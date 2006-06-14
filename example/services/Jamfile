@@ -1,0 +1,26 @@
+subproject libs/asio/example/services ;
+
+project boost : $(BOOST_ROOT) ;
+
+if $(UNIX)
+{
+  switch $(JAMUNAME)
+  {
+  case SunOS* :
+    {
+      SOCKET_LIBS = <find-library>socket <find-library>nsl ;
+    }
+  }
+}
+
+exe daytime_client
+  : <lib>@boost/libs/thread/build/boost_thread
+    daytime_client.cpp
+  : <include>$(BOOST_ROOT)
+    <include>../../../..
+    <define>BOOST_ALL_NO_LIB=1
+    <threading>multi
+    <mingw><*><find-library>ws2_32
+    <mingw><*><find-library>mswsock
+    $(SOCKET_LIBS)
+  ;

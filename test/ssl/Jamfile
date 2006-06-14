@@ -1,0 +1,37 @@
+subproject libs/asio/test/ssl ;
+
+# bring in the rules for testing
+import testing ;
+
+project boost : $(BOOST_ROOT) ;
+
+if $(UNIX)
+{
+  switch $(JAMUNAME)
+  {
+  case SunOS* :
+    {
+      SOCKET_LIBS = <find-library>socket <find-library>nsl ;
+    }
+  }
+}
+
+template unit_test
+  : <lib>@boost/libs/thread/build/boost_thread
+  : <include>../../../..
+    <define>BOOST_ALL_NO_LIB=1
+    <threading>multi
+    <find-library>ssl
+    <find-library>crypto
+    <mingw><*><find-library>ws2_32
+    <mingw><*><find-library>mswsock
+    $(SOCKET_LIBS)
+  ;
+
+run basic_context_test.cpp <template>unit_test ;
+run context_base_test.cpp <template>unit_test ;
+run context_service_test.cpp <template>unit_test ;
+run context_test.cpp <template>unit_test ;
+run stream_base_test.cpp <template>unit_test ;
+run stream_service_test.cpp <template>unit_test ;
+run stream_test.cpp <template>unit_test ;

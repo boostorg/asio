@@ -1,0 +1,34 @@
+subproject libs/asio/example/http/server ;
+
+project boost : $(BOOST_ROOT) ;
+
+if $(UNIX)
+{
+  switch $(JAMUNAME)
+  {
+  case SunOS* :
+    {
+      SOCKET_LIBS = <find-library>socket <find-library>nsl ;
+    }
+  }
+}
+
+exe http_server
+  : <lib>@boost/libs/thread/build/boost_thread
+    connection.cpp
+    connection_manager.cpp
+    mime_types.cpp
+    posix_main.cpp
+    reply.cpp
+    request_handler.cpp
+    request_parser.cpp
+    server.cpp
+    win_main.cpp
+  : <include>$(BOOST_ROOT)
+    <include>../../../../..
+    <define>BOOST_ALL_NO_LIB=1
+    <threading>multi
+    <mingw><*><find-library>ws2_32
+    <mingw><*><find-library>mswsock
+    $(SOCKET_LIBS)
+  ;

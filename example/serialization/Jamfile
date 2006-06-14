@@ -1,0 +1,38 @@
+subproject libs/asio/example/serialization ;
+
+project boost : $(BOOST_ROOT) ;
+
+if $(UNIX)
+{
+  switch $(JAMUNAME)
+  {
+  case SunOS* :
+    {
+      SOCKET_LIBS = <find-library>socket <find-library>nsl ;
+    }
+  }
+}
+
+exe client
+  : <lib>@boost/libs/serialization/build/boost_serialization
+    client.cpp
+  : <include>$(BOOST_ROOT)
+    <include>../../../..
+    <define>BOOST_ALL_NO_LIB=1
+    <threading>multi
+    <mingw><*><find-library>ws2_32
+    <mingw><*><find-library>mswsock
+    $(SOCKET_LIBS)
+  ;
+
+exe server
+  : <lib>@boost/libs/serialization/build/boost_serialization
+    server.cpp
+  : <include>$(BOOST_ROOT)
+    <include>../../../..
+    <define>BOOST_ALL_NO_LIB=1
+    <threading>multi
+    <mingw><*><find-library>ws2_32
+    <mingw><*><find-library>mswsock
+    $(SOCKET_LIBS)
+  ;
