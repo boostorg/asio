@@ -50,7 +50,7 @@ namespace asio {
  * @param s The stream from which the data is to be read. The type must support
  * the Sync_Read_Stream concept.
  *
- * @param b A streambuf object into which the data will be written.
+ * @param b A streambuf object into which the data will be read.
  *
  * @param delim The delimiter character.
  *
@@ -93,7 +93,7 @@ std::size_t read_until(Sync_Read_Stream& s,
  * @param s The stream from which the data is to be read. The type must support
  * the Sync_Read_Stream concept.
  *
- * @param b A streambuf object into which the data will be written.
+ * @param b A streambuf object into which the data will be read.
  *
  * @param delim The delimiter character.
  *
@@ -132,7 +132,7 @@ std::size_t read_until(Sync_Read_Stream& s,
  * @param s The stream from which the data is to be read. The type must support
  * the Sync_Read_Stream concept.
  *
- * @param b A streambuf object into which the data will be written.
+ * @param b A streambuf object into which the data will be read.
  *
  * @param expr The regular expression.
  *
@@ -175,7 +175,7 @@ std::size_t read_until(Sync_Read_Stream& s,
  * @param s The stream from which the data is to be read. The type must support
  * the Sync_Read_Stream concept.
  *
- * @param b A streambuf object into which the data will be written.
+ * @param b A streambuf object into which the data will be read.
  *
  * @param expr The regular expression.
  *
@@ -189,17 +189,17 @@ std::size_t read_until(Sync_Read_Stream& s,
  * the operation is complete.
  *
  * @returns The number of bytes in the streambuf's get area up to and including
- * the substring that matches the regular expression.
- */
+* the substring that matches the regular expression.
+*/
 template <typename Sync_Read_Stream, typename Allocator, typename Error_Handler>
 std::size_t read_until(Sync_Read_Stream& s,
-    boost::asio::basic_streambuf<Allocator>& b, const boost::regex& expr,
-    Error_Handler error_handler);
+  boost::asio::basic_streambuf<Allocator>& b, const boost::regex& expr,
+  Error_Handler error_handler);
 
 /*@}*/
 /**
- * @defgroup async_read_until boost::asio::async_read_until
- */
+* @defgroup async_read_until boost::asio::async_read_until
+*/
 /*@{*/
 
 /// Start an asynchronous operation to read data into a streambuf until a
@@ -221,7 +221,7 @@ std::size_t read_until(Sync_Read_Stream& s,
  * @param s The stream from which the data is to be read. The type must support
  * the Async_Read_Stream concept.
  *
- * @param b A streambuf object into which the data will be written. Ownership of
+ * @param b A streambuf object into which the data will be read. Ownership of
  * the streambuf is retained by the caller, which must guarantee that it remains
  * valid until the handler is called.
  *
@@ -262,7 +262,7 @@ std::size_t read_until(Sync_Read_Stream& s,
  */
 template <typename Async_Read_Stream, typename Allocator, typename Handler>
 void async_read_until(Async_Read_Stream& s,
-    boost::asio::basic_streambuf<Allocator>& b, char delim, Handler handler);
+  boost::asio::basic_streambuf<Allocator>& b, char delim, Handler handler);
 
 /// Start an asynchronous operation to read data into a streambuf until a
 /// regular expression is located.
@@ -284,7 +284,7 @@ void async_read_until(Async_Read_Stream& s,
  * @param s The stream from which the data is to be read. The type must support
  * the Async_Read_Stream concept.
  *
- * @param b A streambuf object into which the data will be written. Ownership of
+ * @param b A streambuf object into which the data will be read. Ownership of
  * the streambuf is retained by the caller, which must guarantee that it remains
  * valid until the handler is called.
  *

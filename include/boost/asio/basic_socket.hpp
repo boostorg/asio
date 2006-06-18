@@ -157,8 +157,8 @@ public:
    *
    * @par Example:
    * @code
-   * boost::asio::ipv4::tcp::socket socket(io_service);
-   * socket.open(boost::asio::ipv4::tcp());
+   * boost::asio::ip::tcp::socket socket(io_service);
+   * socket.open(boost::asio::ip::tcp::v4());
    * @endcode
    */
   void open(const protocol_type& protocol = protocol_type())
@@ -181,9 +181,9 @@ public:
    *
    * @par Example:
    * @code
-   * boost::asio::ipv4::tcp::socket socket(io_service);
+   * boost::asio::ip::tcp::socket socket(io_service);
    * boost::asio::error error;
-   * socket.open(boost::asio::ipv4::tcp(), boost::asio::assign_error(error));
+   * socket.open(boost::asio::ip::tcp::v4(), boost::asio::assign_error(error));
    * if (error)
    * {
    *   // An error occurred.
@@ -263,7 +263,7 @@ public:
    *
    * @par Example:
    * @code
-   * boost::asio::ipv4::tcp::socket socket(io_service);
+   * boost::asio::ip::tcp::socket socket(io_service);
    * ...
    * boost::asio::error error;
    * socket.close(boost::asio::assign_error(error));
@@ -302,9 +302,10 @@ public:
    *
    * @par Example:
    * @code
-   * boost::asio::ipv4::tcp::socket socket(io_service);
-   * socket.open(boost::asio::ipv4::tcp());
-   * socket.bind(boost::asio::ipv4::tcp::endpoint(12345));
+   * boost::asio::ip::tcp::socket socket(io_service);
+   * socket.open(boost::asio::ip::tcp::v4());
+   * socket.bind(boost::asio::ip::tcp::endpoint(
+   *       boost::asio::ip::tcp::v4(), 12345));
    * @endcode
    */
   void bind(const endpoint_type& endpoint)
@@ -329,10 +330,11 @@ public:
    *
    * @par Example:
    * @code
-   * boost::asio::ipv4::tcp::socket socket(io_service);
-   * socket.open(boost::asio::ipv4::tcp());
+   * boost::asio::ip::tcp::socket socket(io_service);
+   * socket.open(boost::asio::ip::tcp::v4());
    * boost::asio::error error;
-   * socket.bind(boost::asio::ipv4::tcp::endpoint(12345),
+   * socket.bind(boost::asio::ip::tcp::endpoint(
+   *       boost::asio::ip::tcp::v4(), 12345),
    *     boost::asio::assign_error(error));
    * if (error)
    * {
@@ -363,8 +365,9 @@ public:
    *
    * @par Example:
    * @code
-   * boost::asio::ipv4::tcp::socket socket(io_service);
-   * boost::asio::ipv4::tcp::endpoint endpoint(12345, "1.2.3.4");
+   * boost::asio::ip::tcp::socket socket(io_service);
+   * boost::asio::ip::tcp::endpoint endpoint(
+   *     boost::asio::ip::address::from_string("1.2.3.4"), 12345);
    * socket.connect(endpoint);
    * @endcode
    */
@@ -395,8 +398,9 @@ public:
    *
    * @par Example:
    * @code
-   * boost::asio::ipv4::tcp::socket socket(io_service);
-   * boost::asio::ipv4::tcp::endpoint endpoint(12345, "1.2.3.4");
+   * boost::asio::ip::tcp::socket socket(io_service);
+   * boost::asio::ip::tcp::endpoint endpoint(
+   *     boost::asio::ip::address::from_string("1.2.3.4"), 12345);
    * boost::asio::error error;
    * socket.connect(endpoint, boost::asio::assign_error(error));
    * if (error)
@@ -446,8 +450,9 @@ public:
    *
    * ...
    *
-   * boost::asio::ipv4::tcp::socket socket(io_service);
-   * boost::asio::ipv4::tcp::endpoint endpoint(12345, "1.2.3.4");
+   * boost::asio::ip::tcp::socket socket(io_service);
+   * boost::asio::ip::tcp::endpoint endpoint(
+   *     boost::asio::ip::address::from_string("1.2.3.4"), 12345);
    * socket.async_connect(endpoint, connect_handler);
    * @endcode
    */
@@ -475,19 +480,19 @@ public:
    * boost::asio::socket_base::reuse_address @n
    * boost::asio::socket_base::send_buffer_size @n
    * boost::asio::socket_base::send_low_watermark @n
-   * boost::asio::ipv4::multicast::add_membership @n
-   * boost::asio::ipv4::multicast::drop_membership @n
-   * boost::asio::ipv4::multicast::enable_loopback @n
-   * boost::asio::ipv4::multicast::outbound_interface @n
-   * boost::asio::ipv4::multicast::time_to_live @n
-   * boost::asio::ipv4::tcp::no_delay
+   * boost::asio::ip::multicast::join_group @n
+   * boost::asio::ip::multicast::leave_group @n
+   * boost::asio::ip::multicast::enable_loopback @n
+   * boost::asio::ip::multicast::outbound_interface @n
+   * boost::asio::ip::multicast::hops @n
+   * boost::asio::ip::tcp::no_delay
    *
    * @par Example:
    * Setting the IPPROTO_TCP/TCP_NODELAY option:
    * @code
-   * boost::asio::ipv4::tcp::socket socket(io_service);
+   * boost::asio::ip::tcp::socket socket(io_service);
    * ...
-   * boost::asio::ipv4::tcp::no_delay option(true);
+   * boost::asio::ip::tcp::no_delay option(true);
    * socket.set_option(option);
    * @endcode
    */
@@ -520,19 +525,19 @@ public:
    * boost::asio::socket_base::reuse_address @n
    * boost::asio::socket_base::send_buffer_size @n
    * boost::asio::socket_base::send_low_watermark @n
-   * boost::asio::ipv4::multicast::add_membership @n
-   * boost::asio::ipv4::multicast::drop_membership @n
-   * boost::asio::ipv4::multicast::enable_loopback @n
-   * boost::asio::ipv4::multicast::outbound_interface @n
-   * boost::asio::ipv4::multicast::time_to_live @n
-   * boost::asio::ipv4::tcp::no_delay
+   * boost::asio::ip::multicast::join_group @n
+   * boost::asio::ip::multicast::leave_group @n
+   * boost::asio::ip::multicast::enable_loopback @n
+   * boost::asio::ip::multicast::outbound_interface @n
+   * boost::asio::ip::multicast::hops @n
+   * boost::asio::ip::tcp::no_delay
    *
    * @par Example:
    * Setting the IPPROTO_TCP/TCP_NODELAY option:
    * @code
-   * boost::asio::ipv4::tcp::socket socket(io_service);
+   * boost::asio::ip::tcp::socket socket(io_service);
    * ...
-   * boost::asio::ipv4::tcp::no_delay option(true);
+   * boost::asio::ip::tcp::no_delay option(true);
    * boost::asio::error error;
    * socket.set_option(option, boost::asio::assign_error(error));
    * if (error)
@@ -565,19 +570,19 @@ public:
    * boost::asio::socket_base::reuse_address @n
    * boost::asio::socket_base::send_buffer_size @n
    * boost::asio::socket_base::send_low_watermark @n
-   * boost::asio::ipv4::multicast::add_membership @n
-   * boost::asio::ipv4::multicast::drop_membership @n
-   * boost::asio::ipv4::multicast::enable_loopback @n
-   * boost::asio::ipv4::multicast::outbound_interface @n
-   * boost::asio::ipv4::multicast::time_to_live @n
-   * boost::asio::ipv4::tcp::no_delay
+   * boost::asio::ip::multicast::join_group @n
+   * boost::asio::ip::multicast::leave_group @n
+   * boost::asio::ip::multicast::enable_loopback @n
+   * boost::asio::ip::multicast::outbound_interface @n
+   * boost::asio::ip::multicast::hops @n
+   * boost::asio::ip::tcp::no_delay
    *
    * @par Example:
    * Getting the value of the SOL_SOCKET/SO_KEEPALIVE option:
    * @code
-   * boost::asio::ipv4::tcp::socket socket(io_service);
+   * boost::asio::ip::tcp::socket socket(io_service);
    * ...
-   * boost::asio::ipv4::tcp::socket::keep_alive option;
+   * boost::asio::ip::tcp::socket::keep_alive option;
    * socket.get_option(option);
    * bool is_set = option.get();
    * @endcode
@@ -611,19 +616,19 @@ public:
    * boost::asio::socket_base::reuse_address @n
    * boost::asio::socket_base::send_buffer_size @n
    * boost::asio::socket_base::send_low_watermark @n
-   * boost::asio::ipv4::multicast::add_membership @n
-   * boost::asio::ipv4::multicast::drop_membership @n
-   * boost::asio::ipv4::multicast::enable_loopback @n
-   * boost::asio::ipv4::multicast::outbound_interface @n
-   * boost::asio::ipv4::multicast::time_to_live @n
-   * boost::asio::ipv4::tcp::no_delay
+   * boost::asio::ip::multicast::join_group @n
+   * boost::asio::ip::multicast::leave_group @n
+   * boost::asio::ip::multicast::enable_loopback @n
+   * boost::asio::ip::multicast::outbound_interface @n
+   * boost::asio::ip::multicast::hops @n
+   * boost::asio::ip::tcp::no_delay
    *
    * @par Example:
    * Getting the value of the SOL_SOCKET/SO_KEEPALIVE option:
    * @code
-   * boost::asio::ipv4::tcp::socket socket(io_service);
+   * boost::asio::ip::tcp::socket socket(io_service);
    * ...
-   * boost::asio::ipv4::tcp::socket::keep_alive option;
+   * boost::asio::ip::tcp::socket::keep_alive option;
    * boost::asio::error error;
    * socket.get_option(option, boost::asio::assign_error(error));
    * if (error)
@@ -654,9 +659,9 @@ public:
    * @par Example:
    * Getting the number of bytes ready to read:
    * @code
-   * boost::asio::ipv4::tcp::socket socket(io_service);
+   * boost::asio::ip::tcp::socket socket(io_service);
    * ...
-   * boost::asio::ipv4::tcp::socket::bytes_readable command;
+   * boost::asio::ip::tcp::socket::bytes_readable command;
    * socket.io_control(command);
    * std::size_t bytes_readable = command.get();
    * @endcode
@@ -687,9 +692,9 @@ public:
    * @par Example:
    * Getting the number of bytes ready to read:
    * @code
-   * boost::asio::ipv4::tcp::socket socket(io_service);
+   * boost::asio::ip::tcp::socket socket(io_service);
    * ...
-   * boost::asio::ipv4::tcp::socket::bytes_readable command;
+   * boost::asio::ip::tcp::socket::bytes_readable command;
    * boost::asio::error error;
    * socket.io_control(command, boost::asio::assign_error(error));
    * if (error)
@@ -715,9 +720,9 @@ public:
    *
    * @par Example:
    * @code
-   * boost::asio::ipv4::tcp::socket socket(io_service);
+   * boost::asio::ip::tcp::socket socket(io_service);
    * ...
-   * boost::asio::ipv4::tcp::endpoint endpoint = socket.local_endpoint();
+   * boost::asio::ip::tcp::endpoint endpoint = socket.local_endpoint();
    * @endcode
    */
   endpoint_type local_endpoint() const
@@ -742,10 +747,10 @@ public:
    *
    * @par Example:
    * @code
-   * boost::asio::ipv4::tcp::socket socket(io_service);
+   * boost::asio::ip::tcp::socket socket(io_service);
    * ...
    * boost::asio::error error;
-   * boost::asio::ipv4::tcp::endpoint endpoint
+   * boost::asio::ip::tcp::endpoint endpoint
    *   = socket.local_endpoint(boost::asio::assign_error(error));
    * if (error)
    * {
@@ -769,9 +774,9 @@ public:
    *
    * @par Example:
    * @code
-   * boost::asio::ipv4::tcp::socket socket(io_service);
+   * boost::asio::ip::tcp::socket socket(io_service);
    * ...
-   * boost::asio::ipv4::tcp::endpoint endpoint = socket.remote_endpoint();
+   * boost::asio::ip::tcp::endpoint endpoint = socket.remote_endpoint();
    * @endcode
    */
   endpoint_type remote_endpoint() const
@@ -796,10 +801,10 @@ public:
    *
    * @par Example:
    * @code
-   * boost::asio::ipv4::tcp::socket socket(io_service);
+   * boost::asio::ip::tcp::socket socket(io_service);
    * ...
    * boost::asio::error error;
-   * boost::asio::ipv4::tcp::endpoint endpoint
+   * boost::asio::ip::tcp::endpoint endpoint
    *   = socket.remote_endpoint(boost::asio::assign_error(error));
    * if (error)
    * {
@@ -825,9 +830,9 @@ public:
    * @par Example:
    * Shutting down the send side of the socket:
    * @code
-   * boost::asio::ipv4::tcp::socket socket(io_service);
+   * boost::asio::ip::tcp::socket socket(io_service);
    * ...
-   * socket.shutdown(boost::asio::ipv4::tcp::socket::shutdown_send);
+   * socket.shutdown(boost::asio::ip::tcp::socket::shutdown_send);
    * @endcode
    */
   void shutdown(shutdown_type what)
@@ -852,10 +857,10 @@ public:
    * @par Example:
    * Shutting down the send side of the socket:
    * @code
-   * boost::asio::ipv4::tcp::socket socket(io_service);
+   * boost::asio::ip::tcp::socket socket(io_service);
    * ...
    * boost::asio::error error;
-   * socket.shutdown(boost::asio::ipv4::tcp::socket::shutdown_send,
+   * socket.shutdown(boost::asio::ip::tcp::socket::shutdown_send,
    *     boost::asio::assign_error(error));
    * if (error)
    * {

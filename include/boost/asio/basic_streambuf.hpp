@@ -26,9 +26,7 @@
 #include <vector>
 #include <boost/asio/detail/pop_options.hpp>
 
-#include <boost/asio/completion_condition.hpp>
-#include <boost/asio/error_handler.hpp>
-#include <boost/asio/write.hpp>
+#include <boost/asio/buffer.hpp>
 #include <boost/asio/detail/noncopyable.hpp>
 
 namespace boost {
@@ -65,57 +63,43 @@ public:
     setp(&buffer_[0], &buffer_[0] + pend);
   }
 
-  /// Move the start of the get area by the specified number of characters.
-  void sbump(std::streamsize n)
-  {
-    while (n > 0)
-    {
-      sbumpc();
-      --n;
-    }
-  }
-
-  /// Move the start of the put area by the specified number of characters.
-  void spbump(std::streamsize n)
-  {
-    if (pptr() + n > epptr())
-      n = epptr() - pptr();
-    pbump(n);
-  }
-
-  /// Move the start of the put area by one character, returning the character
-  /// that was just moved into the get area.
-  int_type spbumpc()
-  {
-    if (pptr() == epptr())
-    {
-      return traits_type::eof();
-    }
-
-    int_type c = traits_type::to_int_type(*pptr());
-    pbump(1);
-    return c;
-  }
-
   /// Return the size of the get area in characters.
-  std::size_t slength() const
+  std::size_t size() const
   {
     return pptr() - gptr();
   }
 
   /// Get a list of buffers that represents the get area.
-  const_buffers_type sbuffers() const
+  const_buffers_type data() const
   {
     return boost::asio::buffer(boost::asio::const_buffer(gptr(),
           (pptr() - gptr()) * sizeof(char_type)));
   }
 
   /// Get a list of buffers that represents the put area, with the given size.
-  mutable_buffers_type spbuffers(std::size_t size)
+  mutable_buffers_type prepare(std::size_t size)
   {
     reserve(size);
     return boost::asio::buffer(boost::asio::mutable_buffer(
           pptr(), size * sizeof(char_type)));
+  }
+
+  /// Move the start of the put area by the specified number of characters.
+  void commit(std::size_t n)
+  {
+    if (pptr() + n > epptr())
+      n = epptr() - pptr();
+    pbump(n);
+  }
+
+  /// Move the start of the get area by the specified number of characters.
+  void consume(std::size_t n)
+  {
+    while (n > 0)
+    {
+      sbumpc();
+      --n;
+    }
   }
 
 protected:
@@ -204,214 +188,199 @@ private:
   std::vector<char_type, Allocator> buffer_;
 };
 
-template <typename Sync_Read_Stream, typename Allocator,
-    typename Completion_Condition, typename Error_Handler>
-std::size_t read(Sync_Read_Stream& s,
-    boost::asio::basic_streambuf<Allocator>& b,
-    Completion_Condition completion_condition, Error_Handler error_handler)
+} // namespace asio
+} // namespace boost
+
+#include <boost/asio/detail/pop_options.hpp>
+
+#endif // BOOST_ASIO_BASIC_STREAMBUF_HPP
+// basic_streambuf.hpp
+// ~~~~~~~~~~~~~~~~~~~
+//
+// Copyright (c) 2003-2006 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+//
+// Distributed under the Boost Software License, Version 1.0. (See accompanying
+// file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+//
+
+#ifndef BOOST_ASIO_BASIC_STREAMBUF_HPP
+#define BOOST_ASIO_BASIC_STREAMBUF_HPP
+
+#if defined(_MSC_VER) && (_MSC_VER >= 1200)
+# pragma once
+#endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
+
+#include <boost/asio/detail/push_options.hpp>
+
+#include <boost/asio/detail/push_options.hpp>
+#include <algorithm>
+#include <limits>
+#include <memory>
+#include <stdexcept>
+#include <streambuf>
+#include <vector>
+#include <boost/asio/detail/pop_options.hpp>
+
+#include <boost/asio/detail/noncopyable.hpp>
+
+namespace boost {
+namespace asio {
+
+/// Automatically resizable buffer class based on std::streambuf.
+template <typename Allocator = std::allocator<char> >
+class basic_streambuf
+  : public std::streambuf,
+    private noncopyable
 {
-  std::size_t total_transferred = 0;
-  for (;;)
+public:
+#if defined(GENERATING_DOCUMENTATION)
+  /// The type used to represent the get area as a list of buffers.
+  typedef implementation_defined const_buffers_type;
+
+  /// The type used to represent the put area as a list of buffers.
+  typedef implementation_defined mutable_buffers_type;
+#else
+  typedef boost::asio::const_buffer_container_1 const_buffers_type;
+  typedef boost::asio::mutable_buffer_container_1 mutable_buffers_type;
+#endif
+
+  /// Construct a buffer with a specified maximum size.
+  explicit basic_streambuf(
+      std::size_t max_size = (std::numeric_limits<std::size_t>::max)(),
+      const Allocator& allocator = Allocator())
+    : max_size_(max_size),
+      buffer_(allocator)
   {
-    typename Sync_Read_Stream::error_type e;
-    std::size_t bytes_transferred = s.read_some(
-        b.spbuffers(512), assign_error(e));
-    b.spbump(bytes_transferred);
-    total_transferred += bytes_transferred;
-    if (completion_condition(e, total_transferred))
+    std::size_t pend = (std::min<std::size_t>)(max_size_, buffer_delta);
+    buffer_.resize((std::max<std::size_t>)(pend, 1));
+    setg(&buffer_[0], &buffer_[0], &buffer_[0]);
+    setp(&buffer_[0], &buffer_[0] + pend);
+  }
+
+  /// Return the size of the get area in characters.
+  std::size_t size() const
+  {
+    return pptr() - gptr();
+  }
+
+  /// Get a list of buffers that represents the get area.
+  const_buffers_type data() const
+  {
+    return boost::asio::buffer(boost::asio::const_buffer(gptr(),
+          (pptr() - gptr()) * sizeof(char_type)));
+  }
+
+  /// Get a list of buffers that represents the put area, with the given size.
+  mutable_buffers_type prepare(std::size_t size)
+  {
+    reserve(size);
+    return boost::asio::buffer(boost::asio::mutable_buffer(
+          pptr(), size * sizeof(char_type)));
+  }
+
+  /// Move the start of the put area by the specified number of characters.
+  void commit(std::size_t n)
+  {
+    if (pptr() + n > epptr())
+      n = epptr() - pptr();
+    pbump(n);
+  }
+
+  /// Move the start of the get area by the specified number of characters.
+  void consume(std::size_t n)
+  {
+    while (n > 0)
     {
-      error_handler(e);
-      return total_transferred;
+      sbumpc();
+      --n;
     }
   }
-  typename Sync_Read_Stream::error_type e;
-  error_handler(e);
-  return total_transferred;
-}
 
-template <typename Sync_Read_Stream, typename Allocator>
-inline std::size_t read(Sync_Read_Stream& s,
-    boost::asio::basic_streambuf<Allocator>& b)
-{
-  return read(s, b, transfer_all(), throw_error());
-}
+protected:
+  enum { buffer_delta = 128 };
 
-template <typename Sync_Read_Stream, typename Allocator,
-    typename Completion_Condition>
-inline std::size_t read(Sync_Read_Stream& s,
-    boost::asio::basic_streambuf<Allocator>& b,
-    Completion_Condition completion_condition)
-{
-  return read(s, b, completion_condition, throw_error());
-}
-
-namespace detail
-{
-  template <typename Async_Read_Stream, typename Allocator,
-      typename Completion_Condition, typename Handler>
-  class read_streambuf_handler
+  int_type underflow()
   {
-  public:
-    read_streambuf_handler(Async_Read_Stream& stream,
-        basic_streambuf<Allocator>& streambuf,
-        Completion_Condition completion_condition, Handler handler)
-      : stream_(stream),
-        streambuf_(streambuf),
-        total_transferred_(0),
-        completion_condition_(completion_condition),
-        handler_(handler)
+    if (gptr() < pptr())
     {
+      setg(&buffer_[0], gptr(), pptr());
+      return traits_type::to_int_type(*gptr());
+    }
+    else
+    {
+      return traits_type::eof();
+    }
+  }
+
+  int_type overflow(int_type c)
+  {
+    if (!traits_type::eq_int_type(c, traits_type::eof()))
+    {
+      if (pptr() == epptr())
+      {
+        std::size_t buffer_size = pptr() - gptr();
+        if (buffer_size < max_size_ && max_size_ - buffer_size < buffer_delta)
+        {
+          reserve(max_size_ - buffer_size);
+        }
+        else
+        {
+          reserve(buffer_delta);
+        }
+      }
+
+      *pptr() = traits_type::to_char_type(c);
+      pbump(1);
+      return c;
     }
 
-    void operator()(const typename Async_Read_Stream::error_type& e,
-        std::size_t bytes_transferred)
+    return traits_type::not_eof(c);
+  }
+
+  void reserve(std::size_t n)
+  {
+    // Get current stream positions as offsets.
+    std::size_t gnext = gptr() - &buffer_[0];
+    std::size_t gend = egptr() - &buffer_[0];
+    std::size_t pnext = pptr() - &buffer_[0];
+    std::size_t pend = epptr() - &buffer_[0];
+
+    // Check if there is already enough space in the put area.
+    if (n <= pend - pnext)
     {
-      total_transferred_ += bytes_transferred;
-      streambuf_.spbump(bytes_transferred);
-      if (completion_condition_(e, total_transferred_))
+      return;
+    }
+
+    // Shift existing contents of get area to start of buffer.
+    if (gnext > 0)
+    {
+      std::rotate(&buffer_[0], &buffer_[0] + gnext, &buffer_[0] + pend);
+      gend -= gnext;
+      pnext -= gnext;
+    }
+
+    // Ensure buffer is large enough to hold at least the specified size.
+    if (n > pend - pnext)
+    {
+      if (n <= max_size_ & pnext <= max_size_ - n)
       {
-        stream_.io_service().dispatch(
-            detail::bind_handler(handler_, e, total_transferred_));
+        buffer_.resize((std::max<std::size_t>)(pnext + n, 1));
       }
       else
       {
-        stream_.async_read_some(streambuf_.spbuffers(512), *this);
+        throw std::length_error("boost::asio::streambuf too long");
       }
     }
 
-    friend void* asio_handler_allocate(std::size_t size,
-        read_streambuf_handler<Async_Read_Stream, Allocator,
-          Completion_Condition, Handler>* this_handler)
-    {
-      return boost_asio_handler_alloc_helpers::allocate(
-          size, &this_handler->handler_);
-    }
+    // Update stream positions.
+    setg(&buffer_[0], &buffer_[0], &buffer_[0] + gend);
+    setp(&buffer_[0] + pnext, &buffer_[0] + pnext + n);
+  }
 
-    friend void asio_handler_deallocate(void* pointer, std::size_t size,
-        read_streambuf_handler<Async_Read_Stream, Allocator,
-          Completion_Condition, Handler>* this_handler)
-    {
-      boost_asio_handler_alloc_helpers::deallocate(
-          pointer, size, &this_handler->handler_);
-    }
-
-  private:
-    Async_Read_Stream& stream_;
-    boost::asio::basic_streambuf<Allocator>& streambuf_;
-    std::size_t total_transferred_;
-    Completion_Condition completion_condition_;
-    Handler handler_;
-  };
-} // namespace detail
-
-template <typename Async_Read_Stream, typename Allocator,
-    typename Completion_Condition, typename Handler>
-inline void async_read(Async_Read_Stream& s,
-    boost::asio::basic_streambuf<Allocator>& b,
-    Completion_Condition completion_condition, Handler handler)
-{
-  s.async_read_some(b.spbuffers(512),
-      detail::read_streambuf_handler<Async_Read_Stream, Allocator,
-        Completion_Condition, Handler>(
-          s, b, completion_condition, handler));
-}
-
-template <typename Async_Read_Stream, typename Allocator, typename Handler>
-inline void async_read(Async_Read_Stream& s,
-    boost::asio::basic_streambuf<Allocator>& b, Handler handler)
-{
-  async_read(s, b, transfer_all(), handler);
-}
-
-template <typename Sync_Write_Stream, typename Allocator,
-    typename Completion_Condition, typename Error_Handler>
-std::size_t write(Sync_Write_Stream& s,
-    boost::asio::basic_streambuf<Allocator>& b,
-    Completion_Condition completion_condition, Error_Handler error_handler)
-{
-  typename Sync_Write_Stream::error_type error;
-  std::size_t bytes_transferred = write(s, b.sbuffers(),
-      completion_condition, boost::asio::assign_error(error));
-  b.sbump(bytes_transferred);
-  error_handler(error);
-  return bytes_transferred;
-}
-
-template <typename Sync_Write_Stream, typename Allocator>
-inline std::size_t write(Sync_Write_Stream& s,
-    boost::asio::basic_streambuf<Allocator>& b)
-{
-  return write(s, b, transfer_all(), throw_error());
-}
-
-template <typename Sync_Write_Stream, typename Allocator,
-    typename Completion_Condition>
-inline std::size_t write(Sync_Write_Stream& s,
-    boost::asio::basic_streambuf<Allocator>& b,
-    Completion_Condition completion_condition)
-{
-  return write(s, b, completion_condition, throw_error());
-}
-
-namespace detail
-{
-  template <typename Async_Write_Stream, typename Allocator, typename Handler>
-  class write_streambuf_handler
-  {
-  public:
-    write_streambuf_handler(boost::asio::basic_streambuf<Allocator>& streambuf,
-        Handler handler)
-      : streambuf_(streambuf),
-        handler_(handler)
-    {
-    }
-
-    void operator()(const typename Async_Write_Stream::error_type& e,
-        std::size_t bytes_transferred)
-    {
-      streambuf_.sbump(bytes_transferred);
-      handler_(e, bytes_transferred);
-    }
-
-    friend void* asio_handler_allocate(std::size_t size,
-        write_streambuf_handler<Async_Write_Stream,
-          Allocator, Handler>* this_handler)
-    {
-      return boost_asio_handler_alloc_helpers::allocate(
-          size, &this_handler->handler_);
-    }
-
-    friend void asio_handler_deallocate(void* pointer, std::size_t size,
-        write_streambuf_handler<Async_Write_Stream,
-          Allocator, Handler>* this_handler)
-    {
-      boost_asio_handler_alloc_helpers::deallocate(
-          pointer, size, &this_handler->handler_);
-    }
-
-  private:
-    boost::asio::basic_streambuf<Allocator>& streambuf_;
-    Handler handler_;
-  };
-} // namespace detail
-
-template <typename Async_Write_Stream, typename Allocator,
-  typename Completion_Condition, typename Handler>
-inline void async_write(Async_Write_Stream& s,
-    boost::asio::basic_streambuf<Allocator>& b,
-    Completion_Condition completion_condition, Handler handler)
-{
-  async_write(s, b.sbuffers(),
-      detail::write_streambuf_handler<Async_Write_Stream, Allocator, Handler>(
-        b, handler));
-}
-
-template <typename Async_Write_Stream, typename Allocator, typename Handler>
-inline void async_write(Async_Write_Stream& s,
-    boost::asio::basic_streambuf<Allocator>& b, Handler handler)
-{
-  async_write(s, b, transfer_all(), handler);
-}
+private:
+  std::size_t max_size_;
+  std::vector<char_type, Allocator> buffer_;
+};
 
 } // namespace asio
 } // namespace boost
