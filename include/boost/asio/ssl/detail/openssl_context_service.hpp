@@ -121,6 +121,9 @@ public:
       Error_Handler error_handler)
   {
     ::SSL_CTX_set_options(impl, o);
+
+    boost::asio::error e;
+    error_handler(e);
   }
 
   // Set peer verification mode.
@@ -129,6 +132,9 @@ public:
       Error_Handler error_handler)
   {
     ::SSL_CTX_set_verify(impl, v, 0);
+
+    boost::asio::error e;
+    error_handler(e);
   }
 
   // Load a certification authority file for performing verification.
@@ -140,7 +146,11 @@ public:
     {
       boost::asio::error e(boost::asio::error::invalid_argument);
       error_handler(e);
+      return;
     }
+
+    boost::asio::error e;
+    error_handler(e);
   }
 
   // Add a directory containing certification authority files to be used for
@@ -153,7 +163,11 @@ public:
     {
       boost::asio::error e(boost::asio::error::invalid_argument);
       error_handler(e);
+      return;
     }
+
+    boost::asio::error e;
+    error_handler(e);
   }
 
   // Use a certificate from a file.
@@ -182,7 +196,11 @@ public:
     {
       boost::asio::error e(boost::asio::error::invalid_argument);
       error_handler(e);
+      return;
     }
+
+    boost::asio::error e;
+    error_handler(e);
   }
 
   // Use a certificate chain from a file.
@@ -194,7 +212,11 @@ public:
     {
       boost::asio::error e(boost::asio::error::invalid_argument);
       error_handler(e);
+      return;
     }
+
+    boost::asio::error e;
+    error_handler(e);
   }
 
   // Use a private key from a file.
@@ -223,7 +245,11 @@ public:
     {
       boost::asio::error e(boost::asio::error::invalid_argument);
       error_handler(e);
+      return;
     }
+
+    boost::asio::error e;
+    error_handler(e);
   }
 
   // Use an RSA private key from a file.
@@ -253,7 +279,11 @@ public:
     {
       boost::asio::error e(boost::asio::error::invalid_argument);
       error_handler(e);
+      return;
     }
+
+    boost::asio::error e;
+    error_handler(e);
   }
 
   // Use the specified file to obtain the temporary Diffie-Hellman parameters.
@@ -285,7 +315,11 @@ public:
       ::DH_free(dh);
       boost::asio::error e(boost::asio::error::invalid_argument);
       error_handler(e);
+      return;
     }
+
+    boost::asio::error e;
+    error_handler(e);
   }
 
 private:
