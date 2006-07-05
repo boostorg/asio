@@ -24,10 +24,11 @@
 
 #include <boost/asio/io_service.hpp>
 #include <boost/asio/detail/bind_handler.hpp>
+#include <boost/asio/detail/call_stack.hpp>
 #include <boost/asio/detail/handler_alloc_helpers.hpp>
+#include <boost/asio/detail/handler_dispatch_helpers.hpp>
 #include <boost/asio/detail/mutex.hpp>
 #include <boost/asio/detail/noncopyable.hpp>
-#include <boost/asio/detail/strand_service.hpp>
 
 namespace boost {
 namespace asio {
@@ -143,6 +144,13 @@ public:
       return impl_.handler_storage_.address();
     }
 
+    template <typename Handler_To_Dispatch>
+    friend void asio_handler_dispatch(Handler_To_Dispatch handler,
+        invoke_current_handler*)
+    {
+      handler();
+    }
+
   private:
     strand_service& service_impl_;
     implementation_type& impl_;
@@ -227,8 +235,11 @@ public:
       // Free the memory associated with the handler.
       ptr.reset();
 
+      // Indicate that this strand is executing on the current thread.
+      call_stack<implementation_type>::context ctx(&impl);
+
       // Make the upcall.
-      handler();
+      boost_asio_handler_dispatch_helpers::dispatch_handler(handler, &handler);
     }
 
     static void do_destroy(handler_base* base)
@@ -336,38 +347,45 @@ public:
   template <typename Handler>
   void dispatch(implementation_type& impl, Handler handler)
   {
-    boost::asio::detail::mutex::scoped_lock lock(impl.mutex_);
-
-    // Allocate and construct an object to wrap the handler.
-    typedef handler_wrapper<Handler> value_type;
-    typedef handler_alloc_traits<Handler, value_type> alloc_traits;
-    raw_handler_ptr<alloc_traits> raw_ptr(handler);
-    handler_ptr<alloc_traits> ptr(raw_ptr, handler);
-
-    if (impl.current_handler_ == 0)
+    if (call_stack<implementation_type>::contains(&impl))
     {
-      // This handler now has the lock, so can be dispatched immediately.
-      impl.current_handler_ = ptr.get();
-      lock.unlock();
-      owner().dispatch(invoke_current_handler(*this, impl));
-      ptr.release();
+      boost_asio_handler_dispatch_helpers::dispatch_handler(handler, &handler);
     }
     else
     {
-      // Another handler already holds the lock, so this handler must join the
-      // list of waiters. The handler will be posted automatically when its turn
-      // comes.
-      if (impl.last_waiter_)
+      boost::asio::detail::mutex::scoped_lock lock(impl.mutex_);
+
+      // Allocate and construct an object to wrap the handler.
+      typedef handler_wrapper<Handler> value_type;
+      typedef handler_alloc_traits<Handler, value_type> alloc_traits;
+      raw_handler_ptr<alloc_traits> raw_ptr(handler);
+      handler_ptr<alloc_traits> ptr(raw_ptr, handler);
+
+      if (impl.current_handler_ == 0)
       {
-        impl.last_waiter_->next_ = ptr.get();
-        impl.last_waiter_ = impl.last_waiter_->next_;
+        // This handler now has the lock, so can be dispatched immediately.
+        impl.current_handler_ = ptr.get();
+        lock.unlock();
+        owner().dispatch(invoke_current_handler(*this, impl));
+        ptr.release();
       }
       else
       {
-        impl.first_waiter_ = ptr.get();
-        impl.last_waiter_ = ptr.get();
+        // Another handler already holds the lock, so this handler must join
+        // the list of waiters. The handler will be posted automatically when
+        // its turn comes.
+        if (impl.last_waiter_)
+        {
+          impl.last_waiter_->next_ = ptr.get();
+          impl.last_waiter_ = impl.last_waiter_->next_;
+        }
+        else
+        {
+          impl.first_waiter_ = ptr.get();
+          impl.last_waiter_ = ptr.get();
+        }
+        ptr.release();
       }
-      ptr.release();
     }
   }
 

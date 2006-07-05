@@ -34,6 +34,7 @@
 #include <boost/asio/socket_base.hpp>
 #include <boost/asio/detail/bind_handler.hpp>
 #include <boost/asio/detail/handler_alloc_helpers.hpp>
+#include <boost/asio/detail/handler_dispatch_helpers.hpp>
 #include <boost/asio/detail/mutex.hpp>
 #include <boost/asio/detail/select_reactor.hpp>
 #include <boost/asio/detail/socket_holder.hpp>
@@ -289,7 +290,7 @@ public:
       }
       else
       {
-        if (*static_cast<const int*>(option.data(impl.protocol_)))
+        if (*reinterpret_cast<const int*>(option.data(impl.protocol_)))
           impl.flags_ |= implementation_type::enable_connection_aborted;
         else
           impl.flags_ &= ~implementation_type::enable_connection_aborted;
@@ -321,7 +322,7 @@ public:
       }
       else
       {
-        int* target = static_cast<int*>(option.data(impl.protocol_));
+        int* target = reinterpret_cast<int*>(option.data(impl.protocol_));
         if (impl.flags_ & implementation_type::enable_connection_aborted)
           *target = 1;
         else
@@ -477,7 +478,8 @@ public:
 
       // Call the handler.
       boost::asio::error error(last_error);
-      handler(error, bytes_transferred);
+      boost_asio_handler_dispatch_helpers::dispatch_handler(
+          detail::bind_handler(handler, error, bytes_transferred), &handler);
     }
 
     static void destroy_impl(operation* op)
@@ -610,7 +612,8 @@ public:
 
       // Call the handler.
       boost::asio::error error(last_error);
-      handler(error, bytes_transferred);
+      boost_asio_handler_dispatch_helpers::dispatch_handler(
+          detail::bind_handler(handler, error, bytes_transferred), &handler);
     }
 
     static void destroy_impl(operation* op)
@@ -764,7 +767,8 @@ public:
 
       // Call the handler.
       boost::asio::error error(last_error);
-      handler(error, bytes_transferred);
+      boost_asio_handler_dispatch_helpers::dispatch_handler(
+          detail::bind_handler(handler, error, bytes_transferred), &handler);
     }
 
     static void destroy_impl(operation* op)
@@ -920,7 +924,8 @@ public:
 
       // Call the handler.
       boost::asio::error error(last_error);
-      handler(error, bytes_transferred);
+      boost_asio_handler_dispatch_helpers::dispatch_handler(
+          detail::bind_handler(handler, error, bytes_transferred), &handler);
     }
 
     static void destroy_impl(operation* op)
@@ -1224,7 +1229,8 @@ public:
 
       // Call the handler.
       boost::asio::error error(last_error);
-      handler(error);
+      boost_asio_handler_dispatch_helpers::dispatch_handler(
+          detail::bind_handler(handler, error), &handler);
     }
 
     static void destroy_impl(operation* op)
@@ -1489,7 +1495,8 @@ public:
 
       // Call the handler.
       boost::asio::error error(last_error);
-      handler(error);
+      boost_asio_handler_dispatch_helpers::dispatch_handler(
+          detail::bind_handler(handler, error), &handler);
     }
 
     static void destroy_impl(operation* op)

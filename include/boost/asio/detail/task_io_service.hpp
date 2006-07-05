@@ -21,6 +21,7 @@
 #include <boost/asio/detail/call_stack.hpp>
 #include <boost/asio/detail/event.hpp>
 #include <boost/asio/detail/handler_alloc_helpers.hpp>
+#include <boost/asio/detail/handler_dispatch_helpers.hpp>
 #include <boost/asio/detail/mutex.hpp>
 #include <boost/asio/detail/task_io_service_fwd.hpp>
 
@@ -181,7 +182,7 @@ public:
   void dispatch(Handler handler)
   {
     if (call_stack<task_io_service>::contains(this))
-      handler();
+      boost_asio_handler_dispatch_helpers::dispatch_handler(handler, &handler);
     else
       post(handler);
   }
@@ -331,7 +332,7 @@ private:
       ptr.reset();
 
       // Make the upcall.
-      handler();
+      boost_asio_handler_dispatch_helpers::dispatch_handler(handler, &handler);
     }
 
     static void do_destroy(handler_base* base)

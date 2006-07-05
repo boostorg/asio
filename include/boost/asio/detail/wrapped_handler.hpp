@@ -19,6 +19,7 @@
 
 #include <boost/asio/detail/bind_handler.hpp>
 #include <boost/asio/detail/handler_alloc_helpers.hpp>
+#include <boost/asio/detail/handler_dispatch_helpers.hpp>
 
 namespace boost {
 namespace asio {
@@ -47,50 +48,52 @@ public:
   }
 
   template <typename Arg1>
-  void operator()(Arg1 arg1)
+  void operator()(const Arg1& arg1)
   {
     dispatcher_.dispatch(detail::bind_handler(handler_, arg1));
   }
 
   template <typename Arg1>
-  void operator()(Arg1 arg1) const
+  void operator()(const Arg1& arg1) const
   {
     dispatcher_.dispatch(detail::bind_handler(handler_, arg1));
   }
 
   template <typename Arg1, typename Arg2>
-  void operator()(Arg1 arg1, Arg2 arg2)
+  void operator()(const Arg1& arg1, const Arg2& arg2)
   {
     dispatcher_.dispatch(detail::bind_handler(handler_, arg1, arg2));
   }
 
   template <typename Arg1, typename Arg2>
-  void operator()(Arg1 arg1, Arg2 arg2) const
+  void operator()(const Arg1& arg1, const Arg2& arg2) const
   {
     dispatcher_.dispatch(detail::bind_handler(handler_, arg1, arg2));
   }
 
   template <typename Arg1, typename Arg2, typename Arg3>
-  void operator()(Arg1 arg1, Arg2 arg2, Arg3 arg3)
+  void operator()(const Arg1& arg1, const Arg2& arg2, const Arg3& arg3)
   {
     dispatcher_.dispatch(detail::bind_handler(handler_, arg1, arg2, arg3));
   }
 
   template <typename Arg1, typename Arg2, typename Arg3>
-  void operator()(Arg1 arg1, Arg2 arg2, Arg3 arg3) const
+  void operator()(const Arg1& arg1, const Arg2& arg2, const Arg3& arg3) const
   {
     dispatcher_.dispatch(detail::bind_handler(handler_, arg1, arg2, arg3));
   }
 
   template <typename Arg1, typename Arg2, typename Arg3, typename Arg4>
-  void operator()(Arg1 arg1, Arg2 arg2, Arg3 arg3, Arg4 arg4)
+  void operator()(const Arg1& arg1, const Arg2& arg2, const Arg3& arg3,
+      const Arg4& arg4)
   {
     dispatcher_.dispatch(
         detail::bind_handler(handler_, arg1, arg2, arg3, arg4));
   }
 
   template <typename Arg1, typename Arg2, typename Arg3, typename Arg4>
-  void operator()(Arg1 arg1, Arg2 arg2, Arg3 arg3, Arg4 arg4) const
+  void operator()(const Arg1& arg1, const Arg2& arg2, const Arg3& arg3,
+      const Arg4& arg4) const
   {
     dispatcher_.dispatch(
         detail::bind_handler(handler_, arg1, arg2, arg3, arg4));
@@ -98,7 +101,8 @@ public:
 
   template <typename Arg1, typename Arg2, typename Arg3, typename Arg4,
       typename Arg5>
-  void operator()(Arg1 arg1, Arg2 arg2, Arg3 arg3, Arg4 arg4, Arg5 arg5)
+  void operator()(const Arg1& arg1, const Arg2& arg2, const Arg3& arg3,
+      const Arg4& arg4, const Arg5& arg5)
   {
     dispatcher_.dispatch(
         detail::bind_handler(handler_, arg1, arg2, arg3, arg4, arg5));
@@ -106,30 +110,75 @@ public:
 
   template <typename Arg1, typename Arg2, typename Arg3, typename Arg4,
       typename Arg5>
-  void operator()(Arg1 arg1, Arg2 arg2, Arg3 arg3, Arg4 arg4, Arg5 arg5) const
+  void operator()(const Arg1& arg1, const Arg2& arg2, const Arg3& arg3,
+      const Arg4& arg4, const Arg5& arg5) const
   {
     dispatcher_.dispatch(
         detail::bind_handler(handler_, arg1, arg2, arg3, arg4, arg5));
   }
 
-  friend void* asio_handler_allocate(std::size_t size,
-      wrapped_handler<Dispatcher, Handler>* this_handler)
-  {
-    return boost_asio_handler_alloc_helpers::allocate(
-        size, &this_handler->handler_);
-  }
-
-  friend void asio_handler_deallocate(void* pointer, std::size_t size,
-      wrapped_handler<Dispatcher, Handler>* this_handler)
-  {
-    boost_asio_handler_alloc_helpers::deallocate(
-        pointer, size, &this_handler->handler_);
-  }
-
-private:
+//private:
   Dispatcher& dispatcher_;
   Handler handler_;
 };
+
+template <typename Dispatcher, typename Handler>
+inline void* asio_handler_allocate(std::size_t size,
+    wrapped_handler<Dispatcher, Handler>* this_handler)
+{
+  return boost_asio_handler_alloc_helpers::allocate(
+      size, &this_handler->handler_);
+}
+
+template <typename Dispatcher, typename Handler>
+inline void asio_handler_deallocate(void* pointer, std::size_t size,
+    wrapped_handler<Dispatcher, Handler>* this_handler)
+{
+  boost_asio_handler_alloc_helpers::deallocate(
+      pointer, size, &this_handler->handler_);
+}
+
+template <typename Handler, typename Context>
+class rewrapped_handler
+{
+public:
+  explicit rewrapped_handler(const Handler& handler, const Context& context)
+    : handler_(handler),
+      context_(context)
+  {
+  }
+
+  void operator()()
+  {
+    handler_();
+  }
+
+  void operator()() const
+  {
+    handler_();
+  }
+
+//private:
+  Handler handler_;
+  Context context_;
+};
+
+template <typename Handler_To_Dispatch, typename Dispatcher, typename Handler>
+inline void asio_handler_dispatch(const Handler_To_Dispatch& handler,
+    wrapped_handler<Dispatcher, Handler>* this_handler)
+{
+  this_handler->dispatcher_.dispatch(
+      rewrapped_handler<Handler_To_Dispatch, Handler>(
+        handler, this_handler->handler_));
+}
+
+template <typename Handler_To_Dispatch, typename Dispatcher, typename Handler>
+inline void asio_handler_dispatch(const Handler_To_Dispatch& handler,
+    rewrapped_handler<Dispatcher, Handler>* this_handler)
+{
+  boost_asio_handler_dispatch_helpers::dispatch_handler(
+      handler, &this_handler->context_);
+}
 
 } // namespace detail
 } // namespace asio

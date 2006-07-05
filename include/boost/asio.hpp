@@ -39,6 +39,7 @@
 #include <boost/asio/error_handler.hpp>
 #include <boost/asio/error.hpp>
 #include <boost/asio/handler_alloc_hook.hpp>
+#include <boost/asio/handler_dispatch_hook.hpp>
 #include <boost/asio/io_service.hpp>
 #include <boost/asio/ip/address.hpp>
 #include <boost/asio/ip/address_v4.hpp>
