@@ -24,6 +24,9 @@
 #include <cerrno>
 #include <boost/detail/workaround.hpp>
 #include <new>
+#if defined(__MACH__) && defined(__APPLE__)
+# include <AvailabilityMacros.h>
+#endif // defined(__MACH__) && defined(__APPLE__)
 #include <boost/asio/detail/pop_options.hpp>
 
 #include <boost/asio/error.hpp>
@@ -190,7 +193,12 @@ inline int recvfrom(socket_type s, buf* bufs, size_t count, int flags,
   return bytes_transferred;
 #else // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
   msghdr msg;
+#if defined(__MACH__) && defined(__APPLE__) \
+    && (MAC_OS_X_VERSION_MAX_ALLOWED < 1040)
+  msg.msg_name = reinterpret_cast<char*>(addr);
+#else
   msg.msg_name = addr;
+#endif
   msg.msg_namelen = *addrlen;
   msg.msg_iov = bufs;
   msg.msg_iovlen = count;
@@ -247,7 +255,12 @@ inline int sendto(socket_type s, const buf* bufs, size_t count, int flags,
   return bytes_transferred;
 #else // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
   msghdr msg;
+#if defined(__MACH__) && defined(__APPLE__) \
+    && (MAC_OS_X_VERSION_MAX_ALLOWED < 1040)
+  msg.msg_name = reinterpret_cast<char*>(const_cast<socket_addr_type*>(addr));
+#else
   msg.msg_name = const_cast<socket_addr_type*>(addr);
+#endif
   msg.msg_namelen = addrlen;
   msg.msg_iov = const_cast<buf*>(bufs);
   msg.msg_iovlen = count;
