@@ -4,7 +4,6 @@
 #include <string>
 #include <boost/asio.hpp>
 #include <boost/bind.hpp>
-#include <boost/regex.hpp>
 
 using boost::asio::ip::tcp;
 
@@ -83,7 +82,7 @@ private:
     if (!err)
     {
       // Read the response status line.
-      boost::asio::async_read_until(socket_, response_, boost::regex("\r\n"),
+      boost::asio::async_read_until(socket_, response_, "\r\n",
           boost::bind(&client::handle_read_status_line, this,
             boost::asio::placeholders::error));
     }
@@ -118,7 +117,7 @@ private:
       }
 
       // Read the response headers, which are terminated by a blank line.
-      boost::asio::async_read_until(socket_, response_, boost::regex("\r\n\r\n"),
+      boost::asio::async_read_until(socket_, response_, "\r\n\r\n",
           boost::bind(&client::handle_read_headers, this,
             boost::asio::placeholders::error));
     }
