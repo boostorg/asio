@@ -1063,12 +1063,6 @@ public:
       return;
     }
 
-    if (int err = socket_ops::get_error())
-    {
-      error_handler(boost::asio::error(err));
-      return;
-    }
-
     // Accept a socket.
     for (;;)
     {

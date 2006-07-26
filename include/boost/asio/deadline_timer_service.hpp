@@ -24,10 +24,10 @@
 
 #include <boost/asio/io_service.hpp>
 #include <boost/asio/time_traits.hpp>
+#include <boost/asio/detail/deadline_timer_service.hpp>
 #include <boost/asio/detail/epoll_reactor.hpp>
 #include <boost/asio/detail/kqueue_reactor.hpp>
 #include <boost/asio/detail/select_reactor.hpp>
-#include <boost/asio/detail/reactive_deadline_timer_service.hpp>
 
 namespace boost {
 namespace asio {
@@ -51,16 +51,16 @@ public:
 private:
   // The type of the platform-specific implementation.
 #if defined(BOOST_ASIO_HAS_IOCP)
-  typedef detail::reactive_deadline_timer_service<
+  typedef detail::deadline_timer_service<
     traits_type, detail::select_reactor<true> > service_impl_type;
 #elif defined(BOOST_ASIO_HAS_EPOLL)
-  typedef detail::reactive_deadline_timer_service<
+  typedef detail::deadline_timer_service<
     traits_type, detail::epoll_reactor<false> > service_impl_type;
 #elif defined(BOOST_ASIO_HAS_KQUEUE)
-  typedef detail::reactive_deadline_timer_service<
+  typedef detail::deadline_timer_service<
     traits_type, detail::kqueue_reactor<false> > service_impl_type;
 #else
-  typedef detail::reactive_deadline_timer_service<
+  typedef detail::deadline_timer_service<
     traits_type, detail::select_reactor<false> > service_impl_type;
 #endif
 
