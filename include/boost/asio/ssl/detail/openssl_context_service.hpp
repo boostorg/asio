@@ -19,7 +19,9 @@
 #include <boost/asio/detail/push_options.hpp>
 
 #include <boost/asio/detail/push_options.hpp>
+#include <cstring>
 #include <string>
+#include <boost/function.hpp>
 #include <boost/asio/detail/pop_options.hpp>
 
 #include <boost/asio/error.hpp>
@@ -39,6 +41,10 @@ class openssl_context_service
 public:
   // The native type of the context.
   typedef ::SSL_CTX* impl_type;
+
+  // The type for the password callback function object.
+  typedef boost::function<std::string(std::size_t,
+      context_base::password_purpose)> password_callback_type;
 
   // Constructor.
   openssl_context_service(boost::asio::io_service& io_service)
@@ -110,6 +116,15 @@ public:
   {
     if (impl != null())
     {
+      if (impl->default_passwd_callback_userdata)
+      {
+        password_callback_type* callback =
+          static_cast<password_callback_type*>(
+              impl->default_passwd_callback_userdata);
+        delete callback;
+        impl->default_passwd_callback_userdata = 0;
+      }
+
       ::SSL_CTX_free(impl);
       impl = null();
     }
@@ -317,6 +332,52 @@ public:
       error_handler(e);
       return;
     }
+
+    boost::asio::error e;
+    error_handler(e);
+  }
+
+  static int password_callback(char* buf, int size, int purpose, void* data)
+  {
+    using namespace std; // For strncat and strlen.
+
+    if (data)
+    {
+      password_callback_type* callback =
+        static_cast<password_callback_type*>(data);
+      std::string passwd = (*callback)(static_cast<std::size_t>(size),
+          purpose ? context_base::for_writing : context_base::for_reading);
+      *buf = '\0';
+      strncat(buf, passwd.c_str(), size);
+      return strlen(buf);
+    }
+
+    return 0;
+  }
+
+  // Set the password callback.
+  template <typename Password_Callback, typename Error_Handler>
+  void set_password_callback(impl_type& impl, Password_Callback callback,
+      Error_Handler error_handler)
+  {
+    // Allocate callback function object if not already present.
+    if (impl->default_passwd_callback_userdata)
+    {
+      password_callback_type* callback_function =
+        static_cast<password_callback_type*>(
+            impl->default_passwd_callback_userdata);
+      *callback_function = callback;
+    }
+    else
+    {
+      password_callback_type* callback_function =
+        new password_callback_type(callback);
+      impl->default_passwd_callback_userdata = callback_function;
+    }
+
+    // Set the password callback.
+    SSL_CTX_set_default_passwd_cb(impl,
+        &openssl_context_service::password_callback);
 
     boost::asio::error e;
     error_handler(e);

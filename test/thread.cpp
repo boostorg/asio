@@ -1,6 +1,6 @@
 //
-// basic_strand.cpp
-// ~~~~~~~~~~~~~~~~
+// thread_test.cpp
+// ~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2006 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
@@ -14,12 +14,11 @@
 #endif // !defined(BOOST_ALL_NO_LIB)
 
 // Test that header file is self-contained.
-#include <boost/asio/basic_strand.hpp>
 
 #include "unit_test.hpp"
 
 test_suite* init_unit_test_suite(int argc, char* argv[])
 {
-  test_suite* test = BOOST_TEST_SUITE("basic_strand");
+  test_suite* test = BOOST_TEST_SUITE("thread");
   return test;
 }

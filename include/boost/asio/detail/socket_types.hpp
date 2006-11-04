@@ -23,6 +23,9 @@
 
 #include <boost/asio/detail/push_options.hpp>
 #if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
+# if defined(_WINSOCKAPI_) && !defined(_WINSOCK2API_)
+#  error WinSock.h has already been included
+# endif // defined(_WINSOCKAPI_) && !defined(_WINSOCK2API_)
 # if !defined(_WIN32_WINNT) && !defined(_WIN32_WINDOWS)
 #  if defined(_MSC_VER) || defined(__BORLANDC__)
 #   pragma message("Please define _WIN32_WINNT or _WIN32_WINDOWS appropriately")
@@ -56,7 +59,6 @@
 #   define BOOST_ASIO_WSPIAPI_H_DEFINED
 #  endif // !defined(_WSPIAPI_H_)
 # endif // defined(__BORLANDC__)
-# define FD_SETSIZE 1024
 # if !defined(BOOST_ASIO_NO_WIN32_LEAN_AND_MEAN)
 #  if !defined(WIN32_LEAN_AND_MEAN)
 #   define WIN32_LEAN_AND_MEAN
@@ -167,6 +169,13 @@ const int message_do_not_route = MSG_DONTROUTE;
 #endif
 const int custom_socket_option_level = 0xA5100000;
 const int enable_connection_aborted_option = 1;
+
+#if defined(_WIN64)
+std::size_t hash_value(SOCKET s)
+{
+  return static_cast<std::size_t>(s);
+}
+#endif // defined(_WIN64)
 
 } // namespace detail
 } // namespace asio

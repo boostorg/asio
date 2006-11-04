@@ -1,6 +1,6 @@
 //
-// basic_resolver_test.cpp
-// ~~~~~~~~~~~~~~~~~~~~~~~
+// read_until_test.cpp
+// ~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2006 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
@@ -14,12 +14,12 @@
 #endif // !defined(BOOST_ALL_NO_LIB)
 
 // Test that header file is self-contained.
-#include <boost/asio/basic_resolver.hpp>
+#include <boost/asio/read_until.hpp>
 
 #include "unit_test.hpp"
 
 test_suite* init_unit_test_suite(int argc, char* argv[])
 {
-  test_suite* test = BOOST_TEST_SUITE("basic_resolver");
+  test_suite* test = BOOST_TEST_SUITE("read_until");
   return test;
 }

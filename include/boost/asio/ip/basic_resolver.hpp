@@ -8,8 +8,8 @@
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
-#ifndef BOOST_ASIO_BASIC_RESOLVER_HPP
-#define BOOST_ASIO_BASIC_RESOLVER_HPP
+#ifndef BOOST_ASIO_IP_BASIC_RESOLVER_HPP
+#define BOOST_ASIO_IP_BASIC_RESOLVER_HPP
 
 #if defined(_MSC_VER) && (_MSC_VER >= 1200)
 # pragma once
@@ -20,10 +20,11 @@
 #include <boost/asio/basic_io_object.hpp>
 #include <boost/asio/error.hpp>
 #include <boost/asio/error_handler.hpp>
-#include <boost/asio/resolver_service.hpp>
+#include <boost/asio/ip/resolver_service.hpp>
 
 namespace boost {
 namespace asio {
+namespace ip {
 
 /// Provides endpoint resolution functionality.
 /**
@@ -246,9 +247,10 @@ public:
   }
 };
 
+} // namespace ip
 } // namespace asio
 } // namespace boost
 
 #include <boost/asio/detail/pop_options.hpp>
 
-#endif // BOOST_ASIO_BASIC_RESOLVER_HPP
+#endif // BOOST_ASIO_IP_BASIC_RESOLVER_HPP

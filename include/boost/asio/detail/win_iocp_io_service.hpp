@@ -22,6 +22,7 @@
 #if defined(BOOST_ASIO_HAS_IOCP)
 
 #include <boost/asio/detail/push_options.hpp>
+#include <limits>
 #include <boost/throw_exception.hpp>
 #include <boost/asio/detail/pop_options.hpp>
 
@@ -29,7 +30,7 @@
 #include <boost/asio/system_exception.hpp>
 #include <boost/asio/detail/call_stack.hpp>
 #include <boost/asio/detail/handler_alloc_helpers.hpp>
-#include <boost/asio/detail/handler_dispatch_helpers.hpp>
+#include <boost/asio/detail/handler_invoke_helpers.hpp>
 #include <boost/asio/detail/socket_types.hpp>
 #include <boost/asio/detail/win_iocp_operation.hpp>
 
@@ -74,10 +75,11 @@ public:
       DWORD_PTR completion_key = 0;
 #endif
       LPOVERLAPPED overlapped = 0;
-      ::GetQueuedCompletionStatus(iocp_.handle,
+      ::SetLastError(0);
+      BOOL ok = ::GetQueuedCompletionStatus(iocp_.handle,
           &bytes_transferred, &completion_key, &overlapped, 0);
       DWORD last_error = ::GetLastError();
-      if (last_error == WAIT_TIMEOUT)
+      if (!ok && overlapped == 0 && last_error == WAIT_TIMEOUT)
         break;
       if (overlapped)
         static_cast<operation*>(overlapped)->destroy();
@@ -91,79 +93,56 @@ public:
     ::CreateIoCompletionPort(sock_as_handle, iocp_.handle, 0, 0);
   }
 
-  struct auto_work
-  {
-    auto_work(win_iocp_io_service& io_service)
-      : io_service_(io_service)
-    {
-      io_service_.work_started();
-    }
-
-    ~auto_work()
-    {
-      io_service_.work_finished();
-    }
-
-  private:
-    win_iocp_io_service& io_service_;
-  };
-
-  // Run the event processing loop.
-  void run()
+  // Run the event loop until interrupted or no more work.
+  size_t run()
   {
     if (::InterlockedExchangeAdd(&outstanding_work_, 0) == 0)
-      return;
+      return 0;
 
     call_stack<win_iocp_io_service>::context ctx(this);
 
-    for (;;)
-    {
-      // Get the next operation from the queue.
-      DWORD bytes_transferred = 0;
-#if (WINVER < 0x0500)
-      DWORD completion_key = 0;
-#else
-      DWORD_PTR completion_key = 0;
-#endif
-      LPOVERLAPPED overlapped = 0;
-      ::SetLastError(0);
-      ::GetQueuedCompletionStatus(iocp_.handle, &bytes_transferred,
-          &completion_key, &overlapped, INFINITE);
-      DWORD last_error = ::GetLastError();
+    size_t n = 0;
+    while (do_one(true))
+      if (n != (std::numeric_limits<size_t>::max)())
+        ++n;
+    return n;
+  }
 
-      if (overlapped)
-      {
-        // We may have been passed a last_error value in the completion_key.
-        if (last_error == 0)
-        {
-          last_error = completion_key;
-        }
+  // Run until interrupted or one operation is performed.
+  size_t run_one()
+  {
+    if (::InterlockedExchangeAdd(&outstanding_work_, 0) == 0)
+      return 0;
 
-        // Ensure that the io_service does not exit due to running out of work
-        // while we make the upcall.
-        auto_work work(*this);
+    call_stack<win_iocp_io_service>::context ctx(this);
 
-        // Dispatch the operation.
-        operation* op = static_cast<operation*>(overlapped);
-        op->do_completion(last_error, bytes_transferred);
-      }
-      else
-      {
-        // The interrupted_ flag is always checked to ensure that any leftover
-        // interrupts from a previous run invocation are ignored.
-        if (::InterlockedExchangeAdd(&interrupted_, 0) != 0)
-        {
-          // Wake up next thread that is blocked on GetQueuedCompletionStatus.
-          if (!::PostQueuedCompletionStatus(iocp_.handle, 0, 0, 0))
-          {
-            DWORD last_error = ::GetLastError();
-            system_exception e("pqcs", last_error);
-            boost::throw_exception(e);
-          }
-          break;
-        }
-      }
-    }
+    return do_one(true);
+  }
+
+  // Poll for operations without blocking.
+  size_t poll()
+  {
+    if (::InterlockedExchangeAdd(&outstanding_work_, 0) == 0)
+      return 0;
+
+    call_stack<win_iocp_io_service>::context ctx(this);
+
+    size_t n = 0;
+    while (do_one(false))
+      if (n != (std::numeric_limits<size_t>::max)())
+        ++n;
+    return n;
+  }
+
+  // Poll for one operation without blocking.
+  size_t poll_one()
+  {
+    if (::InterlockedExchangeAdd(&outstanding_work_, 0) == 0)
+      return 0;
+
+    call_stack<win_iocp_io_service>::context ctx(this);
+
+    return do_one(false);
   }
 
   // Interrupt the event processing loop.
@@ -199,68 +178,12 @@ public:
       interrupt();
   }
 
-  template <typename Handler>
-  struct handler_operation
-    : public operation
-  {
-    handler_operation(win_iocp_io_service& io_service,
-        Handler handler)
-      : operation(&handler_operation<Handler>::do_completion_impl,
-          &handler_operation<Handler>::destroy_impl),
-        io_service_(io_service),
-        handler_(handler)
-    {
-      io_service_.work_started();
-    }
-
-    ~handler_operation()
-    {
-      io_service_.work_finished();
-    }
-
-  private:
-    // Prevent copying and assignment.
-    handler_operation(const handler_operation&);
-    void operator=(const handler_operation&);
-    
-    static void do_completion_impl(operation* op, DWORD, size_t)
-    {
-      // Take ownership of the operation object.
-      typedef handler_operation<Handler> op_type;
-      op_type* handler_op(static_cast<op_type*>(op));
-      typedef handler_alloc_traits<Handler, op_type> alloc_traits;
-      handler_ptr<alloc_traits> ptr(handler_op->handler_, handler_op);
-
-      // Make a copy of the handler so that the memory can be deallocated before
-      // the upcall is made.
-      Handler handler(handler_op->handler_);
-
-      // Free the memory associated with the handler.
-      ptr.reset();
-
-      // Make the upcall.
-      boost_asio_handler_dispatch_helpers::dispatch_handler(handler, &handler);
-    }
-
-    static void destroy_impl(operation* op)
-    {
-      // Take ownership of the operation object.
-      typedef handler_operation<Handler> op_type;
-      op_type* handler_op(static_cast<op_type*>(op));
-      typedef handler_alloc_traits<Handler, op_type> alloc_traits;
-      handler_ptr<alloc_traits> ptr(handler_op->handler_, handler_op);
-    }
-
-    win_iocp_io_service& io_service_;
-    Handler handler_;
-  };
-
   // Request invocation of the given handler.
   template <typename Handler>
   void dispatch(Handler handler)
   {
     if (call_stack<win_iocp_io_service>::contains(this))
-      boost_asio_handler_dispatch_helpers::dispatch_handler(handler, &handler);
+      asio_handler_invoke_helpers::invoke(handler, &handler);
     else
       post(handler);
   }
@@ -306,6 +229,140 @@ public:
   }
 
 private:
+  // Dequeues at most one operation from the I/O completion port, and then
+  // executes it. Returns the number of operations that were dequeued (i.e.
+  // either 0 or 1).
+  size_t do_one(bool block)
+  {
+    for (;;)
+    {
+      // Get the next operation from the queue.
+      DWORD bytes_transferred = 0;
+#if (WINVER < 0x0500)
+      DWORD completion_key = 0;
+#else
+      DWORD_PTR completion_key = 0;
+#endif
+      LPOVERLAPPED overlapped = 0;
+      ::SetLastError(0);
+      BOOL ok = ::GetQueuedCompletionStatus(iocp_.handle, &bytes_transferred,
+          &completion_key, &overlapped, block ? INFINITE : 0);
+      DWORD last_error = ::GetLastError();
+
+      if (!ok && overlapped == 0)
+        return 0;
+
+      if (overlapped)
+      {
+        // We may have been passed a last_error value in the completion_key.
+        if (last_error == 0)
+        {
+          last_error = completion_key;
+        }
+
+        // Ensure that the io_service does not exit due to running out of work
+        // while we make the upcall.
+        auto_work work(*this);
+
+        // Dispatch the operation.
+        operation* op = static_cast<operation*>(overlapped);
+        op->do_completion(last_error, bytes_transferred);
+
+        return 1;
+      }
+      else
+      {
+        // The interrupted_ flag is always checked to ensure that any leftover
+        // interrupts from a previous run invocation are ignored.
+        if (::InterlockedExchangeAdd(&interrupted_, 0) != 0)
+        {
+          // Wake up next thread that is blocked on GetQueuedCompletionStatus.
+          if (!::PostQueuedCompletionStatus(iocp_.handle, 0, 0, 0))
+          {
+            DWORD last_error = ::GetLastError();
+            system_exception e("pqcs", last_error);
+            boost::throw_exception(e);
+          }
+
+          return 0;
+        }
+      }
+    }
+  }
+
+  struct auto_work
+  {
+    auto_work(win_iocp_io_service& io_service)
+      : io_service_(io_service)
+    {
+      io_service_.work_started();
+    }
+
+    ~auto_work()
+    {
+      io_service_.work_finished();
+    }
+
+  private:
+    win_iocp_io_service& io_service_;
+  };
+
+  template <typename Handler>
+  struct handler_operation
+    : public operation
+  {
+    handler_operation(win_iocp_io_service& io_service,
+        Handler handler)
+      : operation(&handler_operation<Handler>::do_completion_impl,
+          &handler_operation<Handler>::destroy_impl),
+        io_service_(io_service),
+        handler_(handler)
+    {
+      io_service_.work_started();
+    }
+
+    ~handler_operation()
+    {
+      io_service_.work_finished();
+    }
+
+  private:
+    // Prevent copying and assignment.
+    handler_operation(const handler_operation&);
+    void operator=(const handler_operation&);
+    
+    static void do_completion_impl(operation* op, DWORD, size_t)
+    {
+      // Take ownership of the operation object.
+      typedef handler_operation<Handler> op_type;
+      op_type* handler_op(static_cast<op_type*>(op));
+      typedef handler_alloc_traits<Handler, op_type> alloc_traits;
+      handler_ptr<alloc_traits> ptr(handler_op->handler_, handler_op);
+
+      // Make a copy of the handler so that the memory can be deallocated before
+      // the upcall is made.
+      Handler handler(handler_op->handler_);
+
+      // Free the memory associated with the handler.
+      ptr.reset();
+
+      // Make the upcall.
+      asio_handler_invoke_helpers::invoke(handler, &handler);
+    }
+
+    static void destroy_impl(operation* op)
+    {
+      // Take ownership of the operation object.
+      typedef handler_operation<Handler> op_type;
+      op_type* handler_op(static_cast<op_type*>(op));
+      typedef handler_alloc_traits<Handler, op_type> alloc_traits;
+      handler_ptr<alloc_traits> ptr(handler_op->handler_, handler_op);
+    }
+
+    win_iocp_io_service& io_service_;
+    Handler handler_;
+  };
+
   // The IO completion port used for queueing operations.
   struct iocp_holder
   {

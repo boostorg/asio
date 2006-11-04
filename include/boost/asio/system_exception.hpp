@@ -30,7 +30,7 @@
 #endif // BOOST_WORKAROUND(__BORLANDC__, BOOST_TESTED_AT(0x564))
 #include <boost/asio/detail/pop_options.hpp>
 
-#include <boost/asio/detail/win_local_free_on_block_exit.hpp>
+#include <boost/asio/detail/local_free_on_block_exit.hpp>
 
 namespace boost {
 namespace asio {
@@ -83,7 +83,7 @@ public:
             | FORMAT_MESSAGE_FROM_SYSTEM
             | FORMAT_MESSAGE_IGNORE_INSERTS, 0, code_,
             MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (char*)&msg, 0, 0);
-        detail::win_local_free_on_block_exit local_free_obj(msg);
+        detail::local_free_on_block_exit local_free_obj(msg);
         if (length && msg[length - 1] == '\n')
           msg[--length] = '\0';
         if (length && msg[length - 1] == '\r')
@@ -108,7 +108,8 @@ public:
     }
 #elif defined(__sun) || defined(__QNX__)
     return strerror(code_);
-#elif defined(__MACH__) && defined(__APPLE__) || defined(__NetBSD__)
+#elif defined(__MACH__) && defined(__APPLE__) \
+  || defined(__NetBSD__) || defined(__FreeBSD__) || defined(__OpenBSD__)
     try
     {
       char buf[256] = "";

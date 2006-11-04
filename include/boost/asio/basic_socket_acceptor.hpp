@@ -115,8 +115,8 @@ public:
    * @param endpoint An endpoint on the local machine on which the acceptor
    * will listen for new connections.
    *
-   * @param listen_backlog The maximum length of the queue of pending
-   * connections. A value of 0 means use the default queue length.
+   * @param reuse_addr Whether the constructor should set the socket option
+   * socket_base::reuse_address.
    *
    * @throws boost::asio::error Thrown on failure.
    *
@@ -124,18 +124,26 @@ public:
    * @code
    * basic_socket_acceptor<Protocol> acceptor(io_service);
    * acceptor.open(endpoint.protocol());
+   * if (reuse_addr)
+   *   acceptor.set_option(socket_base::reuse_address(true));
    * acceptor.bind(endpoint);
    * acceptor.listen(listen_backlog);
    * @endcode
    */
   basic_socket_acceptor(boost::asio::io_service& io_service,
-      const endpoint_type& endpoint, int listen_backlog = 0)
+      const endpoint_type& endpoint, bool reuse_addr = true)
     : basic_io_object<Service>(io_service)
   {
     this->service.open(this->implementation, endpoint.protocol(),
         throw_error());
+    if (reuse_addr)
+    {
+      this->service.set_option(this->implementation,
+          socket_base::reuse_address(true), throw_error());
+    }
     this->service.bind(this->implementation, endpoint, throw_error());
-    this->service.listen(this->implementation, listen_backlog, throw_error());
+    this->service.listen(this->implementation,
+        socket_base::max_connections, throw_error());
   }
 
   /// Construct a basic_socket_acceptor on an existing native acceptor.
@@ -312,10 +320,9 @@ public:
    * This function puts the socket acceptor into the state where it may accept
    * new connections.
    *
-   * @param backlog The maximum length of the queue of pending connections. A
-   * value of 0 means use the default queue length.
+   * @param backlog The maximum length of the queue of pending connections.
    */
-  void listen(int backlog = 0)
+  void listen(int backlog = socket_base::max_connections)
   {
     this->service.listen(this->implementation, backlog, throw_error());
   }
@@ -326,8 +333,7 @@ public:
    * This function puts the socket acceptor into the state where it may accept
    * new connections.
    *
-   * @param backlog The maximum length of the queue of pending connections. A
-   * value of 0 means use the default queue length.
+   * @param backlog The maximum length of the queue of pending connections.
    *
    * @param error_handler A handler to be called when the operation completes,
    * to indicate whether or not an error has occurred. Copies will be made of
@@ -341,7 +347,8 @@ public:
    * boost::asio::ip::tcp::acceptor acceptor(io_service);
    * ...
    * boost::asio::error error;
-   * acceptor.listen(0, boost::asio::assign_error(error));
+   * acceptor.listen(boost::asio::socket_base::max_connections,
+   *     boost::asio::assign_error(error));
    * if (error)
    * {
    *   // An error occurred.
@@ -411,6 +418,38 @@ public:
   native_type native()
   {
     return this->service.native(this->implementation);
+  }
+
+  /// Cancel all asynchronous operations associated with the acceptor.
+  /**
+   * This function causes all outstanding asynchronous connect, send and receive
+   * operations to finish immediately, and the handlers for cancelled operations
+   * will be passed the boost::asio::error::operation_aborted error.
+   *
+   * @throws boost::asio::error Thrown on failure.
+   */
+  void cancel()
+  {
+    this->service.cancel(this->implementation, throw_error());
+  }
+
+  /// Cancel all asynchronous operations associated with the acceptor.
+  /**
+   * This function causes all outstanding asynchronous connect, send and receive
+   * operations to finish immediately, and the handlers for cancelled operations
+   * will be passed the boost::asio::error::operation_aborted error.
+   *
+   * @param error_handler A handler to be called when the operation completes,
+   * to indicate whether or not an error has occurred. Copies will be made of
+   * the handler as required. The function signature of the handler must be:
+   * @code void error_handler(
+   *   const boost::asio::error& error // Result of operation
+   * ); @endcode
+   */
+  template <typename Error_Handler>
+  void cancel(Error_Handler error_handler)
+  {
+    this->service.cancel(this->implementation, error_handler);
   }
 
   /// Set an option on the acceptor.

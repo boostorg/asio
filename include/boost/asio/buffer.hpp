@@ -26,6 +26,20 @@
 #include <vector>
 #include <boost/asio/detail/pop_options.hpp>
 
+#if defined(BOOST_MSVC)
+# if defined(_HAS_ITERATOR_DEBUGGING)
+#  if !defined(BOOST_ASIO_DISABLE_BUFFER_DEBUGGING)
+#   define BOOST_ASIO_ENABLE_BUFFER_DEBUGGING
+#  endif // !defined(BOOST_ASIO_DISABLE_BUFFER_DEBUGGING)
+# endif // defined(_HAS_ITERATOR_DEBUGGING)
+#endif // defined(BOOST_MSVC)
+
+#if defined(BOOST_ASIO_ENABLE_BUFFER_DEBUGGING)
+# include <boost/asio/detail/push_options.hpp>
+# include <boost/function.hpp>
+# include <boost/asio/detail/pop_options.hpp>
+#endif // BOOST_ASIO_ENABLE_BUFFER_DEBUGGING
+
 namespace boost {
 namespace asio {
 
@@ -62,6 +76,21 @@ public:
   {
   }
 
+#if defined(BOOST_ASIO_ENABLE_BUFFER_DEBUGGING)
+  mutable_buffer(void* data, std::size_t size,
+      boost::function<void()> debug_check)
+    : data_(data),
+      size_(size),
+      debug_check_(debug_check)
+  {
+  }
+
+  const boost::function<void()>& get_debug_check() const
+  {
+    return debug_check_;
+  }
+#endif // BOOST_ASIO_ENABLE_BUFFER_DEBUGGING
+
 private:
   friend void* boost::asio::detail::buffer_cast_helper(
       const mutable_buffer& b);
@@ -70,12 +99,20 @@ private:
 
   void* data_;
   std::size_t size_;
+
+#if defined(BOOST_ASIO_ENABLE_BUFFER_DEBUGGING)
+  boost::function<void()> debug_check_;
+#endif // BOOST_ASIO_ENABLE_BUFFER_DEBUGGING
 };
 
 namespace detail {
 
 inline void* buffer_cast_helper(const mutable_buffer& b)
 {
+#if defined(BOOST_ASIO_ENABLE_BUFFER_DEBUGGING)
+  if (b.debug_check_)
+    b.debug_check_();
+#endif // BOOST_ASIO_ENABLE_BUFFER_DEBUGGING
   return b.data_;
 }
 
@@ -115,7 +152,11 @@ inline mutable_buffer operator+(const mutable_buffer& b, std::size_t start)
     return mutable_buffer();
   char* new_data = buffer_cast<char*>(b) + start;
   std::size_t new_size = buffer_size(b) - start;
-  return mutable_buffer(new_data, new_size);
+  return mutable_buffer(new_data, new_size
+#if defined(BOOST_ASIO_ENABLE_BUFFER_DEBUGGING)
+      , b.get_debug_check()
+#endif // BOOST_ASIO_ENABLE_BUFFER_DEBUGGING
+      );
 }
 
 /// Create a new modifiable buffer that is offset from the start of another.
@@ -128,7 +169,11 @@ inline mutable_buffer operator+(std::size_t start, const mutable_buffer& b)
     return mutable_buffer();
   char* new_data = buffer_cast<char*>(b) + start;
   std::size_t new_size = buffer_size(b) - start;
-  return mutable_buffer(new_data, new_size);
+  return mutable_buffer(new_data, new_size
+#if defined(BOOST_ASIO_ENABLE_BUFFER_DEBUGGING)
+      , b.get_debug_check()
+#endif // BOOST_ASIO_ENABLE_BUFFER_DEBUGGING
+      );
 }
 
 /// Adapts a single modifiable buffer so that it meets the requirements of the
@@ -189,8 +234,26 @@ public:
   const_buffer(const mutable_buffer& b)
     : data_(boost::asio::detail::buffer_cast_helper(b)),
       size_(boost::asio::detail::buffer_size_helper(b))
+#if defined(BOOST_ASIO_ENABLE_BUFFER_DEBUGGING)
+      , debug_check_(b.get_debug_check())
+#endif // BOOST_ASIO_ENABLE_BUFFER_DEBUGGING
   {
   }
+
+#if defined(BOOST_ASIO_ENABLE_BUFFER_DEBUGGING)
+  const_buffer(const void* data, std::size_t size,
+      boost::function<void()> debug_check)
+    : data_(data),
+      size_(size),
+      debug_check_(debug_check)
+  {
+  }
+
+  const boost::function<void()>& get_debug_check() const
+  {
+    return debug_check_;
+  }
+#endif // BOOST_ASIO_ENABLE_BUFFER_DEBUGGING
 
 private:
   friend const void* boost::asio::detail::buffer_cast_helper(
@@ -200,12 +263,20 @@ private:
 
   const void* data_;
   std::size_t size_;
+
+#if defined(BOOST_ASIO_ENABLE_BUFFER_DEBUGGING)
+  boost::function<void()> debug_check_;
+#endif // BOOST_ASIO_ENABLE_BUFFER_DEBUGGING
 };
 
 namespace detail {
 
 inline const void* buffer_cast_helper(const const_buffer& b)
 {
+#if defined(BOOST_ASIO_ENABLE_BUFFER_DEBUGGING)
+  if (b.debug_check_)
+    b.debug_check_();
+#endif // BOOST_ASIO_ENABLE_BUFFER_DEBUGGING
   return b.data_;
 }
 
@@ -245,7 +316,11 @@ inline const_buffer operator+(const const_buffer& b, std::size_t start)
     return const_buffer();
   const char* new_data = buffer_cast<const char*>(b) + start;
   std::size_t new_size = buffer_size(b) - start;
-  return const_buffer(new_data, new_size);
+  return const_buffer(new_data, new_size
+#if defined(BOOST_ASIO_ENABLE_BUFFER_DEBUGGING)
+      , b.get_debug_check()
+#endif // BOOST_ASIO_ENABLE_BUFFER_DEBUGGING
+      );
 }
 
 /// Create a new non-modifiable buffer that is offset from the start of another.
@@ -258,7 +333,11 @@ inline const_buffer operator+(std::size_t start, const const_buffer& b)
     return const_buffer();
   const char* new_data = buffer_cast<const char*>(b) + start;
   std::size_t new_size = buffer_size(b) - start;
-  return const_buffer(new_data, new_size);
+  return const_buffer(new_data, new_size
+#if defined(BOOST_ASIO_ENABLE_BUFFER_DEBUGGING)
+      , b.get_debug_check()
+#endif // BOOST_ASIO_ENABLE_BUFFER_DEBUGGING
+      );
 }
 
 /// Adapts a single non-modifiable buffer so that it meets the requirements of
@@ -291,6 +370,30 @@ public:
     return begin() + 1;
   }
 };
+
+#if defined(BOOST_ASIO_ENABLE_BUFFER_DEBUGGING)
+namespace detail {
+
+template <typename Iterator>
+class buffer_debug_check
+{
+public:
+  buffer_debug_check(Iterator iter)
+    : iter_(iter)
+  {
+  }
+
+  void operator()()
+  {
+    *iter_;
+  }
+
+private:
+  Iterator iter_;
+};
+
+} // namespace detail
+#endif // BOOST_ASIO_ENABLE_BUFFER_DEBUGGING
 
 /** @defgroup buffer boost::asio::buffer
  *
@@ -356,7 +459,11 @@ inline mutable_buffer_container_1 buffer(const mutable_buffer& b,
   return mutable_buffer_container_1(
       mutable_buffer(buffer_cast<void*>(b),
         buffer_size(b) < max_size_in_bytes
-        ? buffer_size(b) : max_size_in_bytes));
+        ? buffer_size(b) : max_size_in_bytes
+#if defined(BOOST_ASIO_ENABLE_BUFFER_DEBUGGING)
+        , b.get_debug_check()
+#endif // BOOST_ASIO_ENABLE_BUFFER_DEBUGGING
+        ));
 }
 
 /// Create a new non-modifiable buffer from an existing buffer.
@@ -372,7 +479,11 @@ inline const_buffer_container_1 buffer(const const_buffer& b,
   return const_buffer_container_1(
       const_buffer(buffer_cast<const void*>(b),
         buffer_size(b) < max_size_in_bytes
-        ? buffer_size(b) : max_size_in_bytes));
+        ? buffer_size(b) : max_size_in_bytes
+#if defined(BOOST_ASIO_ENABLE_BUFFER_DEBUGGING)
+        , b.get_debug_check()
+#endif // BOOST_ASIO_ENABLE_BUFFER_DEBUGGING
+        ));
 }
 
 /// Create a new modifiable buffer that represents the given memory range.
@@ -561,7 +672,13 @@ template <typename Pod_Type, typename Allocator>
 inline mutable_buffer_container_1 buffer(std::vector<Pod_Type, Allocator>& data)
 {
   return mutable_buffer_container_1(
-      mutable_buffer(&data[0], data.size() * sizeof(Pod_Type)));
+      mutable_buffer(&data[0], data.size() * sizeof(Pod_Type)
+#if defined(BOOST_ASIO_ENABLE_BUFFER_DEBUGGING)
+        , detail::buffer_debug_check<
+            typename std::vector<Pod_Type, Allocator>::iterator
+          >(data.begin())
+#endif // BOOST_ASIO_ENABLE_BUFFER_DEBUGGING
+        ));
 }
 
 /// Create a new modifiable buffer that represents the given POD vector.
@@ -576,7 +693,13 @@ inline mutable_buffer_container_1 buffer(std::vector<Pod_Type, Allocator>& data,
   return mutable_buffer_container_1(
       mutable_buffer(&data[0],
         data.size() * sizeof(Pod_Type) < max_size_in_bytes
-        ? data.size() * sizeof(Pod_Type) : max_size_in_bytes));
+        ? data.size() * sizeof(Pod_Type) : max_size_in_bytes
+#if defined(BOOST_ASIO_ENABLE_BUFFER_DEBUGGING)
+        , detail::buffer_debug_check<
+            typename std::vector<Pod_Type, Allocator>::iterator
+          >(data.begin())
+#endif // BOOST_ASIO_ENABLE_BUFFER_DEBUGGING
+        ));
 }
 
 /// Create a new non-modifiable buffer that represents the given POD vector.
@@ -589,7 +712,13 @@ inline const_buffer_container_1 buffer(
     const std::vector<Pod_Type, Allocator>& data)
 {
   return const_buffer_container_1(
-      const_buffer(&data[0], data.size() * sizeof(Pod_Type)));
+      const_buffer(&data[0], data.size() * sizeof(Pod_Type)
+#if defined(BOOST_ASIO_ENABLE_BUFFER_DEBUGGING)
+        , detail::buffer_debug_check<
+            typename std::vector<Pod_Type, Allocator>::const_iterator
+          >(data.begin())
+#endif // BOOST_ASIO_ENABLE_BUFFER_DEBUGGING
+        ));
 }
 
 /// Create a new non-modifiable buffer that represents the given POD vector.
@@ -604,7 +733,13 @@ inline const_buffer_container_1 buffer(
   return const_buffer_container_1(
       const_buffer(&data[0],
         data.size() * sizeof(Pod_Type) < max_size_in_bytes
-        ? data.size() * sizeof(Pod_Type) : max_size_in_bytes));
+        ? data.size() * sizeof(Pod_Type) : max_size_in_bytes
+#if defined(BOOST_ASIO_ENABLE_BUFFER_DEBUGGING)
+        , detail::buffer_debug_check<
+            typename std::vector<Pod_Type, Allocator>::const_iterator
+          >(data.begin())
+#endif // BOOST_ASIO_ENABLE_BUFFER_DEBUGGING
+        ));
 }
 
 /// Create a new non-modifiable buffer that represents the given string.
@@ -614,7 +749,11 @@ inline const_buffer_container_1 buffer(
  */
 inline const_buffer_container_1 buffer(const std::string& data)
 {
-  return const_buffer_container_1(const_buffer(data.data(), data.size()));
+  return const_buffer_container_1(const_buffer(data.data(), data.size()
+#if defined(BOOST_ASIO_ENABLE_BUFFER_DEBUGGING)
+        , detail::buffer_debug_check<std::string::const_iterator>(data.begin())
+#endif // BOOST_ASIO_ENABLE_BUFFER_DEBUGGING
+        ));
 }
 
 /// Create a new non-modifiable buffer that represents the given string.
@@ -628,7 +767,11 @@ inline const_buffer_container_1 buffer(const std::string& data,
   return const_buffer_container_1(
       const_buffer(data.data(),
         data.size() < max_size_in_bytes
-        ? data.size() : max_size_in_bytes));
+        ? data.size() : max_size_in_bytes
+#if defined(BOOST_ASIO_ENABLE_BUFFER_DEBUGGING)
+        , detail::buffer_debug_check<std::string::const_iterator>(data.begin())
+#endif // BOOST_ASIO_ENABLE_BUFFER_DEBUGGING
+        ));
 }
 
 /*@}*/

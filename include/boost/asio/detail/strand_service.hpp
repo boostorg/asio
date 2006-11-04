@@ -20,13 +20,14 @@
 #include <boost/asio/detail/push_options.hpp>
 #include <boost/aligned_storage.hpp>
 #include <boost/assert.hpp>
+#include <boost/intrusive_ptr.hpp>
 #include <boost/asio/detail/pop_options.hpp>
 
 #include <boost/asio/io_service.hpp>
 #include <boost/asio/detail/bind_handler.hpp>
 #include <boost/asio/detail/call_stack.hpp>
 #include <boost/asio/detail/handler_alloc_helpers.hpp>
-#include <boost/asio/detail/handler_dispatch_helpers.hpp>
+#include <boost/asio/detail/handler_invoke_helpers.hpp>
 #include <boost/asio/detail/mutex.hpp>
 #include <boost/asio/detail/noncopyable.hpp>
 
@@ -43,17 +44,85 @@ public:
   class invoke_current_handler;
   class post_next_waiter_on_exit;
 
-  // The native type of the deadline timer.
-  class implementation_type
+  // The underlying implementation of a strand.
+  class strand_impl
   {
+#if defined (__BORLANDC__)
+  public:
+#else
+  private:
+#endif
+    void add_ref()
+    {
+      boost::asio::detail::mutex::scoped_lock lock(mutex_);
+      ++ref_count_;
+    }
+
+    void release()
+    {
+      boost::asio::detail::mutex::scoped_lock lock(mutex_);
+      --ref_count_;
+      if (ref_count_ == 0)
+      {
+        lock.unlock();
+        delete this;
+      }
+    }
+
   private:
     // Only this service will have access to the internal values.
     friend class strand_service;
     friend class post_next_waiter_on_exit;
     friend class invoke_current_handler;
 
+    strand_impl(strand_service& owner)
+      : owner_(owner),
+        current_handler_(0),
+        first_waiter_(0),
+        last_waiter_(0),
+        ref_count_(0)
+    {
+      // Insert implementation into linked list of all implementations.
+      boost::asio::detail::mutex::scoped_lock lock(owner_.mutex_);
+      next_ = owner_.impl_list_;
+      prev_ = 0;
+      if (owner_.impl_list_)
+        owner_.impl_list_->prev_ = this;
+      owner_.impl_list_ = this;
+    }
+
+    ~strand_impl()
+    {
+      // Remove implementation from linked list of all implementations.
+      boost::asio::detail::mutex::scoped_lock lock(owner_.mutex_);
+      if (owner_.impl_list_ == this)
+        owner_.impl_list_ = next_;
+      if (prev_)
+        prev_->next_ = next_;
+      if (next_)
+        next_->prev_= prev_;
+      next_ = 0;
+      prev_ = 0;
+      lock.unlock();
+
+      if (current_handler_)
+      {
+        current_handler_->destroy();
+      }
+
+      while (first_waiter_)
+      {
+        handler_base* next = first_waiter_->next_;
+        first_waiter_->destroy();
+        first_waiter_ = next;
+      }
+    }
+
     // Mutex to protect access to internal data.
     boost::asio::detail::mutex mutex_;
+
+    // The service that owns this implementation.
+    strand_service& owner_;
 
     // The handler that is ready to execute. If this pointer is non-null then it
     // indicates that a handler holds the lock.
@@ -66,12 +135,36 @@ public:
     handler_base* last_waiter_;
 
     // Storage for posted handlers.
+    typedef boost::aligned_storage<64> handler_storage_type;
+#if defined(__BORLANDC__)
     boost::aligned_storage<64> handler_storage_;
+#else
+    handler_storage_type handler_storage_;
+#endif
 
     // Pointers to adjacent socket implementations in linked list.
-    implementation_type* next_;
-    implementation_type* prev_;
+    strand_impl* next_;
+    strand_impl* prev_;
+
+    // The reference count on the strand implementation.
+    size_t ref_count_;
+
+#if !defined(__BORLANDC__)
+    friend void intrusive_ptr_add_ref(strand_impl* p)
+    {
+      p->add_ref();
+    }
+
+    friend void intrusive_ptr_release(strand_impl* p)
+    {
+      p->release();
+    }
+#endif
   };
+
+  friend class strand_impl;
+
+  typedef boost::intrusive_ptr<strand_impl> implementation_type;
 
   // Base class for all handler types.
   class handler_base
@@ -105,6 +198,7 @@ public:
 
   private:
     friend class strand_service;
+    friend class strand_impl;
     friend class post_next_waiter_on_exit;
     handler_base* next_;
     invoke_func_type invoke_func_;
@@ -116,7 +210,7 @@ public:
   {
   public:
     invoke_current_handler(strand_service& service_impl,
-        implementation_type& impl)
+        const implementation_type& impl)
       : service_impl_(service_impl),
         impl_(impl)
     {
@@ -124,7 +218,7 @@ public:
 
     void operator()()
     {
-      impl_.current_handler_->invoke(service_impl_, impl_);
+      impl_->current_handler_->invoke(service_impl_, impl_);
     }
 
     friend void* asio_handler_allocate(std::size_t size,
@@ -140,20 +234,24 @@ public:
 
     void* do_handler_allocate(std::size_t size)
     {
-      BOOST_ASSERT(size <= impl_.handler_storage_.size);
-      return impl_.handler_storage_.address();
+#if defined(__BORLANDC__)
+      BOOST_ASSERT(size <= boost::aligned_storage<64>::size);
+#else
+      BOOST_ASSERT(size <= strand_impl::handler_storage_type::size);
+#endif
+      return impl_->handler_storage_.address();
     }
 
-    template <typename Handler_To_Dispatch>
-    friend void asio_handler_dispatch(Handler_To_Dispatch handler,
+    template <typename Function>
+    friend void asio_handler_invoke(Function function,
         invoke_current_handler*)
     {
-      handler();
+      function();
     }
 
   private:
     strand_service& service_impl_;
-    implementation_type& impl_;
+    implementation_type impl_;
   };
 
   // Helper class to automatically enqueue next waiter on block exit.
@@ -172,15 +270,15 @@ public:
     {
       if (!cancelled_)
       {
-        boost::asio::detail::mutex::scoped_lock lock(impl_.mutex_);
-        impl_.current_handler_ = impl_.first_waiter_;
-        if (impl_.current_handler_)
+        boost::asio::detail::mutex::scoped_lock lock(impl_->mutex_);
+        impl_->current_handler_ = impl_->first_waiter_;
+        if (impl_->current_handler_)
         {
-          impl_.first_waiter_ = impl_.first_waiter_->next_;
-          if (impl_.first_waiter_ == 0)
-            impl_.last_waiter_ = 0;
+          impl_->first_waiter_ = impl_->first_waiter_->next_;
+          if (impl_->first_waiter_ == 0)
+            impl_->last_waiter_ = 0;
           lock.unlock();
-          service_impl_.owner().post(
+          service_impl_.io_service().post(
               invoke_current_handler(service_impl_, impl_));
         }
       }
@@ -236,10 +334,10 @@ public:
       ptr.reset();
 
       // Indicate that this strand is executing on the current thread.
-      call_stack<implementation_type>::context ctx(&impl);
+      call_stack<strand_impl>::context ctx(impl.get());
 
       // Make the upcall.
-      boost_asio_handler_dispatch_helpers::dispatch_handler(handler, &handler);
+      asio_handler_invoke_helpers::invoke(handler, &handler);
     }
 
     static void do_destroy(handler_base* base)
@@ -255,7 +353,7 @@ public:
     Handler handler_;
   };
 
-  // Construct a new timer service for the specified io_service.
+  // Construct a new strand service for the specified io_service.
   explicit strand_service(boost::asio::io_service& io_service)
     : boost::asio::io_service::service(io_service),
       mutex_(),
@@ -268,7 +366,7 @@ public:
   {
     // Construct a list of all handlers to be destroyed.
     boost::asio::detail::mutex::scoped_lock lock(mutex_);
-    implementation_type* impl = impl_list_;
+    strand_impl* impl = impl_list_;
     handler_base* first_handler = 0;
     while (impl)
     {
@@ -298,62 +396,29 @@ public:
     }
   }
 
-  // Construct a new timer implementation.
+  // Construct a new strand implementation.
   void construct(implementation_type& impl)
   {
-    impl.current_handler_ = 0;
-    impl.first_waiter_ = 0;
-    impl.last_waiter_ = 0;
-
-    // Insert implementation into linked list of all implementations.
-    boost::asio::detail::mutex::scoped_lock lock(mutex_);
-    impl.next_ = impl_list_;
-    impl.prev_ = 0;
-    if (impl_list_)
-      impl_list_->prev_ = &impl;
-    impl_list_ = &impl;
+    impl = implementation_type(new strand_impl(*this));
   }
 
-  // Destroy a timer implementation.
+  // Destroy a strand implementation.
   void destroy(implementation_type& impl)
   {
-    if (impl.current_handler_)
-    {
-      impl.current_handler_->destroy();
-      impl.current_handler_ = 0;
-    }
-
-    while (impl.first_waiter_)
-    {
-      handler_base* next = impl.first_waiter_->next_;
-      impl.first_waiter_->destroy();
-      impl.first_waiter_ = next;
-    }
-    impl.last_waiter_ = 0;
-
-    // Remove implementation from linked list of all implementations.
-    boost::asio::detail::mutex::scoped_lock lock(mutex_);
-    if (impl_list_ == &impl)
-      impl_list_ = impl.next_;
-    if (impl.prev_)
-      impl.prev_->next_ = impl.next_;
-    if (impl.next_)
-      impl.next_->prev_= impl.prev_;
-    impl.next_ = 0;
-    impl.prev_ = 0;
+    implementation_type().swap(impl);
   }
 
   // Request the io_service to invoke the given handler.
   template <typename Handler>
   void dispatch(implementation_type& impl, Handler handler)
   {
-    if (call_stack<implementation_type>::contains(&impl))
+    if (call_stack<strand_impl>::contains(impl.get()))
     {
-      boost_asio_handler_dispatch_helpers::dispatch_handler(handler, &handler);
+      asio_handler_invoke_helpers::invoke(handler, &handler);
     }
     else
     {
-      boost::asio::detail::mutex::scoped_lock lock(impl.mutex_);
+      boost::asio::detail::mutex::scoped_lock lock(impl->mutex_);
 
       // Allocate and construct an object to wrap the handler.
       typedef handler_wrapper<Handler> value_type;
@@ -361,12 +426,12 @@ public:
       raw_handler_ptr<alloc_traits> raw_ptr(handler);
       handler_ptr<alloc_traits> ptr(raw_ptr, handler);
 
-      if (impl.current_handler_ == 0)
+      if (impl->current_handler_ == 0)
       {
         // This handler now has the lock, so can be dispatched immediately.
-        impl.current_handler_ = ptr.get();
+        impl->current_handler_ = ptr.get();
         lock.unlock();
-        owner().dispatch(invoke_current_handler(*this, impl));
+        io_service().dispatch(invoke_current_handler(*this, impl));
         ptr.release();
       }
       else
@@ -374,15 +439,15 @@ public:
         // Another handler already holds the lock, so this handler must join
         // the list of waiters. The handler will be posted automatically when
         // its turn comes.
-        if (impl.last_waiter_)
+        if (impl->last_waiter_)
         {
-          impl.last_waiter_->next_ = ptr.get();
-          impl.last_waiter_ = impl.last_waiter_->next_;
+          impl->last_waiter_->next_ = ptr.get();
+          impl->last_waiter_ = impl->last_waiter_->next_;
         }
         else
         {
-          impl.first_waiter_ = ptr.get();
-          impl.last_waiter_ = ptr.get();
+          impl->first_waiter_ = ptr.get();
+          impl->last_waiter_ = ptr.get();
         }
         ptr.release();
       }
@@ -393,7 +458,7 @@ public:
   template <typename Handler>
   void post(implementation_type& impl, Handler handler)
   {
-    boost::asio::detail::mutex::scoped_lock lock(impl.mutex_);
+    boost::asio::detail::mutex::scoped_lock lock(impl->mutex_);
 
     // Allocate and construct an object to wrap the handler.
     typedef handler_wrapper<Handler> value_type;
@@ -401,12 +466,12 @@ public:
     raw_handler_ptr<alloc_traits> raw_ptr(handler);
     handler_ptr<alloc_traits> ptr(raw_ptr, handler);
 
-    if (impl.current_handler_ == 0)
+    if (impl->current_handler_ == 0)
     {
       // This handler now has the lock, so can be dispatched immediately.
-      impl.current_handler_ = ptr.get();
+      impl->current_handler_ = ptr.get();
       lock.unlock();
-      owner().post(invoke_current_handler(*this, impl));
+      io_service().post(invoke_current_handler(*this, impl));
       ptr.release();
     }
     else
@@ -414,15 +479,15 @@ public:
       // Another handler already holds the lock, so this handler must join the
       // list of waiters. The handler will be posted automatically when its turn
       // comes.
-      if (impl.last_waiter_)
+      if (impl->last_waiter_)
       {
-        impl.last_waiter_->next_ = ptr.get();
-        impl.last_waiter_ = impl.last_waiter_->next_;
+        impl->last_waiter_->next_ = ptr.get();
+        impl->last_waiter_ = impl->last_waiter_->next_;
       }
       else
       {
-        impl.first_waiter_ = ptr.get();
-        impl.last_waiter_ = ptr.get();
+        impl->first_waiter_ = ptr.get();
+        impl->last_waiter_ = ptr.get();
       }
       ptr.release();
     }
@@ -433,12 +498,32 @@ private:
   boost::asio::detail::mutex mutex_;
 
   // The head of a linked list of all implementations.
-  implementation_type* impl_list_;
+  strand_impl* impl_list_;
 };
 
 } // namespace detail
 } // namespace asio
 } // namespace boost
+
+#if defined(__BORLANDC__)
+
+namespace boost {
+
+inline void intrusive_ptr_add_ref(
+    boost::asio::detail::strand_service::strand_impl* p)
+{
+  p->add_ref();
+}
+
+inline void intrusive_ptr_release(
+    boost::asio::detail::strand_service::strand_impl* p)
+{
+  p->release();
+}
+
+} // namespace boost
+
+#endif // defined(__BORLANDC__)
 
 #include <boost/asio/detail/pop_options.hpp>
 

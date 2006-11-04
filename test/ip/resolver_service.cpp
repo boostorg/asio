@@ -1,6 +1,6 @@
 //
-// address_v4_test.cpp
-// ~~~~~~~~~~~~~~~~~~~
+// resolver_service_test.cpp
+// ~~~~~~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2006 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
@@ -14,12 +14,12 @@
 #endif // !defined(BOOST_ALL_NO_LIB)
 
 // Test that header file is self-contained.
-#include <boost/asio/ip/address_v4.hpp>
+#include <boost/asio/ip/resolver_service.hpp>
 
 #include "../unit_test.hpp"
 
 test_suite* init_unit_test_suite(int argc, char* argv[])
 {
-  test_suite* test = BOOST_TEST_SUITE("ip/address_v4");
+  test_suite* test = BOOST_TEST_SUITE("ip/resolver_service");
   return test;
 }

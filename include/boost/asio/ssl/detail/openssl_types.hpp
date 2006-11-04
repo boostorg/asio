@@ -18,7 +18,10 @@
 #include <boost/asio/detail/push_options.hpp>
 
 #include <boost/asio/detail/push_options.hpp>
+#include <openssl/conf.h>
 #include <openssl/ssl.h>
+#include <openssl/engine.h>
+#include <openssl/err.h>
 #include <boost/asio/detail/pop_options.hpp>
 
 #include <boost/asio/detail/pop_options.hpp>

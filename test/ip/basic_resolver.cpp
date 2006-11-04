@@ -1,5 +1,5 @@
 //
-// strand_service_test.cpp
+// basic_resolver_test.cpp
 // ~~~~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2006 Christopher M. Kohlhoff (chris at kohlhoff dot com)
@@ -14,12 +14,12 @@
 #endif // !defined(BOOST_ALL_NO_LIB)
 
 // Test that header file is self-contained.
-#include <boost/asio/strand_service.hpp>
+#include <boost/asio/ip/basic_resolver.hpp>
 
-#include "unit_test.hpp"
+#include "../unit_test.hpp"
 
 test_suite* init_unit_test_suite(int argc, char* argv[])
 {
-  test_suite* test = BOOST_TEST_SUITE("strand_service");
+  test_suite* test = BOOST_TEST_SUITE("ip/basic_resolver");
   return test;
 }

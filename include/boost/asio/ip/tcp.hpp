@@ -17,11 +17,11 @@
 
 #include <boost/asio/detail/push_options.hpp>
 
-#include <boost/asio/basic_resolver.hpp>
 #include <boost/asio/basic_socket_acceptor.hpp>
 #include <boost/asio/basic_socket_iostream.hpp>
 #include <boost/asio/basic_stream_socket.hpp>
 #include <boost/asio/ip/basic_endpoint.hpp>
+#include <boost/asio/ip/basic_resolver.hpp>
 #include <boost/asio/ip/basic_resolver_iterator.hpp>
 #include <boost/asio/ip/basic_resolver_query.hpp>
 #include <boost/asio/detail/socket_option.hpp>

@@ -8,8 +8,8 @@
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
-#ifndef BOOST_ASIO_RESOLVER_SERVICE_HPP
-#define BOOST_ASIO_RESOLVER_SERVICE_HPP
+#ifndef BOOST_ASIO_IP_RESOLVER_SERVICE_HPP
+#define BOOST_ASIO_IP_RESOLVER_SERVICE_HPP
 
 #if defined(_MSC_VER) && (_MSC_VER >= 1200)
 # pragma once
@@ -22,6 +22,7 @@
 
 namespace boost {
 namespace asio {
+namespace ip {
 
 /// Default service implementation for a resolver.
 template <typename Protocol>
@@ -43,7 +44,7 @@ public:
 
 private:
   // The type of the platform-specific implementation.
-  typedef detail::resolver_service<Protocol> service_impl_type;
+  typedef boost::asio::detail::resolver_service<Protocol> service_impl_type;
 
 public:
   /// The type of a resolver implementation.
@@ -120,9 +121,10 @@ private:
   service_impl_type& service_impl_;
 };
 
+} // namespace ip
 } // namespace asio
 } // namespace boost
 
 #include <boost/asio/detail/pop_options.hpp>
 
-#endif // BOOST_ASIO_RESOLVER_SERVICE_HPP
+#endif // BOOST_ASIO_IP_RESOLVER_SERVICE_HPP

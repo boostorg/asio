@@ -35,13 +35,6 @@ public:
   /// The underlying implementation type of I/O object.
   typedef typename service_type::implementation_type implementation_type;
 
-  /// Construct a basic_io_object.
-  explicit basic_io_object(boost::asio::io_service& io_service)
-    : service(boost::asio::use_service<Service>(io_service))
-  {
-    service.construct(implementation);
-  }
-
   /// Get the io_service associated with the object.
   /**
    * This function may be used to obtain the io_service object that the I/O
@@ -52,10 +45,17 @@ public:
    */
   boost::asio::io_service& io_service()
   {
-    return service.owner();
+    return service.io_service();
   }
 
 protected:
+  /// Construct a basic_io_object.
+  explicit basic_io_object(boost::asio::io_service& io_service)
+    : service(boost::asio::use_service<Service>(io_service))
+  {
+    service.construct(implementation);
+  }
+
   /// Protected destructor to prevent deletion through this type.
   ~basic_io_object()
   {

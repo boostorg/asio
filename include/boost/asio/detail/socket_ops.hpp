@@ -561,6 +561,12 @@ inline int gethostname(char* name, int namelen)
   return error_wrapper(::gethostname(name, namelen));
 }
 
+#if defined(BOOST_WINDOWS) || defined(__CYGWIN__) \
+  || defined(__MACH__) && defined(__APPLE__)
+
+// The following functions are only needed for emulation of getaddrinfo and
+// getnameinfo.
+
 inline int translate_netdb_error(int error)
 {
   switch (error)
@@ -1151,7 +1157,6 @@ inline int getaddrinfo_emulation(const char* host, const char* service,
       case NO_RECOVERY:
         return EAI_FAIL;
       case NO_DATA:
-        return EAI_NODATA;
       default:
         return EAI_NONAME;
       }
@@ -1238,92 +1243,6 @@ inline int getaddrinfo_emulation(const char* host, const char* service,
   // Return result to caller.
   *result = aihead;
   return 0;
-}
-
-inline int translate_addrinfo_error(int error)
-{
-  switch (error)
-  {
-  case 0:
-    return boost::asio::error::success;
-  case EAI_AGAIN:
-    return boost::asio::error::host_not_found_try_again;
-  case EAI_BADFLAGS:
-    return boost::asio::error::invalid_argument;
-  case EAI_FAIL:
-    return boost::asio::error::no_recovery;
-  case EAI_FAMILY:
-    return boost::asio::error::address_family_not_supported;
-  case EAI_MEMORY:
-    return boost::asio::error::no_memory;
-  case EAI_NONAME:
-    return boost::asio::error::host_not_found;
-  case EAI_SERVICE:
-    return boost::asio::error::service_not_found;
-  case EAI_SOCKTYPE:
-    return boost::asio::error::socket_type_not_supported;
-  default: // Possibly the non-portable EAI_SYSTEM.
-    return get_error();
-  }
-}
-
-inline int getaddrinfo(const char* host, const char* service,
-    const addrinfo_type* hints, addrinfo_type** result)
-{
-  set_error(0);
-#if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
-# if defined(_WIN32_WINNT) && (_WIN32_WINNT >= 0x0501)
-  // Building for Windows XP, Windows Server 2003, or later.
-  int error = ::getaddrinfo(host, service, hints, result);
-  return translate_addrinfo_error(error);
-# else
-  // Building for Windows 2000 or earlier.
-  typedef int (WSAAPI *gai_t)(const char*,
-      const char*, const addrinfo_type*, addrinfo_type**);
-  if (HMODULE winsock_module = ::GetModuleHandleA("ws2_32"))
-  {
-    if (gai_t gai = (gai_t)::GetProcAddress(winsock_module, "getaddrinfo"))
-    {
-      int error = gai(host, service, hints, result);
-      return translate_addrinfo_error(error);
-    }
-  }
-  int error = getaddrinfo_emulation(host, service, hints, result);
-  return translate_addrinfo_error(error);
-# endif
-#elif defined(__MACH__) && defined(__APPLE__)
-  int error = getaddrinfo_emulation(host, service, hints, result);
-  return translate_addrinfo_error(error);
-#else
-  int error = ::getaddrinfo(host, service, hints, result);
-  return translate_addrinfo_error(error);
-#endif
-}
-
-inline void freeaddrinfo(addrinfo_type* ai)
-{
-#if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
-# if defined(_WIN32_WINNT) && (_WIN32_WINNT >= 0x0501)
-  // Building for Windows XP, Windows Server 2003, or later.
-  ::freeaddrinfo(ai);
-# else
-  // Building for Windows 2000 or earlier.
-  typedef int (WSAAPI *fai_t)(addrinfo_type*);
-  if (HMODULE winsock_module = ::GetModuleHandleA("ws2_32"))
-  {
-    if (fai_t fai = (fai_t)::GetProcAddress(winsock_module, "freeaddrinfo"))
-    {
-      fai(ai);
-      return;
-    }
-  }
-  freeaddrinfo_emulation(ai);
-# endif
-#elif defined(__MACH__) && defined(__APPLE__)
-  freeaddrinfo_emulation(ai);
-#else
-  ::freeaddrinfo(ai);
-#endif
 }
 
 inline int getnameinfo_emulation(const socket_addr_type* sa,
@@ -1453,6 +1372,95 @@ inline int getnameinfo_emulation(const socket_addr_type* sa,
   return 0;
 }
 
+#endif // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
+       //   || defined(__MACH__) && defined(__APPLE__)
+
+inline int translate_addrinfo_error(int error)
+{
+  switch (error)
+  {
+  case 0:
+    return boost::asio::error::success;
+  case EAI_AGAIN:
+    return boost::asio::error::host_not_found_try_again;
+  case EAI_BADFLAGS:
+    return boost::asio::error::invalid_argument;
+  case EAI_FAIL:
+    return boost::asio::error::no_recovery;
+  case EAI_FAMILY:
+    return boost::asio::error::address_family_not_supported;
+  case EAI_MEMORY:
+    return boost::asio::error::no_memory;
+  case EAI_NONAME:
+    return boost::asio::error::host_not_found;
+  case EAI_SERVICE:
+    return boost::asio::error::service_not_found;
+  case EAI_SOCKTYPE:
+    return boost::asio::error::socket_type_not_supported;
+  default: // Possibly the non-portable EAI_SYSTEM.
+    return get_error();
+  }
+}
+
+inline int getaddrinfo(const char* host, const char* service,
+    const addrinfo_type* hints, addrinfo_type** result)
+{
+  set_error(0);
+#if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
+# if defined(_WIN32_WINNT) && (_WIN32_WINNT >= 0x0501)
+  // Building for Windows XP, Windows Server 2003, or later.
+  int error = ::getaddrinfo(host, service, hints, result);
+  return translate_addrinfo_error(error);
+# else
+  // Building for Windows 2000 or earlier.
+  typedef int (WSAAPI *gai_t)(const char*,
+      const char*, const addrinfo_type*, addrinfo_type**);
+  if (HMODULE winsock_module = ::GetModuleHandleA("ws2_32"))
+  {
+    if (gai_t gai = (gai_t)::GetProcAddress(winsock_module, "getaddrinfo"))
+    {
+      int error = gai(host, service, hints, result);
+      return translate_addrinfo_error(error);
+    }
+  }
+  int error = getaddrinfo_emulation(host, service, hints, result);
+  return translate_addrinfo_error(error);
+# endif
+#elif defined(__MACH__) && defined(__APPLE__)
+  int error = getaddrinfo_emulation(host, service, hints, result);
+  return translate_addrinfo_error(error);
+#else
+  int error = ::getaddrinfo(host, service, hints, result);
+  return translate_addrinfo_error(error);
+#endif
+}
+
+inline void freeaddrinfo(addrinfo_type* ai)
+{
+#if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
+# if defined(_WIN32_WINNT) && (_WIN32_WINNT >= 0x0501)
+  // Building for Windows XP, Windows Server 2003, or later.
+  ::freeaddrinfo(ai);
+# else
+  // Building for Windows 2000 or earlier.
+  typedef int (WSAAPI *fai_t)(addrinfo_type*);
+  if (HMODULE winsock_module = ::GetModuleHandleA("ws2_32"))
+  {
+    if (fai_t fai = (fai_t)::GetProcAddress(winsock_module, "freeaddrinfo"))
+    {
+      fai(ai);
+      return;
+    }
+  }
+  freeaddrinfo_emulation(ai);
+# endif
+#elif defined(__MACH__) && defined(__APPLE__)
+  freeaddrinfo_emulation(ai);
+#else
+  ::freeaddrinfo(ai);
+#endif
+}
+
 inline int getnameinfo(const socket_addr_type* addr,
     socket_addr_len_type addrlen, char* host, std::size_t hostlen,
     char* serv, std::size_t servlen, int flags)
@@ -1461,7 +1469,8 @@ inline int getnameinfo(const socket_addr_type* addr,
 # if defined(_WIN32_WINNT) && (_WIN32_WINNT >= 0x0501)
   // Building for Windows XP, Windows Server 2003, or later.
   set_error(0);
-  int error = ::getnameinfo(addr, addrlen, host, hostlen, serv, servlen, flags);
+  int error = ::getnameinfo(addr, addrlen, host, static_cast<DWORD>(hostlen),
+      serv, static_cast<DWORD>(servlen), flags);
   return translate_addrinfo_error(error);
 # else
   // Building for Windows 2000 or earlier.

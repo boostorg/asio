@@ -1,6 +1,6 @@
 //
-// win_local_free_on_block_exit.hpp
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// local_free_on_block_exit.hpp
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2006 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
@@ -8,8 +8,8 @@
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
-#ifndef BOOST_ASIO_DETAIL_WIN_LOCAL_FREE_ON_BLOCK_EXIT_HPP
-#define BOOST_ASIO_DETAIL_WIN_LOCAL_FREE_ON_BLOCK_EXIT_HPP
+#ifndef BOOST_ASIO_DETAIL_LOCAL_FREE_ON_BLOCK_EXIT_HPP
+#define BOOST_ASIO_DETAIL_LOCAL_FREE_ON_BLOCK_EXIT_HPP
 
 #if defined(_MSC_VER) && (_MSC_VER >= 1200)
 # pragma once
@@ -30,18 +30,18 @@ namespace boost {
 namespace asio {
 namespace detail {
 
-class win_local_free_on_block_exit
+class local_free_on_block_exit
   : private noncopyable
 {
 public:
   // Constructor blocks all signals for the calling thread.
-  explicit win_local_free_on_block_exit(void* p)
+  explicit local_free_on_block_exit(void* p)
     : p_(p)
   {
   }
 
   // Destructor restores the previous signal mask.
-  ~win_local_free_on_block_exit()
+  ~local_free_on_block_exit()
   {
     ::LocalFree(p_);
   }
@@ -58,4 +58,4 @@ private:
 
 #include <boost/asio/detail/pop_options.hpp>
 
-#endif // BOOST_ASIO_DETAIL_WIN_LOCAL_FREE_ON_BLOCK_EXIT_HPP
+#endif // BOOST_ASIO_DETAIL_LOCAL_FREE_ON_BLOCK_EXIT_HPP

@@ -18,7 +18,7 @@
 #include <boost/asio/detail/push_options.hpp>
 
 #include <boost/asio/detail/handler_alloc_helpers.hpp>
-#include <boost/asio/detail/handler_dispatch_helpers.hpp>
+#include <boost/asio/detail/handler_invoke_helpers.hpp>
 
 namespace boost {
 namespace asio {
@@ -65,12 +65,12 @@ inline void asio_handler_deallocate(void* pointer, std::size_t size,
       pointer, size, &this_handler->handler_);
 }
 
-template <typename Handler_To_Dispatch, typename Handler, typename Arg1>
-inline void asio_handler_dispatch(const Handler_To_Dispatch& handler,
+template <typename Function, typename Handler, typename Arg1>
+inline void asio_handler_invoke(const Function& function,
     binder1<Handler, Arg1>* this_handler)
 {
-  boost_asio_handler_dispatch_helpers::dispatch_handler(
-      handler, &this_handler->handler_);
+  asio_handler_invoke_helpers::invoke(
+      function, &this_handler->handler_);
 }
 
 template <typename Handler, typename Arg1>
@@ -123,13 +123,12 @@ inline void asio_handler_deallocate(void* pointer, std::size_t size,
       pointer, size, &this_handler->handler_);
 }
 
-template <typename Handler_To_Dispatch, typename Handler, typename Arg1,
-    typename Arg2>
-inline void asio_handler_dispatch(const Handler_To_Dispatch& handler,
+template <typename Function, typename Handler, typename Arg1, typename Arg2>
+inline void asio_handler_invoke(const Function& function,
     binder2<Handler, Arg1, Arg2>* this_handler)
 {
-  boost_asio_handler_dispatch_helpers::dispatch_handler(
-      handler, &this_handler->handler_);
+  asio_handler_invoke_helpers::invoke(
+      function, &this_handler->handler_);
 }
 
 template <typename Handler, typename Arg1, typename Arg2>
@@ -185,13 +184,13 @@ inline void asio_handler_deallocate(void* pointer, std::size_t size,
       pointer, size, &this_handler->handler_);
 }
 
-template <typename Handler_To_Dispatch, typename Handler, typename Arg1,
-    typename Arg2, typename Arg3>
-inline void asio_handler_dispatch(const Handler_To_Dispatch& handler,
+template <typename Function, typename Handler, typename Arg1, typename Arg2,
+    typename Arg3>
+inline void asio_handler_invoke(const Function& function,
     binder3<Handler, Arg1, Arg2, Arg3>* this_handler)
 {
-  boost_asio_handler_dispatch_helpers::dispatch_handler(
-      handler, &this_handler->handler_);
+  asio_handler_invoke_helpers::invoke(
+      function, &this_handler->handler_);
 }
 
 template <typename Handler, typename Arg1, typename Arg2, typename Arg3>
@@ -252,13 +251,13 @@ inline void asio_handler_deallocate(void* pointer, std::size_t size,
       pointer, size, &this_handler->handler_);
 }
 
-template <typename Handler_To_Dispatch, typename Handler, typename Arg1,
-    typename Arg2, typename Arg3, typename Arg4>
-inline void asio_handler_dispatch(const Handler_To_Dispatch& handler,
+template <typename Function, typename Handler, typename Arg1, typename Arg2,
+    typename Arg3, typename Arg4>
+inline void asio_handler_invoke(const Function& function,
     binder4<Handler, Arg1, Arg2, Arg3, Arg4>* this_handler)
 {
-  boost_asio_handler_dispatch_helpers::dispatch_handler(
-      handler, &this_handler->handler_);
+  asio_handler_invoke_helpers::invoke(
+      function, &this_handler->handler_);
 }
 
 template <typename Handler, typename Arg1, typename Arg2, typename Arg3,
@@ -324,13 +323,13 @@ inline void asio_handler_deallocate(void* pointer, std::size_t size,
       pointer, size, &this_handler->handler_);
 }
 
-template <typename Handler_To_Dispatch, typename Handler, typename Arg1,
-    typename Arg2, typename Arg3, typename Arg4, typename Arg5>
-inline void asio_handler_dispatch(const Handler_To_Dispatch& handler,
+template <typename Function, typename Handler, typename Arg1, typename Arg2,
+    typename Arg3, typename Arg4, typename Arg5>
+inline void asio_handler_invoke(const Function& function,
     binder5<Handler, Arg1, Arg2, Arg3, Arg4, Arg5>* this_handler)
 {
-  boost_asio_handler_dispatch_helpers::dispatch_handler(
-      handler, &this_handler->handler_);
+  asio_handler_invoke_helpers::invoke(
+      function, &this_handler->handler_);
 }
 
 template <typename Handler, typename Arg1, typename Arg2, typename Arg3,

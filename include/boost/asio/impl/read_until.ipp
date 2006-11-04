@@ -29,7 +29,7 @@
 #include <boost/asio/detail/bind_handler.hpp>
 #include <boost/asio/detail/const_buffers_iterator.hpp>
 #include <boost/asio/detail/handler_alloc_helpers.hpp>
-#include <boost/asio/detail/handler_dispatch_helpers.hpp>
+#include <boost/asio/detail/handler_invoke_helpers.hpp>
 
 namespace boost {
 namespace asio {
@@ -312,14 +312,14 @@ namespace detail
         pointer, size, &this_handler->handler_);
   }
 
-  template <typename Handler_To_Dispatch, typename Async_Read_Stream,
-      typename Allocator, typename Handler>
-  inline void asio_handler_dispatch(const Handler_To_Dispatch& handler,
+  template <typename Function, typename Async_Read_Stream, typename Allocator,
+      typename Handler>
+  inline void asio_handler_invoke(const Function& function,
       read_until_delim_handler<Async_Read_Stream,
         Allocator, Handler>* this_handler)
   {
-    boost_asio_handler_dispatch_helpers::dispatch_handler(
-        handler, &this_handler->handler_);
+    asio_handler_invoke_helpers::invoke(
+        function, &this_handler->handler_);
   }
 } // namespace detail
 
@@ -448,14 +448,14 @@ namespace detail
         pointer, size, &this_handler->handler_);
   }
 
-  template <typename Handler_To_Dispatch, typename Async_Read_Stream,
+  template <typename Function, typename Async_Read_Stream,
       typename Allocator, typename Handler>
-  inline void asio_handler_dispatch(const Handler_To_Dispatch& handler,
+  inline void asio_handler_invoke(const Function& function,
       read_until_delim_string_handler<Async_Read_Stream,
         Allocator, Handler>* this_handler)
   {
-    boost_asio_handler_dispatch_helpers::dispatch_handler(
-        handler, &this_handler->handler_);
+    asio_handler_invoke_helpers::invoke(
+        function, &this_handler->handler_);
   }
 } // namespace detail
 
@@ -601,14 +601,14 @@ namespace detail
         pointer, size, &this_handler->handler_);
   }
 
-  template <typename Handler_To_Dispatch, typename Async_Read_Stream,
-      typename Allocator, typename Handler>
-  inline void asio_handler_dispatch(const Handler_To_Dispatch& handler,
+  template <typename Function, typename Async_Read_Stream, typename Allocator,
+      typename Handler>
+  inline void asio_handler_invoke(const Function& function,
       read_until_expr_handler<Async_Read_Stream,
         Allocator, Handler>* this_handler)
   {
-    boost_asio_handler_dispatch_helpers::dispatch_handler(
-        handler, &this_handler->handler_);
+    asio_handler_invoke_helpers::invoke(
+        function, &this_handler->handler_);
   }
 } // namespace detail
 

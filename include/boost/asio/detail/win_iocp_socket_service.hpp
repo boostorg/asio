@@ -34,7 +34,7 @@
 #include <boost/asio/socket_base.hpp>
 #include <boost/asio/detail/bind_handler.hpp>
 #include <boost/asio/detail/handler_alloc_helpers.hpp>
-#include <boost/asio/detail/handler_dispatch_helpers.hpp>
+#include <boost/asio/detail/handler_invoke_helpers.hpp>
 #include <boost/asio/detail/mutex.hpp>
 #include <boost/asio/detail/select_reactor.hpp>
 #include <boost/asio/detail/socket_holder.hpp>
@@ -65,7 +65,49 @@ public:
   typedef boost::weak_ptr<void> weak_cancel_token_type;
 
   // The native type of a socket.
-  typedef socket_type native_type;
+  class native_type
+  {
+  public:
+    native_type(socket_type s)
+      : socket_(s),
+        have_remote_endpoint_(false)
+    {
+    }
+
+    native_type(socket_type s, const endpoint_type& ep)
+      : socket_(s),
+        have_remote_endpoint_(true),
+        remote_endpoint_(ep)
+    {
+    }
+
+    void operator=(socket_type s)
+    {
+      socket_ = s;
+      have_remote_endpoint_ = false;
+      remote_endpoint_ = endpoint_type();
+    }
+
+    operator socket_type() const
+    {
+      return socket_;
+    }
+
+    bool have_remote_endpoint() const
+    {
+      return have_remote_endpoint_;
+    }
+
+    endpoint_type remote_endpoint() const
+    {
+      return remote_endpoint_;
+    }
+
+  private:
+    socket_type socket_;
+    bool have_remote_endpoint_;
+    endpoint_type remote_endpoint_;
+  };
 
   // The implementation type of the socket.
   class implementation_type
@@ -87,11 +129,12 @@ public:
     friend class win_iocp_socket_service;
 
     // The native socket representation.
-    socket_type socket_;
+    native_type socket_;
 
     enum
     {
-      enable_connection_aborted = 1 // User wants connection_aborted errors.
+      enable_connection_aborted = 1, // User wants connection_aborted errors.
+      user_set_linger = 2 // The user set the linger option.
     };
 
     // Flags indicating the current state of the socket.
@@ -107,6 +150,12 @@ public:
 
     // The protocol associated with the socket.
     protocol_type protocol_;
+
+    // The ID of the thread from which it is safe to cancel asynchronous
+    // operations. 0 means no asynchronous operations have been started yet.
+    // ~0 means asynchronous operations have been started from more than one
+    // thread, and cancellation is not supported for the socket.
+    DWORD safe_cancellation_thread_id_;
 
     // Pointers to adjacent socket implementations in linked list.
     implementation_type* next_;
@@ -147,6 +196,7 @@ public:
   {
     impl.socket_ = invalid_socket;
     impl.cancel_token_.reset();
+    impl.safe_cancellation_thread_id_ = 0;
 
     // Insert implementation into linked list of all implementations.
     boost::asio::detail::mutex::scoped_lock lock(mutex_);
@@ -160,7 +210,31 @@ public:
   // Destroy a socket implementation.
   void destroy(implementation_type& impl)
   {
-    close(impl, boost::asio::ignore_error());
+    if (impl.socket_ != invalid_socket)
+    {
+      // Check if the reactor was created, in which case we need to close the
+      // socket on the reactor as well to cancel any operations that might be
+      // running there.
+      reactor_type* reactor = static_cast<reactor_type*>(
+            interlocked_compare_exchange_pointer(
+              reinterpret_cast<void**>(&reactor_), 0, 0));
+      if (reactor)
+        reactor->close_descriptor(impl.socket_);
+
+      if (impl.flags_ & implementation_type::user_set_linger)
+      {
+        ::linger opt;
+        opt.l_onoff = 0;
+        opt.l_linger = 0;
+        socket_ops::setsockopt(impl.socket_,
+            SOL_SOCKET, SO_LINGER, &opt, sizeof(opt));
+      }
+
+      socket_ops::close(impl.socket_);
+      impl.socket_ = invalid_socket;
+      impl.cancel_token_.reset();
+      impl.safe_cancellation_thread_id_ = 0;
+    }
 
     // Remove implementation from linked list of all implementations.
     boost::asio::detail::mutex::scoped_lock lock(mutex_);
@@ -238,6 +312,7 @@ public:
       {
         impl.socket_ = invalid_socket;
         impl.cancel_token_.reset();
+        impl.safe_cancellation_thread_id_ = 0;
       }
     }
 
@@ -248,6 +323,44 @@ public:
   native_type native(implementation_type& impl)
   {
     return impl.socket_;
+  }
+
+  // Cancel all operations associated with the socket.
+  template <typename Error_Handler>
+  void cancel(implementation_type& impl, Error_Handler error_handler)
+  {
+    if (impl.socket_ == invalid_socket)
+    {
+      boost::asio::error error(boost::asio::error::bad_descriptor);
+      error_handler(error);
+    }
+    else if (impl.safe_cancellation_thread_id_ == 0)
+    {
+      // No operations have been started, so there's nothing to cancel.
+      error_handler(boost::asio::error(0));
+    }
+    else if (impl.safe_cancellation_thread_id_ == ::GetCurrentThreadId())
+    {
+      // Asynchronous operations have been started from the current thread only,
+      // so it is safe to try to cancel them using CancelIo.
+      socket_type sock = impl.socket_;
+      HANDLE sock_as_handle = reinterpret_cast<HANDLE>(sock);
+      if (!::CancelIo(sock_as_handle))
+      {
+        DWORD last_error = ::GetLastError();
+        error_handler(boost::asio::error(last_error));
+      }
+      else
+      {
+        error_handler(boost::asio::error(0));
+      }
+    }
+    else
+    {
+      // Asynchronous operations have been started from more than one thread,
+      // so cancellation is not safe.
+      error_handler(boost::asio::error(boost::asio::error::not_supported));
+    }
   }
 
   // Bind the socket to the specified local endpoint.
@@ -267,9 +380,6 @@ public:
   void listen(implementation_type& impl, int backlog,
       Error_Handler error_handler)
   {
-    if (backlog == 0)
-      backlog = SOMAXCONN;
-
     if (socket_ops::listen(impl.socket_, backlog) == socket_error_retval)
       error_handler(boost::asio::error(socket_ops::get_error()));
     else
@@ -299,6 +409,12 @@ public:
     }
     else
     {
+      if (option.level(impl.protocol_) == SOL_SOCKET
+          && option.name(impl.protocol_) == SO_LINGER)
+      {
+        impl.flags_ |= implementation_type::user_set_linger;
+      }
+
       if (socket_ops::setsockopt(impl.socket_,
             option.level(impl.protocol_), option.name(impl.protocol_),
             option.data(impl.protocol_), option.size(impl.protocol_)))
@@ -375,15 +491,38 @@ public:
   void get_remote_endpoint(const implementation_type& impl,
       endpoint_type& endpoint, Error_Handler error_handler) const
   {
-    socket_addr_len_type addr_len = endpoint.capacity();
-    if (socket_ops::getpeername(impl.socket_, endpoint.data(), &addr_len))
+    if (impl.socket_.have_remote_endpoint())
     {
-      error_handler(boost::asio::error(socket_ops::get_error()));
-      return;
-    }
+      // Check if socket is still connected.
+      DWORD connect_time = 0;
+      size_t connect_time_len = sizeof(connect_time);
+      if (socket_ops::getsockopt(impl.socket_, SOL_SOCKET, SO_CONNECT_TIME,
+            &connect_time, &connect_time_len) == socket_error_retval)
+      {
+        error_handler(boost::asio::error(socket_ops::get_error()));
+        return;
+      }
+      if (connect_time == 0xFFFFFFFF)
+      {
+        error_handler(boost::asio::error(boost::asio::error::not_connected));
+        return;
+      }
 
-    endpoint.resize(addr_len);
-    error_handler(boost::asio::error(0));
+      endpoint = impl.socket_.remote_endpoint();
+      error_handler(boost::asio::error(0));
+    }
+    else
+    {
+      socket_addr_len_type addr_len = endpoint.capacity();
+      if (socket_ops::getpeername(impl.socket_, endpoint.data(), &addr_len))
+      {
+        error_handler(boost::asio::error(socket_ops::get_error()));
+        return;
+      }
+
+      endpoint.resize(addr_len);
+      error_handler(boost::asio::error(0));
+    }
   }
 
   /// Disable sends or receives on the socket.
@@ -407,12 +546,21 @@ public:
     typename Const_Buffers::const_iterator iter = buffers.begin();
     typename Const_Buffers::const_iterator end = buffers.end();
     DWORD i = 0;
+    size_t total_buffer_size = 0;
     for (; iter != end && i < max_buffers; ++iter, ++i)
     {
       boost::asio::const_buffer buffer(*iter);
       bufs[i].len = static_cast<u_long>(boost::asio::buffer_size(buffer));
       bufs[i].buf = const_cast<char*>(
           boost::asio::buffer_cast<const char*>(buffer));
+      total_buffer_size += boost::asio::buffer_size(buffer);
+    }
+
+    // A request to receive 0 bytes on a stream socket is a no-op.
+    if (impl.protocol_.type() == SOCK_STREAM && total_buffer_size == 0)
+    {
+      error_handler(boost::asio::error(0));
+      return 0;
     }
 
     // Send the data.
@@ -460,6 +608,20 @@ public:
       typedef handler_alloc_traits<Handler, op_type> alloc_traits;
       handler_ptr<alloc_traits> ptr(handler_op->handler_, handler_op);
 
+#if defined(BOOST_ASIO_ENABLE_BUFFER_DEBUGGING)
+      // Check whether buffers are still valid.
+      typename Const_Buffers::const_iterator iter
+        = handler_op->buffers_.begin();
+      typename Const_Buffers::const_iterator end
+        = handler_op->buffers_.end();
+      while (iter != end)
+      {
+        boost::asio::const_buffer buffer(*iter);
+        boost::asio::buffer_cast<const char*>(buffer);
+        ++iter;
+      }
+#endif // defined(BOOST_ASIO_ENABLE_BUFFER_DEBUGGING)
+
       // Map ERROR_NETNAME_DELETED to more useful error.
       if (last_error == ERROR_NETNAME_DELETED)
       {
@@ -478,7 +640,7 @@ public:
 
       // Call the handler.
       boost::asio::error error(last_error);
-      boost_asio_handler_dispatch_helpers::dispatch_handler(
+      asio_handler_invoke_helpers::invoke(
           detail::bind_handler(handler, error, bytes_transferred), &handler);
     }
 
@@ -503,24 +665,41 @@ public:
   void async_send(implementation_type& impl, const Const_Buffers& buffers,
       socket_base::message_flags flags, Handler handler)
   {
+    // Update the ID of the thread from which cancellation is safe.
+    if (impl.safe_cancellation_thread_id_ == 0)
+      impl.safe_cancellation_thread_id_ = ::GetCurrentThreadId();
+    else
+      impl.safe_cancellation_thread_id_ = ~DWORD(0);
+
     // Allocate and construct an operation to wrap the handler.
     typedef send_operation<Const_Buffers, Handler> value_type;
     typedef handler_alloc_traits<Handler, value_type> alloc_traits;
     raw_handler_ptr<alloc_traits> raw_ptr(handler);
     handler_ptr<alloc_traits> ptr(raw_ptr,
-        owner(), impl.cancel_token_, buffers, handler);
+        io_service(), impl.cancel_token_, buffers, handler);
 
     // Copy buffers into WSABUF array.
     ::WSABUF bufs[max_buffers];
     typename Const_Buffers::const_iterator iter = buffers.begin();
     typename Const_Buffers::const_iterator end = buffers.end();
     DWORD i = 0;
+    size_t total_buffer_size = 0;
     for (; iter != end && i < max_buffers; ++iter, ++i)
     {
       boost::asio::const_buffer buffer(*iter);
       bufs[i].len = static_cast<u_long>(boost::asio::buffer_size(buffer));
       bufs[i].buf = const_cast<char*>(
           boost::asio::buffer_cast<const char*>(buffer));
+      total_buffer_size += boost::asio::buffer_size(buffer);
+    }
+
+    // A request to receive 0 bytes on a stream socket is a no-op.
+    if (impl.protocol_.type() == SOCK_STREAM && total_buffer_size == 0)
+    {
+      ptr.reset();
+      boost::asio::error error(boost::asio::error::success);
+      iocp_service_.post(bind_handler(handler, error, 0));
+      return;
     }
 
     // Send the data.
@@ -603,6 +782,20 @@ public:
       typedef handler_alloc_traits<Handler, op_type> alloc_traits;
       handler_ptr<alloc_traits> ptr(handler_op->handler_, handler_op);
 
+#if defined(BOOST_ASIO_ENABLE_BUFFER_DEBUGGING)
+      // Check whether buffers are still valid.
+      typename Const_Buffers::const_iterator iter
+        = handler_op->buffers_.begin();
+      typename Const_Buffers::const_iterator end
+        = handler_op->buffers_.end();
+      while (iter != end)
+      {
+        boost::asio::const_buffer buffer(*iter);
+        boost::asio::buffer_cast<const char*>(buffer);
+        ++iter;
+      }
+#endif // defined(BOOST_ASIO_ENABLE_BUFFER_DEBUGGING)
+
       // Make a copy of the handler so that the memory can be deallocated before
       // the upcall is made.
       Handler handler(handler_op->handler_);
@@ -612,7 +805,7 @@ public:
 
       // Call the handler.
       boost::asio::error error(last_error);
-      boost_asio_handler_dispatch_helpers::dispatch_handler(
+      asio_handler_invoke_helpers::invoke(
           detail::bind_handler(handler, error, bytes_transferred), &handler);
     }
 
@@ -637,11 +830,17 @@ public:
       const endpoint_type& destination, socket_base::message_flags flags,
       Handler handler)
   {
+    // Update the ID of the thread from which cancellation is safe.
+    if (impl.safe_cancellation_thread_id_ == 0)
+      impl.safe_cancellation_thread_id_ = ::GetCurrentThreadId();
+    else
+      impl.safe_cancellation_thread_id_ = ~DWORD(0);
+
     // Allocate and construct an operation to wrap the handler.
     typedef send_to_operation<Const_Buffers, Handler> value_type;
     typedef handler_alloc_traits<Handler, value_type> alloc_traits;
     raw_handler_ptr<alloc_traits> raw_ptr(handler);
-    handler_ptr<alloc_traits> ptr(raw_ptr, owner(), buffers, handler);
+    handler_ptr<alloc_traits> ptr(raw_ptr, io_service(), buffers, handler);
 
     // Copy buffers into WSABUF array.
     ::WSABUF bufs[max_buffers];
@@ -685,11 +884,20 @@ public:
     typename Mutable_Buffers::const_iterator iter = buffers.begin();
     typename Mutable_Buffers::const_iterator end = buffers.end();
     DWORD i = 0;
+    size_t total_buffer_size = 0;
     for (; iter != end && i < max_buffers; ++iter, ++i)
     {
       boost::asio::mutable_buffer buffer(*iter);
       bufs[i].len = static_cast<u_long>(boost::asio::buffer_size(buffer));
       bufs[i].buf = boost::asio::buffer_cast<char*>(buffer);
+      total_buffer_size += boost::asio::buffer_size(buffer);
+    }
+
+    // A request to receive 0 bytes on a stream socket is a no-op.
+    if (impl.protocol_.type() == SOCK_STREAM && total_buffer_size == 0)
+    {
+      error_handler(boost::asio::error(0));
+      return 0;
     }
 
     // Receive some data.
@@ -743,6 +951,20 @@ public:
       typedef handler_alloc_traits<Handler, op_type> alloc_traits;
       handler_ptr<alloc_traits> ptr(handler_op->handler_, handler_op);
 
+#if defined(BOOST_ASIO_ENABLE_BUFFER_DEBUGGING)
+      // Check whether buffers are still valid.
+      typename Mutable_Buffers::const_iterator iter
+        = handler_op->buffers_.begin();
+      typename Mutable_Buffers::const_iterator end
+        = handler_op->buffers_.end();
+      while (iter != end)
+      {
+        boost::asio::mutable_buffer buffer(*iter);
+        boost::asio::buffer_cast<char*>(buffer);
+        ++iter;
+      }
+#endif // defined(BOOST_ASIO_ENABLE_BUFFER_DEBUGGING)
+
       // Map ERROR_NETNAME_DELETED to more useful error.
       if (last_error == ERROR_NETNAME_DELETED)
       {
@@ -767,7 +989,7 @@ public:
 
       // Call the handler.
       boost::asio::error error(last_error);
-      boost_asio_handler_dispatch_helpers::dispatch_handler(
+      asio_handler_invoke_helpers::invoke(
           detail::bind_handler(handler, error, bytes_transferred), &handler);
     }
 
@@ -792,23 +1014,40 @@ public:
   void async_receive(implementation_type& impl, const Mutable_Buffers& buffers,
       socket_base::message_flags flags, Handler handler)
   {
+    // Update the ID of the thread from which cancellation is safe.
+    if (impl.safe_cancellation_thread_id_ == 0)
+      impl.safe_cancellation_thread_id_ = ::GetCurrentThreadId();
+    else
+      impl.safe_cancellation_thread_id_ = ~DWORD(0);
+
     // Allocate and construct an operation to wrap the handler.
     typedef receive_operation<Mutable_Buffers, Handler> value_type;
     typedef handler_alloc_traits<Handler, value_type> alloc_traits;
     raw_handler_ptr<alloc_traits> raw_ptr(handler);
     handler_ptr<alloc_traits> ptr(raw_ptr,
-        owner(), impl.cancel_token_, buffers, handler);
+        io_service(), impl.cancel_token_, buffers, handler);
 
     // Copy buffers into WSABUF array.
     ::WSABUF bufs[max_buffers];
     typename Mutable_Buffers::const_iterator iter = buffers.begin();
     typename Mutable_Buffers::const_iterator end = buffers.end();
     DWORD i = 0;
+    size_t total_buffer_size = 0;
     for (; iter != end && i < max_buffers; ++iter, ++i)
     {
       boost::asio::mutable_buffer buffer(*iter);
       bufs[i].len = static_cast<u_long>(boost::asio::buffer_size(buffer));
       bufs[i].buf = boost::asio::buffer_cast<char*>(buffer);
+      total_buffer_size += boost::asio::buffer_size(buffer);
+    }
+
+    // A request to receive 0 bytes on a stream socket is a no-op.
+    if (impl.protocol_.type() == SOCK_STREAM && total_buffer_size == 0)
+    {
+      ptr.reset();
+      boost::asio::error error(boost::asio::error::success);
+      iocp_service_.post(bind_handler(handler, error, 0));
+      return;
     }
 
     // Receive some data.
@@ -906,6 +1145,20 @@ public:
       typedef handler_alloc_traits<Handler, op_type> alloc_traits;
       handler_ptr<alloc_traits> ptr(handler_op->handler_, handler_op);
 
+#if defined(BOOST_ASIO_ENABLE_BUFFER_DEBUGGING)
+      // Check whether buffers are still valid.
+      typename Mutable_Buffers::const_iterator iter
+        = handler_op->buffers_.begin();
+      typename Mutable_Buffers::const_iterator end
+        = handler_op->buffers_.end();
+      while (iter != end)
+      {
+        boost::asio::mutable_buffer buffer(*iter);
+        boost::asio::buffer_cast<char*>(buffer);
+        ++iter;
+      }
+#endif // defined(BOOST_ASIO_ENABLE_BUFFER_DEBUGGING)
+
       // Check for connection closed.
       if (last_error == 0 && bytes_transferred == 0)
       {
@@ -924,7 +1177,7 @@ public:
 
       // Call the handler.
       boost::asio::error error(last_error);
-      boost_asio_handler_dispatch_helpers::dispatch_handler(
+      asio_handler_invoke_helpers::invoke(
           detail::bind_handler(handler, error, bytes_transferred), &handler);
     }
 
@@ -952,12 +1205,18 @@ public:
       const Mutable_Buffers& buffers, endpoint_type& sender_endp,
       socket_base::message_flags flags, Handler handler)
   {
+    // Update the ID of the thread from which cancellation is safe.
+    if (impl.safe_cancellation_thread_id_ == 0)
+      impl.safe_cancellation_thread_id_ = ::GetCurrentThreadId();
+    else
+      impl.safe_cancellation_thread_id_ = ~DWORD(0);
+
     // Allocate and construct an operation to wrap the handler.
     typedef receive_from_operation<Mutable_Buffers, Handler> value_type;
     typedef handler_alloc_traits<Handler, value_type> alloc_traits;
     raw_handler_ptr<alloc_traits> raw_ptr(handler);
     handler_ptr<alloc_traits> ptr(raw_ptr,
-        owner(), sender_endp, buffers, handler);
+        io_service(), sender_endp, buffers, handler);
 
     // Copy buffers into WSABUF array.
     ::WSABUF bufs[max_buffers];
@@ -1104,7 +1363,7 @@ public:
         new_socket_(new_socket),
         peer_(peer),
         protocol_(protocol),
-        work_(io_service.owner()),
+        work_(io_service.io_service()),
         enable_connection_aborted_(enable_connection_aborted),
         handler_(handler)
     {
@@ -1194,13 +1453,37 @@ public:
         }
       }
 
+      // Get the address of the peer.
+      endpoint_type peer_endpoint;
+      if (last_error == 0)
+      {
+        LPSOCKADDR local_addr = 0;
+        int local_addr_length = 0;
+        LPSOCKADDR remote_addr = 0;
+        int remote_addr_length = 0;
+        GetAcceptExSockaddrs(handler_op->output_buffer(), 0,
+            handler_op->address_length(), handler_op->address_length(),
+            &local_addr, &local_addr_length, &remote_addr, &remote_addr_length);
+        if (remote_addr_length > peer_endpoint.capacity())
+        {
+          last_error = boost::asio::error::invalid_argument;
+        }
+        else
+        {
+          using namespace std; // For memcpy.
+          memcpy(peer_endpoint.data(), remote_addr, remote_addr_length);
+          peer_endpoint.resize(remote_addr_length);
+        }
+      }
+
       // Need to set the SO_UPDATE_ACCEPT_CONTEXT option so that getsockname
       // and getpeername will work on the accepted socket.
       if (last_error == 0)
       {
-        DWORD update_ctx_param = handler_op->socket_;
-        if (socket_ops::setsockopt(handler_op->new_socket_.get(), SOL_SOCKET,
-              SO_UPDATE_ACCEPT_CONTEXT, &update_ctx_param, sizeof(DWORD)) != 0)
+        SOCKET update_ctx_param = handler_op->socket_;
+        if (socket_ops::setsockopt(handler_op->new_socket_.get(),
+              SOL_SOCKET, SO_UPDATE_ACCEPT_CONTEXT,
+              &update_ctx_param, sizeof(SOCKET)) != 0)
         {
           last_error = socket_ops::get_error();
         }
@@ -1212,7 +1495,7 @@ public:
       {
         boost::asio::error temp_error;
         handler_op->peer_.assign(handler_op->protocol_,
-            handler_op->new_socket_.get(),
+            native_type(handler_op->new_socket_.get(), peer_endpoint),
             boost::asio::assign_error(temp_error));
         if (temp_error)
           last_error = temp_error.code();
@@ -1229,7 +1512,7 @@ public:
 
       // Call the handler.
       boost::asio::error error(last_error);
-      boost_asio_handler_dispatch_helpers::dispatch_handler(
+      asio_handler_invoke_helpers::invoke(
           detail::bind_handler(handler, error), &handler);
     }
 
@@ -1258,11 +1541,17 @@ public:
   template <typename Socket, typename Handler>
   void async_accept(implementation_type& impl, Socket& peer, Handler handler)
   {
+    // Update the ID of the thread from which cancellation is safe.
+    if (impl.safe_cancellation_thread_id_ == 0)
+      impl.safe_cancellation_thread_id_ = ::GetCurrentThreadId();
+    else
+      impl.safe_cancellation_thread_id_ = ~DWORD(0);
+
     // Check whether acceptor has been initialised.
     if (impl.socket_ == invalid_socket)
     {
       boost::asio::error error(boost::asio::error::bad_descriptor);
-      owner().post(bind_handler(handler, error));
+      io_service().post(bind_handler(handler, error));
       return;
     }
 
@@ -1270,7 +1559,7 @@ public:
     if (peer.native() != invalid_socket)
     {
       boost::asio::error error(boost::asio::error::already_connected);
-      owner().post(bind_handler(handler, error));
+      io_service().post(bind_handler(handler, error));
       return;
     }
 
@@ -1280,7 +1569,7 @@ public:
     if (sock.get() == invalid_socket)
     {
       boost::asio::error error(socket_ops::get_error());
-      owner().post(bind_handler(handler, error));
+      io_service().post(bind_handler(handler, error));
       return;
     }
 
@@ -1347,7 +1636,7 @@ public:
         peer_(peer),
         protocol_(protocol),
         peer_endpoint_(peer_endpoint),
-        work_(io_service.owner()),
+        work_(io_service.io_service()),
         enable_connection_aborted_(enable_connection_aborted),
         handler_(handler)
     {
@@ -1453,10 +1742,10 @@ public:
         }
         else
         {
-          handler_op->peer_endpoint_.resize(remote_addr_length);
           using namespace std; // For memcpy.
           memcpy(handler_op->peer_endpoint_.data(),
               remote_addr, remote_addr_length);
+          handler_op->peer_endpoint_.resize(remote_addr_length);
         }
       }
 
@@ -1464,9 +1753,10 @@ public:
       // and getpeername will work on the accepted socket.
       if (last_error == 0)
       {
-        DWORD update_ctx_param = handler_op->socket_;
-        if (socket_ops::setsockopt(handler_op->new_socket_.get(), SOL_SOCKET,
-              SO_UPDATE_ACCEPT_CONTEXT, &update_ctx_param, sizeof(DWORD)) != 0)
+        SOCKET update_ctx_param = handler_op->socket_;
+        if (socket_ops::setsockopt(handler_op->new_socket_.get(),
+              SOL_SOCKET, SO_UPDATE_ACCEPT_CONTEXT,
+              &update_ctx_param, sizeof(SOCKET)) != 0)
         {
           last_error = socket_ops::get_error();
         }
@@ -1478,7 +1768,8 @@ public:
       {
         boost::asio::error temp_error;
         handler_op->peer_.assign(handler_op->peer_endpoint_.protocol(),
-            handler_op->new_socket_.get(),
+            native_type(handler_op->new_socket_.get(),
+              handler_op->peer_endpoint_),
             boost::asio::assign_error(temp_error));
         if (temp_error)
           last_error = temp_error.code();
@@ -1495,7 +1786,7 @@ public:
 
       // Call the handler.
       boost::asio::error error(last_error);
-      boost_asio_handler_dispatch_helpers::dispatch_handler(
+      asio_handler_invoke_helpers::invoke(
           detail::bind_handler(handler, error), &handler);
     }
 
@@ -1526,11 +1817,17 @@ public:
   void async_accept_endpoint(implementation_type& impl, Socket& peer,
       endpoint_type& peer_endpoint, Handler handler)
   {
+    // Update the ID of the thread from which cancellation is safe.
+    if (impl.safe_cancellation_thread_id_ == 0)
+      impl.safe_cancellation_thread_id_ = ::GetCurrentThreadId();
+    else
+      impl.safe_cancellation_thread_id_ = ~DWORD(0);
+
     // Check whether acceptor has been initialised.
     if (impl.socket_ == invalid_socket)
     {
       boost::asio::error error(boost::asio::error::bad_descriptor);
-      owner().post(bind_handler(handler, error));
+      io_service().post(bind_handler(handler, error));
       return;
     }
 
@@ -1538,7 +1835,7 @@ public:
     if (peer.native() != invalid_socket)
     {
       boost::asio::error error(boost::asio::error::already_connected);
-      owner().post(bind_handler(handler, error));
+      io_service().post(bind_handler(handler, error));
       return;
     }
 
@@ -1548,7 +1845,7 @@ public:
     if (sock.get() == invalid_socket)
     {
       boost::asio::error error(socket_ops::get_error());
-      owner().post(bind_handler(handler, error));
+      io_service().post(bind_handler(handler, error));
       return;
     }
 
@@ -1713,13 +2010,19 @@ public:
   void async_connect(implementation_type& impl,
       const endpoint_type& peer_endpoint, Handler handler)
   {
+    // Update the ID of the thread from which cancellation is safe.
+    if (impl.safe_cancellation_thread_id_ == 0)
+      impl.safe_cancellation_thread_id_ = ::GetCurrentThreadId();
+    else
+      impl.safe_cancellation_thread_id_ = ~DWORD(0);
+
     // Check if the reactor was already obtained from the io_service.
     reactor_type* reactor = static_cast<reactor_type*>(
           interlocked_compare_exchange_pointer(
             reinterpret_cast<void**>(&reactor_), 0, 0));
     if (!reactor)
     {
-      reactor = &(boost::asio::use_service<reactor_type>(owner()));
+      reactor = &(boost::asio::use_service<reactor_type>(io_service()));
       interlocked_exchange_pointer(
           reinterpret_cast<void**>(&reactor_), reactor);
     }
@@ -1737,7 +2040,7 @@ public:
       if (impl.socket_ == invalid_socket)
       {
         boost::asio::error error(socket_ops::get_error());
-        owner().post(bind_handler(handler, error));
+        io_service().post(bind_handler(handler, error));
         return;
       }
       iocp_service_.register_socket(impl.socket_);
@@ -1749,7 +2052,7 @@ public:
     if (socket_ops::ioctl(impl.socket_, FIONBIO, &non_blocking))
     {
       boost::asio::error error(socket_ops::get_error());
-      owner().post(bind_handler(handler, error));
+      io_service().post(bind_handler(handler, error));
       return;
     }
 
@@ -1760,7 +2063,7 @@ public:
       // The connect operation has finished successfully so we need to post the
       // handler immediately.
       boost::asio::error error(boost::asio::error::success);
-      owner().post(bind_handler(handler, error));
+      io_service().post(bind_handler(handler, error));
     }
     else if (socket_ops::get_error() == boost::asio::error::in_progress
         || socket_ops::get_error() == boost::asio::error::would_block)
@@ -1770,13 +2073,13 @@ public:
       boost::shared_ptr<bool> completed(new bool(false));
       reactor->start_write_and_except_ops(impl.socket_,
           connect_handler<Handler>(
-            impl.socket_, completed, owner(), *reactor, handler));
+            impl.socket_, completed, io_service(), *reactor, handler));
     }
     else
     {
       // The connect operation has failed, so post the handler immediately.
       boost::asio::error error(socket_ops::get_error());
-      owner().post(bind_handler(handler, error));
+      io_service().post(bind_handler(handler, error));
     }
   }
 

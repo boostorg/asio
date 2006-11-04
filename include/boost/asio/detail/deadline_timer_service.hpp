@@ -63,6 +63,12 @@ public:
     scheduler_.add_timer_queue(timer_queue_);
   }
 
+  // Destructor.
+  ~deadline_timer_service()
+  {
+    scheduler_.remove_timer_queue(timer_queue_);
+  }
+
   // Destroy all user-defined handler objects owned by the service.
   void shutdown_service()
   {
@@ -164,7 +170,7 @@ public:
   {
     impl.might_have_pending_waits = true;
     scheduler_.schedule_timer(timer_queue_, impl.expiry,
-        wait_handler<Handler>(owner(), handler), &impl);
+        wait_handler<Handler>(io_service(), handler), &impl);
   }
 
 private:

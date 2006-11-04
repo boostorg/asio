@@ -1,6 +1,6 @@
 //
-// basic_socketbuf.hpp
-// ~~~~~~~~~~~~~~~~~~~
+// basic_socket_streambuf.hpp
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2006 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
@@ -8,8 +8,8 @@
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
-#ifndef BOOST_ASIO_BASIC_SOCKETBUF_HPP
-#define BOOST_ASIO_BASIC_SOCKETBUF_HPP
+#ifndef BOOST_ASIO_BASIC_SOCKET_STREAMBUF_HPP
+#define BOOST_ASIO_BASIC_SOCKET_STREAMBUF_HPP
 
 #if defined(_MSC_VER) && (_MSC_VER >= 1200)
 # pragma once
@@ -32,13 +32,13 @@
 #include <boost/asio/io_service.hpp>
 #include <boost/asio/stream_socket_service.hpp>
 
-#if !defined(BOOST_ASIO_SOCKETBUF_MAX_ARITY)
-#define BOOST_ASIO_SOCKETBUF_MAX_ARITY 5
-#endif // !defined(BOOST_ASIO_SOCKETBUF_MAX_ARITY)
+#if !defined(BOOST_ASIO_SOCKET_STREAMBUF_MAX_ARITY)
+#define BOOST_ASIO_SOCKET_STREAMBUF_MAX_ARITY 5
+#endif // !defined(BOOST_ASIO_SOCKET_STREAMBUF_MAX_ARITY)
 
 // A macro that should expand to:
 //   template < typename T1, ..., typename Tn >
-//   explicit basic_socketbuf( T1 x1, ..., Tn xn )
+//   explicit basic_socket_streambuf( T1 x1, ..., Tn xn )
 //     : basic_socket<Protocol, Service>(
 //         boost::base_from_member<io_service>::member)
 //   {
@@ -51,7 +51,7 @@
 
 #define BOOST_ASIO_PRIVATE_CTR_DEF( z, n, data ) \
   template < BOOST_PP_ENUM_PARAMS(n, typename T) > \
-  explicit basic_socketbuf( BOOST_PP_ENUM_BINARY_PARAMS(n, T, x) ) \
+  explicit basic_socket_streambuf( BOOST_PP_ENUM_BINARY_PARAMS(n, T, x) ) \
     : basic_socket<Protocol, Service>( \
         boost::base_from_member<io_service>::member) \
   { \
@@ -92,7 +92,7 @@ namespace asio {
 /// Iostream streambuf for a socket.
 template <typename Protocol,
     typename Service = stream_socket_service<Protocol> >
-class basic_socketbuf
+class basic_socket_streambuf
   : public std::streambuf,
     private boost::base_from_member<io_service>,
     public basic_socket<Protocol, Service>
@@ -101,8 +101,8 @@ public:
   /// The endpoint type.
   typedef typename Protocol::endpoint endpoint_type;
 
-  /// Construct a basic_socketbuf without establishing a connection.
-  basic_socketbuf()
+  /// Construct a basic_socket_streambuf without establishing a connection.
+  basic_socket_streambuf()
     : basic_socket<Protocol, Service>(
         boost::base_from_member<boost::asio::io_service>::member)
   {
@@ -110,7 +110,7 @@ public:
   }
 
   /// Establish a connection to the specified endpoint.
-  explicit basic_socketbuf(const endpoint_type& endpoint)
+  explicit basic_socket_streambuf(const endpoint_type& endpoint)
     : basic_socket<Protocol, Service>(
         boost::base_from_member<boost::asio::io_service>::member)
   {
@@ -126,15 +126,15 @@ public:
    * a resolver query object.
    */
   template <typename T1, ..., typename TN>
-  explicit basic_socketbuf(T1 t1, ..., TN tn);
+  explicit basic_socket_streambuf(T1 t1, ..., TN tn);
 #else
   BOOST_PP_REPEAT_FROM_TO(
-      1, BOOST_PP_INC(BOOST_ASIO_SOCKETBUF_MAX_ARITY),
+      1, BOOST_PP_INC(BOOST_ASIO_SOCKET_STREAMBUF_MAX_ARITY),
       BOOST_ASIO_PRIVATE_CTR_DEF, _ )
 #endif
 
   /// Destructor flushes buffered data.
-  ~basic_socketbuf()
+  ~basic_socket_streambuf()
   {
     sync();
   }
@@ -158,7 +158,7 @@ public:
   void connect(T1 t1, ..., TN tn);
 #else
   BOOST_PP_REPEAT_FROM_TO(
-      1, BOOST_PP_INC(BOOST_ASIO_SOCKETBUF_MAX_ARITY),
+      1, BOOST_PP_INC(BOOST_ASIO_SOCKET_STREAMBUF_MAX_ARITY),
       BOOST_ASIO_PRIVATE_CONNECT_DEF, _ )
 #endif
 
@@ -279,4 +279,4 @@ private:
 
 #include <boost/asio/detail/pop_options.hpp>
 
-#endif // BOOST_ASIO_BASIC_SOCKETBUF_HPP
+#endif // BOOST_ASIO_BASIC_SOCKET_STREAMBUF_HPP

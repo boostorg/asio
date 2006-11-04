@@ -30,6 +30,16 @@ namespace boost {
 namespace asio {
 namespace detail {
 
+template <typename T>
+inline std::size_t calculate_hash_value(const T& t)
+{
+  // It would be better to use "using boost::hash_value;" here, but it makes
+  // Borland C++ crash.
+  using namespace boost;
+
+  return hash_value(t);
+}
+
 template <typename K, typename V>
 class hash_map
   : private noncopyable
@@ -85,7 +95,7 @@ public:
   // Find an entry in the map.
   iterator find(const K& k)
   {
-    size_t bucket = boost::hash_value(k) % num_buckets;
+    size_t bucket = calculate_hash_value(k) % num_buckets;
     iterator it = buckets_[bucket].first;
     if (it == values_.end())
       return values_.end();
@@ -103,7 +113,7 @@ public:
   // Find an entry in the map.
   const_iterator find(const K& k) const
   {
-    size_t bucket = boost::hash_value(k) % num_buckets;
+    size_t bucket = calculate_hash_value(k) % num_buckets;
     const_iterator it = buckets_[bucket].first;
     if (it == values_.end())
       return it;
@@ -121,7 +131,7 @@ public:
   // Insert a new entry into the map.
   std::pair<iterator, bool> insert(const value_type& v)
   {
-    size_t bucket = boost::hash_value(v.first) % num_buckets;
+    size_t bucket = calculate_hash_value(v.first) % num_buckets;
     iterator it = buckets_[bucket].first;
     if (it == values_.end())
     {
@@ -146,7 +156,7 @@ public:
   {
     assert(it != values_.end());
 
-    size_t bucket = boost::hash_value(it->first) % num_buckets;
+    size_t bucket = calculate_hash_value(it->first) % num_buckets;
     bool is_first = (it == buckets_[bucket].first);
     bool is_last = (it == buckets_[bucket].last);
     if (is_first && is_last)
