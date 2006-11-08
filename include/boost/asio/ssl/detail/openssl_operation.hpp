@@ -34,7 +34,8 @@ namespace ssl {
 namespace detail {
 
 typedef boost::function<int (::SSL*)> ssl_primitive_func; 
-typedef boost::function<void (const error&, int)> user_handler_func;
+typedef boost::function<void (const boost::system::error_code&, int)>
+  user_handler_func;
 
 // Network send_/recv buffer implementation
 //
@@ -156,15 +157,15 @@ public:
 
     if (is_shut_down_sent && is_shut_down_received && is_operation_done)
       // SSL connection is shut down cleanly
-      return handler_(boost::asio::error(), 1);
+      return handler_(boost::asio::error::success, 1);
 
     if (is_shut_down_received && !is_write_needed)
-      return handler_(boost::asio::error(boost::asio::error::eof), 0);
+      return handler_(boost::asio::error::eof, 0);
 
     if (is_shut_down_received)
       // Shutdown has been requested, while we were reading or writing...
       // abort our action...
-      return handler_(boost::asio::error(boost::asio::error::shut_down), 0);
+      return handler_(boost::asio::error::shut_down, 0);
 
     if (!is_operation_done && !is_read_needed && !is_write_needed 
       && !is_shut_down_sent)
@@ -172,9 +173,15 @@ public:
       // The operation has failed... It is not completed and does 
       // not want network communication nor does want to send shutdown out...
       if (error_code == SSL_ERROR_SYSCALL)
-        return handler_(boost::asio::error(sys_error_code), rc); 
+      {
+        return handler_(boost::system::error_code(
+              sys_error_code, boost::system::native_ecat), rc); 
+      }
       else
-        return handler_(boost::asio::error(error_code + 1000000), rc); 
+      {
+        return handler_(boost::system::error_code(
+              error_code, boost::asio::error::ssl_ecat), rc); 
+      }
     }
 
     if (!is_operation_done && !is_write_needed)
@@ -199,7 +206,7 @@ public:
           if (!BIO_should_retry(ssl_bio_))
           {
             // Some serios error with BIO....
-            return handler_(boost::asio::error(boost::asio::error::no_recovery), 0);
+            return handler_(boost::asio::error::no_recovery, 0);
           }
         }
 
@@ -213,7 +220,7 @@ public:
 
 // Private implementation
 private:
-  typedef boost::function<int (const boost::asio::error&, int)>
+  typedef boost::function<int (const boost::system::error_code&, int)>
     int_handler_func;
   typedef boost::function<int (bool, int)> write_func;
 
@@ -235,15 +242,15 @@ private:
   SSL*    session_;
 
   //
-  int sync_user_handler(const boost::asio::error& error, int rc)
+  int sync_user_handler(const boost::system::error_code& error, int rc)
   {
     if (!error)
       return rc;
 
-    throw error;
+    throw boost::system::system_error(error);
   }
     
-  int async_user_handler(const boost::asio::error& error, int rc)
+  int async_user_handler(const boost::system::error_code& error, int rc)
   {
     user_handler_(error, rc);
     return 0;
@@ -296,7 +303,7 @@ private:
       {
         // Seems like fatal error
         // reading from SSL BIO has failed...
-        handler_(boost::asio::error(boost::asio::error::no_recovery), 0);
+        handler_(boost::asio::error::no_recovery, 0);
         return 0;
       }
     }
@@ -304,7 +311,7 @@ private:
     if (is_operation_done)
     {
       // Finish the operation, with success
-      handler_(boost::asio::error(), rc);
+      handler_(boost::asio::error::success, rc);
       return 0;
     }
     
@@ -316,7 +323,7 @@ private:
   }
 
   void async_write_handler(bool is_operation_done, int rc, 
-    const boost::asio::error& error, size_t bytes_sent)
+    const boost::system::error_code& error, size_t bytes_sent)
   {
     if (!error)
     {
@@ -324,7 +331,7 @@ private:
       send_buf_.data_removed(bytes_sent);
 
       if (is_operation_done)
-        handler_(boost::asio::error(), rc);
+        handler_(boost::asio::error::success, rc);
       else
         // Since the operation was not completed, try it again...
         start();
@@ -350,7 +357,8 @@ private:
     );
   }
 
-  void async_read_handler(const boost::asio::error& error, size_t bytes_recvd)
+  void async_read_handler(const boost::system::error_code& error,
+      size_t bytes_recvd)
   {
     if (!error)
     {
@@ -373,7 +381,7 @@ private:
         if (!BIO_should_retry(ssl_bio_))
         {
           // Some serios error with BIO....
-          handler_(boost::asio::error(boost::asio::error::no_recovery), 0);
+          handler_(boost::asio::error::no_recovery, 0);
           return;
         }
       }
@@ -417,7 +425,7 @@ private:
       {
         // Seems like fatal error
         // reading from SSL BIO has failed...
-        throw boost::asio::error(boost::asio::error::no_recovery);
+        throw boost::system::system_error(boost::asio::error::no_recovery);
       }
     }
     
@@ -457,7 +465,7 @@ private:
       if (!BIO_should_retry(ssl_bio_))
       {
         // Some serios error with BIO....
-        throw boost::asio::error(boost::asio::error::no_recovery);
+        throw boost::system::system_error(boost::asio::error::no_recovery);
       }
     }
 

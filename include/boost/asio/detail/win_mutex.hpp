@@ -19,11 +19,11 @@
 
 #include <boost/asio/detail/push_options.hpp>
 #include <boost/config.hpp>
+#include <boost/system/system_error.hpp>
 #include <boost/asio/detail/pop_options.hpp>
 
 #if defined(BOOST_WINDOWS)
 
-#include <boost/asio/system_exception.hpp>
 #include <boost/asio/detail/noncopyable.hpp>
 #include <boost/asio/detail/socket_types.hpp>
 #include <boost/asio/detail/scoped_lock.hpp>
@@ -48,7 +48,9 @@ public:
     int error = do_init();
     if (error != 0)
     {
-      system_exception e("mutex", error);
+      boost::system::system_error e(
+          boost::system::error_code(error, boost::system::native_ecat),
+          "mutex");
       boost::throw_exception(e);
     }
   }
@@ -65,7 +67,9 @@ public:
     int error = do_lock();
     if (error != 0)
     {
-      system_exception e("mutex", error);
+      boost::system::system_error e(
+          boost::system::error_code(error, boost::system::native_ecat),
+          "mutex");
       boost::throw_exception(e);
     }
   }

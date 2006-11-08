@@ -25,11 +25,11 @@
 #include <boost/asio/detail/pop_options.hpp>
 
 #include <boost/asio/buffer.hpp>
-#include <boost/asio/error_handler.hpp>
 #include <boost/asio/detail/bind_handler.hpp>
 #include <boost/asio/detail/const_buffers_iterator.hpp>
 #include <boost/asio/detail/handler_alloc_helpers.hpp>
 #include <boost/asio/detail/handler_invoke_helpers.hpp>
+#include <boost/asio/detail/throw_error.hpp>
 
 namespace boost {
 namespace asio {
@@ -38,13 +38,16 @@ template <typename Sync_Read_Stream, typename Allocator>
 inline std::size_t read_until(Sync_Read_Stream& s,
     boost::asio::basic_streambuf<Allocator>& b, char delim)
 {
-  return read_until(s, b, delim, throw_error());
+  boost::system::error_code ec;
+  std::size_t bytes_transferred = read_until(s, b, delim, ec);
+  boost::asio::detail::throw_error(ec);
+  return bytes_transferred;
 }
 
-template <typename Sync_Read_Stream, typename Allocator, typename Error_Handler>
+template <typename Sync_Read_Stream, typename Allocator>
 std::size_t read_until(Sync_Read_Stream& s,
     boost::asio::basic_streambuf<Allocator>& b, char delim,
-    Error_Handler error_handler)
+    boost::system::error_code& ec)
 {
   std::size_t next_search_start = 0;
   for (;;)
@@ -63,6 +66,7 @@ std::size_t read_until(Sync_Read_Stream& s,
     if (iter != end)
     {
       // Found a match. We're done.
+      ec = boost::system::error_code();
       return iter.position() + 1;
     }
     else
@@ -72,13 +76,9 @@ std::size_t read_until(Sync_Read_Stream& s,
     }
 
     // Need more data.
-    typename Sync_Read_Stream::error_type error;
-    b.commit(s.read_some(b.prepare(512), boost::asio::assign_error(error)));
-    if (error)
-    {
-      error_handler(error);
+    b.commit(s.read_some(b.prepare(512), ec));
+    if (ec)
       return 0;
-    }
   }
 }
 
@@ -86,7 +86,10 @@ template <typename Sync_Read_Stream, typename Allocator>
 inline std::size_t read_until(Sync_Read_Stream& s,
     boost::asio::basic_streambuf<Allocator>& b, const std::string& delim)
 {
-  return read_until(s, b, delim, throw_error());
+  boost::system::error_code ec;
+  std::size_t bytes_transferred = read_until(s, b, delim, ec);
+  boost::asio::detail::throw_error(ec);
+  return bytes_transferred;
 }
 
 namespace detail
@@ -124,10 +127,10 @@ namespace detail
   }
 } // namespace detail
 
-template <typename Sync_Read_Stream, typename Allocator, typename Error_Handler>
+template <typename Sync_Read_Stream, typename Allocator>
 std::size_t read_until(Sync_Read_Stream& s,
     boost::asio::basic_streambuf<Allocator>& b, const std::string& delim,
-    Error_Handler error_handler)
+    boost::system::error_code& ec)
 {
   std::size_t next_search_start = 0;
   for (;;)
@@ -149,6 +152,7 @@ std::size_t read_until(Sync_Read_Stream& s,
       if (result.second)
       {
         // Full match. We're done.
+        ec = boost::system::error_code();
         return result.first.position() + delim.length();
       }
       else
@@ -164,13 +168,9 @@ std::size_t read_until(Sync_Read_Stream& s,
     }
 
     // Need more data.
-    typename Sync_Read_Stream::error_type error;
-    b.commit(s.read_some(b.prepare(512), boost::asio::assign_error(error)));
-    if (error)
-    {
-      error_handler(error);
+    b.commit(s.read_some(b.prepare(512), ec));
+    if (ec)
       return 0;
-    }
   }
 }
 
@@ -178,13 +178,16 @@ template <typename Sync_Read_Stream, typename Allocator>
 inline std::size_t read_until(Sync_Read_Stream& s,
     boost::asio::basic_streambuf<Allocator>& b, const boost::regex& expr)
 {
-  return read_until(s, b, expr, throw_error());
+  boost::system::error_code ec;
+  std::size_t bytes_transferred = read_until(s, b, expr, ec);
+  boost::asio::detail::throw_error(ec);
+  return bytes_transferred;
 }
 
-template <typename Sync_Read_Stream, typename Allocator, typename Error_Handler>
+template <typename Sync_Read_Stream, typename Allocator>
 std::size_t read_until(Sync_Read_Stream& s,
     boost::asio::basic_streambuf<Allocator>& b, const boost::regex& expr,
-    Error_Handler error_handler)
+    boost::system::error_code& ec)
 {
   std::size_t next_search_start = 0;
   for (;;)
@@ -206,6 +209,7 @@ std::size_t read_until(Sync_Read_Stream& s,
       if (match_results[0].matched)
       {
         // Full match. We're done.
+        ec = boost::system::error_code();
         return match_results[0].second.position();
       }
       else
@@ -221,13 +225,9 @@ std::size_t read_until(Sync_Read_Stream& s,
     }
 
     // Need more data.
-    typename Sync_Read_Stream::error_type error;
-    b.commit(s.read_some(b.prepare(512), boost::asio::assign_error(error)));
-    if (error)
-    {
-      error_handler(error);
+    b.commit(s.read_some(b.prepare(512), ec));
+    if (ec)
       return 0;
-    }
   }
 }
 
@@ -248,14 +248,14 @@ namespace detail
     {
     }
 
-    void operator()(const typename Async_Read_Stream::error_type& e,
+    void operator()(const boost::system::error_code& ec,
         std::size_t bytes_transferred)
     {
       // Check for errors.
-      if (e)
+      if (ec)
       {
         std::size_t bytes = 0;
-        handler_(e, bytes);
+        handler_(ec, bytes);
         return;
       }
 
@@ -277,7 +277,7 @@ namespace detail
       {
         // Found a match. We're done.
         std::size_t bytes = iter.position() + 1;
-        handler_(e, bytes);
+        handler_(ec, bytes);
         return;
       }
 
@@ -341,9 +341,9 @@ void async_read_until(Async_Read_Stream& s,
   if (iter != end)
   {
     // Found a match. We're done.
-    typename Async_Read_Stream::error_type error;
+    boost::system::error_code ec;
     std::size_t bytes = iter.position() + 1;
-    s.io_service().post(detail::bind_handler(handler, error, bytes));
+    s.io_service().post(detail::bind_handler(handler, ec, bytes));
     return;
   }
 
@@ -371,14 +371,14 @@ namespace detail
     {
     }
 
-    void operator()(const typename Async_Read_Stream::error_type& e,
+    void operator()(const boost::system::error_code& ec,
         std::size_t bytes_transferred)
     {
       // Check for errors.
-      if (e)
+      if (ec)
       {
         std::size_t bytes = 0;
-        handler_(e, bytes);
+        handler_(ec, bytes);
         return;
       }
 
@@ -403,7 +403,7 @@ namespace detail
         {
           // Full match. We're done.
           std::size_t bytes = result.first.position() + delim_.length();
-          handler_(e, bytes);
+          handler_(ec, bytes);
           return;
         }
         else
@@ -482,9 +482,9 @@ void async_read_until(Async_Read_Stream& s,
     if (result.second)
     {
       // Full match. We're done.
-      typename Async_Read_Stream::error_type error;
+      boost::system::error_code ec;
       std::size_t bytes = result.first.position() + delim.length();
-      s.io_service().post(detail::bind_handler(handler, error, bytes));
+      s.io_service().post(detail::bind_handler(handler, ec, bytes));
       return;
     }
     else
@@ -524,14 +524,14 @@ namespace detail
     {
     }
 
-    void operator()(const typename Async_Read_Stream::error_type& e,
+    void operator()(const boost::system::error_code& ec,
         std::size_t bytes_transferred)
     {
       // Check for errors.
-      if (e)
+      if (ec)
       {
         std::size_t bytes = 0;
-        handler_(e, bytes);
+        handler_(ec, bytes);
         return;
       }
 
@@ -556,7 +556,7 @@ namespace detail
         {
           // Full match. We're done.
           std::size_t bytes = match_results[0].second.position();
-          handler_(e, bytes);
+          handler_(ec, bytes);
           return;
         }
         else
@@ -635,9 +635,9 @@ void async_read_until(Async_Read_Stream& s,
     if (match_results[0].matched)
     {
       // Full match. We're done.
-      typename Async_Read_Stream::error_type error;
+      boost::system::error_code ec;
       std::size_t bytes = match_results[0].second.position();
-      s.io_service().post(detail::bind_handler(handler, error, bytes));
+      s.io_service().post(detail::bind_handler(handler, ec, bytes));
       return;
     }
     else

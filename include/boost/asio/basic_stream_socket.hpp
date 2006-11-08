@@ -23,8 +23,9 @@
 #include <boost/asio/detail/pop_options.hpp>
 
 #include <boost/asio/basic_socket.hpp>
-#include <boost/asio/error_handler.hpp>
+#include <boost/asio/error.hpp>
 #include <boost/asio/stream_socket_service.hpp>
+#include <boost/asio/detail/throw_error.hpp>
 
 namespace boost {
 namespace asio {
@@ -39,8 +40,8 @@ namespace asio {
  * @e Shared @e objects: Unsafe.
  *
  * @par Concepts:
- * Async_Read_Stream, Async_Write_Stream, Error_Source, IO_Object, Stream,
- * Sync_Read_Stream, Sync_Write_Stream.
+ * Async_Read_Stream, Async_Write_Stream, Stream, Sync_Read_Stream,
+ * Sync_Write_Stream.
  */
 template <typename Protocol,
     typename Service = stream_socket_service<Protocol> >
@@ -81,7 +82,7 @@ public:
    *
    * @param protocol An object specifying protocol parameters to be used.
    *
-   * @throws boost::asio::error Thrown on failure.
+   * @throws boost::system::system_error Thrown on failure.
    */
   basic_stream_socket(boost::asio::io_service& io_service,
       const protocol_type& protocol)
@@ -102,7 +103,7 @@ public:
    * @param endpoint An endpoint on the local machine to which the stream
    * socket will be bound.
    *
-   * @throws boost::asio::error Thrown on failure.
+   * @throws boost::system::system_error Thrown on failure.
    */
   basic_stream_socket(boost::asio::io_service& io_service,
       const endpoint_type& endpoint)
@@ -122,7 +123,7 @@ public:
    *
    * @param native_socket The new underlying socket implementation.
    *
-   * @throws boost::asio::error Thrown on failure.
+   * @throws boost::system::system_error Thrown on failure.
    */
   basic_stream_socket(boost::asio::io_service& io_service,
       const protocol_type& protocol, const native_type& native_socket)
@@ -140,7 +141,7 @@ public:
    *
    * @returns The number of bytes sent.
    *
-   * @throws boost::asio::error Thrown on failure.
+   * @throws boost::system::system_error Thrown on failure.
    *
    * @note The send operation may not transmit all of the data to the peer.
    * Consider using the @ref write function if you need to ensure that all data
@@ -158,7 +159,11 @@ public:
   template <typename Const_Buffers>
   std::size_t send(const Const_Buffers& buffers)
   {
-    return this->service.send(this->implementation, buffers, 0, throw_error());
+    boost::system::error_code ec;
+    std::size_t s = this->service.send(
+        this->implementation, buffers, 0, ec);
+    boost::asio::detail::throw_error(ec);
+    return s;
   }
 
   /// Send some data on the socket.
@@ -173,7 +178,7 @@ public:
    *
    * @returns The number of bytes sent.
    *
-   * @throws boost::asio::error Thrown on failure.
+   * @throws boost::system::system_error Thrown on failure.
    *
    * @note The send operation may not transmit all of the data to the peer.
    * Consider using the @ref write function if you need to ensure that all data
@@ -192,8 +197,11 @@ public:
   std::size_t send(const Const_Buffers& buffers,
       socket_base::message_flags flags)
   {
-    return this->service.send(this->implementation, buffers, flags,
-        throw_error());
+    boost::system::error_code ec;
+    std::size_t s = this->service.send(
+        this->implementation, buffers, flags, ec);
+    boost::asio::detail::throw_error(ec);
+    return s;
   }
 
   /// Send some data on the socket.
@@ -206,27 +214,19 @@ public:
    *
    * @param flags Flags specifying how the send call is to be made.
    *
-   * @param error_handler A handler to be called when the operation completes,
-   * to indicate whether or not an error has occurred. Copies will be made of
-   * the handler as required. The function signature of the handler must be:
-   * @code void error_handler(
-   *   const boost::asio::error& error // Result of operation.
-   * ); @endcode
+   * @param ec Set to indicate what error occurred, if any.
    *
-   * @returns The number of bytes sent. Returns 0 if an error occurred and the
-   * error handler did not throw an exception.
+   * @returns The number of bytes sent. Returns 0 if an error occurred.
    *
    * @note The send operation may not transmit all of the data to the peer.
    * Consider using the @ref write function if you need to ensure that all data
    * is written before the blocking operation completes.
    */
-  template <typename Const_Buffers, typename Error_Handler>
+  template <typename Const_Buffers>
   std::size_t send(const Const_Buffers& buffers,
-      socket_base::message_flags flags,
-      Error_Handler error_handler)
+      socket_base::message_flags flags, boost::system::error_code& ec)
   {
-    return this->service.send(this->implementation, buffers, flags,
-        error_handler);
+    return this->service.send(this->implementation, buffers, flags, ec);
   }
 
   /// Start an asynchronous send.
@@ -243,8 +243,8 @@ public:
    * Copies will be made of the handler as required. The function signature of
    * the handler must be:
    * @code void handler(
-   *   const boost::asio::error& error,     // Result of operation.
-   *   std::size_t bytes_transferred // Number of bytes sent.
+   *   const boost::system::error_code& error, // Result of operation.
+   *   std::size_t bytes_transferred           // Number of bytes sent.
    * ); @endcode
    * Regardless of whether the asynchronous operation completes immediately or
    * not, the handler will not be invoked from within this function. Invocation
@@ -286,8 +286,8 @@ public:
    * Copies will be made of the handler as required. The function signature of
    * the handler must be:
    * @code void handler(
-   *   const boost::asio::error& error,     // Result of operation.
-   *   std::size_t bytes_transferred // Number of bytes sent.
+   *   const boost::system::error_code& error, // Result of operation.
+   *   std::size_t bytes_transferred           // Number of bytes sent.
    * ); @endcode
    * Regardless of whether the asynchronous operation completes immediately or
    * not, the handler will not be invoked from within this function. Invocation
@@ -324,7 +324,7 @@ public:
    *
    * @returns The number of bytes received.
    *
-   * @throws boost::asio::error Thrown on failure. An error code of
+   * @throws boost::system::system_error Thrown on failure. An error code of
    * boost::asio::error::eof indicates that the connection was closed by the
    * peer.
    *
@@ -345,8 +345,10 @@ public:
   template <typename Mutable_Buffers>
   std::size_t receive(const Mutable_Buffers& buffers)
   {
-    return this->service.receive(this->implementation, buffers, 0,
-        throw_error());
+    boost::system::error_code ec;
+    std::size_t s = this->service.receive(this->implementation, buffers, 0, ec);
+    boost::asio::detail::throw_error(ec);
+    return s;
   }
 
   /// Receive some data on the socket.
@@ -361,7 +363,7 @@ public:
    *
    * @returns The number of bytes received.
    *
-   * @throws boost::asio::error Thrown on failure. An error code of
+   * @throws boost::system::system_error Thrown on failure. An error code of
    * boost::asio::error::eof indicates that the connection was closed by the
    * peer.
    *
@@ -383,8 +385,11 @@ public:
   std::size_t receive(const Mutable_Buffers& buffers,
       socket_base::message_flags flags)
   {
-    return this->service.receive(this->implementation, buffers, flags,
-        throw_error());
+    boost::system::error_code ec;
+    std::size_t s = this->service.receive(
+        this->implementation, buffers, flags, ec);
+    boost::asio::detail::throw_error(ec);
+    return s;
   }
 
   /// Receive some data on a connected socket.
@@ -397,26 +402,19 @@ public:
    *
    * @param flags Flags specifying how the receive call is to be made.
    *
-   * @param error_handler A handler to be called when the operation completes,
-   * to indicate whether or not an error has occurred. Copies will be made of
-   * the handler as required. The function signature of the handler must be:
-   * @code void error_handler(
-   *   const boost::asio::error& error // Result of operation
-   * ); @endcode
+   * @param ec Set to indicate what error occurred, if any.
    *
-   * @returns The number of bytes received. Returns 0 if an error occurred and
-   * the error handler did not throw an exception.
+   * @returns The number of bytes received. Returns 0 if an error occurred.
    *
    * @note The receive operation may not receive all of the requested number of
    * bytes. Consider using the @ref read function if you need to ensure that the
    * requested amount of data is read before the blocking operation completes.
    */
-  template <typename Mutable_Buffers, typename Error_Handler>
+  template <typename Mutable_Buffers>
   std::size_t receive(const Mutable_Buffers& buffers,
-      socket_base::message_flags flags, Error_Handler error_handler)
+      socket_base::message_flags flags, boost::system::error_code& ec)
   {
-    return this->service.receive(this->implementation, buffers, flags,
-        error_handler);
+    return this->service.receive(this->implementation, buffers, flags, ec);
   }
 
   /// Start an asynchronous receive.
@@ -433,8 +431,8 @@ public:
    * completes. Copies will be made of the handler as required. The function
    * signature of the handler must be:
    * @code void handler(
-   *   const boost::asio::error& error,     // Result of operation.
-   *   std::size_t bytes_transferred // Number of bytes received.
+   *   const boost::system::error_code& error, // Result of operation.
+   *   std::size_t bytes_transferred           // Number of bytes received.
    * ); @endcode
    * Regardless of whether the asynchronous operation completes immediately or
    * not, the handler will not be invoked from within this function. Invocation
@@ -478,8 +476,8 @@ public:
    * completes. Copies will be made of the handler as required. The function
    * signature of the handler must be:
    * @code void handler(
-   *   const boost::asio::error& error,     // Result of operation.
-   *   std::size_t bytes_transferred // Number of bytes received.
+   *   const boost::system::error_code& error, // Result of operation.
+   *   std::size_t bytes_transferred           // Number of bytes received.
    * ); @endcode
    * Regardless of whether the asynchronous operation completes immediately or
    * not, the handler will not be invoked from within this function. Invocation
@@ -518,7 +516,7 @@ public:
    *
    * @returns The number of bytes written.
    *
-   * @throws boost::asio::error Thrown on failure. An error code of
+   * @throws boost::system::system_error Thrown on failure. An error code of
    * boost::asio::error::eof indicates that the connection was closed by the
    * peer.
    *
@@ -538,7 +536,10 @@ public:
   template <typename Const_Buffers>
   std::size_t write_some(const Const_Buffers& buffers)
   {
-    return this->service.send(this->implementation, buffers, 0, throw_error());
+    boost::system::error_code ec;
+    std::size_t s = this->service.send(this->implementation, buffers, 0, ec);
+    boost::asio::detail::throw_error(ec);
+    return s;
   }
 
   /// Write some data to the socket.
@@ -549,25 +550,19 @@ public:
    *
    * @param buffers One or more data buffers to be written to the socket.
    *
-   * @param error_handler A handler to be called when the operation completes,
-   * to indicate whether or not an error has occurred. Copies will be made of
-   * the handler as required. The function signature of the handler must be:
-   * @code void error_handler(
-   *   const boost::asio::error& error // Result of operation.
-   * ); @endcode
+   * @param ec Set to indicate what error occurred, if any.
    *
-   * @returns The number of bytes written. Returns 0 if an error occurred and
-   * the error handler did not throw an exception.
+   * @returns The number of bytes written. Returns 0 if an error occurred.
    *
    * @note The write_some operation may not transmit all of the data to the
    * peer. Consider using the @ref write function if you need to ensure that
    * all data is written before the blocking operation completes.
    */
-  template <typename Const_Buffers, typename Error_Handler>
+  template <typename Const_Buffers>
   std::size_t write_some(const Const_Buffers& buffers,
-      Error_Handler error_handler)
+      boost::system::error_code& ec)
   {
-    return this->service.send(this->implementation, buffers, 0, error_handler);
+    return this->service.send(this->implementation, buffers, 0, ec);
   }
 
   /// Start an asynchronous write.
@@ -584,8 +579,8 @@ public:
    * Copies will be made of the handler as required. The function signature of
    * the handler must be:
    * @code void handler(
-   *   const boost::asio::error& error,     // Result of operation.
-   *   std::size_t bytes_transferred // Number of bytes written.
+   *   const boost::system::error_code& error, // Result of operation.
+   *   std::size_t bytes_transferred           // Number of bytes written.
    * ); @endcode
    * Regardless of whether the asynchronous operation completes immediately or
    * not, the handler will not be invoked from within this function. Invocation
@@ -621,7 +616,7 @@ public:
    *
    * @returns The number of bytes read.
    *
-   * @throws boost::asio::error Thrown on failure. An error code of
+   * @throws boost::system::system_error Thrown on failure. An error code of
    * boost::asio::error::eof indicates that the connection was closed by the
    * peer.
    *
@@ -642,8 +637,10 @@ public:
   template <typename Mutable_Buffers>
   std::size_t read_some(const Mutable_Buffers& buffers)
   {
-    return this->service.receive(this->implementation, buffers, 0,
-        throw_error());
+    boost::system::error_code ec;
+    std::size_t s = this->service.receive(this->implementation, buffers, 0, ec);
+    boost::asio::detail::throw_error(ec);
+    return s;
   }
 
   /// Read some data from the socket.
@@ -654,27 +651,20 @@ public:
    *
    * @param buffers One or more buffers into which the data will be read.
    *
-   * @param error_handler A handler to be called when the operation completes,
-   * to indicate whether or not an error has occurred. Copies will be made of
-   * the handler as required. The function signature of the handler must be:
-   * @code void error_handler(
-   *   const boost::asio::error& error // Result of operation.
-   * ); @endcode
+   * @param ec Set to indicate what error occurred, if any.
    *
-   * @returns The number of bytes read. Returns 0 if an error occurred and the
-   * error handler did not throw an exception.
+   * @returns The number of bytes read. Returns 0 if an error occurred.
    *
    * @note The read_some operation may not read all of the requested number of
    * bytes. Consider using the @ref read function if you need to ensure that
    * the requested amount of data is read before the blocking operation
    * completes.
    */
-  template <typename Mutable_Buffers, typename Error_Handler>
+  template <typename Mutable_Buffers>
   std::size_t read_some(const Mutable_Buffers& buffers,
-      Error_Handler error_handler)
+      boost::system::error_code& ec)
   {
-    return this->service.receive(this->implementation, buffers, 0,
-        error_handler);
+    return this->service.receive(this->implementation, buffers, 0, ec);
   }
 
   /// Start an asynchronous read.
@@ -691,8 +681,8 @@ public:
    * Copies will be made of the handler as required. The function signature of
    * the handler must be:
    * @code void handler(
-   *   const boost::asio::error& error,     // Result of operation.
-   *   std::size_t bytes_transferred // Number of bytes read.
+   *   const boost::system::error_code& error, // Result of operation.
+   *   std::size_t bytes_transferred           // Number of bytes read.
    * ); @endcode
    * Regardless of whether the asynchronous operation completes immediately or
    * not, the handler will not be invoked from within this function. Invocation
@@ -729,7 +719,7 @@ public:
    *
    * @returns The number of bytes read.
    *
-   * @throws boost::asio::error Thrown on failure.
+   * @throws boost::system::system_error Thrown on failure.
    *
    * @par Example:
    * To peek using a single data buffer use the @ref buffer function as
@@ -742,8 +732,11 @@ public:
   template <typename Mutable_Buffers>
   std::size_t peek(const Mutable_Buffers& buffers)
   {
-    return this->service.receive(this->implementation, buffers,
-        socket_base::message_peek, throw_error());
+    boost::system::error_code ec;
+    std::size_t s = this->service.receive(this->implementation, buffers,
+        socket_base::message_peek, ec);
+    boost::asio::detail::throw_error(ec);
+    return s;
   }
 
   /// Peek at the incoming data on the stream socket.
@@ -754,21 +747,16 @@ public:
    *
    * @param buffers One or more buffers into which the data will be read.
    *
-   * @param error_handler A handler to be called when the operation completes,
-   * to indicate whether or not an error has occurred. Copies will be made of
-   * the handler as required. The function signature of the handler must be:
-   * @code void error_handler(
-   *   const boost::asio::error& error // Result of operation.
-   * ); @endcode
+   * @param ec Set to indicate what error occurred, if any.
    *
-   * @returns The number of bytes read. Returns 0 if an error occurred and the
-   * error handler did not throw an exception.
+   * @returns The number of bytes read. Returns 0 if an error occurred.
    */
-  template <typename Mutable_Buffers, typename Error_Handler>
-  std::size_t peek(const Mutable_Buffers& buffers, Error_Handler error_handler)
+  template <typename Mutable_Buffers>
+  std::size_t peek(const Mutable_Buffers& buffers,
+      boost::system::error_code& ec)
   {
     return this->service.receive(this->implementation, buffers,
-        socket_base::message_peek, error_handler);
+        socket_base::message_peek, ec);
   }
 
   /// Determine the amount of data that may be read without blocking.
@@ -778,12 +766,14 @@ public:
    *
    * @returns The number of bytes of data that can be read without blocking.
    *
-   * @throws boost::asio::error Thrown on failure.
+   * @throws boost::system::system_error Thrown on failure.
    */
   std::size_t in_avail()
   {
     socket_base::bytes_readable command;
-    this->service.io_control(this->implementation, command, throw_error());
+    boost::system::error_code ec;
+    this->service.io_control(this->implementation, command, ec);
+    boost::asio::detail::throw_error(ec);
     return command.get();
   }
 
@@ -792,20 +782,14 @@ public:
    * This function is used to determine the amount of data, in bytes, that may
    * be read from the stream socket without blocking.
    *
-   * @param error_handler A handler to be called when the operation completes,
-   * to indicate whether or not an error has occurred. Copies will be made of
-   * the handler as required. The function signature of the handler must be:
-   * @code void error_handler(
-   *   const boost::asio::error& error // Result of operation
-   * ); @endcode
+   * @param ec Set to indicate what error occurred, if any.
    *
    * @returns The number of bytes of data that can be read without blocking.
    */
-  template <typename Error_Handler>
-  std::size_t in_avail(Error_Handler error_handler)
+  std::size_t in_avail(boost::system::error_code& ec)
   {
     socket_base::bytes_readable command;
-    this->service.io_control(this->implementation, command, error_handler);
+    this->service.io_control(this->implementation, command, ec);
     return command.get();
   }
 };

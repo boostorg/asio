@@ -38,11 +38,11 @@ int main(int argc, char* argv[])
 
     // Try each endpoint until we successfully establish a connection.
     tcp::socket socket(io_service);
-    boost::asio::error error = boost::asio::error::host_not_found;
+    boost::system::error_code error = boost::asio::error::host_not_found;
     while (error && endpoint_iterator != end)
     {
       socket.close();
-      socket.connect(*endpoint_iterator++, boost::asio::assign_error(error));
+      socket.connect(*endpoint_iterator++, error);
     }
     if (error)
       throw error;
@@ -98,8 +98,7 @@ int main(int argc, char* argv[])
 
     // Read until EOF, writing data to output as we go.
     while (boost::asio::read(socket, response,
-          boost::asio::transfer_at_least(1),
-          boost::asio::assign_error(error)))
+          boost::asio::transfer_at_least(1), error))
       std::cout << &response;
     if (error != boost::asio::error::eof)
       throw error;

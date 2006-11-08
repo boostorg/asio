@@ -37,8 +37,9 @@ int main()
 
       std::string message = make_daytime_string();
 
+      boost::system::error_code ignored_error;
       boost::asio::write(socket, boost::asio::buffer(message),
-          boost::asio::transfer_all(), boost::asio::ignore_error());
+          boost::asio::transfer_all(), ignored_error);
     }
   }
   catch (std::exception& e)

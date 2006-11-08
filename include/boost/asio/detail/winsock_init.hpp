@@ -19,6 +19,7 @@
 
 #include <boost/asio/detail/push_options.hpp>
 #include <boost/config.hpp>
+#include <boost/system/system_error.hpp>
 #include <boost/asio/detail/pop_options.hpp>
 
 #if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
@@ -28,7 +29,6 @@
 #include <boost/throw_exception.hpp>
 #include <boost/asio/detail/pop_options.hpp>
 
-#include <boost/asio/system_exception.hpp>
 #include <boost/asio/detail/noncopyable.hpp>
 #include <boost/asio/detail/socket_types.hpp>
 
@@ -85,7 +85,9 @@ public:
     // catch the exception.
     if (this != &instance_ && ref_->result() != 0)
     {
-      system_exception e("winsock", ref_->result());
+      boost::system::system_error e(
+          boost::system::error_code(ref_->result(), boost::system::native_ecat),
+          "winsock");
       boost::throw_exception(e);
     }
   }

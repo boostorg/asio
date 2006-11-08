@@ -33,7 +33,7 @@ public:
     timer_.async_wait(boost::bind(&datagram_handler::close, this));
   }
 
-  void handle_receive_from(const error& err, size_t length)
+  void handle_receive_from(const boost::system::error_code& err, size_t length)
   {
     if (err)
     {
@@ -66,10 +66,6 @@ int main()
     io_service ios;
     datagram_handler dh(ios);
     ios.run();
-  }
-  catch (boost::asio::error& e)
-  {
-    std::cerr << "Exception: " << e << "\n";
   }
   catch (std::exception& e)
   {

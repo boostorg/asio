@@ -32,7 +32,7 @@ public:
     timer_.async_wait(boost::bind(&connect_handler::close, this));
   }
 
-  void handle_connect(const error& err)
+  void handle_connect(const boost::system::error_code& err)
   {
     if (err)
     {
@@ -74,10 +74,6 @@ int main()
     connect_handler ch9(ios);
 
     ios.run();
-  }
-  catch (boost::asio::error& e)
-  {
-    std::cerr << "Exception: " << e << "\n";
   }
   catch (std::exception& e)
   {

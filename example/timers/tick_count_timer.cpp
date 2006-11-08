@@ -85,7 +85,7 @@ struct tick_count_traits
 typedef boost::asio::basic_deadline_timer<
     DWORD, tick_count_traits> tick_count_timer;
 
-void handle_timeout(const boost::asio::error&)
+void handle_timeout(const boost::system::error_code&)
 {
   std::cout << "handle_timeout\n";
 }

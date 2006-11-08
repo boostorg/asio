@@ -29,7 +29,7 @@ public:
           boost::asio::placeholders::error, ++endpoint_iterator));
   }
 
-  void handle_connect(const boost::asio::error& error,
+  void handle_connect(const boost::system::error_code& error,
       boost::asio::ip::tcp::resolver::iterator endpoint_iterator)
   {
     if (!error)
@@ -52,7 +52,7 @@ public:
     }
   }
 
-  void handle_handshake(const boost::asio::error& error)
+  void handle_handshake(const boost::system::error_code& error)
   {
     if (!error)
     {
@@ -72,7 +72,8 @@ public:
     }
   }
 
-  void handle_write(const boost::asio::error& error, size_t bytes_transferred)
+  void handle_write(const boost::system::error_code& error,
+      size_t bytes_transferred)
   {
     if (!error)
     {
@@ -88,7 +89,8 @@ public:
     }
   }
 
-  void handle_read(const boost::asio::error& error, size_t bytes_transferred)
+  void handle_read(const boost::system::error_code& error,
+      size_t bytes_transferred)
   {
     if (!error)
     {
@@ -131,10 +133,6 @@ int main(int argc, char* argv[])
     client c(io_service, ctx, iterator);
 
     io_service.run();
-  }
-  catch (boost::asio::error& e)
-  {
-    std::cerr << e << "\n";
   }
   catch (std::exception& e)
   {

@@ -28,9 +28,9 @@
 #include <boost/asio/detail/pop_options.hpp>
 
 #include <boost/asio/basic_socket.hpp>
-#include <boost/asio/error_handler.hpp>
 #include <boost/asio/io_service.hpp>
 #include <boost/asio/stream_socket_service.hpp>
+#include <boost/asio/detail/throw_error.hpp>
 
 #if !defined(BOOST_ASIO_SOCKET_STREAMBUF_MAX_ARITY)
 #define BOOST_ASIO_SOCKET_STREAMBUF_MAX_ARITY 5
@@ -175,15 +175,15 @@ protected:
   {
     if (gptr() == egptr())
     {
-      boost::asio::error error;
+      boost::system::error_code ec;
       std::size_t bytes_transferred = this->service.receive(
           this->implementation,
           boost::asio::buffer(boost::asio::buffer(get_buffer_) + putback_max),
-          0, boost::asio::assign_error(error));
-      if (error)
+          0, ec);
+      if (ec)
       {
-        if (error != boost::asio::error::eof)
-          throw error;
+        if (ec != boost::asio::error::eof)
+          boost::asio::detail::throw_error(ec);
         return traits_type::eof();
       }
       setg(get_buffer_.begin(), get_buffer_.begin() + putback_max,
@@ -206,9 +206,11 @@ protected:
           boost::asio::buffer(pbase(), pptr() - pbase());
         while (boost::asio::buffer_size(buffer) > 0)
         {
+          boost::system::error_code ec;
           std::size_t bytes_transferred = this->service.send(
               this->implementation, boost::asio::buffer(buffer),
-              0, boost::asio::throw_error());
+              0, ec);
+          boost::asio::detail::throw_error(ec);
           buffer = buffer + bytes_transferred;
         }
         setp(put_buffer_.begin(), put_buffer_.end());
@@ -228,9 +230,11 @@ protected:
       boost::asio::buffer(pbase(), pptr() - pbase());
     while (boost::asio::buffer_size(buffer) > 0)
     {
+      boost::system::error_code ec;
       std::size_t bytes_transferred = this->service.send(
           this->implementation, boost::asio::buffer(buffer),
-          0, boost::asio::throw_error());
+          0, ec);
+      boost::asio::detail::throw_error(ec);
       buffer = buffer + bytes_transferred;
     }
     setp(put_buffer_.begin(), put_buffer_.end());
@@ -253,16 +257,14 @@ private:
     resolver_type resolver(
         boost::base_from_member<boost::asio::io_service>::member);
     iterator_type iterator = resolver.resolve(query);
-    boost::asio::error error(boost::asio::error::host_not_found);
-    while (error && iterator != iterator_type())
+    boost::system::error_code ec(boost::asio::error::host_not_found);
+    while (ec && iterator != iterator_type())
     {
       this->basic_socket<Protocol, Service>::close();
-      this->basic_socket<Protocol, Service>::connect(
-          *iterator, boost::asio::assign_error(error));
+      this->basic_socket<Protocol, Service>::connect(*iterator, ec);
       ++iterator;
     }
-    if (error)
-      throw error;
+    boost::asio::detail::throw_error(ec);
   }
 
   enum { putback_max = 8 };

@@ -43,9 +43,10 @@ void decrement_to_zero(boost::asio::deadline_timer* t, int* count)
   }
 }
 
-void increment_if_not_cancelled(int* count, const boost::asio::error& e)
+void increment_if_not_cancelled(int* count,
+    const boost::system::error_code& ec)
 {
-  if (!e)
+  if (!ec)
     ++(*count);
 }
 

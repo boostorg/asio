@@ -23,9 +23,10 @@
 #include <boost/noncopyable.hpp>
 #include <boost/asio/detail/pop_options.hpp>
 
-#include <boost/asio/error_handler.hpp>
+#include <boost/asio/error.hpp>
 #include <boost/asio/io_service.hpp>
 #include <boost/asio/ssl/context_base.hpp>
+#include <boost/asio/detail/throw_error.hpp>
 
 namespace boost {
 namespace asio {
@@ -77,11 +78,13 @@ public:
    * the context_base class. The options are bitwise-ored with any existing
    * value for the options.
    *
-   * @throws boost::asio::error Thrown on failure.
+   * @throws boost::system::system_error Thrown on failure.
    */
   void set_options(options o)
   {
-    service_.set_options(impl_, o, throw_error());
+    boost::system::error_code ec;
+    service_.set_options(impl_, o, ec);
+    boost::asio::detail::throw_error(ec);
   }
 
   /// Set options on the context.
@@ -92,17 +95,12 @@ public:
    * the context_base class. The options are bitwise-ored with any existing
    * value for the options.
    *
-   * @param error_handler A handler to be called when the operation completes,
-   * to indicate whether or not an error has occurred. Copies will be made of
-   * the handler as required. The function signature of the handler must be:
-   * @code void error_handler(
-   *   const boost::asio::error& error // Result of operation
-   * ); @endcode
+   * @param ec Set to indicate what error occurred, if any.
    */
-  template <typename Error_Handler>
-  void set_options(options o, Error_Handler error_handler)
+  boost::system::error_code set_options(options o,
+      boost::system::error_code& ec)
   {
-    service_.set_options(impl_, o, error_handler);
+    return service_.set_options(impl_, o, ec);
   }
 
   /// Set the peer verification mode.
@@ -113,11 +111,13 @@ public:
    * @param v A bitmask of peer verification modes. The available verify_mode
    * values are defined in the context_base class.
    *
-   * @throws boost::asio::error Thrown on failure.
+   * @throws boost::system::system_error Thrown on failure.
    */
   void set_verify_mode(verify_mode v)
   {
-    service_.set_verify_mode(impl_, v, throw_error());
+    boost::system::error_code ec;
+    service_.set_verify_mode(impl_, v, ec);
+    boost::asio::detail::throw_error(ec);
   }
 
   /// Set the peer verification mode.
@@ -128,17 +128,12 @@ public:
    * @param v A bitmask of peer verification modes. The available verify_mode
    * values are defined in the context_base class.
    *
-   * @param error_handler A handler to be called when the operation completes,
-   * to indicate whether or not an error has occurred. Copies will be made of
-   * the handler as required. The function signature of the handler must be:
-   * @code void error_handler(
-   *   const boost::asio::error& error // Result of operation
-   * ); @endcode
+   * @param ec Set to indicate what error occurred, if any.
    */
-  template <typename Error_Handler>
-  void set_verify_mode(verify_mode v, Error_Handler error_handler)
+  boost::system::error_code set_verify_mode(verify_mode v,
+      boost::system::error_code& ec)
   {
-    service_.set_verify_mode(impl_, v, error_handler);
+    return service_.set_verify_mode(impl_, v, ec);
   }
 
   /// Load a certification authority file for performing verification.
@@ -149,11 +144,13 @@ public:
    * @param filename The name of a file containing certification authority
    * certificates in PEM format.
    *
-   * @throws boost::asio::error Thrown on failure.
+   * @throws boost::system::system_error Thrown on failure.
    */
   void load_verify_file(const std::string& filename)
   {
-    service_.load_verify_file(impl_, filename, throw_error());
+    boost::system::error_code ec;
+    service_.load_verify_file(impl_, filename, ec);
+    boost::asio::detail::throw_error(ec);
   }
 
   /// Load a certification authority file for performing verification.
@@ -164,18 +161,12 @@ public:
    * @param filename The name of a file containing certification authority
    * certificates in PEM format.
    *
-   * @param error_handler A handler to be called when the operation completes,
-   * to indicate whether or not an error has occurred. Copies will be made of
-   * the handler as required. The function signature of the handler must be:
-   * @code void error_handler(
-   *   const boost::asio::error& error // Result of operation
-   * ); @endcode
+   * @param ec Set to indicate what error occurred, if any.
    */
-  template <typename Error_Handler>
-  void load_verify_file(const std::string& filename,
-      Error_Handler error_handler)
+  boost::system::error_code load_verify_file(const std::string& filename,
+      boost::system::error_code& ec)
   {
-    service_.load_verify_file(impl_, filename, error_handler);
+    return service_.load_verify_file(impl_, filename, ec);
   }
 
   /// Add a directory containing certificate authority files to be used for
@@ -188,11 +179,13 @@ public:
    *
    * @param path The name of a directory containing the certificates.
    *
-   * @throws boost::asio::error Thrown on failure.
+   * @throws boost::system::system_error Thrown on failure.
    */
   void add_verify_path(const std::string& path)
   {
-    service_.add_verify_path(impl_, path, throw_error());
+    boost::system::error_code ec;
+    service_.add_verify_path(impl_, path, ec);
+    boost::asio::detail::throw_error(ec);
   }
 
   /// Add a directory containing certificate authority files to be used for
@@ -205,17 +198,12 @@ public:
    *
    * @param path The name of a directory containing the certificates.
    *
-   * @param error_handler A handler to be called when the operation completes,
-   * to indicate whether or not an error has occurred. Copies will be made of
-   * the handler as required. The function signature of the handler must be:
-   * @code void error_handler(
-   *   const boost::asio::error& error // Result of operation
-   * ); @endcode
+   * @param ec Set to indicate what error occurred, if any.
    */
-  template <typename Error_Handler>
-  void add_verify_path(const std::string& path, Error_Handler error_handler)
+  boost::system::error_code add_verify_path(const std::string& path,
+      boost::system::error_code& ec)
   {
-    service_.add_verify_path(impl_, path, error_handler);
+    return service_.add_verify_path(impl_, path, ec);
   }
 
   /// Use a certificate from a file.
@@ -226,11 +214,13 @@ public:
    *
    * @param format The file format (ASN.1 or PEM).
    *
-   * @throws boost::asio::error Thrown on failure.
+   * @throws boost::system::system_error Thrown on failure.
    */
   void use_certificate_file(const std::string& filename, file_format format)
   {
-    service_.use_certificate_file(impl_, filename, format, throw_error());
+    boost::system::error_code ec;
+    service_.use_certificate_file(impl_, filename, format, ec);
+    boost::asio::detail::throw_error(ec);
   }
 
   /// Use a certificate from a file.
@@ -241,18 +231,12 @@ public:
    *
    * @param format The file format (ASN.1 or PEM).
    *
-   * @param error_handler A handler to be called when the operation completes,
-   * to indicate whether or not an error has occurred. Copies will be made of
-   * the handler as required. The function signature of the handler must be:
-   * @code void error_handler(
-   *   const boost::asio::error& error // Result of operation
-   * ); @endcode
+   * @param ec Set to indicate what error occurred, if any.
    */
-  template <typename Error_Handler>
-  void use_certificate_file(const std::string& filename, file_format format,
-      Error_Handler error_handler)
+  boost::system::error_code use_certificate_file(const std::string& filename,
+      file_format format, boost::system::error_code& ec)
   {
-    service_.use_certificate_file(impl_, filename, format, error_handler);
+    return service_.use_certificate_file(impl_, filename, format, ec);
   }
 
   /// Use a certificate chain from a file.
@@ -263,11 +247,13 @@ public:
    * @param filename The name of the file containing the certificate. The file
    * must use the PEM format.
    *
-   * @throws boost::asio::error Thrown on failure.
+   * @throws boost::system::system_error Thrown on failure.
    */
   void use_certificate_chain_file(const std::string& filename)
   {
-    service_.use_certificate_chain_file(impl_, filename, throw_error());
+    boost::system::error_code ec;
+    service_.use_certificate_chain_file(impl_, filename, ec);
+    boost::asio::detail::throw_error(ec);
   }
 
   /// Use a certificate chain from a file.
@@ -278,18 +264,12 @@ public:
    * @param filename The name of the file containing the certificate. The file
    * must use the PEM format.
    *
-   * @param error_handler A handler to be called when the operation completes,
-   * to indicate whether or not an error has occurred. Copies will be made of
-   * the handler as required. The function signature of the handler must be:
-   * @code void error_handler(
-   *   const boost::asio::error& error // Result of operation
-   * ); @endcode
+   * @param ec Set to indicate what error occurred, if any.
    */
-  template <typename Error_Handler>
-  void use_certificate_chain_file(const std::string& filename,
-      Error_Handler error_handler)
+  boost::system::error_code use_certificate_chain_file(
+      const std::string& filename, boost::system::error_code& ec)
   {
-    service_.use_certificate_chain_file(impl_, filename, error_handler);
+    return service_.use_certificate_chain_file(impl_, filename, ec);
   }
 
   /// Use a private key from a file.
@@ -300,11 +280,13 @@ public:
    *
    * @param format The file format (ASN.1 or PEM).
    *
-   * @throws boost::asio::error Thrown on failure.
+   * @throws boost::system::system_error Thrown on failure.
    */
   void use_private_key_file(const std::string& filename, file_format format)
   {
-    service_.use_private_key_file(impl_, filename, format, throw_error());
+    boost::system::error_code ec;
+    service_.use_private_key_file(impl_, filename, format, ec);
+    boost::asio::detail::throw_error(ec);
   }
 
   /// Use a private key from a file.
@@ -315,18 +297,12 @@ public:
    *
    * @param format The file format (ASN.1 or PEM).
    *
-   * @param error_handler A handler to be called when the operation completes,
-   * to indicate whether or not an error has occurred. Copies will be made of
-   * the handler as required. The function signature of the handler must be:
-   * @code void error_handler(
-   *   const boost::asio::error& error // Result of operation
-   * ); @endcode
+   * @param ec Set to indicate what error occurred, if any.
    */
-  template <typename Error_Handler>
-  void use_private_key_file(const std::string& filename, file_format format,
-      Error_Handler error_handler)
+  boost::system::error_code use_private_key_file(const std::string& filename,
+      file_format format, boost::system::error_code& ec)
   {
-    service_.use_private_key_file(impl_, filename, format, error_handler);
+    return service_.use_private_key_file(impl_, filename, format, ec);
   }
 
   /// Use an RSA private key from a file.
@@ -338,11 +314,13 @@ public:
    *
    * @param format The file format (ASN.1 or PEM).
    *
-   * @throws boost::asio::error Thrown on failure.
+   * @throws boost::system::system_error Thrown on failure.
    */
   void use_rsa_private_key_file(const std::string& filename, file_format format)
   {
-    service_.use_rsa_private_key_file(impl_, filename, format, throw_error());
+    boost::system::error_code ec;
+    service_.use_rsa_private_key_file(impl_, filename, format, ec);
+    boost::asio::detail::throw_error(ec);
   }
 
   /// Use an RSA private key from a file.
@@ -354,18 +332,13 @@ public:
    *
    * @param format The file format (ASN.1 or PEM).
    *
-   * @param error_handler A handler to be called when the operation completes,
-   * to indicate whether or not an error has occurred. Copies will be made of
-   * the handler as required. The function signature of the handler must be:
-   * @code void error_handler(
-   *   const boost::asio::error& error // Result of operation
-   * ); @endcode
+   * @param ec Set to indicate what error occurred, if any.
    */
-  template <typename Error_Handler>
-  void use_rsa_private_key_file(const std::string& filename, file_format format,
-      Error_Handler error_handler)
+  boost::system::error_code use_rsa_private_key_file(
+      const std::string& filename, file_format format,
+      boost::system::error_code& ec)
   {
-    service_.use_rsa_private_key_file(impl_, filename, format, error_handler);
+    return service_.use_rsa_private_key_file(impl_, filename, format, ec);
   }
 
   /// Use the specified file to obtain the temporary Diffie-Hellman parameters.
@@ -376,11 +349,13 @@ public:
    * @param filename The name of the file containing the Diffie-Hellman
    * parameters. The file must use the PEM format.
    *
-   * @throws boost::asio::error Thrown on failure.
+   * @throws boost::system::system_error Thrown on failure.
    */
   void use_tmp_dh_file(const std::string& filename)
   {
-    service_.use_tmp_dh_file(impl_, filename, throw_error());
+    boost::system::error_code ec;
+    service_.use_tmp_dh_file(impl_, filename, ec);
+    boost::asio::detail::throw_error(ec);
   }
 
   /// Use the specified file to obtain the temporary Diffie-Hellman parameters.
@@ -391,17 +366,12 @@ public:
    * @param filename The name of the file containing the Diffie-Hellman
    * parameters. The file must use the PEM format.
    *
-   * @param error_handler A handler to be called when the operation completes,
-   * to indicate whether or not an error has occurred. Copies will be made of
-   * the handler as required. The function signature of the handler must be:
-   * @code void error_handler(
-   *   const boost::asio::error& error // Result of operation
-   * ); @endcode
+   * @param ec Set to indicate what error occurred, if any.
    */
-  template <typename Error_Handler>
-  void use_tmp_dh_file(const std::string& filename, Error_Handler error_handler)
+  boost::system::error_code use_tmp_dh_file(const std::string& filename,
+      boost::system::error_code& ec)
   {
-    service_.use_tmp_dh_file(impl_, filename, error_handler);
+    return service_.use_tmp_dh_file(impl_, filename, ec);
   }
 
   /// Set the password callback.
@@ -417,12 +387,14 @@ public:
    * ); @endcode
    * The return value of the callback is a string containing the password.
    *
-   * @throws boost::asio::error Thrown on failure.
+   * @throws boost::system::system_error Thrown on failure.
    */
   template <typename Password_Callback>
   void set_password_callback(Password_Callback callback)
   {
-    service_.set_password_callback(impl_, callback, throw_error());
+    boost::system::error_code ec;
+    service_.set_password_callback(impl_, callback, ec);
+    boost::asio::detail::throw_error(ec);
   }
 
   /// Set the password callback.
@@ -438,18 +410,13 @@ public:
    * ); @endcode
    * The return value of the callback is a string containing the password.
    *
-   * @param error_handler A handler to be called when the operation completes,
-   * to indicate whether or not an error has occurred. Copies will be made of
-   * the handler as required. The function signature of the handler must be:
-   * @code void error_handler(
-   *   const boost::asio::error& error // Result of operation
-   * ); @endcode
+   * @param ec Set to indicate what error occurred, if any.
    */
-  template <typename Password_Callback, typename Error_Handler>
-  void set_password_callback(Password_Callback callback,
-      Error_Handler error_handler)
+  template <typename Password_Callback>
+  boost::system::error_code set_password_callback(Password_Callback callback,
+      boost::system::error_code& ec)
   {
-    service_.set_password_callback(impl_, callback, error_handler);
+    return service_.set_password_callback(impl_, callback, ec);
   }
 
 private:

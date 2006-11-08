@@ -34,7 +34,6 @@
 #include <boost/asio/datagram_socket_service.hpp>
 #include <boost/asio/deadline_timer_service.hpp>
 #include <boost/asio/deadline_timer.hpp>
-#include <boost/asio/error_handler.hpp>
 #include <boost/asio/error.hpp>
 #include <boost/asio/handler_alloc_hook.hpp>
 #include <boost/asio/handler_invoke_hook.hpp>
@@ -63,7 +62,6 @@
 #include <boost/asio/strand.hpp>
 #include <boost/asio/stream_socket_service.hpp>
 #include <boost/asio/streambuf.hpp>
-#include <boost/asio/system_exception.hpp>
 #include <boost/asio/time_traits.hpp>
 #include <boost/asio/write.hpp>
 

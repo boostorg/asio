@@ -20,9 +20,9 @@
 #include <boost/asio/basic_io_object.hpp>
 #include <boost/asio/basic_socket.hpp>
 #include <boost/asio/error.hpp>
-#include <boost/asio/error_handler.hpp>
 #include <boost/asio/socket_acceptor_service.hpp>
 #include <boost/asio/socket_base.hpp>
+#include <boost/asio/detail/throw_error.hpp>
 
 namespace boost {
 namespace asio {
@@ -35,9 +35,6 @@ namespace asio {
  * @par Thread Safety:
  * @e Distinct @e objects: Safe.@n
  * @e Shared @e objects: Unsafe.
- *
- * @par Concepts:
- * Async_Object, Error_Source.
  *
  * @par Example:
  * Opening a socket acceptor with the SO_REUSEADDR option enabled:
@@ -66,9 +63,6 @@ public:
   /// The endpoint type.
   typedef typename Protocol::endpoint endpoint_type;
 
-  /// The type used for reporting errors.
-  typedef boost::asio::error error_type;
-
   /// Construct an acceptor without opening it.
   /**
    * This constructor creates an acceptor without opening it to listen for new
@@ -94,13 +88,15 @@ public:
    *
    * @param protocol An object specifying protocol parameters to be used.
    *
-   * @throws boost::asio::error Thrown on failure.
+   * @throws boost::system::system_error Thrown on failure.
    */
   basic_socket_acceptor(boost::asio::io_service& io_service,
       const protocol_type& protocol)
     : basic_io_object<Service>(io_service)
   {
-    this->service.open(this->implementation, protocol, throw_error());
+    boost::system::error_code ec;
+    this->service.open(this->implementation, protocol, ec);
+    boost::asio::detail::throw_error(ec);
   }
 
   /// Construct an acceptor opened on the given endpoint.
@@ -118,7 +114,7 @@ public:
    * @param reuse_addr Whether the constructor should set the socket option
    * socket_base::reuse_address.
    *
-   * @throws boost::asio::error Thrown on failure.
+   * @throws boost::system::system_error Thrown on failure.
    *
    * @note This constructor is equivalent to the following code:
    * @code
@@ -134,16 +130,20 @@ public:
       const endpoint_type& endpoint, bool reuse_addr = true)
     : basic_io_object<Service>(io_service)
   {
-    this->service.open(this->implementation, endpoint.protocol(),
-        throw_error());
+    boost::system::error_code ec;
+    this->service.open(this->implementation, endpoint.protocol(), ec);
+    boost::asio::detail::throw_error(ec);
     if (reuse_addr)
     {
       this->service.set_option(this->implementation,
-          socket_base::reuse_address(true), throw_error());
+          socket_base::reuse_address(true), ec);
+      boost::asio::detail::throw_error(ec);
     }
-    this->service.bind(this->implementation, endpoint, throw_error());
+    this->service.bind(this->implementation, endpoint, ec);
+    boost::asio::detail::throw_error(ec);
     this->service.listen(this->implementation,
-        socket_base::max_connections, throw_error());
+        socket_base::max_connections, ec);
+    boost::asio::detail::throw_error(ec);
   }
 
   /// Construct a basic_socket_acceptor on an existing native acceptor.
@@ -159,14 +159,15 @@ public:
    *
    * @param native_acceptor A native acceptor.
    *
-   * @throws boost::asio::error Thrown on failure.
+   * @throws boost::system::system_error Thrown on failure.
    */
   basic_socket_acceptor(boost::asio::io_service& io_service,
       const protocol_type& protocol, const native_type& native_acceptor)
     : basic_io_object<Service>(io_service)
   {
-    this->service.assign(this->implementation, protocol, native_acceptor,
-        throw_error());
+    boost::system::error_code ec;
+    this->service.assign(this->implementation, protocol, native_acceptor, ec);
+    boost::asio::detail::throw_error(ec);
   }
 
   /// Open the acceptor using the specified protocol.
@@ -175,6 +176,8 @@ public:
    * protocol.
    *
    * @param protocol An object specifying which protocol is to be used.
+   *
+   * @throws boost::system::system_error Thrown on failure.
    *
    * @par Example:
    * @code
@@ -184,7 +187,9 @@ public:
    */
   void open(const protocol_type& protocol = protocol_type())
   {
-    this->service.open(this->implementation, protocol, throw_error());
+    boost::system::error_code ec;
+    this->service.open(this->implementation, protocol, ec);
+    boost::asio::detail::throw_error(ec);
   }
 
   /// Open the acceptor using the specified protocol.
@@ -194,29 +199,23 @@ public:
    *
    * @param protocol An object specifying which protocol is to be used.
    *
-   * @param error_handler A handler to be called when the operation completes,
-   * to indicate whether or not an error has occurred. Copies will be made of
-   * the handler as required. The function signature of the handler must be:
-   * @code void error_handler(
-   *   const boost::asio::error& error // Result of operation
-   * ); @endcode
+   * @param ec Set to indicate what error occurred, if any.
    *
    * @par Example:
    * @code
    * boost::asio::ip::tcp::acceptor acceptor(io_service);
-   * boost::asio::error error;
-   * acceptor.open(boost::asio::ip::tcp::v4(),
-   *     boost::asio::assign_error(error));
-   * if (error)
+   * boost::system::error_code ec;
+   * acceptor.open(boost::asio::ip::tcp::v4(), ec);
+   * if (ec)
    * {
    *   // An error occurred.
    * }
    * @endcode
    */
-  template <typename Error_Handler>
-  void open(const protocol_type& protocol, Error_Handler error_handler)
+  boost::system::error_code open(const protocol_type& protocol,
+      boost::system::error_code& ec)
   {
-    this->service.open(this->implementation, protocol, error_handler);
+    return this->service.open(this->implementation, protocol, ec);
   }
 
   /// Assigns an existing native acceptor to the acceptor.
@@ -227,12 +226,13 @@ public:
    *
    * @param native_acceptor A native acceptor.
    *
-   * @throws boost::asio::error Thrown on failure.
+   * @throws boost::system::system_error Thrown on failure.
    */
   void assign(const protocol_type& protocol, const native_type& native_acceptor)
   {
-    this->service.assign(this->implementation, protocol, native_acceptor,
-        throw_error());
+    boost::system::error_code ec;
+    this->service.assign(this->implementation, protocol, native_acceptor, ec);
+    boost::asio::detail::throw_error(ec);
   }
 
   /// Assigns an existing native acceptor to the acceptor.
@@ -243,19 +243,13 @@ public:
    *
    * @param native_acceptor A native acceptor.
    *
-   * @param error_handler A handler to be called when the operation completes,
-   * to indicate whether or not an error has occurred. Copies will be made of
-   * the handler as required. The function signature of the handler must be:
-   * @code void error_handler(
-   *   const boost::asio::error& error // Result of operation
-   * ); @endcode
+   * @param ec Set to indicate what error occurred, if any.
    */
-  template <typename Error_Handler>
-  void assign(const protocol_type& protocol, const native_type& native_acceptor,
-      Error_Handler error_handler)
+  boost::system::error_code assign(const protocol_type& protocol,
+      const native_type& native_acceptor, boost::system::error_code& ec)
   {
-    this->service.assign(this->implementation, protocol, native_acceptor,
-        error_handler);
+    return this->service.assign(this->implementation,
+        protocol, native_acceptor, ec);
   }
 
   /// Bind the acceptor to the given local endpoint.
@@ -266,7 +260,7 @@ public:
    * @param endpoint An endpoint on the local machine to which the socket
    * acceptor will be bound.
    *
-   * @throws boost::asio::error Thrown on failure.
+   * @throws boost::system::system_error Thrown on failure.
    *
    * @par Example:
    * @code
@@ -277,7 +271,9 @@ public:
    */
   void bind(const endpoint_type& endpoint)
   {
-    this->service.bind(this->implementation, endpoint, throw_error());
+    boost::system::error_code ec;
+    this->service.bind(this->implementation, endpoint, ec);
+    boost::asio::detail::throw_error(ec);
   }
 
   /// Bind the acceptor to the given local endpoint.
@@ -288,30 +284,24 @@ public:
    * @param endpoint An endpoint on the local machine to which the socket
    * acceptor will be bound.
    *
-   * @param error_handler A handler to be called when the operation completes,
-   * to indicate whether or not an error has occurred. Copies will be made of
-   * the handler as required. The function signature of the handler must be:
-   * @code void error_handler(
-   *   const boost::asio::error& error // Result of operation
-   * ); @endcode
+   * @param ec Set to indicate what error occurred, if any.
    *
    * @par Example:
    * @code
    * boost::asio::ip::tcp::acceptor acceptor(io_service);
    * acceptor.open(boost::asio::ip::tcp::v4());
-   * boost::asio::error error;
-   * acceptor.bind(boost::asio::ip::tcp::endpoint(12345),
-   *     boost::asio::assign_error(error));
-   * if (error)
+   * boost::system::error_code ec;
+   * acceptor.bind(boost::asio::ip::tcp::endpoint(12345), ec);
+   * if (ec)
    * {
    *   // An error occurred.
    * }
    * @endcode
    */
-  template <typename Error_Handler>
-  void bind(const endpoint_type& endpoint, Error_Handler error_handler)
+  boost::system::error_code bind(const endpoint_type& endpoint,
+      boost::system::error_code& ec)
   {
-    this->service.bind(this->implementation, endpoint, error_handler);
+    return this->service.bind(this->implementation, endpoint, ec);
   }
 
   /// Place the acceptor into the state where it will listen for new
@@ -321,10 +311,14 @@ public:
    * new connections.
    *
    * @param backlog The maximum length of the queue of pending connections.
+   *
+   * @throws boost::system::system_error Thrown on failure.
    */
   void listen(int backlog = socket_base::max_connections)
   {
-    this->service.listen(this->implementation, backlog, throw_error());
+    boost::system::error_code ec;
+    this->service.listen(this->implementation, backlog, ec);
+    boost::asio::detail::throw_error(ec);
   }
 
   /// Place the acceptor into the state where it will listen for new
@@ -335,30 +329,23 @@ public:
    *
    * @param backlog The maximum length of the queue of pending connections.
    *
-   * @param error_handler A handler to be called when the operation completes,
-   * to indicate whether or not an error has occurred. Copies will be made of
-   * the handler as required. The function signature of the handler must be:
-   * @code void error_handler(
-   *   const boost::asio::error& error // Result of operation
-   * ); @endcode
+   * @param ec Set to indicate what error occurred, if any.
    *
    * @par Example:
    * @code
    * boost::asio::ip::tcp::acceptor acceptor(io_service);
    * ...
-   * boost::asio::error error;
-   * acceptor.listen(boost::asio::socket_base::max_connections,
-   *     boost::asio::assign_error(error));
-   * if (error)
+   * boost::system::error_code ec;
+   * acceptor.listen(boost::asio::socket_base::max_connections, ec);
+   * if (ec)
    * {
    *   // An error occurred.
    * }
    * @endcode
    */
-  template <typename Error_Handler>
-  void listen(int backlog, Error_Handler error_handler)
+  boost::system::error_code listen(int backlog, boost::system::error_code& ec)
   {
-    this->service.listen(this->implementation, backlog, error_handler);
+    return this->service.listen(this->implementation, backlog, ec);
   }
 
   /// Close the acceptor.
@@ -369,11 +356,13 @@ public:
    * A subsequent call to open() is required before the acceptor can again be
    * used to again perform socket accept operations.
    *
-   * @throws boost::asio::error Thrown on failure.
+   * @throws boost::system::system_error Thrown on failure.
    */
   void close()
   {
-    this->service.close(this->implementation, throw_error());
+    boost::system::error_code ec;
+    this->service.close(this->implementation, ec);
+    boost::asio::detail::throw_error(ec);
   }
 
   /// Close the acceptor.
@@ -384,29 +373,23 @@ public:
    * A subsequent call to open() is required before the acceptor can again be
    * used to again perform socket accept operations.
    *
-   * @param error_handler A handler to be called when the operation completes,
-   * to indicate whether or not an error has occurred. Copies will be made of
-   * the handler as required. The function signature of the handler must be:
-   * @code void error_handler(
-   *   const boost::asio::error& error // Result of operation
-   * ); @endcode
+   * @param ec Set to indicate what error occurred, if any.
    *
    * @par Example:
    * @code
    * boost::asio::ip::tcp::acceptor acceptor(io_service);
    * ...
-   * boost::asio::error error;
-   * acceptor.close(boost::asio::assign_error(error));
-   * if (error)
+   * boost::system::error_code ec;
+   * acceptor.close(ec);
+   * if (ec)
    * {
    *   // An error occurred.
    * }
    * @endcode
    */
-  template <typename Error_Handler>
-  void close(Error_Handler error_handler)
+  boost::system::error_code close(boost::system::error_code& ec)
   {
-    this->service.close(this->implementation, error_handler);
+    return this->service.close(this->implementation, ec);
   }
 
   /// Get the native acceptor representation.
@@ -426,11 +409,13 @@ public:
    * operations to finish immediately, and the handlers for cancelled operations
    * will be passed the boost::asio::error::operation_aborted error.
    *
-   * @throws boost::asio::error Thrown on failure.
+   * @throws boost::system::system_error Thrown on failure.
    */
   void cancel()
   {
-    this->service.cancel(this->implementation, throw_error());
+    boost::system::error_code ec;
+    this->service.cancel(this->implementation, ec);
+    boost::asio::detail::throw_error(ec);
   }
 
   /// Cancel all asynchronous operations associated with the acceptor.
@@ -439,17 +424,11 @@ public:
    * operations to finish immediately, and the handlers for cancelled operations
    * will be passed the boost::asio::error::operation_aborted error.
    *
-   * @param error_handler A handler to be called when the operation completes,
-   * to indicate whether or not an error has occurred. Copies will be made of
-   * the handler as required. The function signature of the handler must be:
-   * @code void error_handler(
-   *   const boost::asio::error& error // Result of operation
-   * ); @endcode
+   * @param ec Set to indicate what error occurred, if any.
    */
-  template <typename Error_Handler>
-  void cancel(Error_Handler error_handler)
+  boost::system::error_code cancel(boost::system::error_code& ec)
   {
-    this->service.cancel(this->implementation, error_handler);
+    return this->service.cancel(this->implementation, ec);
   }
 
   /// Set an option on the acceptor.
@@ -458,7 +437,7 @@ public:
    *
    * @param option The new option value to be set on the acceptor.
    *
-   * @throws boost::asio::error Thrown on failure.
+   * @throws boost::system::system_error Thrown on failure.
    *
    * @sa Socket_Option @n
    * boost::asio::socket_base::reuse_address
@@ -476,7 +455,9 @@ public:
   template <typename Option>
   void set_option(const Option& option)
   {
-    this->service.set_option(this->implementation, option, throw_error());
+    boost::system::error_code ec;
+    this->service.set_option(this->implementation, option, ec);
+    boost::asio::detail::throw_error(ec);
   }
 
   /// Set an option on the acceptor.
@@ -485,12 +466,7 @@ public:
    *
    * @param option The new option value to be set on the acceptor.
    *
-   * @param error_handler A handler to be called when the operation completes,
-   * to indicate whether or not an error has occurred. Copies will be made of
-   * the handler as required. The function signature of the handler must be:
-   * @code void error_handler(
-   *   const boost::asio::error& error // Result of operation
-   * ); @endcode
+   * @param ec Set to indicate what error occurred, if any.
    *
    * @sa Socket_Option @n
    * boost::asio::socket_base::reuse_address
@@ -502,18 +478,19 @@ public:
    * boost::asio::ip::tcp::acceptor acceptor(io_service);
    * ...
    * boost::asio::ip::tcp::acceptor::reuse_address option(true);
-   * boost::asio::error error;
-   * acceptor.set_option(option, boost::asio::assign_error(error));
-   * if (error)
+   * boost::system::error_code ec;
+   * acceptor.set_option(option, ec);
+   * if (ec)
    * {
    *   // An error occurred.
    * }
    * @endcode
    */
-  template <typename Option, typename Error_Handler>
-  void set_option(const Option& option, Error_Handler error_handler)
+  template <typename Option>
+  boost::system::error_code set_option(const Option& option,
+      boost::system::error_code& ec)
   {
-    this->service.set_option(this->implementation, option, error_handler);
+    return this->service.set_option(this->implementation, option, ec);
   }
 
   /// Get an option from the acceptor.
@@ -523,7 +500,7 @@ public:
    *
    * @param option The option value to be obtained from the acceptor.
    *
-   * @throws boost::asio::error Thrown on failure.
+   * @throws boost::system::system_error Thrown on failure.
    *
    * @sa Socket_Option @n
    * boost::asio::socket_base::reuse_address
@@ -541,7 +518,9 @@ public:
   template <typename Option>
   void get_option(Option& option)
   {
-    this->service.get_option(this->implementation, option, throw_error());
+    boost::system::error_code ec;
+    this->service.get_option(this->implementation, option, ec);
+    boost::asio::detail::throw_error(ec);
   }
 
   /// Get an option from the acceptor.
@@ -551,12 +530,7 @@ public:
    *
    * @param option The option value to be obtained from the acceptor.
    *
-   * @param error_handler A handler to be called when the operation completes,
-   * to indicate whether or not an error has occurred. Copies will be made of
-   * the handler as required. The function signature of the handler must be:
-   * @code void error_handler(
-   *   const boost::asio::error& error // Result of operation
-   * ); @endcode
+   * @param ec Set to indicate what error occurred, if any.
    *
    * @sa Socket_Option @n
    * boost::asio::socket_base::reuse_address
@@ -567,19 +541,20 @@ public:
    * boost::asio::ip::tcp::acceptor acceptor(io_service);
    * ...
    * boost::asio::ip::tcp::acceptor::reuse_address option;
-   * boost::asio::error error;
-   * acceptor.get_option(option, boost::asio::assign_error(error));
-   * if (error)
+   * boost::system::error_code ec;
+   * acceptor.get_option(option, ec);
+   * if (ec)
    * {
    *   // An error occurred.
    * }
    * bool is_set = option.get();
    * @endcode
    */
-  template <typename Option, typename Error_Handler>
-  void get_option(Option& option, Error_Handler error_handler)
+  template <typename Option>
+  boost::system::error_code get_option(Option& option,
+      boost::system::error_code& ec)
   {
-    this->service.get_option(this->implementation, option, error_handler);
+    return this->service.get_option(this->implementation, option, ec);
   }
 
   /// Get the local endpoint of the acceptor.
@@ -588,7 +563,7 @@ public:
    *
    * @returns An object that represents the local endpoint of the acceptor.
    *
-   * @throws boost::asio::error Thrown on failure.
+   * @throws boost::system::system_error Thrown on failure.
    *
    * @par Example:
    * @code
@@ -599,19 +574,17 @@ public:
    */
   endpoint_type local_endpoint() const
   {
-    return this->service.local_endpoint(this->implementation, throw_error());
+    boost::system::error_code ec;
+    endpoint_type ep = this->service.local_endpoint(this->implementation, ec);
+    boost::asio::detail::throw_error(ec);
+    return ep;
   }
 
   /// Get the local endpoint of the acceptor.
   /**
    * This function is used to obtain the locally bound endpoint of the acceptor.
    *
-   * @param error_handler A handler to be called when the operation completes,
-   * to indicate whether or not an error has occurred. Copies will be made of
-   * the handler as required. The function signature of the handler must be:
-   * @code void error_handler(
-   *   const boost::asio::error& error // Result of operation
-   * ); @endcode
+   * @param ec Set to indicate what error occurred, if any.
    *
    * @returns An object that represents the local endpoint of the acceptor.
    * Returns a default-constructed endpoint object if an error occurred and the
@@ -621,19 +594,17 @@ public:
    * @code
    * boost::asio::ip::tcp::acceptor acceptor(io_service);
    * ...
-   * boost::asio::error error;
-   * boost::asio::ip::tcp::endpoint endpoint
-   *   = acceptor.local_endpoint(boost::asio::assign_error(error));
-   * if (error)
+   * boost::system::error_code ec;
+   * boost::asio::ip::tcp::endpoint endpoint = acceptor.local_endpoint(ec);
+   * if (ec)
    * {
    *   // An error occurred.
    * }
    * @endcode
    */
-  template <typename Error_Handler>
-  endpoint_type local_endpoint(Error_Handler error_handler) const
+  endpoint_type local_endpoint(boost::system::error_code& ec) const
   {
-    return this->service.local_endpoint(this->implementation, error_handler);
+    return this->service.local_endpoint(this->implementation, ec);
   }
 
   /// Accept a new connection.
@@ -644,7 +615,7 @@ public:
    *
    * @param peer The socket into which the new connection will be accepted.
    *
-   * @throws boost::asio::error Thrown on failure.
+   * @throws boost::system::system_error Thrown on failure.
    *
    * @par Example:
    * @code
@@ -657,7 +628,9 @@ public:
   template <typename Socket_Service>
   void accept(basic_socket<protocol_type, Socket_Service>& peer)
   {
-    this->service.accept(this->implementation, peer, throw_error());
+    boost::system::error_code ec;
+    this->service.accept(this->implementation, peer, ec);
+    boost::asio::detail::throw_error(ec);
   }
 
   /// Accept a new connection.
@@ -668,31 +641,27 @@ public:
    *
    * @param peer The socket into which the new connection will be accepted.
    *
-   * @param error_handler A handler to be called when the operation completes,
-   * to indicate whether or not an error has occurred. Copies will be made of
-   * the handler as required. The function signature of the handler must be:
-   * @code void error_handler(
-   *   const boost::asio::error& error // Result of operation
-   * ); @endcode
+   * @param ec Set to indicate what error occurred, if any.
    *
    * @par Example:
    * @code
    * boost::asio::ip::tcp::acceptor acceptor(io_service);
    * ...
    * boost::asio::ip::tcp::soocket socket(io_service);
-   * boost::asio::error error;
-   * acceptor.accept(socket, boost::asio::assign_error(error));
-   * if (error)
+   * boost::system::error_code ec;
+   * acceptor.accept(socket, ec);
+   * if (ec)
    * {
    *   // An error occurred.
    * }
    * @endcode
    */
-  template <typename Socket_Service, typename Error_Handler>
-  void accept(basic_socket<protocol_type, Socket_Service>& peer,
-      Error_Handler error_handler)
+  template <typename Socket_Service>
+  boost::system::error_code accept(
+      basic_socket<protocol_type, Socket_Service>& peer,
+      boost::system::error_code& ec)
   {
-    this->service.accept(this->implementation, peer, error_handler);
+    return this->service.accept(this->implementation, peer, ec);
   }
 
   /// Start an asynchronous accept.
@@ -708,7 +677,7 @@ public:
    * completes. Copies will be made of the handler as required. The function
    * signature of the handler must be:
    * @code void handler(
-   *   const boost::asio::error& error // Result of operation
+   *   const boost::system::error_code& error // Result of operation.
    * ); @endcode
    * Regardless of whether the asynchronous operation completes immediately or
    * not, the handler will not be invoked from within this function. Invocation
@@ -717,7 +686,7 @@ public:
    *
    * @par Example:
    * @code
-   * void accept_handler(const boost::asio::error& error)
+   * void accept_handler(const boost::system::error_code& error)
    * {
    *   if (!error)
    *   {
@@ -752,7 +721,7 @@ public:
    * @param peer_endpoint An endpoint object which will receive the endpoint of
    * the remote peer.
    *
-   * @throws boost::asio::error Thrown on failure.
+   * @throws boost::system::system_error Thrown on failure.
    *
    * @par Example:
    * @code
@@ -767,8 +736,10 @@ public:
   void accept_endpoint(basic_socket<protocol_type, Socket_Service>& peer,
       endpoint_type& peer_endpoint)
   {
-    this->service.accept_endpoint(this->implementation, peer, peer_endpoint,
-        throw_error());
+    boost::system::error_code ec;
+    this->service.accept_endpoint(
+        this->implementation, peer, peer_endpoint, ec);
+    boost::asio::detail::throw_error(ec);
   }
 
   /// Accept a new connection and obtain the endpoint of the peer
@@ -783,12 +754,7 @@ public:
    * @param peer_endpoint An endpoint object which will receive the endpoint of
    * the remote peer.
    *
-   * @param error_handler A handler to be called when the operation completes,
-   * to indicate whether or not an error has occurred. Copies will be made of
-   * the handler as required. The function signature of the handler must be:
-   * @code void error_handler(
-   *   const boost::asio::error& error // Result of operation
-   * ); @endcode
+   * @param ec Set to indicate what error occurred, if any.
    *
    * @par Example:
    * @code
@@ -796,21 +762,21 @@ public:
    * ...
    * boost::asio::ip::tcp::socket socket(io_service);
    * boost::asio::ip::tcp::endpoint endpoint;
-   * boost::asio::error error;
-   * acceptor.accept_endpoint(socket, endpoint,
-   *     boost::asio::assign_error(error));
-   * if (error)
+   * boost::system::error_code ec;
+   * acceptor.accept_endpoint(socket, endpoint, ec);
+   * if (ec)
    * {
    *   // An error occurred.
    * }
    * @endcode
    */
-  template <typename Socket_Service, typename Error_Handler>
-  void accept_endpoint(basic_socket<protocol_type, Socket_Service>& peer,
-      endpoint_type& peer_endpoint, Error_Handler error_handler)
+  template <typename Socket_Service>
+  boost::system::error_code accept_endpoint(
+      basic_socket<protocol_type, Socket_Service>& peer,
+      endpoint_type& peer_endpoint, boost::system::error_code& ec)
   {
-    this->service.accept_endpoint(this->implementation, peer, peer_endpoint,
-        error_handler);
+    return this->service.accept_endpoint(
+        this->implementation, peer, peer_endpoint, ec);
   }
 
   /// Start an asynchronous accept.
@@ -832,7 +798,7 @@ public:
    * completes. Copies will be made of the handler as required. The function
    * signature of the handler must be:
    * @code void handler(
-   *   const boost::asio::error& error // Result of operation
+   *   const boost::system::error_code& error // Result of operation.
    * ); @endcode
    * Regardless of whether the asynchronous operation completes immediately or
    * not, the handler will not be invoked from within this function. Invocation

@@ -18,25 +18,17 @@
 #include <boost/asio/detail/push_options.hpp>
 
 #include <boost/asio/detail/push_options.hpp>
-#include <boost/config.hpp>
-#include <boost/scoped_ptr.hpp>
 #include <cerrno>
-#include <cstring>
-#include <exception>
-#include <string>
-#include <boost/detail/workaround.hpp>
-#if BOOST_WORKAROUND(__BORLANDC__, BOOST_TESTED_AT(0x564))
-# include <iostream>
-#endif // BOOST_WORKAROUND(__BORLANDC__, BOOST_TESTED_AT(0x564))
+#include <boost/config.hpp>
+#include <boost/cerrno.hpp>
+#include <boost/system/error_code.hpp>
 #include <boost/asio/detail/pop_options.hpp>
 
-#include <boost/asio/detail/local_free_on_block_exit.hpp>
 #include <boost/asio/detail/socket_types.hpp>
 
-namespace boost {
-namespace asio {
-
 #if defined(GENERATING_DOCUMENTATION)
+/// INTERNAL ONLY.
+# define BOOST_ASIO_NATIVE_ERROR(e) implementation_defined
 /// INTERNAL ONLY.
 # define BOOST_ASIO_SOCKET_ERROR(e) implementation_defined
 /// INTERNAL ONLY.
@@ -44,345 +36,463 @@ namespace asio {
 /// INTERNAL ONLY.
 # define BOOST_ASIO_GETADDRINFO_ERROR(e) implementation_defined
 /// INTERNAL ONLY.
-# define BOOST_ASIO_OS_ERROR(e_win, e_posix) implementation_defined
+# define BOOST_ASIO_WIN_OR_POSIX(e_win, e_posix) implementation_defined
 #elif defined(BOOST_WINDOWS) || defined(__CYGWIN__)
-# define BOOST_ASIO_SOCKET_ERROR(e) WSA ## e
-# define BOOST_ASIO_NETDB_ERROR(e) WSA ## e
-# define BOOST_ASIO_GETADDRINFO_ERROR(e) e
-# define BOOST_ASIO_OS_ERROR(e_win, e_posix) e_win
+# define BOOST_ASIO_NATIVE_ERROR(e) \
+    boost::system::error_code(e, boost::system::native_ecat)
+# define BOOST_ASIO_SOCKET_ERROR(e) \
+    boost::system::error_code(WSA ## e, boost::system::native_ecat)
+# define BOOST_ASIO_NETDB_ERROR(e) \
+    boost::system::error_code(WSA ## e, boost::system::native_ecat)
+# define BOOST_ASIO_GETADDRINFO_ERROR(e) \
+    boost::system::error_code(WSA ## e, boost::system::native_ecat)
+# define BOOST_ASIO_EOF_ERROR(e) \
+    boost::system::error_code(e, boost::system::native_ecat)
+# define BOOST_ASIO_WIN_OR_POSIX(e_win, e_posix) e_win
 #else
-# define BOOST_ASIO_SOCKET_ERROR(e) e
-# define BOOST_ASIO_NETDB_ERROR(e) 16384 + e
-# define BOOST_ASIO_GETADDRINFO_ERROR(e) 32768 + e
-# define BOOST_ASIO_OS_ERROR(e_win, e_posix) e_posix
+# define BOOST_ASIO_NATIVE_ERROR(e) \
+    boost::system::error_code(e, boost::system::native_ecat)
+# define BOOST_ASIO_SOCKET_ERROR(e) \
+    boost::system::error_code(e, boost::system::native_ecat)
+# define BOOST_ASIO_NETDB_ERROR(e) \
+    boost::system::error_code(e, boost::asio::error_base<T>::netdb_ecat)
+# define BOOST_ASIO_GETADDRINFO_ERROR(e) \
+    boost::system::error_code(e, boost::asio::error_base<T>::addrinfo_ecat)
+# define BOOST_ASIO_EOF_ERROR(e) \
+    boost::system::error_code(e, boost::asio::error_base<T>::eof_ecat)
+# define BOOST_ASIO_WIN_OR_POSIX(e_win, e_posix) e_posix
 #endif
 
-/// The error class is used to encapsulate system error codes.
-class error
-  : public std::exception
+namespace boost {
+namespace asio {
+
+/// Hack to keep asio library header-file-only.
+template <typename T>
+class error_base
 {
 public:
-  /// Error codes.
-  enum code_type
-  {
-    /// Permission denied.
-    access_denied = BOOST_ASIO_SOCKET_ERROR(EACCES),
+#if !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
+  static boost::system::error_category netdb_ecat;
+  static int netdb_ed(const boost::system::error_code& ec);
+  static std::string netdb_md(const boost::system::error_code& ec);
+  static boost::system::wstring_t netdb_wmd(
+      const boost::system::error_code& ec);
 
-    /// Address family not supported by protocol.
-    address_family_not_supported = BOOST_ASIO_SOCKET_ERROR(EAFNOSUPPORT),
+  static boost::system::error_category addrinfo_ecat;
+  static int addrinfo_ed(const boost::system::error_code& ec);
+  static std::string addrinfo_md(const boost::system::error_code& ec);
+  static boost::system::wstring_t addrinfo_wmd(
+      const boost::system::error_code& ec);
 
-    /// Address already in use.
-    address_in_use = BOOST_ASIO_SOCKET_ERROR(EADDRINUSE),
+  static boost::system::error_category eof_ecat;
+  static int eof_ed(const boost::system::error_code& ec);
+  static std::string eof_md(const boost::system::error_code& ec);
+  static boost::system::wstring_t eof_wmd(const boost::system::error_code& ec);
+#endif // !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
 
-    /// Transport endpoint is already connected.
-    already_connected = BOOST_ASIO_SOCKET_ERROR(EISCONN),
+  static boost::system::error_category ssl_ecat;
+  static int ssl_ed(const boost::system::error_code& ec);
+  static std::string ssl_md(const boost::system::error_code& ec);
+  static boost::system::wstring_t ssl_wmd(const boost::system::error_code& ec);
 
-    /// Operation already in progress.
-    already_started = BOOST_ASIO_SOCKET_ERROR(EALREADY),
+  /// Permission denied.
+  static const boost::system::error_code access_denied;
 
-    /// A connection has been aborted.
-    connection_aborted = BOOST_ASIO_SOCKET_ERROR(ECONNABORTED),
+  /// Address family not supported by protocol.
+  static const boost::system::error_code address_family_not_supported;
 
-    /// Connection refused.
-    connection_refused = BOOST_ASIO_SOCKET_ERROR(ECONNREFUSED),
+  /// Address already in use.
+  static const boost::system::error_code address_in_use;
 
-    /// Connection reset by peer.
-    connection_reset = BOOST_ASIO_SOCKET_ERROR(ECONNRESET),
+  /// Transport endpoint is already connected.
+  static const boost::system::error_code already_connected;
 
-    /// Bad file descriptor.
-    bad_descriptor = BOOST_ASIO_SOCKET_ERROR(EBADF),
+  /// Operation already in progress.
+  static const boost::system::error_code already_started;
 
-    /// End of file or stream.
-    eof = BOOST_ASIO_OS_ERROR(ERROR_HANDLE_EOF, -1),
+  /// A connection has been aborted.
+  static const boost::system::error_code connection_aborted;
 
-    /// Bad address.
-    fault = BOOST_ASIO_SOCKET_ERROR(EFAULT),
+  /// Connection refused.
+  static const boost::system::error_code connection_refused;
 
-    /// Host not found (authoritative).
-    host_not_found = BOOST_ASIO_NETDB_ERROR(HOST_NOT_FOUND),
+  /// Connection reset by peer.
+  static const boost::system::error_code connection_reset;
 
-    /// Host not found (non-authoritative).
-    host_not_found_try_again = BOOST_ASIO_NETDB_ERROR(TRY_AGAIN),
+  /// Bad file descriptor.
+  static const boost::system::error_code bad_descriptor;
 
-    /// No route to host.
-    host_unreachable = BOOST_ASIO_SOCKET_ERROR(EHOSTUNREACH),
+  /// End of file or stream.
+  static const boost::system::error_code eof;
 
-    /// Operation now in progress.
-    in_progress = BOOST_ASIO_SOCKET_ERROR(EINPROGRESS),
+  /// Bad address.
+  static const boost::system::error_code fault;
 
-    /// Interrupted system call.
-    interrupted = BOOST_ASIO_SOCKET_ERROR(EINTR),
+  /// Host not found (authoritative).
+  static const boost::system::error_code host_not_found;
 
-    /// Invalid argument.
-    invalid_argument = BOOST_ASIO_SOCKET_ERROR(EINVAL),
+  /// Host not found (non-authoritative).
+  static const boost::system::error_code host_not_found_try_again;
 
-    /// Message too long.
-    message_size = BOOST_ASIO_SOCKET_ERROR(EMSGSIZE),
+  /// No route to host.
+  static const boost::system::error_code host_unreachable;
 
-    /// Network is down.
-    network_down = BOOST_ASIO_SOCKET_ERROR(ENETDOWN),
+  /// Operation now in progress.
+  static const boost::system::error_code in_progress;
 
-    /// Network dropped connection on reset.
-    network_reset = BOOST_ASIO_SOCKET_ERROR(ENETRESET),
+  /// Interrupted system call.
+  static const boost::system::error_code interrupted;
 
-    /// Network is unreachable.
-    network_unreachable = BOOST_ASIO_SOCKET_ERROR(ENETUNREACH),
+  /// Invalid argument.
+  static const boost::system::error_code invalid_argument;
 
-    /// Too many open files.
-    no_descriptors = BOOST_ASIO_SOCKET_ERROR(EMFILE),
+  /// Message too long.
+  static const boost::system::error_code message_size;
 
-    /// No buffer space available.
-    no_buffer_space = BOOST_ASIO_SOCKET_ERROR(ENOBUFS),
+  /// Network is down.
+  static const boost::system::error_code network_down;
 
-    /// The query is valid but does not have associated address data.
-    no_data = BOOST_ASIO_NETDB_ERROR(NO_DATA),
+  /// Network dropped connection on reset.
+  static const boost::system::error_code network_reset;
 
-    /// Cannot allocate memory.
-    no_memory = BOOST_ASIO_OS_ERROR(ERROR_OUTOFMEMORY, ENOMEM),
+  /// Network is unreachable.
+  static const boost::system::error_code network_unreachable;
 
-    /// Operation not permitted.
-    no_permission = BOOST_ASIO_OS_ERROR(ERROR_ACCESS_DENIED, EPERM),
+  /// Too many open files.
+  static const boost::system::error_code no_descriptors;
 
-    /// Protocol not available.
-    no_protocol_option = BOOST_ASIO_SOCKET_ERROR(ENOPROTOOPT),
+  /// No buffer space available.
+  static const boost::system::error_code no_buffer_space;
 
-    /// A non-recoverable error occurred.
-    no_recovery = BOOST_ASIO_NETDB_ERROR(NO_RECOVERY),
+  /// The query is valid but does not have associated address data.
+  static const boost::system::error_code no_data;
 
-    /// Transport endpoint is not connected.
-    not_connected = BOOST_ASIO_SOCKET_ERROR(ENOTCONN),
+  /// Cannot allocate memory.
+  static const boost::system::error_code no_memory;
 
-    /// Socket operation on non-socket.
-    not_socket = BOOST_ASIO_SOCKET_ERROR(ENOTSOCK),
+  /// Operation not permitted.
+  static const boost::system::error_code no_permission;
 
-    /// Operation not supported.
-    not_supported = BOOST_ASIO_SOCKET_ERROR(EOPNOTSUPP),
+  /// Protocol not available.
+  static const boost::system::error_code no_protocol_option;
 
-    /// Operation cancelled.
-    operation_aborted = BOOST_ASIO_OS_ERROR(ERROR_OPERATION_ABORTED, ECANCELED),
+  /// A non-recoverable error occurred.
+  static const boost::system::error_code no_recovery;
 
-    /// The service is not supported for the given socket type.
-    service_not_found = BOOST_ASIO_OS_ERROR(
-        WSATYPE_NOT_FOUND,
-        BOOST_ASIO_GETADDRINFO_ERROR(EAI_SERVICE)),
+  /// Transport endpoint is not connected.
+  static const boost::system::error_code not_connected;
 
-    /// The socket type is not supported.
-    socket_type_not_supported = BOOST_ASIO_OS_ERROR(
-        WSAESOCKTNOSUPPORT,
-        BOOST_ASIO_GETADDRINFO_ERROR(EAI_SOCKTYPE)),
+  /// Socket operation on non-socket.
+  static const boost::system::error_code not_socket;
 
-    /// Cannot send after transport endpoint shutdown.
-    shut_down = BOOST_ASIO_SOCKET_ERROR(ESHUTDOWN),
+  /// Operation not supported.
+  static const boost::system::error_code not_supported;
 
-    /// Success.
-    success = 0,
+  /// Operation cancelled.
+  static const boost::system::error_code operation_aborted;
 
-    /// Connection timed out.
-    timed_out = BOOST_ASIO_SOCKET_ERROR(ETIMEDOUT),
+  /// The service is not supported for the given socket type.
+  static const boost::system::error_code service_not_found;
 
-    /// Resource temporarily unavailable.
-    try_again = BOOST_ASIO_OS_ERROR(ERROR_RETRY, EAGAIN),
+  /// The socket type is not supported.
+  static const boost::system::error_code socket_type_not_supported;
 
-    /// The socket is marked non-blocking and the requested operation would
-    /// block.
-    would_block = BOOST_ASIO_SOCKET_ERROR(EWOULDBLOCK)
-  };
+  /// Cannot send after transport endpoint shutdown.
+  static const boost::system::error_code shut_down;
 
-  /// Default constructor.
-  error()
-    : code_(success)
-  {
-  }
+  /// Success.
+  static const boost::system::error_code success;
 
-  /// Construct with a specific error code.
-  error(int code)
-    : code_(code)
-  {
-  }
+  /// Connection timed out.
+  static const boost::system::error_code timed_out;
 
-  /// Copy constructor.
-  error(const error& e)
-    : std::exception(e),
-      code_(e.code_)
-  {
-  }
+  /// Resource temporarily unavailable.
+  static const boost::system::error_code try_again;
 
-  /// Destructor.
-  virtual ~error() throw ()
-  {
-  }
-
-  /// Assignment operator.
-  error& operator=(const error& e)
-  {
-    code_ = e.code_;
-    what_.reset();
-    return *this;
-  }
-
-  /// Get a string representation of the exception.
-  virtual const char* what() const throw ()
-  {
-#if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
-    try
-    {
-      if (!what_)
-      {
-        char* msg = 0;
-        DWORD length = ::FormatMessageA(FORMAT_MESSAGE_ALLOCATE_BUFFER
-            | FORMAT_MESSAGE_FROM_SYSTEM
-            | FORMAT_MESSAGE_IGNORE_INSERTS, 0, code_,
-            MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (char*)&msg, 0, 0);
-        detail::local_free_on_block_exit local_free_obj(msg);
-        if (length && msg[length - 1] == '\n')
-          msg[--length] = '\0';
-        if (length && msg[length - 1] == '\r')
-          msg[--length] = '\0';
-        if (length)
-          what_.reset(new std::string(msg));
-        else
-          return "asio error";
-      }
-      return what_->c_str();
-    }
-    catch (std::exception&)
-    {
-      return "asio error";
-    }
-#else // defined(BOOST_WINDOWS)
-    switch (code_)
-    {
-    case error::eof:
-      return "End of file.";
-    case error::host_not_found:
-      return "Host not found (authoritative).";
-    case error::host_not_found_try_again:
-      return "Host not found (non-authoritative), try again later.";
-    case error::no_recovery:
-      return "A non-recoverable error occurred during database lookup.";
-    case error::no_data:
-      return "The query is valid, but it does not have associated data.";
-#if !defined(__sun)
-    case error::operation_aborted:
-      return "Operation aborted.";
-#endif // !defined(__sun)
-    case error::service_not_found:
-      return "Service not found.";
-    case error::socket_type_not_supported:
-      return "Socket type not supported.";
-    default:
-#if defined(__sun) || defined(__QNX__)
-      return strerror(code_);
-#elif defined(__MACH__) && defined(__APPLE__) \
-  || defined(__NetBSD__) || defined(__FreeBSD__) || defined(__OpenBSD__)
-      try
-      {
-        char buf[256] = "";
-        strerror_r(code_, buf, sizeof(buf));
-        what_.reset(new std::string(buf));
-        return what_->c_str();
-      }
-      catch (std::exception&)
-      {
-        return "asio error";
-      }
-#else
-      try
-      {
-        char buf[256] = "";
-        what_.reset(new std::string(strerror_r(code_, buf, sizeof(buf))));
-        return what_->c_str();
-      }
-      catch (std::exception&)
-      {
-        return "asio error";
-      }
-#endif
-    }
-#endif // defined(BOOST_WINDOWS)
-  }
-
-  /// Get the code associated with the error.
-  int code() const
-  {
-    return code_;
-  }
-
-  struct unspecified_bool_type_t
-  {
-  };
-
-  typedef unspecified_bool_type_t* unspecified_bool_type;
-
-  /// Operator returns non-null if there is a non-success error code.
-  operator unspecified_bool_type() const
-  {
-    if (code_ == success)
-      return 0;
-    else
-      return reinterpret_cast<unspecified_bool_type>(1);
-  }
-
-  /// Operator to test if the error represents success.
-  bool operator!() const
-  {
-    return code_ == success;
-  }
-
-  /// Equality operator to compare two error objects.
-  friend bool operator==(const error& e1, const error& e2)
-  {
-    return e1.code_ == e2.code_;
-  }
-
-  /// Inequality operator to compare two error objects.
-  friend bool operator!=(const error& e1, const error& e2)
-  {
-    return e1.code_ != e2.code_;
-  }
+  /// The socket is marked non-blocking and the requested operation would block.
+  static const boost::system::error_code would_block;
 
 private:
-  // The code associated with the error.
-  int code_;
-
-  // The string representation of the error.
-  mutable boost::scoped_ptr<std::string> what_;
+  error_base();
 };
 
-/// Output the string associated with an error.
-/**
- * Used to output a human-readable string that is associated with an error.
- *
- * @param os The output stream to which the string will be written.
- *
- * @param e The error to be written.
- *
- * @return The output stream.
- *
- * @relates boost::asio::error
- */
-#if BOOST_WORKAROUND(__BORLANDC__, BOOST_TESTED_AT(0x564))
-std::ostream& operator<<(std::ostream& os, const error& e)
+#if !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
+
+template <typename T>
+boost::system::error_category error_base<T>::netdb_ecat(
+    boost::system::error_code::new_category(&error_base<T>::netdb_ed,
+      &error_base<T>::netdb_md, &error_base<T>::netdb_wmd));
+
+template <typename T>
+int error_base<T>::netdb_ed(const boost::system::error_code& ec)
 {
-  os << e.what();
-  return os;
+  return EOTHER;
 }
-#else // BOOST_WORKAROUND(__BORLANDC__, BOOST_TESTED_AT(0x564))
-template <typename Ostream>
-Ostream& operator<<(Ostream& os, const error& e)
+
+template <typename T>
+std::string error_base<T>::netdb_md(const boost::system::error_code& ec)
 {
-  os << e.what();
-  return os;
+  if (ec == error_base<T>::host_not_found)
+    return "Host not found (authoritative)";
+  if (ec == error_base<T>::host_not_found_try_again)
+    return "Host not found (non-authoritative), try again later";
+  if (ec == error_base<T>::no_data)
+    return "The query is valid, but it does not have associated data";
+  if (ec == error_base<T>::no_recovery)
+    return "A non-recoverable error occurred during database lookup";
+  return "EINVAL";
 }
-#endif // BOOST_WORKAROUND(__BORLANDC__, BOOST_TESTED_AT(0x564))
+
+template <typename T>
+boost::system::wstring_t error_base<T>::netdb_wmd(
+    const boost::system::error_code& ec)
+{
+  if (ec == error_base<T>::host_not_found)
+    return L"Host not found (authoritative)";
+  if (ec == error_base<T>::host_not_found_try_again)
+    return L"Host not found (non-authoritative), try again later";
+  if (ec == error_base<T>::no_data)
+    return L"The query is valid, but it does not have associated data";
+  if (ec == error_base<T>::no_recovery)
+    return L"A non-recoverable error occurred during database lookup";
+  return L"EINVAL";
+}
+
+template <typename T>
+boost::system::error_category error_base<T>::addrinfo_ecat(
+    boost::system::error_code::new_category(&error_base<T>::addrinfo_ed,
+      &error_base<T>::addrinfo_md, &error_base<T>::addrinfo_wmd));
+
+template <typename T>
+int error_base<T>::addrinfo_ed(const boost::system::error_code& ec)
+{
+  return EOTHER;
+}
+
+template <typename T>
+std::string error_base<T>::addrinfo_md(const boost::system::error_code& ec)
+{
+  if (ec == error_base<T>::service_not_found)
+    return "Service not found";
+  if (ec == error_base<T>::socket_type_not_supported)
+    return "Socket type not supported";
+  return "EINVAL";
+}
+
+template <typename T>
+boost::system::wstring_t error_base<T>::addrinfo_wmd(
+    const boost::system::error_code& ec)
+{
+  if (ec == error_base<T>::service_not_found)
+    return L"Service not found";
+  if (ec == error_base<T>::socket_type_not_supported)
+    return L"Socket type not supported";
+  return L"EINVAL";
+}
+
+template <typename T>
+boost::system::error_category error_base<T>::eof_ecat(
+    boost::system::error_code::new_category(&error_base<T>::eof_ed,
+      &error_base<T>::eof_md, &error_base<T>::eof_wmd));
+
+template <typename T>
+int error_base<T>::eof_ed(const boost::system::error_code& ec)
+{
+  return EOTHER;
+}
+
+template <typename T>
+std::string error_base<T>::eof_md(const boost::system::error_code& ec)
+{
+  if (ec == error_base<T>::eof)
+    return "End of file";
+  return "EINVAL";
+}
+
+template <typename T>
+boost::system::wstring_t error_base<T>::eof_wmd(
+    const boost::system::error_code& ec)
+{
+  if (ec == error_base<T>::eof)
+    return L"End of file";
+  return L"EINVAL";
+}
+
+#endif // !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
+
+template <typename T>
+boost::system::error_category error_base<T>::ssl_ecat(
+    boost::system::error_code::new_category(&error_base<T>::ssl_ed,
+      &error_base<T>::ssl_md, &error_base<T>::ssl_wmd));
+
+template <typename T>
+int error_base<T>::ssl_ed(const boost::system::error_code& ec)
+{
+  return EOTHER;
+}
+
+template <typename T>
+std::string error_base<T>::ssl_md(const boost::system::error_code& ec)
+{
+  return "SSL error";
+}
+
+template <typename T>
+boost::system::wstring_t error_base<T>::ssl_wmd(
+    const boost::system::error_code& ec)
+{
+  return L"SSL error";
+}
+
+template <typename T> const boost::system::error_code
+error_base<T>::access_denied = BOOST_ASIO_SOCKET_ERROR(EACCES);
+
+template <typename T> const boost::system::error_code
+error_base<T>::address_family_not_supported = BOOST_ASIO_SOCKET_ERROR(
+    EAFNOSUPPORT);
+
+template <typename T> const boost::system::error_code
+error_base<T>::address_in_use = BOOST_ASIO_SOCKET_ERROR(EADDRINUSE);
+
+template <typename T> const boost::system::error_code
+error_base<T>::already_connected = BOOST_ASIO_SOCKET_ERROR(EISCONN);
+
+template <typename T> const boost::system::error_code
+error_base<T>::already_started = BOOST_ASIO_SOCKET_ERROR(EALREADY);
+
+template <typename T> const boost::system::error_code
+error_base<T>::connection_aborted = BOOST_ASIO_SOCKET_ERROR(ECONNABORTED);
+
+template <typename T> const boost::system::error_code
+error_base<T>::connection_refused = BOOST_ASIO_SOCKET_ERROR(ECONNREFUSED);
+
+template <typename T> const boost::system::error_code
+error_base<T>::connection_reset = BOOST_ASIO_SOCKET_ERROR(ECONNRESET);
+
+template <typename T> const boost::system::error_code
+error_base<T>::bad_descriptor = BOOST_ASIO_SOCKET_ERROR(EBADF);
+
+template <typename T> const boost::system::error_code
+error_base<T>::eof = BOOST_ASIO_WIN_OR_POSIX(
+    BOOST_ASIO_EOF_ERROR(ERROR_HANDLE_EOF),
+    BOOST_ASIO_EOF_ERROR(-1));
+
+template <typename T> const boost::system::error_code
+error_base<T>::fault = BOOST_ASIO_SOCKET_ERROR(EFAULT);
+
+template <typename T> const boost::system::error_code
+error_base<T>::host_not_found = BOOST_ASIO_NETDB_ERROR(HOST_NOT_FOUND);
+
+template <typename T> const boost::system::error_code
+error_base<T>::host_not_found_try_again = BOOST_ASIO_NETDB_ERROR(TRY_AGAIN);
+
+template <typename T> const boost::system::error_code
+error_base<T>::host_unreachable = BOOST_ASIO_SOCKET_ERROR(EHOSTUNREACH);
+
+template <typename T> const boost::system::error_code
+error_base<T>::in_progress = BOOST_ASIO_SOCKET_ERROR(EINPROGRESS);
+
+template <typename T> const boost::system::error_code
+error_base<T>::interrupted = BOOST_ASIO_SOCKET_ERROR(EINTR);
+
+template <typename T> const boost::system::error_code
+error_base<T>::invalid_argument = BOOST_ASIO_SOCKET_ERROR(EINVAL);
+
+template <typename T> const boost::system::error_code
+error_base<T>::message_size = BOOST_ASIO_SOCKET_ERROR(EMSGSIZE);
+
+template <typename T> const boost::system::error_code
+error_base<T>::network_down = BOOST_ASIO_SOCKET_ERROR(ENETDOWN);
+
+template <typename T> const boost::system::error_code
+error_base<T>::network_reset = BOOST_ASIO_SOCKET_ERROR(ENETRESET);
+
+template <typename T> const boost::system::error_code
+error_base<T>::network_unreachable = BOOST_ASIO_SOCKET_ERROR(ENETUNREACH);
+
+template <typename T> const boost::system::error_code
+error_base<T>::no_descriptors = BOOST_ASIO_SOCKET_ERROR(EMFILE);
+
+template <typename T> const boost::system::error_code
+error_base<T>::no_buffer_space = BOOST_ASIO_SOCKET_ERROR(ENOBUFS);
+
+template <typename T> const boost::system::error_code
+error_base<T>::no_data = BOOST_ASIO_NETDB_ERROR(NO_DATA);
+
+template <typename T> const boost::system::error_code
+error_base<T>::no_memory = BOOST_ASIO_WIN_OR_POSIX(
+    BOOST_ASIO_NATIVE_ERROR(ERROR_OUTOFMEMORY),
+    BOOST_ASIO_NATIVE_ERROR(ENOMEM));
+
+template <typename T> const boost::system::error_code
+error_base<T>::no_permission = BOOST_ASIO_WIN_OR_POSIX(
+    BOOST_ASIO_NATIVE_ERROR(ERROR_ACCESS_DENIED),
+    BOOST_ASIO_NATIVE_ERROR(EPERM));
+
+template <typename T> const boost::system::error_code
+error_base<T>::no_protocol_option = BOOST_ASIO_SOCKET_ERROR(ENOPROTOOPT);
+
+template <typename T> const boost::system::error_code
+error_base<T>::no_recovery = BOOST_ASIO_NETDB_ERROR(NO_RECOVERY);
+
+template <typename T> const boost::system::error_code
+error_base<T>::not_connected = BOOST_ASIO_SOCKET_ERROR(ENOTCONN);
+
+template <typename T> const boost::system::error_code
+error_base<T>::not_socket = BOOST_ASIO_SOCKET_ERROR(ENOTSOCK);
+
+template <typename T> const boost::system::error_code
+error_base<T>::not_supported = BOOST_ASIO_SOCKET_ERROR(EOPNOTSUPP);
+
+template <typename T> const boost::system::error_code
+error_base<T>::operation_aborted = BOOST_ASIO_WIN_OR_POSIX(
+    BOOST_ASIO_NATIVE_ERROR(ERROR_OPERATION_ABORTED),
+    BOOST_ASIO_NATIVE_ERROR(ECANCELED));
+
+template <typename T> const boost::system::error_code
+error_base<T>::service_not_found = BOOST_ASIO_WIN_OR_POSIX(
+    BOOST_ASIO_NATIVE_ERROR(WSATYPE_NOT_FOUND),
+    BOOST_ASIO_GETADDRINFO_ERROR(EAI_SERVICE));
+
+template <typename T> const boost::system::error_code
+error_base<T>::socket_type_not_supported = BOOST_ASIO_WIN_OR_POSIX(
+    BOOST_ASIO_NATIVE_ERROR(WSAESOCKTNOSUPPORT),
+    BOOST_ASIO_GETADDRINFO_ERROR(EAI_SOCKTYPE));
+
+template <typename T> const boost::system::error_code
+error_base<T>::shut_down = BOOST_ASIO_SOCKET_ERROR(ESHUTDOWN);
+
+template <typename T> const boost::system::error_code
+error_base<T>::success;
+
+template <typename T> const boost::system::error_code
+error_base<T>::timed_out = BOOST_ASIO_SOCKET_ERROR(ETIMEDOUT);
+
+template <typename T> const boost::system::error_code
+error_base<T>::try_again = BOOST_ASIO_WIN_OR_POSIX(
+    BOOST_ASIO_NATIVE_ERROR(ERROR_RETRY),
+    BOOST_ASIO_NATIVE_ERROR(EAGAIN));
+
+template <typename T> const boost::system::error_code
+error_base<T>::would_block = BOOST_ASIO_SOCKET_ERROR(EWOULDBLOCK);
+
+/// Contains error constants.
+class error : public error_base<error>
+{
+private:
+  error();
+};
 
 } // namespace asio
 } // namespace boost
 
+#undef BOOST_ASIO_NATIVE_ERROR
 #undef BOOST_ASIO_SOCKET_ERROR
 #undef BOOST_ASIO_NETDB_ERROR
 #undef BOOST_ASIO_GETADDRINFO_ERROR
-#undef BOOST_ASIO_OS_ERROR
+#undef BOOST_ASIO_EOF_ERROR
+#undef BOOST_ASIO_WIN_OR_POSIX
+
 
 #include <boost/asio/detail/pop_options.hpp>
 

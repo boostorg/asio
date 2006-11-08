@@ -101,7 +101,8 @@ public:
 
   // Dispatch the first operation corresponding to the descriptor. Returns true
   // if there are more operations queued for the descriptor.
-  bool dispatch_operation(Descriptor descriptor, int result)
+  bool dispatch_operation(Descriptor descriptor,
+      const boost::system::error_code& result)
   {
     typename operation_map::iterator i = operations_.find(descriptor);
     if (i != operations_.end())
@@ -138,7 +139,8 @@ public:
   }
 
   // Dispatch all operations corresponding to the descriptor.
-  void dispatch_all_operations(Descriptor descriptor, int result)
+  void dispatch_all_operations(Descriptor descriptor,
+      const boost::system::error_code& result)
   {
     typename operation_map::iterator i = operations_.find(descriptor);
     if (i != operations_.end())
@@ -180,7 +182,8 @@ public:
   // Dispatch the operations corresponding to the ready file descriptors
   // contained in the given descriptor set.
   template <typename Descriptor_Set>
-  void dispatch_descriptors(const Descriptor_Set& descriptors, int result)
+  void dispatch_descriptors(const Descriptor_Set& descriptors,
+      const boost::system::error_code& result)
   {
     typename operation_map::iterator i = operations_.begin();
     while (i != operations_.end())
@@ -283,7 +286,7 @@ private:
     }
 
     // Perform the operation.
-    bool invoke(int result)
+    bool invoke(const boost::system::error_code& result)
     {
       return invoke_func_(this, result);
     }
@@ -295,7 +298,8 @@ private:
     }
 
   protected:
-    typedef bool (*invoke_func_type)(op_base*, int);
+    typedef bool (*invoke_func_type)(op_base*,
+        const boost::system::error_code&);
     typedef void (*destroy_func_type)(op_base*);
 
     // Construct an operation for the given descriptor.
@@ -344,7 +348,8 @@ private:
     }
 
     // Invoke the handler.
-    static bool invoke_handler(op_base* base, int result)
+    static bool invoke_handler(op_base* base,
+        const boost::system::error_code& result)
     {
       return static_cast<op<Handler>*>(base)->handler_(result);
     }

@@ -47,10 +47,11 @@ public:
 
 private:
   /// Handle completion of a read operation.
-  void handle_read(const boost::asio::error& e, std::size_t bytes_transferred);
+  void handle_read(const boost::system::error_code& e,
+      std::size_t bytes_transferred);
 
   /// Handle completion of a write operation.
-  void handle_write(const boost::asio::error& e);
+  void handle_write(const boost::system::error_code& e);
 
   /// Socket for the connection.
   boost::asio::ip::tcp::socket socket_;

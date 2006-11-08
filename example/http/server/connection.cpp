@@ -43,7 +43,7 @@ void connection::stop()
   socket_.close();
 }
 
-void connection::handle_read(const boost::asio::error& e,
+void connection::handle_read(const boost::system::error_code& e,
     std::size_t bytes_transferred)
 {
   if (!e)
@@ -80,7 +80,7 @@ void connection::handle_read(const boost::asio::error& e,
   }
 }
 
-void connection::handle_write(const boost::asio::error& e)
+void connection::handle_write(const boost::system::error_code& e)
 {
   if (e != boost::asio::error::operation_aborted)
   {

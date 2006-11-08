@@ -21,8 +21,9 @@
 #include <string>
 #include <boost/asio/detail/pop_options.hpp>
 
-#include <boost/asio/error_handler.hpp>
+#include <boost/asio/error.hpp>
 #include <boost/asio/detail/socket_ops.hpp>
+#include <boost/asio/detail/throw_error.hpp>
 
 namespace boost {
 namespace asio {
@@ -32,24 +33,25 @@ namespace ip {
 std::string host_name();
 
 /// Get the current host name.
-template <typename Error_Handler>
-std::string host_name(Error_Handler error_handler);
+std::string host_name(boost::system::error_code& ec);
 
 inline std::string host_name()
 {
-  return host_name(boost::asio::throw_error());
-}
-
-template <typename Error_Handler>
-std::string host_name(Error_Handler error_handler)
-{
   char name[1024];
-  if (boost::asio::detail::socket_ops::gethostname(name, sizeof(name)) != 0)
+  boost::system::error_code ec;
+  if (boost::asio::detail::socket_ops::gethostname(name, sizeof(name), ec) != 0)
   {
-    boost::asio::error error(boost::asio::detail::socket_ops::get_error());
-    error_handler(error);
+    boost::asio::detail::throw_error(ec);
     return std::string();
   }
+  return std::string(name);
+}
+
+inline std::string host_name(boost::system::error_code& ec)
+{
+  char name[1024];
+  if (boost::asio::detail::socket_ops::gethostname(name, sizeof(name), ec) != 0)
+    return std::string();
   return std::string(name);
 }
 

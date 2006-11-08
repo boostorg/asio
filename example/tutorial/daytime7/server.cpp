@@ -86,7 +86,7 @@ private:
   }
 
   void handle_accept(tcp_connection::pointer new_connection,
-      const boost::asio::error& error)
+      const boost::system::error_code& error)
   {
     if (!error)
     {
@@ -116,7 +116,7 @@ private:
           boost::asio::placeholders::error));
   }
 
-  void handle_receive(const boost::asio::error& error)
+  void handle_receive(const boost::system::error_code& error)
   {
     if (!error || error == boost::asio::error::message_size)
     {

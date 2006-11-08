@@ -24,10 +24,10 @@
 #include <boost/asio/detail/push_options.hpp>
 #include <limits>
 #include <boost/throw_exception.hpp>
+#include <boost/system/system_error.hpp>
 #include <boost/asio/detail/pop_options.hpp>
 
 #include <boost/asio/io_service.hpp>
-#include <boost/asio/system_exception.hpp>
 #include <boost/asio/detail/call_stack.hpp>
 #include <boost/asio/detail/handler_alloc_helpers.hpp>
 #include <boost/asio/detail/handler_invoke_helpers.hpp>
@@ -56,7 +56,9 @@ public:
     if (!iocp_.handle)
     {
       DWORD last_error = ::GetLastError();
-      system_exception e("iocp", last_error);
+      boost::system::system_error e(
+          boost::system::error_code(last_error, boost::system::native_ecat),
+          "iocp");
       boost::throw_exception(e);
     }
   }
@@ -153,7 +155,9 @@ public:
       if (!::PostQueuedCompletionStatus(iocp_.handle, 0, 0, 0))
       {
         DWORD last_error = ::GetLastError();
-        system_exception e("pqcs", last_error);
+        boost::system::system_error e(
+            boost::system::error_code(last_error, boost::system::native_ecat),
+            "pqcs");
         boost::throw_exception(e);
       }
     }
@@ -206,7 +210,9 @@ public:
     if (!::PostQueuedCompletionStatus(iocp_.handle, 0, 0, ptr.get()))
     {
       DWORD last_error = ::GetLastError();
-      system_exception e("pqcs", last_error);
+      boost::system::system_error e(
+          boost::system::error_code(last_error, boost::system::native_ecat),
+          "pqcs");
       boost::throw_exception(e);
     }
 
@@ -223,7 +229,9 @@ public:
           bytes_transferred, op_last_error, op))
     {
       DWORD last_error = ::GetLastError();
-      system_exception e("pqcs", last_error);
+      boost::system::system_error e(
+          boost::system::error_code(last_error, boost::system::native_ecat),
+          "pqcs");
       boost::throw_exception(e);
     }
   }
@@ -280,7 +288,10 @@ private:
           if (!::PostQueuedCompletionStatus(iocp_.handle, 0, 0, 0))
           {
             DWORD last_error = ::GetLastError();
-            system_exception e("pqcs", last_error);
+            boost::system::system_error e(
+                boost::system::error_code(last_error, 
+                  boost::system::native_ecat),
+                "pqcs");
             boost::throw_exception(e);
           }
 

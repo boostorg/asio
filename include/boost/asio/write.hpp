@@ -23,6 +23,7 @@
 #include <boost/asio/detail/pop_options.hpp>
 
 #include <boost/asio/basic_streambuf.hpp>
+#include <boost/asio/error.hpp>
 
 namespace boost {
 namespace asio {
@@ -54,7 +55,7 @@ namespace asio {
  *
  * @returns The number of bytes transferred.
  *
- * @throws Sync_Write_Stream::error_type Thrown on failure.
+ * @throws boost::system::system_error Thrown on failure.
  *
  * @par Example:
  * To write a single data buffer use the @ref buffer function as follows:
@@ -66,8 +67,7 @@ namespace asio {
  * @note This overload is equivalent to calling:
  * @code boost::asio::write(
  *     s, buffers,
- *     boost::asio::transfer_all(),
- *     boost::asio::throw_error()); @endcode
+ *     boost::asio::transfer_all()); @endcode
  */
 template <typename Sync_Write_Stream, typename Const_Buffers>
 std::size_t write(Sync_Write_Stream& s, const Const_Buffers& buffers);
@@ -96,11 +96,11 @@ std::size_t write(Sync_Write_Stream& s, const Const_Buffers& buffers);
  * whether the write operation is complete. The signature of the function object
  * must be:
  * @code bool completion_condition(
- *   const Sync_Write_Stream::error_type& error, // Result of latest write_some
- *                                               // operation.
+ *   const boost::system::error_code& error, // Result of latest write_some
+ *                                           // operation.
  *
- *   std::size_t bytes_transferred               // Number of bytes transferred
- *                                               // so far.
+ *   std::size_t bytes_transferred           // Number of bytes transferred
+ *                                           // so far.
  * ); @endcode
  * A return value of true indicates that the write operation is complete. False
  * indicates that further calls to the stream's write_some function are
@@ -108,7 +108,7 @@ std::size_t write(Sync_Write_Stream& s, const Const_Buffers& buffers);
  *
  * @returns The number of bytes transferred.
  *
- * @throws Sync_Write_Stream::error_type Thrown on failure.
+ * @throws boost::system::system_error Thrown on failure.
  *
  * @par Example:
  * To write a single data buffer use the @ref buffer function as follows:
@@ -117,12 +117,6 @@ std::size_t write(Sync_Write_Stream& s, const Const_Buffers& buffers);
  * See the @ref buffer documentation for information on writing multiple
  * buffers in one go, and how to use it with arrays, boost::array or
  * std::vector.
- *
- * @note This overload is equivalent to calling:
- * @code boost::asio::write(
- *     s, buffers,
- *     completion_condition,
- *     boost::asio::throw_error()); @endcode
  */
 template <typename Sync_Write_Stream, typename Const_Buffers,
     typename Completion_Condition>
@@ -153,31 +147,25 @@ std::size_t write(Sync_Write_Stream& s, const Const_Buffers& buffers,
  * whether the write operation is complete. The signature of the function object
  * must be:
  * @code bool completion_condition(
- *   const Sync_Write_Stream::error_type& error, // Result of latest write_some
- *                                               // operation.
+ *   const boost::system::error_code& error, // Result of latest write_some
+ *                                           // operation.
  *
- *   std::size_t bytes_transferred               // Number of bytes transferred
- *                                               // so far.
+ *   std::size_t bytes_transferred           // Number of bytes transferred
+ *                                           // so far.
  * ); @endcode
  * A return value of true indicates that the write operation is complete. False
  * indicates that further calls to the stream's write_some function are
  * required.
  *
- * @param error_handler A handler to be called when the operation completes,
- * to indicate whether or not an error has occurred. Copies will be made of
- * the handler as required. The function signature of the handler must be:
- * @code void error_handler(
- *   const Sync_Write_Stream::error_type& error // Result of operation.
- * ); @endcode
+ * @param ec Set to indicate what error occurred, if any.
  *
- * @returns The number of bytes written. If an error occurs, and the error
- * handler does not throw an exception, returns the total number of bytes
- * successfully transferred prior to the error.
+ * @returns The number of bytes written. If an error occurs, returns the total
+ * number of bytes successfully transferred prior to the error.
  */
 template <typename Sync_Write_Stream, typename Const_Buffers,
-    typename Completion_Condition, typename Error_Handler>
+    typename Completion_Condition>
 std::size_t write(Sync_Write_Stream& s, const Const_Buffers& buffers,
-    Completion_Condition completion_condition, Error_Handler error_handler);
+    Completion_Condition completion_condition, boost::system::error_code& ec);
 
 /// Write a certain amount of data to a stream before returning.
 /**
@@ -198,13 +186,12 @@ std::size_t write(Sync_Write_Stream& s, const Const_Buffers& buffers,
  *
  * @returns The number of bytes transferred.
  *
- * @throws Sync_Write_Stream::error_type Thrown on failure.
+ * @throws boost::system::system_error Thrown on failure.
  *
  * @note This overload is equivalent to calling:
  * @code boost::asio::write(
  *     s, b,
- *     boost::asio::transfer_all(),
- *     boost::asio::throw_error()); @endcode
+ *     boost::asio::transfer_all()); @endcode
  */
 template <typename Sync_Write_Stream, typename Allocator>
 std::size_t write(Sync_Write_Stream& s, basic_streambuf<Allocator>& b);
@@ -230,11 +217,11 @@ std::size_t write(Sync_Write_Stream& s, basic_streambuf<Allocator>& b);
  * whether the write operation is complete. The signature of the function object
  * must be:
  * @code bool completion_condition(
- *   const Sync_Write_Stream::error_type& error, // Result of latest write_some
- *                                               // operation.
+ *   const boost::system::error_code& error, // Result of latest write_some
+ *                                           // operation.
  *
- *   std::size_t bytes_transferred               // Number of bytes transferred
- *                                               // so far.
+ *   std::size_t bytes_transferred           // Number of bytes transferred
+ *                                           // so far.
  * ); @endcode
  * A return value of true indicates that the write operation is complete. False
  * indicates that further calls to the stream's write_some function are
@@ -242,13 +229,7 @@ std::size_t write(Sync_Write_Stream& s, basic_streambuf<Allocator>& b);
  *
  * @returns The number of bytes transferred.
  *
- * @throws Sync_Write_Stream::error_type Thrown on failure.
- *
- * @note This overload is equivalent to calling:
- * @code boost::asio::write(
- *     s, b,
- *     completion_condition,
- *     boost::asio::throw_error()); @endcode
+ * @throws boost::system::system_error Thrown on failure.
  */
 template <typename Sync_Write_Stream, typename Allocator,
     typename Completion_Condition>
@@ -276,31 +257,25 @@ std::size_t write(Sync_Write_Stream& s, basic_streambuf<Allocator>& b,
  * whether the write operation is complete. The signature of the function object
  * must be:
  * @code bool completion_condition(
- *   const Sync_Write_Stream::error_type& error, // Result of latest write_some
- *                                               // operation.
+ *   const boost::system::error_code& error, // Result of latest write_some
+ *                                           // operation.
  *
- *   std::size_t bytes_transferred               // Number of bytes transferred
- *                                               // so far.
+ *   std::size_t bytes_transferred           // Number of bytes transferred
+ *                                           // so far.
  * ); @endcode
  * A return value of true indicates that the write operation is complete. False
  * indicates that further calls to the stream's write_some function are
  * required.
  *
- * @param error_handler A handler to be called when the operation completes,
- * to indicate whether or not an error has occurred. Copies will be made of
- * the handler as required. The function signature of the handler must be:
- * @code void error_handler(
- *   const Sync_Write_Stream::error_type& error // Result of operation.
- * ); @endcode
+ * @param ec Set to indicate what error occurred, if any.
  *
- * @returns The number of bytes written. If an error occurs, and the error
- * handler does not throw an exception, returns the total number of bytes
- * successfully transferred prior to the error.
+ * @returns The number of bytes written. If an error occurs, returns the total
+ * number of bytes successfully transferred prior to the error.
  */
 template <typename Sync_Write_Stream, typename Allocator,
-    typename Completion_Condition, typename Error_Handler>
+    typename Completion_Condition>
 std::size_t write(Sync_Write_Stream& s, basic_streambuf<Allocator>& b,
-    Completion_Condition completion_condition, Error_Handler error_handler);
+    Completion_Condition completion_condition, boost::system::error_code& ec);
 
 /*@}*/
 /**
@@ -336,13 +311,12 @@ std::size_t write(Sync_Write_Stream& s, basic_streambuf<Allocator>& b,
  * Copies will be made of the handler as required. The function signature of
  * the handler must be:
  * @code void handler(
- *   const Async_Write_Stream::error_type& error, // Result of operation.
+ *   const boost::system::error_code& error, // Result of operation.
  *
- *   std::size_t bytes_transferred                // Number of bytes written
- *                                                // from the buffers. If an
- *                                                // error occurred, this will
- *                                                // be less than the sum of the
- *                                                // buffer sizes.
+ *   std::size_t bytes_transferred           // Number of bytes written from the
+ *                                           // buffers. If an error occurred,
+ *                                           // this will be less than the sum
+ *                                           // of the buffer sizes.
  * ); @endcode
  * Regardless of whether the asynchronous operation completes immediately or
  * not, the handler will not be invoked from within this function. Invocation of
@@ -390,11 +364,11 @@ void async_write(Async_Write_Stream& s, const Const_Buffers& buffers,
  * whether the write operation is complete. The signature of the function object
  * must be:
  * @code bool completion_condition(
- *   const Async_Write_Stream::error_type& error, // Result of latest write_some
- *                                                // operation.
+ *   const boost::system::error_code& error, // Result of latest write_some
+ *                                           // operation.
  *
- *   std::size_t bytes_transferred                // Number of bytes transferred
- *                                                // so far.
+ *   std::size_t bytes_transferred           // Number of bytes transferred
+ *                                           // so far.
  * ); @endcode
  * A return value of true indicates that the write operation is complete. False
  * indicates that further calls to the stream's async_write_some function are
@@ -404,13 +378,12 @@ void async_write(Async_Write_Stream& s, const Const_Buffers& buffers,
  * Copies will be made of the handler as required. The function signature of the
  * handler must be:
  * @code void handler(
- *   const Async_Write_Stream::error_type& error, // Result of operation.
+ *   const boost::system::error_code& error, // Result of operation.
  *
- *   std::size_t bytes_transferred                // Number of bytes written
- *                                                // from the buffers. If an
- *                                                // error occurred, this will
- *                                                // be less than the sum of the
- *                                                // buffer sizes.
+ *   std::size_t bytes_transferred           // Number of bytes written from the
+ *                                           // buffers. If an error occurred,
+ *                                           // this will be less than the sum
+ *                                           // of the buffer sizes.
  * ); @endcode
  * Regardless of whether the asynchronous operation completes immediately or
  * not, the handler will not be invoked from within this function. Invocation of
@@ -458,13 +431,12 @@ void async_write(Async_Write_Stream& s, const Const_Buffers& buffers,
  * Copies will be made of the handler as required. The function signature of the
  * handler must be:
  * @code void handler(
- *   const Async_Write_Stream::error_type& error, // Result of operation.
+ *   const boost::system::error_code& error, // Result of operation.
  *
- *   std::size_t bytes_transferred                // Number of bytes written
- *                                                // from the buffers. If an
- *                                                // error occurred, this will
- *                                                // be less than the sum of the
- *                                                // buffer sizes.
+ *   std::size_t bytes_transferred           // Number of bytes written from the
+ *                                           // buffers. If an error occurred,
+ *                                           // this will be less than the sum
+ *                                           // of the buffer sizes.
  * ); @endcode
  * Regardless of whether the asynchronous operation completes immediately or
  * not, the handler will not be invoked from within this function. Invocation of
@@ -501,11 +473,11 @@ void async_write(Async_Write_Stream& s, basic_streambuf<Allocator>& b,
  * whether the write operation is complete. The signature of the function object
  * must be:
  * @code bool completion_condition(
- *   const Async_Write_Stream::error_type& error, // Result of latest write_some
- *                                                // operation.
+ *   const boost::system::error_code& error, // Result of latest write_some
+ *                                           // operation.
  *
- *   std::size_t bytes_transferred                // Number of bytes transferred
- *                                                // so far.
+ *   std::size_t bytes_transferred           // Number of bytes transferred
+ *                                           // so far.
  * ); @endcode
  * A return value of true indicates that the write operation is complete. False
  * indicates that further calls to the stream's async_write_some function are
@@ -515,13 +487,12 @@ void async_write(Async_Write_Stream& s, basic_streambuf<Allocator>& b,
  * Copies will be made of the handler as required. The function signature of the
  * handler must be:
  * @code void handler(
- *   const Async_Write_Stream::error_type& error, // Result of operation.
+ *   const boost::system::error_code& error, // Result of operation.
  *
- *   std::size_t bytes_transferred                // Number of bytes written
- *                                                // from the buffers. If an
- *                                                // error occurred, this will
- *                                                // be less than the sum of the
- *                                                // buffer sizes.
+ *   std::size_t bytes_transferred           // Number of bytes written from the
+ *                                           // buffers. If an error occurred,
+ *                                           // this will be less than the sum
+ *                                           // of the buffer sizes.
  * ); @endcode
  * Regardless of whether the asynchronous operation completes immediately or
  * not, the handler will not be invoked from within this function. Invocation of

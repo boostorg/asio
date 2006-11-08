@@ -38,7 +38,7 @@ public:
           boost::asio::placeholders::error));
   }
 
-  void handle_send_to(const boost::asio::error& error)
+  void handle_send_to(const boost::system::error_code& error)
   {
     if (!error && message_count_ < max_message_count)
     {
@@ -49,7 +49,7 @@ public:
     }
   }
 
-  void handle_timeout(const boost::asio::error& error)
+  void handle_timeout(const boost::system::error_code& error)
   {
     if (!error)
     {
@@ -89,10 +89,6 @@ int main(int argc, char* argv[])
     boost::asio::io_service io_service;
     sender s(io_service, boost::asio::ip::address::from_string(argv[1]));
     io_service.run();
-  }
-  catch (boost::asio::error& e)
-  {
-    std::cerr << e << "\n";
   }
   catch (std::exception& e)
   {

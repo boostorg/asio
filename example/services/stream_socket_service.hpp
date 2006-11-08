@@ -121,12 +121,12 @@ public:
     {
     }
 
-    void operator()(const boost::asio::error& e)
+    void operator()(const boost::system::error_code& e)
     {
       if (e)
       {
         std::string msg = "Asynchronous connect failed: ";
-        msg += e.what();
+        msg += e.message();
         logger_.log(msg);
       }
       else
@@ -228,12 +228,13 @@ public:
     {
     }
 
-    void operator()(const boost::asio::error& e, std::size_t bytes_transferred)
+    void operator()(const boost::system::error_code& e,
+        std::size_t bytes_transferred)
     {
       if (e)
       {
         std::string msg = "Asynchronous send failed: ";
-        msg += e.what();
+        msg += e.message();
         logger_.log(msg);
       }
       else
@@ -280,12 +281,13 @@ public:
     {
     }
 
-    void operator()(const boost::asio::error& e, std::size_t bytes_transferred)
+    void operator()(const boost::system::error_code& e,
+        std::size_t bytes_transferred)
     {
       if (e)
       {
         std::string msg = "Asynchronous receive failed: ";
-        msg += e.what();
+        msg += e.message();
         logger_.log(msg);
       }
       else

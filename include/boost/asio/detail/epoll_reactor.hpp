@@ -28,10 +28,11 @@
 #include <boost/config.hpp>
 #include <boost/date_time/posix_time/posix_time_types.hpp>
 #include <boost/throw_exception.hpp>
+#include <boost/system/system_error.hpp>
 #include <boost/asio/detail/pop_options.hpp>
 
+#include <boost/asio/error.hpp>
 #include <boost/asio/io_service.hpp>
-#include <boost/asio/system_exception.hpp>
 #include <boost/asio/detail/bind_handler.hpp>
 #include <boost/asio/detail/hash_map.hpp>
 #include <boost/asio/detail/mutex.hpp>
@@ -140,7 +141,7 @@ public:
       return;
 
     if (!read_op_queue_.has_operation(descriptor))
-      if (handler(0))
+      if (handler(boost::asio::error::success))
         return;
 
     if (read_op_queue_.enqueue_operation(descriptor, handler))
@@ -156,8 +157,8 @@ public:
       int result = epoll_ctl(epoll_fd_, EPOLL_CTL_MOD, descriptor, &ev);
       if (result != 0)
       {
-        int error = errno;
-        read_op_queue_.dispatch_all_operations(descriptor, error);
+        boost::system::error_code ec(errno, boost::system::native_ecat);
+        read_op_queue_.dispatch_all_operations(descriptor, ec);
       }
     }
   }
@@ -173,7 +174,7 @@ public:
       return;
 
     if (!write_op_queue_.has_operation(descriptor))
-      if (handler(0))
+      if (handler(boost::asio::error::success))
         return;
 
     if (write_op_queue_.enqueue_operation(descriptor, handler))
@@ -189,8 +190,8 @@ public:
       int result = epoll_ctl(epoll_fd_, EPOLL_CTL_MOD, descriptor, &ev);
       if (result != 0)
       {
-        int error = errno;
-        write_op_queue_.dispatch_all_operations(descriptor, error);
+        boost::system::error_code ec(errno, boost::system::native_ecat);
+        write_op_queue_.dispatch_all_operations(descriptor, ec);
       }
     }
   }
@@ -218,8 +219,8 @@ public:
       int result = epoll_ctl(epoll_fd_, EPOLL_CTL_MOD, descriptor, &ev);
       if (result != 0)
       {
-        int error = errno;
-        except_op_queue_.dispatch_all_operations(descriptor, error);
+        boost::system::error_code ec(errno, boost::system::native_ecat);
+        except_op_queue_.dispatch_all_operations(descriptor, ec);
       }
     }
   }
@@ -249,9 +250,9 @@ public:
       int result = epoll_ctl(epoll_fd_, EPOLL_CTL_MOD, descriptor, &ev);
       if (result != 0)
       {
-        int error = errno;
-        write_op_queue_.dispatch_all_operations(descriptor, error);
-        except_op_queue_.dispatch_all_operations(descriptor, error);
+        boost::system::error_code ec(errno, boost::system::native_ecat);
+        write_op_queue_.dispatch_all_operations(descriptor, ec);
+        except_op_queue_.dispatch_all_operations(descriptor, ec);
       }
     }
   }
@@ -399,9 +400,10 @@ private:
       {
         if (events[i].events & (EPOLLERR | EPOLLHUP))
         {
-          except_op_queue_.dispatch_all_operations(descriptor, 0);
-          read_op_queue_.dispatch_all_operations(descriptor, 0);
-          write_op_queue_.dispatch_all_operations(descriptor, 0);
+          boost::system::error_code ec;
+          except_op_queue_.dispatch_all_operations(descriptor, ec);
+          read_op_queue_.dispatch_all_operations(descriptor, ec);
+          write_op_queue_.dispatch_all_operations(descriptor, ec);
 
           epoll_event ev = { 0, { 0 } };
           ev.events = 0;
@@ -413,21 +415,22 @@ private:
           bool more_reads = false;
           bool more_writes = false;
           bool more_except = false;
+          boost::system::error_code ec;
 
           // Exception operations must be processed first to ensure that any
           // out-of-band data is read before normal data.
           if (events[i].events & EPOLLPRI)
-            more_except = except_op_queue_.dispatch_operation(descriptor, 0);
+            more_except = except_op_queue_.dispatch_operation(descriptor, ec);
           else
             more_except = except_op_queue_.has_operation(descriptor);
 
           if (events[i].events & EPOLLIN)
-            more_reads = read_op_queue_.dispatch_operation(descriptor, 0);
+            more_reads = read_op_queue_.dispatch_operation(descriptor, ec);
           else
             more_reads = read_op_queue_.has_operation(descriptor);
 
           if (events[i].events & EPOLLOUT)
-            more_writes = write_op_queue_.dispatch_operation(descriptor, 0);
+            more_writes = write_op_queue_.dispatch_operation(descriptor, ec);
           else
             more_writes = write_op_queue_.has_operation(descriptor);
 
@@ -443,10 +446,10 @@ private:
           int result = epoll_ctl(epoll_fd_, EPOLL_CTL_MOD, descriptor, &ev);
           if (result != 0)
           {
-            int error = errno;
-            read_op_queue_.dispatch_all_operations(descriptor, error);
-            write_op_queue_.dispatch_all_operations(descriptor, error);
-            except_op_queue_.dispatch_all_operations(descriptor, error);
+            ec = boost::system::error_code(errno, boost::system::native_ecat);
+            read_op_queue_.dispatch_all_operations(descriptor, ec);
+            write_op_queue_.dispatch_all_operations(descriptor, ec);
+            except_op_queue_.dispatch_all_operations(descriptor, ec);
           }
         }
       }
@@ -504,7 +507,9 @@ private:
     int fd = epoll_create(epoll_size);
     if (fd == -1)
     {
-      system_exception e("epoll", errno);
+      boost::system::system_error e(
+          boost::system::error_code(errno, boost::system::native_ecat),
+          "epoll");
       boost::throw_exception(e);
     }
     return fd;

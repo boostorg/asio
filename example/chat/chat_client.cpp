@@ -46,7 +46,7 @@ public:
 
 private:
 
-  void handle_connect(const boost::asio::error& error,
+  void handle_connect(const boost::system::error_code& error,
       tcp::resolver::iterator endpoint_iterator)
   {
     if (!error)
@@ -66,7 +66,7 @@ private:
     }
   }
 
-  void handle_read_header(const boost::asio::error& error)
+  void handle_read_header(const boost::system::error_code& error)
   {
     if (!error && read_msg_.decode_header())
     {
@@ -81,7 +81,7 @@ private:
     }
   }
 
-  void handle_read_body(const boost::asio::error& error)
+  void handle_read_body(const boost::system::error_code& error)
   {
     if (!error)
     {
@@ -112,7 +112,7 @@ private:
     }
   }
 
-  void handle_write(const boost::asio::error& error)
+  void handle_write(const boost::system::error_code& error)
   {
     if (!error)
     {
@@ -177,10 +177,6 @@ int main(int argc, char* argv[])
 
     c.close();
     t.join();
-  }
-  catch (boost::asio::error& e)
-  {
-    std::cerr << e << "\n";
   }
   catch (std::exception& e)
   {

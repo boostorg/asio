@@ -23,6 +23,7 @@
 #include <boost/noncopyable.hpp>
 #include <boost/asio/detail/pop_options.hpp>
 
+#include <boost/asio/error.hpp>
 #include <boost/asio/io_service.hpp>
 #include <boost/asio/ssl/context_base.hpp>
 #include <boost/asio/ssl/detail/openssl_context_service.hpp>
@@ -78,85 +79,78 @@ public:
   }
 
   /// Set options on the context.
-  template <typename Error_Handler>
-  void set_options(impl_type& impl, context_base::options o,
-      Error_Handler error_handler)
+  boost::system::error_code set_options(impl_type& impl,
+      context_base::options o, boost::system::error_code& ec)
   {
-    service_impl_.set_options(impl, o, error_handler);
+    return service_impl_.set_options(impl, o, ec);
   }
 
   /// Set peer verification mode.
-  template <typename Error_Handler>
-  void set_verify_mode(impl_type& impl, context_base::verify_mode v,
-      Error_Handler error_handler)
+  boost::system::error_code set_verify_mode(impl_type& impl,
+      context_base::verify_mode v, boost::system::error_code& ec)
   {
-    service_impl_.set_verify_mode(impl, v, error_handler);
+    return service_impl_.set_verify_mode(impl, v, ec);
   }
 
   /// Load a certification authority file for performing verification.
-  template <typename Error_Handler>
-  void load_verify_file(impl_type& impl, const std::string& filename,
-      Error_Handler error_handler)
+  boost::system::error_code load_verify_file(impl_type& impl,
+      const std::string& filename, boost::system::error_code& ec)
   {
-    service_impl_.load_verify_file(impl, filename, error_handler);
+    return service_impl_.load_verify_file(impl, filename, ec);
   }
 
   /// Add a directory containing certification authority files to be used for
   /// performing verification.
-  template <typename Error_Handler>
-  void add_verify_path(impl_type& impl, const std::string& path,
-      Error_Handler error_handler)
+  boost::system::error_code add_verify_path(impl_type& impl,
+      const std::string& path, boost::system::error_code& ec)
   {
-    service_impl_.add_verify_path(impl, path, error_handler);
+    return service_impl_.add_verify_path(impl, path, ec);
   }
 
   /// Use a certificate from a file.
-  template <typename Error_Handler>
-  void use_certificate_file(impl_type& impl, const std::string& filename,
-      context_base::file_format format, Error_Handler error_handler)
+  boost::system::error_code use_certificate_file(impl_type& impl,
+      const std::string& filename, context_base::file_format format,
+      boost::system::error_code& ec)
   {
-    service_impl_.use_certificate_file(impl, filename, format, error_handler);
+    return service_impl_.use_certificate_file(impl, filename, format, ec);
   }
 
   /// Use a certificate chain from a file.
-  template <typename Error_Handler>
-  void use_certificate_chain_file(impl_type& impl, const std::string& filename,
-      Error_Handler error_handler)
+  boost::system::error_code use_certificate_chain_file(impl_type& impl,
+      const std::string& filename, boost::system::error_code& ec)
   {
-    service_impl_.use_certificate_chain_file(impl, filename, error_handler);
+    return service_impl_.use_certificate_chain_file(impl, filename, ec);
   }
 
   /// Use a private key from a file.
-  template <typename Error_Handler>
-  void use_private_key_file(impl_type& impl, const std::string& filename,
-      context_base::file_format format, Error_Handler error_handler)
+  boost::system::error_code use_private_key_file(impl_type& impl,
+      const std::string& filename, context_base::file_format format,
+      boost::system::error_code& ec)
   {
-    service_impl_.use_private_key_file(impl, filename, format, error_handler);
+    return service_impl_.use_private_key_file(impl, filename, format, ec);
   }
 
   /// Use an RSA private key from a file.
-  template <typename Error_Handler>
-  void use_rsa_private_key_file(impl_type& impl, const std::string& filename,
-      context_base::file_format format, Error_Handler error_handler)
+  boost::system::error_code use_rsa_private_key_file(impl_type& impl,
+      const std::string& filename, context_base::file_format format,
+      boost::system::error_code& ec)
   {
-    service_impl_.use_rsa_private_key_file(impl, filename, format,
-        error_handler);
+    return service_impl_.use_rsa_private_key_file(impl, filename, format, ec);
   }
 
   /// Use the specified file to obtain the temporary Diffie-Hellman parameters.
-  template <typename Error_Handler>
-  void use_tmp_dh_file(impl_type& impl, const std::string& filename,
-      Error_Handler error_handler)
+  boost::system::error_code use_tmp_dh_file(impl_type& impl,
+      const std::string& filename, boost::system::error_code& ec)
   {
-    service_impl_.use_tmp_dh_file(impl, filename, error_handler);
+    return service_impl_.use_tmp_dh_file(impl, filename, ec);
   }
 
   /// Set the password callback.
-  template <typename Password_Callback, typename Error_Handler>
-  void set_password_callback(impl_type& impl, Password_Callback callback,
-      Error_Handler error_handler)
+  template <typename Password_Callback>
+  boost::system::error_code set_password_callback(impl_type& impl,
+      Password_Callback callback, boost::system::error_code& ec)
   {
-    service_impl_.set_password_callback(impl, callback, error_handler);
+    return service_impl_.set_password_callback(impl, callback, ec);
   }
 
 private:

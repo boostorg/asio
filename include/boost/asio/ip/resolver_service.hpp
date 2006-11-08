@@ -17,6 +17,7 @@
 
 #include <boost/asio/detail/push_options.hpp>
 
+#include <boost/asio/error.hpp>
 #include <boost/asio/io_service.hpp>
 #include <boost/asio/detail/resolver_service.hpp>
 
@@ -85,11 +86,10 @@ public:
   }
 
   /// Resolve a query to a list of entries.
-  template <typename Error_Handler>
   iterator_type resolve(implementation_type& impl, const query_type& query,
-      Error_Handler error_handler)
+      boost::system::error_code& ec)
   {
-    return service_impl_.resolve(impl, query, error_handler);
+    return service_impl_.resolve(impl, query, ec);
   }
 
   /// Asynchronously resolve a query to a list of entries.
@@ -101,11 +101,10 @@ public:
   }
 
   /// Resolve an endpoint to a list of entries.
-  template <typename Error_Handler>
   iterator_type resolve(implementation_type& impl,
-      const endpoint_type& endpoint, Error_Handler error_handler)
+      const endpoint_type& endpoint, boost::system::error_code& ec)
   {
-    return service_impl_.resolve(impl, endpoint, error_handler);
+    return service_impl_.resolve(impl, endpoint, ec);
   }
 
   /// Asynchronously resolve an endpoint to a list of entries.

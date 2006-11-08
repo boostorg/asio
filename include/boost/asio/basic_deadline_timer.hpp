@@ -40,9 +40,6 @@ namespace asio {
  * @e Distinct @e objects: Safe.@n
  * @e Shared @e objects: Unsafe.
  *
- * @par Concepts:
- * Async_Object, Error_Source.
- *
  * @sa @ref deadline_timer_reset
  *
  * @par Examples:
@@ -61,7 +58,7 @@ namespace asio {
  * @par 
  * Performing an asynchronous wait:
  * @code
- * void handler(const boost::asio::error& error)
+ * void handler(const boost::system::error_code& error)
  * {
  *   if (!error)
  *   {
@@ -86,9 +83,6 @@ class basic_deadline_timer
   : public basic_io_object<Service>
 {
 public:
-  /// The type used for reporting errors.
-  typedef boost::asio::error error_type;
-
   /// The time traits type.
   typedef Time_Traits traits_type;
 
@@ -222,7 +216,7 @@ public:
    * This function is used to wait for the timer to expire. This function
    * blocks and does not return until the timer has expired.
    *
-   * @throws boost::asio::error Thrown on failure.
+   * @throws boost::system::system_error Thrown on failure.
    */
   void wait()
   {
@@ -246,7 +240,7 @@ public:
    * will be made of the handler as required. The function signature of the
    * handler must be:
    * @code void handler(
-   *   const boost::asio::error& error // Result of operation
+   *   const boost::system::error_code& error // Result of operation.
    * ); @endcode
    * Regardless of whether the asynchronous operation completes immediately or
    * not, the handler will not be invoked from within this function. Invocation
@@ -282,7 +276,7 @@ public:
  *   }
  * }
  *
- * void on_timeout(const boost::asio::error& e)
+ * void on_timeout(const boost::system::error_code& e)
  * {
  *   if (e != boost::asio::error::operation_aborted)
  *   {
@@ -297,8 +291,8 @@ public:
  * late and the wait handler has already been executed, or will soon be
  * executed. If it returns 1 then the wait handler was successfully cancelled.
  *
- * @li If a wait handler is cancelled, the boost::asio::error passed to it
- * contains the value boost::asio::error::operation_aborted.
+ * @li If a wait handler is cancelled, the boost::system::error_code passed to
+ * it contains the value boost::asio::error::operation_aborted.
  *
  * @sa boost::asio::basic_deadline_timer
  */

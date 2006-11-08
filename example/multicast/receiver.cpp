@@ -41,7 +41,8 @@ public:
           boost::asio::placeholders::bytes_transferred));
   }
 
-  void handle_receive_from(const boost::asio::error& error, size_t bytes_recvd)
+  void handle_receive_from(const boost::system::error_code& error,
+      size_t bytes_recvd)
   {
     if (!error)
     {

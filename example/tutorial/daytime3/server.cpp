@@ -57,7 +57,7 @@ private:
   {
   }
 
-  void handle_write(const boost::asio::error& /*error*/,
+  void handle_write(const boost::system::error_code& /*error*/,
       size_t /*bytes_transferred*/)
   {
   }
@@ -87,7 +87,7 @@ private:
   }
 
   void handle_accept(tcp_connection::pointer new_connection,
-      const boost::asio::error& error)
+      const boost::system::error_code& error)
   {
     if (!error)
     {

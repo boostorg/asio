@@ -31,10 +31,11 @@
 #include <boost/config.hpp>
 #include <boost/date_time/posix_time/posix_time_types.hpp>
 #include <boost/throw_exception.hpp>
+#include <boost/system/system_error.hpp>
 #include <boost/asio/detail/pop_options.hpp>
 
+#include <boost/asio/error.hpp>
 #include <boost/asio/io_service.hpp>
-#include <boost/asio/system_exception.hpp>
 #include <boost/asio/detail/bind_handler.hpp>
 #include <boost/asio/detail/mutex.hpp>
 #include <boost/asio/detail/task_io_service.hpp>
@@ -139,7 +140,7 @@ public:
       return;
 
     if (!read_op_queue_.has_operation(descriptor))
-      if (handler(0))
+      if (handler(boost::asio::error::success))
         return;
 
     if (read_op_queue_.enqueue_operation(descriptor, handler))
@@ -148,8 +149,8 @@ public:
       EV_SET(&event, descriptor, EVFILT_READ, EV_ADD, 0, 0, 0);
       if (::kevent(kqueue_fd_, &event, 1, 0, 0, 0) == -1)
       {
-        int error = errno;
-        read_op_queue_.dispatch_all_operations(descriptor, error);
+        boost::system::error_code ec(errno, boost::system::native_ecat);
+        read_op_queue_.dispatch_all_operations(descriptor, ec);
       }
     }
   }
@@ -165,7 +166,7 @@ public:
       return;
 
     if (!write_op_queue_.has_operation(descriptor))
-      if (handler(0))
+      if (handler(boost::asio::error::success))
         return;
 
     if (write_op_queue_.enqueue_operation(descriptor, handler))
@@ -174,8 +175,8 @@ public:
       EV_SET(&event, descriptor, EVFILT_WRITE, EV_ADD, 0, 0, 0);
       if (::kevent(kqueue_fd_, &event, 1, 0, 0, 0) == -1)
       {
-        int error = errno;
-        write_op_queue_.dispatch_all_operations(descriptor, error);
+        boost::system::error_code ec(errno, boost::system::native_ecat);
+        write_op_queue_.dispatch_all_operations(descriptor, ec);
       }
     }
   }
@@ -199,8 +200,8 @@ public:
         EV_SET(&event, descriptor, EVFILT_READ, EV_ADD, EV_OOBAND, 0, 0);
       if (::kevent(kqueue_fd_, &event, 1, 0, 0, 0) == -1)
       {
-        int error = errno;
-        except_op_queue_.dispatch_all_operations(descriptor, error);
+        boost::system::error_code ec(errno, boost::system::native_ecat);
+        except_op_queue_.dispatch_all_operations(descriptor, ec);
       }
     }
   }
@@ -222,8 +223,8 @@ public:
       EV_SET(&event, descriptor, EVFILT_WRITE, EV_ADD, 0, 0, 0);
       if (::kevent(kqueue_fd_, &event, 1, 0, 0, 0) == -1)
       {
-        int error = errno;
-        write_op_queue_.dispatch_all_operations(descriptor, error);
+        boost::system::error_code ec(errno, boost::system::native_ecat);
+        write_op_queue_.dispatch_all_operations(descriptor, ec);
       }
     }
 
@@ -236,9 +237,9 @@ public:
         EV_SET(&event, descriptor, EVFILT_READ, EV_ADD, EV_OOBAND, 0, 0);
       if (::kevent(kqueue_fd_, &event, 1, 0, 0, 0) == -1)
       {
-        int error = errno;
-        except_op_queue_.dispatch_all_operations(descriptor, error);
-        write_op_queue_.dispatch_all_operations(descriptor, error);
+        boost::system::error_code ec(errno, boost::system::native_ecat);
+        except_op_queue_.dispatch_all_operations(descriptor, ec);
+        write_op_queue_.dispatch_all_operations(descriptor, ec);
       }
     }
   }
@@ -394,21 +395,24 @@ private:
         bool more_except = false;
         if (events[i].flags & EV_ERROR)
         {
-          int error = events[i].data;
+          boost::system::error_code error(
+              events[i].data, boost::system::native_ecat);
           except_op_queue_.dispatch_all_operations(descriptor, error);
           read_op_queue_.dispatch_all_operations(descriptor, error);
         }
         else if (events[i].flags & EV_OOBAND)
         {
-          more_except = except_op_queue_.dispatch_operation(descriptor, 0);
+          boost::system::error_code error;
+          more_except = except_op_queue_.dispatch_operation(descriptor, error);
           if (events[i].data > 0)
-            more_reads = read_op_queue_.dispatch_operation(descriptor, 0);
+            more_reads = read_op_queue_.dispatch_operation(descriptor, error);
           else
             more_reads = read_op_queue_.has_operation(descriptor);
         }
         else
         {
-          more_reads = read_op_queue_.dispatch_operation(descriptor, 0);
+          boost::system::error_code error;
+          more_reads = read_op_queue_.dispatch_operation(descriptor, error);
           more_except = except_op_queue_.has_operation(descriptor);
         }
 
@@ -422,7 +426,7 @@ private:
           EV_SET(&event, descriptor, EVFILT_READ, EV_DELETE, 0, 0, 0);
         if (::kevent(kqueue_fd_, &event, 1, 0, 0, 0) == -1)
         {
-          int error = errno;
+          boost::system::error_code error(errno, boost::system::native_ecat);
           except_op_queue_.dispatch_all_operations(descriptor, error);
           read_op_queue_.dispatch_all_operations(descriptor, error);
         }
@@ -433,12 +437,14 @@ private:
         bool more_writes = false;
         if (events[i].flags & EV_ERROR)
         {
-          int error = events[i].data;
+          boost::system::error_code error(
+              events[i].data, boost::system::native_ecat);
           write_op_queue_.dispatch_all_operations(descriptor, error);
         }
         else
         {
-          more_writes = write_op_queue_.dispatch_operation(descriptor, 0);
+          boost::system::error_code error;
+          more_writes = write_op_queue_.dispatch_operation(descriptor, error);
         }
 
         // Update the descriptor in the kqueue.
@@ -449,7 +455,7 @@ private:
           EV_SET(&event, descriptor, EVFILT_WRITE, EV_DELETE, 0, 0, 0);
         if (::kevent(kqueue_fd_, &event, 1, 0, 0, 0) == -1)
         {
-          int error = errno;
+          boost::system::error_code error(errno, boost::system::native_ecat);
           write_op_queue_.dispatch_all_operations(descriptor, error);
         }
       }
@@ -505,7 +511,9 @@ private:
     int fd = kqueue();
     if (fd == -1)
     {
-      system_exception e("kqueue", errno);
+      boost::system::system_error e(
+          boost::system::error_code(errno, boost::system::native_ecat),
+          "kqueue");
       boost::throw_exception(e);
     }
     return fd;

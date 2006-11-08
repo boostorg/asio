@@ -71,17 +71,15 @@ void test_sync_operations()
   while (bytes_written < sizeof(write_data))
   {
     bytes_written += server_socket.write_some(
-        boost::asio::buffer(write_buf + bytes_written),
-        boost::asio::throw_error());
-    server_socket.flush(boost::asio::throw_error());
+        boost::asio::buffer(write_buf + bytes_written));
+    server_socket.flush();
   }
 
   bytes_read = 0;
   while (bytes_read < sizeof(read_data))
   {
     bytes_read += client_socket.read_some(
-        boost::asio::buffer(read_buf + bytes_read),
-        boost::asio::throw_error());
+        boost::asio::buffer(read_buf + bytes_read));
   }
 
   BOOST_CHECK(bytes_written == sizeof(write_data));
@@ -89,23 +87,22 @@ void test_sync_operations()
   BOOST_CHECK(memcmp(write_data, read_data, sizeof(write_data)) == 0);
 
   server_socket.close();
-  boost::asio::error error;
+  boost::system::error_code error;
   bytes_read = client_socket.read_some(
-      boost::asio::buffer(read_buf),
-      boost::asio::assign_error(error));
+      boost::asio::buffer(read_buf), error);
 
   BOOST_CHECK(bytes_read == 0);
   BOOST_CHECK(error == boost::asio::error::eof);
 
-  client_socket.close(boost::asio::throw_error());
+  client_socket.close(error);
 }
 
-void handle_accept(const boost::asio::error& e)
+void handle_accept(const boost::system::error_code& e)
 {
   BOOST_CHECK(!e);
 }
 
-void handle_write(const boost::asio::error& e,
+void handle_write(const boost::system::error_code& e,
     std::size_t bytes_transferred,
     std::size_t* total_bytes_written)
 {
@@ -115,12 +112,12 @@ void handle_write(const boost::asio::error& e,
   *total_bytes_written += bytes_transferred;
 }
 
-void handle_flush(const boost::asio::error& e)
+void handle_flush(const boost::system::error_code& e)
 {
   BOOST_CHECK(!e);
 }
 
-void handle_read(const boost::asio::error& e,
+void handle_read(const boost::system::error_code& e,
     std::size_t bytes_transferred,
     std::size_t* total_bytes_read)
 {
@@ -130,7 +127,7 @@ void handle_read(const boost::asio::error& e,
   *total_bytes_read += bytes_transferred;
 }
 
-void handle_read_eof(const boost::asio::error& e,
+void handle_read_eof(const boost::system::error_code& e,
     std::size_t bytes_transferred)
 {
   BOOST_CHECK(e == boost::asio::error::eof);

@@ -19,11 +19,11 @@
 
 #include <boost/asio/detail/push_options.hpp>
 #include <boost/config.hpp>
+#include <boost/system/system_error.hpp>
 #include <boost/asio/detail/pop_options.hpp>
 
 #if defined(BOOST_WINDOWS)
 
-#include <boost/asio/system_exception.hpp>
 #include <boost/asio/detail/noncopyable.hpp>
 #include <boost/asio/detail/socket_types.hpp>
 
@@ -47,7 +47,9 @@ public:
     if (tss_key_ == TLS_OUT_OF_INDEXES)
     {
       DWORD last_error = ::GetLastError();
-      system_exception e("tss", last_error);
+      boost::system::system_error e(
+          boost::system::error_code(last_error, boost::system::native_ecat),
+          "tss");
       boost::throw_exception(e);
     }
   }

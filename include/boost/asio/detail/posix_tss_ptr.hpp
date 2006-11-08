@@ -19,6 +19,7 @@
 
 #include <boost/asio/detail/push_options.hpp>
 #include <boost/config.hpp>
+#include <boost/system/system_error.hpp>
 #include <boost/asio/detail/pop_options.hpp>
 
 #if defined(BOOST_HAS_PTHREADS)
@@ -28,7 +29,6 @@
 #include <pthread.h>
 #include <boost/asio/detail/pop_options.hpp>
 
-#include <boost/asio/system_exception.hpp>
 #include <boost/asio/detail/noncopyable.hpp>
 
 namespace boost {
@@ -46,7 +46,9 @@ public:
     int error = ::pthread_key_create(&tss_key_, 0);
     if (error != 0)
     {
-      system_exception e("tss", error);
+      boost::system::system_error e(
+          boost::system::error_code(error, boost::system::native_ecat),
+          "tss");
       boost::throw_exception(e);
     }
   }

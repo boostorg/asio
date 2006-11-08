@@ -22,6 +22,7 @@
 #include <boost/config.hpp>
 #include <boost/asio/detail/pop_options.hpp>
 
+#include <boost/asio/error.hpp>
 #include <boost/asio/io_service.hpp>
 #include <boost/asio/detail/epoll_reactor.hpp>
 #include <boost/asio/detail/kqueue_reactor.hpp>
@@ -99,29 +100,29 @@ public:
   }
 
   // Open a new datagram socket implementation.
-  template <typename Error_Handler>
-  void open(implementation_type& impl, const protocol_type& protocol,
-      Error_Handler error_handler)
+  boost::system::error_code open(implementation_type& impl,
+      const protocol_type& protocol, boost::system::error_code& ec)
   {
     if (protocol.type() == SOCK_DGRAM)
-      service_impl_.open(impl, protocol, error_handler);
+      service_impl_.open(impl, protocol, ec);
     else
-      error_handler(boost::asio::error(boost::asio::error::invalid_argument));
+      ec = boost::asio::error::invalid_argument;
+    return ec;
   }
 
   /// Assign an existing native socket to a datagram socket.
-  template <typename Error_Handler>
-  void assign(implementation_type& impl, const protocol_type& protocol,
-      const native_type& native_socket, Error_Handler error_handler)
+  boost::system::error_code assign(implementation_type& impl,
+      const protocol_type& protocol, const native_type& native_socket,
+      boost::system::error_code& ec)
   {
-    service_impl_.assign(impl, protocol, native_socket, error_handler);
+    return service_impl_.assign(impl, protocol, native_socket, ec);
   }
 
   /// Close a datagram socket implementation.
-  template <typename Error_Handler>
-  void close(implementation_type& impl, Error_Handler error_handler)
+  boost::system::error_code close(implementation_type& impl,
+      boost::system::error_code& ec)
   {
-    service_impl_.close(impl, error_handler);
+    return service_impl_.close(impl, ec);
   }
 
   /// Get the native socket implementation.
@@ -131,26 +132,24 @@ public:
   }
 
   /// Cancel all asynchronous operations associated with the socket.
-  template <typename Error_Handler>
-  void cancel(implementation_type& impl, Error_Handler error_handler)
+  boost::system::error_code cancel(implementation_type& impl,
+      boost::system::error_code& ec)
   {
-    service_impl_.cancel(impl, error_handler);
+    return service_impl_.cancel(impl, ec);
   }
 
   // Bind the datagram socket to the specified local endpoint.
-  template <typename Error_Handler>
-  void bind(implementation_type& impl, const endpoint_type& endpoint,
-      Error_Handler error_handler)
+  boost::system::error_code bind(implementation_type& impl,
+      const endpoint_type& endpoint, boost::system::error_code& ec)
   {
-    service_impl_.bind(impl, endpoint, error_handler);
+    return service_impl_.bind(impl, endpoint, ec);
   }
 
   /// Connect the datagram socket to the specified endpoint.
-  template <typename Error_Handler>
-  void connect(implementation_type& impl, const endpoint_type& peer_endpoint,
-      Error_Handler error_handler)
+  boost::system::error_code connect(implementation_type& impl,
+      const endpoint_type& peer_endpoint, boost::system::error_code& ec)
   {
-    service_impl_.connect(impl, peer_endpoint, error_handler);
+    return service_impl_.connect(impl, peer_endpoint, ec);
   }
 
   /// Start an asynchronous connect.
@@ -162,63 +161,56 @@ public:
   }
 
   /// Set a socket option.
-  template <typename Option, typename Error_Handler>
-  void set_option(implementation_type& impl, const Option& option,
-      Error_Handler error_handler)
+  template <typename Option>
+  boost::system::error_code set_option(implementation_type& impl,
+      const Option& option, boost::system::error_code& ec)
   {
-    service_impl_.set_option(impl, option, error_handler);
+    return service_impl_.set_option(impl, option, ec);
   }
 
   /// Get a socket option.
-  template <typename Option, typename Error_Handler>
-  void get_option(const implementation_type& impl, Option& option,
-      Error_Handler error_handler) const
+  template <typename Option>
+  boost::system::error_code get_option(const implementation_type& impl,
+      Option& option, boost::system::error_code& ec) const
   {
-    service_impl_.get_option(impl, option, error_handler);
+    return service_impl_.get_option(impl, option, ec);
   }
 
   /// Perform an IO control command on the socket.
-  template <typename IO_Control_Command, typename Error_Handler>
-  void io_control(implementation_type& impl, IO_Control_Command& command,
-      Error_Handler error_handler)
+  template <typename IO_Control_Command>
+  boost::system::error_code io_control(implementation_type& impl,
+      IO_Control_Command& command, boost::system::error_code& ec)
   {
-    service_impl_.io_control(impl, command, error_handler);
+    return service_impl_.io_control(impl, command, ec);
   }
 
   /// Get the local endpoint.
-  template <typename Error_Handler>
   endpoint_type local_endpoint(const implementation_type& impl,
-      Error_Handler error_handler) const
+      boost::system::error_code& ec) const
   {
-    endpoint_type endpoint;
-    service_impl_.get_local_endpoint(impl, endpoint, error_handler);
-    return endpoint;
+    return service_impl_.local_endpoint(impl, ec);
   }
 
   /// Get the remote endpoint.
-  template <typename Error_Handler>
   endpoint_type remote_endpoint(const implementation_type& impl,
-      Error_Handler error_handler) const
+      boost::system::error_code& ec) const
   {
-    endpoint_type endpoint;
-    service_impl_.get_remote_endpoint(impl, endpoint, error_handler);
-    return endpoint;
+    return service_impl_.remote_endpoint(impl, ec);
   }
 
   /// Disable sends or receives on the socket.
-  template <typename Error_Handler>
-  void shutdown(implementation_type& impl, socket_base::shutdown_type what,
-      Error_Handler error_handler)
+  boost::system::error_code shutdown(implementation_type& impl,
+      socket_base::shutdown_type what, boost::system::error_code& ec)
   {
-    service_impl_.shutdown(impl, what, error_handler);
+    return service_impl_.shutdown(impl, what, ec);
   }
 
   /// Send the given data to the peer.
-  template <typename Const_Buffers, typename Error_Handler>
+  template <typename Const_Buffers>
   std::size_t send(implementation_type& impl, const Const_Buffers& buffers,
-      socket_base::message_flags flags, Error_Handler error_handler)
+      socket_base::message_flags flags, boost::system::error_code& ec)
   {
-    return service_impl_.send(impl, buffers, flags, error_handler);
+    return service_impl_.send(impl, buffers, flags, ec);
   }
 
   /// Start an asynchronous send.
@@ -230,13 +222,12 @@ public:
   }
 
   /// Send a datagram to the specified endpoint.
-  template <typename Const_Buffers, typename Error_Handler>
+  template <typename Const_Buffers>
   std::size_t send_to(implementation_type& impl, const Const_Buffers& buffers,
       const endpoint_type& destination, socket_base::message_flags flags,
-      Error_Handler error_handler)
+      boost::system::error_code& ec)
   {
-    return service_impl_.send_to(impl, buffers, destination, flags,
-        error_handler);
+    return service_impl_.send_to(impl, buffers, destination, flags, ec);
   }
 
   /// Start an asynchronous send.
@@ -249,11 +240,11 @@ public:
   }
 
   /// Receive some data from the peer.
-  template <typename Mutable_Buffers, typename Error_Handler>
+  template <typename Mutable_Buffers>
   std::size_t receive(implementation_type& impl, const Mutable_Buffers& buffers,
-      socket_base::message_flags flags, Error_Handler error_handler)
+      socket_base::message_flags flags, boost::system::error_code& ec)
   {
-    return service_impl_.receive(impl, buffers, flags, error_handler);
+    return service_impl_.receive(impl, buffers, flags, ec);
   }
 
   /// Start an asynchronous receive.
@@ -265,13 +256,13 @@ public:
   }
 
   /// Receive a datagram with the endpoint of the sender.
-  template <typename Mutable_Buffers, typename Error_Handler>
+  template <typename Mutable_Buffers>
   std::size_t receive_from(implementation_type& impl,
       const Mutable_Buffers& buffers, endpoint_type& sender_endpoint,
-      socket_base::message_flags flags, Error_Handler error_handler)
+      socket_base::message_flags flags, boost::system::error_code& ec)
   {
     return service_impl_.receive_from(impl, buffers, sender_endpoint, flags,
-        error_handler);
+        ec);
   }
 
   /// Start an asynchronous receive that will get the endpoint of the sender.

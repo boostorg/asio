@@ -19,6 +19,7 @@
 
 #include <boost/asio/detail/push_options.hpp>
 #include <boost/config.hpp>
+#include <boost/system/system_error.hpp>
 #include <boost/asio/detail/pop_options.hpp>
 
 #if !defined(BOOST_HAS_THREADS)
@@ -28,7 +29,6 @@
 #include <boost/asio/detail/pop_options.hpp>
 
 #include <boost/asio/error.hpp>
-#include <boost/asio/system_exception.hpp>
 #include <boost/asio/detail/noncopyable.hpp>
 
 namespace boost {
@@ -43,7 +43,7 @@ public:
   template <typename Function>
   null_thread(Function f)
   {
-    system_exception e("thread", boost::asio::error::not_supported);
+    boost::system::system_error e(boost::asio::error::not_supported, "thread");
     boost::throw_exception(e);
   }
 

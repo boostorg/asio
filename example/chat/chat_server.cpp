@@ -112,7 +112,7 @@ public:
     }
   }
 
-  void handle_read_header(const boost::asio::error& error)
+  void handle_read_header(const boost::system::error_code& error)
   {
     if (!error && read_msg_.decode_header())
     {
@@ -127,7 +127,7 @@ public:
     }
   }
 
-  void handle_read_body(const boost::asio::error& error)
+  void handle_read_body(const boost::system::error_code& error)
   {
     if (!error)
     {
@@ -143,7 +143,7 @@ public:
     }
   }
 
-  void handle_write(const boost::asio::error& error)
+  void handle_write(const boost::system::error_code& error)
   {
     if (!error)
     {
@@ -188,7 +188,8 @@ public:
           boost::asio::placeholders::error));
   }
 
-  void handle_accept(chat_session_ptr session, const boost::asio::error& error)
+  void handle_accept(chat_session_ptr session,
+      const boost::system::error_code& error)
   {
     if (!error)
     {
@@ -233,10 +234,6 @@ int main(int argc, char* argv[])
     }
 
     io_service.run();
-  }
-  catch (boost::asio::error& e)
-  {
-    std::cerr << e << "\n";
   }
   catch (std::exception& e)
   {

@@ -26,6 +26,7 @@
 #include <boost/bind.hpp>
 #include <boost/asio/detail/pop_options.hpp>
 
+#include <boost/asio/error.hpp>
 #include <boost/asio/io_service.hpp>
 #include <boost/asio/ssl/basic_context.hpp>
 #include <boost/asio/ssl/stream_base.hpp>
@@ -46,7 +47,8 @@ private:
   class base_handler
   {
   public:
-    typedef boost::function<void (const boost::asio::error&, size_t)> func_t;
+    typedef boost::function<
+      void (const boost::system::error_code&, size_t)> func_t;
 
     base_handler(boost::asio::io_service& io_service)
       : op_(NULL)
@@ -54,7 +56,7 @@ private:
       , work_(io_service)
     {}
     
-    void do_func(const boost::asio::error& error, size_t size)
+    void do_func(const boost::system::error_code& error, size_t size)
     {
       func_(error, size);
     }
@@ -91,7 +93,7 @@ private:
 
   private:
     Handler handler_;
-    void handler_impl(const boost::asio::error& error, size_t size)
+    void handler_impl(const boost::system::error_code& error, size_t size)
     {
       handler_(error, size);
       delete this;
@@ -115,7 +117,7 @@ private:
 
   private:
     Handler handler_;
-    void handler_impl(const boost::asio::error& error, size_t)
+    void handler_impl(const boost::system::error_code& error, size_t)
     {
       handler_(error);
       delete this;
@@ -140,7 +142,7 @@ private:
 
   private:
     Handler handler_;
-    void handler_impl(const boost::asio::error& error, size_t)
+    void handler_impl(const boost::system::error_code& error, size_t)
     {
       handler_(error);
       delete this;
@@ -202,9 +204,9 @@ public:
   }
 
   // Perform SSL handshaking.
-  template <typename Stream, typename Error_Handler>
-  void handshake(impl_type& impl, Stream& next_layer,
-      stream_base::handshake_type type, Error_Handler error_handler)
+  template <typename Stream>
+  boost::system::error_code handshake(impl_type& impl, Stream& next_layer,
+      stream_base::handshake_type type, boost::system::error_code& ec)
   {
     try
     {
@@ -218,14 +220,14 @@ public:
         impl->ext_bio);
       op.start();
     }
-    catch (boost::asio::error& e)
+    catch (boost::system::system_error& e)
     {
-      error_handler(e);
-      return;
+      ec = e.code();
+      return ec;
     }
 
-    boost::asio::error e;
-    error_handler(e);
+    ec = boost::system::error_code();
+    return ec;
   }
 
   // Start an asynchronous SSL handshake.
@@ -261,9 +263,9 @@ public:
   }
 
   // Shut down SSL on the stream.
-  template <typename Stream, typename Error_Handler>
-  void shutdown(impl_type& impl, Stream& next_layer,
-      Error_Handler error_handler)
+  template <typename Stream>
+  boost::system::error_code shutdown(impl_type& impl, Stream& next_layer,
+      boost::system::error_code& ec)
   {
     try
     {
@@ -275,14 +277,14 @@ public:
         impl->ext_bio);
       op.start();
     }
-    catch (boost::asio::error& e)
+    catch (boost::system::system_error& e)
     {
-      error_handler(e);
-      return;
+      ec = e.code();
+      return ec;
     }
 
-    boost::asio::error e;
-    error_handler(e);
+    ec = boost::system::error_code();
+    return ec;
   }
 
   // Asynchronously shut down SSL on the stream.
@@ -315,9 +317,9 @@ public:
   }
 
   // Write some data to the stream.
-  template <typename Stream, typename Const_Buffers, typename Error_Handler>
+  template <typename Stream, typename Const_Buffers>
   std::size_t write_some(impl_type& impl, Stream& next_layer,
-      const Const_Buffers& buffers, Error_Handler error_handler)
+      const Const_Buffers& buffers, boost::system::error_code& ec)
   {
     size_t bytes_transferred = 0;
     try
@@ -335,14 +337,13 @@ public:
       );
       bytes_transferred = static_cast<size_t>(op.start());
     }
-    catch (boost::asio::error& e)
+    catch (boost::system::system_error& e)
     {
-      error_handler(e);
+      ec = e.code();
       return 0;
     }
 
-    boost::asio::error e;
-    error_handler(e);
+    ec = boost::system::error_code();
     return bytes_transferred;
   }
 
@@ -381,9 +382,9 @@ public:
   }
 
   // Read some data from the stream.
-  template <typename Stream, typename Mutable_Buffers, typename Error_Handler>
+  template <typename Stream, typename Mutable_Buffers>
   std::size_t read_some(impl_type& impl, Stream& next_layer,
-      const Mutable_Buffers& buffers, Error_Handler error_handler)
+      const Mutable_Buffers& buffers, boost::system::error_code& ec)
   {
     size_t bytes_transferred = 0;
     try
@@ -401,14 +402,13 @@ public:
 
       bytes_transferred = static_cast<size_t>(op.start());
     }
-    catch (boost::asio::error& e)
+    catch (boost::system::system_error& e)
     {
-      error_handler(e);
+      ec = e.code();
       return 0;
     }
 
-    boost::asio::error e;
-    error_handler(e);
+    ec = boost::system::error_code();
     return bytes_transferred;
   }
 
@@ -447,22 +447,20 @@ public:
   }
 
   // Peek at the incoming data on the stream.
-  template <typename Stream, typename Mutable_Buffers, typename Error_Handler>
+  template <typename Stream, typename Mutable_Buffers>
   std::size_t peek(impl_type& impl, Stream& next_layer,
-      const Mutable_Buffers& buffers, Error_Handler error_handler)
+      const Mutable_Buffers& buffers, boost::system::error_code& ec)
   {
-    boost::asio::error e;
-    error_handler(e);
+    ec = boost::system::error_code();
     return 0;
   }
 
   // Determine the amount of data that may be read without blocking.
-  template <typename Stream, typename Error_Handler>
+  template <typename Stream>
   std::size_t in_avail(impl_type& impl, Stream& next_layer,
-      Error_Handler error_handler)
+      boost::system::error_code& ec)
   {
-    boost::asio::error e;
-    error_handler(e);
+    ec = boost::system::error_code();
     return 0;
   }
 

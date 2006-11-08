@@ -29,7 +29,6 @@ class test_stream
 {
 public:
   typedef boost::asio::io_service io_service_type;
-  typedef boost::asio::error error_type;
 
   test_stream(boost::asio::io_service& io_service)
     : io_service_(io_service),
@@ -106,9 +105,11 @@ public:
     return total_length;
   }
 
-  template <typename Mutable_Buffers, typename Error_Handler>
-  size_t read_some(const Mutable_Buffers& buffers, Error_Handler)
+  template <typename Mutable_Buffers>
+  size_t read_some(const Mutable_Buffers& buffers,
+      boost::system::error_code& ec)
   {
+    ec = boost::asio::error::success;
     return read_some(buffers);
   }
 
@@ -116,9 +117,8 @@ public:
   void async_read_some(const Mutable_Buffers& buffers, Handler handler)
   {
     size_t bytes_transferred = read_some(buffers);
-    boost::asio::error error;
-    io_service_.post(
-        boost::asio::detail::bind_handler(handler, error, bytes_transferred));
+    io_service_.post(boost::asio::detail::bind_handler(
+          handler, boost::asio::error::success, bytes_transferred));
   }
 
 private:
@@ -273,9 +273,9 @@ void test_4_arg_read()
 
   s.reset(read_data, sizeof(read_data));
   memset(read_buf, 0, sizeof(read_buf));
-  boost::asio::error error;
+  boost::system::error_code error;
   size_t bytes_transferred = boost::asio::read(s, buffers,
-      boost::asio::transfer_all(), boost::asio::assign_error(error));
+      boost::asio::transfer_all(), error);
   BOOST_CHECK(bytes_transferred == sizeof(read_data));
   BOOST_CHECK(s.check(buffers, sizeof(read_data)));
   BOOST_CHECK(!error);
@@ -283,9 +283,9 @@ void test_4_arg_read()
   s.reset(read_data, sizeof(read_data));
   s.next_read_length(1);
   memset(read_buf, 0, sizeof(read_buf));
-  error = boost::asio::error();
+  error = boost::system::error_code();
   bytes_transferred = boost::asio::read(s, buffers,
-      boost::asio::transfer_all(), boost::asio::assign_error(error));
+      boost::asio::transfer_all(), error);
   BOOST_CHECK(bytes_transferred == sizeof(read_data));
   BOOST_CHECK(s.check(buffers, sizeof(read_data)));
   BOOST_CHECK(!error);
@@ -293,18 +293,18 @@ void test_4_arg_read()
   s.reset(read_data, sizeof(read_data));
   s.next_read_length(10);
   memset(read_buf, 0, sizeof(read_buf));
-  error = boost::asio::error();
+  error = boost::system::error_code();
   bytes_transferred = boost::asio::read(s, buffers,
-      boost::asio::transfer_all(), boost::asio::assign_error(error));
+      boost::asio::transfer_all(), error);
   BOOST_CHECK(bytes_transferred == sizeof(read_data));
   BOOST_CHECK(s.check(buffers, sizeof(read_data)));
   BOOST_CHECK(!error);
 
   s.reset(read_data, sizeof(read_data));
   memset(read_buf, 0, sizeof(read_buf));
-  error = boost::asio::error();
+  error = boost::system::error_code();
   bytes_transferred = boost::asio::read(s, buffers,
-      boost::asio::transfer_at_least(1), boost::asio::assign_error(error));
+      boost::asio::transfer_at_least(1), error);
   BOOST_CHECK(bytes_transferred == sizeof(read_data));
   BOOST_CHECK(s.check(buffers, sizeof(read_data)));
   BOOST_CHECK(!error);
@@ -312,9 +312,9 @@ void test_4_arg_read()
   s.reset(read_data, sizeof(read_data));
   s.next_read_length(1);
   memset(read_buf, 0, sizeof(read_buf));
-  error = boost::asio::error();
+  error = boost::system::error_code();
   bytes_transferred = boost::asio::read(s, buffers,
-      boost::asio::transfer_at_least(1), boost::asio::assign_error(error));
+      boost::asio::transfer_at_least(1), error);
   BOOST_CHECK(bytes_transferred == 1);
   BOOST_CHECK(s.check(buffers, 1));
   BOOST_CHECK(!error);
@@ -322,18 +322,18 @@ void test_4_arg_read()
   s.reset(read_data, sizeof(read_data));
   s.next_read_length(10);
   memset(read_buf, 0, sizeof(read_buf));
-  error = boost::asio::error();
+  error = boost::system::error_code();
   bytes_transferred = boost::asio::read(s, buffers,
-      boost::asio::transfer_at_least(1), boost::asio::assign_error(error));
+      boost::asio::transfer_at_least(1), error);
   BOOST_CHECK(bytes_transferred == 10);
   BOOST_CHECK(s.check(buffers, 10));
   BOOST_CHECK(!error);
 
   s.reset(read_data, sizeof(read_data));
   memset(read_buf, 0, sizeof(read_buf));
-  error = boost::asio::error();
+  error = boost::system::error_code();
   bytes_transferred = boost::asio::read(s, buffers,
-      boost::asio::transfer_at_least(10), boost::asio::assign_error(error));
+      boost::asio::transfer_at_least(10), error);
   BOOST_CHECK(bytes_transferred == sizeof(read_data));
   BOOST_CHECK(s.check(buffers, sizeof(read_data)));
   BOOST_CHECK(!error);
@@ -341,9 +341,9 @@ void test_4_arg_read()
   s.reset(read_data, sizeof(read_data));
   s.next_read_length(1);
   memset(read_buf, 0, sizeof(read_buf));
-  error = boost::asio::error();
+  error = boost::system::error_code();
   bytes_transferred = boost::asio::read(s, buffers,
-      boost::asio::transfer_at_least(10), boost::asio::assign_error(error));
+      boost::asio::transfer_at_least(10), error);
   BOOST_CHECK(bytes_transferred == 10);
   BOOST_CHECK(s.check(buffers, 10));
   BOOST_CHECK(!error);
@@ -351,18 +351,18 @@ void test_4_arg_read()
   s.reset(read_data, sizeof(read_data));
   s.next_read_length(10);
   memset(read_buf, 0, sizeof(read_buf));
-  error = boost::asio::error();
+  error = boost::system::error_code();
   bytes_transferred = boost::asio::read(s, buffers,
-      boost::asio::transfer_at_least(10), boost::asio::assign_error(error));
+      boost::asio::transfer_at_least(10), error);
   BOOST_CHECK(bytes_transferred == 10);
   BOOST_CHECK(s.check(buffers, 10));
   BOOST_CHECK(!error);
 
   s.reset(read_data, sizeof(read_data));
   memset(read_buf, 0, sizeof(read_buf));
-  error = boost::asio::error();
+  error = boost::system::error_code();
   bytes_transferred = boost::asio::read(s, buffers,
-      boost::asio::transfer_at_least(42), boost::asio::assign_error(error));
+      boost::asio::transfer_at_least(42), error);
   BOOST_CHECK(bytes_transferred == sizeof(read_data));
   BOOST_CHECK(s.check(buffers, sizeof(read_data)));
   BOOST_CHECK(!error);
@@ -370,9 +370,9 @@ void test_4_arg_read()
   s.reset(read_data, sizeof(read_data));
   s.next_read_length(1);
   memset(read_buf, 0, sizeof(read_buf));
-  error = boost::asio::error();
+  error = boost::system::error_code();
   bytes_transferred = boost::asio::read(s, buffers,
-      boost::asio::transfer_at_least(42), boost::asio::assign_error(error));
+      boost::asio::transfer_at_least(42), error);
   BOOST_CHECK(bytes_transferred == 42);
   BOOST_CHECK(s.check(buffers, 42));
   BOOST_CHECK(!error);
@@ -380,16 +380,16 @@ void test_4_arg_read()
   s.reset(read_data, sizeof(read_data));
   s.next_read_length(10);
   memset(read_buf, 0, sizeof(read_buf));
-  error = boost::asio::error();
+  error = boost::system::error_code();
   bytes_transferred = boost::asio::read(s, buffers,
-      boost::asio::transfer_at_least(42), boost::asio::assign_error(error));
+      boost::asio::transfer_at_least(42), error);
   BOOST_CHECK(bytes_transferred == 50);
   BOOST_CHECK(s.check(buffers, 50));
   BOOST_CHECK(!error);
 }
 
-void async_read_handler(const boost::asio::error& e, size_t bytes_transferred,
-    size_t expected_bytes_transferred, bool* called)
+void async_read_handler(const boost::system::error_code& e,
+    size_t bytes_transferred, size_t expected_bytes_transferred, bool* called)
 {
   *called = true;
   BOOST_CHECK(!e);

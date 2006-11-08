@@ -85,7 +85,8 @@ public:
           boost::asio::placeholders::error));
   }
 
-  void handle_accept(session_ptr new_session, const boost::asio::error& error)
+  void handle_accept(session_ptr new_session,
+      const boost::system::error_code& error)
   {
     if (!error)
     {
