@@ -39,7 +39,7 @@ int main(int argc, char* argv[])
       socket.connect(*endpoint_iterator++, error);
     }
     if (error)
-      throw error;
+      throw boost::system::system_error(error);
 
     for (;;)
     {
@@ -51,7 +51,7 @@ int main(int argc, char* argv[])
       if (error == boost::asio::error::eof)
         break; // Connection closed cleanly by peer.
       else if (error)
-        throw error; // Some other error.
+        throw boost::system::system_error(error); // Some other error.
 
       std::cout.write(buf.data(), len);
     }

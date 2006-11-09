@@ -45,7 +45,7 @@ int main(int argc, char* argv[])
       socket.connect(*endpoint_iterator++, error);
     }
     if (error)
-      throw error;
+      throw boost::system::system_error(error);
 
     // Form the request. We specify the "Connection: close" header so that the
     // server will close the socket after transmitting the response. This will
@@ -101,7 +101,7 @@ int main(int argc, char* argv[])
           boost::asio::transfer_at_least(1), error))
       std::cout << &response;
     if (error != boost::asio::error::eof)
-      throw error;
+      throw boost::system::system_error(error);
   }
   catch (std::exception& e)
   {

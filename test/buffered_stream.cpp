@@ -108,7 +108,7 @@ void handle_write(const boost::system::error_code& e,
 {
   BOOST_CHECK(!e);
   if (e)
-    throw e; // Terminate test.
+    throw boost::system::system_error(e); // Terminate test.
   *total_bytes_written += bytes_transferred;
 }
 
@@ -123,7 +123,7 @@ void handle_read(const boost::system::error_code& e,
 {
   BOOST_CHECK(!e);
   if (e)
-    throw e; // Terminate test.
+    throw boost::system::system_error(e); // Terminate test.
   *total_bytes_read += bytes_transferred;
 }
 
