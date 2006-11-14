@@ -511,10 +511,9 @@ private:
     int fd = kqueue();
     if (fd == -1)
     {
-      boost::system::system_error e(
-          boost::system::error_code(errno, boost::system::native_ecat),
-          "kqueue");
-      boost::throw_exception(e);
+      boost::throw_exception(boost::system::system_error(
+            boost::system::error_code(errno, boost::system::native_ecat),
+            "kqueue"));
     }
     return fd;
   }

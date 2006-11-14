@@ -507,10 +507,9 @@ private:
     int fd = epoll_create(epoll_size);
     if (fd == -1)
     {
-      boost::system::system_error e(
-          boost::system::error_code(errno, boost::system::native_ecat),
-          "epoll");
-      boost::throw_exception(e);
+      boost::throw_exception(boost::system::system_error(
+            boost::system::error_code(errno, boost::system::native_ecat),
+            "epoll"));
     }
     return fd;
   }
