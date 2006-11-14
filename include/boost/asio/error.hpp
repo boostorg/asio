@@ -20,6 +20,7 @@
 #include <boost/asio/detail/push_options.hpp>
 #include <cerrno>
 #include <boost/config.hpp>
+#include <boost/cerrno.hpp>
 #include <boost/system/error_code.hpp>
 #include <boost/asio/detail/pop_options.hpp>
 
