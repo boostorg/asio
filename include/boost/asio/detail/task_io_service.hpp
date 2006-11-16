@@ -48,6 +48,10 @@ public:
   {
   }
 
+  void init(size_t concurrency_hint)
+  {
+  }
+
   // Destroy all user-defined handler objects owned by the service.
   void shutdown_service()
   {
