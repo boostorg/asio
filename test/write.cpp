@@ -110,7 +110,7 @@ public:
   template <typename Const_Buffers>
   size_t write_some(const Const_Buffers& buffers, boost::system::error_code& ec)
   {
-    ec = boost::asio::error::success;
+    ec = boost::system::error_code();
     return write_some(buffers);
   }
 
@@ -119,7 +119,7 @@ public:
   {
     size_t bytes_transferred = write_some(buffers);
     io_service_.post(boost::asio::detail::bind_handler(
-          handler, boost::asio::error::success, bytes_transferred));
+          handler, boost::system::error_code(), bytes_transferred));
   }
 
 private:

@@ -141,7 +141,7 @@ public:
       return;
 
     if (!read_op_queue_.has_operation(descriptor))
-      if (handler(boost::asio::error::success))
+      if (handler(boost::system::error_code()))
         return;
 
     if (read_op_queue_.enqueue_operation(descriptor, handler))
@@ -174,7 +174,7 @@ public:
       return;
 
     if (!write_op_queue_.has_operation(descriptor))
-      if (handler(boost::asio::error::success))
+      if (handler(boost::system::error_code()))
         return;
 
     if (write_op_queue_.enqueue_operation(descriptor, handler))

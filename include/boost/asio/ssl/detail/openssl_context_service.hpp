@@ -361,7 +361,7 @@ public:
     SSL_CTX_set_default_passwd_cb(impl,
         &openssl_context_service::password_callback);
 
-    ec = boost::asio::error::success;
+    ec = boost::system::error_code();
     return ec;
   }
 

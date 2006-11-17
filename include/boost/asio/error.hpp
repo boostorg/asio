@@ -200,9 +200,6 @@ public:
   /// Cannot send after transport endpoint shutdown.
   static const boost::system::error_code shut_down;
 
-  /// Success.
-  static const boost::system::error_code success;
-
   /// Connection timed out.
   static const boost::system::error_code timed_out;
 
@@ -461,9 +458,6 @@ error_base<T>::socket_type_not_supported = BOOST_ASIO_WIN_OR_POSIX(
 
 template <typename T> const boost::system::error_code
 error_base<T>::shut_down = BOOST_ASIO_SOCKET_ERROR(ESHUTDOWN);
-
-template <typename T> const boost::system::error_code
-error_base<T>::success;
 
 template <typename T> const boost::system::error_code
 error_base<T>::timed_out = BOOST_ASIO_SOCKET_ERROR(ETIMEDOUT);

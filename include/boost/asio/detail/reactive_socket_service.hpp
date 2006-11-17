@@ -228,7 +228,7 @@ public:
     else
     {
       reactor_.cancel_ops(impl.socket_);
-      ec = boost::asio::error::success;
+      ec = boost::system::error_code();
       return ec;
     }
   }
@@ -395,7 +395,7 @@ public:
     // A request to receive 0 bytes on a stream socket is a no-op.
     if (impl.protocol_.type() == SOCK_STREAM && total_buffer_size == 0)
     {
-      ec = boost::asio::error::success;
+      ec = boost::system::error_code();
       return 0;
     }
 
@@ -511,7 +511,7 @@ public:
         if (total_buffer_size == 0)
         {
           io_service().post(bind_handler(handler,
-                boost::asio::error::success, 0));
+                boost::system::error_code(), 0));
           return;
         }
       }
@@ -697,7 +697,7 @@ public:
     // A request to receive 0 bytes on a stream socket is a no-op.
     if (impl.protocol_.type() == SOCK_STREAM && total_buffer_size == 0)
     {
-      ec = boost::asio::error::success;
+      ec = boost::system::error_code();
       return 0;
     }
 
@@ -822,7 +822,7 @@ public:
         if (total_buffer_size == 0)
         {
           io_service().post(bind_handler(handler,
-                boost::asio::error::success, 0));
+                boost::system::error_code(), 0));
           return;
         }
       }
@@ -1476,7 +1476,7 @@ public:
     {
       // The connect operation has finished successfully so we need to post the
       // handler immediately.
-      io_service().post(bind_handler(handler, boost::asio::error::success));
+      io_service().post(bind_handler(handler, boost::system::error_code()));
     }
     else if (ec == boost::asio::error::in_progress
         || ec == boost::asio::error::would_block)

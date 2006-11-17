@@ -157,7 +157,7 @@ public:
 
     if (is_shut_down_sent && is_shut_down_received && is_operation_done)
       // SSL connection is shut down cleanly
-      return handler_(boost::asio::error::success, 1);
+      return handler_(boost::system::error_code(), 1);
 
     if (is_shut_down_received && !is_write_needed)
       return handler_(boost::asio::error::eof, 0);
@@ -311,7 +311,7 @@ private:
     if (is_operation_done)
     {
       // Finish the operation, with success
-      handler_(boost::asio::error::success, rc);
+      handler_(boost::system::error_code(), rc);
       return 0;
     }
     
@@ -331,7 +331,7 @@ private:
       send_buf_.data_removed(bytes_sent);
 
       if (is_operation_done)
-        handler_(boost::asio::error::success, rc);
+        handler_(boost::system::error_code(), rc);
       else
         // Since the operation was not completed, try it again...
         start();

@@ -77,7 +77,6 @@ void error_test()
   test_error_code(boost::asio::error::operation_aborted);
   test_error_code(boost::asio::error::service_not_found);
   test_error_code(boost::asio::error::shut_down);
-  test_error_code(boost::asio::error::success);
   test_error_code(boost::asio::error::timed_out);
   test_error_code(boost::asio::error::try_again);
   test_error_code(boost::asio::error::would_block);

@@ -112,7 +112,7 @@ public:
     {
       timer_base* t = heap_[0];
       remove_timer(t);
-      t->invoke(boost::asio::error::success);
+      t->invoke(boost::system::error_code());
     }
   }
 

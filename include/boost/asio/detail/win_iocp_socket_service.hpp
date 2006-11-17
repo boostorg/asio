@@ -332,7 +332,7 @@ public:
     else if (impl.safe_cancellation_thread_id_ == 0)
     {
       // No operations have been started, so there's nothing to cancel.
-      ec = boost::asio::error::success;
+      ec = boost::system::error_code();
     }
     else if (impl.safe_cancellation_thread_id_ == ::GetCurrentThreadId())
     {
@@ -347,7 +347,7 @@ public:
       }
       else
       {
-        ec = boost::asio::error::success;
+        ec = boost::system::error_code();
       }
     }
     else
@@ -488,7 +488,7 @@ public:
         return endpoint_type();
       }
 
-      ec = boost::asio::error::success;
+      ec = boost::system::error_code();
       return impl.socket_.remote_endpoint();
     }
     else
@@ -533,7 +533,7 @@ public:
     // A request to receive 0 bytes on a stream socket is a no-op.
     if (impl.protocol_.type() == SOCK_STREAM && total_buffer_size == 0)
     {
-      ec = boost::asio::error::success;
+      ec = boost::system::error_code();
       return 0;
     }
 
@@ -671,7 +671,7 @@ public:
     if (impl.protocol_.type() == SOCK_STREAM && total_buffer_size == 0)
     {
       ptr.reset();
-      boost::system::error_code error(boost::asio::error::success);
+      boost::system::error_code error;
       iocp_service_.post(bind_handler(handler, error, 0));
       return;
     }
@@ -870,7 +870,7 @@ public:
     // A request to receive 0 bytes on a stream socket is a no-op.
     if (impl.protocol_.type() == SOCK_STREAM && total_buffer_size == 0)
     {
-      ec = boost::asio::error::success;
+      ec = boost::system::error_code();
       return 0;
     }
 
@@ -1019,7 +1019,7 @@ public:
     if (impl.protocol_.type() == SOCK_STREAM && total_buffer_size == 0)
     {
       ptr.reset();
-      boost::system::error_code error(boost::asio::error::success);
+      boost::system::error_code error;
       iocp_service_.post(bind_handler(handler, error, 0));
       return;
     }

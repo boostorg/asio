@@ -369,7 +369,7 @@ inline int select(int nfds, fd_set* readfds, fd_set* writefds,
     if (milliseconds == 0)
       milliseconds = 1; // Force context switch.
     ::Sleep(milliseconds);
-    ec = boost::asio::error::success;
+    ec = boost::system::error_code();
     return 0;
   }
 
@@ -578,7 +578,7 @@ inline boost::system::error_code translate_netdb_error(int error)
   switch (error)
   {
   case 0:
-    return boost::asio::error::success;
+    return boost::system::error_code();
   case HOST_NOT_FOUND:
     return boost::asio::error::host_not_found;
   case TRY_AGAIN:
@@ -1389,7 +1389,7 @@ inline boost::system::error_code translate_addrinfo_error(int error)
   switch (error)
   {
   case 0:
-    return boost::asio::error::success;
+    return boost::system::error_code();
   case EAI_AGAIN:
     return boost::asio::error::host_not_found_try_again;
   case EAI_BADFLAGS:
