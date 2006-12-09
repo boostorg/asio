@@ -92,6 +92,11 @@ public:
       return socket_;
     }
 
+    HANDLE as_handle() const
+    {
+      return reinterpret_cast<HANDLE>(socket_);
+    }
+
     bool have_remote_endpoint() const
     {
       return have_remote_endpoint_;
@@ -262,7 +267,8 @@ public:
     if (sock.get() == invalid_socket)
       return ec;
 
-    iocp_service_.register_socket(sock.get());
+    HANDLE sock_as_handle = reinterpret_cast<HANDLE>(sock.get());
+    iocp_service_.register_handle(sock_as_handle);
 
     impl.socket_ = sock.release();
     impl.cancel_token_.reset(static_cast<void*>(0), noop_deleter());
@@ -279,7 +285,7 @@ public:
     boost::system::error_code ignored_ec;
     close(impl, ignored_ec);
 
-    iocp_service_.register_socket(native_socket);
+    iocp_service_.register_handle(native_socket.as_handle());
 
     impl.socket_ = native_socket;
     impl.cancel_token_.reset(static_cast<void*>(0), noop_deleter());
@@ -1862,7 +1868,7 @@ public:
       impl.socket_ = socket_ops::socket(family, type, proto, ec);
       if (impl.socket_ == invalid_socket)
         return ec;
-      iocp_service_.register_socket(impl.socket_);
+      iocp_service_.register_handle(impl.socket_.as_handle());
     }
 
     // Perform the connect operation.
@@ -1987,7 +1993,7 @@ public:
         io_service().post(bind_handler(handler, ec));
         return;
       }
-      iocp_service_.register_socket(impl.socket_);
+      iocp_service_.register_handle(impl.socket_.as_handle());
     }
 
     // Mark the socket as non-blocking so that the connection will take place
