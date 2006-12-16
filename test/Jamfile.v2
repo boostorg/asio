@@ -34,8 +34,8 @@ project
     <threading>multi
     <os>SOLARIS:<library>socket
     <os>SOLARIS:<library>nsl
-    <os>NT<toolset>gcc:<library>ws2_32
-    <os>NT<toolset>gcc:<library>mswsock
+    <os>NT,<toolset>gcc:<library>ws2_32
+    <os>NT,<toolset>gcc:<library>mswsock
   ;
 
 test-suite "asio" :
