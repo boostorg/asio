@@ -552,6 +552,8 @@ public:
       DWORD last_error = ::WSAGetLastError();
       if (last_error == ERROR_NETNAME_DELETED)
         last_error = WSAECONNRESET;
+      else if (last_error == ERROR_PORT_UNREACHABLE)
+        last_error = WSAECONNREFUSED;
       ec = boost::system::error_code(last_error, boost::system::native_ecat);
       return 0;
     }
@@ -602,13 +604,17 @@ public:
       }
 #endif // defined(BOOST_ASIO_ENABLE_BUFFER_DEBUGGING)
 
-      // Map ERROR_NETNAME_DELETED to more useful error.
+      // Map non-portable errors to their portable counterparts.
       if (last_error == ERROR_NETNAME_DELETED)
       {
         if (handler_op->cancel_token_.expired())
           last_error = ERROR_OPERATION_ABORTED;
         else
           last_error = WSAECONNRESET;
+      }
+      else if (last_error == ERROR_PORT_UNREACHABLE)
+      {
+        last_error = WSAECONNREFUSED;
       }
 
       // Make a copy of the handler so that the memory can be deallocated before
@@ -728,6 +734,8 @@ public:
     if (result != 0)
     {
       DWORD last_error = ::WSAGetLastError();
+      if (last_error == ERROR_PORT_UNREACHABLE)
+        last_error = WSAECONNREFUSED;
       ec = boost::system::error_code(last_error, boost::system::native_ecat);
       return 0;
     }
@@ -775,6 +783,12 @@ public:
         ++iter;
       }
 #endif // defined(BOOST_ASIO_ENABLE_BUFFER_DEBUGGING)
+
+      // Map non-portable errors to their portable counterparts.
+      if (last_error == ERROR_PORT_UNREACHABLE)
+      {
+        last_error = WSAECONNREFUSED;
+      }
 
       // Make a copy of the handler so that the memory can be deallocated before
       // the upcall is made.
@@ -890,6 +904,8 @@ public:
       DWORD last_error = ::WSAGetLastError();
       if (last_error == ERROR_NETNAME_DELETED)
         last_error = WSAECONNRESET;
+      else if (last_error == ERROR_PORT_UNREACHABLE)
+        last_error = WSAECONNREFUSED;
       ec = boost::system::error_code(last_error, boost::system::native_ecat);
       return 0;
     }
@@ -945,13 +961,17 @@ public:
       }
 #endif // defined(BOOST_ASIO_ENABLE_BUFFER_DEBUGGING)
 
-      // Map ERROR_NETNAME_DELETED to more useful error.
+      // Map non-portable errors to their portable counterparts.
       if (last_error == ERROR_NETNAME_DELETED)
       {
         if (handler_op->cancel_token_.expired())
           last_error = ERROR_OPERATION_ABORTED;
         else
           last_error = WSAECONNRESET;
+      }
+      else if (last_error == ERROR_PORT_UNREACHABLE)
+      {
+        last_error = WSAECONNREFUSED;
       }
 
       // Check for connection closed.
@@ -1076,6 +1096,8 @@ public:
     if (result != 0)
     {
       DWORD last_error = ::WSAGetLastError();
+      if (last_error == ERROR_PORT_UNREACHABLE)
+        last_error = WSAECONNREFUSED;
       ec = boost::system::error_code(last_error, boost::system::native_ecat);
       return 0;
     }
@@ -1138,6 +1160,12 @@ public:
         ++iter;
       }
 #endif // defined(BOOST_ASIO_ENABLE_BUFFER_DEBUGGING)
+
+      // Map non-portable errors to their portable counterparts.
+      if (last_error == ERROR_PORT_UNREACHABLE)
+      {
+        last_error = WSAECONNREFUSED;
+      }
 
       // Check for connection closed.
       if (last_error == 0 && bytes_transferred == 0)
