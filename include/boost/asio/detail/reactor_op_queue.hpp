@@ -161,8 +161,8 @@ public:
           i->second = this_op;
           return;
         }
-        operations_.erase(i);
       }
+      operations_.erase(i);
     }
   }
 
