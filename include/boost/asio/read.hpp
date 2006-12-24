@@ -47,7 +47,7 @@ namespace asio {
  * read_some function.
  *
  * @param s The stream from which the data is to be read. The type must support
- * the Sync_Read_Stream concept.
+ * the SyncReadStream concept.
  *
  * @param buffers One or more buffers into which the data will be read. The sum
  * of the buffer sizes indicates the maximum number of bytes to read from the
@@ -57,7 +57,7 @@ namespace asio {
  *
  * @throws boost::system::system_error Thrown on failure.
  *
- * @par Example:
+ * @par Example
  * To read into a single data buffer use the @ref buffer function as follows:
  * @code boost::asio::read(s, boost::asio::buffer(data, size)); @endcode
  * See the @ref buffer documentation for information on reading into multiple
@@ -69,8 +69,8 @@ namespace asio {
  *     s, buffers,
  *     boost::asio::transfer_all()); @endcode
  */
-template <typename Sync_Read_Stream, typename Mutable_Buffers>
-std::size_t read(Sync_Read_Stream& s, const Mutable_Buffers& buffers);
+template <typename SyncReadStream, typename MutableBufferSequence>
+std::size_t read(SyncReadStream& s, const MutableBufferSequence& buffers);
 
 /// Attempt to read a certain amount of data from a stream before returning.
 /**
@@ -86,7 +86,7 @@ std::size_t read(Sync_Read_Stream& s, const Mutable_Buffers& buffers);
  * read_some function.
  *
  * @param s The stream from which the data is to be read. The type must support
- * the Sync_Read_Stream concept.
+ * the SyncReadStream concept.
  *
  * @param buffers One or more buffers into which the data will be read. The sum
  * of the buffer sizes indicates the maximum number of bytes to read from the
@@ -109,7 +109,7 @@ std::size_t read(Sync_Read_Stream& s, const Mutable_Buffers& buffers);
  *
  * @throws boost::system::system_error Thrown on failure.
  *
- * @par Example:
+ * @par Example
  * To read into a single data buffer use the @ref buffer function as follows:
  * @code boost::asio::read(s, boost::asio::buffer(data, size),
  *     boost::asio::transfer_at_least(32)); @endcode
@@ -117,10 +117,10 @@ std::size_t read(Sync_Read_Stream& s, const Mutable_Buffers& buffers);
  * buffers in one go, and how to use it with arrays, boost::array or
  * std::vector.
  */
-template <typename Sync_Read_Stream, typename Mutable_Buffers,
-  typename Completion_Condition>
-std::size_t read(Sync_Read_Stream& s, const Mutable_Buffers& buffers,
-    Completion_Condition completion_condition);
+template <typename SyncReadStream, typename MutableBufferSequence,
+  typename CompletionCondition>
+std::size_t read(SyncReadStream& s, const MutableBufferSequence& buffers,
+    CompletionCondition completion_condition);
 
 /// Attempt to read a certain amount of data from a stream before returning.
 /**
@@ -136,7 +136,7 @@ std::size_t read(Sync_Read_Stream& s, const Mutable_Buffers& buffers,
  * read_some function.
  *
  * @param s The stream from which the data is to be read. The type must support
- * the Sync_Read_Stream concept.
+ * the SyncReadStream concept.
  *
  * @param buffers One or more buffers into which the data will be read. The sum
  * of the buffer sizes indicates the maximum number of bytes to read from the
@@ -160,10 +160,10 @@ std::size_t read(Sync_Read_Stream& s, const Mutable_Buffers& buffers,
  * @returns The number of bytes read. If an error occurs, returns the total
  * number of bytes successfully transferred prior to the error.
  */
-template <typename Sync_Read_Stream, typename Mutable_Buffers,
-    typename Completion_Condition>
-std::size_t read(Sync_Read_Stream& s, const Mutable_Buffers& buffers,
-    Completion_Condition completion_condition, boost::system::error_code& ec);
+template <typename SyncReadStream, typename MutableBufferSequence,
+    typename CompletionCondition>
+std::size_t read(SyncReadStream& s, const MutableBufferSequence& buffers,
+    CompletionCondition completion_condition, boost::system::error_code& ec);
 
 /// Attempt to read a certain amount of data from a stream before returning.
 /**
@@ -176,7 +176,7 @@ std::size_t read(Sync_Read_Stream& s, const Mutable_Buffers& buffers,
  * read_some function.
  *
  * @param s The stream from which the data is to be read. The type must support
- * the Sync_Read_Stream concept.
+ * the SyncReadStream concept.
  *
  * @param b The basic_streambuf object into which the data will be read.
  *
@@ -189,8 +189,8 @@ std::size_t read(Sync_Read_Stream& s, const Mutable_Buffers& buffers,
  *     s, b,
  *     boost::asio::transfer_all()); @endcode
  */
-template <typename Sync_Read_Stream, typename Allocator>
-std::size_t read(Sync_Read_Stream& s, basic_streambuf<Allocator>& b);
+template <typename SyncReadStream, typename Allocator>
+std::size_t read(SyncReadStream& s, basic_streambuf<Allocator>& b);
 
 /// Attempt to read a certain amount of data from a stream before returning.
 /**
@@ -203,7 +203,7 @@ std::size_t read(Sync_Read_Stream& s, basic_streambuf<Allocator>& b);
  * read_some function.
  *
  * @param s The stream from which the data is to be read. The type must support
- * the Sync_Read_Stream concept.
+ * the SyncReadStream concept.
  *
  * @param b The basic_streambuf object into which the data will be read.
  *
@@ -224,10 +224,10 @@ std::size_t read(Sync_Read_Stream& s, basic_streambuf<Allocator>& b);
  *
  * @throws boost::system::system_error Thrown on failure.
  */
-template <typename Sync_Read_Stream, typename Allocator,
-    typename Completion_Condition>
-std::size_t read(Sync_Read_Stream& s, basic_streambuf<Allocator>& b,
-    Completion_Condition completion_condition);
+template <typename SyncReadStream, typename Allocator,
+    typename CompletionCondition>
+std::size_t read(SyncReadStream& s, basic_streambuf<Allocator>& b,
+    CompletionCondition completion_condition);
 
 /// Attempt to read a certain amount of data from a stream before returning.
 /**
@@ -240,7 +240,7 @@ std::size_t read(Sync_Read_Stream& s, basic_streambuf<Allocator>& b,
  * read_some function.
  *
  * @param s The stream from which the data is to be read. The type must support
- * the Sync_Read_Stream concept.
+ * the SyncReadStream concept.
  *
  * @param b The basic_streambuf object into which the data will be read.
  *
@@ -262,10 +262,10 @@ std::size_t read(Sync_Read_Stream& s, basic_streambuf<Allocator>& b,
  * @returns The number of bytes read. If an error occurs, returns the total
  * number of bytes successfully transferred prior to the error.
  */
-template <typename Sync_Read_Stream, typename Allocator,
-    typename Completion_Condition>
-std::size_t read(Sync_Read_Stream& s, basic_streambuf<Allocator>& b,
-    Completion_Condition completion_condition, boost::system::error_code& ec);
+template <typename SyncReadStream, typename Allocator,
+    typename CompletionCondition>
+std::size_t read(SyncReadStream& s, basic_streambuf<Allocator>& b,
+    CompletionCondition completion_condition, boost::system::error_code& ec);
 
 /*@}*/
 /**
@@ -290,7 +290,7 @@ std::size_t read(Sync_Read_Stream& s, basic_streambuf<Allocator>& b,
  * async_read_some function.
  *
  * @param s The stream from which the data is to be read. The type must support
- * the Async_Read_Stream concept.
+ * the AsyncReadStream concept.
  *
  * @param buffers One or more buffers into which the data will be read. The sum
  * of the buffer sizes indicates the maximum number of bytes to read from the
@@ -315,7 +315,7 @@ std::size_t read(Sync_Read_Stream& s, basic_streambuf<Allocator>& b,
  * the handler will be performed in a manner equivalent to using
  * boost::asio::io_service::post().
  *
- * @par Example:
+ * @par Example
  * To read into a single data buffer use the @ref buffer function as follows:
  * @code
  * boost::asio::async_read(s, boost::asio::buffer(data, size), handler);
@@ -330,10 +330,10 @@ std::size_t read(Sync_Read_Stream& s, basic_streambuf<Allocator>& b,
  *     boost::asio::transfer_all(),
  *     handler); @endcode
  */
-template <typename Async_Read_Stream, typename Mutable_Buffers,
-    typename Handler>
-void async_read(Async_Read_Stream& s, const Mutable_Buffers& buffers,
-    Handler handler);
+template <typename AsyncReadStream, typename MutableBufferSequence,
+    typename ReadHandler>
+void async_read(AsyncReadStream& s, const MutableBufferSequence& buffers,
+    ReadHandler handler);
 
 /// Start an asynchronous operation to read a certain amount of data from a
 /// stream.
@@ -349,7 +349,7 @@ void async_read(Async_Read_Stream& s, const Mutable_Buffers& buffers,
  * @li The completion_condition function object returns true.
  *
  * @param s The stream from which the data is to be read. The type must support
- * the Async_Read_Stream concept.
+ * the AsyncReadStream concept.
  *
  * @param buffers One or more buffers into which the data will be read. The sum
  * of the buffer sizes indicates the maximum number of bytes to read from the
@@ -388,7 +388,7 @@ void async_read(Async_Read_Stream& s, const Mutable_Buffers& buffers,
  * the handler will be performed in a manner equivalent to using
  * boost::asio::io_service::post().
  *
- * @par Example:
+ * @par Example
  * To read into a single data buffer use the @ref buffer function as follows:
  * @code boost::asio::async_read(s,
  *     boost::asio::buffer(data, size),
@@ -398,10 +398,10 @@ void async_read(Async_Read_Stream& s, const Mutable_Buffers& buffers,
  * buffers in one go, and how to use it with arrays, boost::array or
  * std::vector.
  */
-template <typename Async_Read_Stream, typename Mutable_Buffers,
-    typename Completion_Condition, typename Handler>
-void async_read(Async_Read_Stream& s, const Mutable_Buffers& buffers,
-    Completion_Condition completion_condition, Handler handler);
+template <typename AsyncReadStream, typename MutableBufferSequence,
+    typename CompletionCondition, typename ReadHandler>
+void async_read(AsyncReadStream& s, const MutableBufferSequence& buffers,
+    CompletionCondition completion_condition, ReadHandler handler);
 
 /// Start an asynchronous operation to read a certain amount of data from a
 /// stream.
@@ -413,11 +413,11 @@ void async_read(Async_Read_Stream& s, const Mutable_Buffers& buffers,
  *
  * @li An error occurred.
  *
- * @param s The stream from which the data is to be read. The type must support
- * the Async_Read_Stream concept.
- *
  * This operation is implemented in terms of one or more calls to the stream's
  * async_read_some function.
+ *
+ * @param s The stream from which the data is to be read. The type must support
+ * the AsyncReadStream concept.
  *
  * @param b A basic_streambuf object into which the data will be read. Ownership
  * of the streambuf is retained by the caller, which must guarantee that it
@@ -446,9 +446,9 @@ void async_read(Async_Read_Stream& s, const Mutable_Buffers& buffers,
  *     boost::asio::transfer_all(),
  *     handler); @endcode
  */
-template <typename Async_Read_Stream, typename Allocator, typename Handler>
-void async_read(Async_Read_Stream& s, basic_streambuf<Allocator>& b,
-    Handler handler);
+template <typename AsyncReadStream, typename Allocator, typename ReadHandler>
+void async_read(AsyncReadStream& s, basic_streambuf<Allocator>& b,
+    ReadHandler handler);
 
 /// Start an asynchronous operation to read a certain amount of data from a
 /// stream.
@@ -464,7 +464,7 @@ void async_read(Async_Read_Stream& s, basic_streambuf<Allocator>& b,
  * async_read_some function.
  *
  * @param s The stream from which the data is to be read. The type must support
- * the Async_Read_Stream concept.
+ * the AsyncReadStream concept.
  *
  * @param b A basic_streambuf object into which the data will be read. Ownership
  * of the streambuf is retained by the caller, which must guarantee that it
@@ -501,10 +501,10 @@ void async_read(Async_Read_Stream& s, basic_streambuf<Allocator>& b,
  * the handler will be performed in a manner equivalent to using
  * boost::asio::io_service::post().
  */
-template <typename Async_Read_Stream, typename Allocator,
-    typename Completion_Condition, typename Handler>
-void async_read(Async_Read_Stream& s, basic_streambuf<Allocator>& b,
-    Completion_Condition completion_condition, Handler handler);
+template <typename AsyncReadStream, typename Allocator,
+    typename CompletionCondition, typename ReadHandler>
+void async_read(AsyncReadStream& s, basic_streambuf<Allocator>& b,
+    CompletionCondition completion_condition, ReadHandler handler);
 
 /*@}*/
 

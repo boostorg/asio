@@ -32,12 +32,12 @@ namespace ip {
 /**
  * The boost::asio::ip::udp class contains flags necessary for UDP sockets.
  *
- * @par Thread Safety:
+ * @par Thread Safety
  * @e Distinct @e objects: Safe.@n
  * @e Shared @e objects: Safe.
  *
  * @par Concepts:
- * Protocol.
+ * Protocol, InternetProtocol.
  */
 class udp
 {

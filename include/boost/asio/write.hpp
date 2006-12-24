@@ -47,7 +47,7 @@ namespace asio {
  * write_some function.
  *
  * @param s The stream to which the data is to be written. The type must support
- * the Sync_Write_Stream concept.
+ * the SyncWriteStream concept.
  *
  * @param buffers One or more buffers containing the data to be written. The sum
  * of the buffer sizes indicates the maximum number of bytes to write to the
@@ -57,7 +57,7 @@ namespace asio {
  *
  * @throws boost::system::system_error Thrown on failure.
  *
- * @par Example:
+ * @par Example
  * To write a single data buffer use the @ref buffer function as follows:
  * @code boost::asio::write(s, boost::asio::buffer(data, size)); @endcode
  * See the @ref buffer documentation for information on writing multiple
@@ -69,8 +69,8 @@ namespace asio {
  *     s, buffers,
  *     boost::asio::transfer_all()); @endcode
  */
-template <typename Sync_Write_Stream, typename Const_Buffers>
-std::size_t write(Sync_Write_Stream& s, const Const_Buffers& buffers);
+template <typename SyncWriteStream, typename ConstBufferSequence>
+std::size_t write(SyncWriteStream& s, const ConstBufferSequence& buffers);
 
 /// Write a certain amount of data to a stream before returning.
 /**
@@ -86,7 +86,7 @@ std::size_t write(Sync_Write_Stream& s, const Const_Buffers& buffers);
  * write_some function.
  *
  * @param s The stream to which the data is to be written. The type must support
- * the Sync_Write_Stream concept.
+ * the SyncWriteStream concept.
  *
  * @param buffers One or more buffers containing the data to be written. The sum
  * of the buffer sizes indicates the maximum number of bytes to write to the
@@ -110,7 +110,7 @@ std::size_t write(Sync_Write_Stream& s, const Const_Buffers& buffers);
  *
  * @throws boost::system::system_error Thrown on failure.
  *
- * @par Example:
+ * @par Example
  * To write a single data buffer use the @ref buffer function as follows:
  * @code boost::asio::write(s, boost::asio::buffer(data, size),
  *     boost::asio::transfer_at_least(32)); @endcode
@@ -118,10 +118,10 @@ std::size_t write(Sync_Write_Stream& s, const Const_Buffers& buffers);
  * buffers in one go, and how to use it with arrays, boost::array or
  * std::vector.
  */
-template <typename Sync_Write_Stream, typename Const_Buffers,
-    typename Completion_Condition>
-std::size_t write(Sync_Write_Stream& s, const Const_Buffers& buffers,
-    Completion_Condition completion_condition);
+template <typename SyncWriteStream, typename ConstBufferSequence,
+    typename CompletionCondition>
+std::size_t write(SyncWriteStream& s, const ConstBufferSequence& buffers,
+    CompletionCondition completion_condition);
 
 /// Write a certain amount of data to a stream before returning.
 /**
@@ -137,7 +137,7 @@ std::size_t write(Sync_Write_Stream& s, const Const_Buffers& buffers,
  * write_some function.
  *
  * @param s The stream to which the data is to be written. The type must support
- * the Sync_Write_Stream concept.
+ * the SyncWriteStream concept.
  *
  * @param buffers One or more buffers containing the data to be written. The sum
  * of the buffer sizes indicates the maximum number of bytes to write to the
@@ -162,10 +162,10 @@ std::size_t write(Sync_Write_Stream& s, const Const_Buffers& buffers,
  * @returns The number of bytes written. If an error occurs, returns the total
  * number of bytes successfully transferred prior to the error.
  */
-template <typename Sync_Write_Stream, typename Const_Buffers,
-    typename Completion_Condition>
-std::size_t write(Sync_Write_Stream& s, const Const_Buffers& buffers,
-    Completion_Condition completion_condition, boost::system::error_code& ec);
+template <typename SyncWriteStream, typename ConstBufferSequence,
+    typename CompletionCondition>
+std::size_t write(SyncWriteStream& s, const ConstBufferSequence& buffers,
+    CompletionCondition completion_condition, boost::system::error_code& ec);
 
 /// Write a certain amount of data to a stream before returning.
 /**
@@ -180,7 +180,7 @@ std::size_t write(Sync_Write_Stream& s, const Const_Buffers& buffers,
  * write_some function.
  *
  * @param s The stream to which the data is to be written. The type must support
- * the Sync_Write_Stream concept.
+ * the SyncWriteStream concept.
  *
  * @param b The basic_streambuf object from which data will be written.
  *
@@ -193,8 +193,8 @@ std::size_t write(Sync_Write_Stream& s, const Const_Buffers& buffers,
  *     s, b,
  *     boost::asio::transfer_all()); @endcode
  */
-template <typename Sync_Write_Stream, typename Allocator>
-std::size_t write(Sync_Write_Stream& s, basic_streambuf<Allocator>& b);
+template <typename SyncWriteStream, typename Allocator>
+std::size_t write(SyncWriteStream& s, basic_streambuf<Allocator>& b);
 
 /// Write a certain amount of data to a stream before returning.
 /**
@@ -209,7 +209,7 @@ std::size_t write(Sync_Write_Stream& s, basic_streambuf<Allocator>& b);
  * write_some function.
  *
  * @param s The stream to which the data is to be written. The type must support
- * the Sync_Write_Stream concept.
+ * the SyncWriteStream concept.
  *
  * @param b The basic_streambuf object from which data will be written.
  *
@@ -231,10 +231,10 @@ std::size_t write(Sync_Write_Stream& s, basic_streambuf<Allocator>& b);
  *
  * @throws boost::system::system_error Thrown on failure.
  */
-template <typename Sync_Write_Stream, typename Allocator,
-    typename Completion_Condition>
-std::size_t write(Sync_Write_Stream& s, basic_streambuf<Allocator>& b,
-    Completion_Condition completion_condition);
+template <typename SyncWriteStream, typename Allocator,
+    typename CompletionCondition>
+std::size_t write(SyncWriteStream& s, basic_streambuf<Allocator>& b,
+    CompletionCondition completion_condition);
 
 /// Write a certain amount of data to a stream before returning.
 /**
@@ -249,7 +249,7 @@ std::size_t write(Sync_Write_Stream& s, basic_streambuf<Allocator>& b,
  * write_some function.
  *
  * @param s The stream to which the data is to be written. The type must support
- * the Sync_Write_Stream concept.
+ * the SyncWriteStream concept.
  *
  * @param b The basic_streambuf object from which data will be written.
  *
@@ -272,10 +272,10 @@ std::size_t write(Sync_Write_Stream& s, basic_streambuf<Allocator>& b,
  * @returns The number of bytes written. If an error occurs, returns the total
  * number of bytes successfully transferred prior to the error.
  */
-template <typename Sync_Write_Stream, typename Allocator,
-    typename Completion_Condition>
-std::size_t write(Sync_Write_Stream& s, basic_streambuf<Allocator>& b,
-    Completion_Condition completion_condition, boost::system::error_code& ec);
+template <typename SyncWriteStream, typename Allocator,
+    typename CompletionCondition>
+std::size_t write(SyncWriteStream& s, basic_streambuf<Allocator>& b,
+    CompletionCondition completion_condition, boost::system::error_code& ec);
 
 /*@}*/
 /**
@@ -300,7 +300,7 @@ std::size_t write(Sync_Write_Stream& s, basic_streambuf<Allocator>& b,
  * async_write_some function.
  *
  * @param s The stream to which the data is to be written. The type must support
- * the Async_Write_Stream concept.
+ * the AsyncWriteStream concept.
  *
  * @param buffers One or more buffers containing the data to be written.
  * Although the buffers object may be copied as necessary, ownership of the
@@ -323,7 +323,7 @@ std::size_t write(Sync_Write_Stream& s, basic_streambuf<Allocator>& b,
  * the handler will be performed in a manner equivalent to using
  * boost::asio::io_service::post().
  *
- * @par Example:
+ * @par Example
  * To write a single data buffer use the @ref buffer function as follows:
  * @code
  * boost::asio::async_write(s, boost::asio::buffer(data, size), handler);
@@ -332,9 +332,10 @@ std::size_t write(Sync_Write_Stream& s, basic_streambuf<Allocator>& b,
  * buffers in one go, and how to use it with arrays, boost::array or
  * std::vector.
  */
-template <typename Async_Write_Stream, typename Const_Buffers, typename Handler>
-void async_write(Async_Write_Stream& s, const Const_Buffers& buffers,
-    Handler handler);
+template <typename AsyncWriteStream, typename ConstBufferSequence,
+    typename WriteHandler>
+void async_write(AsyncWriteStream& s, const ConstBufferSequence& buffers,
+    WriteHandler handler);
 
 /// Start an asynchronous operation to write a certain amount of data to a
 /// stream.
@@ -353,7 +354,7 @@ void async_write(Async_Write_Stream& s, const Const_Buffers& buffers,
  * async_write_some function.
  *
  * @param s The stream to which the data is to be written. The type must support
- * the Async_Write_Stream concept.
+ * the AsyncWriteStream concept.
  *
  * @param buffers One or more buffers containing the data to be written.
  * Although the buffers object may be copied as necessary, ownership of the
@@ -390,7 +391,7 @@ void async_write(Async_Write_Stream& s, const Const_Buffers& buffers,
  * the handler will be performed in a manner equivalent to using
  * boost::asio::io_service::post().
  *
- * @par Example:
+ * @par Example
  * To write a single data buffer use the @ref buffer function as follows:
  * @code boost::asio::async_write(s,
  *     boost::asio::buffer(data, size),
@@ -400,10 +401,10 @@ void async_write(Async_Write_Stream& s, const Const_Buffers& buffers,
  * buffers in one go, and how to use it with arrays, boost::array or
  * std::vector.
  */
-template <typename Async_Write_Stream, typename Const_Buffers,
-    typename Completion_Condition, typename Handler>
-void async_write(Async_Write_Stream& s, const Const_Buffers& buffers,
-    Completion_Condition completion_condition, Handler handler);
+template <typename AsyncWriteStream, typename ConstBufferSequence,
+    typename CompletionCondition, typename WriteHandler>
+void async_write(AsyncWriteStream& s, const ConstBufferSequence& buffers,
+    CompletionCondition completion_condition, WriteHandler handler);
 
 /// Start an asynchronous operation to write a certain amount of data to a
 /// stream.
@@ -421,7 +422,7 @@ void async_write(Async_Write_Stream& s, const Const_Buffers& buffers,
  * async_write_some function.
  *
  * @param s The stream to which the data is to be written. The type must support
- * the Async_Write_Stream concept.
+ * the AsyncWriteStream concept.
  *
  * @param b A basic_streambuf object from which data will be written. Ownership
  * of the streambuf is retained by the caller, which must guarantee that it
@@ -443,9 +444,9 @@ void async_write(Async_Write_Stream& s, const Const_Buffers& buffers,
  * the handler will be performed in a manner equivalent to using
  * boost::asio::io_service::post().
  */
-template <typename Async_Write_Stream, typename Allocator, typename Handler>
-void async_write(Async_Write_Stream& s, basic_streambuf<Allocator>& b,
-    Handler handler);
+template <typename AsyncWriteStream, typename Allocator, typename WriteHandler>
+void async_write(AsyncWriteStream& s, basic_streambuf<Allocator>& b,
+    WriteHandler handler);
 
 /// Start an asynchronous operation to write a certain amount of data to a
 /// stream.
@@ -463,7 +464,7 @@ void async_write(Async_Write_Stream& s, basic_streambuf<Allocator>& b,
  * async_write_some function.
  *
  * @param s The stream to which the data is to be written. The type must support
- * the Async_Write_Stream concept.
+ * the AsyncWriteStream concept.
  *
  * @param b A basic_streambuf object from which data will be written. Ownership
  * of the streambuf is retained by the caller, which must guarantee that it
@@ -499,10 +500,10 @@ void async_write(Async_Write_Stream& s, basic_streambuf<Allocator>& b,
  * the handler will be performed in a manner equivalent to using
  * boost::asio::io_service::post().
  */
-template <typename Async_Write_Stream, typename Allocator,
-    typename Completion_Condition, typename Handler>
-void async_write(Async_Write_Stream& s, basic_streambuf<Allocator>& b,
-    Completion_Condition completion_condition, Handler handler);
+template <typename AsyncWriteStream, typename Allocator,
+    typename CompletionCondition, typename WriteHandler>
+void async_write(AsyncWriteStream& s, basic_streambuf<Allocator>& b,
+    CompletionCondition completion_condition, WriteHandler handler);
 
 /*@}*/
 

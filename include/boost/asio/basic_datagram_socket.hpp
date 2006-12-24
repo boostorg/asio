@@ -35,21 +35,18 @@ namespace asio {
  * The basic_datagram_socket class template provides asynchronous and blocking
  * datagram-oriented socket functionality.
  *
- * @par Thread Safety:
+ * @par Thread Safety
  * @e Distinct @e objects: Safe.@n
  * @e Shared @e objects: Unsafe.
- *
- * @par Concepts:
- * Async_Object
  */
 template <typename Protocol,
-    typename Service = datagram_socket_service<Protocol> >
+    typename DatagramSocketService = datagram_socket_service<Protocol> >
 class basic_datagram_socket
-  : public basic_socket<Protocol, Service>
+  : public basic_socket<Protocol, DatagramSocketService>
 {
 public:
   /// The native representation of a socket.
-  typedef typename Service::native_type native_type;
+  typedef typename DatagramSocketService::native_type native_type;
 
   /// The protocol type.
   typedef Protocol protocol_type;
@@ -67,7 +64,7 @@ public:
    * socket.
    */
   explicit basic_datagram_socket(boost::asio::io_service& io_service)
-    : basic_socket<Protocol, Service>(io_service)
+    : basic_socket<Protocol, DatagramSocketService>(io_service)
   {
   }
 
@@ -85,7 +82,7 @@ public:
    */
   basic_datagram_socket(boost::asio::io_service& io_service,
       const protocol_type& protocol)
-    : basic_socket<Protocol, Service>(io_service, protocol)
+    : basic_socket<Protocol, DatagramSocketService>(io_service, protocol)
   {
   }
 
@@ -107,7 +104,7 @@ public:
    */
   basic_datagram_socket(boost::asio::io_service& io_service,
       const endpoint_type& endpoint)
-    : basic_socket<Protocol, Service>(io_service, endpoint)
+    : basic_socket<Protocol, DatagramSocketService>(io_service, endpoint)
   {
   }
 
@@ -128,7 +125,8 @@ public:
    */
   basic_datagram_socket(boost::asio::io_service& io_service,
       const protocol_type& protocol, const native_type& native_socket)
-    : basic_socket<Protocol, Service>(io_service, protocol, native_socket)
+    : basic_socket<Protocol, DatagramSocketService>(
+        io_service, protocol, native_socket)
   {
   }
 
@@ -147,15 +145,15 @@ public:
    * @note The send operation can only be used with a connected socket. Use
    * the send_to function to send data on an unconnected datagram socket.
    *
-   * @par Example:
+   * @par Example
    * To send a single data buffer use the @ref buffer function as follows:
    * @code socket.send(boost::asio::buffer(data, size)); @endcode
    * See the @ref buffer documentation for information on sending multiple
    * buffers in one go, and how to use it with arrays, boost::array or
    * std::vector.
    */
-  template <typename Const_Buffers>
-  std::size_t send(const Const_Buffers& buffers)
+  template <typename ConstBufferSequence>
+  std::size_t send(const ConstBufferSequence& buffers)
   {
     boost::system::error_code ec;
     std::size_t s = this->service.send(this->implementation, buffers, 0, ec);
@@ -180,8 +178,8 @@ public:
    * @note The send operation can only be used with a connected socket. Use
    * the send_to function to send data on an unconnected datagram socket.
    */
-  template <typename Const_Buffers>
-  std::size_t send(const Const_Buffers& buffers,
+  template <typename ConstBufferSequence>
+  std::size_t send(const ConstBufferSequence& buffers,
       socket_base::message_flags flags)
   {
     boost::system::error_code ec;
@@ -208,8 +206,8 @@ public:
    * @note The send operation can only be used with a connected socket. Use
    * the send_to function to send data on an unconnected datagram socket.
    */
-  template <typename Const_Buffers>
-  std::size_t send(const Const_Buffers& buffers,
+  template <typename ConstBufferSequence>
+  std::size_t send(const ConstBufferSequence& buffers,
       socket_base::message_flags flags, boost::system::error_code& ec)
   {
     return this->service.send(this->implementation, buffers, flags, ec);
@@ -242,7 +240,7 @@ public:
    * Use the async_send_to function to send data on an unconnected datagram
    * socket.
    *
-   * @par Example:
+   * @par Example
    * To send a single data buffer use the @ref buffer function as follows:
    * @code
    * socket.async_send(boost::asio::buffer(data, size), handler);
@@ -251,8 +249,8 @@ public:
    * buffers in one go, and how to use it with arrays, boost::array or
    * std::vector.
    */
-  template <typename Const_Buffers, typename Handler>
-  void async_send(const Const_Buffers& buffers, Handler handler)
+  template <typename ConstBufferSequence, typename WriteHandler>
+  void async_send(const ConstBufferSequence& buffers, WriteHandler handler)
   {
     this->service.async_send(this->implementation, buffers, 0, handler);
   }
@@ -286,9 +284,9 @@ public:
    * Use the async_send_to function to send data on an unconnected datagram
    * socket.
    */
-  template <typename Const_Buffers, typename Handler>
-  void async_send(const Const_Buffers& buffers,
-      socket_base::message_flags flags, Handler handler)
+  template <typename ConstBufferSequence, typename WriteHandler>
+  void async_send(const ConstBufferSequence& buffers,
+      socket_base::message_flags flags, WriteHandler handler)
   {
     this->service.async_send(this->implementation, buffers, flags, handler);
   }
@@ -307,7 +305,7 @@ public:
    *
    * @throws boost::system::system_error Thrown on failure.
    *
-   * @par Example:
+   * @par Example
    * To send a single data buffer use the @ref buffer function as follows:
    * @code
    * boost::asio::ip::udp::endpoint destination(
@@ -318,8 +316,8 @@ public:
    * buffers in one go, and how to use it with arrays, boost::array or
    * std::vector.
    */
-  template <typename Const_Buffers>
-  std::size_t send_to(const Const_Buffers& buffers,
+  template <typename ConstBufferSequence>
+  std::size_t send_to(const ConstBufferSequence& buffers,
       const endpoint_type& destination)
   {
     boost::system::error_code ec;
@@ -345,8 +343,8 @@ public:
    *
    * @throws boost::system::system_error Thrown on failure.
    */
-  template <typename Const_Buffers>
-  std::size_t send_to(const Const_Buffers& buffers,
+  template <typename ConstBufferSequence>
+  std::size_t send_to(const ConstBufferSequence& buffers,
       const endpoint_type& destination, socket_base::message_flags flags)
   {
     boost::system::error_code ec;
@@ -372,8 +370,8 @@ public:
    *
    * @returns The number of bytes sent.
    */
-  template <typename Const_Buffers>
-  std::size_t send_to(const Const_Buffers& buffers,
+  template <typename ConstBufferSequence>
+  std::size_t send_to(const ConstBufferSequence& buffers,
       const endpoint_type& destination, socket_base::message_flags flags,
       boost::system::error_code& ec)
   {
@@ -406,7 +404,7 @@ public:
    * of the handler will be performed in a manner equivalent to using
    * boost::asio::io_service::post().
    *
-   * @par Example:
+   * @par Example
    * To send a single data buffer use the @ref buffer function as follows:
    * @code
    * boost::asio::ip::udp::endpoint destination(
@@ -418,9 +416,9 @@ public:
    * buffers in one go, and how to use it with arrays, boost::array or
    * std::vector.
    */
-  template <typename Const_Buffers, typename Handler>
-  void async_send_to(const Const_Buffers& buffers,
-      const endpoint_type& destination, Handler handler)
+  template <typename ConstBufferSequence, typename WriteHandler>
+  void async_send_to(const ConstBufferSequence& buffers,
+      const endpoint_type& destination, WriteHandler handler)
   {
     this->service.async_send_to(this->implementation, buffers, destination, 0,
         handler);
@@ -453,10 +451,10 @@ public:
    * of the handler will be performed in a manner equivalent to using
    * boost::asio::io_service::post().
    */
-  template <typename Const_Buffers, typename Handler>
-  void async_send_to(const Const_Buffers& buffers,
+  template <typename ConstBufferSequence, typename WriteHandler>
+  void async_send_to(const ConstBufferSequence& buffers,
       const endpoint_type& destination, socket_base::message_flags flags,
-      Handler handler)
+      WriteHandler handler)
   {
     this->service.async_send_to(this->implementation, buffers, destination,
         flags, handler);
@@ -478,7 +476,7 @@ public:
    * the receive_from function to receive data on an unconnected datagram
    * socket.
    *
-   * @par Example:
+   * @par Example
    * To receive into a single data buffer use the @ref buffer function as
    * follows:
    * @code socket.receive(boost::asio::buffer(data, size)); @endcode
@@ -486,8 +484,8 @@ public:
    * multiple buffers in one go, and how to use it with arrays, boost::array or
    * std::vector.
    */
-  template <typename Mutable_Buffers>
-  std::size_t receive(const Mutable_Buffers& buffers)
+  template <typename MutableBufferSequence>
+  std::size_t receive(const MutableBufferSequence& buffers)
   {
     boost::system::error_code ec;
     std::size_t s = this->service.receive(
@@ -514,8 +512,8 @@ public:
    * the receive_from function to receive data on an unconnected datagram
    * socket.
    */
-  template <typename Mutable_Buffers>
-  std::size_t receive(const Mutable_Buffers& buffers,
+  template <typename MutableBufferSequence>
+  std::size_t receive(const MutableBufferSequence& buffers,
       socket_base::message_flags flags)
   {
     boost::system::error_code ec;
@@ -543,8 +541,8 @@ public:
    * the receive_from function to receive data on an unconnected datagram
    * socket.
    */
-  template <typename Mutable_Buffers>
-  std::size_t receive(const Mutable_Buffers& buffers,
+  template <typename MutableBufferSequence>
+  std::size_t receive(const MutableBufferSequence& buffers,
       socket_base::message_flags flags, boost::system::error_code& ec)
   {
     return this->service.receive(this->implementation, buffers, flags, ec);
@@ -576,7 +574,7 @@ public:
    * Use the async_receive_from function to receive data on an unconnected
    * datagram socket.
    *
-   * @par Example:
+   * @par Example
    * To receive into a single data buffer use the @ref buffer function as
    * follows:
    * @code
@@ -586,8 +584,8 @@ public:
    * multiple buffers in one go, and how to use it with arrays, boost::array or
    * std::vector.
    */
-  template <typename Mutable_Buffers, typename Handler>
-  void async_receive(const Mutable_Buffers& buffers, Handler handler)
+  template <typename MutableBufferSequence, typename ReadHandler>
+  void async_receive(const MutableBufferSequence& buffers, ReadHandler handler)
   {
     this->service.async_receive(this->implementation, buffers, 0, handler);
   }
@@ -620,9 +618,9 @@ public:
    * Use the async_receive_from function to receive data on an unconnected
    * datagram socket.
    */
-  template <typename Mutable_Buffers, typename Handler>
-  void async_receive(const Mutable_Buffers& buffers,
-      socket_base::message_flags flags, Handler handler)
+  template <typename MutableBufferSequence, typename ReadHandler>
+  void async_receive(const MutableBufferSequence& buffers,
+      socket_base::message_flags flags, ReadHandler handler)
   {
     this->service.async_receive(this->implementation, buffers, flags, handler);
   }
@@ -641,7 +639,7 @@ public:
    *
    * @throws boost::system::system_error Thrown on failure.
    *
-   * @par Example:
+   * @par Example
    * To receive into a single data buffer use the @ref buffer function as
    * follows:
    * @code
@@ -653,8 +651,8 @@ public:
    * multiple buffers in one go, and how to use it with arrays, boost::array or
    * std::vector.
    */
-  template <typename Mutable_Buffers>
-  std::size_t receive_from(const Mutable_Buffers& buffers,
+  template <typename MutableBufferSequence>
+  std::size_t receive_from(const MutableBufferSequence& buffers,
       endpoint_type& sender_endpoint)
   {
     boost::system::error_code ec;
@@ -680,8 +678,8 @@ public:
    *
    * @throws boost::system::system_error Thrown on failure.
    */
-  template <typename Mutable_Buffers>
-  std::size_t receive_from(const Mutable_Buffers& buffers,
+  template <typename MutableBufferSequence>
+  std::size_t receive_from(const MutableBufferSequence& buffers,
       endpoint_type& sender_endpoint, socket_base::message_flags flags)
   {
     boost::system::error_code ec;
@@ -707,8 +705,8 @@ public:
    *
    * @returns The number of bytes received.
    */
-  template <typename Mutable_Buffers>
-  std::size_t receive_from(const Mutable_Buffers& buffers,
+  template <typename MutableBufferSequence>
+  std::size_t receive_from(const MutableBufferSequence& buffers,
       endpoint_type& sender_endpoint, socket_base::message_flags flags,
       boost::system::error_code& ec)
   {
@@ -743,7 +741,7 @@ public:
    * of the handler will be performed in a manner equivalent to using
    * boost::asio::io_service::post().
    *
-   * @par Example:
+   * @par Example
    * To receive into a single data buffer use the @ref buffer function as
    * follows:
    * @code socket.async_receive_from(
@@ -752,9 +750,9 @@ public:
    * multiple buffers in one go, and how to use it with arrays, boost::array or
    * std::vector.
    */
-  template <typename Mutable_Buffers, typename Handler>
-  void async_receive_from(const Mutable_Buffers& buffers,
-      endpoint_type& sender_endpoint, Handler handler)
+  template <typename MutableBufferSequence, typename ReadHandler>
+  void async_receive_from(const MutableBufferSequence& buffers,
+      endpoint_type& sender_endpoint, ReadHandler handler)
   {
     this->service.async_receive_from(this->implementation, buffers,
         sender_endpoint, 0, handler);
@@ -789,10 +787,10 @@ public:
    * of the handler will be performed in a manner equivalent to using
    * boost::asio::io_service::post().
    */
-  template <typename Mutable_Buffers, typename Handler>
-  void async_receive_from(const Mutable_Buffers& buffers,
+  template <typename MutableBufferSequence, typename ReadHandler>
+  void async_receive_from(const MutableBufferSequence& buffers,
       endpoint_type& sender_endpoint, socket_base::message_flags flags,
-      Handler handler)
+      ReadHandler handler)
   {
     this->service.async_receive_from(this->implementation, buffers,
         sender_endpoint, flags, handler);

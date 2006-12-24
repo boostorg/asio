@@ -33,7 +33,7 @@ namespace multicast {
 /**
  * Implements the IPPROTO_IP/IP_ADD_MEMBERSHIP socket option.
  *
- * @par Examples:
+ * @par Examples
  * Setting the option to join a multicast group:
  * @code
  * boost::asio::ip::udp::socket socket(io_service); 
@@ -45,7 +45,7 @@ namespace multicast {
  * @endcode
  *
  * @par Concepts:
- * Socket_Option, IP_MReq_Socket_Option.
+ * SettableSocketOption.
  */
 #if defined(GENERATING_DOCUMENTATION)
 typedef implementation_defined join_group;
@@ -58,7 +58,7 @@ typedef boost::asio::ip::detail::socket_option::multicast_request<
 /**
  * Implements the IPPROTO_IP/IP_DROP_MEMBERSHIP socket option.
  *
- * @par Examples:
+ * @par Examples
  * Setting the option to leave a multicast group:
  * @code
  * boost::asio::ip::udp::socket socket(io_service); 
@@ -70,7 +70,7 @@ typedef boost::asio::ip::detail::socket_option::multicast_request<
  * @endcode
  *
  * @par Concepts:
- * Socket_Option, IP_MReq_Socket_Option.
+ * SettableSocketOption.
  */
 #if defined(GENERATING_DOCUMENTATION)
 typedef implementation_defined leave_group;
@@ -83,7 +83,7 @@ typedef boost::asio::ip::detail::socket_option::multicast_request<
 /**
  * Implements the IPPROTO_IP/IP_MULTICAST_IF socket option.
  *
- * @par Examples:
+ * @par Examples
  * Setting the option:
  * @code
  * boost::asio::ip::udp::socket socket(io_service); 
@@ -95,7 +95,7 @@ typedef boost::asio::ip::detail::socket_option::multicast_request<
  * @endcode
  *
  * @par Concepts:
- * Socket_Option, IP_Network_Interface_Socket_Option.
+ * SettableSocketOption.
  */
 #if defined(GENERATING_DOCUMENTATION)
 typedef implementation_defined outbound_interface;
@@ -109,7 +109,7 @@ typedef boost::asio::ip::detail::socket_option::network_interface<
 /**
  * Implements the IPPROTO_IP/IP_MULTICAST_TTL socket option.
  *
- * @par Examples:
+ * @par Examples
  * Setting the option:
  * @code
  * boost::asio::ip::udp::socket socket(io_service); 
@@ -129,7 +129,7 @@ typedef boost::asio::ip::detail::socket_option::network_interface<
  * @endcode
  *
  * @par Concepts:
- * Socket_Option, Integer_Socket_Option.
+ * GettableSocketOption, SettableSocketOption.
  */
 #if defined(GENERATING_DOCUMENTATION)
 typedef implementation_defined hops;
@@ -143,7 +143,7 @@ typedef boost::asio::ip::detail::socket_option::integer<
 /**
  * Implements the IPPROTO_IP/IP_MULTICAST_LOOP socket option.
  *
- * @par Examples:
+ * @par Examples
  * Setting the option:
  * @code
  * boost::asio::ip::udp::socket socket(io_service); 
@@ -163,7 +163,7 @@ typedef boost::asio::ip::detail::socket_option::integer<
  * @endcode
  *
  * @par Concepts:
- * Socket_Option, Boolean_Socket_Option.
+ * GettableSocketOption, SettableSocketOption.
  */
 #if defined(GENERATING_DOCUMENTATION)
 typedef implementation_defined enable_loopback;

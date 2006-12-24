@@ -146,25 +146,25 @@ public:
   }
 
   /// Set a socket option.
-  template <typename Option>
+  template <typename SettableSocketOption>
   boost::system::error_code set_option(implementation_type& impl,
-      const Option& option, boost::system::error_code& ec)
+      const SettableSocketOption& option, boost::system::error_code& ec)
   {
     return service_impl_.set_option(impl, option, ec);
   }
 
   /// Get a socket option.
-  template <typename Option>
+  template <typename GettableSocketOption>
   boost::system::error_code get_option(const implementation_type& impl,
-      Option& option, boost::system::error_code& ec) const
+      GettableSocketOption& option, boost::system::error_code& ec) const
   {
     return service_impl_.get_option(impl, option, ec);
   }
 
   /// Perform an IO control command on the socket.
-  template <typename IO_Control_Command>
+  template <typename IoControlCommand>
   boost::system::error_code io_control(implementation_type& impl,
-      IO_Control_Command& command, boost::system::error_code& ec)
+      IoControlCommand& command, boost::system::error_code& ec)
   {
     return service_impl_.io_control(impl, command, ec);
   }
@@ -177,36 +177,36 @@ public:
   }
 
   /// Accept a new connection.
-  template <typename Socket_Service>
+  template <typename SocketService>
   boost::system::error_code accept(implementation_type& impl,
-      basic_socket<protocol_type, Socket_Service>& peer,
+      basic_socket<protocol_type, SocketService>& peer,
       boost::system::error_code& ec)
   {
     return service_impl_.accept(impl, peer, ec);
   }
 
   /// Accept a new connection.
-  template <typename Socket_Service>
+  template <typename SocketService>
   boost::system::error_code accept_endpoint(implementation_type& impl,
-      basic_socket<protocol_type, Socket_Service>& peer,
+      basic_socket<protocol_type, SocketService>& peer,
       endpoint_type& peer_endpoint, boost::system::error_code& ec)
   {
     return service_impl_.accept_endpoint(impl, peer, peer_endpoint, ec);
   }
 
   /// Start an asynchronous accept.
-  template <typename Socket_Service, typename Handler>
+  template <typename SocketService, typename AcceptHandler>
   void async_accept(implementation_type& impl,
-      basic_socket<protocol_type, Socket_Service>& peer, Handler handler)
+      basic_socket<protocol_type, SocketService>& peer, AcceptHandler handler)
   {
     service_impl_.async_accept(impl, peer, handler);
   }
 
   /// Start an asynchronous accept.
-  template <typename Socket_Service, typename Handler>
+  template <typename SocketService, typename AcceptHandler>
   void async_accept_endpoint(implementation_type& impl,
-      basic_socket<protocol_type, Socket_Service>& peer,
-      endpoint_type& peer_endpoint, Handler handler)
+      basic_socket<protocol_type, SocketService>& peer,
+      endpoint_type& peer_endpoint, AcceptHandler handler)
   {
     service_impl_.async_accept_endpoint(impl, peer, peer_endpoint, handler);
   }

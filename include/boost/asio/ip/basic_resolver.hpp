@@ -31,26 +31,27 @@ namespace ip {
  * The basic_resolver class template provides the ability to resolve a query
  * to a list of endpoints.
  *
- * @par Thread Safety:
+ * @par Thread Safety
  * @e Distinct @e objects: Safe.@n
  * @e Shared @e objects: Unsafe.
  */
-template <typename Protocol, typename Service = resolver_service<Protocol> >
+template <typename InternetProtocol,
+    typename ResolverService = resolver_service<InternetProtocol> >
 class basic_resolver
-  : public basic_io_object<Service>
+  : public basic_io_object<ResolverService>
 {
 public:
   /// The protocol type.
-  typedef Protocol protocol_type;
+  typedef InternetProtocol protocol_type;
 
   /// The endpoint type.
-  typedef typename Protocol::endpoint endpoint_type;
+  typedef typename InternetProtocol::endpoint endpoint_type;
 
   /// The query type.
-  typedef typename Protocol::resolver_query query;
+  typedef typename InternetProtocol::resolver_query query;
 
   /// The iterator type.
-  typedef typename Protocol::resolver_iterator iterator;
+  typedef typename InternetProtocol::resolver_iterator iterator;
 
   /// Constructor.
   /**
@@ -60,7 +61,7 @@ public:
    * dispatch handlers for any asynchronous operations performed on the timer.
    */
   explicit basic_resolver(boost::asio::io_service& io_service)
-    : basic_io_object<Service>(io_service)
+    : basic_io_object<ResolverService>(io_service)
   {
   }
 
@@ -88,8 +89,8 @@ public:
    *
    * @note A default constructed iterator represents the end of the list.
    *
-   * @note A successful call to this function is guaranteed to return at least
-   * one entry.
+   * A successful call to this function is guaranteed to return at least one
+   * entry.
    */
   iterator resolve(const query& q)
   {
@@ -105,16 +106,16 @@ public:
    *
    * @param q A query object that determines what endpoints will be returned.
    *
+   * @param ec Set to indicate what error occurred, if any.
+   *
    * @returns A forward-only iterator that can be used to traverse the list
    * of endpoint entries. Returns a default constructed iterator if an error
    * occurs.
    *
-   * @param ec Set to indicate what error occurred, if any.
-   *
    * @note A default constructed iterator represents the end of the list.
    *
-   * @note A successful call to this function is guaranteed to return at least
-   * one entry.
+   * A successful call to this function is guaranteed to return at least one
+   * entry.
    */
   iterator resolve(const query& q, boost::system::error_code& ec)
   {
@@ -144,11 +145,11 @@ public:
    *
    * @note A default constructed iterator represents the end of the list.
    *
-   * @note A successful resolve operation is guaranteed to pass at least one
-   * entry to the handler.
+   * A successful resolve operation is guaranteed to pass at least one entry to
+   * the handler.
    */
-  template <typename Handler>
-  void async_resolve(const query& q, Handler handler)
+  template <typename ResolveHandler>
+  void async_resolve(const query& q, ResolveHandler handler)
   {
     return this->service.async_resolve(this->implementation, q, handler);
   }
@@ -168,8 +169,8 @@ public:
    *
    * @note A default constructed iterator represents the end of the list.
    *
-   * @note A successful call to this function is guaranteed to return at least
-   * one entry.
+   * A successful call to this function is guaranteed to return at least one
+   * entry.
    */
   iterator resolve(const endpoint_type& e)
   {
@@ -187,16 +188,16 @@ public:
    * @param e An endpoint object that determines what endpoints will be
    * returned.
    *
+   * @param ec Set to indicate what error occurred, if any.
+   *
    * @returns A forward-only iterator that can be used to traverse the list
    * of endpoint entries. Returns a default constructed iterator if an error
    * occurs.
    *
-   * @param ec Set to indicate what error occurred, if any.
-   *
    * @note A default constructed iterator represents the end of the list.
    *
-   * @note A successful call to this function is guaranteed to return at least
-   * one entry.
+   * A successful call to this function is guaranteed to return at least one
+   * entry.
    */
   iterator resolve(const endpoint_type& e, boost::system::error_code& ec)
   {
@@ -227,11 +228,11 @@ public:
    *
    * @note A default constructed iterator represents the end of the list.
    *
-   * @note A successful resolve operation is guaranteed to pass at least one
-   * entry to the handler.
+   * A successful resolve operation is guaranteed to pass at least one entry to
+   * the handler.
    */
-  template <typename Handler>
-  void async_resolve(const endpoint_type& e, Handler handler)
+  template <typename ResolveHandler>
+  void async_resolve(const endpoint_type& e, ResolveHandler handler)
   {
     return this->service.async_resolve(this->implementation, e, handler);
   }

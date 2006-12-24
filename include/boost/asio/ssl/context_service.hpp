@@ -146,9 +146,9 @@ public:
   }
 
   /// Set the password callback.
-  template <typename Password_Callback>
+  template <typename PasswordCallback>
   boost::system::error_code set_password_callback(impl_type& impl,
-      Password_Callback callback, boost::system::error_code& ec)
+      PasswordCallback callback, boost::system::error_code& ec)
   {
     return service_impl_.set_password_callback(impl, callback, ec);
   }

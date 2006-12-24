@@ -35,12 +35,12 @@ namespace ip {
 /**
  * The boost::asio::ip::tcp class contains flags necessary for TCP sockets.
  *
- * @par Thread Safety:
+ * @par Thread Safety
  * @e Distinct @e objects: Safe.@n
  * @e Shared @e objects: Safe.
  *
  * @par Concepts:
- * Protocol.
+ * Protocol, InternetProtocol.
  */
 class tcp
 {
@@ -100,21 +100,21 @@ public:
   /**
    * Implements the IPPROTO_TCP/TCP_NODELAY socket option.
    *
-   * @par Examples:
+   * @par Examples
    * Setting the option:
    * @code
-   * boost::asio::ipv6::tcp::socket socket(io_service); 
+   * boost::asio::ip::tcp::socket socket(io_service); 
    * ...
-   * boost::asio::ipv6::tcp::no_delay option(true);
+   * boost::asio::ip::tcp::no_delay option(true);
    * socket.set_option(option);
    * @endcode
    *
    * @par
    * Getting the current option value:
    * @code
-   * boost::asio::ipv6::tcp::socket socket(io_service); 
+   * boost::asio::ip::tcp::socket socket(io_service); 
    * ...
-   * boost::asio::ipv6::tcp::no_delay option;
+   * boost::asio::ip::tcp::no_delay option;
    * socket.get_option(option);
    * bool is_set = option.get();
    * @endcode

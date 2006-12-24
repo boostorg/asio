@@ -52,7 +52,7 @@ namespace asio {
  * The io_service class also includes facilities intended for developers of
  * custom asynchronous services.
  *
- * @par Thread Safety:
+ * @par Thread Safety
  * @e Distinct @e objects: Safe.@n
  * @e Shared @e objects: Safe, with the exception that calling reset()
  * while there are unfinished run() calls results in undefined behaviour.
@@ -85,11 +85,13 @@ public:
 
   class strand;
 
-  /// Default constructor.
+  /// Constructor.
   io_service();
 
-  /// Construct with a hint about the required level of concurrency.
+  /// Constructor.
   /**
+   * Construct with a hint about the required level of concurrency.
+   *
    * @param concurrency_hint A suggestion to the implementation on how many
    * threads it should allow to run simultaneously.
    */
@@ -172,8 +174,8 @@ public:
    * a copy of the handler object as required. The function signature of the
    * handler must be: @code void handler(); @endcode
    */
-  template <typename Handler>
-  void dispatch(Handler handler);
+  template <typename CompletionHandler>
+  void dispatch(CompletionHandler handler);
 
   /// Request the io_service to invoke the given handler and return immediately.
   /**
@@ -189,8 +191,8 @@ public:
    * a copy of the handler object as required. The function signature of the
    * handler must be: @code void handler(); @endcode
    */
-  template <typename Handler>
-  void post(Handler handler);
+  template <typename CompletionHandler>
+  void post(CompletionHandler handler);
 
   /// Create a new handler that automatically dispatches the wrapped handler
   /// on the io_service.
@@ -398,7 +400,7 @@ public:
  * boost::asio::io_service::reset(). This allows the thread to rejoin the
  * io_service's thread pool without impacting any other threads in the pool.
  *
- * @par Example:
+ * @par Example
  * @code
  * boost::asio::io_service io_service;
  * ...

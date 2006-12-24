@@ -91,9 +91,9 @@ public:
   }
 
   /// Start an asynchronous SSL handshake.
-  template <typename Stream, typename Handler>
+  template <typename Stream, typename HandshakeHandler>
   void async_handshake(impl_type& impl, Stream& next_layer,
-      stream_base::handshake_type type, Handler handler)
+      stream_base::handshake_type type, HandshakeHandler handler)
   {
     service_impl_.async_handshake(impl, next_layer, type, handler);
   }
@@ -107,48 +107,51 @@ public:
   }
 
   /// Asynchronously shut down SSL on the stream.
-  template <typename Stream, typename Handler>
-  void async_shutdown(impl_type& impl, Stream& next_layer, Handler handler)
+  template <typename Stream, typename ShutdownHandler>
+  void async_shutdown(impl_type& impl, Stream& next_layer,
+      ShutdownHandler handler)
   {
     service_impl_.async_shutdown(impl, next_layer, handler);
   }
 
   /// Write some data to the stream.
-  template <typename Stream, typename Const_Buffers>
+  template <typename Stream, typename ConstBufferSequence>
   std::size_t write_some(impl_type& impl, Stream& next_layer,
-      const Const_Buffers& buffers, boost::system::error_code& ec)
+      const ConstBufferSequence& buffers, boost::system::error_code& ec)
   {
     return service_impl_.write_some(impl, next_layer, buffers, ec);
   }
 
   /// Start an asynchronous write.
-  template <typename Stream, typename Const_Buffers, typename Handler>
+  template <typename Stream, typename ConstBufferSequence,
+      typename WriteHandler>
   void async_write_some(impl_type& impl, Stream& next_layer,
-      const Const_Buffers& buffers, Handler handler)
+      const ConstBufferSequence& buffers, WriteHandler handler)
   {
     service_impl_.async_write_some(impl, next_layer, buffers, handler);
   }
 
   /// Read some data from the stream.
-  template <typename Stream, typename Mutable_Buffers>
+  template <typename Stream, typename MutableBufferSequence>
   std::size_t read_some(impl_type& impl, Stream& next_layer,
-      const Mutable_Buffers& buffers, boost::system::error_code& ec)
+      const MutableBufferSequence& buffers, boost::system::error_code& ec)
   {
     return service_impl_.read_some(impl, next_layer, buffers, ec);
   }
 
   /// Start an asynchronous read.
-  template <typename Stream, typename Mutable_Buffers, typename Handler>
+  template <typename Stream, typename MutableBufferSequence,
+      typename ReadHandler>
   void async_read_some(impl_type& impl, Stream& next_layer,
-      const Mutable_Buffers& buffers, Handler handler)
+      const MutableBufferSequence& buffers, ReadHandler handler)
   {
     service_impl_.async_read_some(impl, next_layer, buffers, handler);
   }
 
   /// Peek at the incoming data on the stream.
-  template <typename Stream, typename Mutable_Buffers>
+  template <typename Stream, typename MutableBufferSequence>
   std::size_t peek(impl_type& impl, Stream& next_layer,
-      const Mutable_Buffers& buffers, boost::system::error_code& ec)
+      const MutableBufferSequence& buffers, boost::system::error_code& ec)
   {
     return service_impl_.peek(impl, next_layer, buffers, ec);
   }

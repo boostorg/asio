@@ -37,7 +37,7 @@ namespace ip {
  * The boost::asio::ip::address_v4 class provides the ability to use and
  * manipulate IP version 4 addresses.
  *
- * @par Thread Safety:
+ * @par Thread Safety
  * @e Distinct @e objects: Safe.@n
  * @e Shared @e objects: Unsafe.
  */

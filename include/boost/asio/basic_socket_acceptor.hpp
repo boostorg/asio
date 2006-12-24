@@ -32,11 +32,11 @@ namespace asio {
  * The basic_socket_acceptor class template is used for accepting new socket
  * connections.
  *
- * @par Thread Safety:
+ * @par Thread Safety
  * @e Distinct @e objects: Safe.@n
  * @e Shared @e objects: Unsafe.
  *
- * @par Example:
+ * @par Example
  * Opening a socket acceptor with the SO_REUSEADDR option enabled:
  * @code
  * boost::asio::ip::tcp::acceptor acceptor(io_service);
@@ -48,14 +48,14 @@ namespace asio {
  * @endcode
  */
 template <typename Protocol,
-    typename Service = socket_acceptor_service<Protocol> >
+    typename SocketAcceptorService = socket_acceptor_service<Protocol> >
 class basic_socket_acceptor
-  : public basic_io_object<Service>,
+  : public basic_io_object<SocketAcceptorService>,
     public socket_base
 {
 public:
   /// The native representation of an acceptor.
-  typedef typename Service::native_type native_type;
+  typedef typename SocketAcceptorService::native_type native_type;
 
   /// The protocol type.
   typedef Protocol protocol_type;
@@ -74,7 +74,7 @@ public:
    * acceptor.
    */
   explicit basic_socket_acceptor(boost::asio::io_service& io_service)
-    : basic_io_object<Service>(io_service)
+    : basic_io_object<SocketAcceptorService>(io_service)
   {
   }
 
@@ -92,7 +92,7 @@ public:
    */
   basic_socket_acceptor(boost::asio::io_service& io_service,
       const protocol_type& protocol)
-    : basic_io_object<Service>(io_service)
+    : basic_io_object<SocketAcceptorService>(io_service)
   {
     boost::system::error_code ec;
     this->service.open(this->implementation, protocol, ec);
@@ -128,7 +128,7 @@ public:
    */
   basic_socket_acceptor(boost::asio::io_service& io_service,
       const endpoint_type& endpoint, bool reuse_addr = true)
-    : basic_io_object<Service>(io_service)
+    : basic_io_object<SocketAcceptorService>(io_service)
   {
     boost::system::error_code ec;
     this->service.open(this->implementation, endpoint.protocol(), ec);
@@ -163,7 +163,7 @@ public:
    */
   basic_socket_acceptor(boost::asio::io_service& io_service,
       const protocol_type& protocol, const native_type& native_acceptor)
-    : basic_io_object<Service>(io_service)
+    : basic_io_object<SocketAcceptorService>(io_service)
   {
     boost::system::error_code ec;
     this->service.assign(this->implementation, protocol, native_acceptor, ec);
@@ -179,7 +179,7 @@ public:
    *
    * @throws boost::system::system_error Thrown on failure.
    *
-   * @par Example:
+   * @par Example
    * @code
    * boost::asio::ip::tcp::acceptor acceptor(io_service);
    * acceptor.open(boost::asio::ip::tcp::v4());
@@ -201,7 +201,7 @@ public:
    *
    * @param ec Set to indicate what error occurred, if any.
    *
-   * @par Example:
+   * @par Example
    * @code
    * boost::asio::ip::tcp::acceptor acceptor(io_service);
    * boost::system::error_code ec;
@@ -262,7 +262,7 @@ public:
    *
    * @throws boost::system::system_error Thrown on failure.
    *
-   * @par Example:
+   * @par Example
    * @code
    * boost::asio::ip::tcp::acceptor acceptor(io_service);
    * acceptor.open(boost::asio::ip::tcp::v4());
@@ -286,7 +286,7 @@ public:
    *
    * @param ec Set to indicate what error occurred, if any.
    *
-   * @par Example:
+   * @par Example
    * @code
    * boost::asio::ip::tcp::acceptor acceptor(io_service);
    * acceptor.open(boost::asio::ip::tcp::v4());
@@ -331,7 +331,7 @@ public:
    *
    * @param ec Set to indicate what error occurred, if any.
    *
-   * @par Example:
+   * @par Example
    * @code
    * boost::asio::ip::tcp::acceptor acceptor(io_service);
    * ...
@@ -375,7 +375,7 @@ public:
    *
    * @param ec Set to indicate what error occurred, if any.
    *
-   * @par Example:
+   * @par Example
    * @code
    * boost::asio::ip::tcp::acceptor acceptor(io_service);
    * ...
@@ -439,11 +439,11 @@ public:
    *
    * @throws boost::system::system_error Thrown on failure.
    *
-   * @sa Socket_Option @n
+   * @sa SettableSocketOption @n
    * boost::asio::socket_base::reuse_address
    * boost::asio::socket_base::enable_connection_aborted
    *
-   * @par Example:
+   * @par Example
    * Setting the SOL_SOCKET/SO_REUSEADDR option:
    * @code
    * boost::asio::ip::tcp::acceptor acceptor(io_service);
@@ -452,8 +452,8 @@ public:
    * acceptor.set_option(option);
    * @endcode
    */
-  template <typename Option>
-  void set_option(const Option& option)
+  template <typename SettableSocketOption>
+  void set_option(const SettableSocketOption& option)
   {
     boost::system::error_code ec;
     this->service.set_option(this->implementation, option, ec);
@@ -468,11 +468,11 @@ public:
    *
    * @param ec Set to indicate what error occurred, if any.
    *
-   * @sa Socket_Option @n
+   * @sa SettableSocketOption @n
    * boost::asio::socket_base::reuse_address
    * boost::asio::socket_base::enable_connection_aborted
    *
-   * @par Example:
+   * @par Example
    * Setting the SOL_SOCKET/SO_REUSEADDR option:
    * @code
    * boost::asio::ip::tcp::acceptor acceptor(io_service);
@@ -486,8 +486,8 @@ public:
    * }
    * @endcode
    */
-  template <typename Option>
-  boost::system::error_code set_option(const Option& option,
+  template <typename SettableSocketOption>
+  boost::system::error_code set_option(const SettableSocketOption& option,
       boost::system::error_code& ec)
   {
     return this->service.set_option(this->implementation, option, ec);
@@ -502,10 +502,10 @@ public:
    *
    * @throws boost::system::system_error Thrown on failure.
    *
-   * @sa Socket_Option @n
+   * @sa GettableSocketOption @n
    * boost::asio::socket_base::reuse_address
    *
-   * @par Example:
+   * @par Example
    * Getting the value of the SOL_SOCKET/SO_REUSEADDR option:
    * @code
    * boost::asio::ip::tcp::acceptor acceptor(io_service);
@@ -515,8 +515,8 @@ public:
    * bool is_set = option.get();
    * @endcode
    */
-  template <typename Option>
-  void get_option(Option& option)
+  template <typename GettableSocketOption>
+  void get_option(GettableSocketOption& option)
   {
     boost::system::error_code ec;
     this->service.get_option(this->implementation, option, ec);
@@ -532,10 +532,10 @@ public:
    *
    * @param ec Set to indicate what error occurred, if any.
    *
-   * @sa Socket_Option @n
+   * @sa GettableSocketOption @n
    * boost::asio::socket_base::reuse_address
    *
-   * @par Example:
+   * @par Example
    * Getting the value of the SOL_SOCKET/SO_REUSEADDR option:
    * @code
    * boost::asio::ip::tcp::acceptor acceptor(io_service);
@@ -550,8 +550,8 @@ public:
    * bool is_set = option.get();
    * @endcode
    */
-  template <typename Option>
-  boost::system::error_code get_option(Option& option,
+  template <typename GettableSocketOption>
+  boost::system::error_code get_option(GettableSocketOption& option,
       boost::system::error_code& ec)
   {
     return this->service.get_option(this->implementation, option, ec);
@@ -565,7 +565,7 @@ public:
    *
    * @throws boost::system::system_error Thrown on failure.
    *
-   * @par Example:
+   * @par Example
    * @code
    * boost::asio::ip::tcp::acceptor acceptor(io_service);
    * ...
@@ -590,7 +590,7 @@ public:
    * Returns a default-constructed endpoint object if an error occurred and the
    * error handler did not throw an exception.
    *
-   * @par Example:
+   * @par Example
    * @code
    * boost::asio::ip::tcp::acceptor acceptor(io_service);
    * ...
@@ -617,7 +617,7 @@ public:
    *
    * @throws boost::system::system_error Thrown on failure.
    *
-   * @par Example:
+   * @par Example
    * @code
    * boost::asio::ip::tcp::acceptor acceptor(io_service);
    * ...
@@ -625,8 +625,8 @@ public:
    * acceptor.accept(socket);
    * @endcode
    */
-  template <typename Socket_Service>
-  void accept(basic_socket<protocol_type, Socket_Service>& peer)
+  template <typename SocketService>
+  void accept(basic_socket<protocol_type, SocketService>& peer)
   {
     boost::system::error_code ec;
     this->service.accept(this->implementation, peer, ec);
@@ -643,7 +643,7 @@ public:
    *
    * @param ec Set to indicate what error occurred, if any.
    *
-   * @par Example:
+   * @par Example
    * @code
    * boost::asio::ip::tcp::acceptor acceptor(io_service);
    * ...
@@ -656,9 +656,9 @@ public:
    * }
    * @endcode
    */
-  template <typename Socket_Service>
+  template <typename SocketService>
   boost::system::error_code accept(
-      basic_socket<protocol_type, Socket_Service>& peer,
+      basic_socket<protocol_type, SocketService>& peer,
       boost::system::error_code& ec)
   {
     return this->service.accept(this->implementation, peer, ec);
@@ -684,7 +684,7 @@ public:
    * of the handler will be performed in a manner equivalent to using
    * boost::asio::io_service::post().
    *
-   * @par Example:
+   * @par Example
    * @code
    * void accept_handler(const boost::system::error_code& error)
    * {
@@ -702,9 +702,9 @@ public:
    * acceptor.async_accept(socket, accept_handler);
    * @endcode
    */
-  template <typename Socket_Service, typename Handler>
-  void async_accept(basic_socket<protocol_type, Socket_Service>& peer,
-      Handler handler)
+  template <typename SocketService, typename AcceptHandler>
+  void async_accept(basic_socket<protocol_type, SocketService>& peer,
+      AcceptHandler handler)
   {
     this->service.async_accept(this->implementation, peer, handler);
   }
@@ -723,7 +723,7 @@ public:
    *
    * @throws boost::system::system_error Thrown on failure.
    *
-   * @par Example:
+   * @par Example
    * @code
    * boost::asio::ip::tcp::acceptor acceptor(io_service);
    * ...
@@ -732,8 +732,8 @@ public:
    * acceptor.accept_endpoint(socket, endpoint);
    * @endcode
    */
-  template <typename Socket_Service>
-  void accept_endpoint(basic_socket<protocol_type, Socket_Service>& peer,
+  template <typename SocketService>
+  void accept_endpoint(basic_socket<protocol_type, SocketService>& peer,
       endpoint_type& peer_endpoint)
   {
     boost::system::error_code ec;
@@ -756,7 +756,7 @@ public:
    *
    * @param ec Set to indicate what error occurred, if any.
    *
-   * @par Example:
+   * @par Example
    * @code
    * boost::asio::ip::tcp::acceptor acceptor(io_service);
    * ...
@@ -770,9 +770,9 @@ public:
    * }
    * @endcode
    */
-  template <typename Socket_Service>
+  template <typename SocketService>
   boost::system::error_code accept_endpoint(
-      basic_socket<protocol_type, Socket_Service>& peer,
+      basic_socket<protocol_type, SocketService>& peer,
       endpoint_type& peer_endpoint, boost::system::error_code& ec)
   {
     return this->service.accept_endpoint(
@@ -805,9 +805,9 @@ public:
    * of the handler will be performed in a manner equivalent to using
    * boost::asio::io_service::post().
    */
-  template <typename Socket_Service, typename Handler>
-  void async_accept_endpoint(basic_socket<protocol_type, Socket_Service>& peer,
-      endpoint_type& peer_endpoint, Handler handler)
+  template <typename SocketService, typename AcceptHandler>
+  void async_accept_endpoint(basic_socket<protocol_type, SocketService>& peer,
+      endpoint_type& peer_endpoint, AcceptHandler handler)
   {
     this->service.async_accept_endpoint(this->implementation, peer,
         peer_endpoint, handler);

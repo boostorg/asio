@@ -26,26 +26,27 @@ namespace asio {
 namespace ip {
 
 /// Default service implementation for a resolver.
-template <typename Protocol>
+template <typename InternetProtocol>
 class resolver_service
   : public boost::asio::io_service::service
 {
 public:
   /// The protocol type.
-  typedef Protocol protocol_type;
+  typedef InternetProtocol protocol_type;
 
   /// The endpoint type.
-  typedef typename Protocol::endpoint endpoint_type;
+  typedef typename InternetProtocol::endpoint endpoint_type;
 
   /// The query type.
-  typedef typename Protocol::resolver_query query_type;
+  typedef typename InternetProtocol::resolver_query query_type;
 
   /// The iterator type.
-  typedef typename Protocol::resolver_iterator iterator_type;
+  typedef typename InternetProtocol::resolver_iterator iterator_type;
 
 private:
   // The type of the platform-specific implementation.
-  typedef boost::asio::detail::resolver_service<Protocol> service_impl_type;
+  typedef boost::asio::detail::resolver_service<InternetProtocol>
+    service_impl_type;
 
 public:
   /// The type of a resolver implementation.
@@ -108,9 +109,9 @@ public:
   }
 
   /// Asynchronously resolve an endpoint to a list of entries.
-  template <typename Handler>
+  template <typename ResolveHandler>
   void async_resolve(implementation_type& impl, const endpoint_type& endpoint,
-      Handler handler)
+      ResolveHandler handler)
   {
     return service_impl_.async_resolve(impl, endpoint, handler);
   }

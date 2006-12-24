@@ -35,22 +35,21 @@ namespace asio {
  * The basic_stream_socket class template provides asynchronous and blocking
  * stream-oriented socket functionality.
  *
- * @par Thread Safety:
+ * @par Thread Safety
  * @e Distinct @e objects: Safe.@n
  * @e Shared @e objects: Unsafe.
  *
  * @par Concepts:
- * Async_Read_Stream, Async_Write_Stream, Stream, Sync_Read_Stream,
- * Sync_Write_Stream.
+ * AsyncReadStream, AsyncWriteStream, Stream, SyncReadStream, SyncWriteStream.
  */
 template <typename Protocol,
-    typename Service = stream_socket_service<Protocol> >
+    typename StreamSocketService = stream_socket_service<Protocol> >
 class basic_stream_socket
-  : public basic_socket<Protocol, Service>
+  : public basic_socket<Protocol, StreamSocketService>
 {
 public:
   /// The native representation of a socket.
-  typedef typename Service::native_type native_type;
+  typedef typename StreamSocketService::native_type native_type;
 
   /// The protocol type.
   typedef Protocol protocol_type;
@@ -68,7 +67,7 @@ public:
    * dispatch handlers for any asynchronous operations performed on the socket.
    */
   explicit basic_stream_socket(boost::asio::io_service& io_service)
-    : basic_socket<Protocol, Service>(io_service)
+    : basic_socket<Protocol, StreamSocketService>(io_service)
   {
   }
 
@@ -86,7 +85,7 @@ public:
    */
   basic_stream_socket(boost::asio::io_service& io_service,
       const protocol_type& protocol)
-    : basic_socket<Protocol, Service>(io_service, protocol)
+    : basic_socket<Protocol, StreamSocketService>(io_service, protocol)
   {
   }
 
@@ -107,7 +106,7 @@ public:
    */
   basic_stream_socket(boost::asio::io_service& io_service,
       const endpoint_type& endpoint)
-    : basic_socket<Protocol, Service>(io_service, endpoint)
+    : basic_socket<Protocol, StreamSocketService>(io_service, endpoint)
   {
   }
 
@@ -127,7 +126,8 @@ public:
    */
   basic_stream_socket(boost::asio::io_service& io_service,
       const protocol_type& protocol, const native_type& native_socket)
-    : basic_socket<Protocol, Service>(io_service, protocol, native_socket)
+    : basic_socket<Protocol, StreamSocketService>(
+        io_service, protocol, native_socket)
   {
   }
 
@@ -147,7 +147,7 @@ public:
    * Consider using the @ref write function if you need to ensure that all data
    * is written before the blocking operation completes.
    *
-   * @par Example:
+   * @par Example
    * To send a single data buffer use the @ref buffer function as follows:
    * @code
    * socket.send(boost::asio::buffer(data, size));
@@ -156,8 +156,8 @@ public:
    * buffers in one go, and how to use it with arrays, boost::array or
    * std::vector.
    */
-  template <typename Const_Buffers>
-  std::size_t send(const Const_Buffers& buffers)
+  template <typename ConstBufferSequence>
+  std::size_t send(const ConstBufferSequence& buffers)
   {
     boost::system::error_code ec;
     std::size_t s = this->service.send(
@@ -184,7 +184,7 @@ public:
    * Consider using the @ref write function if you need to ensure that all data
    * is written before the blocking operation completes.
    *
-   * @par Example:
+   * @par Example
    * To send a single data buffer use the @ref buffer function as follows:
    * @code
    * socket.send(boost::asio::buffer(data, size), 0);
@@ -193,8 +193,8 @@ public:
    * buffers in one go, and how to use it with arrays, boost::array or
    * std::vector.
    */
-  template <typename Const_Buffers>
-  std::size_t send(const Const_Buffers& buffers,
+  template <typename ConstBufferSequence>
+  std::size_t send(const ConstBufferSequence& buffers,
       socket_base::message_flags flags)
   {
     boost::system::error_code ec;
@@ -222,8 +222,8 @@ public:
    * Consider using the @ref write function if you need to ensure that all data
    * is written before the blocking operation completes.
    */
-  template <typename Const_Buffers>
-  std::size_t send(const Const_Buffers& buffers,
+  template <typename ConstBufferSequence>
+  std::size_t send(const ConstBufferSequence& buffers,
       socket_base::message_flags flags, boost::system::error_code& ec)
   {
     return this->service.send(this->implementation, buffers, flags, ec);
@@ -255,7 +255,7 @@ public:
    * Consider using the @ref async_write function if you need to ensure that all
    * data is written before the asynchronous operation completes.
    *
-   * @par Example:
+   * @par Example
    * To send a single data buffer use the @ref buffer function as follows:
    * @code
    * socket.async_send(boost::asio::buffer(data, size), handler);
@@ -264,8 +264,8 @@ public:
    * buffers in one go, and how to use it with arrays, boost::array or
    * std::vector.
    */
-  template <typename Const_Buffers, typename Handler>
-  void async_send(const Const_Buffers& buffers, Handler handler)
+  template <typename ConstBufferSequence, typename WriteHandler>
+  void async_send(const ConstBufferSequence& buffers, WriteHandler handler)
   {
     this->service.async_send(this->implementation, buffers, 0, handler);
   }
@@ -298,7 +298,7 @@ public:
    * Consider using the @ref async_write function if you need to ensure that all
    * data is written before the asynchronous operation completes.
    *
-   * @par Example:
+   * @par Example
    * To send a single data buffer use the @ref buffer function as follows:
    * @code
    * socket.async_send(boost::asio::buffer(data, size), 0, handler);
@@ -307,9 +307,9 @@ public:
    * buffers in one go, and how to use it with arrays, boost::array or
    * std::vector.
    */
-  template <typename Const_Buffers, typename Handler>
-  void async_send(const Const_Buffers& buffers,
-      socket_base::message_flags flags, Handler handler)
+  template <typename ConstBufferSequence, typename WriteHandler>
+  void async_send(const ConstBufferSequence& buffers,
+      socket_base::message_flags flags, WriteHandler handler)
   {
     this->service.async_send(this->implementation, buffers, flags, handler);
   }
@@ -332,7 +332,7 @@ public:
    * bytes. Consider using the @ref read function if you need to ensure that the
    * requested amount of data is read before the blocking operation completes.
    *
-   * @par Example:
+   * @par Example
    * To receive into a single data buffer use the @ref buffer function as
    * follows:
    * @code
@@ -342,8 +342,8 @@ public:
    * multiple buffers in one go, and how to use it with arrays, boost::array or
    * std::vector.
    */
-  template <typename Mutable_Buffers>
-  std::size_t receive(const Mutable_Buffers& buffers)
+  template <typename MutableBufferSequence>
+  std::size_t receive(const MutableBufferSequence& buffers)
   {
     boost::system::error_code ec;
     std::size_t s = this->service.receive(this->implementation, buffers, 0, ec);
@@ -371,7 +371,7 @@ public:
    * bytes. Consider using the @ref read function if you need to ensure that the
    * requested amount of data is read before the blocking operation completes.
    *
-   * @par Example:
+   * @par Example
    * To receive into a single data buffer use the @ref buffer function as
    * follows:
    * @code
@@ -381,8 +381,8 @@ public:
    * multiple buffers in one go, and how to use it with arrays, boost::array or
    * std::vector.
    */
-  template <typename Mutable_Buffers>
-  std::size_t receive(const Mutable_Buffers& buffers,
+  template <typename MutableBufferSequence>
+  std::size_t receive(const MutableBufferSequence& buffers,
       socket_base::message_flags flags)
   {
     boost::system::error_code ec;
@@ -410,8 +410,8 @@ public:
    * bytes. Consider using the @ref read function if you need to ensure that the
    * requested amount of data is read before the blocking operation completes.
    */
-  template <typename Mutable_Buffers>
-  std::size_t receive(const Mutable_Buffers& buffers,
+  template <typename MutableBufferSequence>
+  std::size_t receive(const MutableBufferSequence& buffers,
       socket_base::message_flags flags, boost::system::error_code& ec)
   {
     return this->service.receive(this->implementation, buffers, flags, ec);
@@ -444,7 +444,7 @@ public:
    * that the requested amount of data is received before the asynchronous
    * operation completes.
    *
-   * @par Example:
+   * @par Example
    * To receive into a single data buffer use the @ref buffer function as
    * follows:
    * @code
@@ -454,8 +454,8 @@ public:
    * multiple buffers in one go, and how to use it with arrays, boost::array or
    * std::vector.
    */
-  template <typename Mutable_Buffers, typename Handler>
-  void async_receive(const Mutable_Buffers& buffers, Handler handler)
+  template <typename MutableBufferSequence, typename ReadHandler>
+  void async_receive(const MutableBufferSequence& buffers, ReadHandler handler)
   {
     this->service.async_receive(this->implementation, buffers, 0, handler);
   }
@@ -489,7 +489,7 @@ public:
    * that the requested amount of data is received before the asynchronous
    * operation completes.
    *
-   * @par Example:
+   * @par Example
    * To receive into a single data buffer use the @ref buffer function as
    * follows:
    * @code
@@ -499,9 +499,9 @@ public:
    * multiple buffers in one go, and how to use it with arrays, boost::array or
    * std::vector.
    */
-  template <typename Mutable_Buffers, typename Handler>
-  void async_receive(const Mutable_Buffers& buffers,
-      socket_base::message_flags flags, Handler handler)
+  template <typename MutableBufferSequence, typename ReadHandler>
+  void async_receive(const MutableBufferSequence& buffers,
+      socket_base::message_flags flags, ReadHandler handler)
   {
     this->service.async_receive(this->implementation, buffers, flags, handler);
   }
@@ -524,7 +524,7 @@ public:
    * peer. Consider using the @ref write function if you need to ensure that
    * all data is written before the blocking operation completes.
    *
-   * @par Example:
+   * @par Example
    * To write a single data buffer use the @ref buffer function as follows:
    * @code
    * socket.write_some(boost::asio::buffer(data, size));
@@ -533,8 +533,8 @@ public:
    * buffers in one go, and how to use it with arrays, boost::array or
    * std::vector.
    */
-  template <typename Const_Buffers>
-  std::size_t write_some(const Const_Buffers& buffers)
+  template <typename ConstBufferSequence>
+  std::size_t write_some(const ConstBufferSequence& buffers)
   {
     boost::system::error_code ec;
     std::size_t s = this->service.send(this->implementation, buffers, 0, ec);
@@ -558,8 +558,8 @@ public:
    * peer. Consider using the @ref write function if you need to ensure that
    * all data is written before the blocking operation completes.
    */
-  template <typename Const_Buffers>
-  std::size_t write_some(const Const_Buffers& buffers,
+  template <typename ConstBufferSequence>
+  std::size_t write_some(const ConstBufferSequence& buffers,
       boost::system::error_code& ec)
   {
     return this->service.send(this->implementation, buffers, 0, ec);
@@ -591,7 +591,7 @@ public:
    * Consider using the @ref async_write function if you need to ensure that all
    * data is written before the asynchronous operation completes.
    *
-   * @par Example:
+   * @par Example
    * To write a single data buffer use the @ref buffer function as follows:
    * @code
    * socket.async_write_some(boost::asio::buffer(data, size), handler);
@@ -600,8 +600,9 @@ public:
    * buffers in one go, and how to use it with arrays, boost::array or
    * std::vector.
    */
-  template <typename Const_Buffers, typename Handler>
-  void async_write_some(const Const_Buffers& buffers, Handler handler)
+  template <typename ConstBufferSequence, typename WriteHandler>
+  void async_write_some(const ConstBufferSequence& buffers,
+      WriteHandler handler)
   {
     this->service.async_send(this->implementation, buffers, 0, handler);
   }
@@ -625,7 +626,7 @@ public:
    * the requested amount of data is read before the blocking operation
    * completes.
    *
-   * @par Example:
+   * @par Example
    * To read into a single data buffer use the @ref buffer function as follows:
    * @code
    * socket.read_some(boost::asio::buffer(data, size));
@@ -634,8 +635,8 @@ public:
    * buffers in one go, and how to use it with arrays, boost::array or
    * std::vector.
    */
-  template <typename Mutable_Buffers>
-  std::size_t read_some(const Mutable_Buffers& buffers)
+  template <typename MutableBufferSequence>
+  std::size_t read_some(const MutableBufferSequence& buffers)
   {
     boost::system::error_code ec;
     std::size_t s = this->service.receive(this->implementation, buffers, 0, ec);
@@ -660,8 +661,8 @@ public:
    * the requested amount of data is read before the blocking operation
    * completes.
    */
-  template <typename Mutable_Buffers>
-  std::size_t read_some(const Mutable_Buffers& buffers,
+  template <typename MutableBufferSequence>
+  std::size_t read_some(const MutableBufferSequence& buffers,
       boost::system::error_code& ec)
   {
     return this->service.receive(this->implementation, buffers, 0, ec);
@@ -694,7 +695,7 @@ public:
    * requested amount of data is read before the asynchronous operation
    * completes.
    *
-   * @par Example:
+   * @par Example
    * To read into a single data buffer use the @ref buffer function as follows:
    * @code
    * socket.async_read_some(boost::asio::buffer(data, size), handler);
@@ -703,8 +704,9 @@ public:
    * buffers in one go, and how to use it with arrays, boost::array or
    * std::vector.
    */
-  template <typename Mutable_Buffers, typename Handler>
-  void async_read_some(const Mutable_Buffers& buffers, Handler handler)
+  template <typename MutableBufferSequence, typename ReadHandler>
+  void async_read_some(const MutableBufferSequence& buffers,
+      ReadHandler handler)
   {
     this->service.async_receive(this->implementation, buffers, 0, handler);
   }
@@ -721,7 +723,7 @@ public:
    *
    * @throws boost::system::system_error Thrown on failure.
    *
-   * @par Example:
+   * @par Example
    * To peek using a single data buffer use the @ref buffer function as
    * follows:
    * @code socket.peek(boost::asio::buffer(data, size)); @endcode
@@ -729,8 +731,8 @@ public:
    * buffers in one go, and how to use it with arrays, boost::array or
    * std::vector.
    */
-  template <typename Mutable_Buffers>
-  std::size_t peek(const Mutable_Buffers& buffers)
+  template <typename MutableBufferSequence>
+  std::size_t peek(const MutableBufferSequence& buffers)
   {
     boost::system::error_code ec;
     std::size_t s = this->service.receive(this->implementation, buffers,
@@ -751,8 +753,8 @@ public:
    *
    * @returns The number of bytes read. Returns 0 if an error occurred.
    */
-  template <typename Mutable_Buffers>
-  std::size_t peek(const Mutable_Buffers& buffers,
+  template <typename MutableBufferSequence>
+  std::size_t peek(const MutableBufferSequence& buffers,
       boost::system::error_code& ec)
   {
     return this->service.receive(this->implementation, buffers,
