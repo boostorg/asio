@@ -45,21 +45,34 @@ public:
   }
 
   // Construct with a specific option value.
-  boolean(bool value)
-    : value_(value ? 1 : 0)
+  explicit boolean(bool v)
+    : value_(v ? 1 : 0)
   {
   }
 
   // Set the value of the boolean.
-  void set(bool value)
+  boolean& operator=(bool v)
   {
-    value_ = value ? 1 : 0;
+    value_ = v ? 1 : 0;
+    return *this;
   }
 
   // Get the current value of the boolean.
-  bool get() const
+  bool value() const
   {
-    return value_;
+    return !!value_;
+  }
+
+  // Convert to bool.
+  operator bool() const
+  {
+    return !!value_;
+  }
+
+  // Test for false.
+  bool operator!() const
+  {
+    return !value_;
   }
 
   // Get the level of the socket option.
@@ -101,6 +114,14 @@ public:
     return sizeof(value_);
   }
 
+  // Set the size of the boolean data.
+  template <typename Protocol>
+  void resize(const Protocol&, std::size_t s) const
+  {
+    if (s != sizeof(value_))
+      throw std::length_error("boolean socket option resize");
+  }
+
 private:
   int value_;
 };
@@ -117,19 +138,20 @@ public:
   }
 
   // Construct with a specific option value.
-  integer(int value)
-    : value_(value)
+  explicit integer(int v)
+    : value_(v)
   {
   }
 
   // Set the value of the int option.
-  void set(int value)
+  integer& operator=(int v)
   {
-    value_ = value;
+    value_ = v;
+    return *this;
   }
 
   // Get the current value of the int option.
-  int get() const
+  int value() const
   {
     return value_;
   }
@@ -173,6 +195,14 @@ public:
     return sizeof(value_);
   }
 
+  // Set the size of the int data.
+  template <typename Protocol>
+  void resize(const Protocol&, std::size_t s) const
+  {
+    if (s != sizeof(value_))
+      throw std::length_error("integer socket option resize");
+  }
+
 private:
   int value_;
 };
@@ -198,7 +228,7 @@ public:
   }
 
   // Construct with multicast address only.
-  multicast_request(const boost::asio::ip::address& multicast_address)
+  explicit multicast_request(const boost::asio::ip::address& multicast_address)
   {
     if (multicast_address.is_v6())
     {
@@ -231,7 +261,8 @@ public:
   }
 
   // Construct with multicast address and IPv4 address specifying an interface.
-  multicast_request(const boost::asio::ip::address_v4& multicast_address,
+  explicit multicast_request(
+      const boost::asio::ip::address_v4& multicast_address,
       const boost::asio::ip::address_v4& network_interface
         = boost::asio::ip::address_v4::any())
   {
@@ -248,7 +279,8 @@ public:
   }
 
   // Construct with multicast address and IPv6 network interface index.
-  multicast_request(const boost::asio::ip::address_v6& multicast_address,
+  explicit multicast_request(
+      const boost::asio::ip::address_v6& multicast_address,
       unsigned long network_interface = 0)
   {
     ipv4_value_.imr_multiaddr.s_addr =
@@ -281,15 +313,6 @@ public:
     if (protocol.family() == PF_INET6)
       return IPv6_Name;
     return IPv4_Name;
-  }
-
-  // Get the address of the option data.
-  template <typename Protocol>
-  void* data(const Protocol& protocol)
-  {
-    if (protocol.family() == PF_INET6)
-      return &ipv6_value_;
-    return &ipv4_value_;
   }
 
   // Get the address of the option data.
@@ -330,7 +353,7 @@ public:
   }
 
   // Construct with IPv4 interface.
-  network_interface(const boost::asio::ip::address_v4& ipv4_interface)
+  explicit network_interface(const boost::asio::ip::address_v4& ipv4_interface)
   {
     ipv4_value_.s_addr =
       boost::asio::detail::socket_ops::host_to_network_long(
@@ -339,7 +362,7 @@ public:
   }
 
   // Construct with IPv6 interface.
-  network_interface(unsigned long ipv6_interface)
+  explicit network_interface(unsigned long ipv6_interface)
   {
     ipv4_value_.s_addr =
       boost::asio::detail::socket_ops::host_to_network_long(
@@ -363,15 +386,6 @@ public:
     if (protocol.family() == PF_INET6)
       return IPv6_Name;
     return IPv4_Name;
-  }
-
-  // Get the address of the option data.
-  template <typename Protocol>
-  void* data(const Protocol& protocol)
-  {
-    if (protocol.family() == PF_INET6)
-      return &ipv6_value_;
-    return &ipv4_value_;
   }
 
   // Get the address of the option data.

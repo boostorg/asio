@@ -439,6 +439,7 @@ public:
           *target = 1;
         else
           *target = 0;
+        option.resize(impl.protocol_, sizeof(int));
         ec = boost::system::error_code();
       }
       return ec;
@@ -449,6 +450,8 @@ public:
       socket_ops::getsockopt(impl.socket_,
           option.level(impl.protocol_), option.name(impl.protocol_),
           option.data(impl.protocol_), &size, ec);
+      if (!ec)
+        option.resize(impl.protocol_, size);
       return ec;
     }
   }
