@@ -138,7 +138,7 @@ void test_2_arg_write()
 {
   boost::asio::io_service ios;
   test_stream s(ios);
-  boost::asio::const_buffer_container_1 buffers
+  boost::asio::const_buffers_1 buffers
     = boost::asio::buffer(write_data, sizeof(write_data));
 
   s.reset();
@@ -163,7 +163,7 @@ void test_3_arg_write()
 {
   boost::asio::io_service ios;
   test_stream s(ios);
-  boost::asio::const_buffer_container_1 buffers
+  boost::asio::const_buffers_1 buffers
     = boost::asio::buffer(write_data, sizeof(write_data));
 
   s.reset();
@@ -251,7 +251,7 @@ void test_4_arg_write()
 {
   boost::asio::io_service ios;
   test_stream s(ios);
-  boost::asio::const_buffer_container_1 buffers
+  boost::asio::const_buffers_1 buffers
     = boost::asio::buffer(write_data, sizeof(write_data));
 
   s.reset();
@@ -371,7 +371,7 @@ void test_3_arg_async_write()
 {
   boost::asio::io_service ios;
   test_stream s(ios);
-  boost::asio::const_buffer_container_1 buffers
+  boost::asio::const_buffers_1 buffers
     = boost::asio::buffer(write_data, sizeof(write_data));
 
   s.reset();
@@ -417,7 +417,7 @@ void test_4_arg_async_write()
 {
   boost::asio::io_service ios;
   test_stream s(ios);
-  boost::asio::const_buffer_container_1 buffers
+  boost::asio::const_buffers_1 buffers
     = boost::asio::buffer(write_data, sizeof(write_data));
 
   s.reset();

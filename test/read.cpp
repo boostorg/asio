@@ -138,7 +138,7 @@ void test_2_arg_read()
   boost::asio::io_service ios;
   test_stream s(ios);
   char read_buf[sizeof(read_data)];
-  boost::asio::mutable_buffer_container_1 buffers
+  boost::asio::mutable_buffers_1 buffers
     = boost::asio::buffer(read_buf, sizeof(read_buf));
 
   s.reset(read_data, sizeof(read_data));
@@ -167,7 +167,7 @@ void test_3_arg_read()
   boost::asio::io_service ios;
   test_stream s(ios);
   char read_buf[sizeof(read_data)];
-  boost::asio::mutable_buffer_container_1 buffers
+  boost::asio::mutable_buffers_1 buffers
     = boost::asio::buffer(read_buf, sizeof(read_buf));
 
   s.reset(read_data, sizeof(read_data));
@@ -268,7 +268,7 @@ void test_4_arg_read()
   boost::asio::io_service ios;
   test_stream s(ios);
   char read_buf[sizeof(read_data)];
-  boost::asio::mutable_buffer_container_1 buffers
+  boost::asio::mutable_buffers_1 buffers
     = boost::asio::buffer(read_buf, sizeof(read_buf));
 
   s.reset(read_data, sizeof(read_data));
@@ -401,7 +401,7 @@ void test_3_arg_async_read()
   boost::asio::io_service ios;
   test_stream s(ios);
   char read_buf[sizeof(read_data)];
-  boost::asio::mutable_buffer_container_1 buffers
+  boost::asio::mutable_buffers_1 buffers
     = boost::asio::buffer(read_buf, sizeof(read_buf));
 
   s.reset(read_data, sizeof(read_data));
@@ -451,7 +451,7 @@ void test_4_arg_async_read()
   boost::asio::io_service ios;
   test_stream s(ios);
   char read_buf[sizeof(read_data)];
-  boost::asio::mutable_buffer_container_1 buffers
+  boost::asio::mutable_buffers_1 buffers
     = boost::asio::buffer(read_buf, sizeof(read_buf));
 
   s.reset(read_data, sizeof(read_data));
