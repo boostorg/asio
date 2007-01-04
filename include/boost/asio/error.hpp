@@ -39,32 +39,44 @@
 # define BOOST_ASIO_WIN_OR_POSIX(e_win, e_posix) implementation_defined
 #elif defined(BOOST_WINDOWS) || defined(__CYGWIN__)
 # define BOOST_ASIO_NATIVE_ERROR(e) \
-    boost::system::error_code(e, boost::system::native_ecat)
+    boost::system::error_code(e, \
+        boost::system::native_ecat)
 # define BOOST_ASIO_SOCKET_ERROR(e) \
-    boost::system::error_code(WSA ## e, boost::system::native_ecat)
+    boost::system::error_code(WSA ## e, \
+        boost::system::native_ecat)
 # define BOOST_ASIO_NETDB_ERROR(e) \
-    boost::system::error_code(WSA ## e, boost::system::native_ecat)
+    boost::system::error_code(WSA ## e, \
+        boost::system::native_ecat)
 # define BOOST_ASIO_GETADDRINFO_ERROR(e) \
-    boost::system::error_code(WSA ## e, boost::system::native_ecat)
+    boost::system::error_code(WSA ## e, \
+        boost::system::native_ecat)
 # define BOOST_ASIO_EOF_ERROR(e) \
-    boost::system::error_code(e, boost::system::native_ecat)
+    boost::system::error_code(e, \
+        boost::system::native_ecat)
 # define BOOST_ASIO_WIN_OR_POSIX(e_win, e_posix) e_win
 #else
 # define BOOST_ASIO_NATIVE_ERROR(e) \
-    boost::system::error_code(e, boost::system::native_ecat)
+    boost::system::error_code(e, \
+        boost::system::native_ecat)
 # define BOOST_ASIO_SOCKET_ERROR(e) \
-    boost::system::error_code(e, boost::system::native_ecat)
+    boost::system::error_code(e, \
+        boost::system::native_ecat)
 # define BOOST_ASIO_NETDB_ERROR(e) \
-    boost::system::error_code(e, boost::asio::error_base<T>::netdb_ecat)
+    boost::system::error_code(e, \
+        boost::asio::detail::error_base<T>::netdb_ecat)
 # define BOOST_ASIO_GETADDRINFO_ERROR(e) \
-    boost::system::error_code(e, boost::asio::error_base<T>::addrinfo_ecat)
+    boost::system::error_code(e, \
+        boost::asio::detail::error_base<T>::addrinfo_ecat)
 # define BOOST_ASIO_EOF_ERROR(e) \
-    boost::system::error_code(e, boost::asio::error_base<T>::eof_ecat)
+    boost::system::error_code(e, \
+        boost::asio::detail::error_base<T>::eof_ecat)
 # define BOOST_ASIO_WIN_OR_POSIX(e_win, e_posix) e_posix
 #endif
 
 namespace boost {
 namespace asio {
+
+namespace detail {
 
 /// Hack to keep asio library header-file-only.
 template <typename T>
@@ -470,8 +482,10 @@ error_base<T>::try_again = BOOST_ASIO_WIN_OR_POSIX(
 template <typename T> const boost::system::error_code
 error_base<T>::would_block = BOOST_ASIO_SOCKET_ERROR(EWOULDBLOCK);
 
+} // namespace detail
+
 /// Contains error constants.
-class error : public error_base<error>
+class error : public boost::asio::detail::error_base<error>
 {
 private:
   error();
