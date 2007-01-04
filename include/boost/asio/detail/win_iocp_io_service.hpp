@@ -51,7 +51,7 @@ public:
     : boost::asio::detail::service_base<win_iocp_io_service>(io_service),
       iocp_(),
       outstanding_work_(0),
-      interrupted_(0),
+      stopped_(0),
       shutdown_(0)
   {
   }
@@ -101,7 +101,7 @@ public:
     ::CreateIoCompletionPort(handle, iocp_.handle, 0, 0);
   }
 
-  // Run the event loop until interrupted or no more work.
+  // Run the event loop until stopped or no more work.
   size_t run()
   {
     if (::InterlockedExchangeAdd(&outstanding_work_, 0) == 0)
@@ -116,7 +116,7 @@ public:
     return n;
   }
 
-  // Run until interrupted or one operation is performed.
+  // Run until stopped or one operation is performed.
   size_t run_one()
   {
     if (::InterlockedExchangeAdd(&outstanding_work_, 0) == 0)
@@ -153,10 +153,10 @@ public:
     return do_one(false);
   }
 
-  // Interrupt the event processing loop.
-  void interrupt()
+  // Stop the event processing loop.
+  void stop()
   {
-    if (::InterlockedExchange(&interrupted_, 1) == 0)
+    if (::InterlockedExchange(&stopped_, 1) == 0)
     {
       if (!::PostQueuedCompletionStatus(iocp_.handle, 0, 0, 0))
       {
@@ -172,7 +172,7 @@ public:
   // Reset in preparation for a subsequent run invocation.
   void reset()
   {
-    ::InterlockedExchange(&interrupted_, 0);
+    ::InterlockedExchange(&stopped_, 0);
   }
 
   // Notify that some work has started.
@@ -185,7 +185,7 @@ public:
   void work_finished()
   {
     if (::InterlockedDecrement(&outstanding_work_) == 0)
-      interrupt();
+      stop();
   }
 
   // Request invocation of the given handler.
@@ -290,9 +290,9 @@ private:
       }
       else
       {
-        // The interrupted_ flag is always checked to ensure that any leftover
+        // The stopped_ flag is always checked to ensure that any leftover
         // interrupts from a previous run invocation are ignored.
-        if (::InterlockedExchangeAdd(&interrupted_, 0) != 0)
+        if (::InterlockedExchangeAdd(&stopped_, 0) != 0)
         {
           // Wake up next thread that is blocked on GetQueuedCompletionStatus.
           if (!::PostQueuedCompletionStatus(iocp_.handle, 0, 0, 0))
@@ -395,8 +395,8 @@ private:
   // The count of unfinished work.
   long outstanding_work_;
 
-  // Flag to indicate whether the event loop has been interrupted.
-  long interrupted_;
+  // Flag to indicate whether the event loop has been stopped.
+  long stopped_;
 
   // Flag to indicate whether the service has been shut down.
   long shutdown_;
