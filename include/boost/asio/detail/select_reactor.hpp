@@ -31,14 +31,15 @@
 #include <boost/asio/detail/fd_set_adapter.hpp>
 #include <boost/asio/detail/mutex.hpp>
 #include <boost/asio/detail/noncopyable.hpp>
-#include <boost/asio/detail/task_io_service.hpp>
-#include <boost/asio/detail/thread.hpp>
 #include <boost/asio/detail/reactor_op_queue.hpp>
 #include <boost/asio/detail/select_interrupter.hpp>
 #include <boost/asio/detail/select_reactor_fwd.hpp>
+#include <boost/asio/detail/service_base.hpp>
 #include <boost/asio/detail/signal_blocker.hpp>
 #include <boost/asio/detail/socket_ops.hpp>
 #include <boost/asio/detail/socket_types.hpp>
+#include <boost/asio/detail/task_io_service.hpp>
+#include <boost/asio/detail/thread.hpp>
 #include <boost/asio/detail/timer_queue.hpp>
 
 namespace boost {
@@ -47,12 +48,13 @@ namespace detail {
 
 template <bool Own_Thread>
 class select_reactor
-  : public boost::asio::io_service::service
+  : public boost::asio::detail::service_base<select_reactor<Own_Thread> >
 {
 public:
   // Constructor.
   select_reactor(boost::asio::io_service& io_service)
-    : boost::asio::io_service::service(io_service),
+    : boost::asio::detail::service_base<
+        select_reactor<Own_Thread> >(io_service),
       mutex_(),
       select_in_progress_(false),
       interrupter_(),

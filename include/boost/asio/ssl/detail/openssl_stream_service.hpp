@@ -28,6 +28,7 @@
 
 #include <boost/asio/error.hpp>
 #include <boost/asio/io_service.hpp>
+#include <boost/asio/detail/service_base.hpp>
 #include <boost/asio/ssl/basic_context.hpp>
 #include <boost/asio/ssl/stream_base.hpp>
 #include <boost/asio/ssl/detail/openssl_operation.hpp>
@@ -39,7 +40,7 @@ namespace ssl {
 namespace detail {
 
 class openssl_stream_service
-  : public boost::asio::io_service::service
+  : public boost::asio::detail::service_base<openssl_stream_service>
 {
 private:
   //Base handler for asyncrhonous operations
@@ -160,7 +161,7 @@ public:
 
   // Construct a new stream socket service for the specified io_service.
   explicit openssl_stream_service(boost::asio::io_service& io_service)
-    : boost::asio::io_service::service(io_service)
+    : boost::asio::detail::service_base<openssl_stream_service>(io_service)
   {
   }
 

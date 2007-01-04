@@ -20,6 +20,7 @@ else if [ os.name ] = NT
 
 exe daytime_client
   : daytime_client.cpp
+    logger_service.cpp
     /boost/system//boost_system
     /boost/thread//boost_thread
   : <define>BOOST_ALL_NO_LIB=1

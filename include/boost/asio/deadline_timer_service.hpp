@@ -28,19 +28,30 @@
 #include <boost/asio/detail/epoll_reactor.hpp>
 #include <boost/asio/detail/kqueue_reactor.hpp>
 #include <boost/asio/detail/select_reactor.hpp>
+#include <boost/asio/detail/service_base.hpp>
 
 namespace boost {
 namespace asio {
 
 /// Default service implementation for a timer.
-template <typename Time_Type,
-    typename Time_Traits = boost::asio::time_traits<Time_Type> >
+template <typename TimeType,
+    typename TimeTraits = boost::asio::time_traits<TimeType> >
 class deadline_timer_service
+#if defined(GENERATING_DOCUMENTATION)
   : public boost::asio::io_service::service
+#else
+  : public boost::asio::detail::service_base<
+      deadline_timer_service<TimeType, TimeTraits> >
+#endif
 {
 public:
+#if defined(GENERATING_DOCUMENTATION)
+  /// The unique service identifier.
+  static boost::asio::io_service::id id;
+#endif
+
   /// The time traits type.
-  typedef Time_Traits traits_type;
+  typedef TimeTraits traits_type;
 
   /// The time type.
   typedef typename traits_type::time_type time_type;
@@ -74,7 +85,8 @@ public:
 
   /// Construct a new timer service for the specified io_service.
   explicit deadline_timer_service(boost::asio::io_service& io_service)
-    : boost::asio::io_service::service(io_service),
+    : boost::asio::detail::service_base<
+        deadline_timer_service<TimeType, TimeTraits> >(io_service),
       service_impl_(boost::asio::use_service<service_impl_type>(io_service))
   {
   }

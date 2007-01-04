@@ -23,6 +23,7 @@
 #include <boost/asio/detail/handler_alloc_helpers.hpp>
 #include <boost/asio/detail/handler_invoke_helpers.hpp>
 #include <boost/asio/detail/mutex.hpp>
+#include <boost/asio/detail/service_base.hpp>
 #include <boost/asio/detail/task_io_service_fwd.hpp>
 
 namespace boost {
@@ -31,12 +32,12 @@ namespace detail {
 
 template <typename Task>
 class task_io_service
-  : public boost::asio::io_service::service
+  : public boost::asio::detail::service_base<task_io_service<Task> >
 {
 public:
   // Constructor.
   task_io_service(boost::asio::io_service& io_service)
-    : boost::asio::io_service::service(io_service),
+    : boost::asio::detail::service_base<task_io_service<Task> >(io_service),
       mutex_(),
       task_(use_service<Task>(io_service)),
       outstanding_work_(0),
@@ -48,7 +49,7 @@ public:
   {
   }
 
-  void init(size_t concurrency_hint)
+  void init(size_t /*concurrency_hint*/)
   {
   }
 

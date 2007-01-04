@@ -29,6 +29,7 @@
 #include <boost/asio/detail/bind_handler.hpp>
 #include <boost/asio/detail/mutex.hpp>
 #include <boost/asio/detail/noncopyable.hpp>
+#include <boost/asio/detail/service_base.hpp>
 #include <boost/asio/detail/socket_ops.hpp>
 #include <boost/asio/detail/socket_types.hpp>
 #include <boost/asio/detail/thread.hpp>
@@ -39,7 +40,7 @@ namespace detail {
 
 template <typename Protocol>
 class resolver_service
-  : public boost::asio::io_service::service
+  : public boost::asio::detail::service_base<resolver_service<Protocol> >
 {
 private:
   // Helper class to perform exception-safe cleanup of addrinfo objects.
@@ -85,7 +86,8 @@ public:
 
   // Constructor.
   resolver_service(boost::asio::io_service& io_service)
-    : boost::asio::io_service::service(io_service),
+    : boost::asio::detail::service_base<
+        resolver_service<Protocol> >(io_service),
       mutex_(),
       work_io_service_(new boost::asio::io_service),
       work_(new boost::asio::io_service::work(*work_io_service_)),
@@ -212,7 +214,7 @@ public:
       start_work_thread();
       work_io_service_->post(
           resolve_query_handler<Handler>(
-            impl, query, io_service(), handler));
+            impl, query, this->io_service(), handler));
     }
   }
 
@@ -308,7 +310,7 @@ public:
       start_work_thread();
       work_io_service_->post(
           resolve_endpoint_handler<Handler>(
-            impl, endpoint, io_service(), handler));
+            impl, endpoint, this->io_service(), handler));
     }
   }
 

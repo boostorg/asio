@@ -47,7 +47,7 @@ namespace detail {
 
 template <typename Protocol>
 class win_iocp_socket_service
-  : public boost::asio::io_service::service
+  : public boost::asio::detail::service_base<win_iocp_socket_service<Protocol> >
 {
 public:
   // The protocol type.
@@ -174,7 +174,8 @@ public:
 
   // Constructor.
   win_iocp_socket_service(boost::asio::io_service& io_service)
-    : boost::asio::io_service::service(io_service),
+    : boost::asio::detail::service_base<
+        win_iocp_socket_service<Protocol> >(io_service),
       iocp_service_(boost::asio::use_service<win_iocp_io_service>(io_service)),
       reactor_(0),
       mutex_(),
@@ -662,7 +663,7 @@ public:
     typedef handler_alloc_traits<Handler, value_type> alloc_traits;
     raw_handler_ptr<alloc_traits> raw_ptr(handler);
     handler_ptr<alloc_traits> ptr(raw_ptr,
-        io_service(), impl.cancel_token_, buffers, handler);
+        this->io_service(), impl.cancel_token_, buffers, handler);
 
     // Copy buffers into WSABUF array.
     ::WSABUF bufs[max_buffers];
@@ -834,7 +835,8 @@ public:
     typedef send_to_operation<ConstBufferSequence, Handler> value_type;
     typedef handler_alloc_traits<Handler, value_type> alloc_traits;
     raw_handler_ptr<alloc_traits> raw_ptr(handler);
-    handler_ptr<alloc_traits> ptr(raw_ptr, io_service(), buffers, handler);
+    handler_ptr<alloc_traits> ptr(raw_ptr,
+        this->io_service(), buffers, handler);
 
     // Copy buffers into WSABUF array.
     ::WSABUF bufs[max_buffers];
@@ -1029,7 +1031,7 @@ public:
     typedef handler_alloc_traits<Handler, value_type> alloc_traits;
     raw_handler_ptr<alloc_traits> raw_ptr(handler);
     handler_ptr<alloc_traits> ptr(raw_ptr,
-        io_service(), impl.cancel_token_, buffers, handler);
+        this->io_service(), impl.cancel_token_, buffers, handler);
 
     // Copy buffers into WSABUF array.
     ::WSABUF bufs[max_buffers];
@@ -1231,7 +1233,7 @@ public:
     typedef handler_alloc_traits<Handler, value_type> alloc_traits;
     raw_handler_ptr<alloc_traits> raw_ptr(handler);
     handler_ptr<alloc_traits> ptr(raw_ptr,
-        io_service(), sender_endp, buffers, handler);
+        this->io_service(), sender_endp, buffers, handler);
 
     // Copy buffers into WSABUF array.
     ::WSABUF bufs[max_buffers];
@@ -1543,7 +1545,7 @@ public:
     // Check whether acceptor has been initialised.
     if (impl.socket_ == invalid_socket)
     {
-      io_service().post(bind_handler(handler,
+      this->io_service().post(bind_handler(handler,
             boost::asio::error::bad_descriptor));
       return;
     }
@@ -1551,7 +1553,7 @@ public:
     // Check that peer socket has not already been connected.
     if (peer.native() != invalid_socket)
     {
-      io_service().post(bind_handler(handler,
+      this->io_service().post(bind_handler(handler,
             boost::asio::error::already_connected));
       return;
     }
@@ -1562,7 +1564,7 @@ public:
           impl.protocol_.type(), impl.protocol_.protocol(), ec));
     if (sock.get() == invalid_socket)
     {
-      io_service().post(bind_handler(handler, ec));
+      this->io_service().post(bind_handler(handler, ec));
       return;
     }
 
@@ -1819,7 +1821,7 @@ public:
     // Check whether acceptor has been initialised.
     if (impl.socket_ == invalid_socket)
     {
-      io_service().post(bind_handler(handler,
+      this->io_service().post(bind_handler(handler,
             boost::asio::error::bad_descriptor));
       return;
     }
@@ -1827,7 +1829,7 @@ public:
     // Check that peer socket has not already been connected.
     if (peer.native() != invalid_socket)
     {
-      io_service().post(bind_handler(handler,
+      this->io_service().post(bind_handler(handler,
             boost::asio::error::already_connected));
       return;
     }
@@ -1838,7 +1840,7 @@ public:
           impl.protocol_.type(), impl.protocol_.protocol(), ec));
     if (sock.get() == invalid_socket)
     {
-      io_service().post(bind_handler(handler, ec));
+      this->io_service().post(bind_handler(handler, ec));
       return;
     }
 
@@ -2007,7 +2009,7 @@ public:
             reinterpret_cast<void**>(&reactor_), 0, 0));
     if (!reactor)
     {
-      reactor = &(boost::asio::use_service<reactor_type>(io_service()));
+      reactor = &(boost::asio::use_service<reactor_type>(this->io_service()));
       interlocked_exchange_pointer(
           reinterpret_cast<void**>(&reactor_), reactor);
     }
@@ -2025,7 +2027,7 @@ public:
       impl.socket_ = socket_ops::socket(family, type, proto, ec);
       if (impl.socket_ == invalid_socket)
       {
-        io_service().post(bind_handler(handler, ec));
+        this->io_service().post(bind_handler(handler, ec));
         return;
       }
       iocp_service_.register_handle(impl.socket_.as_handle());
@@ -2037,7 +2039,7 @@ public:
     boost::system::error_code ec;
     if (socket_ops::ioctl(impl.socket_, FIONBIO, &non_blocking, ec))
     {
-      io_service().post(bind_handler(handler, ec));
+      this->io_service().post(bind_handler(handler, ec));
       return;
     }
 
@@ -2047,7 +2049,7 @@ public:
     {
       // The connect operation has finished successfully so we need to post the
       // handler immediately.
-      io_service().post(bind_handler(handler, ec));
+      this->io_service().post(bind_handler(handler, ec));
     }
     else if (ec == boost::asio::error::in_progress
         || ec == boost::asio::error::would_block)
@@ -2057,12 +2059,12 @@ public:
       boost::shared_ptr<bool> completed(new bool(false));
       reactor->start_write_and_except_ops(impl.socket_,
           connect_handler<Handler>(
-            impl.socket_, completed, io_service(), *reactor, handler));
+            impl.socket_, completed, this->io_service(), *reactor, handler));
     }
     else
     {
       // The connect operation has failed, so post the handler immediately.
-      io_service().post(bind_handler(handler, ec));
+      this->io_service().post(bind_handler(handler, ec));
     }
   }
 

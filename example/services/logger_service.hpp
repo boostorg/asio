@@ -28,6 +28,9 @@ class logger_service
   : public boost::asio::io_service::service
 {
 public:
+  /// The unique service identifier.
+  static boost::asio::io_service::id id;
+
   /// The backend implementation of a logger.
   struct logger_impl
   {
@@ -98,8 +101,7 @@ public:
   {
     // Format the text to be logged.
     std::ostringstream os;
-    os << boost::posix_time::microsec_clock::universal_time();
-    os << " - " << impl->identifier << " - " << message;
+    os << impl->identifier << ": " << message;
 
     // Pass the work of opening the file to the background thread.
     work_io_service_.post(boost::bind(

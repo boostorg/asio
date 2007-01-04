@@ -31,6 +31,7 @@
 #include <boost/asio/detail/call_stack.hpp>
 #include <boost/asio/detail/handler_alloc_helpers.hpp>
 #include <boost/asio/detail/handler_invoke_helpers.hpp>
+#include <boost/asio/detail/service_base.hpp>
 #include <boost/asio/detail/socket_types.hpp>
 #include <boost/asio/detail/win_iocp_operation.hpp>
 
@@ -39,7 +40,7 @@ namespace asio {
 namespace detail {
 
 class win_iocp_io_service
-  : public boost::asio::io_service::service
+  : public boost::asio::detail::service_base<win_iocp_io_service>
 {
 public:
   // Base class for all operations.
@@ -47,7 +48,7 @@ public:
 
   // Constructor.
   win_iocp_io_service(boost::asio::io_service& io_service)
-    : boost::asio::io_service::service(io_service),
+    : boost::asio::detail::service_base<win_iocp_io_service>(io_service),
       iocp_(),
       outstanding_work_(0),
       interrupted_(0),

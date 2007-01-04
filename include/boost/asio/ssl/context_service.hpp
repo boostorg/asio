@@ -25,6 +25,7 @@
 
 #include <boost/asio/error.hpp>
 #include <boost/asio/io_service.hpp>
+#include <boost/asio/detail/service_base.hpp>
 #include <boost/asio/ssl/context_base.hpp>
 #include <boost/asio/ssl/detail/openssl_context_service.hpp>
 
@@ -34,13 +35,22 @@ namespace ssl {
 
 /// Default service implementation for a context.
 class context_service
+#if defined(GENERATING_DOCUMENTATION)
   : public boost::asio::io_service::service
+#else
+  : public boost::asio::detail::service_base<context_service>
+#endif
 {
 private:
   // The type of the platform-specific implementation.
   typedef detail::openssl_context_service service_impl_type;
 
 public:
+#if defined(GENERATING_DOCUMENTATION)
+  /// The unique service identifier.
+  static boost::asio::io_service::id id;
+#endif
+
   /// The type of the context.
 #if defined(GENERATING_DOCUMENTATION)
   typedef implementation_defined impl_type;
@@ -50,7 +60,7 @@ public:
 
   /// Constructor.
   explicit context_service(boost::asio::io_service& io_service)
-    : boost::asio::io_service::service(io_service),
+    : boost::asio::detail::service_base<context_service>(io_service),
       service_impl_(boost::asio::use_service<service_impl_type>(io_service))
   {
   }

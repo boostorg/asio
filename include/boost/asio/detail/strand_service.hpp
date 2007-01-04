@@ -30,6 +30,7 @@
 #include <boost/asio/detail/handler_invoke_helpers.hpp>
 #include <boost/asio/detail/mutex.hpp>
 #include <boost/asio/detail/noncopyable.hpp>
+#include <boost/asio/detail/service_base.hpp>
 
 namespace boost {
 namespace asio {
@@ -37,7 +38,7 @@ namespace detail {
 
 // Default service implementation for a strand.
 class strand_service
-  : public boost::asio::io_service::service
+  : public boost::asio::detail::service_base<strand_service>
 {
 public:
   class handler_base;
@@ -352,7 +353,7 @@ public:
 
   // Construct a new strand service for the specified io_service.
   explicit strand_service(boost::asio::io_service& io_service)
-    : boost::asio::io_service::service(io_service),
+    : boost::asio::detail::service_base<strand_service>(io_service),
       mutex_(),
       impl_list_(0)
   {
@@ -428,7 +429,7 @@ public:
         // This handler now has the lock, so can be dispatched immediately.
         impl->current_handler_ = ptr.get();
         lock.unlock();
-        io_service().dispatch(invoke_current_handler(*this, impl));
+        this->io_service().dispatch(invoke_current_handler(*this, impl));
         ptr.release();
       }
       else
@@ -468,7 +469,7 @@ public:
       // This handler now has the lock, so can be dispatched immediately.
       impl->current_handler_ = ptr.get();
       lock.unlock();
-      io_service().post(invoke_current_handler(*this, impl));
+      this->io_service().post(invoke_current_handler(*this, impl));
       ptr.release();
     }
     else

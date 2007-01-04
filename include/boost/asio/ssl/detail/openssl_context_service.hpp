@@ -26,6 +26,7 @@
 
 #include <boost/asio/error.hpp>
 #include <boost/asio/io_service.hpp>
+#include <boost/asio/detail/service_base.hpp>
 #include <boost/asio/ssl/context_base.hpp>
 #include <boost/asio/ssl/detail/openssl_init.hpp>
 #include <boost/asio/ssl/detail/openssl_types.hpp>
@@ -36,7 +37,7 @@ namespace ssl {
 namespace detail {
 
 class openssl_context_service
-  : public boost::asio::io_service::service
+  : public boost::asio::detail::service_base<openssl_context_service>
 {
 public:
   // The native type of the context.
@@ -48,7 +49,7 @@ public:
 
   // Constructor.
   openssl_context_service(boost::asio::io_service& io_service)
-    : boost::asio::io_service::service(io_service)
+    : boost::asio::detail::service_base<openssl_context_service>(io_service)
   {
   }
 

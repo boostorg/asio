@@ -25,6 +25,7 @@
 #include <boost/asio/detail/pop_options.hpp>
 
 #include <boost/asio/io_service.hpp>
+#include <boost/asio/detail/service_base.hpp>
 #include <boost/asio/ssl/basic_context.hpp>
 #include <boost/asio/ssl/stream_base.hpp>
 #include <boost/asio/ssl/detail/openssl_stream_service.hpp>
@@ -35,13 +36,22 @@ namespace ssl {
 
 /// Default service implementation for an SSL stream.
 class stream_service
+#if defined(GENERATING_DOCUMENTATION)
   : public boost::asio::io_service::service
+#else
+  : public boost::asio::detail::service_base<stream_service>
+#endif
 {
 private:
   // The type of the platform-specific implementation.
   typedef detail::openssl_stream_service service_impl_type;
 
 public:
+#if defined(GENERATING_DOCUMENTATION)
+  /// The unique service identifier.
+  static boost::asio::io_service::id id;
+#endif
+
   /// The type of a stream implementation.
 #if defined(GENERATING_DOCUMENTATION)
   typedef implementation_defined impl_type;
@@ -51,7 +61,7 @@ public:
 
   /// Construct a new stream service for the specified io_service.
   explicit stream_service(boost::asio::io_service& io_service)
-    : boost::asio::io_service::service(io_service),
+    : boost::asio::detail::service_base<stream_service>(io_service),
       service_impl_(boost::asio::use_service<service_impl_type>(io_service))
   {
   }
