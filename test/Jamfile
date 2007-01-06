@@ -64,6 +64,8 @@ test-suite "asio"
   [ run ip/resolver_service.cpp <template>asio_unit_test ]
   [ run ip/tcp.cpp <template>asio_unit_test ]
   [ run ip/udp.cpp <template>asio_unit_test ]
+  [ run ip/unicast.cpp <template>asio_unit_test ]
+  [ run ip/v6_only.cpp <template>asio_unit_test ]
   [ run is_read_buffered.cpp <template>asio_unit_test ]
   [ run is_write_buffered.cpp <template>asio_unit_test ]
   [ run placeholders.cpp <template>asio_unit_test ]
