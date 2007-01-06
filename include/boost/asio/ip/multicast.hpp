@@ -125,7 +125,7 @@ typedef boost::asio::ip::detail::socket_option::network_interface<
  * ...
  * boost::asio::ip::multicast::hops option;
  * socket.get_option(option);
- * int ttl = option.get();
+ * int ttl = option.value();
  * @endcode
  *
  * @par Concepts:
@@ -159,7 +159,7 @@ typedef boost::asio::ip::detail::socket_option::integer<
  * ...
  * boost::asio::ip::multicast::enable_loopback option;
  * socket.get_option(option);
- * bool is_set = option.get();
+ * bool is_set = option.value();
  * @endcode
  *
  * @par Concepts:

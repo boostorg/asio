@@ -116,7 +116,7 @@ public:
    * ...
    * boost::asio::ip::tcp::no_delay option;
    * socket.get_option(option);
-   * bool is_set = option.get();
+   * bool is_set = option.value();
    * @endcode
    *
    * @par Concepts:
