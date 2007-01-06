@@ -1,5 +1,5 @@
 [/
- / Copyright (c) 2003-2006 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+ / Copyright (c) 2003-2007 Christopher M. Kohlhoff (chris at kohlhoff dot com)
  /
  / Distributed under the Boost Software License, Version 1.0. (See accompanying
  / file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -8,7 +8,10 @@
 [section:Service Service requirements]
 
 A class is a service if it is publicly derived from another service, or if it
-is a class derived from `io_service::service`.
+is a class derived from `io_service::service` and contains a
+publicly-accessible declaration as follows:
+
+  static io_service::id id;
 
 All services define a one-argument constructor that takes a reference to the
 `io_service` object that owns the service. This constructor is /explicit/,
@@ -17,6 +20,7 @@ preventing its participation in automatic conversions. For example:
   class my_service : public io_service::service
   {
   public:
+    static io_service::id id;
     explicit my_service(io_service& ios);
   private:
     virtual void shutdown_service();

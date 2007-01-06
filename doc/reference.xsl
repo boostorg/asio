@@ -2,7 +2,7 @@
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
 
 <!--
-  Copyright (c) 2003-2006 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+  Copyright (c) 2003-2007 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 
   Distributed under the Boost Software License, Version 1.0. (See accompanying
   file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -25,7 +25,7 @@
 -->
 <xsl:template match="/doxygen">
 <xsl:text>[/
- / Copyright (c) 2003-2006 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+ / Copyright (c) 2003-2007 Christopher M. Kohlhoff (chris at kohlhoff dot com)
  /
  / Distributed under the Boost Software License, Version 1.0. (See accompanying
  / file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -312,9 +312,16 @@
   <xsl:variable name="text" select="."/>
   <xsl:variable name="starts-with-whitespace" select="
       starts-with($text, ' ') or starts-with($text, $newline)"/>
+  <xsl:variable name="preceding-node-name">
+    <xsl:for-each select="preceding-sibling::*">
+      <xsl:if test="position() = last()">
+        <xsl:value-of select="local-name()"/>
+      </xsl:if>
+    </xsl:for-each>
+  </xsl:variable>
   <xsl:variable name="after-newline" select="
-      preceding-sibling::linebreak[position()=last()] or
-      preceding-sibling::programlisting[position()=last()]"/>
+      $preceding-node-name = 'programlisting' or
+      $preceding-node-name = 'linebreak'"/>
   <xsl:choose>
     <xsl:when test="$starts-with-whitespace and $after-newline">
       <xsl:call-template name="escape-text">
@@ -338,9 +345,16 @@
   <xsl:variable name="text" select="."/>
   <xsl:variable name="starts-with-whitespace" select="
       starts-with($text, ' ') or starts-with($text, $newline)"/>
+  <xsl:variable name="preceding-node-name">
+    <xsl:for-each select="preceding-sibling::*">
+      <xsl:if test="position() = last()">
+        <xsl:value-of select="local-name()"/>
+      </xsl:if>
+    </xsl:for-each>
+  </xsl:variable>
   <xsl:variable name="after-newline" select="
-      preceding-sibling::linebreak[position()=last()] or
-      preceding-sibling::programlisting[position()=last()]"/>
+      $preceding-node-name = 'programlisting' or
+      $preceding-node-name = 'linebreak'"/>
   <xsl:choose>
     <xsl:when test="$starts-with-whitespace and $after-newline">
       <xsl:call-template name="escape-text">
@@ -414,7 +428,7 @@
         </xsl:call-template>
       </xsl:variable>
 [link boost_asio.reference.<xsl:value-of select="$ref-id"/><xsl:text> </xsl:text><xsl:value-of
- select="$ref-name"/>] </xsl:when>
+ select="$ref-name"/>]</xsl:when>
     <xsl:otherwise><xsl:value-of select="."/></xsl:otherwise>
   </xsl:choose>
 </xsl:template>
@@ -446,8 +460,8 @@
 
 <xsl:apply-templates select="templateparamlist"
  mode="class-detail"/><xsl:text>  </xsl:text><xsl:value-of select="@kind"/><xsl:text> </xsl:text><xsl:value-of
- select="$unqualified-class-name"/><xsl:if test="count(basecompoundref) > 0"> :</xsl:if><xsl:text>
-</xsl:text><xsl:for-each select="basecompoundref">
+ select="$unqualified-class-name"/><xsl:if test="count(basecompoundref[not(contains(.,'::detail'))]) > 0"> :</xsl:if><xsl:text>
+</xsl:text><xsl:for-each select="basecompoundref[not(contains(.,'::detail'))]">
 <xsl:text>    </xsl:text><xsl:if test="@prot='public'">public </xsl:if><xsl:call-template
  name="strip-asio-ns"><xsl:with-param name="name" select="."/></xsl:call-template><xsl:if
  test="not(position() = last())">,</xsl:if><xsl:text>
@@ -634,11 +648,13 @@
  select="$overload-position"/> of <xsl:value-of select="$overload-count"/> overloads)</xsl:if>]
 
 <xsl:if test="not(starts-with($doxygen-id, ../../@id))">
+<xsl:variable name="inherited-from" select="/doxygen/compounddef[starts-with($doxygen-id, @id)]/compoundname"/>
+<xsl:if test="not(contains($inherited-from, '::detail'))">
 ['Inherited from <xsl:call-template name="strip-asio-ns">
-<xsl:with-param name="name" select="/doxygen/compounddef[starts-with($doxygen-id, @id)]/compoundname"/>
+<xsl:with-param name="name" select="$inherited-from"/>
 </xsl:call-template>.]<xsl:text>
 
-</xsl:text></xsl:if>
+</xsl:text></xsl:if></xsl:if>
 
 <xsl:value-of select="briefdescription"/><xsl:text>
 </xsl:text>

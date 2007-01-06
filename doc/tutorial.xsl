@@ -2,7 +2,7 @@
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
 
 <!--
-  Copyright (c) 2003-2006 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+  Copyright (c) 2003-2007 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 
   Distributed under the Boost Software License, Version 1.0. (See accompanying
   file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -20,7 +20,7 @@
 
 <xsl:template match="/doxygen">
 <xsl:text>[/
- / Copyright (c) 2003-2006 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+ / Copyright (c) 2003-2007 Christopher M. Kohlhoff (chris at kohlhoff dot com)
  /
  / Distributed under the Boost Software License, Version 1.0. (See accompanying
  / file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -150,9 +150,16 @@
   <xsl:variable name="text" select="."/>
   <xsl:variable name="starts-with-whitespace" select="
       starts-with($text, ' ') or starts-with($text, $newline)"/>
+  <xsl:variable name="preceding-node-name">
+    <xsl:for-each select="preceding-sibling::*">
+      <xsl:if test="position() = last()">
+        <xsl:value-of select="local-name()"/>
+      </xsl:if>
+    </xsl:for-each>
+  </xsl:variable>
   <xsl:variable name="after-newline" select="
-      preceding-sibling::linebreak[position()=last()] or
-      preceding-sibling::programlisting[position()=last()]"/>
+      $preceding-node-name = 'programlisting' or
+      $preceding-node-name = 'linebreak'"/>
   <xsl:choose>
     <xsl:when test="$starts-with-whitespace and $after-newline">
       <xsl:call-template name="escape-text">
