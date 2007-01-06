@@ -280,8 +280,22 @@ inline socket_type socket(int af, int type, int protocol,
 {
   clear_error(ec);
 #if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
-  return error_wrapper(::WSASocket(af, type, protocol, 0, 0,
+  socket_type s = error_wrapper(::WSASocket(af, type, protocol, 0, 0,
         WSA_FLAG_OVERLAPPED), ec);
+  if (s == invalid_socket)
+    return s;
+
+  if (af == AF_INET6)
+  {
+    // Try to enable the POSIX default behaviour of having IPV6_V6ONLY set to
+    // false. This will only succeed on Windows Vista and later versions of
+    // Windows, where a dual-stack IPv4/v6 implementation is available.
+    DWORD optval = 0;
+    ::setsockopt(s, IPPROTO_IPV6, IPV6_V6ONLY,
+        reinterpret_cast<const char*>(&optval), sizeof(optval));
+  }
+
+  return s;
 #elif defined(__MACH__) && defined(__APPLE__)
   socket_type s = error_wrapper(::socket(af, type, protocol), ec);
   if (s == invalid_socket)
@@ -324,12 +338,35 @@ inline int getsockopt(socket_type s, int level, int optname, void* optval,
   int result = error_wrapper(::getsockopt(s, level, optname,
         reinterpret_cast<char*>(optval), &tmp_optlen), ec);
   *optlen = static_cast<size_t>(tmp_optlen);
+  if (result != 0 && level == IPPROTO_IPV6 && optname == IPV6_V6ONLY
+      && ec.value() == WSAENOPROTOOPT && *optlen == sizeof(DWORD))
+  {
+    // Dual-stack IPv4/v6 sockets, and the IPV6_V6ONLY socket option, are only
+    // supported on Windows Vista and later. To simplify program logic we will
+    // fake success of getting this option and specify that the value is
+    // non-zero (i.e. true). This corresponds to the behavior of IPv6 sockets
+    // on Windows platforms pre-Vista.
+    *static_cast<DWORD*>(optval) = 1;
+    clear_error(ec);
+  }
   return result;
 #else // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
   socklen_t tmp_optlen = static_cast<socklen_t>(*optlen);
   int result = error_wrapper(::getsockopt(s, level, optname,
         optval, &tmp_optlen), ec);
   *optlen = static_cast<size_t>(tmp_optlen);
+#if defined(__linux__)
+  if (result == 0 && level == SOL_SOCKET && *optlen == sizeof(int)
+      && (optname == SO_SNDBUF || optname == SO_RCVBUF))
+  {
+    // On Linux, setting SO_SNDBUF or SO_RCVBUF to N actually causes the kernel
+    // to set the buffer size to N*2. Linux puts additional stuff into the
+    // buffers so that only about half is actually available to the application.
+    // The retrieved value is divided by 2 here to make it appear as though the
+    // correct value has been set.
+    *static_cast<int*>(optval) /= 2;
+  }
+#endif // defined(__linux__)
   return result;
 #endif // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
 }

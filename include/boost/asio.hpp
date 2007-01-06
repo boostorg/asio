@@ -52,6 +52,8 @@
 #include <boost/asio/ip/resolver_service.hpp>
 #include <boost/asio/ip/tcp.hpp>
 #include <boost/asio/ip/udp.hpp>
+#include <boost/asio/ip/unicast.hpp>
+#include <boost/asio/ip/v6_only.hpp>
 #include <boost/asio/is_read_buffered.hpp>
 #include <boost/asio/is_write_buffered.hpp>
 #include <boost/asio/placeholders.hpp>

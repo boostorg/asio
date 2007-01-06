@@ -307,6 +307,11 @@ inline int IN6_IS_ADDR_MC_GLOBAL(const in6_addr_emulation* a)
 
 #endif // defined(BOOST_ASIO_HAS_OLD_WIN_SDK)
 
+// Even newer Platform SDKs that support IPv6 may not define IPV6_V6ONLY.
+#if !defined(IPV6_V6ONLY)
+# define IPV6_V6ONLY 27
+#endif
+
 #endif // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
 
 #include <boost/asio/detail/pop_options.hpp>
