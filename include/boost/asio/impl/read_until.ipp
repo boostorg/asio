@@ -75,8 +75,17 @@ std::size_t read_until(SyncReadStream& s,
       next_search_start = end.position();
     }
 
+    // Check if buffer is full.
+    if (b.size() == b.max_size())
+    {
+      ec = error::not_found;
+      return 0;
+    }
+
     // Need more data.
-    b.commit(s.read_some(b.prepare(512), ec));
+    std::size_t bytes_available =
+      std::min<std::size_t>(512, b.max_size() - b.size());
+    b.commit(s.read_some(b.prepare(bytes_available), ec));
     if (ec)
       return 0;
   }
@@ -167,8 +176,17 @@ std::size_t read_until(SyncReadStream& s,
       next_search_start = end.position();
     }
 
+    // Check if buffer is full.
+    if (b.size() == b.max_size())
+    {
+      ec = error::not_found;
+      return 0;
+    }
+
     // Need more data.
-    b.commit(s.read_some(b.prepare(512), ec));
+    std::size_t bytes_available =
+      std::min<std::size_t>(512, b.max_size() - b.size());
+    b.commit(s.read_some(b.prepare(bytes_available), ec));
     if (ec)
       return 0;
   }
@@ -224,8 +242,17 @@ std::size_t read_until(SyncReadStream& s,
       next_search_start = end.position();
     }
 
+    // Check if buffer is full.
+    if (b.size() == b.max_size())
+    {
+      ec = error::not_found;
+      return 0;
+    }
+
     // Need more data.
-    b.commit(s.read_some(b.prepare(512), ec));
+    std::size_t bytes_available =
+      std::min<std::size_t>(512, b.max_size() - b.size());
+    b.commit(s.read_some(b.prepare(bytes_available), ec));
     if (ec)
       return 0;
   }
@@ -281,9 +308,21 @@ namespace detail
         return;
       }
 
-      // No match. Start a new asynchronous read operation to obtain more data.
+      // No match. Check if buffer is full.
+      if (streambuf_.size() == streambuf_.max_size())
+      {
+        std::size_t bytes = 0;
+        handler_(error::not_found, bytes);
+        return;
+      }
+
+      // Next search can start with the new data.
       next_search_start_ = end.position();
-      stream_.async_read_some(streambuf_.prepare(512), *this);
+
+      // Start a new asynchronous read operation to obtain more data.
+      std::size_t bytes_available =
+        std::min<std::size_t>(512, streambuf_.max_size() - streambuf_.size());
+      stream_.async_read_some(streambuf_.prepare(bytes_available), *this);
     }
 
   //private:
@@ -347,8 +386,17 @@ void async_read_until(AsyncReadStream& s,
     return;
   }
 
-  // No match. Start a new asynchronous read operation to obtain more data.
-  s.async_read_some(b.prepare(512),
+  // No match. Check if buffer is full.
+  if (b.size() == b.max_size())
+  {
+    s.io_service().post(detail::bind_handler(handler, error::not_found, 0));
+    return;
+  }
+
+  // Start a new asynchronous read operation to obtain more data.
+  std::size_t bytes_available =
+    std::min<std::size_t>(512, b.max_size() - b.size());
+  s.async_read_some(b.prepare(bytes_available),
       detail::read_until_delim_handler<AsyncReadStream, Allocator, ReadHandler>(
         s, b, delim, end.position(), handler));
 }
@@ -418,8 +466,18 @@ namespace detail
         next_search_start_ = end.position();
       }
 
-      // No match. Start a new asynchronous read operation to obtain more data.
-      stream_.async_read_some(streambuf_.prepare(512), *this);
+      // Check if buffer is full.
+      if (streambuf_.size() == streambuf_.max_size())
+      {
+        std::size_t bytes = 0;
+        handler_(error::not_found, bytes);
+        return;
+      }
+
+      // Start a new asynchronous read operation to obtain more data.
+      std::size_t bytes_available =
+        std::min<std::size_t>(512, streambuf_.max_size() - streambuf_.size());
+      stream_.async_read_some(streambuf_.prepare(bytes_available), *this);
     }
 
   //private:
@@ -499,8 +557,17 @@ void async_read_until(AsyncReadStream& s,
     next_search_start = end.position();
   }
 
-  // No match. Start a new asynchronous read operation to obtain more data.
-  s.async_read_some(b.prepare(512),
+  // Check if buffer is full.
+  if (b.size() == b.max_size())
+  {
+    s.io_service().post(detail::bind_handler(handler, error::not_found, 0));
+    return;
+  }
+
+  // Start a new asynchronous read operation to obtain more data.
+  std::size_t bytes_available =
+    std::min<std::size_t>(512, b.max_size() - b.size());
+  s.async_read_some(b.prepare(bytes_available),
       detail::read_until_delim_string_handler<
         AsyncReadStream, Allocator, ReadHandler>(
           s, b, delim, next_search_start, handler));
@@ -571,8 +638,18 @@ namespace detail
         next_search_start_ = end.position();
       }
 
-      // No match. Start a new asynchronous read operation to obtain more data.
-      stream_.async_read_some(streambuf_.prepare(512), *this);
+      // Check if buffer is full.
+      if (streambuf_.size() == streambuf_.max_size())
+      {
+        std::size_t bytes = 0;
+        handler_(error::not_found, bytes);
+        return;
+      }
+
+      // Start a new asynchronous read operation to obtain more data.
+      std::size_t bytes_available =
+        std::min<std::size_t>(512, streambuf_.max_size() - streambuf_.size());
+      stream_.async_read_some(streambuf_.prepare(bytes_available), *this);
     }
 
   //private:
@@ -652,8 +729,17 @@ void async_read_until(AsyncReadStream& s,
     next_search_start = end.position();
   }
 
-  // No match. Start a new asynchronous read operation to obtain more data.
-  s.async_read_some(b.prepare(512),
+  // Check if buffer is full.
+  if (b.size() == b.max_size())
+  {
+    s.io_service().post(detail::bind_handler(handler, error::not_found, 0));
+    return;
+  }
+
+  // Start a new asynchronous read operation to obtain more data.
+  std::size_t bytes_available =
+    std::min<std::size_t>(512, b.max_size() - b.size());
+  s.async_read_some(b.prepare(bytes_available),
       detail::read_until_expr_handler<AsyncReadStream, Allocator, ReadHandler>(
         s, b, expr, next_search_start, handler));
 }
