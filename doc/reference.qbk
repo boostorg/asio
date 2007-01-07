@@ -21200,17 +21200,17 @@ Contains error constants.
   ]
   
   [
-    [[link boost_asio.reference.error.eof_ed [*eof_ed]]]
+    [[link boost_asio.reference.error.misc_ed [*misc_ed]]]
     []
   ]
   
   [
-    [[link boost_asio.reference.error.eof_md [*eof_md]]]
+    [[link boost_asio.reference.error.misc_md [*misc_md]]]
     []
   ]
   
   [
-    [[link boost_asio.reference.error.eof_wmd [*eof_wmd]]]
+    [[link boost_asio.reference.error.misc_wmd [*misc_wmd]]]
     []
   ]
   
@@ -21306,11 +21306,6 @@ Contains error constants.
   ]
 
   [
-    [[link boost_asio.reference.error.eof_ecat [*eof_ecat]]]
-    []
-  ]
-
-  [
     [[link boost_asio.reference.error.fault [*fault]]]
     [Bad address. ]
   ]
@@ -21348,6 +21343,11 @@ Contains error constants.
   [
     [[link boost_asio.reference.error.message_size [*message_size]]]
     [Message too long. ]
+  ]
+
+  [
+    [[link boost_asio.reference.error.misc_ecat [*misc_ecat]]]
+    []
   ]
 
   [
@@ -21408,6 +21408,11 @@ Contains error constants.
   [
     [[link boost_asio.reference.error.not_connected [*not_connected]]]
     [Transport endpoint is not connected. ]
+  ]
+
+  [
+    [[link boost_asio.reference.error.not_found [*not_found]]]
+    [Element not found. ]
   ]
 
   [
@@ -21634,57 +21639,6 @@ End of file or stream.
 
 
 
-[section:eof_ecat error::eof_ecat]
-
-
-
-  static boost::system::error_category eof_ecat;
-
-
-
-[endsect]
-
-
-
-[section:eof_ed error::eof_ed]
-
-
-
-  static int eof_ed(
-      const boost::system::error_code & ec);
-
-
-
-[endsect]
-
-
-
-[section:eof_md error::eof_md]
-
-
-
-  static std::string eof_md(
-      const boost::system::error_code & ec);
-
-
-
-[endsect]
-
-
-
-[section:eof_wmd error::eof_wmd]
-
-
-
-  static boost::system::wstring_t eof_wmd(
-      const boost::system::error_code & ec);
-
-
-
-[endsect]
-
-
-
 [section:fault error::fault]
 
 Bad address. 
@@ -21774,6 +21728,57 @@ Invalid argument.
 Message too long. 
 
   static const boost::system::error_code message_size;
+
+
+
+[endsect]
+
+
+
+[section:misc_ecat error::misc_ecat]
+
+
+
+  static boost::system::error_category misc_ecat;
+
+
+
+[endsect]
+
+
+
+[section:misc_ed error::misc_ed]
+
+
+
+  static int misc_ed(
+      const boost::system::error_code & ec);
+
+
+
+[endsect]
+
+
+
+[section:misc_md error::misc_md]
+
+
+
+  static std::string misc_md(
+      const boost::system::error_code & ec);
+
+
+
+[endsect]
+
+
+
+[section:misc_wmd error::misc_wmd]
+
+
+
+  static boost::system::wstring_t misc_wmd(
+      const boost::system::error_code & ec);
 
 
 
@@ -21957,6 +21962,18 @@ A non-recoverable error occurred.
 Transport endpoint is not connected. 
 
   static const boost::system::error_code not_connected;
+
+
+
+[endsect]
+
+
+
+[section:not_found error::not_found]
+
+Element not found. 
+
+  static const boost::system::error_code not_found;
 
 
 
