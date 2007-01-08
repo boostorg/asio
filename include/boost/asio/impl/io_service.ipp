@@ -26,6 +26,7 @@
 #include <boost/asio/detail/select_reactor.hpp>
 #include <boost/asio/detail/service_registry.hpp>
 #include <boost/asio/detail/task_io_service.hpp>
+#include <boost/asio/detail/throw_error.hpp>
 #include <boost/asio/detail/win_iocp_io_service.hpp>
 
 namespace boost {
@@ -35,10 +36,10 @@ inline io_service::io_service()
   : service_registry_(new boost::asio::detail::service_registry(*this)),
     impl_(service_registry_->use_service<impl_type>())
 {
-  impl_.init((std::numeric_limits<size_t>::max)());
+  impl_.init((std::numeric_limits<std::size_t>::max)());
 }
 
-inline io_service::io_service(size_t concurrency_hint)
+inline io_service::io_service(std::size_t concurrency_hint)
   : service_registry_(new boost::asio::detail::service_registry(*this)),
     impl_(service_registry_->use_service<impl_type>())
 {
@@ -50,24 +51,56 @@ inline io_service::~io_service()
   delete service_registry_;
 }
 
-inline size_t io_service::run()
+inline std::size_t io_service::run()
 {
-  return impl_.run();
+  boost::system::error_code ec;
+  std::size_t s = impl_.run(ec);
+  boost::asio::detail::throw_error(ec);
+  return s;
 }
 
-inline size_t io_service::run_one()
+inline std::size_t io_service::run(boost::system::error_code& ec)
 {
-  return impl_.run_one();
+  return impl_.run(ec);
 }
 
-inline size_t io_service::poll()
+inline std::size_t io_service::run_one()
 {
-  return impl_.poll();
+  boost::system::error_code ec;
+  std::size_t s = impl_.run_one(ec);
+  boost::asio::detail::throw_error(ec);
+  return s;
 }
 
-inline size_t io_service::poll_one()
+inline std::size_t io_service::run_one(boost::system::error_code& ec)
 {
-  return impl_.poll_one();
+  return impl_.run_one(ec);
+}
+
+inline std::size_t io_service::poll()
+{
+  boost::system::error_code ec;
+  std::size_t s = impl_.poll(ec);
+  boost::asio::detail::throw_error(ec);
+  return s;
+}
+
+inline std::size_t io_service::poll(boost::system::error_code& ec)
+{
+  return impl_.poll(ec);
+}
+
+inline std::size_t io_service::poll_one()
+{
+  boost::system::error_code ec;
+  std::size_t s = impl_.poll_one(ec);
+  boost::asio::detail::throw_error(ec);
+  return s;
+}
+
+inline std::size_t io_service::poll_one(boost::system::error_code& ec)
+{
+  return impl_.poll_one(ec);
 }
 
 inline void io_service::stop()

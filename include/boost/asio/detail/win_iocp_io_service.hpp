@@ -102,55 +102,67 @@ public:
   }
 
   // Run the event loop until stopped or no more work.
-  size_t run()
+  size_t run(boost::system::error_code& ec)
   {
     if (::InterlockedExchangeAdd(&outstanding_work_, 0) == 0)
+    {
+      ec = boost::system::error_code();
       return 0;
+    }
 
     call_stack<win_iocp_io_service>::context ctx(this);
 
     size_t n = 0;
-    while (do_one(true))
+    while (do_one(true, ec))
       if (n != (std::numeric_limits<size_t>::max)())
         ++n;
     return n;
   }
 
   // Run until stopped or one operation is performed.
-  size_t run_one()
+  size_t run_one(boost::system::error_code& ec)
   {
     if (::InterlockedExchangeAdd(&outstanding_work_, 0) == 0)
+    {
+      ec = boost::system::error_code();
       return 0;
+    }
 
     call_stack<win_iocp_io_service>::context ctx(this);
 
-    return do_one(true);
+    return do_one(true, ec);
   }
 
   // Poll for operations without blocking.
-  size_t poll()
+  size_t poll(boost::system::error_code& ec)
   {
     if (::InterlockedExchangeAdd(&outstanding_work_, 0) == 0)
+    {
+      ec = boost::system::error_code();
       return 0;
+    }
 
     call_stack<win_iocp_io_service>::context ctx(this);
 
     size_t n = 0;
-    while (do_one(false))
+    while (do_one(false, ec))
       if (n != (std::numeric_limits<size_t>::max)())
         ++n;
     return n;
   }
 
   // Poll for one operation without blocking.
-  size_t poll_one()
+  size_t poll_one(boost::system::error_code& ec)
   {
     if (::InterlockedExchangeAdd(&outstanding_work_, 0) == 0)
+    {
+      ec = boost::system::error_code();
       return 0;
+    }
 
     call_stack<win_iocp_io_service>::context ctx(this);
 
-    return do_one(false);
+    return do_one(false, ec);
   }
 
   // Stop the event processing loop.
@@ -246,7 +258,7 @@ private:
   // Dequeues at most one operation from the I/O completion port, and then
   // executes it. Returns the number of operations that were dequeued (i.e.
   // either 0 or 1).
-  size_t do_one(bool block)
+  size_t do_one(bool block, boost::system::error_code& ec)
   {
     for (;;)
     {
@@ -267,6 +279,7 @@ private:
       {
         if (block && last_error == WAIT_TIMEOUT)
           continue;
+        ec = boost::system::error_code();
         return 0;
       }
 
@@ -286,6 +299,7 @@ private:
         operation* op = static_cast<operation*>(overlapped);
         op->do_completion(last_error, bytes_transferred);
 
+        ec = boost::system::error_code();
         return 1;
       }
       else
@@ -298,13 +312,12 @@ private:
           if (!::PostQueuedCompletionStatus(iocp_.handle, 0, 0, 0))
           {
             DWORD last_error = ::GetLastError();
-            boost::system::system_error e(
-                boost::system::error_code(last_error, 
-                  boost::system::native_ecat),
-                "pqcs");
-            boost::throw_exception(e);
+            ec = boost::system::error_code(last_error,
+                boost::system::native_ecat);
+            return 0;
           }
 
+          ec = boost::system::error_code();
           return 0;
         }
       }

@@ -75,7 +75,7 @@ public:
   }
 
   // Run the event loop until interrupted or no more work.
-  size_t run()
+  size_t run(boost::system::error_code& ec)
   {
     typename call_stack<task_io_service>::context ctx(this);
 
@@ -86,14 +86,14 @@ public:
     boost::asio::detail::mutex::scoped_lock lock(mutex_);
 
     size_t n = 0;
-    while (do_one(lock, &this_idle_thread))
+    while (do_one(lock, &this_idle_thread, ec))
       if (n != (std::numeric_limits<size_t>::max)())
         ++n;
     return n;
   }
 
   // Run until interrupted or one operation is performed.
-  size_t run_one()
+  size_t run_one(boost::system::error_code& ec)
   {
     typename call_stack<task_io_service>::context ctx(this);
 
@@ -103,31 +103,31 @@ public:
 
     boost::asio::detail::mutex::scoped_lock lock(mutex_);
 
-    return do_one(lock, &this_idle_thread);
+    return do_one(lock, &this_idle_thread, ec);
   }
 
   // Poll for operations without blocking.
-  size_t poll()
+  size_t poll(boost::system::error_code& ec)
   {
     typename call_stack<task_io_service>::context ctx(this);
 
     boost::asio::detail::mutex::scoped_lock lock(mutex_);
 
     size_t n = 0;
-    while (do_one(lock, 0))
+    while (do_one(lock, 0, ec))
       if (n != (std::numeric_limits<size_t>::max)())
         ++n;
     return n;
   }
 
   // Poll for one operation without blocking.
-  size_t poll_one()
+  size_t poll_one(boost::system::error_code& ec)
   {
     typename call_stack<task_io_service>::context ctx(this);
 
     boost::asio::detail::mutex::scoped_lock lock(mutex_);
 
-    return do_one(lock, 0);
+    return do_one(lock, 0, ec);
   }
 
   // Interrupt the event processing loop.
@@ -210,11 +210,12 @@ private:
   struct idle_thread_info;
 
   size_t do_one(boost::asio::detail::mutex::scoped_lock& lock,
-      idle_thread_info* this_idle_thread)
+      idle_thread_info* this_idle_thread, boost::system::error_code& ec)
   {
     if (outstanding_work_ == 0 && !stopped_)
     {
       stop_all_threads();
+      ec = boost::system::error_code();
       return 0;
     }
 
@@ -236,7 +237,10 @@ private:
         {
           // If the task has already run and we're polling then we're done.
           if (task_has_run && polling)
+          {
+            ec = boost::system::error_code();
             return 0;
+          }
           task_has_run = true;
           
           task_cleanup c(lock, *this);
@@ -253,6 +257,7 @@ private:
           // Invoke the handler. May throw an exception.
           h->call(); // call() deletes the handler object
 
+          ec = boost::system::error_code();
           return 1;
         }
       }
@@ -287,10 +292,12 @@ private:
       }
       else
       {
+        ec = boost::system::error_code();
         return 0;
       }
     }
 
+    ec = boost::system::error_code();
     return 0;
   }
 
@@ -528,6 +535,7 @@ private:
 } // namespace asio
 } // namespace boost
 
+#include <boost/system/error_code.hpp>
 #include <boost/asio/detail/pop_options.hpp>
 
 #endif // BOOST_ASIO_DETAIL_TASK_IO_SERVICE_HPP

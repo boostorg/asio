@@ -23,6 +23,7 @@
 #include <typeinfo>
 #include <boost/config.hpp>
 #include <boost/throw_exception.hpp>
+#include <boost/system/error_code.hpp>
 #include <boost/asio/detail/pop_options.hpp>
 
 #include <boost/asio/detail/epoll_reactor_fwd.hpp>
@@ -97,7 +98,7 @@ public:
    * @param concurrency_hint A suggestion to the implementation on how many
    * threads it should allow to run simultaneously.
    */
-  explicit io_service(size_t concurrency_hint);
+  explicit io_service(std::size_t concurrency_hint);
 
   /// Destructor.
   ~io_service();
@@ -114,8 +115,27 @@ public:
    * after a call to reset().
    *
    * @return The number of handlers that were executed.
+   *
+   * @throws boost::system::system_error Thrown on failure.
    */
-  size_t run();
+  std::size_t run();
+
+  /// Run the io_service's event processing loop.
+  /**
+   * The run() function blocks until all work has finished and there are no
+   * more handlers to be dispatched, or until the io_service has been stopped.
+   *
+   * Multiple threads may call the run() function to set up a pool of threads
+   * from which the io_service may execute handlers.
+   *
+   * The run() function may be safely called again once it has completed only
+   * after a call to reset().
+   *
+   * @param ec Set to indicate what error occurred, if any.
+   *
+   * @return The number of handlers that were executed.
+   */
+  std::size_t run(boost::system::error_code& ec);
 
   /// Run the io_service's event processing loop to execute at most one handler.
   /**
@@ -123,8 +143,21 @@ public:
    * until the io_service has been stopped.
    *
    * @return The number of handlers that were executed.
+   *
+   * @throws boost::system::system_error Thrown on failure.
    */
-  size_t run_one();
+  std::size_t run_one();
+
+  /// Run the io_service's event processing loop to execute at most one handler.
+  /**
+   * The run_one() function blocks until one handler has been dispatched, or
+   * until the io_service has been stopped.
+   *
+   * @param ec Set to indicate what error occurred, if any.
+   *
+   * @return The number of handlers that were executed.
+   */
+  std::size_t run_one(boost::system::error_code& ec);
 
   /// Run the io_service's event processing loop to execute ready handlers.
   /**
@@ -132,8 +165,21 @@ public:
    * until the io_service has been stopped or there are no more ready handlers.
    *
    * @return The number of handlers that were executed.
+   *
+   * @throws boost::system::system_error Thrown on failure.
    */
-  size_t poll();
+  std::size_t poll();
+
+  /// Run the io_service's event processing loop to execute ready handlers.
+  /**
+   * The poll() function runs handlers that are ready to run, without blocking,
+   * until the io_service has been stopped or there are no more ready handlers.
+   *
+   * @param ec Set to indicate what error occurred, if any.
+   *
+   * @return The number of handlers that were executed.
+   */
+  std::size_t poll(boost::system::error_code& ec);
 
   /// Run the io_service's event processing loop to execute one ready handler.
   /**
@@ -141,8 +187,21 @@ public:
    * without blocking.
    *
    * @return The number of handlers that were executed.
+   *
+   * @throws boost::system::system_error Thrown on failure.
    */
-  size_t poll_one();
+  std::size_t poll_one();
+
+  /// Run the io_service's event processing loop to execute one ready handler.
+  /**
+   * The poll_one() function runs at most one handler that is ready to run,
+   * without blocking.
+   *
+   * @param ec Set to indicate what error occurred, if any.
+   *
+   * @return The number of handlers that were executed.
+   */
+  std::size_t poll_one(boost::system::error_code& ec);
 
   /// Stop the io_service's event processing loop.
   /**
