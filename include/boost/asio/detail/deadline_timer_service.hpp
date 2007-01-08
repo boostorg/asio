@@ -87,16 +87,21 @@ public:
   // Destroy a timer implementation.
   void destroy(implementation_type& impl)
   {
-    cancel(impl);
+    boost::system::error_code ec;
+    cancel(impl, ec);
   }
 
   // Cancel any asynchronous wait operations associated with the timer.
-  std::size_t cancel(implementation_type& impl)
+  std::size_t cancel(implementation_type& impl, boost::system::error_code& ec)
   {
     if (!impl.might_have_pending_waits)
+    {
+      ec = boost::system::error_code();
       return 0;
+    }
     std::size_t count = scheduler_.cancel_timer(timer_queue_, &impl);
     impl.might_have_pending_waits = false;
+    ec = boost::system::error_code();
     return count;
   }
 
@@ -108,10 +113,11 @@ public:
 
   // Set the expiry time for the timer as an absolute time.
   std::size_t expires_at(implementation_type& impl,
-      const time_type& expiry_time)
+      const time_type& expiry_time, boost::system::error_code& ec)
   {
-    std::size_t count = cancel(impl);
+    std::size_t count = cancel(impl, ec);
     impl.expiry = expiry_time;
+    ec = boost::system::error_code();
     return count;
   }
 
@@ -123,13 +129,14 @@ public:
 
   // Set the expiry time for the timer relative to now.
   std::size_t expires_from_now(implementation_type& impl,
-      const duration_type& expiry_time)
+      const duration_type& expiry_time, boost::system::error_code& ec)
   {
-    return expires_at(impl, Time_Traits::add(Time_Traits::now(), expiry_time));
+    return expires_at(impl,
+        Time_Traits::add(Time_Traits::now(), expiry_time), ec);
   }
 
   // Perform a blocking wait on the timer.
-  void wait(implementation_type& impl)
+  void wait(implementation_type& impl, boost::system::error_code& ec)
   {
     time_type now = Time_Traits::now();
     while (Time_Traits::less_than(now, impl.expiry))
@@ -143,6 +150,7 @@ public:
       socket_ops::select(0, 0, 0, 0, &tv, ec);
       now = Time_Traits::now();
     }
+    ec = boost::system::error_code();
   }
 
   template <typename Handler>
