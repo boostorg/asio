@@ -76,6 +76,11 @@ void throw_exception()
   throw 1;
 }
 
+void io_service_run(io_service* ios)
+{
+  ios->run();
+}
+
 void strand_test()
 {
   io_service ios;
@@ -107,8 +112,8 @@ void strand_test()
   count = 0;
   ios.reset();
   ios.post(boost::bind(start_sleep_increments, &ios, &s, &count));
-  boost::thread thread1(boost::bind(&io_service::run, &ios));
-  boost::thread thread2(boost::bind(&io_service::run, &ios));
+  boost::thread thread1(boost::bind(io_service_run, &ios));
+  boost::thread thread2(boost::bind(io_service_run, &ios));
 
   // Check all events run one after another even though there are two threads.
   deadline_timer timer1(ios, boost::posix_time::seconds(3));

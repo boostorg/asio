@@ -80,6 +80,11 @@ void throw_exception()
   throw 1;
 }
 
+void io_service_run(io_service* ios)
+{
+  ios->run();
+}
+
 void io_service_test()
 {
   io_service ios;
@@ -174,8 +179,8 @@ void io_service_test()
   ios.reset();
   ios.post(boost::bind(start_sleep_increments, &ios, &count));
   ios.post(boost::bind(start_sleep_increments, &ios, &count2));
-  boost::thread thread1(boost::bind(&io_service::run, &ios));
-  boost::thread thread2(boost::bind(&io_service::run, &ios));
+  boost::thread thread1(boost::bind(io_service_run, &ios));
+  boost::thread thread2(boost::bind(io_service_run, &ios));
   thread1.join();
   thread2.join();
 

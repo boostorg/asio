@@ -52,7 +52,7 @@
         boost::system::native_ecat)
 # define BOOST_ASIO_MISC_ERROR(e) \
     boost::system::error_code(e, \
-        boost::system::native_ecat)
+        boost::asio::detail::error_base<T>::misc_ecat)
 # define BOOST_ASIO_WIN_OR_POSIX(e_win, e_posix) e_win
 #else
 # define BOOST_ASIO_NATIVE_ERROR(e) \
@@ -118,6 +118,9 @@ public:
 
   /// Transport endpoint is already connected.
   static const boost::system::error_code already_connected;
+
+  /// Already open.
+  static const boost::system::error_code already_open;
 
   /// Operation already in progress.
   static const boost::system::error_code already_started;
@@ -200,11 +203,11 @@ public:
   /// Socket operation on non-socket.
   static const boost::system::error_code not_socket;
 
-  /// Operation not supported.
-  static const boost::system::error_code not_supported;
-
   /// Operation cancelled.
   static const boost::system::error_code operation_aborted;
+
+  /// Operation not supported.
+  static const boost::system::error_code operation_not_supported;
 
   /// The service is not supported for the given socket type.
   static const boost::system::error_code service_not_found;
@@ -316,6 +319,8 @@ int error_base<T>::misc_ed(const boost::system::error_code& ec)
 template <typename T>
 std::string error_base<T>::misc_md(const boost::system::error_code& ec)
 {
+  if (ec == error_base<T>::already_open)
+    return "Already open";
   if (ec == error_base<T>::eof)
     return "End of file";
   if (ec == error_base<T>::not_found)
@@ -374,6 +379,9 @@ template <typename T> const boost::system::error_code
 error_base<T>::already_connected = BOOST_ASIO_SOCKET_ERROR(EISCONN);
 
 template <typename T> const boost::system::error_code
+error_base<T>::already_open = BOOST_ASIO_MISC_ERROR(1);
+
+template <typename T> const boost::system::error_code
 error_base<T>::already_started = BOOST_ASIO_SOCKET_ERROR(EALREADY);
 
 template <typename T> const boost::system::error_code
@@ -389,9 +397,7 @@ template <typename T> const boost::system::error_code
 error_base<T>::bad_descriptor = BOOST_ASIO_SOCKET_ERROR(EBADF);
 
 template <typename T> const boost::system::error_code
-error_base<T>::eof = BOOST_ASIO_WIN_OR_POSIX(
-    BOOST_ASIO_MISC_ERROR(ERROR_HANDLE_EOF),
-    BOOST_ASIO_MISC_ERROR(1));
+error_base<T>::eof = BOOST_ASIO_MISC_ERROR(2);
 
 template <typename T> const boost::system::error_code
 error_base<T>::fault = BOOST_ASIO_SOCKET_ERROR(EFAULT);
@@ -455,20 +461,18 @@ template <typename T> const boost::system::error_code
 error_base<T>::not_connected = BOOST_ASIO_SOCKET_ERROR(ENOTCONN);
 
 template <typename T> const boost::system::error_code
-error_base<T>::not_found = BOOST_ASIO_WIN_OR_POSIX(
-    BOOST_ASIO_MISC_ERROR(ERROR_NOT_FOUND),
-    BOOST_ASIO_MISC_ERROR(2));
+error_base<T>::not_found = BOOST_ASIO_MISC_ERROR(3);
 
 template <typename T> const boost::system::error_code
 error_base<T>::not_socket = BOOST_ASIO_SOCKET_ERROR(ENOTSOCK);
 
 template <typename T> const boost::system::error_code
-error_base<T>::not_supported = BOOST_ASIO_SOCKET_ERROR(EOPNOTSUPP);
-
-template <typename T> const boost::system::error_code
 error_base<T>::operation_aborted = BOOST_ASIO_WIN_OR_POSIX(
     BOOST_ASIO_NATIVE_ERROR(ERROR_OPERATION_ABORTED),
     BOOST_ASIO_NATIVE_ERROR(ECANCELED));
+
+template <typename T> const boost::system::error_code
+error_base<T>::operation_not_supported = BOOST_ASIO_SOCKET_ERROR(EOPNOTSUPP);
 
 template <typename T> const boost::system::error_code
 error_base<T>::service_not_found = BOOST_ASIO_WIN_OR_POSIX(

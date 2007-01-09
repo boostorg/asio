@@ -629,7 +629,7 @@ public:
   void accept(basic_socket<protocol_type, SocketService>& peer)
   {
     boost::system::error_code ec;
-    this->service.accept(this->implementation, peer, ec);
+    this->service.accept(this->implementation, peer, 0, ec);
     boost::asio::detail::throw_error(ec);
   }
 
@@ -661,7 +661,7 @@ public:
       basic_socket<protocol_type, SocketService>& peer,
       boost::system::error_code& ec)
   {
-    return this->service.accept(this->implementation, peer, ec);
+    return this->service.accept(this->implementation, peer, 0, ec);
   }
 
   /// Start an asynchronous accept.
@@ -706,7 +706,7 @@ public:
   void async_accept(basic_socket<protocol_type, SocketService>& peer,
       AcceptHandler handler)
   {
-    this->service.async_accept(this->implementation, peer, handler);
+    this->service.async_accept(this->implementation, peer, 0, handler);
   }
 
   /// Accept a new connection and obtain the endpoint of the peer
@@ -729,16 +729,15 @@ public:
    * ...
    * boost::asio::ip::tcp::socket socket(io_service);
    * boost::asio::ip::tcp::endpoint endpoint;
-   * acceptor.accept_endpoint(socket, endpoint);
+   * acceptor.accept(socket, endpoint);
    * @endcode
    */
   template <typename SocketService>
-  void accept_endpoint(basic_socket<protocol_type, SocketService>& peer,
+  void accept(basic_socket<protocol_type, SocketService>& peer,
       endpoint_type& peer_endpoint)
   {
     boost::system::error_code ec;
-    this->service.accept_endpoint(
-        this->implementation, peer, peer_endpoint, ec);
+    this->service.accept(this->implementation, peer, &peer_endpoint, ec);
     boost::asio::detail::throw_error(ec);
   }
 
@@ -763,7 +762,7 @@ public:
    * boost::asio::ip::tcp::socket socket(io_service);
    * boost::asio::ip::tcp::endpoint endpoint;
    * boost::system::error_code ec;
-   * acceptor.accept_endpoint(socket, endpoint, ec);
+   * acceptor.accept(socket, endpoint, ec);
    * if (ec)
    * {
    *   // An error occurred.
@@ -771,12 +770,11 @@ public:
    * @endcode
    */
   template <typename SocketService>
-  boost::system::error_code accept_endpoint(
+  boost::system::error_code accept(
       basic_socket<protocol_type, SocketService>& peer,
       endpoint_type& peer_endpoint, boost::system::error_code& ec)
   {
-    return this->service.accept_endpoint(
-        this->implementation, peer, peer_endpoint, ec);
+    return this->service.accept(this->implementation, peer, &peer_endpoint, ec);
   }
 
   /// Start an asynchronous accept.
@@ -806,11 +804,11 @@ public:
    * boost::asio::io_service::post().
    */
   template <typename SocketService, typename AcceptHandler>
-  void async_accept_endpoint(basic_socket<protocol_type, SocketService>& peer,
+  void async_accept(basic_socket<protocol_type, SocketService>& peer,
       endpoint_type& peer_endpoint, AcceptHandler handler)
   {
-    this->service.async_accept_endpoint(this->implementation, peer,
-        peer_endpoint, handler);
+    this->service.async_accept(this->implementation,
+        peer, &peer_endpoint, handler);
   }
 };
 

@@ -145,8 +145,11 @@ public:
   boost::system::error_code open(implementation_type& impl,
       const protocol_type& protocol, boost::system::error_code& ec)
   {
-    boost::system::error_code ignored_ec;
-    close(impl, ignored_ec);
+    if (is_open(impl))
+    {
+      ec = boost::asio::error::already_open;
+      return ec;
+    }
 
     socket_holder sock(socket_ops::socket(protocol.family(),
           protocol.type(), protocol.protocol(), ec));
@@ -171,8 +174,11 @@ public:
       const protocol_type& protocol, const native_type& native_socket,
       boost::system::error_code& ec)
   {
-    boost::system::error_code ignored_ec;
-    close(impl, ignored_ec);
+    if (is_open(impl))
+    {
+      ec = boost::asio::error::already_open;
+      return ec;
+    }
 
     if (int err = reactor_.register_descriptor(native_socket))
     {
@@ -187,11 +193,17 @@ public:
     return ec;
   }
 
+  // Determine whether the socket is open.
+  bool is_open(const implementation_type& impl) const
+  {
+    return impl.socket_ != invalid_socket;
+  }
+
   // Destroy a socket implementation.
   boost::system::error_code close(implementation_type& impl,
       boost::system::error_code& ec)
   {
-    if (impl.socket_ != invalid_socket)
+    if (is_open(impl))
     {
       reactor_.close_descriptor(impl.socket_);
 
@@ -223,23 +235,65 @@ public:
   boost::system::error_code cancel(implementation_type& impl,
       boost::system::error_code& ec)
   {
-    if (impl.socket_ == invalid_socket)
+    if (!is_open(impl))
     {
       ec = boost::asio::error::bad_descriptor;
       return ec;
     }
-    else
+
+    reactor_.cancel_ops(impl.socket_);
+    ec = boost::system::error_code();
+    return ec;
+  }
+
+  // Determine whether the socket is at the out-of-band data mark.
+  bool at_mark(const implementation_type& impl,
+      boost::system::error_code& ec) const
+  {
+    if (!is_open(impl))
     {
-      reactor_.cancel_ops(impl.socket_);
-      ec = boost::system::error_code();
-      return ec;
+      ec = boost::asio::error::bad_descriptor;
+      return false;
     }
+
+    boost::asio::detail::ioctl_arg_type value = 0;
+    socket_ops::ioctl(impl.socket_, SIOCATMARK, &value, ec);
+#if defined(ENOTTY)
+    if (ec.value() == ENOTTY)
+      ec = boost::asio::error::not_socket;
+#endif // defined(ENOTTY)
+    return ec ? false : value != 0;
+  }
+
+  // Determine the number of bytes available for reading.
+  std::size_t available(const implementation_type& impl,
+      boost::system::error_code& ec) const
+  {
+    if (!is_open(impl))
+    {
+      ec = boost::asio::error::bad_descriptor;
+      return 0;
+    }
+
+    boost::asio::detail::ioctl_arg_type value = 0;
+    socket_ops::ioctl(impl.socket_, FIONREAD, &value, ec);
+#if defined(ENOTTY)
+    if (ec.value() == ENOTTY)
+      ec = boost::asio::error::not_socket;
+#endif // defined(ENOTTY)
+    return ec ? static_cast<std::size_t>(0) : static_cast<std::size_t>(value);
   }
 
   // Bind the socket to the specified local endpoint.
   boost::system::error_code bind(implementation_type& impl,
       const endpoint_type& endpoint, boost::system::error_code& ec)
   {
+    if (!is_open(impl))
+    {
+      ec = boost::asio::error::bad_descriptor;
+      return ec;
+    }
+
     socket_ops::bind(impl.socket_, endpoint.data(), endpoint.size(), ec);
     return ec;
   }
@@ -248,6 +302,12 @@ public:
   boost::system::error_code listen(implementation_type& impl, int backlog,
       boost::system::error_code& ec)
   {
+    if (!is_open(impl))
+    {
+      ec = boost::asio::error::bad_descriptor;
+      return ec;
+    }
+
     socket_ops::listen(impl.socket_, backlog, ec);
     return ec;
   }
@@ -257,6 +317,12 @@ public:
   boost::system::error_code set_option(implementation_type& impl,
       const Option& option, boost::system::error_code& ec)
   {
+    if (!is_open(impl))
+    {
+      ec = boost::asio::error::bad_descriptor;
+      return ec;
+    }
+
     if (option.level(impl.protocol_) == custom_socket_option_level
         && option.name(impl.protocol_) == enable_connection_aborted_option)
     {
@@ -294,6 +360,12 @@ public:
   boost::system::error_code get_option(const implementation_type& impl,
       Option& option, boost::system::error_code& ec) const
   {
+    if (!is_open(impl))
+    {
+      ec = boost::asio::error::bad_descriptor;
+      return ec;
+    }
+
     if (option.level(impl.protocol_) == custom_socket_option_level
         && option.name(impl.protocol_) == enable_connection_aborted_option)
     {
@@ -330,6 +402,12 @@ public:
   boost::system::error_code io_control(implementation_type& impl,
       IO_Control_Command& command, boost::system::error_code& ec)
   {
+    if (!is_open(impl))
+    {
+      ec = boost::asio::error::bad_descriptor;
+      return ec;
+    }
+
     if (command.name() == static_cast<int>(FIONBIO))
     {
       if (command.get())
@@ -350,6 +428,12 @@ public:
   endpoint_type local_endpoint(const implementation_type& impl,
       boost::system::error_code& ec) const
   {
+    if (!is_open(impl))
+    {
+      ec = boost::asio::error::bad_descriptor;
+      return endpoint_type();
+    }
+
     endpoint_type endpoint;
     socket_addr_len_type addr_len = endpoint.capacity();
     if (socket_ops::getsockname(impl.socket_, endpoint.data(), &addr_len, ec))
@@ -362,6 +446,12 @@ public:
   endpoint_type remote_endpoint(const implementation_type& impl,
       boost::system::error_code& ec) const
   {
+    if (!is_open(impl))
+    {
+      ec = boost::asio::error::bad_descriptor;
+      return endpoint_type();
+    }
+
     endpoint_type endpoint;
     socket_addr_len_type addr_len = endpoint.capacity();
     if (socket_ops::getpeername(impl.socket_, endpoint.data(), &addr_len, ec))
@@ -374,6 +464,12 @@ public:
   boost::system::error_code shutdown(implementation_type& impl,
       socket_base::shutdown_type what, boost::system::error_code& ec)
   {
+    if (!is_open(impl))
+    {
+      ec = boost::asio::error::bad_descriptor;
+      return ec;
+    }
+
     socket_ops::shutdown(impl.socket_, what, ec);
     return ec;
   }
@@ -383,6 +479,12 @@ public:
   size_t send(implementation_type& impl, const ConstBufferSequence& buffers,
       socket_base::message_flags flags, boost::system::error_code& ec)
   {
+    if (!is_open(impl))
+    {
+      ec = boost::asio::error::bad_descriptor;
+      return 0;
+    }
+
     // Copy buffers into array.
     socket_ops::buf bufs[max_buffers];
     typename ConstBufferSequence::const_iterator iter = buffers.begin();
@@ -493,7 +595,7 @@ public:
   void async_send(implementation_type& impl, const ConstBufferSequence& buffers,
       socket_base::message_flags flags, Handler handler)
   {
-    if (impl.socket_ == invalid_socket)
+    if (!is_open(impl))
     {
       this->io_service().post(bind_handler(handler,
             boost::asio::error::bad_descriptor, 0));
@@ -548,6 +650,12 @@ public:
       const endpoint_type& destination, socket_base::message_flags flags,
       boost::system::error_code& ec)
   {
+    if (!is_open(impl))
+    {
+      ec = boost::asio::error::bad_descriptor;
+      return 0;
+    }
+
     // Copy buffers into array.
     socket_ops::buf bufs[max_buffers];
     typename ConstBufferSequence::const_iterator iter = buffers.begin();
@@ -655,7 +763,7 @@ public:
       const endpoint_type& destination, socket_base::message_flags flags,
       Handler handler)
   {
-    if (impl.socket_ == invalid_socket)
+    if (!is_open(impl))
     {
       this->io_service().post(bind_handler(handler,
             boost::asio::error::bad_descriptor, 0));
@@ -688,6 +796,12 @@ public:
       const MutableBufferSequence& buffers,
       socket_base::message_flags flags, boost::system::error_code& ec)
   {
+    if (!is_open(impl))
+    {
+      ec = boost::asio::error::bad_descriptor;
+      return 0;
+    }
+
     // Copy buffers into array.
     socket_ops::buf bufs[max_buffers];
     typename MutableBufferSequence::const_iterator iter = buffers.begin();
@@ -808,7 +922,7 @@ public:
       const MutableBufferSequence& buffers,
       socket_base::message_flags flags, Handler handler)
   {
-    if (impl.socket_ == invalid_socket)
+    if (!is_open(impl))
     {
       this->io_service().post(bind_handler(handler,
             boost::asio::error::bad_descriptor, 0));
@@ -873,6 +987,12 @@ public:
       endpoint_type& sender_endpoint, socket_base::message_flags flags,
       boost::system::error_code& ec)
   {
+    if (!is_open(impl))
+    {
+      ec = boost::asio::error::bad_descriptor;
+      return 0;
+    }
+
     // Copy buffers into array.
     socket_ops::buf bufs[max_buffers];
     typename MutableBufferSequence::const_iterator iter = buffers.begin();
@@ -996,7 +1116,7 @@ public:
       const MutableBufferSequence& buffers, endpoint_type& sender_endpoint,
       socket_base::message_flags flags, Handler handler)
   {
-    if (impl.socket_ == invalid_socket)
+    if (!is_open(impl))
     {
       this->io_service().post(bind_handler(handler,
             boost::asio::error::bad_descriptor, 0));
@@ -1025,13 +1145,19 @@ public:
 
   // Accept a new connection.
   template <typename Socket>
-  boost::system::error_code accept(implementation_type& impl, Socket& peer,
-      boost::system::error_code& ec)
+  boost::system::error_code accept(implementation_type& impl,
+      Socket& peer, endpoint_type* peer_endpoint, boost::system::error_code& ec)
   {
-    // We cannot accept a socket that is already open.
-    if (peer.native() != invalid_socket)
+    if (!is_open(impl))
     {
-      ec = boost::asio::error::already_connected;
+      ec = boost::asio::error::bad_descriptor;
+      return ec;
+    }
+
+    // We cannot accept a socket that is already open.
+    if (peer.is_open())
+    {
+      ec = boost::asio::error::already_open;
       return ec;
     }
 
@@ -1039,65 +1165,25 @@ public:
     for (;;)
     {
       // Try to complete the operation without blocking.
-      socket_holder new_socket(socket_ops::accept(impl.socket_, 0, 0, ec));
-
-      // Check if operation succeeded.
-      if (new_socket.get() >= 0)
+      boost::system::error_code ec;
+      socket_holder new_socket;
+      socket_addr_len_type addr_len = 0;
+      if (peer_endpoint)
       {
-        peer.assign(impl.protocol_, new_socket.get(), ec);
-        if (!ec)
-          new_socket.release();
-        return ec;
-      }
-
-      // Operation failed.
-      if (ec == boost::asio::error::would_block
-          || ec == boost::asio::error::try_again)
-      {
-        if (impl.flags_ & implementation_type::user_set_non_blocking)
-          return ec;
-        // Fall through to retry operation.
-      }
-      else if (ec == boost::asio::error::connection_aborted)
-      {
-        if (impl.flags_ & implementation_type::enable_connection_aborted)
-          return ec;
-        // Fall through to retry operation.
+        addr_len = peer_endpoint->capacity();
+        new_socket.reset(socket_ops::accept(impl.socket_,
+              peer_endpoint->data(), &addr_len, ec));
       }
       else
-        return ec;
-
-      // Wait for socket to become ready.
-      if (socket_ops::poll_read(impl.socket_, ec) < 0)
-        return ec;
-    }
-  }
-
-  // Accept a new connection.
-  template <typename Socket>
-  boost::system::error_code accept_endpoint(implementation_type& impl,
-      Socket& peer, endpoint_type& peer_endpoint, boost::system::error_code& ec)
-  {
-    // We cannot accept a socket that is already open.
-    if (peer.native() != invalid_socket)
-    {
-      ec = boost::asio::error::already_connected;
-      return ec;
-    }
-
-    // Accept a socket.
-    for (;;)
-    {
-      // Try to complete the operation without blocking.
-      socket_addr_len_type addr_len = peer_endpoint.capacity();
-      boost::system::error_code ec;
-      socket_holder new_socket(socket_ops::accept(
-            impl.socket_, peer_endpoint.data(), &addr_len, ec));
+      {
+        new_socket.reset(socket_ops::accept(impl.socket_, 0, 0, ec));
+      }
 
       // Check if operation succeeded.
       if (new_socket.get() >= 0)
       {
-        peer_endpoint.resize(addr_len);
+        if (peer_endpoint)
+          peer_endpoint->resize(addr_len);
         peer.assign(impl.protocol_, new_socket.get(), ec);
         if (!ec)
           new_socket.release();
@@ -1133,12 +1219,14 @@ public:
   public:
     accept_handler(socket_type socket, boost::asio::io_service& io_service,
         Socket& peer, const protocol_type& protocol,
-        bool enable_connection_aborted, Handler handler)
+        endpoint_type* peer_endpoint, bool enable_connection_aborted,
+        Handler handler)
       : socket_(socket),
         io_service_(io_service),
         work_(io_service),
         peer_(peer),
         protocol_(protocol),
+        peer_endpoint_(peer_endpoint),
         enable_connection_aborted_(enable_connection_aborted),
         handler_(handler)
     {
@@ -1155,7 +1243,18 @@ public:
 
       // Accept the waiting connection.
       boost::system::error_code ec;
-      socket_holder new_socket(socket_ops::accept(socket_, 0, 0, ec));
+      socket_holder new_socket;
+      socket_addr_len_type addr_len = 0;
+      if (peer_endpoint_)
+      {
+        addr_len = peer_endpoint_->capacity();
+        new_socket.reset(socket_ops::accept(socket_,
+              peer_endpoint_->data(), &addr_len, ec));
+      }
+      else
+      {
+        new_socket.reset(socket_ops::accept(socket_, 0, 0, ec));
+      }
 
       // Check if we need to run the operation again.
       if (ec == boost::asio::error::would_block
@@ -1168,6 +1267,8 @@ public:
       // Transfer ownership of the new socket to the peer object.
       if (!ec)
       {
+        if (peer_endpoint_)
+          peer_endpoint_->resize(addr_len);
         peer_.assign(protocol_, new_socket.get(), ec);
         if (!ec)
           new_socket.release();
@@ -1183,24 +1284,26 @@ public:
     boost::asio::io_service::work work_;
     Socket& peer_;
     protocol_type protocol_;
+    endpoint_type* peer_endpoint_;
     bool enable_connection_aborted_;
     Handler handler_;
   };
 
-  // Start an asynchronous accept. The peer object must be valid until the
-  // accept's handler is invoked.
+  // Start an asynchronous accept. The peer and peer_endpoint objects
+  // must be valid until the accept's handler is invoked.
   template <typename Socket, typename Handler>
-  void async_accept(implementation_type& impl, Socket& peer, Handler handler)
+  void async_accept(implementation_type& impl, Socket& peer,
+      endpoint_type* peer_endpoint, Handler handler)
   {
-    if (impl.socket_ == invalid_socket)
+    if (!is_open(impl))
     {
       this->io_service().post(bind_handler(handler,
             boost::asio::error::bad_descriptor));
     }
-    else if (peer.native() != invalid_socket)
+    else if (peer.is_open())
     {
       this->io_service().post(bind_handler(handler,
-            boost::asio::error::already_connected));
+            boost::asio::error::already_open));
     }
     else
     {
@@ -1219,109 +1322,8 @@ public:
 
       reactor_.start_read_op(impl.socket_,
           accept_handler<Socket, Handler>(
-            impl.socket_, this->io_service(), peer, impl.protocol_,
-            (impl.flags_ & implementation_type::enable_connection_aborted) != 0,
-            handler));
-    }
-  }
-
-  template <typename Socket, typename Handler>
-  class accept_endp_handler
-  {
-  public:
-    accept_endp_handler(socket_type socket, boost::asio::io_service& io_service,
-        Socket& peer, endpoint_type& peer_endpoint,
-        bool enable_connection_aborted, Handler handler)
-      : socket_(socket),
-        io_service_(io_service),
-        work_(io_service),
-        peer_(peer),
-        peer_endpoint_(peer_endpoint),
-        enable_connection_aborted_(enable_connection_aborted),
-        handler_(handler)
-    {
-    }
-
-    bool operator()(const boost::system::error_code& result)
-    {
-      // Check whether the operation was successful.
-      if (result)
-      {
-        io_service_.post(bind_handler(handler_, result));
-        return true;
-      }
-
-      // Accept the waiting connection.
-      socket_addr_len_type addr_len = peer_endpoint_.capacity();
-      boost::system::error_code ec;
-      socket_holder new_socket(socket_ops::accept(
-            socket_, peer_endpoint_.data(), &addr_len, ec));
-
-      // Check if we need to run the operation again.
-      if (ec == boost::asio::error::would_block
-          || ec == boost::asio::error::try_again)
-        return false;
-      if (ec == boost::asio::error::connection_aborted
-          && !enable_connection_aborted_)
-        return false;
-
-      // Transfer ownership of the new socket to the peer object.
-      if (!ec)
-      {
-        peer_endpoint_.resize(addr_len);
-        peer_.assign(peer_endpoint_.protocol(), new_socket.get(), ec);
-        if (!ec)
-          new_socket.release();
-      }
-
-      io_service_.post(bind_handler(handler_, ec));
-      return true;
-    }
-
-  private:
-    socket_type socket_;
-    boost::asio::io_service& io_service_;
-    boost::asio::io_service::work work_;
-    Socket& peer_;
-    endpoint_type& peer_endpoint_;
-    bool enable_connection_aborted_;
-    Handler handler_;
-  };
-
-  // Start an asynchronous accept. The peer and peer_endpoint objects
-  // must be valid until the accept's handler is invoked.
-  template <typename Socket, typename Handler>
-  void async_accept_endpoint(implementation_type& impl, Socket& peer,
-      endpoint_type& peer_endpoint, Handler handler)
-  {
-    if (impl.socket_ == invalid_socket)
-    {
-      this->io_service().post(bind_handler(handler,
-            boost::asio::error::bad_descriptor));
-    }
-    else if (peer.native() != invalid_socket)
-    {
-      this->io_service().post(bind_handler(handler,
-            boost::asio::error::already_connected));
-    }
-    else
-    {
-      // Make socket non-blocking.
-      if (!(impl.flags_ & implementation_type::internal_non_blocking))
-      {
-        ioctl_arg_type non_blocking = 1;
-        boost::system::error_code ec;
-        if (socket_ops::ioctl(impl.socket_, FIONBIO, &non_blocking, ec))
-        {
-          this->io_service().post(bind_handler(handler, ec));
-          return;
-        }
-        impl.flags_ |= implementation_type::internal_non_blocking;
-      }
-
-      reactor_.start_read_op(impl.socket_,
-          accept_endp_handler<Socket, Handler>(
-            impl.socket_, this->io_service(), peer, peer_endpoint,
+            impl.socket_, this->io_service(),
+            peer, impl.protocol_, peer_endpoint,
             (impl.flags_ & implementation_type::enable_connection_aborted) != 0,
             handler));
     }
@@ -1331,28 +1333,13 @@ public:
   boost::system::error_code connect(implementation_type& impl,
       const endpoint_type& peer_endpoint, boost::system::error_code& ec)
   {
-    // Open the socket if it is not already open.
-    if (impl.socket_ == invalid_socket)
+    if (!is_open(impl))
     {
-      // Get the flags used to create the new socket.
-      int family = peer_endpoint.protocol().family();
-      int type = peer_endpoint.protocol().type();
-      int proto = peer_endpoint.protocol().protocol();
-
-      // Create a new socket.
-      impl.socket_ = socket_ops::socket(family, type, proto, ec);
-      if (impl.socket_ == invalid_socket)
-        return ec;
-
-      // Register the socket with the reactor.
-      if (int err = reactor_.register_descriptor(impl.socket_))
-      {
-        socket_ops::close(impl.socket_, ec);
-        ec = boost::system::error_code(err, boost::system::native_ecat);
-        return ec;
-      }
+      ec = boost::asio::error::bad_descriptor;
+      return ec;
     }
-    else if (impl.flags_ & implementation_type::internal_non_blocking)
+
+    if (impl.flags_ & implementation_type::internal_non_blocking)
     {
       // Mark the socket as blocking while we perform the connect.
       ioctl_arg_type non_blocking = 0;
@@ -1439,31 +1426,11 @@ public:
   void async_connect(implementation_type& impl,
       const endpoint_type& peer_endpoint, Handler handler)
   {
-    // Open the socket if it is not already open.
-    if (impl.socket_ == invalid_socket)
+    if (!is_open(impl))
     {
-      // Get the flags used to create the new socket.
-      int family = peer_endpoint.protocol().family();
-      int type = peer_endpoint.protocol().type();
-      int proto = peer_endpoint.protocol().protocol();
-
-      // Create a new socket.
-      boost::system::error_code ec;
-      impl.socket_ = socket_ops::socket(family, type, proto, ec);
-      if (impl.socket_ == invalid_socket)
-      {
-        this->io_service().post(bind_handler(handler, ec));
-        return;
-      }
-
-      // Register the socket with the reactor.
-      if (int err = reactor_.register_descriptor(impl.socket_))
-      {
-        socket_ops::close(impl.socket_, ec);
-        ec = boost::system::error_code(err, boost::system::native_ecat);
-        this->io_service().post(bind_handler(handler, ec));
-        return;
-      }
+      this->io_service().post(bind_handler(handler,
+            boost::asio::error::bad_descriptor));
+      return;
     }
 
     // Make socket non-blocking.
@@ -1508,7 +1475,7 @@ public:
   }
 
 private:
-  // The selector that performs event demultiplexing for the provider.
+  // The selector that performs event demultiplexing for the service.
   Reactor& reactor_;
 };
 

@@ -73,8 +73,8 @@ void error_test()
   test_error_code(boost::asio::error::no_recovery);
   test_error_code(boost::asio::error::not_connected);
   test_error_code(boost::asio::error::not_socket);
-  test_error_code(boost::asio::error::not_supported);
   test_error_code(boost::asio::error::operation_aborted);
+  test_error_code(boost::asio::error::operation_not_supported);
   test_error_code(boost::asio::error::service_not_found);
   test_error_code(boost::asio::error::shut_down);
   test_error_code(boost::asio::error::timed_out);

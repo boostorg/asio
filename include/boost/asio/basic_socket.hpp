@@ -226,6 +226,12 @@ public:
         protocol, native_socket, ec);
   }
 
+  /// Determine whether the socket is open.
+  bool is_open() const
+  {
+    return this->service.is_open(this->implementation);
+  }
+
   /// Close the socket.
   /**
    * This function is used to close the socket. Any asynchronous send, receive
@@ -303,6 +309,72 @@ public:
   boost::system::error_code cancel(boost::system::error_code& ec)
   {
     return this->service.cancel(this->implementation, ec);
+  }
+
+  /// Determine whether the socket is at the out-of-band data mark.
+  /**
+   * This function is used to check whether the socket input is currently
+   * positioned at the out-of-band data mark.
+   *
+   * @return A bool indicating whether the socket is at the out-of-band data
+   * mark.
+   *
+   * @throws boost::system::system_error Thrown on failure.
+   */
+  bool at_mark() const
+  {
+    boost::system::error_code ec;
+    bool b = this->service.at_mark(this->implementation, ec);
+    boost::asio::detail::throw_error(ec);
+    return b;
+  }
+
+  /// Determine whether the socket is at the out-of-band data mark.
+  /**
+   * This function is used to check whether the socket input is currently
+   * positioned at the out-of-band data mark.
+   *
+   * @param ec Set to indicate what error occurred, if any.
+   *
+   * @return A bool indicating whether the socket is at the out-of-band data
+   * mark.
+   */
+  bool at_mark(boost::system::error_code& ec) const
+  {
+    return this->service.at_mark(this->implementation, ec);
+  }
+
+  /// Determine the number of bytes available for reading.
+  /**
+   * This function is used to determine the number of bytes that may be read
+   * without blocking.
+   *
+   * @return The number of bytes that may be read without blocking, or 0 if an
+   * error occurs.
+   *
+   * @throws boost::system::system_error Thrown on failure.
+   */
+  std::size_t available() const
+  {
+    boost::system::error_code ec;
+    std::size_t s = this->service.available(this->implementation, ec);
+    boost::asio::detail::throw_error(ec);
+    return s;
+  }
+
+  /// Determine the number of bytes available for reading.
+  /**
+   * This function is used to determine the number of bytes that may be read
+   * without blocking.
+   *
+   * @param ec Set to indicate what error occurred, if any.
+   *
+   * @return The number of bytes that may be read without blocking, or 0 if an
+   * error occurs.
+   */
+  std::size_t available(boost::system::error_code& ec) const
+  {
+    return this->service.available(this->implementation, ec);
   }
 
   /// Bind the socket to the given local endpoint.
@@ -385,6 +457,11 @@ public:
   void connect(const endpoint_type& peer_endpoint)
   {
     boost::system::error_code ec;
+    if (!is_open())
+    {
+      this->service.open(this->implementation, peer_endpoint.protocol(), ec);
+      boost::asio::detail::throw_error(ec);
+    }
     this->service.connect(this->implementation, peer_endpoint, ec);
     boost::asio::detail::throw_error(ec);
   }
@@ -420,6 +497,15 @@ public:
   boost::system::error_code connect(const endpoint_type& peer_endpoint,
       boost::system::error_code& ec)
   {
+    if (!is_open())
+    {
+      if (this->service.open(this->implementation,
+            peer_endpoint.protocol(), ec))
+      {
+        return ec;
+      }
+    }
+
     return this->service.connect(this->implementation, peer_endpoint, ec);
   }
 
@@ -467,6 +553,17 @@ public:
   template <typename ConnectHandler>
   void async_connect(const endpoint_type& peer_endpoint, ConnectHandler handler)
   {
+    if (!is_open())
+    {
+      boost::system::error_code ec;
+      if (this->service.open(this->implementation,
+            peer_endpoint.protocol(), ec))
+      {
+        this->io_service().post(boost::asio::detail::bind_handler(handler, ec));
+        return;
+      }
+    }
+
     this->service.async_connect(this->implementation, peer_endpoint, handler);
   }
 
