@@ -789,6 +789,7 @@ public:
     // A request to receive 0 bytes on a stream socket is a no-op.
     if (impl.protocol_.type() == SOCK_STREAM && total_buffer_size == 0)
     {
+      boost::asio::io_service::work work(this->io_service());
       ptr.reset();
       boost::system::error_code error;
       iocp_service_.post(bind_handler(handler, error, 0));
@@ -804,6 +805,7 @@ public:
     // Check if the operation completed immediately.
     if (result != 0 && last_error != WSA_IO_PENDING)
     {
+      boost::asio::io_service::work work(this->io_service());
       ptr.reset();
       boost::system::error_code ec(last_error, boost::system::native_ecat);
       iocp_service_.post(bind_handler(handler, ec, bytes_transferred));
@@ -979,6 +981,7 @@ public:
     // Check if the operation completed immediately.
     if (result != 0 && last_error != WSA_IO_PENDING)
     {
+      boost::asio::io_service::work work(this->io_service());
       ptr.reset();
       boost::system::error_code ec(last_error, boost::system::native_ecat);
       iocp_service_.post(bind_handler(handler, ec, bytes_transferred));
@@ -1182,6 +1185,7 @@ public:
     // A request to receive 0 bytes on a stream socket is a no-op.
     if (impl.protocol_.type() == SOCK_STREAM && total_buffer_size == 0)
     {
+      boost::asio::io_service::work work(this->io_service());
       ptr.reset();
       boost::system::error_code error;
       iocp_service_.post(bind_handler(handler, error, 0));
@@ -1196,6 +1200,7 @@ public:
     DWORD last_error = ::WSAGetLastError();
     if (result != 0 && last_error != WSA_IO_PENDING)
     {
+      boost::asio::io_service::work work(this->io_service());
       ptr.reset();
       boost::system::error_code ec(last_error, boost::system::native_ecat);
       iocp_service_.post(bind_handler(handler, ec, bytes_transferred));
@@ -1401,6 +1406,7 @@ public:
     DWORD last_error = ::WSAGetLastError();
     if (result != 0 && last_error != WSA_IO_PENDING)
     {
+      boost::asio::io_service::work work(this->io_service());
       ptr.reset();
       boost::system::error_code ec(last_error, boost::system::native_ecat);
       iocp_service_.post(bind_handler(handler, ec, bytes_transferred));
@@ -1737,6 +1743,7 @@ public:
       }
       else
       {
+        boost::asio::io_service::work work(this->io_service());
         ptr.reset();
         boost::system::error_code ec(last_error, boost::system::native_ecat);
         iocp_service_.post(bind_handler(handler, ec));
