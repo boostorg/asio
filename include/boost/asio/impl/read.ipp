@@ -122,7 +122,10 @@ namespace detail
   class read_handler
   {
   public:
-    read_handler(AsyncReadStream& stream, const MutableBufferSequence& buffers,
+    typedef boost::asio::detail::consuming_buffers<
+      mutable_buffer, MutableBufferSequence> buffers_type;
+
+    read_handler(AsyncReadStream& stream, const buffers_type& buffers,
         CompletionCondition completion_condition, ReadHandler handler)
       : stream_(stream),
         buffers_(buffers),
@@ -150,8 +153,7 @@ namespace detail
 
   //private:
     AsyncReadStream& stream_;
-    boost::asio::detail::consuming_buffers<
-      mutable_buffer, MutableBufferSequence> buffers_;
+    buffers_type buffers_;
     std::size_t total_transferred_;
     CompletionCondition completion_condition_;
     ReadHandler handler_;
@@ -194,10 +196,12 @@ template <typename AsyncReadStream, typename MutableBufferSequence,
 inline void async_read(AsyncReadStream& s, const MutableBufferSequence& buffers,
     CompletionCondition completion_condition, ReadHandler handler)
 {
-  s.async_read_some(buffers,
+  boost::asio::detail::consuming_buffers<
+    mutable_buffer, MutableBufferSequence> tmp(buffers);
+  s.async_read_some(tmp,
       detail::read_handler<AsyncReadStream, MutableBufferSequence,
         CompletionCondition, ReadHandler>(
-          s, buffers, completion_condition, handler));
+          s, tmp, completion_condition, handler));
 }
 
 template <typename AsyncReadStream, typename MutableBufferSequence,
