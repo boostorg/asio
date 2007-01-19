@@ -126,6 +126,15 @@ boost_asio.reference.basic_stream_socket].
 * [@../../example/services/stream_socket_service.hpp]
 
 
+[heading SOCKS 4]
+
+Example client program implementing the SOCKS 4 protocol for communication via
+a proxy.
+
+* [@../../example/socks4/sync_client.cpp]
+* [@../../example/socks4/socks4.hpp]
+
+
 [heading SSL]
 
 Example client and server programs showing the use of the [link
