@@ -1150,6 +1150,13 @@ Provides datagram-oriented socket functionality.
 
   [
 
+    [[link boost_asio.reference.basic_datagram_socket.debug [*debug]]]
+    [Socket option to enable socket-level debugging. ]
+  
+  ]
+
+  [
+
     [[link boost_asio.reference.basic_datagram_socket.do_not_route [*do_not_route]]]
     [Socket option to prevent routing, use local interfaces only. ]
   
@@ -1311,6 +1318,16 @@ Provides datagram-oriented socket functionality.
   ]
   
   [
+    [[link boost_asio.reference.basic_datagram_socket.at_mark [*at_mark]]]
+    [Determine whether the socket is at the out-of-band data mark. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.basic_datagram_socket.available [*available]]]
+    [Determine the number of bytes available for reading. ]
+  ]
+  
+  [
     [[link boost_asio.reference.basic_datagram_socket.basic_datagram_socket [*basic_datagram_socket]]]
     [Construct a basic_datagram_socket without opening it. ]
   ]
@@ -1348,6 +1365,11 @@ Provides datagram-oriented socket functionality.
   [
     [[link boost_asio.reference.basic_datagram_socket.io_service [*io_service]]]
     [Get the io_service associated with the object. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.basic_datagram_socket.is_open [*is_open]]]
+    [Determine whether the socket is open. ]
   ]
   
   [
@@ -2051,6 +2073,158 @@ Regardless of whether the asynchronous operation completes immediately or not, t
 
 [endsect]
 
+[section:at_mark basic_datagram_socket::at_mark]
+
+Determine whether the socket is at the out-of-band data mark. 
+
+  bool ``[link boost_asio.reference.basic_datagram_socket.at_mark.overload1 at_mark]``() const;
+
+  bool ``[link boost_asio.reference.basic_datagram_socket.at_mark.overload2 at_mark]``(
+      boost::system::error_code & ec) const;
+
+
+[section:overload1 basic_datagram_socket::at_mark (1 of 2 overloads)]
+
+
+['Inherited from basic_socket.]
+
+Determine whether the socket is at the out-of-band data mark. 
+
+  bool at_mark() const;
+
+
+This function is used to check whether the socket input is currently positioned at the out-of-band data mark.
+
+
+[heading Return Value]
+      
+A bool indicating whether the socket is at the out-of-band data mark.
+
+[heading Exceptions]
+    
+
+[variablelist
+  
+[[boost::system::system_error][Thrown on failure. ]]
+
+]
+
+
+
+[endsect]
+
+
+
+[section:overload2 basic_datagram_socket::at_mark (2 of 2 overloads)]
+
+
+['Inherited from basic_socket.]
+
+Determine whether the socket is at the out-of-band data mark. 
+
+  bool at_mark(
+      boost::system::error_code & ec) const;
+
+
+This function is used to check whether the socket input is currently positioned at the out-of-band data mark.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[ec][Set to indicate what error occurred, if any.]]
+
+]
+
+[heading Return Value]
+      
+A bool indicating whether the socket is at the out-of-band data mark. 
+
+
+
+[endsect]
+
+
+[endsect]
+
+[section:available basic_datagram_socket::available]
+
+Determine the number of bytes available for reading. 
+
+  std::size_t ``[link boost_asio.reference.basic_datagram_socket.available.overload1 available]``() const;
+
+  std::size_t ``[link boost_asio.reference.basic_datagram_socket.available.overload2 available]``(
+      boost::system::error_code & ec) const;
+
+
+[section:overload1 basic_datagram_socket::available (1 of 2 overloads)]
+
+
+['Inherited from basic_socket.]
+
+Determine the number of bytes available for reading. 
+
+  std::size_t available() const;
+
+
+This function is used to determine the number of bytes that may be read without blocking.
+
+
+[heading Return Value]
+      
+The number of bytes that may be read without blocking, or 0 if an error occurs.
+
+[heading Exceptions]
+    
+
+[variablelist
+  
+[[boost::system::system_error][Thrown on failure. ]]
+
+]
+
+
+
+[endsect]
+
+
+
+[section:overload2 basic_datagram_socket::available (2 of 2 overloads)]
+
+
+['Inherited from basic_socket.]
+
+Determine the number of bytes available for reading. 
+
+  std::size_t available(
+      boost::system::error_code & ec) const;
+
+
+This function is used to determine the number of bytes that may be read without blocking.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[ec][Set to indicate what error occurred, if any.]]
+
+]
+
+[heading Return Value]
+      
+The number of bytes that may be read without blocking, or 0 if an error occurs. 
+
+
+
+[endsect]
+
+
+[endsect]
+
 [section:basic_datagram_socket basic_datagram_socket::basic_datagram_socket]
 
 Construct a basic_datagram_socket without opening it. 
@@ -2673,6 +2847,49 @@ The socket is automatically opened if it is not already open. If the connect fai
 [endsect]
 
 
+[section:debug basic_datagram_socket::debug]
+
+
+['Inherited from socket_base.]
+
+Socket option to enable socket-level debugging. 
+
+  typedef implementation_defined debug;
+
+
+
+Implements the SOL\_SOCKET/SO\_DEBUG socket option.
+
+
+[heading Examples]
+  
+Setting the option: 
+
+   boost::asio::ip::tcp::socket socket(io_service); 
+   ...
+   boost::asio::socket_base::debug option(true);
+   socket.set_option(option);
+
+
+
+
+Getting the current option value: 
+
+   boost::asio::ip::tcp::socket socket(io_service); 
+   ...
+   boost::asio::socket_base::debug option;
+   socket.get_option(option);
+   bool is_set = option.value();
+
+
+
+
+
+
+[endsect]
+
+
+
 [section:do_not_route basic_datagram_socket::do_not_route]
 
 
@@ -3039,6 +3256,21 @@ A reference to the io_service object that the I/O object will use to dispatch ha
 
 
 
+[section:is_open basic_datagram_socket::is_open]
+
+
+['Inherited from basic_socket.]
+
+Determine whether the socket is open. 
+
+  bool is_open() const;
+
+
+
+[endsect]
+
+
+
 [section:keep_alive basic_datagram_socket::keep_alive]
 
 
@@ -3282,6 +3514,13 @@ A basic_socket is always the lowest layer.
 
   [
 
+    [[link boost_asio.reference.basic_socket.debug [*debug]]]
+    [Socket option to enable socket-level debugging. ]
+  
+  ]
+
+  [
+
     [[link boost_asio.reference.basic_socket.do_not_route [*do_not_route]]]
     [Socket option to prevent routing, use local interfaces only. ]
   
@@ -3423,6 +3662,16 @@ A basic_socket is always the lowest layer.
   ]
   
   [
+    [[link boost_asio.reference.basic_socket.at_mark [*at_mark]]]
+    [Determine whether the socket is at the out-of-band data mark. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.basic_socket.available [*available]]]
+    [Determine the number of bytes available for reading. ]
+  ]
+  
+  [
     [[link boost_asio.reference.basic_socket.basic_socket [*basic_socket]]]
     [Construct a basic_socket without opening it. ]
   ]
@@ -3460,6 +3709,11 @@ A basic_socket is always the lowest layer.
   [
     [[link boost_asio.reference.basic_socket.io_service [*io_service]]]
     [Get the io_service associated with the object. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.basic_socket.is_open [*is_open]]]
+    [Determine whether the socket is open. ]
   ]
   
   [
@@ -5352,8 +5606,17 @@ This constructor creates a timer and sets the expiry time.
 
 [endsect]
 
-
 [section:cancel basic_deadline_timer::cancel]
+
+Cancel any asynchronous operations that are waiting on the timer. 
+
+  std::size_t ``[link boost_asio.reference.basic_deadline_timer.cancel.overload1 cancel]``();
+
+  std::size_t ``[link boost_asio.reference.basic_deadline_timer.cancel.overload2 cancel]``(
+      boost::system::error_code & ec);
+
+
+[section:overload1 basic_deadline_timer::cancel (1 of 2 overloads)]
 
 Cancel any asynchronous operations that are waiting on the timer. 
 
@@ -5367,12 +5630,55 @@ Cancelling the timer does not change the expiry time.
 
 [heading Return Value]
       
+The number of asynchronous operations that were cancelled.
+
+[heading Exceptions]
+    
+
+[variablelist
+  
+[[boost::system::system_error][Thrown on failure. ]]
+
+]
+
+
+
+[endsect]
+
+
+
+[section:overload2 basic_deadline_timer::cancel (2 of 2 overloads)]
+
+Cancel any asynchronous operations that are waiting on the timer. 
+
+  std::size_t cancel(
+      boost::system::error_code & ec);
+
+
+This function forces the completion of any pending asynchronous wait operations against the timer. The handler for each cancelled operation will be invoked with the boost::asio::error::operation\_aborted error code.
+
+Cancelling the timer does not change the expiry time.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[ec][Set to indicate what error occurred, if any.]]
+
+]
+
+[heading Return Value]
+      
 The number of asynchronous operations that were cancelled. 
 
 
 
 [endsect]
 
+
+[endsect]
 
 
 [section:duration_type basic_deadline_timer::duration_type]
@@ -5396,8 +5702,12 @@ Get the timer's expiry time as an absolute time.
   std::size_t ``[link boost_asio.reference.basic_deadline_timer.expires_at.overload2 expires_at]``(
       const time_type & expiry_time);
 
+  std::size_t ``[link boost_asio.reference.basic_deadline_timer.expires_at.overload3 expires_at]``(
+      const time_type & expiry_time,
+      boost::system::error_code & ec);
 
-[section:overload1 basic_deadline_timer::expires_at (1 of 2 overloads)]
+
+[section:overload1 basic_deadline_timer::expires_at (1 of 3 overloads)]
 
 Get the timer's expiry time as an absolute time. 
 
@@ -5411,7 +5721,7 @@ This function may be used to obtain the timer's current expiry time. Whether the
 
 
 
-[section:overload2 basic_deadline_timer::expires_at (2 of 2 overloads)]
+[section:overload2 basic_deadline_timer::expires_at (2 of 3 overloads)]
 
 Set the timer's expiry time as an absolute time. 
 
@@ -5435,6 +5745,50 @@ See Changing an active deadline_timer's expiry time  for more information on alt
 
 [heading Return Value]
       
+The number of asynchronous operations that were cancelled.
+
+[heading Exceptions]
+    
+
+[variablelist
+  
+[[boost::system::system_error][Thrown on failure. ]]
+
+]
+
+
+
+[endsect]
+
+
+
+[section:overload3 basic_deadline_timer::expires_at (3 of 3 overloads)]
+
+Set the timer's expiry time as an absolute time. 
+
+  std::size_t expires_at(
+      const time_type & expiry_time,
+      boost::system::error_code & ec);
+
+
+This function sets the expiry time. Any pending asynchronous wait operations will be cancelled. The handler for each cancelled operation will be invoked with the boost::asio::error::operation\_aborted error code.
+
+See Changing an active deadline_timer's expiry time  for more information on altering the expiry time of an active timer.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[expiry_time][The expiry time to be used for the timer.]]
+
+[[ec][Set to indicate what error occurred, if any.]]
+
+]
+
+[heading Return Value]
+      
 The number of asynchronous operations that were cancelled. 
 
 
@@ -5453,8 +5807,12 @@ Get the timer's expiry time relative to now.
   std::size_t ``[link boost_asio.reference.basic_deadline_timer.expires_from_now.overload2 expires_from_now]``(
       const duration_type & expiry_time);
 
+  std::size_t ``[link boost_asio.reference.basic_deadline_timer.expires_from_now.overload3 expires_from_now]``(
+      const duration_type & expiry_time,
+      boost::system::error_code & ec);
 
-[section:overload1 basic_deadline_timer::expires_from_now (1 of 2 overloads)]
+
+[section:overload1 basic_deadline_timer::expires_from_now (1 of 3 overloads)]
 
 Get the timer's expiry time relative to now. 
 
@@ -5468,7 +5826,7 @@ This function may be used to obtain the timer's current expiry time. Whether the
 
 
 
-[section:overload2 basic_deadline_timer::expires_from_now (2 of 2 overloads)]
+[section:overload2 basic_deadline_timer::expires_from_now (2 of 3 overloads)]
 
 Set the timer's expiry time relative to now. 
 
@@ -5487,6 +5845,50 @@ See Changing an active deadline_timer's expiry time  for more information on alt
 [variablelist
   
 [[expiry_time][The expiry time to be used for the timer.]]
+
+]
+
+[heading Return Value]
+      
+The number of asynchronous operations that were cancelled.
+
+[heading Exceptions]
+    
+
+[variablelist
+  
+[[boost::system::system_error][Thrown on failure. ]]
+
+]
+
+
+
+[endsect]
+
+
+
+[section:overload3 basic_deadline_timer::expires_from_now (3 of 3 overloads)]
+
+Set the timer's expiry time relative to now. 
+
+  std::size_t expires_from_now(
+      const duration_type & expiry_time,
+      boost::system::error_code & ec);
+
+
+This function sets the expiry time. Any pending asynchronous wait operations will be cancelled. The handler for each cancelled operation will be invoked with the boost::asio::error::operation\_aborted error code.
+
+See Changing an active deadline_timer's expiry time  for more information on altering the expiry time of an active timer.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[expiry_time][The expiry time to be used for the timer.]]
+
+[[ec][Set to indicate what error occurred, if any.]]
 
 ]
 
@@ -5582,8 +5984,17 @@ The time traits type.
 [endsect]
 
 
-
 [section:wait basic_deadline_timer::wait]
+
+Perform a blocking wait on the timer. 
+
+  void ``[link boost_asio.reference.basic_deadline_timer.wait.overload1 wait]``();
+
+  void ``[link boost_asio.reference.basic_deadline_timer.wait.overload2 wait]``(
+      boost::system::error_code & ec);
+
+
+[section:overload1 basic_deadline_timer::wait (1 of 2 overloads)]
 
 Perform a blocking wait on the timer. 
 
@@ -5606,6 +6017,34 @@ This function is used to wait for the timer to expire. This function blocks and 
 
 [endsect]
 
+
+
+[section:overload2 basic_deadline_timer::wait (2 of 2 overloads)]
+
+Perform a blocking wait on the timer. 
+
+  void wait(
+      boost::system::error_code & ec);
+
+
+This function is used to wait for the timer to expire. This function blocks and does not return until the timer has expired.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[ec][Set to indicate what error occurred, if any. ]]
+
+]
+
+
+
+[endsect]
+
+
+[endsect]
 
 
 [endsect]
@@ -5726,6 +6165,13 @@ Provides socket functionality.
 
     [[link boost_asio.reference.basic_socket.bytes_readable [*bytes_readable]]]
     [IO control command to get the amount of data that can be read without blocking. ]
+  
+  ]
+
+  [
+
+    [[link boost_asio.reference.basic_socket.debug [*debug]]]
+    [Socket option to enable socket-level debugging. ]
   
   ]
 
@@ -5872,6 +6318,16 @@ Provides socket functionality.
   ]
   
   [
+    [[link boost_asio.reference.basic_socket.at_mark [*at_mark]]]
+    [Determine whether the socket is at the out-of-band data mark. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.basic_socket.available [*available]]]
+    [Determine the number of bytes available for reading. ]
+  ]
+  
+  [
     [[link boost_asio.reference.basic_socket.basic_socket [*basic_socket]]]
     [Construct a basic_socket without opening it. ]
   ]
@@ -5909,6 +6365,11 @@ Provides socket functionality.
   [
     [[link boost_asio.reference.basic_socket.io_service [*io_service]]]
     [Get the io_service associated with the object. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.basic_socket.is_open [*is_open]]]
+    [Determine whether the socket is open. ]
   ]
   
   [
@@ -6088,6 +6549,146 @@ Regardless of whether the asynchronous operation completes immediately or not, t
 
 [endsect]
 
+
+[section:at_mark basic_socket::at_mark]
+
+Determine whether the socket is at the out-of-band data mark. 
+
+  bool ``[link boost_asio.reference.basic_socket.at_mark.overload1 at_mark]``() const;
+
+  bool ``[link boost_asio.reference.basic_socket.at_mark.overload2 at_mark]``(
+      boost::system::error_code & ec) const;
+
+
+[section:overload1 basic_socket::at_mark (1 of 2 overloads)]
+
+Determine whether the socket is at the out-of-band data mark. 
+
+  bool at_mark() const;
+
+
+This function is used to check whether the socket input is currently positioned at the out-of-band data mark.
+
+
+[heading Return Value]
+      
+A bool indicating whether the socket is at the out-of-band data mark.
+
+[heading Exceptions]
+    
+
+[variablelist
+  
+[[boost::system::system_error][Thrown on failure. ]]
+
+]
+
+
+
+[endsect]
+
+
+
+[section:overload2 basic_socket::at_mark (2 of 2 overloads)]
+
+Determine whether the socket is at the out-of-band data mark. 
+
+  bool at_mark(
+      boost::system::error_code & ec) const;
+
+
+This function is used to check whether the socket input is currently positioned at the out-of-band data mark.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[ec][Set to indicate what error occurred, if any.]]
+
+]
+
+[heading Return Value]
+      
+A bool indicating whether the socket is at the out-of-band data mark. 
+
+
+
+[endsect]
+
+
+[endsect]
+
+[section:available basic_socket::available]
+
+Determine the number of bytes available for reading. 
+
+  std::size_t ``[link boost_asio.reference.basic_socket.available.overload1 available]``() const;
+
+  std::size_t ``[link boost_asio.reference.basic_socket.available.overload2 available]``(
+      boost::system::error_code & ec) const;
+
+
+[section:overload1 basic_socket::available (1 of 2 overloads)]
+
+Determine the number of bytes available for reading. 
+
+  std::size_t available() const;
+
+
+This function is used to determine the number of bytes that may be read without blocking.
+
+
+[heading Return Value]
+      
+The number of bytes that may be read without blocking, or 0 if an error occurs.
+
+[heading Exceptions]
+    
+
+[variablelist
+  
+[[boost::system::system_error][Thrown on failure. ]]
+
+]
+
+
+
+[endsect]
+
+
+
+[section:overload2 basic_socket::available (2 of 2 overloads)]
+
+Determine the number of bytes available for reading. 
+
+  std::size_t available(
+      boost::system::error_code & ec) const;
+
+
+This function is used to determine the number of bytes that may be read without blocking.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[ec][Set to indicate what error occurred, if any.]]
+
+]
+
+[heading Return Value]
+      
+The number of bytes that may be read without blocking, or 0 if an error occurs. 
+
+
+
+[endsect]
+
+
+[endsect]
 
 [section:basic_socket basic_socket::basic_socket]
 
@@ -6687,6 +7288,49 @@ The socket is automatically opened if it is not already open. If the connect fai
 [endsect]
 
 
+[section:debug basic_socket::debug]
+
+
+['Inherited from socket_base.]
+
+Socket option to enable socket-level debugging. 
+
+  typedef implementation_defined debug;
+
+
+
+Implements the SOL\_SOCKET/SO\_DEBUG socket option.
+
+
+[heading Examples]
+  
+Setting the option: 
+
+   boost::asio::ip::tcp::socket socket(io_service); 
+   ...
+   boost::asio::socket_base::debug option(true);
+   socket.set_option(option);
+
+
+
+
+Getting the current option value: 
+
+   boost::asio::ip::tcp::socket socket(io_service); 
+   ...
+   boost::asio::socket_base::debug option;
+   socket.get_option(option);
+   bool is_set = option.value();
+
+
+
+
+
+
+[endsect]
+
+
+
 [section:do_not_route basic_socket::do_not_route]
 
 
@@ -7057,6 +7701,18 @@ A reference to the io_service object that the I/O object will use to dispatch ha
 
 
 
+[section:is_open basic_socket::is_open]
+
+Determine whether the socket is open. 
+
+  bool is_open() const;
+
+
+
+[endsect]
+
+
+
 [section:keep_alive basic_socket::keep_alive]
 
 
@@ -7288,6 +7944,13 @@ A basic_socket is always the lowest layer.
 
   [
 
+    [[link boost_asio.reference.basic_socket.debug [*debug]]]
+    [Socket option to enable socket-level debugging. ]
+  
+  ]
+
+  [
+
     [[link boost_asio.reference.basic_socket.do_not_route [*do_not_route]]]
     [Socket option to prevent routing, use local interfaces only. ]
   
@@ -7429,6 +8092,16 @@ A basic_socket is always the lowest layer.
   ]
   
   [
+    [[link boost_asio.reference.basic_socket.at_mark [*at_mark]]]
+    [Determine whether the socket is at the out-of-band data mark. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.basic_socket.available [*available]]]
+    [Determine the number of bytes available for reading. ]
+  ]
+  
+  [
     [[link boost_asio.reference.basic_socket.basic_socket [*basic_socket]]]
     [Construct a basic_socket without opening it. ]
   ]
@@ -7466,6 +8139,11 @@ A basic_socket is always the lowest layer.
   [
     [[link boost_asio.reference.basic_socket.io_service [*io_service]]]
     [Get the io_service associated with the object. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.basic_socket.is_open [*is_open]]]
+    [Determine whether the socket is open. ]
   ]
   
   [
@@ -8402,6 +9080,13 @@ Provides the ability to accept new connections.
 
   [
 
+    [[link boost_asio.reference.basic_socket_acceptor.debug [*debug]]]
+    [Socket option to enable socket-level debugging. ]
+  
+  ]
+
+  [
+
     [[link boost_asio.reference.basic_socket_acceptor.do_not_route [*do_not_route]]]
     [Socket option to prevent routing, use local interfaces only. ]
   
@@ -8531,22 +9216,12 @@ Provides the ability to accept new connections.
   ]
   
   [
-    [[link boost_asio.reference.basic_socket_acceptor.accept_endpoint [*accept_endpoint]]]
-    [Accept a new connection and obtain the endpoint of the peer. ]
-  ]
-  
-  [
     [[link boost_asio.reference.basic_socket_acceptor.assign [*assign]]]
     [Assigns an existing native acceptor to the acceptor. ]
   ]
   
   [
     [[link boost_asio.reference.basic_socket_acceptor.async_accept [*async_accept]]]
-    [Start an asynchronous accept. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.basic_socket_acceptor.async_accept_endpoint [*async_accept_endpoint]]]
     [Start an asynchronous accept. ]
   ]
   
@@ -8671,8 +9346,21 @@ Accept a new connection.
       basic_socket< protocol_type, SocketService > & peer,
       boost::system::error_code & ec);
 
+  template<
+      typename SocketService>
+  void ``[link boost_asio.reference.basic_socket_acceptor.accept.overload3 accept]``(
+      basic_socket< protocol_type, SocketService > & peer,
+      endpoint_type & peer_endpoint);
 
-[section:overload1 basic_socket_acceptor::accept (1 of 2 overloads)]
+  template<
+      typename SocketService>
+  boost::system::error_code ``[link boost_asio.reference.basic_socket_acceptor.accept.overload4 accept]``(
+      basic_socket< protocol_type, SocketService > & peer,
+      endpoint_type & peer_endpoint,
+      boost::system::error_code & ec);
+
+
+[section:overload1 basic_socket_acceptor::accept (1 of 4 overloads)]
 
 Accept a new connection. 
 
@@ -8721,7 +9409,7 @@ This function is used to accept a new connection from a peer into the given sock
 
 
 
-[section:overload2 basic_socket_acceptor::accept (2 of 2 overloads)]
+[section:overload2 basic_socket_acceptor::accept (2 of 4 overloads)]
 
 Accept a new connection. 
 
@@ -8768,33 +9456,14 @@ This function is used to accept a new connection from a peer into the given sock
 [endsect]
 
 
-[endsect]
 
-[section:accept_endpoint basic_socket_acceptor::accept_endpoint]
-
-Accept a new connection and obtain the endpoint of the peer. 
-
-  template<
-      typename SocketService>
-  void ``[link boost_asio.reference.basic_socket_acceptor.accept_endpoint.overload1 accept_endpoint]``(
-      basic_socket< protocol_type, SocketService > & peer,
-      endpoint_type & peer_endpoint);
-
-  template<
-      typename SocketService>
-  boost::system::error_code ``[link boost_asio.reference.basic_socket_acceptor.accept_endpoint.overload2 accept_endpoint]``(
-      basic_socket< protocol_type, SocketService > & peer,
-      endpoint_type & peer_endpoint,
-      boost::system::error_code & ec);
-
-
-[section:overload1 basic_socket_acceptor::accept_endpoint (1 of 2 overloads)]
+[section:overload3 basic_socket_acceptor::accept (3 of 4 overloads)]
 
 Accept a new connection and obtain the endpoint of the peer. 
 
   template<
       typename SocketService>
-  void accept_endpoint(
+  void accept(
       basic_socket< protocol_type, SocketService > & peer,
       endpoint_type & peer_endpoint);
 
@@ -8830,7 +9499,7 @@ This function is used to accept a new connection from a peer into the given sock
    ...
    boost::asio::ip::tcp::socket socket(io_service);
    boost::asio::ip::tcp::endpoint endpoint;
-   acceptor.accept_endpoint(socket, endpoint);
+   acceptor.accept(socket, endpoint);
 
 
 
@@ -8841,13 +9510,13 @@ This function is used to accept a new connection from a peer into the given sock
 
 
 
-[section:overload2 basic_socket_acceptor::accept_endpoint (2 of 2 overloads)]
+[section:overload4 basic_socket_acceptor::accept (4 of 4 overloads)]
 
 Accept a new connection and obtain the endpoint of the peer. 
 
   template<
       typename SocketService>
-  boost::system::error_code accept_endpoint(
+  boost::system::error_code accept(
       basic_socket< protocol_type, SocketService > & peer,
       endpoint_type & peer_endpoint,
       boost::system::error_code & ec);
@@ -8878,7 +9547,7 @@ This function is used to accept a new connection from a peer into the given sock
    boost::asio::ip::tcp::socket socket(io_service);
    boost::asio::ip::tcp::endpoint endpoint;
    boost::system::error_code ec;
-   acceptor.accept_endpoint(socket, endpoint, ec);
+   acceptor.accept(socket, endpoint, ec);
    if (ec)
    {
      // An error occurred.
@@ -8938,8 +9607,27 @@ Assigns an existing native acceptor to the acceptor.
 
 [endsect]
 
-
 [section:async_accept basic_socket_acceptor::async_accept]
+
+Start an asynchronous accept. 
+
+  template<
+      typename SocketService,
+      typename AcceptHandler>
+  void ``[link boost_asio.reference.basic_socket_acceptor.async_accept.overload1 async_accept]``(
+      basic_socket< protocol_type, SocketService > & peer,
+      AcceptHandler handler);
+
+  template<
+      typename SocketService,
+      typename AcceptHandler>
+  void ``[link boost_asio.reference.basic_socket_acceptor.async_accept.overload2 async_accept]``(
+      basic_socket< protocol_type, SocketService > & peer,
+      endpoint_type & peer_endpoint,
+      AcceptHandler handler);
+
+
+[section:overload1 basic_socket_acceptor::async_accept (1 of 2 overloads)]
 
 Start an asynchronous accept. 
 
@@ -9000,14 +9688,14 @@ Regardless of whether the asynchronous operation completes immediately or not, t
 
 
 
-[section:async_accept_endpoint basic_socket_acceptor::async_accept_endpoint]
+[section:overload2 basic_socket_acceptor::async_accept (2 of 2 overloads)]
 
 Start an asynchronous accept. 
 
   template<
       typename SocketService,
       typename AcceptHandler>
-  void async_accept_endpoint(
+  void async_accept(
       basic_socket< protocol_type, SocketService > & peer,
       endpoint_type & peer_endpoint,
       AcceptHandler handler);
@@ -9040,6 +9728,8 @@ Regardless of whether the asynchronous operation completes immediately or not, t
 
 [endsect]
 
+
+[endsect]
 
 [section:basic_socket_acceptor basic_socket_acceptor::basic_socket_acceptor]
 
@@ -9547,6 +10237,49 @@ A subsequent call to open() is required before the acceptor can again be used to
 
 
 [endsect]
+
+
+[section:debug basic_socket_acceptor::debug]
+
+
+['Inherited from socket_base.]
+
+Socket option to enable socket-level debugging. 
+
+  typedef implementation_defined debug;
+
+
+
+Implements the SOL\_SOCKET/SO\_DEBUG socket option.
+
+
+[heading Examples]
+  
+Setting the option: 
+
+   boost::asio::ip::tcp::socket socket(io_service); 
+   ...
+   boost::asio::socket_base::debug option(true);
+   socket.set_option(option);
+
+
+
+
+Getting the current option value: 
+
+   boost::asio::ip::tcp::socket socket(io_service); 
+   ...
+   boost::asio::socket_base::debug option;
+   socket.get_option(option);
+   bool is_set = option.value();
+
+
+
+
+
+
+[endsect]
+
 
 
 [section:do_not_route basic_socket_acceptor::do_not_route]
@@ -10877,6 +11610,13 @@ Iostream streambuf for a socket.
 
   [
 
+    [[link boost_asio.reference.basic_socket_streambuf.debug [*debug]]]
+    [Socket option to enable socket-level debugging. ]
+  
+  ]
+
+  [
+
     [[link boost_asio.reference.basic_socket_streambuf.do_not_route [*do_not_route]]]
     [Socket option to prevent routing, use local interfaces only. ]
   
@@ -11018,6 +11758,16 @@ Iostream streambuf for a socket.
   ]
   
   [
+    [[link boost_asio.reference.basic_socket_streambuf.at_mark [*at_mark]]]
+    [Determine whether the socket is at the out-of-band data mark. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.basic_socket_streambuf.available [*available]]]
+    [Determine the number of bytes available for reading. ]
+  ]
+  
+  [
     [[link boost_asio.reference.basic_socket_streambuf.basic_socket_streambuf [*basic_socket_streambuf]]]
     [Construct a basic_socket_streambuf without establishing a connection. ]
   ]
@@ -11039,7 +11789,7 @@ Iostream streambuf for a socket.
   
   [
     [[link boost_asio.reference.basic_socket_streambuf.connect [*connect]]]
-    [Establish a connection to the specified endpoint. ]
+    [Establish a connection. ]
   ]
   
   [
@@ -11055,6 +11805,11 @@ Iostream streambuf for a socket.
   [
     [[link boost_asio.reference.basic_socket_streambuf.io_service [*io_service]]]
     [Get the io_service associated with the object. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.basic_socket_streambuf.is_open [*is_open]]]
+    [Determine whether the socket is open. ]
   ]
   
   [
@@ -11238,26 +11993,160 @@ Regardless of whether the asynchronous operation completes immediately or not, t
 [endsect]
 
 
+[section:at_mark basic_socket_streambuf::at_mark]
+
+Determine whether the socket is at the out-of-band data mark. 
+
+  bool ``[link boost_asio.reference.basic_socket_streambuf.at_mark.overload1 at_mark]``() const;
+
+  bool ``[link boost_asio.reference.basic_socket_streambuf.at_mark.overload2 at_mark]``(
+      boost::system::error_code & ec) const;
+
+
+[section:overload1 basic_socket_streambuf::at_mark (1 of 2 overloads)]
+
+
+['Inherited from basic_socket.]
+
+Determine whether the socket is at the out-of-band data mark. 
+
+  bool at_mark() const;
+
+
+This function is used to check whether the socket input is currently positioned at the out-of-band data mark.
+
+
+[heading Return Value]
+      
+A bool indicating whether the socket is at the out-of-band data mark.
+
+[heading Exceptions]
+    
+
+[variablelist
+  
+[[boost::system::system_error][Thrown on failure. ]]
+
+]
+
+
+
+[endsect]
+
+
+
+[section:overload2 basic_socket_streambuf::at_mark (2 of 2 overloads)]
+
+
+['Inherited from basic_socket.]
+
+Determine whether the socket is at the out-of-band data mark. 
+
+  bool at_mark(
+      boost::system::error_code & ec) const;
+
+
+This function is used to check whether the socket input is currently positioned at the out-of-band data mark.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[ec][Set to indicate what error occurred, if any.]]
+
+]
+
+[heading Return Value]
+      
+A bool indicating whether the socket is at the out-of-band data mark. 
+
+
+
+[endsect]
+
+
+[endsect]
+
+[section:available basic_socket_streambuf::available]
+
+Determine the number of bytes available for reading. 
+
+  std::size_t ``[link boost_asio.reference.basic_socket_streambuf.available.overload1 available]``() const;
+
+  std::size_t ``[link boost_asio.reference.basic_socket_streambuf.available.overload2 available]``(
+      boost::system::error_code & ec) const;
+
+
+[section:overload1 basic_socket_streambuf::available (1 of 2 overloads)]
+
+
+['Inherited from basic_socket.]
+
+Determine the number of bytes available for reading. 
+
+  std::size_t available() const;
+
+
+This function is used to determine the number of bytes that may be read without blocking.
+
+
+[heading Return Value]
+      
+The number of bytes that may be read without blocking, or 0 if an error occurs.
+
+[heading Exceptions]
+    
+
+[variablelist
+  
+[[boost::system::system_error][Thrown on failure. ]]
+
+]
+
+
+
+[endsect]
+
+
+
+[section:overload2 basic_socket_streambuf::available (2 of 2 overloads)]
+
+
+['Inherited from basic_socket.]
+
+Determine the number of bytes available for reading. 
+
+  std::size_t available(
+      boost::system::error_code & ec) const;
+
+
+This function is used to determine the number of bytes that may be read without blocking.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[ec][Set to indicate what error occurred, if any.]]
+
+]
+
+[heading Return Value]
+      
+The number of bytes that may be read without blocking, or 0 if an error occurs. 
+
+
+
+[endsect]
+
+
+[endsect]
+
+
 [section:basic_socket_streambuf basic_socket_streambuf::basic_socket_streambuf]
-
-Construct a basic_socket_streambuf without establishing a connection. 
-
-  ``[link boost_asio.reference.basic_socket_streambuf.basic_socket_streambuf.overload1 basic_socket_streambuf]``();
-
-  ``[link boost_asio.reference.basic_socket_streambuf.basic_socket_streambuf.overload2 basic_socket_streambuf]``(
-      const endpoint_type & endpoint);
-
-  template<
-      typename T1,
-      ... ,
-      typename TN>
-  ``[link boost_asio.reference.basic_socket_streambuf.basic_socket_streambuf.overload3 basic_socket_streambuf]``(
-      T1 t1,
-      ... ,
-      TN tn);
-
-
-[section:overload1 basic_socket_streambuf::basic_socket_streambuf (1 of 3 overloads)]
 
 Construct a basic_socket_streambuf without establishing a connection. 
 
@@ -11267,42 +12156,6 @@ Construct a basic_socket_streambuf without establishing a connection.
 
 [endsect]
 
-
-
-[section:overload2 basic_socket_streambuf::basic_socket_streambuf (2 of 3 overloads)]
-
-Establish a connection to the specified endpoint. 
-
-  basic_socket_streambuf(
-      const endpoint_type & endpoint);
-
-
-
-[endsect]
-
-
-
-[section:overload3 basic_socket_streambuf::basic_socket_streambuf (3 of 3 overloads)]
-
-Establish a connection to an endpoint corresponding to a resolver query. 
-
-  template<
-      typename T1,
-      ... ,
-      typename TN>
-  basic_socket_streambuf(
-      T1 t1,
-      ... ,
-      TN tn);
-
-
-This constructor automatically establishes a connection based on the supplied resolver query parameters. The arguments are used to construct a resolver query object. 
-
-
-[endsect]
-
-
-[endsect]
 
 [section:bind basic_socket_streambuf::bind]
 
@@ -11564,7 +12417,7 @@ This function causes all outstanding asynchronous connect, send and receive oper
 
 Close the connection. 
 
-  void ``[link boost_asio.reference.basic_socket_streambuf.close.overload1 close]``();
+  basic_socket_streambuf< Protocol, StreamSocketService > * ``[link boost_asio.reference.basic_socket_streambuf.close.overload1 close]``();
 
   boost::system::error_code ``[link boost_asio.reference.basic_socket_streambuf.close.overload2 close]``(
       boost::system::error_code & ec);
@@ -11574,7 +12427,13 @@ Close the connection.
 
 Close the connection. 
 
-  void close();
+  basic_socket_streambuf< Protocol, StreamSocketService > * close();
+
+
+
+[heading Return Value]
+      
+this if a connection was successfully established, a null pointer otherwise. 
 
 
 
@@ -11630,16 +12489,16 @@ This function is used to close the socket. Any asynchronous send, receive or con
 
 [section:connect basic_socket_streambuf::connect]
 
-Establish a connection to the specified endpoint. 
+Establish a connection. 
 
-  void ``[link boost_asio.reference.basic_socket_streambuf.connect.overload1 connect]``(
+  basic_socket_streambuf< Protocol, StreamSocketService > * ``[link boost_asio.reference.basic_socket_streambuf.connect.overload1 connect]``(
       const endpoint_type & endpoint);
 
   template<
       typename T1,
       ... ,
       typename TN>
-  void ``[link boost_asio.reference.basic_socket_streambuf.connect.overload2 connect]``(
+  basic_socket_streambuf< Protocol, StreamSocketService > * ``[link boost_asio.reference.basic_socket_streambuf.connect.overload2 connect]``(
       T1 t1,
       ... ,
       TN tn);
@@ -11651,10 +12510,18 @@ Establish a connection to the specified endpoint.
 
 [section:overload1 basic_socket_streambuf::connect (1 of 3 overloads)]
 
-Establish a connection to the specified endpoint. 
+Establish a connection. 
 
-  void connect(
+  basic_socket_streambuf< Protocol, StreamSocketService > * connect(
       const endpoint_type & endpoint);
+
+
+This function establishes a connection to the specified endpoint.
+
+
+[heading Return Value]
+      
+this if a connection was successfully established, a null pointer otherwise. 
 
 
 
@@ -11664,19 +12531,25 @@ Establish a connection to the specified endpoint.
 
 [section:overload2 basic_socket_streambuf::connect (2 of 3 overloads)]
 
-Establish a connection to an endpoint corresponding to a resolver query. 
+Establish a connection. 
 
   template<
       typename T1,
       ... ,
       typename TN>
-  void connect(
+  basic_socket_streambuf< Protocol, StreamSocketService > * connect(
       T1 t1,
       ... ,
       TN tn);
 
 
-This function automatically establishes a connection based on the supplied resolver query parameters. The arguments are used to construct a resolver query object. 
+This function automatically establishes a connection based on the supplied resolver query parameters. The arguments are used to construct a resolver query object.
+
+
+[heading Return Value]
+      
+this if a connection was successfully established, a null pointer otherwise. 
+
 
 
 [endsect]
@@ -11734,6 +12607,49 @@ The socket is automatically opened if it is not already open. If the connect fai
 
 
 [endsect]
+
+
+[section:debug basic_socket_streambuf::debug]
+
+
+['Inherited from socket_base.]
+
+Socket option to enable socket-level debugging. 
+
+  typedef implementation_defined debug;
+
+
+
+Implements the SOL\_SOCKET/SO\_DEBUG socket option.
+
+
+[heading Examples]
+  
+Setting the option: 
+
+   boost::asio::ip::tcp::socket socket(io_service); 
+   ...
+   boost::asio::socket_base::debug option(true);
+   socket.set_option(option);
+
+
+
+
+Getting the current option value: 
+
+   boost::asio::ip::tcp::socket socket(io_service); 
+   ...
+   boost::asio::socket_base::debug option;
+   socket.get_option(option);
+   bool is_set = option.value();
+
+
+
+
+
+
+[endsect]
+
 
 
 [section:do_not_route basic_socket_streambuf::do_not_route]
@@ -12102,6 +13018,21 @@ A reference to the io_service object that the I/O object will use to dispatch ha
 
 
 
+[section:is_open basic_socket_streambuf::is_open]
+
+
+['Inherited from basic_socket.]
+
+Determine whether the socket is open. 
+
+  bool is_open() const;
+
+
+
+[endsect]
+
+
+
 [section:keep_alive basic_socket_streambuf::keep_alive]
 
 
@@ -12345,6 +13276,13 @@ A basic_socket is always the lowest layer.
 
   [
 
+    [[link boost_asio.reference.basic_socket.debug [*debug]]]
+    [Socket option to enable socket-level debugging. ]
+  
+  ]
+
+  [
+
     [[link boost_asio.reference.basic_socket.do_not_route [*do_not_route]]]
     [Socket option to prevent routing, use local interfaces only. ]
   
@@ -12486,6 +13424,16 @@ A basic_socket is always the lowest layer.
   ]
   
   [
+    [[link boost_asio.reference.basic_socket.at_mark [*at_mark]]]
+    [Determine whether the socket is at the out-of-band data mark. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.basic_socket.available [*available]]]
+    [Determine the number of bytes available for reading. ]
+  ]
+  
+  [
     [[link boost_asio.reference.basic_socket.basic_socket [*basic_socket]]]
     [Construct a basic_socket without opening it. ]
   ]
@@ -12523,6 +13471,11 @@ A basic_socket is always the lowest layer.
   [
     [[link boost_asio.reference.basic_socket.io_service [*io_service]]]
     [Get the io_service associated with the object. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.basic_socket.is_open [*is_open]]]
+    [Determine whether the socket is open. ]
   ]
   
   [
@@ -13454,7 +14407,7 @@ Different ways a socket may be shutdown.
 
 Destructor flushes buffered data. 
 
-  ~basic_socket_streambuf();
+  virtual ~basic_socket_streambuf();
 
 
 
@@ -13490,6 +14443,13 @@ Provides stream-oriented socket functionality.
 
     [[link boost_asio.reference.basic_stream_socket.bytes_readable [*bytes_readable]]]
     [IO control command to get the amount of data that can be read without blocking. ]
+  
+  ]
+
+  [
+
+    [[link boost_asio.reference.basic_stream_socket.debug [*debug]]]
+    [Socket option to enable socket-level debugging. ]
   
   ]
 
@@ -13656,6 +14616,16 @@ Provides stream-oriented socket functionality.
   ]
   
   [
+    [[link boost_asio.reference.basic_stream_socket.at_mark [*at_mark]]]
+    [Determine whether the socket is at the out-of-band data mark. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.basic_stream_socket.available [*available]]]
+    [Determine the number of bytes available for reading. ]
+  ]
+  
+  [
     [[link boost_asio.reference.basic_stream_socket.basic_stream_socket [*basic_stream_socket]]]
     [Construct a basic_stream_socket without opening it. ]
   ]
@@ -13686,11 +14656,6 @@ Provides stream-oriented socket functionality.
   ]
   
   [
-    [[link boost_asio.reference.basic_stream_socket.in_avail [*in_avail]]]
-    [Determine the amount of data that may be read without blocking. ]
-  ]
-  
-  [
     [[link boost_asio.reference.basic_stream_socket.io_control [*io_control]]]
     [Perform an IO control command on the socket. ]
   ]
@@ -13698,6 +14663,11 @@ Provides stream-oriented socket functionality.
   [
     [[link boost_asio.reference.basic_stream_socket.io_service [*io_service]]]
     [Get the io_service associated with the object. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.basic_stream_socket.is_open [*is_open]]]
+    [Determine whether the socket is open. ]
   ]
   
   [
@@ -13718,11 +14688,6 @@ Provides stream-oriented socket functionality.
   [
     [[link boost_asio.reference.basic_stream_socket.open [*open]]]
     [Open the socket using the specified protocol. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.basic_stream_socket.peek [*peek]]]
-    [Peek at the incoming data on the stream socket. ]
   ]
   
   [
@@ -14293,6 +15258,158 @@ See the
 
 [endsect]
 
+
+[section:at_mark basic_stream_socket::at_mark]
+
+Determine whether the socket is at the out-of-band data mark. 
+
+  bool ``[link boost_asio.reference.basic_stream_socket.at_mark.overload1 at_mark]``() const;
+
+  bool ``[link boost_asio.reference.basic_stream_socket.at_mark.overload2 at_mark]``(
+      boost::system::error_code & ec) const;
+
+
+[section:overload1 basic_stream_socket::at_mark (1 of 2 overloads)]
+
+
+['Inherited from basic_socket.]
+
+Determine whether the socket is at the out-of-band data mark. 
+
+  bool at_mark() const;
+
+
+This function is used to check whether the socket input is currently positioned at the out-of-band data mark.
+
+
+[heading Return Value]
+      
+A bool indicating whether the socket is at the out-of-band data mark.
+
+[heading Exceptions]
+    
+
+[variablelist
+  
+[[boost::system::system_error][Thrown on failure. ]]
+
+]
+
+
+
+[endsect]
+
+
+
+[section:overload2 basic_stream_socket::at_mark (2 of 2 overloads)]
+
+
+['Inherited from basic_socket.]
+
+Determine whether the socket is at the out-of-band data mark. 
+
+  bool at_mark(
+      boost::system::error_code & ec) const;
+
+
+This function is used to check whether the socket input is currently positioned at the out-of-band data mark.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[ec][Set to indicate what error occurred, if any.]]
+
+]
+
+[heading Return Value]
+      
+A bool indicating whether the socket is at the out-of-band data mark. 
+
+
+
+[endsect]
+
+
+[endsect]
+
+[section:available basic_stream_socket::available]
+
+Determine the number of bytes available for reading. 
+
+  std::size_t ``[link boost_asio.reference.basic_stream_socket.available.overload1 available]``() const;
+
+  std::size_t ``[link boost_asio.reference.basic_stream_socket.available.overload2 available]``(
+      boost::system::error_code & ec) const;
+
+
+[section:overload1 basic_stream_socket::available (1 of 2 overloads)]
+
+
+['Inherited from basic_socket.]
+
+Determine the number of bytes available for reading. 
+
+  std::size_t available() const;
+
+
+This function is used to determine the number of bytes that may be read without blocking.
+
+
+[heading Return Value]
+      
+The number of bytes that may be read without blocking, or 0 if an error occurs.
+
+[heading Exceptions]
+    
+
+[variablelist
+  
+[[boost::system::system_error][Thrown on failure. ]]
+
+]
+
+
+
+[endsect]
+
+
+
+[section:overload2 basic_stream_socket::available (2 of 2 overloads)]
+
+
+['Inherited from basic_socket.]
+
+Determine the number of bytes available for reading. 
+
+  std::size_t available(
+      boost::system::error_code & ec) const;
+
+
+This function is used to determine the number of bytes that may be read without blocking.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[ec][Set to indicate what error occurred, if any.]]
+
+]
+
+[heading Return Value]
+      
+The number of bytes that may be read without blocking, or 0 if an error occurs. 
+
+
+
+[endsect]
+
+
+[endsect]
 
 [section:basic_stream_socket basic_stream_socket::basic_stream_socket]
 
@@ -14916,6 +16033,49 @@ The socket is automatically opened if it is not already open. If the connect fai
 [endsect]
 
 
+[section:debug basic_stream_socket::debug]
+
+
+['Inherited from socket_base.]
+
+Socket option to enable socket-level debugging. 
+
+  typedef implementation_defined debug;
+
+
+
+Implements the SOL\_SOCKET/SO\_DEBUG socket option.
+
+
+[heading Examples]
+  
+Setting the option: 
+
+   boost::asio::ip::tcp::socket socket(io_service); 
+   ...
+   boost::asio::socket_base::debug option(true);
+   socket.set_option(option);
+
+
+
+
+Getting the current option value: 
+
+   boost::asio::ip::tcp::socket socket(io_service); 
+   ...
+   boost::asio::socket_base::debug option;
+   socket.get_option(option);
+   bool is_set = option.value();
+
+
+
+
+
+
+[endsect]
+
+
+
 [section:do_not_route basic_stream_socket::do_not_route]
 
 
@@ -15144,76 +16304,6 @@ The underlying implementation type of I/O object.
 [endsect]
 
 
-[section:in_avail basic_stream_socket::in_avail]
-
-Determine the amount of data that may be read without blocking. 
-
-  std::size_t ``[link boost_asio.reference.basic_stream_socket.in_avail.overload1 in_avail]``();
-
-  std::size_t ``[link boost_asio.reference.basic_stream_socket.in_avail.overload2 in_avail]``(
-      boost::system::error_code & ec);
-
-
-[section:overload1 basic_stream_socket::in_avail (1 of 2 overloads)]
-
-Determine the amount of data that may be read without blocking. 
-
-  std::size_t in_avail();
-
-
-This function is used to determine the amount of data, in bytes, that may be read from the stream socket without blocking.
-
-
-[heading Return Value]
-      
-The number of bytes of data that can be read without blocking.
-
-[heading Exceptions]
-    
-
-[variablelist
-  
-[[boost::system::system_error][Thrown on failure. ]]
-
-]
-
-
-
-[endsect]
-
-
-
-[section:overload2 basic_stream_socket::in_avail (2 of 2 overloads)]
-
-Determine the amount of data that may be read without blocking. 
-
-  std::size_t in_avail(
-      boost::system::error_code & ec);
-
-
-This function is used to determine the amount of data, in bytes, that may be read from the stream socket without blocking.
-
-
-[heading Parameters]
-    
-
-[variablelist
-  
-[[ec][Set to indicate what error occurred, if any.]]
-
-]
-
-[heading Return Value]
-      
-The number of bytes of data that can be read without blocking. 
-
-
-
-[endsect]
-
-
-[endsect]
-
 [section:io_control basic_stream_socket::io_control]
 
 Perform an IO control command on the socket. 
@@ -15345,6 +16435,21 @@ This function may be used to obtain the io_service object that the I/O object us
 [heading Return Value]
       
 A reference to the io_service object that the I/O object will use to dispatch handlers. Ownership is not transferred to the caller. 
+
+
+
+[endsect]
+
+
+
+[section:is_open basic_stream_socket::is_open]
+
+
+['Inherited from basic_socket.]
+
+Determine whether the socket is open. 
+
+  bool is_open() const;
 
 
 
@@ -15595,6 +16700,13 @@ A basic_socket is always the lowest layer.
 
   [
 
+    [[link boost_asio.reference.basic_socket.debug [*debug]]]
+    [Socket option to enable socket-level debugging. ]
+  
+  ]
+
+  [
+
     [[link boost_asio.reference.basic_socket.do_not_route [*do_not_route]]]
     [Socket option to prevent routing, use local interfaces only. ]
   
@@ -15736,6 +16848,16 @@ A basic_socket is always the lowest layer.
   ]
   
   [
+    [[link boost_asio.reference.basic_socket.at_mark [*at_mark]]]
+    [Determine whether the socket is at the out-of-band data mark. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.basic_socket.available [*available]]]
+    [Determine the number of bytes available for reading. ]
+  ]
+  
+  [
     [[link boost_asio.reference.basic_socket.basic_socket [*basic_socket]]]
     [Construct a basic_socket without opening it. ]
   ]
@@ -15773,6 +16895,11 @@ A basic_socket is always the lowest layer.
   [
     [[link boost_asio.reference.basic_socket.io_service [*io_service]]]
     [Get the io_service associated with the object. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.basic_socket.is_open [*is_open]]]
+    [Determine whether the socket is open. ]
   ]
   
   [
@@ -16081,110 +17208,6 @@ This function opens the socket so that it will use the specified protocol.
 
 
 
-
-
-
-[endsect]
-
-
-[endsect]
-
-[section:peek basic_stream_socket::peek]
-
-Peek at the incoming data on the stream socket. 
-
-  template<
-      typename MutableBufferSequence>
-  std::size_t ``[link boost_asio.reference.basic_stream_socket.peek.overload1 peek]``(
-      const MutableBufferSequence & buffers);
-
-  template<
-      typename MutableBufferSequence>
-  std::size_t ``[link boost_asio.reference.basic_stream_socket.peek.overload2 peek]``(
-      const MutableBufferSequence & buffers,
-      boost::system::error_code & ec);
-
-
-[section:overload1 basic_stream_socket::peek (1 of 2 overloads)]
-
-Peek at the incoming data on the stream socket. 
-
-  template<
-      typename MutableBufferSequence>
-  std::size_t peek(
-      const MutableBufferSequence & buffers);
-
-
-This function is used to peek at the incoming data on the stream socket, without removing it from the input queue. The function call will block until data has been read successfully or an error occurs.
-
-
-[heading Parameters]
-    
-
-[variablelist
-  
-[[buffers][One or more buffers into which the data will be read.]]
-
-]
-
-[heading Return Value]
-      
-The number of bytes read.
-
-[heading Exceptions]
-    
-
-[variablelist
-  
-[[boost::system::system_error][Thrown on failure.]]
-
-]
-
-[heading Example]
-  
-To peek using a single data buffer use the 
-[link boost_asio.reference.buffer buffer]  function as follows: 
-
-   socket.peek(boost::asio::buffer(data, size)); 
-
-
-See the 
-[link boost_asio.reference.buffer buffer]  documentation for information on using multiple buffers in one go, and how to use it with arrays, boost::array or std::vector. 
-
-
-
-[endsect]
-
-
-
-[section:overload2 basic_stream_socket::peek (2 of 2 overloads)]
-
-Peek at the incoming data on the stream socket. 
-
-  template<
-      typename MutableBufferSequence>
-  std::size_t peek(
-      const MutableBufferSequence & buffers,
-      boost::system::error_code & ec);
-
-
-This function is used to peek at the incoming data on the stream socket, without removing it from the input queue. The function call will block until data has been read successfully or an error occurs.
-
-
-[heading Parameters]
-    
-
-[variablelist
-  
-[[buffers][One or more buffers into which the data will be read.]]
-
-[[ec][Set to indicate what error occurred, if any.]]
-
-]
-
-[heading Return Value]
-      
-The number of bytes read. Returns 0 if an error occurred. 
 
 
 
@@ -20096,6 +21119,16 @@ Default service implementation for a datagram socket.
   ]
   
   [
+    [[link boost_asio.reference.datagram_socket_service.at_mark [*at_mark]]]
+    [Determine whether the socket is at the out-of-band data mark. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.datagram_socket_service.available [*available]]]
+    [Determine the number of bytes available for reading. ]
+  ]
+  
+  [
     [[link boost_asio.reference.datagram_socket_service.bind [*bind]]]
     []
   ]
@@ -20143,6 +21176,11 @@ Default service implementation for a datagram socket.
   [
     [[link boost_asio.reference.datagram_socket_service.io_service [*io_service]]]
     [Get the io_service object that owns the service. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.datagram_socket_service.is_open [*is_open]]]
+    [Determine whether the socket is open. ]
   ]
   
   [
@@ -20318,6 +21356,34 @@ Start an asynchronous send.
       const endpoint_type & destination,
       socket_base::message_flags flags,
       WriteHandler handler);
+
+
+
+[endsect]
+
+
+
+[section:at_mark datagram_socket_service::at_mark]
+
+Determine whether the socket is at the out-of-band data mark. 
+
+  bool at_mark(
+      const implementation_type & impl,
+      boost::system::error_code & ec) const;
+
+
+
+[endsect]
+
+
+
+[section:available datagram_socket_service::available]
+
+Determine the number of bytes available for reading. 
+
+  std::size_t available(
+      const implementation_type & impl,
+      boost::system::error_code & ec) const;
 
 
 
@@ -20502,6 +21568,19 @@ Perform an IO control command on the socket.
 Get the io_service object that owns the service. 
 
   boost::asio::io_service & io_service();
+
+
+
+[endsect]
+
+
+
+[section:is_open datagram_socket_service::is_open]
+
+Determine whether the socket is open. 
+
+  bool is_open(
+      const implementation_type & impl) const;
 
 
 
@@ -20940,7 +22019,8 @@ Default service implementation for a timer.
 Cancel any asynchronous wait operations associated with the timer. 
 
   std::size_t cancel(
-      implementation_type & impl);
+      implementation_type & impl,
+      boost::system::error_code & ec);
 
 
 
@@ -21008,7 +22088,8 @@ Get the expiry time for the timer as an absolute time.
 
   std::size_t ``[link boost_asio.reference.deadline_timer_service.expires_at.overload2 expires_at]``(
       implementation_type & impl,
-      const time_type & expiry_time);
+      const time_type & expiry_time,
+      boost::system::error_code & ec);
 
 
 [section:overload1 deadline_timer_service::expires_at (1 of 2 overloads)]
@@ -21030,7 +22111,8 @@ Set the expiry time for the timer as an absolute time.
 
   std::size_t expires_at(
       implementation_type & impl,
-      const time_type & expiry_time);
+      const time_type & expiry_time,
+      boost::system::error_code & ec);
 
 
 
@@ -21048,7 +22130,8 @@ Get the expiry time for the timer relative to now.
 
   std::size_t ``[link boost_asio.reference.deadline_timer_service.expires_from_now.overload2 expires_from_now]``(
       implementation_type & impl,
-      const duration_type & expiry_time);
+      const duration_type & expiry_time,
+      boost::system::error_code & ec);
 
 
 [section:overload1 deadline_timer_service::expires_from_now (1 of 2 overloads)]
@@ -21070,7 +22153,8 @@ Set the expiry time for the timer relative to now.
 
   std::size_t expires_from_now(
       implementation_type & impl,
-      const duration_type & expiry_time);
+      const duration_type & expiry_time,
+      boost::system::error_code & ec);
 
 
 
@@ -21163,7 +22247,8 @@ The time traits type.
 
 
   void wait(
-      implementation_type & impl);
+      implementation_type & impl,
+      boost::system::error_code & ec);
 
 
 
@@ -21273,6 +22358,11 @@ Contains error constants.
   [
     [[link boost_asio.reference.error.already_connected [*already_connected]]]
     [Transport endpoint is already connected. ]
+  ]
+
+  [
+    [[link boost_asio.reference.error.already_open [*already_open]]]
+    [Already open. ]
   ]
 
   [
@@ -21421,13 +22511,13 @@ Contains error constants.
   ]
 
   [
-    [[link boost_asio.reference.error.not_supported [*not_supported]]]
-    [Operation not supported. ]
+    [[link boost_asio.reference.error.operation_aborted [*operation_aborted]]]
+    [Operation cancelled. ]
   ]
 
   [
-    [[link boost_asio.reference.error.operation_aborted [*operation_aborted]]]
-    [Operation cancelled. ]
+    [[link boost_asio.reference.error.operation_not_supported [*operation_not_supported]]]
+    [Operation not supported. ]
   ]
 
   [
@@ -21560,6 +22650,18 @@ Address already in use.
 Transport endpoint is already connected. 
 
   static const boost::system::error_code already_connected;
+
+
+
+[endsect]
+
+
+
+[section:already_open error::already_open]
+
+Already open. 
+
+  static const boost::system::error_code already_open;
 
 
 
@@ -21993,11 +23095,11 @@ Socket operation on non-socket.
 
 
 
-[section:not_supported error::not_supported]
+[section:operation_aborted error::operation_aborted]
 
-Operation not supported. 
+Operation cancelled. 
 
-  static const boost::system::error_code not_supported;
+  static const boost::system::error_code operation_aborted;
 
 
 
@@ -22005,11 +23107,11 @@ Operation not supported.
 
 
 
-[section:operation_aborted error::operation_aborted]
+[section:operation_not_supported error::operation_not_supported]
 
-Operation cancelled. 
+Operation not supported. 
 
-  static const boost::system::error_code operation_aborted;
+  static const boost::system::error_code operation_not_supported;
 
 
 
@@ -22371,7 +23473,7 @@ Constructor.
   ``[link boost_asio.reference.io_service.io_service.overload1 io_service]``();
 
   ``[link boost_asio.reference.io_service.io_service.overload2 io_service]``(
-      size_t concurrency_hint);
+      std::size_t concurrency_hint);
 
 
 [section:overload1 io_service::io_service (1 of 2 overloads)]
@@ -22391,7 +23493,7 @@ Constructor.
 Constructor. 
 
   io_service(
-      size_t concurrency_hint);
+      std::size_t concurrency_hint);
 
 
 Construct with a hint about the required level of concurrency.
@@ -22413,12 +23515,21 @@ Construct with a hint about the required level of concurrency.
 
 [endsect]
 
-
 [section:poll io_service::poll]
 
 Run the io_service's event processing loop to execute ready handlers. 
 
-  size_t poll();
+  std::size_t ``[link boost_asio.reference.io_service.poll.overload1 poll]``();
+
+  std::size_t ``[link boost_asio.reference.io_service.poll.overload2 poll]``(
+      boost::system::error_code & ec);
+
+
+[section:overload1 io_service::poll (1 of 2 overloads)]
+
+Run the io_service's event processing loop to execute ready handlers. 
+
+  std::size_t poll();
 
 
 The poll() function runs handlers that are ready to run, without blocking, until the io_service has been stopped or there are no more ready handlers.
@@ -22426,7 +23537,16 @@ The poll() function runs handlers that are ready to run, without blocking, until
 
 [heading Return Value]
       
-The number of handlers that were executed. 
+The number of handlers that were executed.
+
+[heading Exceptions]
+    
+
+[variablelist
+  
+[[boost::system::system_error][Thrown on failure. ]]
+
+]
 
 
 
@@ -22434,15 +23554,25 @@ The number of handlers that were executed.
 
 
 
-[section:poll_one io_service::poll_one]
+[section:overload2 io_service::poll (2 of 2 overloads)]
 
-Run the io_service's event processing loop to execute one ready handler. 
+Run the io_service's event processing loop to execute ready handlers. 
 
-  size_t poll_one();
+  std::size_t poll(
+      boost::system::error_code & ec);
 
 
-The poll\_one() function runs at most one handler that is ready to run, without blocking.
+The poll() function runs handlers that are ready to run, without blocking, until the io_service has been stopped or there are no more ready handlers.
 
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[ec][Set to indicate what error occurred, if any.]]
+
+]
 
 [heading Return Value]
       
@@ -22452,6 +23582,78 @@ The number of handlers that were executed.
 
 [endsect]
 
+
+[endsect]
+
+[section:poll_one io_service::poll_one]
+
+Run the io_service's event processing loop to execute one ready handler. 
+
+  std::size_t ``[link boost_asio.reference.io_service.poll_one.overload1 poll_one]``();
+
+  std::size_t ``[link boost_asio.reference.io_service.poll_one.overload2 poll_one]``(
+      boost::system::error_code & ec);
+
+
+[section:overload1 io_service::poll_one (1 of 2 overloads)]
+
+Run the io_service's event processing loop to execute one ready handler. 
+
+  std::size_t poll_one();
+
+
+The poll\_one() function runs at most one handler that is ready to run, without blocking.
+
+
+[heading Return Value]
+      
+The number of handlers that were executed.
+
+[heading Exceptions]
+    
+
+[variablelist
+  
+[[boost::system::system_error][Thrown on failure. ]]
+
+]
+
+
+
+[endsect]
+
+
+
+[section:overload2 io_service::poll_one (2 of 2 overloads)]
+
+Run the io_service's event processing loop to execute one ready handler. 
+
+  std::size_t poll_one(
+      boost::system::error_code & ec);
+
+
+The poll\_one() function runs at most one handler that is ready to run, without blocking.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[ec][Set to indicate what error occurred, if any.]]
+
+]
+
+[heading Return Value]
+      
+The number of handlers that were executed. 
+
+
+
+[endsect]
+
+
+[endsect]
 
 
 [section:post io_service::post]
@@ -22504,12 +23706,21 @@ This function must not be called while there are any unfinished calls to the run
 [endsect]
 
 
-
 [section:run io_service::run]
 
 Run the io_service's event processing loop. 
 
-  size_t run();
+  std::size_t ``[link boost_asio.reference.io_service.run.overload1 run]``();
+
+  std::size_t ``[link boost_asio.reference.io_service.run.overload2 run]``(
+      boost::system::error_code & ec);
+
+
+[section:overload1 io_service::run (1 of 2 overloads)]
+
+Run the io_service's event processing loop. 
+
+  std::size_t run();
 
 
 The run() function blocks until all work has finished and there are no more handlers to be dispatched, or until the io_service has been stopped.
@@ -22521,7 +23732,16 @@ The run() function may be safely called again once it has completed only after a
 
 [heading Return Value]
       
-The number of handlers that were executed. 
+The number of handlers that were executed.
+
+[heading Exceptions]
+    
+
+[variablelist
+  
+[[boost::system::system_error][Thrown on failure. ]]
+
+]
 
 
 
@@ -22529,15 +23749,29 @@ The number of handlers that were executed.
 
 
 
-[section:run_one io_service::run_one]
+[section:overload2 io_service::run (2 of 2 overloads)]
 
-Run the io_service's event processing loop to execute at most one handler. 
+Run the io_service's event processing loop. 
 
-  size_t run_one();
+  std::size_t run(
+      boost::system::error_code & ec);
 
 
-The run\_one() function blocks until one handler has been dispatched, or until the io_service has been stopped.
+The run() function blocks until all work has finished and there are no more handlers to be dispatched, or until the io_service has been stopped.
 
+Multiple threads may call the run() function to set up a pool of threads from which the io_service may execute handlers.
+
+The run() function may be safely called again once it has completed only after a call to reset().
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[ec][Set to indicate what error occurred, if any.]]
+
+]
 
 [heading Return Value]
       
@@ -22547,6 +23781,78 @@ The number of handlers that were executed.
 
 [endsect]
 
+
+[endsect]
+
+[section:run_one io_service::run_one]
+
+Run the io_service's event processing loop to execute at most one handler. 
+
+  std::size_t ``[link boost_asio.reference.io_service.run_one.overload1 run_one]``();
+
+  std::size_t ``[link boost_asio.reference.io_service.run_one.overload2 run_one]``(
+      boost::system::error_code & ec);
+
+
+[section:overload1 io_service::run_one (1 of 2 overloads)]
+
+Run the io_service's event processing loop to execute at most one handler. 
+
+  std::size_t run_one();
+
+
+The run\_one() function blocks until one handler has been dispatched, or until the io_service has been stopped.
+
+
+[heading Return Value]
+      
+The number of handlers that were executed.
+
+[heading Exceptions]
+    
+
+[variablelist
+  
+[[boost::system::system_error][Thrown on failure. ]]
+
+]
+
+
+
+[endsect]
+
+
+
+[section:overload2 io_service::run_one (2 of 2 overloads)]
+
+Run the io_service's event processing loop to execute at most one handler. 
+
+  std::size_t run_one(
+      boost::system::error_code & ec);
+
+
+The run\_one() function blocks until one handler has been dispatched, or until the io_service has been stopped.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[ec][Set to indicate what error occurred, if any.]]
+
+]
+
+[heading Return Value]
+      
+The number of handlers that were executed. 
+
+
+
+[endsect]
+
+
+[endsect]
 
 
 [section:stop io_service::stop]
@@ -26874,6 +28180,13 @@ The TCP acceptor type.
 
   [
 
+    [[link boost_asio.reference.basic_socket_acceptor.debug [*debug]]]
+    [Socket option to enable socket-level debugging. ]
+  
+  ]
+
+  [
+
     [[link boost_asio.reference.basic_socket_acceptor.do_not_route [*do_not_route]]]
     [Socket option to prevent routing, use local interfaces only. ]
   
@@ -27003,22 +28316,12 @@ The TCP acceptor type.
   ]
   
   [
-    [[link boost_asio.reference.basic_socket_acceptor.accept_endpoint [*accept_endpoint]]]
-    [Accept a new connection and obtain the endpoint of the peer. ]
-  ]
-  
-  [
     [[link boost_asio.reference.basic_socket_acceptor.assign [*assign]]]
     [Assigns an existing native acceptor to the acceptor. ]
   ]
   
   [
     [[link boost_asio.reference.basic_socket_acceptor.async_accept [*async_accept]]]
-    [Start an asynchronous accept. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.basic_socket_acceptor.async_accept_endpoint [*async_accept_endpoint]]]
     [Start an asynchronous accept. ]
   ]
   
@@ -27546,6 +28849,13 @@ The TCP socket type.
 
   [
 
+    [[link boost_asio.reference.basic_stream_socket.debug [*debug]]]
+    [Socket option to enable socket-level debugging. ]
+  
+  ]
+
+  [
+
     [[link boost_asio.reference.basic_stream_socket.do_not_route [*do_not_route]]]
     [Socket option to prevent routing, use local interfaces only. ]
   
@@ -27707,6 +29017,16 @@ The TCP socket type.
   ]
   
   [
+    [[link boost_asio.reference.basic_stream_socket.at_mark [*at_mark]]]
+    [Determine whether the socket is at the out-of-band data mark. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.basic_stream_socket.available [*available]]]
+    [Determine the number of bytes available for reading. ]
+  ]
+  
+  [
     [[link boost_asio.reference.basic_stream_socket.basic_stream_socket [*basic_stream_socket]]]
     [Construct a basic_stream_socket without opening it. ]
   ]
@@ -27737,11 +29057,6 @@ The TCP socket type.
   ]
   
   [
-    [[link boost_asio.reference.basic_stream_socket.in_avail [*in_avail]]]
-    [Determine the amount of data that may be read without blocking. ]
-  ]
-  
-  [
     [[link boost_asio.reference.basic_stream_socket.io_control [*io_control]]]
     [Perform an IO control command on the socket. ]
   ]
@@ -27749,6 +29064,11 @@ The TCP socket type.
   [
     [[link boost_asio.reference.basic_stream_socket.io_service [*io_service]]]
     [Get the io_service associated with the object. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.basic_stream_socket.is_open [*is_open]]]
+    [Determine whether the socket is open. ]
   ]
   
   [
@@ -27769,11 +29089,6 @@ The TCP socket type.
   [
     [[link boost_asio.reference.basic_stream_socket.open [*open]]]
     [Open the socket using the specified protocol. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.basic_stream_socket.peek [*peek]]]
-    [Peek at the incoming data on the stream socket. ]
   ]
   
   [
@@ -28329,6 +29644,13 @@ The IPv4 UDP socket type.
 
   [
 
+    [[link boost_asio.reference.basic_datagram_socket.debug [*debug]]]
+    [Socket option to enable socket-level debugging. ]
+  
+  ]
+
+  [
+
     [[link boost_asio.reference.basic_datagram_socket.do_not_route [*do_not_route]]]
     [Socket option to prevent routing, use local interfaces only. ]
   
@@ -28490,6 +29812,16 @@ The IPv4 UDP socket type.
   ]
   
   [
+    [[link boost_asio.reference.basic_datagram_socket.at_mark [*at_mark]]]
+    [Determine whether the socket is at the out-of-band data mark. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.basic_datagram_socket.available [*available]]]
+    [Determine the number of bytes available for reading. ]
+  ]
+  
+  [
     [[link boost_asio.reference.basic_datagram_socket.basic_datagram_socket [*basic_datagram_socket]]]
     [Construct a basic_datagram_socket without opening it. ]
   ]
@@ -28527,6 +29859,11 @@ The IPv4 UDP socket type.
   [
     [[link boost_asio.reference.basic_datagram_socket.io_service [*io_service]]]
     [Get the io_service associated with the object. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.basic_datagram_socket.is_open [*is_open]]]
+    [Determine whether the socket is open. ]
   ]
   
   [
@@ -29981,22 +31318,12 @@ Default service implementation for a socket acceptor.
   ]
   
   [
-    [[link boost_asio.reference.socket_acceptor_service.accept_endpoint [*accept_endpoint]]]
-    [Accept a new connection. ]
-  ]
-  
-  [
     [[link boost_asio.reference.socket_acceptor_service.assign [*assign]]]
     [Assign an existing native acceptor to a socket acceptor. ]
   ]
   
   [
     [[link boost_asio.reference.socket_acceptor_service.async_accept [*async_accept]]]
-    [Start an asynchronous accept. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.socket_acceptor_service.async_accept_endpoint [*async_accept_endpoint]]]
     [Start an asynchronous accept. ]
   ]
   
@@ -30098,24 +31425,7 @@ Accept a new connection.
   boost::system::error_code accept(
       implementation_type & impl,
       basic_socket< protocol_type, SocketService > & peer,
-      boost::system::error_code & ec);
-
-
-
-[endsect]
-
-
-
-[section:accept_endpoint socket_acceptor_service::accept_endpoint]
-
-Accept a new connection. 
-
-  template<
-      typename SocketService>
-  boost::system::error_code accept_endpoint(
-      implementation_type & impl,
-      basic_socket< protocol_type, SocketService > & peer,
-      endpoint_type & peer_endpoint,
+      endpoint_type * peer_endpoint,
       boost::system::error_code & ec);
 
 
@@ -30150,25 +31460,7 @@ Start an asynchronous accept.
   void async_accept(
       implementation_type & impl,
       basic_socket< protocol_type, SocketService > & peer,
-      AcceptHandler handler);
-
-
-
-[endsect]
-
-
-
-[section:async_accept_endpoint socket_acceptor_service::async_accept_endpoint]
-
-Start an asynchronous accept. 
-
-  template<
-      typename SocketService,
-      typename AcceptHandler>
-  void async_accept_endpoint(
-      implementation_type & impl,
-      basic_socket< protocol_type, SocketService > & peer,
-      endpoint_type & peer_endpoint,
+      endpoint_type * peer_endpoint,
       AcceptHandler handler);
 
 
@@ -30487,6 +31779,13 @@ The socket_base class is used as a base for the basic_stream_socket and basic_da
 
   [
 
+    [[link boost_asio.reference.socket_base.debug [*debug]]]
+    [Socket option to enable socket-level debugging. ]
+  
+  ]
+
+  [
+
     [[link boost_asio.reference.socket_base.do_not_route [*do_not_route]]]
     [Socket option to prevent routing, use local interfaces only. ]
   
@@ -30658,6 +31957,46 @@ Implements the FIONREAD IO control command.
    boost::asio::socket_base::bytes_readable command(true);
    socket.io_control(command);
    std::size_t bytes_readable = command.get();
+
+
+
+
+
+
+[endsect]
+
+
+
+[section:debug socket_base::debug]
+
+Socket option to enable socket-level debugging. 
+
+  typedef implementation_defined debug;
+
+
+
+Implements the SOL\_SOCKET/SO\_DEBUG socket option.
+
+
+[heading Examples]
+  
+Setting the option: 
+
+   boost::asio::ip::tcp::socket socket(io_service); 
+   ...
+   boost::asio::socket_base::debug option(true);
+   socket.set_option(option);
+
+
+
+
+Getting the current option value: 
+
+   boost::asio::ip::tcp::socket socket(io_service); 
+   ...
+   boost::asio::socket_base::debug option;
+   socket.get_option(option);
+   bool is_set = option.value();
 
 
 
@@ -35086,6 +36425,16 @@ Default service implementation for a stream socket.
   ]
   
   [
+    [[link boost_asio.reference.stream_socket_service.at_mark [*at_mark]]]
+    [Determine whether the socket is at the out-of-band data mark. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.stream_socket_service.available [*available]]]
+    [Determine the number of bytes available for reading. ]
+  ]
+  
+  [
     [[link boost_asio.reference.stream_socket_service.bind [*bind]]]
     [Bind the stream socket to the specified local endpoint. ]
   ]
@@ -35128,6 +36477,11 @@ Default service implementation for a stream socket.
   [
     [[link boost_asio.reference.stream_socket_service.io_service [*io_service]]]
     [Get the io_service object that owns the service. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.stream_socket_service.is_open [*is_open]]]
+    [Determine whether the socket is open. ]
   ]
   
   [
@@ -35258,6 +36612,34 @@ Start an asynchronous send.
       const ConstBufferSequence & buffers,
       socket_base::message_flags flags,
       WriteHandler handler);
+
+
+
+[endsect]
+
+
+
+[section:at_mark stream_socket_service::at_mark]
+
+Determine whether the socket is at the out-of-band data mark. 
+
+  bool at_mark(
+      const implementation_type & impl,
+      boost::system::error_code & ec) const;
+
+
+
+[endsect]
+
+
+
+[section:available stream_socket_service::available]
+
+Determine the number of bytes available for reading. 
+
+  std::size_t available(
+      const implementation_type & impl,
+      boost::system::error_code & ec) const;
 
 
 
@@ -35429,6 +36811,19 @@ Perform an IO control command on the socket.
 Get the io_service object that owns the service. 
 
   boost::asio::io_service & io_service();
+
+
+
+[endsect]
+
+
+
+[section:is_open stream_socket_service::is_open]
+
+Determine whether the socket is open. 
+
+  bool is_open(
+      const implementation_type & impl) const;
 
 
 
