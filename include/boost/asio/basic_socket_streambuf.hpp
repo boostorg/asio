@@ -37,54 +37,32 @@
 #endif // !defined(BOOST_ASIO_SOCKET_STREAMBUF_MAX_ARITY)
 
 // A macro that should expand to:
-//   template < typename T1, ..., typename Tn >
-//   explicit basic_socket_streambuf( T1 x1, ..., Tn xn )
-//     : basic_socket<Protocol, StreamSocketService>(
-//         boost::base_from_member<io_service>::member),
-//       unbuffered_(false)
+//   template <typename T1, ..., typename Tn>
+//   basic_socket_streambuf<Protocol, StreamSocketService>* connect(
+//       T1 x1, ..., Tn xn)
 //   {
 //     init_buffers();
+//     boost::system::error_code ec;
+//     this->basic_socket<Protocol, StreamSocketService>::close(ec);
 //     typedef typename Protocol::resolver_query resolver_query;
-//     resolver_query query( x1, ..., xn );
-//     resolve_and_connect(query);
-//   }
-// This macro should only persist within this file.
-
-#define BOOST_ASIO_PRIVATE_CTR_DEF( z, n, data ) \
-  template < BOOST_PP_ENUM_PARAMS(n, typename T) > \
-  explicit basic_socket_streambuf( BOOST_PP_ENUM_BINARY_PARAMS(n, T, x) ) \
-    : basic_socket<Protocol, StreamSocketService>( \
-        boost::base_from_member<io_service>::member), \
-        unbuffered_(false) \
-  { \
-    init_buffers(); \
-    typedef typename Protocol::resolver_query resolver_query; \
-    resolver_query query( BOOST_PP_ENUM_PARAMS(n, x) ); \
-    resolve_and_connect(query); \
-  } \
-  /**/
-
-// A macro that should expand to:
-//   template < typename T1, ..., typename Tn >
-//   void connect( T1 x1, ..., Tn xn )
-//   {
-//     this->basic_socket<Protocol, StreamSocketService>::close();
-//     init_buffers();
-//     typedef typename Protocol::resolver_query resolver_query;
-//     resolver_query query( x1, ..., xn );
-//     resolve_and_connect(query);
+//     resolver_query query(x1, ..., xn);
+//     resolve_and_connect(query, ec);
+//     return !ec ? this : 0;
 //   }
 // This macro should only persist within this file.
 
 #define BOOST_ASIO_PRIVATE_CONNECT_DEF( z, n, data ) \
-  template < BOOST_PP_ENUM_PARAMS(n, typename T) > \
-  void connect( BOOST_PP_ENUM_BINARY_PARAMS(n, T, x) ) \
+  template <BOOST_PP_ENUM_PARAMS(n, typename T)> \
+  basic_socket_streambuf<Protocol, StreamSocketService>* connect( \
+      BOOST_PP_ENUM_BINARY_PARAMS(n, T, x)) \
   { \
-    this->basic_socket<Protocol, StreamSocketService>::close(); \
     init_buffers(); \
+    boost::system::error_code ec; \
+    this->basic_socket<Protocol, StreamSocketService>::close(ec); \
     typedef typename Protocol::resolver_query resolver_query; \
-    resolver_query query( BOOST_PP_ENUM_PARAMS(n, x) ); \
-    resolve_and_connect(query); \
+    resolver_query query(BOOST_PP_ENUM_PARAMS(n, x)); \
+    resolve_and_connect(query, ec); \
+    return !ec ? this : 0; \
   } \
   /**/
 
@@ -112,54 +90,43 @@ public:
     init_buffers();
   }
 
-  /// Establish a connection to the specified endpoint.
-  explicit basic_socket_streambuf(const endpoint_type& endpoint)
-    : basic_socket<Protocol, StreamSocketService>(
-        boost::base_from_member<boost::asio::io_service>::member),
-      unbuffered_(false)
-  {
-    init_buffers();
-    this->basic_socket<Protocol, StreamSocketService>::connect(endpoint);
-  }
-
-#if defined(GENERATING_DOCUMENTATION)
-  /// Establish a connection to an endpoint corresponding to a resolver query.
-  /**
-   * This constructor automatically establishes a connection based on the
-   * supplied resolver query parameters. The arguments are used to construct
-   * a resolver query object.
-   */
-  template <typename T1, ..., typename TN>
-  explicit basic_socket_streambuf(T1 t1, ..., TN tn);
-#else
-  BOOST_PP_REPEAT_FROM_TO(
-      1, BOOST_PP_INC(BOOST_ASIO_SOCKET_STREAMBUF_MAX_ARITY),
-      BOOST_ASIO_PRIVATE_CTR_DEF, _ )
-#endif
-
   /// Destructor flushes buffered data.
-  ~basic_socket_streambuf()
+  virtual ~basic_socket_streambuf()
   {
-    sync();
+    if (pptr() != pbase())
+      overflow(traits_type::eof());
   }
 
-  /// Establish a connection to the specified endpoint.
-  void connect(const endpoint_type& endpoint)
+  /// Establish a connection.
+  /**
+   * This function establishes a connection to the specified endpoint.
+   *
+   * @return \c this if a connection was successfully established, a null
+   * pointer otherwise.
+   */
+  basic_socket_streambuf<Protocol, StreamSocketService>* connect(
+      const endpoint_type& endpoint)
   {
-    this->basic_socket<Protocol, StreamSocketService>::close();
     init_buffers();
-    this->basic_socket<Protocol, StreamSocketService>::connect(endpoint);
+    boost::system::error_code ec;
+    this->basic_socket<Protocol, StreamSocketService>::close(ec);
+    this->basic_socket<Protocol, StreamSocketService>::connect(endpoint, ec);
+    return !ec ? this : 0;
   }
 
 #if defined(GENERATING_DOCUMENTATION)
-  /// Establish a connection to an endpoint corresponding to a resolver query.
+  /// Establish a connection.
   /**
    * This function automatically establishes a connection based on the supplied
    * resolver query parameters. The arguments are used to construct a resolver
    * query object.
+   *
+   * @return \c this if a connection was successfully established, a null
+   * pointer otherwise.
    */
   template <typename T1, ..., typename TN>
-  void connect(T1 t1, ..., TN tn);
+  basic_socket_streambuf<Protocol, StreamSocketService>* connect(
+      T1 t1, ..., TN tn);
 #else
   BOOST_PP_REPEAT_FROM_TO(
       1, BOOST_PP_INC(BOOST_ASIO_SOCKET_STREAMBUF_MAX_ARITY),
@@ -167,11 +134,18 @@ public:
 #endif
 
   /// Close the connection.
-  void close()
+  /**
+   * @return \c this if a connection was successfully established, a null
+   * pointer otherwise.
+   */
+  basic_socket_streambuf<Protocol, StreamSocketService>* close()
   {
+    boost::system::error_code ec;
     sync();
-    this->basic_socket<Protocol, StreamSocketService>::close();
-    init_buffers();
+    this->basic_socket<Protocol, StreamSocketService>::close(ec);
+    if (!ec)
+      init_buffers();
+    return !ec ? this : 0;
   }
 
 protected:
@@ -185,11 +159,7 @@ protected:
           boost::asio::buffer(boost::asio::buffer(get_buffer_) + putback_max),
           0, ec);
       if (ec)
-      {
-        if (ec != boost::asio::error::eof)
-          boost::asio::detail::throw_error(ec);
         return traits_type::eof();
-      }
       setg(get_buffer_.begin(), get_buffer_.begin() + putback_max,
           get_buffer_.begin() + putback_max + bytes_transferred);
       return traits_type::to_int_type(*gptr());
@@ -202,70 +172,68 @@ protected:
 
   int_type overflow(int_type c)
   {
-    if (!traits_type::eq_int_type(c, traits_type::eof()))
+    if (unbuffered_)
     {
-      if (unbuffered_)
+      if (traits_type::eq_int_type(c, traits_type::eof()))
       {
+        // Nothing to do.
+        return traits_type::not_eof(c);
+      }
+      else
+      {
+        // Send the single character immediately.
         boost::system::error_code ec;
         char_type ch = traits_type::to_char_type(c);
         this->service.send(this->implementation,
             boost::asio::buffer(&ch, sizeof(char_type)), 0, ec);
-        boost::asio::detail::throw_error(ec);
+        if (ec)
+          return traits_type::eof();
+        return c;
       }
-      else
+    }
+    else
+    {
+      // Send all data in the output buffer.
+      boost::asio::const_buffer buffer =
+        boost::asio::buffer(pbase(), pptr() - pbase());
+      while (boost::asio::buffer_size(buffer) > 0)
       {
-        if (pptr() == epptr())
-        {
-          boost::asio::const_buffer buffer =
-            boost::asio::buffer(pbase(), pptr() - pbase());
-          while (boost::asio::buffer_size(buffer) > 0)
-          {
-            boost::system::error_code ec;
-            std::size_t bytes_transferred = this->service.send(
-                this->implementation, boost::asio::buffer(buffer),
-                0, ec);
-            boost::asio::detail::throw_error(ec);
-            buffer = buffer + bytes_transferred;
-          }
-          setp(put_buffer_.begin(), put_buffer_.end());
-        }
-
-        *pptr() = traits_type::to_char_type(c);
-        pbump(1);
+        boost::system::error_code ec;
+        std::size_t bytes_transferred = this->service.send(
+            this->implementation, boost::asio::buffer(buffer),
+            0, ec);
+        if (ec)
+          return traits_type::eof();
+        buffer = buffer + bytes_transferred;
       }
+      setp(put_buffer_.begin(), put_buffer_.end());
 
+      // If the new character is eof then our work here is done.
+      if (traits_type::eq_int_type(c, traits_type::eof()))
+        return traits_type::not_eof(c);
+
+      // Add the new character to the output buffer.
+      *pptr() = traits_type::to_char_type(c);
+      pbump(1);
       return c;
     }
-
-    return traits_type::not_eof(c);
   }
 
   int sync()
   {
-    boost::asio::const_buffer buffer =
-      boost::asio::buffer(pbase(), pptr() - pbase());
-    while (boost::asio::buffer_size(buffer) > 0)
-    {
-      boost::system::error_code ec;
-      std::size_t bytes_transferred = this->service.send(
-          this->implementation, boost::asio::buffer(buffer),
-          0, ec);
-      boost::asio::detail::throw_error(ec);
-      buffer = buffer + bytes_transferred;
-    }
-    setp(put_buffer_.begin(), put_buffer_.end());
-    return 0;
+    return overflow(traits_type::eof());
   }
 
   std::streambuf* setbuf(char_type* s, std::streamsize n)
   {
-    if (pptr() == pbase())
+    if (pptr() == pbase() && s == 0 && n == 0)
     {
       unbuffered_ = true;
-      setp(put_buffer_.begin(), put_buffer_.begin());
+      setp(0, 0);
+      return this;
     }
 
-    return this;
+    return 0;
   }
 
 private:
@@ -275,26 +243,30 @@ private:
         get_buffer_.begin() + putback_max,
         get_buffer_.begin() + putback_max);
     if (unbuffered_)
-      setp(put_buffer_.begin(), put_buffer_.begin());
+      setp(0, 0);
     else
       setp(put_buffer_.begin(), put_buffer_.end());
   }
 
-  void resolve_and_connect(const typename Protocol::resolver_query& query)
+  void resolve_and_connect(const typename Protocol::resolver_query& query,
+      boost::system::error_code& ec)
   {
     typedef typename Protocol::resolver resolver_type;
     typedef typename Protocol::resolver_iterator iterator_type;
     resolver_type resolver(
         boost::base_from_member<boost::asio::io_service>::member);
-    iterator_type iterator = resolver.resolve(query);
-    boost::system::error_code ec(boost::asio::error::host_not_found);
-    while (ec && iterator != iterator_type())
+    iterator_type i = resolver.resolve(query, ec);
+    if (!ec)
     {
-      this->basic_socket<Protocol, StreamSocketService>::close();
-      this->basic_socket<Protocol, StreamSocketService>::connect(*iterator, ec);
-      ++iterator;
+      iterator_type end;
+      ec = boost::asio::error::host_not_found;
+      while (ec && i != end)
+      {
+        this->basic_socket<Protocol, StreamSocketService>::close();
+        this->basic_socket<Protocol, StreamSocketService>::connect(*i, ec);
+        ++i;
+      }
     }
-    boost::asio::detail::throw_error(ec);
   }
 
   enum { putback_max = 8 };
@@ -307,7 +279,6 @@ private:
 } // namespace asio
 } // namespace boost
 
-#undef BOOST_ASIO_PRIVATE_CTR_DEF
 #undef BOOST_ASIO_PRIVATE_CONNECT_DEF
 
 #include <boost/asio/detail/pop_options.hpp>
