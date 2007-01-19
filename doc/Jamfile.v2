@@ -29,4 +29,8 @@ boostbook standalone
   ;
 
 
-install html : /boost//doc/html/boostbook.css ;
+install html
+  :
+    /boost//doc/html/boostbook.css
+    design/proactor.png
+  ;

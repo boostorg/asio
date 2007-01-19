@@ -1,0 +1,19 @@
+[/
+ / Copyright (c) 2003-2007 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+ /
+ / Distributed under the Boost Software License, Version 1.0. (See accompanying
+ / file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+ /]
+
+[section:design Design Notes]
+
+[include design/async.qbk]
+[include design/allocation.qbk]
+[include design/buffers.qbk]
+[include design/eof.qbk]
+[include design/line_based.qbk]
+[include design/threads.qbk]
+[include design/strands.qbk]
+[include design/implementation.qbk]
+
+[endsect]

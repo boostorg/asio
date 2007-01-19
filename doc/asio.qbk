@@ -96,7 +96,8 @@ development of network applications that scale to hundreds or thousands of
 concurrent connections. The library implementation for each operating system
 should use the mechanism that best enables this scalability.
 
-* [*Efficiency.] The library should support techniques such as scatter-gather I/O, and allow protocol implementations that minimise data copying.
+* [*Efficiency.] The library should support techniques such as scatter-gather
+I/O, and allow protocol implementations that minimise data copying.
 
 * [*Model Berkeley sockets.] The Berkeley sockets API is widely implemented and
 understood, as well as being covered in much literature. Other programming
@@ -120,3 +121,4 @@ system resources such as files.
 [include examples.qbk]
 [include requirements.qbk]
 [include reference.qbk]
+[include design.qbk]
