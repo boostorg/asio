@@ -502,8 +502,12 @@ inline const char* inet_ntop(int af, const void* src, char* dest, size_t length,
         reinterpret_cast<sockaddr*>(&address),
         address_length, 0, dest, &string_length), ec);
 
+  // Windows may set error code on success.
+  if (result != socket_error_retval)
+    clear_error(ec);
+
   // Windows may not set an error code on failure.
-  if (result == socket_error_retval && !ec)
+  else if (result == socket_error_retval && !ec)
     ec = boost::asio::error::invalid_argument;
 
   return result == socket_error_retval ? 0 : dest;
@@ -557,6 +561,7 @@ inline int inet_pton(int af, const char* src, void* dest,
     else if (strcmp(src, "255.255.255.255") == 0)
     {
       static_cast<in4_addr_type*>(dest)->s_addr = INADDR_NONE;
+      clear_error(ec);
     }
   }
   else // AF_INET6
