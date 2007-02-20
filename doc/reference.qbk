@@ -9256,6 +9256,11 @@ Provides the ability to accept new connections.
   ]
   
   [
+    [[link boost_asio.reference.basic_socket_acceptor.is_open [*is_open]]]
+    [Determine whether the acceptor is open. ]
+  ]
+  
+  [
     [[link boost_asio.reference.basic_socket_acceptor.listen [*listen]]]
     [Place the acceptor into the state where it will listen for new connections. ]
   ]
@@ -10529,6 +10534,18 @@ This function may be used to obtain the io_service object that the I/O object us
 [heading Return Value]
       
 A reference to the io_service object that the I/O object will use to dispatch handlers. Ownership is not transferred to the caller. 
+
+
+
+[endsect]
+
+
+
+[section:is_open basic_socket_acceptor::is_open]
+
+Determine whether the acceptor is open. 
+
+  bool is_open() const;
 
 
 
@@ -28356,6 +28373,11 @@ The TCP acceptor type.
   ]
   
   [
+    [[link boost_asio.reference.basic_socket_acceptor.is_open [*is_open]]]
+    [Determine whether the acceptor is open. ]
+  ]
+  
+  [
     [[link boost_asio.reference.basic_socket_acceptor.listen [*listen]]]
     [Place the acceptor into the state where it will listen for new connections. ]
   ]
@@ -31368,6 +31390,11 @@ Default service implementation for a socket acceptor.
   ]
   
   [
+    [[link boost_asio.reference.socket_acceptor_service.is_open [*is_open]]]
+    [Determine whether the acceptor is open. ]
+  ]
+  
+  [
     [[link boost_asio.reference.socket_acceptor_service.listen [*listen]]]
     [Place the socket acceptor into the state where it will listen for new connections. ]
   ]
@@ -31618,6 +31645,19 @@ Perform an IO control command on the socket.
 Get the io_service object that owns the service. 
 
   boost::asio::io_service & io_service();
+
+
+
+[endsect]
+
+
+
+[section:is_open socket_acceptor_service::is_open]
+
+Determine whether the acceptor is open. 
+
+  bool is_open(
+      const implementation_type & impl) const;
 
 
 
