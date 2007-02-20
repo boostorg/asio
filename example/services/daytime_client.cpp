@@ -51,7 +51,7 @@ void connect_handler(const boost::system::error_code& e, debug_stream_socket* s,
   }
   else
   {
-    std::cerr << e << std::endl;
+    std::cerr << e.message() << std::endl;
   }
 }
 
