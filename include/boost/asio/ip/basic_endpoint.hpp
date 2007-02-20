@@ -173,7 +173,7 @@ public:
   /// The protocol associated with the endpoint.
   protocol_type protocol() const
   {
-    if (data_.ss_family == AF_INET)
+    if (is_v4())
       return InternetProtocol::v4();
     return InternetProtocol::v6();
   }
@@ -193,7 +193,7 @@ public:
   /// Get the underlying size of the endpoint in the native type.
   size_type size() const
   {
-    if (data_.ss_family == AF_INET)
+    if (is_v4())
       return sizeof(boost::asio::detail::sockaddr_in4_type);
     else
       return sizeof(boost::asio::detail::sockaddr_in6_type);
@@ -219,7 +219,7 @@ public:
   /// the host's byte order.
   unsigned short port() const
   {
-    if (data_.ss_family == AF_INET)
+    if (is_v4())
     {
       return boost::asio::detail::socket_ops::network_to_host_short(
           reinterpret_cast<const boost::asio::detail::sockaddr_in4_type&>(
@@ -237,7 +237,7 @@ public:
   /// the host's byte order.
   void port(unsigned short port_num)
   {
-    if (data_.ss_family == AF_INET)
+    if (is_v4())
     {
       reinterpret_cast<boost::asio::detail::sockaddr_in4_type&>(data_).sin_port
         = boost::asio::detail::socket_ops::host_to_network_short(port_num);
@@ -253,7 +253,7 @@ public:
   boost::asio::ip::address address() const
   {
     using namespace std; // For memcpy.
-    if (data_.ss_family == AF_INET)
+    if (is_v4())
     {
       const boost::asio::detail::sockaddr_in4_type& data
         = reinterpret_cast<const boost::asio::detail::sockaddr_in4_type&>(
@@ -306,6 +306,16 @@ public:
   }
 
 private:
+  // Helper function to determine whether the endpoint is IPv4.
+  bool is_v4() const
+  {
+#if defined(_AIX)
+    return data_.__ss_family == AF_INET;
+#else
+    return data_.ss_family == AF_INET;
+#endif
+  }
+
   // The underlying IP socket address.
   boost::asio::detail::sockaddr_storage_type data_;
 };

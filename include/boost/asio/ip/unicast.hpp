@@ -58,7 +58,7 @@ namespace unicast {
 #if defined(GENERATING_DOCUMENTATION)
 typedef implementation_defined hops;
 #else
-typedef boost::asio::ip::detail::socket_option::integer<
+typedef boost::asio::ip::detail::socket_option::unicast_hops<
   IPPROTO_IP, IP_TTL, IPPROTO_IPV6, IPV6_UNICAST_HOPS> hops;
 #endif
 

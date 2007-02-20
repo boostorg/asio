@@ -100,6 +100,7 @@
 # include <net/if.h>
 # if defined(__sun)
 #  include <sys/filio.h>
+#  include <sys/sockio.h>
 # endif
 #endif
 #include <boost/asio/detail/pop_options.hpp>

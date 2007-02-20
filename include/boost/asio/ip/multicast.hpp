@@ -134,7 +134,7 @@ typedef boost::asio::ip::detail::socket_option::network_interface<
 #if defined(GENERATING_DOCUMENTATION)
 typedef implementation_defined hops;
 #else
-typedef boost::asio::ip::detail::socket_option::integer<
+typedef boost::asio::ip::detail::socket_option::multicast_hops<
   IPPROTO_IP, IP_MULTICAST_TTL, IPPROTO_IPV6, IPV6_MULTICAST_HOPS> hops;
 #endif
 

@@ -32,6 +32,8 @@ project
     <library>/boost/thread//boost_thread
     <define>BOOST_ALL_NO_LIB=1
     <threading>multi
+    <os>SOLARIS:<define>_XOPEN_SOURCE=500
+    <os>SOLARIS:<define>__EXTENSIONS__
     <os>SOLARIS:<library>socket
     <os>SOLARIS:<library>nsl
     <os>NT,<toolset>gcc:<library>ws2_32
