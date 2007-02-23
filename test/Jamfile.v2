@@ -36,6 +36,8 @@ project
     <os>SOLARIS:<define>__EXTENSIONS__
     <os>SOLARIS:<library>socket
     <os>SOLARIS:<library>nsl
+    <os>NT,<toolset>cw:<library>ws2_32
+    <os>NT,<toolset>cw:<library>mswsock
     <os>NT,<toolset>gcc:<library>ws2_32
     <os>NT,<toolset>gcc:<library>mswsock
   ;
