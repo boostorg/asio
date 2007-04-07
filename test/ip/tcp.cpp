@@ -31,6 +31,7 @@
 namespace ip_tcp_compile {
 
 using namespace boost::asio;
+namespace ip = boost::asio::ip;
 
 void test()
 {
@@ -66,6 +67,7 @@ void test()
 namespace ip_tcp_runtime {
 
 using namespace boost::asio;
+namespace ip = boost::asio::ip;
 
 void test()
 {
@@ -116,6 +118,7 @@ void test()
 namespace ip_tcp_socket_compile {
 
 using namespace boost::asio;
+namespace ip = boost::asio::ip;
 
 void connect_handler(const boost::system::error_code&)
 {
@@ -284,6 +287,7 @@ void test()
 namespace ip_tcp_acceptor_runtime {
 
 using namespace boost::asio;
+namespace ip = boost::asio::ip;
 
 void handle_accept(const boost::system::error_code& err)
 {

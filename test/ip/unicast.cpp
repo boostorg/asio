@@ -29,6 +29,7 @@
 namespace ip_unicast_compile {
 
 using namespace boost::asio;
+namespace ip = boost::asio::ip;
 
 void test()
 {
@@ -63,6 +64,7 @@ void test()
 namespace ip_unicast_runtime {
 
 using namespace boost::asio;
+namespace ip = boost::asio::ip;
 
 void test()
 {

@@ -29,6 +29,7 @@
 namespace ip_v6_only_compile {
 
 using namespace boost::asio;
+namespace ip = boost::asio::ip;
 
 void test()
 {
@@ -65,6 +66,7 @@ void test()
 namespace ip_v6_only_runtime {
 
 using namespace boost::asio;
+namespace ip = boost::asio::ip;
 
 void test()
 {

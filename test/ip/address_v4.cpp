@@ -29,6 +29,7 @@
 namespace ip_address_v4_compile {
 
 using namespace boost::asio;
+namespace ip = boost::asio::ip;
 
 void test()
 {

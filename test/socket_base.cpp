@@ -29,6 +29,7 @@
 namespace socket_base_compile {
 
 using namespace boost::asio;
+namespace ip = boost::asio::ip;
 
 void test()
 {
@@ -192,6 +193,7 @@ void test()
 namespace socket_base_runtime {
 
 using namespace boost::asio;
+namespace ip = boost::asio::ip;
 
 void test()
 {

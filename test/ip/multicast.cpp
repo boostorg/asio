@@ -29,6 +29,7 @@
 namespace ip_multicast_compile {
 
 using namespace boost::asio;
+namespace ip = boost::asio::ip;
 
 void test()
 {
@@ -104,6 +105,7 @@ void test()
 namespace ip_multicast_runtime {
 
 using namespace boost::asio;
+namespace ip = boost::asio::ip;
 
 void test()
 {

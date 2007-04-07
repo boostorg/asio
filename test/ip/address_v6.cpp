@@ -28,6 +28,7 @@
 namespace ip_address_v6_compile {
 
 using namespace boost::asio;
+namespace ip = boost::asio::ip;
 
 void test()
 {
