@@ -761,7 +761,7 @@ public:
     // Update the ID of the thread from which cancellation is safe.
     if (impl.safe_cancellation_thread_id_ == 0)
       impl.safe_cancellation_thread_id_ = ::GetCurrentThreadId();
-    else
+    else if (impl.safe_cancellation_thread_id_ != ::GetCurrentThreadId())
       impl.safe_cancellation_thread_id_ = ~DWORD(0);
 
     // Allocate and construct an operation to wrap the handler.
@@ -949,7 +949,7 @@ public:
     // Update the ID of the thread from which cancellation is safe.
     if (impl.safe_cancellation_thread_id_ == 0)
       impl.safe_cancellation_thread_id_ = ::GetCurrentThreadId();
-    else
+    else if (impl.safe_cancellation_thread_id_ != ::GetCurrentThreadId())
       impl.safe_cancellation_thread_id_ = ~DWORD(0);
 
     // Allocate and construct an operation to wrap the handler.
@@ -1158,7 +1158,7 @@ public:
     // Update the ID of the thread from which cancellation is safe.
     if (impl.safe_cancellation_thread_id_ == 0)
       impl.safe_cancellation_thread_id_ = ::GetCurrentThreadId();
-    else
+    else if (impl.safe_cancellation_thread_id_ != ::GetCurrentThreadId())
       impl.safe_cancellation_thread_id_ = ~DWORD(0);
 
     // Allocate and construct an operation to wrap the handler.
@@ -1375,7 +1375,7 @@ public:
     // Update the ID of the thread from which cancellation is safe.
     if (impl.safe_cancellation_thread_id_ == 0)
       impl.safe_cancellation_thread_id_ = ::GetCurrentThreadId();
-    else
+    else if (impl.safe_cancellation_thread_id_ != ::GetCurrentThreadId())
       impl.safe_cancellation_thread_id_ = ~DWORD(0);
 
     // Allocate and construct an operation to wrap the handler.
@@ -1696,7 +1696,7 @@ public:
     // Update the ID of the thread from which cancellation is safe.
     if (impl.safe_cancellation_thread_id_ == 0)
       impl.safe_cancellation_thread_id_ = ::GetCurrentThreadId();
-    else
+    else if (impl.safe_cancellation_thread_id_ != ::GetCurrentThreadId())
       impl.safe_cancellation_thread_id_ = ~DWORD(0);
 
     // Create a new socket for the connection.
@@ -1864,7 +1864,7 @@ public:
     // Update the ID of the thread from which cancellation is safe.
     if (impl.safe_cancellation_thread_id_ == 0)
       impl.safe_cancellation_thread_id_ = ::GetCurrentThreadId();
-    else
+    else if (impl.safe_cancellation_thread_id_ != ::GetCurrentThreadId())
       impl.safe_cancellation_thread_id_ = ~DWORD(0);
 
     // Check if the reactor was already obtained from the io_service.
