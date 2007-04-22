@@ -40,6 +40,10 @@ Boost.Asio is a cross-platform C++ library for network programming that
 provides developers with a consistent asynchronous I/O model using a modern C++
 approach.
 
+[heading Quick Reference]
+
+[xinclude quickref.xml]
+
 [heading Getting Started]
 
 The [link boost_asio.tutorial tutorial] introduces the fundamental concepts
