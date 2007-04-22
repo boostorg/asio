@@ -1460,7 +1460,8 @@ The basic_datagram_socket class template provides asynchronous and blocking data
 
 [heading Thread Safety]
   
-[*Distinct] [*objects:]  Safe.\n
+[*Distinct] [*objects:]  Safe.
+
 [*Shared] [*objects:]  Unsafe. 
 
 
@@ -5422,7 +5423,8 @@ Most applications will use the boost::asio::deadline\_timer typedef.
 
 [heading Thread Safety]
   
-[*Distinct] [*objects:]  Safe.\n
+[*Distinct] [*objects:]  Safe.
+
 [*Shared] [*objects:]  Unsafe.
 
 [heading Examples]
@@ -6440,7 +6442,8 @@ The basic_socket class template provides functionality that is common to both st
 
 [heading Thread Safety]
   
-[*Distinct] [*objects:]  Safe.\n
+[*Distinct] [*objects:]  Safe.
+
 [*Shared] [*objects:]  Unsafe. 
 
 
@@ -9318,7 +9321,8 @@ The basic_socket_acceptor class template is used for accepting new socket connec
 
 [heading Thread Safety]
   
-[*Distinct] [*objects:]  Safe.\n
+[*Distinct] [*objects:]  Safe.
+
 [*Shared] [*objects:]  Unsafe.
 
 [heading Example]
@@ -14775,7 +14779,8 @@ The basic_stream_socket class template provides asynchronous and blocking stream
 
 [heading Thread Safety]
   
-[*Distinct] [*objects:]  Safe.\n
+[*Distinct] [*objects:]  Safe.
+
 [*Shared] [*objects:]  Unsafe.
 
 
@@ -19292,7 +19297,8 @@ The buffered_read_stream class template can be used to add buffering to the sync
 
 [heading Thread Safety]
   
-[*Distinct] [*objects:]  Safe.\n
+[*Distinct] [*objects:]  Safe.
+
 [*Shared] [*objects:]  Unsafe.
 
 
@@ -19837,7 +19843,8 @@ The buffered_stream class template can be used to add buffering to the synchrono
 
 [heading Thread Safety]
   
-[*Distinct] [*objects:]  Safe.\n
+[*Distinct] [*objects:]  Safe.
+
 [*Shared] [*objects:]  Unsafe.
 
 
@@ -20424,7 +20431,8 @@ The buffered_write_stream class template can be used to add buffering to the syn
 
 [heading Thread Safety]
   
-[*Distinct] [*objects:]  Safe.\n
+[*Distinct] [*objects:]  Safe.
+
 [*Shared] [*objects:]  Unsafe.
 
 
@@ -23444,7 +23452,8 @@ The io_service class also includes facilities intended for developers of custom 
 
 [heading Thread Safety]
   
-[*Distinct] [*objects:]  Safe.\n
+[*Distinct] [*objects:]  Safe.
+
 [*Shared] [*objects:]  Safe, with the exception that calling reset() while there are unfinished run() calls results in undefined behaviour.
 
 
@@ -24071,7 +24080,8 @@ The io_service::strand class provides the ability to post and dispatch handlers 
 
 [heading Thread Safety]
   
-[*Distinct] [*objects:]  Safe.\n
+[*Distinct] [*objects:]  Safe.
+
 [*Shared] [*objects:]  Safe.
 
 
@@ -24427,7 +24437,8 @@ The
 
 [heading Thread Safety]
   
-[*Distinct] [*objects:]  Safe.\n
+[*Distinct] [*objects:]  Safe.
+
 [*Shared] [*objects:]  Unsafe. 
 
 
@@ -24816,7 +24827,8 @@ The
 
 [heading Thread Safety]
   
-[*Distinct] [*objects:]  Safe.\n
+[*Distinct] [*objects:]  Safe.
+
 [*Shared] [*objects:]  Unsafe. 
 
 
@@ -25321,7 +25333,8 @@ The
 
 [heading Thread Safety]
   
-[*Distinct] [*objects:]  Safe.\n
+[*Distinct] [*objects:]  Safe.
+
 [*Shared] [*objects:]  Unsafe. 
 
 
@@ -25869,7 +25882,8 @@ The
 
 [heading Thread Safety]
   
-[*Distinct] [*objects:]  Safe.\n
+[*Distinct] [*objects:]  Safe.
+
 [*Shared] [*objects:]  Unsafe.
 
 
@@ -26267,7 +26281,8 @@ The basic_resolver class template provides the ability to resolve a query to a l
 
 [heading Thread Safety]
   
-[*Distinct] [*objects:]  Safe.\n
+[*Distinct] [*objects:]  Safe.
+
 [*Shared] [*objects:]  Unsafe. 
 
 
@@ -26781,7 +26796,8 @@ The
 
 [heading Thread Safety]
   
-[*Distinct] [*objects:]  Safe.\n
+[*Distinct] [*objects:]  Safe.
+
 [*Shared] [*objects:]  Unsafe. 
 
 
@@ -26940,7 +26956,8 @@ The iterator's value\_type, obtained when the iterator is dereferenced, is:
 
 [heading Thread Safety]
   
-[*Distinct] [*objects:]  Safe.\n
+[*Distinct] [*objects:]  Safe.
+
 [*Shared] [*objects:]  Unsafe. 
 
 
@@ -27101,7 +27118,8 @@ The
 
 [heading Thread Safety]
   
-[*Distinct] [*objects:]  Safe.\n
+[*Distinct] [*objects:]  Safe.
+
 [*Shared] [*objects:]  Unsafe. 
 
 
@@ -28165,7 +28183,8 @@ The
 
 [heading Thread Safety]
   
-[*Distinct] [*objects:]  Safe.\n
+[*Distinct] [*objects:]  Safe.
+
 [*Shared] [*objects:]  Safe.
 
 
@@ -29305,7 +29324,8 @@ The
 
 [heading Thread Safety]
   
-[*Distinct] [*objects:]  Safe.\n
+[*Distinct] [*objects:]  Safe.
+
 [*Shared] [*objects:]  Safe.
 
 
@@ -34993,7 +35013,8 @@ The stream class template provides asynchronous and blocking stream-oriented fun
 
 [heading Thread Safety]
   
-[*Distinct] [*objects:]  Safe.\n
+[*Distinct] [*objects:]  Safe.
+
 [*Shared] [*objects:]  Unsafe.
 
 [heading Example]

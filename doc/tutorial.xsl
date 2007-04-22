@@ -120,7 +120,7 @@
 
 
 <xsl:template match="linebreak">
-  <xsl:text>\n</xsl:text>
+  <xsl:value-of select="$newline"/>
   <xsl:value-of select="$newline"/>
 </xsl:template>
 

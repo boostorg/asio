@@ -243,13 +243,15 @@
 
 
 <xsl:template match="linebreak" mode="markup">
-<xsl:text>\n
+<xsl:text>
+
 </xsl:text>
 </xsl:template>
 
 
 <xsl:template match="linebreak" mode="markup-nested">
-<xsl:text>\n
+<xsl:text>
+
 </xsl:text>
 </xsl:template>
 

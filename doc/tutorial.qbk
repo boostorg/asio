@@ -126,8 +126,10 @@ Finally we print the obligatory `"Hello, world!"` message to show when the timer
 
 
 
-See the [link boost_asio.tutorial.tuttimer1.src full source listing]\n
-Return to the [link boost_asio.tutorial tutorial index]\n
+See the [link boost_asio.tutorial.tuttimer1.src full source listing]
+
+Return to the [link boost_asio.tutorial tutorial index]
+
 Next: [link boost_asio.tutorial.tuttimer2 Timer.2 - Using a timer asynchronously]
 
 
@@ -222,9 +224,12 @@ It is important to remember to give the io\_service some work to do before calli
 
 
 
-See the [link boost_asio.tutorial.tuttimer2.src full source listing]\n
-Return to the [link boost_asio.tutorial tutorial index]\n
-Previous: [link boost_asio.tutorial.tuttimer1 Timer.1 - Using a timer synchronously]\n
+See the [link boost_asio.tutorial.tuttimer2.src full source listing]
+
+Return to the [link boost_asio.tutorial tutorial index]
+
+Previous: [link boost_asio.tutorial.tuttimer1 Timer.1 - Using a timer synchronously]
+
 Next: [link boost_asio.tutorial.tuttimer3 Timer.3 - Binding arguments to a handler]
 
 
@@ -367,9 +372,12 @@ Finally, just to prove that the `count` variable was being used in the `print` h
 
 
 
-See the [link boost_asio.tutorial.tuttimer3.src full source listing]\n
-Return to the [link boost_asio.tutorial tutorial index]\n
-Previous: [link boost_asio.tutorial.tuttimer2 Timer.2 - Using a timer asynchronously]\n
+See the [link boost_asio.tutorial.tuttimer3.src full source listing]
+
+Return to the [link boost_asio.tutorial tutorial index]
+
+Previous: [link boost_asio.tutorial.tuttimer2 Timer.2 - Using a timer asynchronously]
+
 Next: [link boost_asio.tutorial.tuttimer4 Timer.4 - Using a member function as a handler]
 
 
@@ -523,10 +531,14 @@ The `main` function is much simpler than before, as it now declares a local `pri
 
 
 
-See the [link boost_asio.tutorial.tuttimer4.src full source listing]\n
-Return to the [link boost_asio.tutorial tutorial index]\n
-Previous: [link boost_asio.tutorial.tuttimer3 Timer.3 - Binding arguments to a handler]\n
-Next: [link boost_asio.tutorial.tuttimer5 Timer.5 - Synchronising handlers in multithreaded programs]\n
+See the [link boost_asio.tutorial.tuttimer4.src full source listing]
+
+Return to the [link boost_asio.tutorial tutorial index]
+
+Previous: [link boost_asio.tutorial.tuttimer3 Timer.3 - Binding arguments to a handler]
+
+Next: [link boost_asio.tutorial.tuttimer5 Timer.5 - Synchronising handlers in multithreaded programs]
+
 
 
 
@@ -721,9 +733,12 @@ Just as it would with a call from a single thread, concurrent calls to boost::as
 
 
 
-See the [link boost_asio.tutorial.tuttimer5.src full source listing]\n
-Return to the [link boost_asio.tutorial tutorial index]\n
-Previous: [link boost_asio.tutorial.tuttimer4 Timer.4 - Using a member function as a handler]\n
+See the [link boost_asio.tutorial.tuttimer5.src full source listing]
+
+Return to the [link boost_asio.tutorial tutorial index]
+
+Previous: [link boost_asio.tutorial.tuttimer4 Timer.4 - Using a member function as a handler]
+
 
 
 
@@ -935,8 +950,10 @@ Finally, handle any exceptions that may have been thrown.
 
 
 
-See the [link boost_asio.tutorial.tutdaytime1.src full source listing]\n
-Return to the [link boost_asio.tutorial tutorial index]\n
+See the [link boost_asio.tutorial.tutdaytime1.src full source listing]
+
+Return to the [link boost_asio.tutorial tutorial index]
+
 Next: [link boost_asio.tutorial.tutdaytime2 Daytime.2 - A synchronous TCP daytime server]
 
 
@@ -1099,9 +1116,12 @@ Finally, handle any exceptions.
 
 
 
-See the [link boost_asio.tutorial.tutdaytime2.src full source listing]\n
-Return to the [link boost_asio.tutorial tutorial index]\n
-Previous: [link boost_asio.tutorial.tutdaytime1 Daytime.1 - A synchronous TCP daytime client]\n
+See the [link boost_asio.tutorial.tutdaytime2.src full source listing]
+
+Return to the [link boost_asio.tutorial tutorial index]
+
+Previous: [link boost_asio.tutorial.tutdaytime1 Daytime.1 - A synchronous TCP daytime client]
+
 Next: [link boost_asio.tutorial.tutdaytime3 Daytime.3 - An asynchronous TCP daytime server]
 
 
@@ -1346,9 +1366,12 @@ The boost::asio::async\_write() call used to initiate the call can then be chang
 
 
 
-See the [link boost_asio.tutorial.tutdaytime3.src full source listing]\n
-Return to the [link boost_asio.tutorial tutorial index]\n
-Previous: [link boost_asio.tutorial.tutdaytime2 Daytime.2 - A synchronous TCP daytime server]\n
+See the [link boost_asio.tutorial.tutdaytime3.src full source listing]
+
+Return to the [link boost_asio.tutorial tutorial index]
+
+Previous: [link boost_asio.tutorial.tutdaytime2 Daytime.2 - A synchronous TCP daytime server]
+
 Next: [link boost_asio.tutorial.tutdaytime4 Daytime.4 - A synchronous UDP daytime client]
 
 
@@ -1563,9 +1586,12 @@ Finally, handle any exceptions that may have been thrown.
   ``''''''``  return 0;
   ``''''''``}
 
-See the [link boost_asio.tutorial.tutdaytime4.src full source listing]\n
-Return to the [link boost_asio.tutorial tutorial index]\n
-Previous: [link boost_asio.tutorial.tutdaytime3 Daytime.3 - An asynchronous TCP daytime server]\n
+See the [link boost_asio.tutorial.tutdaytime4.src full source listing]
+
+Return to the [link boost_asio.tutorial tutorial index]
+
+Previous: [link boost_asio.tutorial.tutdaytime3 Daytime.3 - An asynchronous TCP daytime server]
+
 Next: [link boost_asio.tutorial.tutdaytime5 Daytime.5 - A synchronous UDP daytime server]
 
 
@@ -1703,9 +1729,12 @@ Finally, handle any exceptions.
 
 
 
-See the [link boost_asio.tutorial.tutdaytime5.src full source listing]\n
-Return to the [link boost_asio.tutorial tutorial index]\n
-Previous: [link boost_asio.tutorial.tutdaytime4 Daytime.4 - A synchronous UDP daytime client]\n
+See the [link boost_asio.tutorial.tutdaytime5.src full source listing]
+
+Return to the [link boost_asio.tutorial tutorial index]
+
+Previous: [link boost_asio.tutorial.tutdaytime4 Daytime.4 - A synchronous UDP daytime client]
+
 Next: [link boost_asio.tutorial.tutdaytime6 Daytime.6 - An asynchronous UDP daytime server]
 
 
@@ -1915,9 +1944,12 @@ The function `handle_send()` is invoked after the service request has been compl
 
 
 
-See the [link boost_asio.tutorial.tutdaytime6.src full source listing]\n
-Return to the [link boost_asio.tutorial tutorial index]\n
-Previous: [link boost_asio.tutorial.tutdaytime5 Daytime.5 - A synchronous UDP daytime server]\n
+See the [link boost_asio.tutorial.tutdaytime6.src full source listing]
+
+Return to the [link boost_asio.tutorial tutorial index]
+
+Previous: [link boost_asio.tutorial.tutdaytime5 Daytime.5 - A synchronous UDP daytime server]
+
 Next: [link boost_asio.tutorial.tutdaytime7 Daytime.7 - A combined TCP/UDP asynchronous server]
 
 
@@ -2191,8 +2223,10 @@ Similarly, this next class is taken from the [link boost_asio.tutorial.tutdaytim
 
 
 
-See the [link boost_asio.tutorial.tutdaytime7.src full source listing]\n
-Return to the [link boost_asio.tutorial tutorial index]\n
+See the [link boost_asio.tutorial.tutdaytime7.src full source listing]
+
+Return to the [link boost_asio.tutorial tutorial index]
+
 Previous: [link boost_asio.tutorial.tutdaytime6 Daytime.6 - An asynchronous UDP daytime server]
 
 
