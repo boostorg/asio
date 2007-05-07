@@ -28,8 +28,7 @@ Similarly, to deallocate the memory it will execute:
   asio_handler_deallocate(pointer, size, &h);
 
 These functions are located using argument-dependent lookup. The implementation
-provides default implementations of the above functions in the `std::tr2::sys`
-namespace:
+provides default implementations of the above functions in the `asio` namespace:
 
   void* asio_handler_allocate(size_t, ...);
   void asio_handler_deallocate(void*, size_t, ...);
