@@ -11,9 +11,9 @@
 #include <cstdlib>
 #include <deque>
 #include <iostream>
+#include <boost/thread.hpp>
 #include <boost/bind.hpp>
 #include <boost/asio.hpp>
-#include <boost/thread.hpp>
 #include "chat_message.hpp"
 
 using boost::asio::ip::tcp;
