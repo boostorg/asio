@@ -177,9 +177,7 @@ void deadline_timer_test()
   BOOST_CHECK(count == 1);
   end = now();
   expected_end = start + seconds(10);
-  BOOST_CHECK_MESSAGE(expected_end < end, "expected_end = " << boost::posix_time::to_simple_string(expected_end));
-  BOOST_CHECK_MESSAGE(expected_end < end, "end = " << boost::posix_time::to_simple_string(end));
-  BOOST_CHECK(expected_end < end);
+  BOOST_CHECK(expected_end <= end);
 }
 
 test_suite* init_unit_test_suite(int argc, char* argv[])
