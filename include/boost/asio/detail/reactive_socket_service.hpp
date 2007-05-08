@@ -507,6 +507,18 @@ public:
       return 0;
     }
 
+    // Make socket non-blocking if user wants non-blocking.
+    if (impl.flags_ & implementation_type::user_set_non_blocking)
+    {
+      if (!(impl.flags_ & implementation_type::internal_non_blocking))
+      {
+        ioctl_arg_type non_blocking = 1;
+        if (socket_ops::ioctl(impl.socket_, FIONBIO, &non_blocking, ec))
+          return 0;
+        impl.flags_ |= implementation_type::internal_non_blocking;
+      }
+    }
+
     // Send the data.
     for (;;)
     {
@@ -669,6 +681,18 @@ public:
           boost::asio::buffer_size(buffer));
     }
 
+    // Make socket non-blocking if user wants non-blocking.
+    if (impl.flags_ & implementation_type::user_set_non_blocking)
+    {
+      if (!(impl.flags_ & implementation_type::internal_non_blocking))
+      {
+        ioctl_arg_type non_blocking = 1;
+        if (socket_ops::ioctl(impl.socket_, FIONBIO, &non_blocking, ec))
+          return 0;
+        impl.flags_ |= implementation_type::internal_non_blocking;
+      }
+    }
+
     // Send the data.
     for (;;)
     {
@@ -822,6 +846,18 @@ public:
     {
       ec = boost::system::error_code();
       return 0;
+    }
+
+    // Make socket non-blocking if user wants non-blocking.
+    if (impl.flags_ & implementation_type::user_set_non_blocking)
+    {
+      if (!(impl.flags_ & implementation_type::internal_non_blocking))
+      {
+        ioctl_arg_type non_blocking = 1;
+        if (socket_ops::ioctl(impl.socket_, FIONBIO, &non_blocking, ec))
+          return 0;
+        impl.flags_ |= implementation_type::internal_non_blocking;
+      }
     }
 
     // Receive some data.
@@ -1006,6 +1042,18 @@ public:
           boost::asio::buffer_size(buffer));
     }
 
+    // Make socket non-blocking if user wants non-blocking.
+    if (impl.flags_ & implementation_type::user_set_non_blocking)
+    {
+      if (!(impl.flags_ & implementation_type::internal_non_blocking))
+      {
+        ioctl_arg_type non_blocking = 1;
+        if (socket_ops::ioctl(impl.socket_, FIONBIO, &non_blocking, ec))
+          return 0;
+        impl.flags_ |= implementation_type::internal_non_blocking;
+      }
+    }
+
     // Receive some data.
     for (;;)
     {
@@ -1159,6 +1207,18 @@ public:
     {
       ec = boost::asio::error::already_open;
       return ec;
+    }
+
+    // Make socket non-blocking if user wants non-blocking.
+    if (impl.flags_ & implementation_type::user_set_non_blocking)
+    {
+      if (!(impl.flags_ & implementation_type::internal_non_blocking))
+      {
+        ioctl_arg_type non_blocking = 1;
+        if (socket_ops::ioctl(impl.socket_, FIONBIO, &non_blocking, ec))
+          return ec;
+        impl.flags_ |= implementation_type::internal_non_blocking;
+      }
     }
 
     // Accept a socket.
