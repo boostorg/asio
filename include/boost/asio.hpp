@@ -65,6 +65,7 @@
 #include <boost/asio/stream_socket_service.hpp>
 #include <boost/asio/streambuf.hpp>
 #include <boost/asio/time_traits.hpp>
+#include <boost/asio/version.hpp>
 #include <boost/asio/write.hpp>
 
 #endif // BOOST_ASIO_HPP
