@@ -138,7 +138,8 @@ public:
     enum
     {
       enable_connection_aborted = 1, // User wants connection_aborted errors.
-      user_set_linger = 2 // The user set the linger option.
+      user_set_linger = 2, // The user set the linger option.
+      user_set_non_blocking = 4 // The user wants a non-blocking socket.
     };
 
     // Flags indicating the current state of the socket.
@@ -201,6 +202,7 @@ public:
   void construct(implementation_type& impl)
   {
     impl.socket_ = invalid_socket;
+    impl.flags_ = 0;
     impl.cancel_token_.reset();
     impl.safe_cancellation_thread_id_ = 0;
 
@@ -240,6 +242,7 @@ public:
       boost::system::error_code ignored_ec;
       socket_ops::close(impl.socket_, ignored_ec);
       impl.socket_ = invalid_socket;
+      impl.flags_ = 0;
       impl.cancel_token_.reset();
       impl.safe_cancellation_thread_id_ = 0;
     }
@@ -275,6 +278,7 @@ public:
     iocp_service_.register_handle(sock_as_handle);
 
     impl.socket_ = sock.release();
+    impl.flags_ = 0;
     impl.cancel_token_.reset(static_cast<void*>(0), noop_deleter());
     impl.protocol_ = protocol;
     ec = boost::system::error_code();
@@ -295,6 +299,7 @@ public:
     iocp_service_.register_handle(native_socket.as_handle());
 
     impl.socket_ = native_socket;
+    impl.flags_ = 0;
     impl.cancel_token_.reset(static_cast<void*>(0), noop_deleter());
     impl.protocol_ = protocol;
     ec = boost::system::error_code();
@@ -326,6 +331,7 @@ public:
         return ec;
 
       impl.socket_ = invalid_socket;
+      impl.flags_ = 0;
       impl.cancel_token_.reset();
       impl.safe_cancellation_thread_id_ = 0;
     }
@@ -535,6 +541,15 @@ public:
 
     socket_ops::ioctl(impl.socket_, command.name(),
         static_cast<ioctl_arg_type*>(command.data()), ec);
+
+    if (!ec && command.name() == static_cast<int>(FIONBIO))
+    {
+      if (command.get())
+        impl.flags_ |= implementation_type::user_set_non_blocking;
+      else
+        impl.flags_ &= ~implementation_type::user_set_non_blocking;
+    }
+
     return ec;
   }
 
@@ -1775,11 +1790,12 @@ public:
   class connect_handler
   {
   public:
-    connect_handler(socket_type socket,
+    connect_handler(socket_type socket, bool user_set_non_blocking,
         boost::shared_ptr<bool> completed,
         boost::asio::io_service& io_service,
         reactor_type& reactor, Handler handler)
       : socket_(socket),
+        user_set_non_blocking_(user_set_non_blocking),
         completed_(completed),
         io_service_(io_service),
         reactor_(reactor),
@@ -1826,12 +1842,15 @@ public:
         return true;
       }
 
-      // Make the socket blocking again (the default).
-      ioctl_arg_type non_blocking = 0;
-      if (socket_ops::ioctl(socket_, FIONBIO, &non_blocking, ec))
+      // Revert socket to blocking mode unless the user requested otherwise.
+      if (!user_set_non_blocking_)
       {
-        io_service_.post(bind_handler(handler_, ec));
-        return true;
+        ioctl_arg_type non_blocking = 0;
+        if (socket_ops::ioctl(socket_, FIONBIO, &non_blocking, ec))
+        {
+          io_service_.post(bind_handler(handler_, ec));
+          return true;
+        }
       }
 
       // Post the result of the successful connection operation.
@@ -1842,6 +1861,7 @@ public:
 
   private:
     socket_type socket_;
+    bool user_set_non_blocking_;
     boost::shared_ptr<bool> completed_;
     boost::asio::io_service& io_service_;
     reactor_type& reactor_;
@@ -1892,6 +1912,13 @@ public:
     if (socket_ops::connect(impl.socket_, peer_endpoint.data(),
           peer_endpoint.size(), ec) == 0)
     {
+      // Revert socket to blocking mode unless the user requested otherwise.
+      if (!(impl.flags_ & implementation_type::user_set_non_blocking))
+      {
+        non_blocking = 0;
+        socket_ops::ioctl(impl.socket_, FIONBIO, &non_blocking, ec);
+      }
+
       // The connect operation has finished successfully so we need to post the
       // handler immediately.
       this->io_service().post(bind_handler(handler, ec));
@@ -1904,10 +1931,20 @@ public:
       boost::shared_ptr<bool> completed(new bool(false));
       reactor->start_write_and_except_ops(impl.socket_,
           connect_handler<Handler>(
-            impl.socket_, completed, this->io_service(), *reactor, handler));
+            impl.socket_,
+            (impl.flags_ & implementation_type::user_set_non_blocking) != 0,
+            completed, this->io_service(), *reactor, handler));
     }
     else
     {
+      // Revert socket to blocking mode unless the user requested otherwise.
+      if (!(impl.flags_ & implementation_type::user_set_non_blocking))
+      {
+        non_blocking = 0;
+        boost::system::error_code ignored_ec;
+        socket_ops::ioctl(impl.socket_, FIONBIO, &non_blocking, ignored_ec);
+      }
+
       // The connect operation has failed, so post the handler immediately.
       this->io_service().post(bind_handler(handler, ec));
     }
