@@ -5,7 +5,7 @@
  / file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
  /]
 
-[section Custom Memory Allocation]
+[section:allocation Custom Memory Allocation]
 
 Many asynchronous operations need to allocate an object to store state
 associated with the operation. For example, a Win32 implementation needs

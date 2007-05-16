@@ -8,7 +8,7 @@
 [section:SyncReadStream Buffer-oriented synchronous read stream requirements]
 
 In the table below, `a` denotes a synchronous read stream object, `mb` denotes
-an object satisfying [link boost_asio.requirements.MutableBufferSequence
+an object satisfying [link boost_asio.reference.MutableBufferSequence
 mutable buffer sequence] requirements, and `ec` denotes an object of type
 `error_code`.
 

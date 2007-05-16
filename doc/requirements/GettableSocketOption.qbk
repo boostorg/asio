@@ -8,7 +8,7 @@
 [section:GettableSocketOption Gettable socket option requirements]
 
 In the table below, `X` denotes a socket option class, `a` denotes a value of
-`X`, `p` denotes a value that meets the [link boost_asio.requirements.Protocol
+`X`, `p` denotes a value that meets the [link boost_asio.reference.Protocol
 protocol] requirements, and `u` denotes an identifier.
 
 [table GettableSocketOption requirements

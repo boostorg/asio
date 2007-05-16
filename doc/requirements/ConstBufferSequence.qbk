@@ -16,7 +16,7 @@ denotes a value of type `X` and `u` denotes an identifier.
     [`X::value_type`]
     [`T`]
     [`T` meets the requirements for [link
-     boost_asio.requirements.ConvertibleToConstBuffer
+     boost_asio.reference.ConvertibleToConstBuffer
      ConvertibleToConstBuffer].]
   ]
   [

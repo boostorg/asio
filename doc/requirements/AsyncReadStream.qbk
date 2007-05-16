@@ -9,9 +9,9 @@
 
 In the table below, `a` denotes an asynchronous read stream object, `mb`
 denotes an object satisfying [link
-boost_asio.requirements.MutableBufferSequence mutable buffer sequence]
+boost_asio.reference.MutableBufferSequence mutable buffer sequence]
 requirements, and `h` denotes an object satisfying [link
-boost_asio.requirements.ReadHandler read handler] requirements.
+boost_asio.reference.ReadHandler read handler] requirements.
 
 [table Buffer-oriented asynchronous read stream requirements
   [[operation] [type] [semantics, pre/post-conditions]]
@@ -28,7 +28,7 @@ boost_asio.requirements.ReadHandler read handler] requirements.
       Initiates an asynchronous operation to read one or more bytes of data
       from the stream `a`. The operation is performed via the `io_service`
       object `a.io_service()` and behaves according to [link
-      boost_asio.requirements.asynchronous_operations asynchronous operation]
+      boost_asio.reference.asynchronous_operations asynchronous operation]
       requirements.\n
       \n
       The mutable buffer sequence `mb` specifies memory where the data should

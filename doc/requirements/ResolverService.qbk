@@ -8,7 +8,7 @@
 [section:ResolverService Resolver service requirements]
 
 A resolver service must meet the requirements for an [link
-boost_asio.requirements.IoObjectService I/O object service], as well as the
+boost_asio.reference.IoObjectService I/O object service], as well as the
 additional requirements listed below.
 
 In the table below, `X` denotes a resolver service class for protocol
@@ -17,7 +17,7 @@ type `X::implementation_type`, `q` denotes a value of type
 `ip::basic_resolver_query<InternetProtocol>`, `e` denotes a value of type
 `ip::basic_endpoint<InternetProtocol>`, `ec` denotes a value of type
 `error_code`, and `h` denotes a value meeting [link
-boost_asio.requirements.ResolveHandler `ResolveHandler`] requirements.
+boost_asio.reference.ResolveHandler `ResolveHandler`] requirements.
 
 [table ResolverService requirements
   [[expression] [return type] [assertion/note\npre/post-condition]]
@@ -25,7 +25,7 @@ boost_asio.requirements.ResolveHandler `ResolveHandler`] requirements.
     [`a.destroy(b);`]
     []
     [
-      From [link boost_asio.requirements.IoObjectService IoObjectService]
+      From [link boost_asio.reference.IoObjectService IoObjectService]
       requirements. Implicitly cancels asynchronous resolve operations, as if by
       calling `a.cancel(b, ec)`.
     ]
@@ -63,7 +63,7 @@ boost_asio.requirements.ResolveHandler `ResolveHandler`] requirements.
     [
       Initiates an asynchronous resolve operation that is performed via the
       `io_service` object `a.io_service()` and behaves according to [link
-      boost_asio.requirements.asynchronous_operations asynchronous operation]
+      boost_asio.reference.asynchronous_operations asynchronous operation]
       requirements.\n
       \n
       If the operation completes successfully, the `ResolveHandler` object `h`
@@ -94,7 +94,7 @@ boost_asio.requirements.ResolveHandler `ResolveHandler`] requirements.
     [
       Initiates an asynchronous resolve operation that is performed via the
       `io_service` object `a.io_service()` and behaves according to [link
-      boost_asio.requirements.asynchronous_operations asynchronous operation]
+      boost_asio.reference.asynchronous_operations asynchronous operation]
       requirements.\n
       \n
       If the operation completes successfully, the `ResolveHandler` object `h`

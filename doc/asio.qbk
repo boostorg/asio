@@ -40,89 +40,55 @@ Boost.Asio is a cross-platform C++ library for network programming that
 provides developers with a consistent asynchronous I/O model using a modern C++
 approach.
 
-[heading Quick Reference]
+[variablelist
+  [
+    [
+      [link boost_asio.using Using Boost.Asio]
+    ]
+    [
+      How to use Boost.Asio in your applications. Includes information on
+      library dependencies and supported platforms.
+    ]
+  ]
+  [
+    [
+      [link boost_asio.tutorial Tutorial]
+    ]
+    [
+      A tutorial that introduces the fundamental concepts required to use
+      Boost.Asio, and shows how to use Boost.Asio to develop simple client and
+      server programs.
+    ]
+  ]
+  [
+    [
+      [link boost_asio.examples Examples]
+    ]
+    [
+      Examples that illustrate the use of Boost.Asio in more complex
+      applications.
+    ]
+  ]
+  [
+    [
+      [link boost_asio.reference Reference]
+    ]
+    [
+      Detailed class and function reference.
+    ]
+  ]
+  [
+    [
+      [link boost_asio.design Design]
+    ]
+    [
+      Rationale and design information for Boost.Asio.
+    ]
+  ]
+]
 
-[xinclude quickref.xml]
-
-[heading Getting Started]
-
-The [link boost_asio.tutorial tutorial] introduces the fundamental concepts
-required to use Boost.Asio, and shows how to use Boost.Asio to develop simple
-client and server programs.
-
-The [link boost_asio.examples examples] illustrate the use of Boost.Asio in
-more complex applications. 
-
-[heading Dependencies]
-
-The following libraries must be available in order to link programs that use
-Boost.Asio:
-
-* Boost.System
-
-* Boost.Regex (optional) if you use any of the [link
-boost_asio.reference.read_until `read_until()`] or [link
-boost_asio.reference.async_read_until `async_read_until()`] overloads that take
-a `boost::regex` parameter.
-
-* [@http://www.openssl.org OpenSSL] (optional) if you use Boost.Asio's SSL
-support.
-
-Note: with MSVC or Borland C++ you may want to add `-DBOOST_DATE_TIME_NO_LIB`
-and `-DBOOST_REGEX_NO_LIB` to your project settings to disable autolinking of
-the Boost.Date_Time and Boost.Regex libraries respectively.
-
-[heading Supported Platforms]
-
-The following platforms and compilers have been tested:
-
-* Win32 and Win64 using Visual C++ 7.1 and Visual C++ 8.0.
-* Win32 using Borland C++Builder 6 patch 4.
-* Win32 using MinGW.
-* Win32 using Cygwin. (`__USE_W32_SOCKETS` must be defined.)
-* Linux (2.4 or 2.6 kernels) using g++ 3.3 or later.
-* Solaris using g++ 3.3 or later.
-* Mac OS X 10.4 using g++ 3.3 or later.
-* QNX Neutrino 6.3 using g++ 3.3 or later.
-
-[heading Rationale]
-
-The Boost.Asio library is intended for programmers using C++ for systems
-programming, where access to operating system functionality such as networking
-is often required. In particular, Boost.Asio attempts to address the following
-goals:
-
-* [*Portability.] The library should support, and provide consistent behaviour
-across, a range of commonly used operating systems.
-
-* [*Scalability.] The library should allow, and indeed encourage, the
-development of network applications that scale to hundreds or thousands of
-concurrent connections. The library implementation for each operating system
-should use the mechanism that best enables this scalability.
-
-* [*Efficiency.] The library should support techniques such as scatter-gather
-I/O, and allow protocol implementations that minimise data copying.
-
-* [*Model Berkeley sockets.] The Berkeley sockets API is widely implemented and
-understood, as well as being covered in much literature. Other programming
-languages often use a similar interface for networking APIs.
-
-* [*Ease of use.] Lower the entry barrier for new users by taking a toolkit,
-rather than framework, approach. That is, try to minimise the up-front
-investment in time to just learning a few basic rules and guidelines. After
-that, a library user should only need to understand the specific functions that
-are being used.
-
-* [*Basis for further abstraction.] The library should permit the development
-of other libraries that provide higher levels of abstraction. For example,
-implementations of commonly used protocols such as HTTP.
-
-Although the current incarnation of Boost.Asio focuses primarily on networking,
-its concepts of asynchronous I/O can be extended to include other operating
-system resources such as files.
-
+[include using.qbk]
 [include tutorial.qbk]
 [include examples.qbk]
-[include requirements.qbk]
 [include reference.qbk]
 [include design.qbk]

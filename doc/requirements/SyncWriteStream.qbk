@@ -8,7 +8,7 @@
 [section:SyncWriteStream Buffer-oriented synchronous write stream requirements]
 
 In the table below, `a` denotes a synchronous write stream object, `cb` denotes
-an object satisfying [link boost_asio.requirements.ConstBufferSequence constant
+an object satisfying [link boost_asio.reference.ConstBufferSequence constant
 buffer sequence] requirements, and `ec` denotes an object of type `error_code`.
 
 [table Buffer-oriented synchronous write stream requirements

@@ -17,7 +17,7 @@ In the table below, `X` denotes an endpoint class, `a` denotes a value of type
   [[expression] [type] [assertion/note\npre/post-conditions]]
   [
     [`X::protocol_type`]
-    [type meeting [link boost_asio.requirements.Protocol protocol] requirements]
+    [type meeting [link boost_asio.reference.Protocol protocol] requirements]
     []
   ]
   [

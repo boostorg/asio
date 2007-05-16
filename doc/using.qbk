@@ -1,0 +1,126 @@
+[/
+ / Copyright (c) 2003-2007 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+ /
+ / Distributed under the Boost Software License, Version 1.0. (See accompanying
+ / file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+ /]
+
+[section:using Using Boost.Asio]
+
+[heading Supported Platforms]
+
+The following platforms and compilers have been tested:
+
+* Win32 and Win64 using Visual C++ 7.1 and Visual C++ 8.0.
+* Win32 using Borland C++Builder 6 patch 4.
+* Win32 using MinGW.
+* Win32 using Cygwin. (`__USE_W32_SOCKETS` must be defined.)
+* Linux (2.4 or 2.6 kernels) using g++ 3.3 or later.
+* Solaris using g++ 3.3 or later.
+* Mac OS X 10.4 using g++ 3.3 or later.
+* QNX Neutrino 6.3 using g++ 3.3 or later.
+
+[heading Dependencies]
+
+The following libraries must be available in order to link programs that use
+Boost.Asio:
+
+* Boost.System for the `boost::system::error_code` and
+`boost::system::system_error` classes.
+
+* Boost.Regex (optional) if you use any of the [link
+boost_asio.reference.read_until `read_until()`] or [link
+boost_asio.reference.async_read_until `async_read_until()`] overloads that take
+a `boost::regex` parameter.
+
+* [@http://www.openssl.org OpenSSL] (optional) if you use Boost.Asio's SSL
+support.
+
+Furthermore, some of the examples also require the Boost.Thread,
+Boost.Date_Time or Boost.Serialization libraries.
+
+[note With MSVC or Borland C++ you may want to add `-DBOOST_DATE_TIME_NO_LIB`
+and `-DBOOST_REGEX_NO_LIB` to your project settings to disable autolinking of
+the Boost.Date_Time and Boost.Regex libraries respectively. Alternatively, you
+may choose to build these libraries and link to them.]
+
+[heading Building Boost Libraries]
+
+You may build the subset of Boost libraries required to use Boost.Asio and its
+examples by running the following command from the root of the Boost download
+package:
+
+[pre
+  bjam --with-system --with-thread --with-date_time --with-regex --with-serialization stage
+]
+
+This assumes that you have already built `bjam`. Consult the Boost.Build
+documentation for more details.
+
+[/
+
+[heading Compiling Programs With Boost.Asio]
+
+Consider the following minimal Boost.Asio program [^simple.cpp]:
+
+  #include <boost/asio.hpp>
+  #include <iostream>
+  #include <ostream>
+
+  int main()
+  {
+    boost::asio::ip::tcp::iostream s("www.boost.org", "http");
+
+    s << "GET / HTTP/1.0\r\n";
+    s << "Host: www.boost.org\r\n";
+    s << "\r\n" << std::flush;
+
+    std::cout << s.rdbuf();
+
+    return 0;
+  }
+
+The following compiler commands may be used to build the program (note that the
+name of the `boost_system` library may vary depending on the compiler version):
+
+[table
+  [
+    [OS]
+    [Compiler]
+    [Command]
+  ]
+  [
+    [FreeBSD]
+    [g++]
+    [[^g++ -I['boost_root] -pthread simple.cpp -L['boost_root]/stage/lib -lboost_system-gcc]]
+  ]
+  [
+    [Linux]
+    [g++]
+    [[^g++ -I['boost_root] -pthread simple.cpp -L['boost_root]/stage/lib -lboost_system-gcc41]]
+  ]
+  [
+    [Mac OS X]
+    [g++]
+    [[^g++ -I['boost_root] simple.cpp -L['boost_root]/stage/lib -lboost_system]]
+  ]
+  [
+    [Solaris]
+    [g++]
+    [[^g++ -I['boost_root] simple.cpp -L['boost_root]/stage/lib -lboost_system -lsocket -lnsl -lpthread]]
+  ]
+  [
+    [Windows]
+    [MSVC 7.1]
+    [[^cl /EHsc /GR /MT -I['boost_root] /D_WIN32_WINNT=0x500 simple.cpp /link /libpath:['boost_root]/stage/lib]]
+  ]
+  [
+    [Windows]
+    [MSVC 8.0]
+    [[^cl /EHsc /GR /MT /I['boost_root] /D_WIN32_WINNT=0x500 simple.cpp /link /libpath:['boost_root]/stage/lib]]
+  ]
+]
+
+]
+
+[endsect]

@@ -8,7 +8,7 @@
 [section:CompletionHandler Completion handler requirements]
 
 A completion handler must meet the requirements for a [link
-boost_asio.requirements.Handler handler]. A value `h` of a completion handler
+boost_asio.reference.Handler handler]. A value `h` of a completion handler
 class should work correctly in the expression `h()`.
 
 [endsect]

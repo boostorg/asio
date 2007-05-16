@@ -9,7 +9,7 @@
 -->
 
 <informaltable frame="all">
-  <tgroup cols="3">
+  <tgroup cols="4">
     <tbody>
       <row>
         <entry valign="top">
@@ -84,6 +84,9 @@
           <bridgehead renderas="sect3">Free Functions</bridgehead>
           <itemizedlist>
             <listitem><link linkend="boost_asio.reference.add_service">add_service</link></listitem>
+            <listitem><link linkend="boost_asio.reference.asio_handler_allocate">asio_handler_allocate</link></listitem>
+            <listitem><link linkend="boost_asio.reference.asio_handler_deallocate">asio_handler_deallocate</link></listitem>
+            <listitem><link linkend="boost_asio.reference.asio_handler_invoke">asio_handler_invoke</link></listitem>
             <listitem><link linkend="boost_asio.reference.async_read">async_read</link></listitem>
             <listitem><link linkend="boost_asio.reference.async_read_until">async_read_until</link></listitem>
             <listitem><link linkend="boost_asio.reference.async_write">async_write</link></listitem>
@@ -95,10 +98,51 @@
             <listitem><link linkend="boost_asio.reference.use_service">use_service</link></listitem>
             <listitem><link linkend="boost_asio.reference.write">write</link></listitem>
           </itemizedlist>
+          <bridgehead renderas="sect3">Error Codes</bridgehead>
+          <itemizedlist>
+            <listitem><link linkend="boost_asio.reference.error">error</link></listitem>
+          </itemizedlist>
           <bridgehead renderas="sect3">Type Traits</bridgehead>
           <itemizedlist>
             <listitem><link linkend="boost_asio.reference.is_read_buffered">is_read_buffered</link></listitem>
             <listitem><link linkend="boost_asio.reference.is_write_buffered">is_write_buffered</link></listitem>
+          </itemizedlist>
+        </entry>
+        <entry valign="top">
+          <bridgehead renderas="sect3">Type Requirements</bridgehead>
+          <itemizedlist>
+            <listitem><link linkend="boost_asio.reference.asynchronous_operations">Asynchronous operations</link></listitem>
+            <listitem><link linkend="boost_asio.reference.AcceptHandler">AcceptHandler</link></listitem>
+            <listitem><link linkend="boost_asio.reference.AsyncReadStream">AsyncReadStream</link></listitem>
+            <listitem><link linkend="boost_asio.reference.AsyncWriteStream">AsyncWriteStream</link></listitem>
+            <listitem><link linkend="boost_asio.reference.CompletionHandler">CompletionHandler</link></listitem>
+            <listitem><link linkend="boost_asio.reference.ConnectHandler">ConnectHandler</link></listitem>
+            <listitem><link linkend="boost_asio.reference.ConstBufferSequence">ConstBufferSequence</link></listitem>
+            <listitem><link linkend="boost_asio.reference.ConvertibleToConstBuffer">ConvertibleToConstBuffer</link></listitem>
+            <listitem><link linkend="boost_asio.reference.ConvertibleToMutableBuffer">ConvertibleToMutableBuffer</link></listitem>
+            <listitem><link linkend="boost_asio.reference.DatagramSocketService">DatagramSocketService</link></listitem>
+            <listitem><link linkend="boost_asio.reference.Endpoint">Endpoint</link></listitem>
+            <listitem><link linkend="boost_asio.reference.GettableSocketOption">GettableSocketOption</link></listitem>
+            <listitem><link linkend="boost_asio.reference.Handler">Handler</link></listitem>
+            <listitem><link linkend="boost_asio.reference.InternetProtocol">InternetProtocol</link></listitem>
+            <listitem><link linkend="boost_asio.reference.IoControlCommand">IoControlCommand</link></listitem>
+            <listitem><link linkend="boost_asio.reference.IoObjectService">IoObjectService</link></listitem>
+            <listitem><link linkend="boost_asio.reference.MutableBufferSequence">MutableBufferSequence</link></listitem>
+            <listitem><link linkend="boost_asio.reference.Protocol">Protocol</link></listitem>
+            <listitem><link linkend="boost_asio.reference.ReadHandler">ReadHandler</link></listitem>
+            <listitem><link linkend="boost_asio.reference.ResolveHandler">ResolveHandler</link></listitem>
+            <listitem><link linkend="boost_asio.reference.ResolverService">ResolverService</link></listitem>
+            <listitem><link linkend="boost_asio.reference.Service">Service</link></listitem>
+            <listitem><link linkend="boost_asio.reference.SettableSocketOption">SettableSocketOption</link></listitem>
+            <listitem><link linkend="boost_asio.reference.SocketAcceptorService">SocketAcceptorService</link></listitem>
+            <listitem><link linkend="boost_asio.reference.SocketService">SocketService</link></listitem>
+            <listitem><link linkend="boost_asio.reference.StreamSocketService">StreamSocketService</link></listitem>
+            <listitem><link linkend="boost_asio.reference.SyncReadStream">SyncReadStream</link></listitem>
+            <listitem><link linkend="boost_asio.reference.SyncWriteStream">SyncWriteStream</link></listitem>
+            <listitem><link linkend="boost_asio.reference.TimerService">TimerService</link></listitem>
+            <listitem><link linkend="boost_asio.reference.TimeTraits">TimeTraits</link></listitem>
+            <listitem><link linkend="boost_asio.reference.WaitHandler">WaitHandler</link></listitem>
+            <listitem><link linkend="boost_asio.reference.WriteHandler">WriteHandler</link></listitem>
           </itemizedlist>
         </entry>
       </row>

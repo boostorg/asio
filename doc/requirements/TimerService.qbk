@@ -8,7 +8,7 @@
 [section:TimerService Timer service requirements]
 
 A timer service must meet the requirements for an [link
-boost_asio.requirements.IoObjectService I/O object service], as well as the
+boost_asio.reference.IoObjectService I/O object service], as well as the
 additional requirements listed below.
 
 In the table below, `X` denotes a timer service class for time type `Time` and
@@ -16,7 +16,7 @@ traits type `TimeTraits`, `a` denotes a value of type `X`, `b` denotes a value
 of type `X::implementation_type`, `t` denotes a value of type `Time`, `d`
 denotes a value of type `TimeTraits::duration_type`, `e` denotes a value of
 type `error_code`, and `h` denotes a value meeting [link
-boost_asio.requirements.WaitHandler `WaitHandler`] requirements.
+boost_asio.reference.WaitHandler `WaitHandler`] requirements.
 
 [table TimerService requirements
   [[expression] [return type] [assertion/note\npre/post-condition]]
@@ -24,7 +24,7 @@ boost_asio.requirements.WaitHandler `WaitHandler`] requirements.
     [`a.destroy(b);`]
     []
     [
-      From [link boost_asio.requirements.IoObjectService IoObjectService]
+      From [link boost_asio.reference.IoObjectService IoObjectService]
       requirements. Implicitly cancels asynchronous wait operations, as if by
       calling `a.cancel(b, e)`.
     ]
@@ -92,7 +92,7 @@ boost_asio.requirements.WaitHandler `WaitHandler`] requirements.
     [
       Initiates an asynchronous wait operation that is performed via the
       `io_service` object `a.io_service()` and behaves according to [link
-      boost_asio.requirements.asynchronous_operations asynchronous operation]
+      boost_asio.reference.asynchronous_operations asynchronous operation]
       requirements.\n
       \n
       The handler shall be posted for execution only if the condition

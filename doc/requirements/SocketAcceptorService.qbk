@@ -8,23 +8,23 @@
 [section:SocketAcceptorService Socket acceptor service requirements]
 
 A socket acceptor service must meet the requirements for an [link
-boost_asio.requirements.IoObjectService I/O object service], as well as the
+boost_asio.reference.IoObjectService I/O object service], as well as the
 additional requirements listed below.
 
 In the table below, `X` denotes a socket acceptor service class for protocol
-[link boost_asio.requirements.Protocol `Protocol`], `a` denotes a value of type
+[link boost_asio.reference.Protocol `Protocol`], `a` denotes a value of type
 `X`, `b` denotes a value of type `X::implementation_type`, `p` denotes a value
 of type `Protocol`, `n` denotes a value of type `X::native_type`, `e` denotes a
 value of type `Protocol::endpoint`, `ec` denotes a value of type `error_code`,
-`s` denotes a value meeting [link boost_asio.requirements.SettableSocketOption
+`s` denotes a value meeting [link boost_asio.reference.SettableSocketOption
 `SettableSocketOption`] requirements, `g` denotes a value meeting [link
-boost_asio.requirements.GettableSocketOption `GettableSocketOption`]
+boost_asio.reference.GettableSocketOption `GettableSocketOption`]
 requirements, `i` denotes a value meeting [link
-boost_asio.requirements.IoControlCommand `IoControlCommand`] requirements, `k`
+boost_asio.reference.IoControlCommand `IoControlCommand`] requirements, `k`
 denotes a value of type `basic_socket<Protocol, SocketService>` where
-`SocketService` is a type meeting [link boost_asio.requirements.SocketService
+`SocketService` is a type meeting [link boost_asio.reference.SocketService
 socket service] requirements, `ah` denotes a value meeting [link
-boost_asio.requirements.AcceptHandler `AcceptHandler`] requirements, and `u`
+boost_asio.reference.AcceptHandler `AcceptHandler`] requirements, and `u`
 and `v` denote identifiers.
 
 [table SocketAcceptorService requirements
@@ -42,7 +42,7 @@ and `v` denote identifiers.
     [`a.construct(b);`]
     []
     [
-      From [link boost_asio.requirements.IoObjectService IoObjectService]
+      From [link boost_asio.reference.IoObjectService IoObjectService]
       requirements.\n
       post: `!a.is_open(b)`.
     ]
@@ -51,7 +51,7 @@ and `v` denote identifiers.
     [`a.destroy(b);`]
     []
     [
-      From [link boost_asio.requirements.IoObjectService IoObjectService]
+      From [link boost_asio.reference.IoObjectService IoObjectService]
       requirements. Implicitly cancels asynchronous operations, as if by calling
       `a.close(b, ec)`.
     ]
@@ -223,7 +223,7 @@ and `v` denote identifiers.
       pre: `a.is_open(b) && !k.is_open()`.\n
       Initiates an asynchronous accept operation that is performed via the
       `io_service` object `a.io_service()` and behaves according to [link
-      boost_asio.requirements.asynchronous_operations asynchronous operation]
+      boost_asio.reference.asynchronous_operations asynchronous operation]
       requirements.\n\n
       The program must ensure the objects `k` and `e` are valid until the
       handler for the asynchronous operation is invoked.
@@ -238,7 +238,7 @@ and `v` denote identifiers.
       pre: `a.is_open(b) && !k.is_open()`.\n
       Initiates an asynchronous accept operation that is performed via the
       `io_service` object `a.io_service()` and behaves according to [link
-      boost_asio.requirements.asynchronous_operations asynchronous operation]
+      boost_asio.reference.asynchronous_operations asynchronous operation]
       requirements.\n\n
       The program must ensure the object `k` is valid until the handler for the
       asynchronous operation is invoked.

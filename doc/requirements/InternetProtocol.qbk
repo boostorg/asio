@@ -8,7 +8,7 @@
 [section:InternetProtocol Internet protocol requirements]
 
 An internet protocol must meet the requirements for a [link
-boost_asio.requirements.Protocol protocol] as well as the additional
+boost_asio.reference.Protocol protocol] as well as the additional
 requirements listed below.
 
 In the table below, `X` denotes an internet protocol class, `a` denotes a value

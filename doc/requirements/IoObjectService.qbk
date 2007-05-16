@@ -8,7 +8,7 @@
 [section:IoObjectService I/O object service requirements]
 
 An I/O object service must meet the requirements for a [link
-boost_asio.requirements.Service service], as well as the requirements listed
+boost_asio.reference.Service service], as well as the requirements listed
 below.
 
 In the table below, `X` denotes an I/O object service class, `a` denotes a

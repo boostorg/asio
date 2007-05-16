@@ -12,7 +12,7 @@ named with the prefix `async_`. These functions will be referred to as
 ['initiating functions].
 
 All initiating functions in Boost.Asio take a function object meeting [link
-boost_asio.requirements.Handler handler] requirements as the final parameter.
+boost_asio.reference.Handler handler] requirements as the final parameter.
 These handlers accept as their first parameter an lvalue of type `const
 error_code`.
 
@@ -110,7 +110,7 @@ bound completion handler forwards the `asio_handler_allocate()`,
 `asio_handler_deallocate()`, and `asio_handler_invoke()` calls to the
 corresponding functions for the user-supplied handler. A bound completion
 handler meets the requirements for a [link
-boost_asio.requirements.CompletionHandler completion handler].
+boost_asio.reference.CompletionHandler completion handler].
 
 For example, a bound completion handler for a `ReadHandler` may be implemented
 as follows:

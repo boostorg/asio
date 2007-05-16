@@ -8,19 +8,19 @@
 [section:StreamSocketService Stream socket service requirements]
 
 A stream socket service must meet the requirements for a [link
-boost_asio.requirements.SocketService socket service], as well as the additional
+boost_asio.reference.SocketService socket service], as well as the additional
 requirements listed below.
 
 In the table below, `X` denotes a stream socket service class, `a` denotes a
 value of type `X`, `b` denotes a value of type `X::implementation_type`, `ec`
 denotes a value of type `error_code`, `f` denotes a value of type
 `socket_base::message_flags`, `mb` denotes a value satisfying [link
-boost_asio.requirements.MutableBufferSequence mutable buffer sequence]
+boost_asio.reference.MutableBufferSequence mutable buffer sequence]
 requirements, `rh` denotes a value meeting [link
-boost_asio.requirements.ReadHandler `ReadHandler`] requirements, `cb` denotes a
-value satisfying [link boost_asio.requirements.ConstBufferSequence constant
+boost_asio.reference.ReadHandler `ReadHandler`] requirements, `cb` denotes a
+value satisfying [link boost_asio.reference.ConstBufferSequence constant
 buffer sequence] requirements, and `wh` denotes a value meeting [link
-boost_asio.requirements.WriteHandler `WriteHandler`] requirements.
+boost_asio.reference.WriteHandler `WriteHandler`] requirements.
 
 [table StreamSocketService requirements
   [[expression] [return type] [assertion/note\npre/post-condition]]
@@ -53,7 +53,7 @@ boost_asio.requirements.WriteHandler `WriteHandler`] requirements.
       Initiates an asynchronous operation to read one or more bytes of data
       from a connected socket `b`. The operation is performed via the
       `io_service` object `a.io_service()` and behaves according to [link
-      boost_asio.requirements.asynchronous_operations asynchronous operation]
+      boost_asio.reference.asynchronous_operations asynchronous operation]
       requirements.\n
       \n
       The mutable buffer sequence `mb` specifies memory where the data should
@@ -108,7 +108,7 @@ boost_asio.requirements.WriteHandler `WriteHandler`] requirements.
       Initiates an asynchronous operation to write one or more bytes of data to
       a connected socket `b`. The operation is performed via the `io_service`
       object `a.io_service()` and behaves according to [link
-      boost_asio.requirements.asynchronous_operations asynchronous operation]
+      boost_asio.reference.asynchronous_operations asynchronous operation]
       requirements.\n
       \n
       The constant buffer sequence `cb` specifies memory where the data to be

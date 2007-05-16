@@ -8,7 +8,7 @@
 [section:WaitHandler Wait handler requirements]
 
 A wait handler must meet the requirements for a [link
-boost_asio.requirements.Handler handler]. A value `h` of a wait handler class
+boost_asio.reference.Handler handler]. A value `h` of a wait handler class
 should work correctly in the expression `h(ec)`, where `ec` is an lvalue of
 type `const error_code`.
 
