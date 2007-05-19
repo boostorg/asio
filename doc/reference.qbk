@@ -49,7 +49,7 @@
 
 
   template<
-      typename Service>
+      typename ``[link boost_asio.reference.Service Service]``>
   void add_service(
       io_service & ios,
       Service * svc);
@@ -218,19 +218,19 @@ This default implementation is simply:
 Start an asynchronous operation to read a certain amount of data from a stream. 
 
   template<
-      typename AsyncReadStream,
-      typename MutableBufferSequence,
-      typename ReadHandler>
+      typename ``[link boost_asio.reference.AsyncReadStream AsyncReadStream]``,
+      typename ``[link boost_asio.reference.MutableBufferSequence MutableBufferSequence]``,
+      typename ``[link boost_asio.reference.ReadHandler ReadHandler]``>
   void ``[link boost_asio.reference.async_read.overload1 async_read]``(
       AsyncReadStream & s,
       const MutableBufferSequence & buffers,
       ReadHandler handler);
 
   template<
-      typename AsyncReadStream,
-      typename MutableBufferSequence,
-      typename CompletionCondition,
-      typename ReadHandler>
+      typename ``[link boost_asio.reference.AsyncReadStream AsyncReadStream]``,
+      typename ``[link boost_asio.reference.MutableBufferSequence MutableBufferSequence]``,
+      typename ``[link boost_asio.reference.CompletionCondition CompletionCondition]``,
+      typename ``[link boost_asio.reference.ReadHandler ReadHandler]``>
   void ``[link boost_asio.reference.async_read.overload2 async_read]``(
       AsyncReadStream & s,
       const MutableBufferSequence & buffers,
@@ -238,19 +238,19 @@ Start an asynchronous operation to read a certain amount of data from a stream.
       ReadHandler handler);
 
   template<
-      typename AsyncReadStream,
+      typename ``[link boost_asio.reference.AsyncReadStream AsyncReadStream]``,
       typename Allocator,
-      typename ReadHandler>
+      typename ``[link boost_asio.reference.ReadHandler ReadHandler]``>
   void ``[link boost_asio.reference.async_read.overload3 async_read]``(
       AsyncReadStream & s,
       basic_streambuf< Allocator > & b,
       ReadHandler handler);
 
   template<
-      typename AsyncReadStream,
+      typename ``[link boost_asio.reference.AsyncReadStream AsyncReadStream]``,
       typename Allocator,
-      typename CompletionCondition,
-      typename ReadHandler>
+      typename ``[link boost_asio.reference.CompletionCondition CompletionCondition]``,
+      typename ``[link boost_asio.reference.ReadHandler ReadHandler]``>
   void ``[link boost_asio.reference.async_read.overload4 async_read]``(
       AsyncReadStream & s,
       basic_streambuf< Allocator > & b,
@@ -263,9 +263,9 @@ Start an asynchronous operation to read a certain amount of data from a stream.
 Start an asynchronous operation to read a certain amount of data from a stream. 
 
   template<
-      typename AsyncReadStream,
-      typename MutableBufferSequence,
-      typename ReadHandler>
+      typename ``[link boost_asio.reference.AsyncReadStream AsyncReadStream]``,
+      typename ``[link boost_asio.reference.MutableBufferSequence MutableBufferSequence]``,
+      typename ``[link boost_asio.reference.ReadHandler ReadHandler]``>
   void async_read(
       AsyncReadStream & s,
       const MutableBufferSequence & buffers,
@@ -342,10 +342,10 @@ This overload is equivalent to calling:
 Start an asynchronous operation to read a certain amount of data from a stream. 
 
   template<
-      typename AsyncReadStream,
-      typename MutableBufferSequence,
-      typename CompletionCondition,
-      typename ReadHandler>
+      typename ``[link boost_asio.reference.AsyncReadStream AsyncReadStream]``,
+      typename ``[link boost_asio.reference.MutableBufferSequence MutableBufferSequence]``,
+      typename ``[link boost_asio.reference.CompletionCondition CompletionCondition]``,
+      typename ``[link boost_asio.reference.ReadHandler ReadHandler]``>
   void async_read(
       AsyncReadStream & s,
       const MutableBufferSequence & buffers,
@@ -424,9 +424,9 @@ See the
 Start an asynchronous operation to read a certain amount of data from a stream. 
 
   template<
-      typename AsyncReadStream,
+      typename ``[link boost_asio.reference.AsyncReadStream AsyncReadStream]``,
       typename Allocator,
-      typename ReadHandler>
+      typename ``[link boost_asio.reference.ReadHandler ReadHandler]``>
   void async_read(
       AsyncReadStream & s,
       basic_streambuf< Allocator > & b,
@@ -490,10 +490,10 @@ This overload is equivalent to calling:
 Start an asynchronous operation to read a certain amount of data from a stream. 
 
   template<
-      typename AsyncReadStream,
+      typename ``[link boost_asio.reference.AsyncReadStream AsyncReadStream]``,
       typename Allocator,
-      typename CompletionCondition,
-      typename ReadHandler>
+      typename ``[link boost_asio.reference.CompletionCondition CompletionCondition]``,
+      typename ``[link boost_asio.reference.ReadHandler ReadHandler]``>
   void async_read(
       AsyncReadStream & s,
       basic_streambuf< Allocator > & b,
@@ -560,9 +560,9 @@ Regardless of whether the asynchronous operation completes immediately or not, t
 Start an asynchronous operation to read data into a streambuf until a delimiter is encountered. 
 
   template<
-      typename AsyncReadStream,
+      typename ``[link boost_asio.reference.AsyncReadStream AsyncReadStream]``,
       typename Allocator,
-      typename ReadHandler>
+      typename ``[link boost_asio.reference.ReadHandler ReadHandler]``>
   void ``[link boost_asio.reference.async_read_until.overload1 async_read_until]``(
       AsyncReadStream & s,
       boost::asio::basic_streambuf< Allocator > & b,
@@ -570,9 +570,9 @@ Start an asynchronous operation to read data into a streambuf until a delimiter 
       ReadHandler handler);
 
   template<
-      typename AsyncReadStream,
+      typename ``[link boost_asio.reference.AsyncReadStream AsyncReadStream]``,
       typename Allocator,
-      typename ReadHandler>
+      typename ``[link boost_asio.reference.ReadHandler ReadHandler]``>
   void ``[link boost_asio.reference.async_read_until.overload2 async_read_until]``(
       AsyncReadStream & s,
       boost::asio::basic_streambuf< Allocator > & b,
@@ -580,9 +580,9 @@ Start an asynchronous operation to read data into a streambuf until a delimiter 
       ReadHandler handler);
 
   template<
-      typename AsyncReadStream,
+      typename ``[link boost_asio.reference.AsyncReadStream AsyncReadStream]``,
       typename Allocator,
-      typename ReadHandler>
+      typename ``[link boost_asio.reference.ReadHandler ReadHandler]``>
   void ``[link boost_asio.reference.async_read_until.overload3 async_read_until]``(
       AsyncReadStream & s,
       boost::asio::basic_streambuf< Allocator > & b,
@@ -595,9 +595,9 @@ Start an asynchronous operation to read data into a streambuf until a delimiter 
 Start an asynchronous operation to read data into a streambuf until a delimiter is encountered. 
 
   template<
-      typename AsyncReadStream,
+      typename ``[link boost_asio.reference.AsyncReadStream AsyncReadStream]``,
       typename Allocator,
-      typename ReadHandler>
+      typename ``[link boost_asio.reference.ReadHandler ReadHandler]``>
   void async_read_until(
       AsyncReadStream & s,
       boost::asio::basic_streambuf< Allocator > & b,
@@ -675,9 +675,9 @@ To asynchronously read data into a streambuf until a newline is encountered:
 Start an asynchronous operation to read data into a streambuf until a delimiter is encountered. 
 
   template<
-      typename AsyncReadStream,
+      typename ``[link boost_asio.reference.AsyncReadStream AsyncReadStream]``,
       typename Allocator,
-      typename ReadHandler>
+      typename ``[link boost_asio.reference.ReadHandler ReadHandler]``>
   void async_read_until(
       AsyncReadStream & s,
       boost::asio::basic_streambuf< Allocator > & b,
@@ -755,9 +755,9 @@ To asynchronously read data into a streambuf until a newline is encountered:
 Start an asynchronous operation to read data into a streambuf until a regular expression is located. 
 
   template<
-      typename AsyncReadStream,
+      typename ``[link boost_asio.reference.AsyncReadStream AsyncReadStream]``,
       typename Allocator,
-      typename ReadHandler>
+      typename ``[link boost_asio.reference.ReadHandler ReadHandler]``>
   void async_read_until(
       AsyncReadStream & s,
       boost::asio::basic_streambuf< Allocator > & b,
@@ -838,19 +838,19 @@ To asynchronously read data into a streambuf until a CR-LF sequence is encounter
 Start an asynchronous operation to write of all of the supplied data to a stream. 
 
   template<
-      typename AsyncWriteStream,
-      typename ConstBufferSequence,
-      typename WriteHandler>
+      typename ``[link boost_asio.reference.AsyncWriteStream AsyncWriteStream]``,
+      typename ``[link boost_asio.reference.ConstBufferSequence ConstBufferSequence]``,
+      typename ``[link boost_asio.reference.WriteHandler WriteHandler]``>
   void ``[link boost_asio.reference.async_write.overload1 async_write]``(
       AsyncWriteStream & s,
       const ConstBufferSequence & buffers,
       WriteHandler handler);
 
   template<
-      typename AsyncWriteStream,
-      typename ConstBufferSequence,
-      typename CompletionCondition,
-      typename WriteHandler>
+      typename ``[link boost_asio.reference.AsyncWriteStream AsyncWriteStream]``,
+      typename ``[link boost_asio.reference.ConstBufferSequence ConstBufferSequence]``,
+      typename ``[link boost_asio.reference.CompletionCondition CompletionCondition]``,
+      typename ``[link boost_asio.reference.WriteHandler WriteHandler]``>
   void ``[link boost_asio.reference.async_write.overload2 async_write]``(
       AsyncWriteStream & s,
       const ConstBufferSequence & buffers,
@@ -858,19 +858,19 @@ Start an asynchronous operation to write of all of the supplied data to a stream
       WriteHandler handler);
 
   template<
-      typename AsyncWriteStream,
+      typename ``[link boost_asio.reference.AsyncWriteStream AsyncWriteStream]``,
       typename Allocator,
-      typename WriteHandler>
+      typename ``[link boost_asio.reference.WriteHandler WriteHandler]``>
   void ``[link boost_asio.reference.async_write.overload3 async_write]``(
       AsyncWriteStream & s,
       basic_streambuf< Allocator > & b,
       WriteHandler handler);
 
   template<
-      typename AsyncWriteStream,
+      typename ``[link boost_asio.reference.AsyncWriteStream AsyncWriteStream]``,
       typename Allocator,
-      typename CompletionCondition,
-      typename WriteHandler>
+      typename ``[link boost_asio.reference.CompletionCondition CompletionCondition]``,
+      typename ``[link boost_asio.reference.WriteHandler WriteHandler]``>
   void ``[link boost_asio.reference.async_write.overload4 async_write]``(
       AsyncWriteStream & s,
       basic_streambuf< Allocator > & b,
@@ -883,9 +883,9 @@ Start an asynchronous operation to write of all of the supplied data to a stream
 Start an asynchronous operation to write of all of the supplied data to a stream. 
 
   template<
-      typename AsyncWriteStream,
-      typename ConstBufferSequence,
-      typename WriteHandler>
+      typename ``[link boost_asio.reference.AsyncWriteStream AsyncWriteStream]``,
+      typename ``[link boost_asio.reference.ConstBufferSequence ConstBufferSequence]``,
+      typename ``[link boost_asio.reference.WriteHandler WriteHandler]``>
   void async_write(
       AsyncWriteStream & s,
       const ConstBufferSequence & buffers,
@@ -949,10 +949,10 @@ See the
 Start an asynchronous operation to write a certain amount of data to a stream. 
 
   template<
-      typename AsyncWriteStream,
-      typename ConstBufferSequence,
-      typename CompletionCondition,
-      typename WriteHandler>
+      typename ``[link boost_asio.reference.AsyncWriteStream AsyncWriteStream]``,
+      typename ``[link boost_asio.reference.ConstBufferSequence ConstBufferSequence]``,
+      typename ``[link boost_asio.reference.CompletionCondition CompletionCondition]``,
+      typename ``[link boost_asio.reference.WriteHandler WriteHandler]``>
   void async_write(
       AsyncWriteStream & s,
       const ConstBufferSequence & buffers,
@@ -1033,9 +1033,9 @@ See the
 Start an asynchronous operation to write a certain amount of data to a stream. 
 
   template<
-      typename AsyncWriteStream,
+      typename ``[link boost_asio.reference.AsyncWriteStream AsyncWriteStream]``,
       typename Allocator,
-      typename WriteHandler>
+      typename ``[link boost_asio.reference.WriteHandler WriteHandler]``>
   void async_write(
       AsyncWriteStream & s,
       basic_streambuf< Allocator > & b,
@@ -1088,10 +1088,10 @@ Regardless of whether the asynchronous operation completes immediately or not, t
 Start an asynchronous operation to write a certain amount of data to a stream. 
 
   template<
-      typename AsyncWriteStream,
+      typename ``[link boost_asio.reference.AsyncWriteStream AsyncWriteStream]``,
       typename Allocator,
-      typename CompletionCondition,
-      typename WriteHandler>
+      typename ``[link boost_asio.reference.CompletionCondition CompletionCondition]``,
+      typename ``[link boost_asio.reference.WriteHandler WriteHandler]``>
   void async_write(
       AsyncWriteStream & s,
       basic_streambuf< Allocator > & b,
@@ -1159,8 +1159,8 @@ Regardless of whether the asynchronous operation completes immediately or not, t
 Provides datagram-oriented socket functionality. 
 
   template<
-      typename Protocol,
-      typename DatagramSocketService = datagram_socket_service<Protocol>>
+      typename ``[link boost_asio.reference.Protocol Protocol]``,
+      typename ``[link boost_asio.reference.DatagramSocketService DatagramSocketService]`` = datagram_socket_service<Protocol>>
   class basic_datagram_socket :
     public basic_socket< Protocol, DatagramSocketService >
 
@@ -1618,15 +1618,15 @@ Regardless of whether the asynchronous operation completes immediately or not, t
 Start an asynchronous receive on a connected socket. 
 
   template<
-      typename MutableBufferSequence,
-      typename ReadHandler>
+      typename ``[link boost_asio.reference.MutableBufferSequence MutableBufferSequence]``,
+      typename ``[link boost_asio.reference.ReadHandler ReadHandler]``>
   void ``[link boost_asio.reference.basic_datagram_socket.async_receive.overload1 async_receive]``(
       const MutableBufferSequence & buffers,
       ReadHandler handler);
 
   template<
-      typename MutableBufferSequence,
-      typename ReadHandler>
+      typename ``[link boost_asio.reference.MutableBufferSequence MutableBufferSequence]``,
+      typename ``[link boost_asio.reference.ReadHandler ReadHandler]``>
   void ``[link boost_asio.reference.basic_datagram_socket.async_receive.overload2 async_receive]``(
       const MutableBufferSequence & buffers,
       socket_base::message_flags flags,
@@ -1638,8 +1638,8 @@ Start an asynchronous receive on a connected socket.
 Start an asynchronous receive on a connected socket. 
 
   template<
-      typename MutableBufferSequence,
-      typename ReadHandler>
+      typename ``[link boost_asio.reference.MutableBufferSequence MutableBufferSequence]``,
+      typename ``[link boost_asio.reference.ReadHandler ReadHandler]``>
   void async_receive(
       const MutableBufferSequence & buffers,
       ReadHandler handler);
@@ -1693,8 +1693,8 @@ See the
 Start an asynchronous receive on a connected socket. 
 
   template<
-      typename MutableBufferSequence,
-      typename ReadHandler>
+      typename ``[link boost_asio.reference.MutableBufferSequence MutableBufferSequence]``,
+      typename ``[link boost_asio.reference.ReadHandler ReadHandler]``>
   void async_receive(
       const MutableBufferSequence & buffers,
       socket_base::message_flags flags,
@@ -1741,16 +1741,16 @@ The async\_receive operation can only be used with a connected socket. Use the a
 Start an asynchronous receive. 
 
   template<
-      typename MutableBufferSequence,
-      typename ReadHandler>
+      typename ``[link boost_asio.reference.MutableBufferSequence MutableBufferSequence]``,
+      typename ``[link boost_asio.reference.ReadHandler ReadHandler]``>
   void ``[link boost_asio.reference.basic_datagram_socket.async_receive_from.overload1 async_receive_from]``(
       const MutableBufferSequence & buffers,
       endpoint_type & sender_endpoint,
       ReadHandler handler);
 
   template<
-      typename MutableBufferSequence,
-      typename ReadHandler>
+      typename ``[link boost_asio.reference.MutableBufferSequence MutableBufferSequence]``,
+      typename ``[link boost_asio.reference.ReadHandler ReadHandler]``>
   void ``[link boost_asio.reference.basic_datagram_socket.async_receive_from.overload2 async_receive_from]``(
       const MutableBufferSequence & buffers,
       endpoint_type & sender_endpoint,
@@ -1763,8 +1763,8 @@ Start an asynchronous receive.
 Start an asynchronous receive. 
 
   template<
-      typename MutableBufferSequence,
-      typename ReadHandler>
+      typename ``[link boost_asio.reference.MutableBufferSequence MutableBufferSequence]``,
+      typename ``[link boost_asio.reference.ReadHandler ReadHandler]``>
   void async_receive_from(
       const MutableBufferSequence & buffers,
       endpoint_type & sender_endpoint,
@@ -1818,8 +1818,8 @@ See the
 Start an asynchronous receive. 
 
   template<
-      typename MutableBufferSequence,
-      typename ReadHandler>
+      typename ``[link boost_asio.reference.MutableBufferSequence MutableBufferSequence]``,
+      typename ``[link boost_asio.reference.ReadHandler ReadHandler]``>
   void async_receive_from(
       const MutableBufferSequence & buffers,
       endpoint_type & sender_endpoint,
@@ -1865,15 +1865,15 @@ Regardless of whether the asynchronous operation completes immediately or not, t
 Start an asynchronous send on a connected socket. 
 
   template<
-      typename ConstBufferSequence,
-      typename WriteHandler>
+      typename ``[link boost_asio.reference.ConstBufferSequence ConstBufferSequence]``,
+      typename ``[link boost_asio.reference.WriteHandler WriteHandler]``>
   void ``[link boost_asio.reference.basic_datagram_socket.async_send.overload1 async_send]``(
       const ConstBufferSequence & buffers,
       WriteHandler handler);
 
   template<
-      typename ConstBufferSequence,
-      typename WriteHandler>
+      typename ``[link boost_asio.reference.ConstBufferSequence ConstBufferSequence]``,
+      typename ``[link boost_asio.reference.WriteHandler WriteHandler]``>
   void ``[link boost_asio.reference.basic_datagram_socket.async_send.overload2 async_send]``(
       const ConstBufferSequence & buffers,
       socket_base::message_flags flags,
@@ -1885,8 +1885,8 @@ Start an asynchronous send on a connected socket.
 Start an asynchronous send on a connected socket. 
 
   template<
-      typename ConstBufferSequence,
-      typename WriteHandler>
+      typename ``[link boost_asio.reference.ConstBufferSequence ConstBufferSequence]``,
+      typename ``[link boost_asio.reference.WriteHandler WriteHandler]``>
   void async_send(
       const ConstBufferSequence & buffers,
       WriteHandler handler);
@@ -1940,8 +1940,8 @@ See the
 Start an asynchronous send on a connected socket. 
 
   template<
-      typename ConstBufferSequence,
-      typename WriteHandler>
+      typename ``[link boost_asio.reference.ConstBufferSequence ConstBufferSequence]``,
+      typename ``[link boost_asio.reference.WriteHandler WriteHandler]``>
   void async_send(
       const ConstBufferSequence & buffers,
       socket_base::message_flags flags,
@@ -1988,16 +1988,16 @@ The async\_send operation can only be used with a connected socket. Use the asyn
 Start an asynchronous send. 
 
   template<
-      typename ConstBufferSequence,
-      typename WriteHandler>
+      typename ``[link boost_asio.reference.ConstBufferSequence ConstBufferSequence]``,
+      typename ``[link boost_asio.reference.WriteHandler WriteHandler]``>
   void ``[link boost_asio.reference.basic_datagram_socket.async_send_to.overload1 async_send_to]``(
       const ConstBufferSequence & buffers,
       const endpoint_type & destination,
       WriteHandler handler);
 
   template<
-      typename ConstBufferSequence,
-      typename WriteHandler>
+      typename ``[link boost_asio.reference.ConstBufferSequence ConstBufferSequence]``,
+      typename ``[link boost_asio.reference.WriteHandler WriteHandler]``>
   void ``[link boost_asio.reference.basic_datagram_socket.async_send_to.overload2 async_send_to]``(
       const ConstBufferSequence & buffers,
       const endpoint_type & destination,
@@ -2010,8 +2010,8 @@ Start an asynchronous send.
 Start an asynchronous send. 
 
   template<
-      typename ConstBufferSequence,
-      typename WriteHandler>
+      typename ``[link boost_asio.reference.ConstBufferSequence ConstBufferSequence]``,
+      typename ``[link boost_asio.reference.WriteHandler WriteHandler]``>
   void async_send_to(
       const ConstBufferSequence & buffers,
       const endpoint_type & destination,
@@ -2067,8 +2067,8 @@ See the
 Start an asynchronous send. 
 
   template<
-      typename ConstBufferSequence,
-      typename WriteHandler>
+      typename ``[link boost_asio.reference.ConstBufferSequence ConstBufferSequence]``,
+      typename ``[link boost_asio.reference.WriteHandler WriteHandler]``>
   void async_send_to(
       const ConstBufferSequence & buffers,
       const endpoint_type & destination,
@@ -4084,18 +4084,18 @@ The protocol type.
 Receive some data on a connected socket. 
 
   template<
-      typename MutableBufferSequence>
+      typename ``[link boost_asio.reference.MutableBufferSequence MutableBufferSequence]``>
   std::size_t ``[link boost_asio.reference.basic_datagram_socket.receive.overload1 receive]``(
       const MutableBufferSequence & buffers);
 
   template<
-      typename MutableBufferSequence>
+      typename ``[link boost_asio.reference.MutableBufferSequence MutableBufferSequence]``>
   std::size_t ``[link boost_asio.reference.basic_datagram_socket.receive.overload2 receive]``(
       const MutableBufferSequence & buffers,
       socket_base::message_flags flags);
 
   template<
-      typename MutableBufferSequence>
+      typename ``[link boost_asio.reference.MutableBufferSequence MutableBufferSequence]``>
   std::size_t ``[link boost_asio.reference.basic_datagram_socket.receive.overload3 receive]``(
       const MutableBufferSequence & buffers,
       socket_base::message_flags flags,
@@ -4107,7 +4107,7 @@ Receive some data on a connected socket.
 Receive some data on a connected socket. 
 
   template<
-      typename MutableBufferSequence>
+      typename ``[link boost_asio.reference.MutableBufferSequence MutableBufferSequence]``>
   std::size_t receive(
       const MutableBufferSequence & buffers);
 
@@ -4163,7 +4163,7 @@ See the
 Receive some data on a connected socket. 
 
   template<
-      typename MutableBufferSequence>
+      typename ``[link boost_asio.reference.MutableBufferSequence MutableBufferSequence]``>
   std::size_t receive(
       const MutableBufferSequence & buffers,
       socket_base::message_flags flags);
@@ -4211,7 +4211,7 @@ The receive operation can only be used with a connected socket. Use the receive\
 Receive some data on a connected socket. 
 
   template<
-      typename MutableBufferSequence>
+      typename ``[link boost_asio.reference.MutableBufferSequence MutableBufferSequence]``>
   std::size_t receive(
       const MutableBufferSequence & buffers,
       socket_base::message_flags flags,
@@ -4297,20 +4297,20 @@ Getting the current option value:
 Receive a datagram with the endpoint of the sender. 
 
   template<
-      typename MutableBufferSequence>
+      typename ``[link boost_asio.reference.MutableBufferSequence MutableBufferSequence]``>
   std::size_t ``[link boost_asio.reference.basic_datagram_socket.receive_from.overload1 receive_from]``(
       const MutableBufferSequence & buffers,
       endpoint_type & sender_endpoint);
 
   template<
-      typename MutableBufferSequence>
+      typename ``[link boost_asio.reference.MutableBufferSequence MutableBufferSequence]``>
   std::size_t ``[link boost_asio.reference.basic_datagram_socket.receive_from.overload2 receive_from]``(
       const MutableBufferSequence & buffers,
       endpoint_type & sender_endpoint,
       socket_base::message_flags flags);
 
   template<
-      typename MutableBufferSequence>
+      typename ``[link boost_asio.reference.MutableBufferSequence MutableBufferSequence]``>
   std::size_t ``[link boost_asio.reference.basic_datagram_socket.receive_from.overload3 receive_from]``(
       const MutableBufferSequence & buffers,
       endpoint_type & sender_endpoint,
@@ -4323,7 +4323,7 @@ Receive a datagram with the endpoint of the sender.
 Receive a datagram with the endpoint of the sender. 
 
   template<
-      typename MutableBufferSequence>
+      typename ``[link boost_asio.reference.MutableBufferSequence MutableBufferSequence]``>
   std::size_t receive_from(
       const MutableBufferSequence & buffers,
       endpoint_type & sender_endpoint);
@@ -4380,7 +4380,7 @@ See the
 Receive a datagram with the endpoint of the sender. 
 
   template<
-      typename MutableBufferSequence>
+      typename ``[link boost_asio.reference.MutableBufferSequence MutableBufferSequence]``>
   std::size_t receive_from(
       const MutableBufferSequence & buffers,
       endpoint_type & sender_endpoint,
@@ -4427,7 +4427,7 @@ The number of bytes received.
 Receive a datagram with the endpoint of the sender. 
 
   template<
-      typename MutableBufferSequence>
+      typename ``[link boost_asio.reference.MutableBufferSequence MutableBufferSequence]``>
   std::size_t receive_from(
       const MutableBufferSequence & buffers,
       endpoint_type & sender_endpoint,
@@ -4658,18 +4658,18 @@ Getting the current option value:
 Send some data on a connected socket. 
 
   template<
-      typename ConstBufferSequence>
+      typename ``[link boost_asio.reference.ConstBufferSequence ConstBufferSequence]``>
   std::size_t ``[link boost_asio.reference.basic_datagram_socket.send.overload1 send]``(
       const ConstBufferSequence & buffers);
 
   template<
-      typename ConstBufferSequence>
+      typename ``[link boost_asio.reference.ConstBufferSequence ConstBufferSequence]``>
   std::size_t ``[link boost_asio.reference.basic_datagram_socket.send.overload2 send]``(
       const ConstBufferSequence & buffers,
       socket_base::message_flags flags);
 
   template<
-      typename ConstBufferSequence>
+      typename ``[link boost_asio.reference.ConstBufferSequence ConstBufferSequence]``>
   std::size_t ``[link boost_asio.reference.basic_datagram_socket.send.overload3 send]``(
       const ConstBufferSequence & buffers,
       socket_base::message_flags flags,
@@ -4681,7 +4681,7 @@ Send some data on a connected socket.
 Send some data on a connected socket. 
 
   template<
-      typename ConstBufferSequence>
+      typename ``[link boost_asio.reference.ConstBufferSequence ConstBufferSequence]``>
   std::size_t send(
       const ConstBufferSequence & buffers);
 
@@ -4737,7 +4737,7 @@ See the
 Send some data on a connected socket. 
 
   template<
-      typename ConstBufferSequence>
+      typename ``[link boost_asio.reference.ConstBufferSequence ConstBufferSequence]``>
   std::size_t send(
       const ConstBufferSequence & buffers,
       socket_base::message_flags flags);
@@ -4785,7 +4785,7 @@ The send operation can only be used with a connected socket. Use the send\_to fu
 Send some data on a connected socket. 
 
   template<
-      typename ConstBufferSequence>
+      typename ``[link boost_asio.reference.ConstBufferSequence ConstBufferSequence]``>
   std::size_t send(
       const ConstBufferSequence & buffers,
       socket_base::message_flags flags,
@@ -4914,20 +4914,20 @@ Getting the current option value:
 Send a datagram to the specified endpoint. 
 
   template<
-      typename ConstBufferSequence>
+      typename ``[link boost_asio.reference.ConstBufferSequence ConstBufferSequence]``>
   std::size_t ``[link boost_asio.reference.basic_datagram_socket.send_to.overload1 send_to]``(
       const ConstBufferSequence & buffers,
       const endpoint_type & destination);
 
   template<
-      typename ConstBufferSequence>
+      typename ``[link boost_asio.reference.ConstBufferSequence ConstBufferSequence]``>
   std::size_t ``[link boost_asio.reference.basic_datagram_socket.send_to.overload2 send_to]``(
       const ConstBufferSequence & buffers,
       const endpoint_type & destination,
       socket_base::message_flags flags);
 
   template<
-      typename ConstBufferSequence>
+      typename ``[link boost_asio.reference.ConstBufferSequence ConstBufferSequence]``>
   std::size_t ``[link boost_asio.reference.basic_datagram_socket.send_to.overload3 send_to]``(
       const ConstBufferSequence & buffers,
       const endpoint_type & destination,
@@ -4940,7 +4940,7 @@ Send a datagram to the specified endpoint.
 Send a datagram to the specified endpoint. 
 
   template<
-      typename ConstBufferSequence>
+      typename ``[link boost_asio.reference.ConstBufferSequence ConstBufferSequence]``>
   std::size_t send_to(
       const ConstBufferSequence & buffers,
       const endpoint_type & destination);
@@ -4997,7 +4997,7 @@ See the
 Send a datagram to the specified endpoint. 
 
   template<
-      typename ConstBufferSequence>
+      typename ``[link boost_asio.reference.ConstBufferSequence ConstBufferSequence]``>
   std::size_t send_to(
       const ConstBufferSequence & buffers,
       const endpoint_type & destination,
@@ -5044,7 +5044,7 @@ The number of bytes sent.
 Send a datagram to the specified endpoint. 
 
   template<
-      typename ConstBufferSequence>
+      typename ``[link boost_asio.reference.ConstBufferSequence ConstBufferSequence]``>
   std::size_t send_to(
       const ConstBufferSequence & buffers,
       const endpoint_type & destination,
@@ -5363,8 +5363,8 @@ Provides waitable timer functionality.
 
   template<
       typename Time,
-      typename TimeTraits = boost::asio::time_traits<Time>,
-      typename TimerService = deadline_timer_service<Time, TimeTraits>>
+      typename ``[link boost_asio.reference.TimeTraits TimeTraits]`` = boost::asio::time_traits<Time>,
+      typename ``[link boost_asio.reference.TimerService TimerService]`` = deadline_timer_service<Time, TimeTraits>>
   class basic_deadline_timer :
     public basic_io_object< TimerService >
 
@@ -5507,7 +5507,7 @@ Performing an asynchronous wait:
 Start an asynchronous wait on the timer. 
 
   template<
-      typename WaitHandler>
+      typename ``[link boost_asio.reference.WaitHandler WaitHandler]``>
   void async_wait(
       WaitHandler handler);
 
@@ -6091,7 +6091,7 @@ This function is used to wait for the timer to expire. This function blocks and 
 Base class for all I/O objects. 
 
   template<
-      typename IoObjectService>
+      typename ``[link boost_asio.reference.IoObjectService IoObjectService]``>
   class basic_io_object
 
 
@@ -6180,8 +6180,8 @@ The type of the service that will be used to provide I/O operations.
 Provides socket functionality. 
 
   template<
-      typename Protocol,
-      typename SocketService>
+      typename ``[link boost_asio.reference.Protocol Protocol]``,
+      typename ``[link boost_asio.reference.SocketService SocketService]``>
   class basic_socket :
     public basic_io_object< SocketService >,
     public socket_base
@@ -6532,7 +6532,7 @@ Assign an existing native socket to the socket.
 Start an asynchronous connect. 
 
   template<
-      typename ConnectHandler>
+      typename ``[link boost_asio.reference.ConnectHandler ConnectHandler]``>
   void async_connect(
       const endpoint_type & peer_endpoint,
       ConnectHandler handler);
@@ -7472,12 +7472,12 @@ The endpoint type.
 Get an option from the socket. 
 
   template<
-      typename GettableSocketOption>
+      typename ``[link boost_asio.reference.GettableSocketOption GettableSocketOption]``>
   void ``[link boost_asio.reference.basic_socket.get_option.overload1 get_option]``(
       GettableSocketOption & option) const;
 
   template<
-      typename GettableSocketOption>
+      typename ``[link boost_asio.reference.GettableSocketOption GettableSocketOption]``>
   boost::system::error_code ``[link boost_asio.reference.basic_socket.get_option.overload2 get_option]``(
       GettableSocketOption & option,
       boost::system::error_code & ec) const;
@@ -7488,7 +7488,7 @@ Get an option from the socket.
 Get an option from the socket. 
 
   template<
-      typename GettableSocketOption>
+      typename ``[link boost_asio.reference.GettableSocketOption GettableSocketOption]``>
   void get_option(
       GettableSocketOption & option) const;
 
@@ -7538,7 +7538,7 @@ Getting the value of the SOL\_SOCKET/SO\_KEEPALIVE option:
 Get an option from the socket. 
 
   template<
-      typename GettableSocketOption>
+      typename ``[link boost_asio.reference.GettableSocketOption GettableSocketOption]``>
   boost::system::error_code get_option(
       GettableSocketOption & option,
       boost::system::error_code & ec) const;
@@ -7604,12 +7604,12 @@ The underlying implementation type of I/O object.
 Perform an IO control command on the socket. 
 
   template<
-      typename IoControlCommand>
+      typename ``[link boost_asio.reference.IoControlCommand IoControlCommand]``>
   void ``[link boost_asio.reference.basic_socket.io_control.overload1 io_control]``(
       IoControlCommand & command);
 
   template<
-      typename IoControlCommand>
+      typename ``[link boost_asio.reference.IoControlCommand IoControlCommand]``>
   boost::system::error_code ``[link boost_asio.reference.basic_socket.io_control.overload2 io_control]``(
       IoControlCommand & command,
       boost::system::error_code & ec);
@@ -7620,7 +7620,7 @@ Perform an IO control command on the socket.
 Perform an IO control command on the socket. 
 
   template<
-      typename IoControlCommand>
+      typename ``[link boost_asio.reference.IoControlCommand IoControlCommand]``>
   void io_control(
       IoControlCommand & command);
 
@@ -7670,7 +7670,7 @@ Getting the number of bytes ready to read:
 Perform an IO control command on the socket. 
 
   template<
-      typename IoControlCommand>
+      typename ``[link boost_asio.reference.IoControlCommand IoControlCommand]``>
   boost::system::error_code io_control(
       IoControlCommand & command,
       boost::system::error_code & ec);
@@ -8835,12 +8835,12 @@ The type of the service that will be used to provide I/O operations.
 Set an option on the socket. 
 
   template<
-      typename SettableSocketOption>
+      typename ``[link boost_asio.reference.SettableSocketOption SettableSocketOption]``>
   void ``[link boost_asio.reference.basic_socket.set_option.overload1 set_option]``(
       const SettableSocketOption & option);
 
   template<
-      typename SettableSocketOption>
+      typename ``[link boost_asio.reference.SettableSocketOption SettableSocketOption]``>
   boost::system::error_code ``[link boost_asio.reference.basic_socket.set_option.overload2 set_option]``(
       const SettableSocketOption & option,
       boost::system::error_code & ec);
@@ -8851,7 +8851,7 @@ Set an option on the socket.
 Set an option on the socket. 
 
   template<
-      typename SettableSocketOption>
+      typename ``[link boost_asio.reference.SettableSocketOption SettableSocketOption]``>
   void set_option(
       const SettableSocketOption & option);
 
@@ -8900,7 +8900,7 @@ Setting the IPPROTO\_TCP/TCP\_NODELAY option:
 Set an option on the socket. 
 
   template<
-      typename SettableSocketOption>
+      typename ``[link boost_asio.reference.SettableSocketOption SettableSocketOption]``>
   boost::system::error_code set_option(
       const SettableSocketOption & option,
       boost::system::error_code & ec);
@@ -9091,8 +9091,8 @@ Different ways a socket may be shutdown.
 Provides the ability to accept new connections. 
 
   template<
-      typename Protocol,
-      typename SocketAcceptorService = socket_acceptor_service<Protocol>>
+      typename ``[link boost_asio.reference.Protocol Protocol]``,
+      typename ``[link boost_asio.reference.SocketAcceptorService SocketAcceptorService]`` = socket_acceptor_service<Protocol>>
   class basic_socket_acceptor :
     public basic_io_object< SocketAcceptorService >,
     public socket_base
@@ -9380,24 +9380,24 @@ Opening a socket acceptor with the SO\_REUSEADDR option enabled:
 Accept a new connection. 
 
   template<
-      typename SocketService>
+      typename ``[link boost_asio.reference.SocketService SocketService]``>
   void ``[link boost_asio.reference.basic_socket_acceptor.accept.overload1 accept]``(
       basic_socket< protocol_type, SocketService > & peer);
 
   template<
-      typename SocketService>
+      typename ``[link boost_asio.reference.SocketService SocketService]``>
   boost::system::error_code ``[link boost_asio.reference.basic_socket_acceptor.accept.overload2 accept]``(
       basic_socket< protocol_type, SocketService > & peer,
       boost::system::error_code & ec);
 
   template<
-      typename SocketService>
+      typename ``[link boost_asio.reference.SocketService SocketService]``>
   void ``[link boost_asio.reference.basic_socket_acceptor.accept.overload3 accept]``(
       basic_socket< protocol_type, SocketService > & peer,
       endpoint_type & peer_endpoint);
 
   template<
-      typename SocketService>
+      typename ``[link boost_asio.reference.SocketService SocketService]``>
   boost::system::error_code ``[link boost_asio.reference.basic_socket_acceptor.accept.overload4 accept]``(
       basic_socket< protocol_type, SocketService > & peer,
       endpoint_type & peer_endpoint,
@@ -9409,7 +9409,7 @@ Accept a new connection.
 Accept a new connection. 
 
   template<
-      typename SocketService>
+      typename ``[link boost_asio.reference.SocketService SocketService]``>
   void accept(
       basic_socket< protocol_type, SocketService > & peer);
 
@@ -9458,7 +9458,7 @@ This function is used to accept a new connection from a peer into the given sock
 Accept a new connection. 
 
   template<
-      typename SocketService>
+      typename ``[link boost_asio.reference.SocketService SocketService]``>
   boost::system::error_code accept(
       basic_socket< protocol_type, SocketService > & peer,
       boost::system::error_code & ec);
@@ -9506,7 +9506,7 @@ This function is used to accept a new connection from a peer into the given sock
 Accept a new connection and obtain the endpoint of the peer. 
 
   template<
-      typename SocketService>
+      typename ``[link boost_asio.reference.SocketService SocketService]``>
   void accept(
       basic_socket< protocol_type, SocketService > & peer,
       endpoint_type & peer_endpoint);
@@ -9559,7 +9559,7 @@ This function is used to accept a new connection from a peer into the given sock
 Accept a new connection and obtain the endpoint of the peer. 
 
   template<
-      typename SocketService>
+      typename ``[link boost_asio.reference.SocketService SocketService]``>
   boost::system::error_code accept(
       basic_socket< protocol_type, SocketService > & peer,
       endpoint_type & peer_endpoint,
@@ -9656,15 +9656,15 @@ Assigns an existing native acceptor to the acceptor.
 Start an asynchronous accept. 
 
   template<
-      typename SocketService,
-      typename AcceptHandler>
+      typename ``[link boost_asio.reference.SocketService SocketService]``,
+      typename ``[link boost_asio.reference.AcceptHandler AcceptHandler]``>
   void ``[link boost_asio.reference.basic_socket_acceptor.async_accept.overload1 async_accept]``(
       basic_socket< protocol_type, SocketService > & peer,
       AcceptHandler handler);
 
   template<
-      typename SocketService,
-      typename AcceptHandler>
+      typename ``[link boost_asio.reference.SocketService SocketService]``,
+      typename ``[link boost_asio.reference.AcceptHandler AcceptHandler]``>
   void ``[link boost_asio.reference.basic_socket_acceptor.async_accept.overload2 async_accept]``(
       basic_socket< protocol_type, SocketService > & peer,
       endpoint_type & peer_endpoint,
@@ -9676,8 +9676,8 @@ Start an asynchronous accept.
 Start an asynchronous accept. 
 
   template<
-      typename SocketService,
-      typename AcceptHandler>
+      typename ``[link boost_asio.reference.SocketService SocketService]``,
+      typename ``[link boost_asio.reference.AcceptHandler AcceptHandler]``>
   void async_accept(
       basic_socket< protocol_type, SocketService > & peer,
       AcceptHandler handler);
@@ -9737,8 +9737,8 @@ Regardless of whether the asynchronous operation completes immediately or not, t
 Start an asynchronous accept. 
 
   template<
-      typename SocketService,
-      typename AcceptHandler>
+      typename ``[link boost_asio.reference.SocketService SocketService]``,
+      typename ``[link boost_asio.reference.AcceptHandler AcceptHandler]``>
   void async_accept(
       basic_socket< protocol_type, SocketService > & peer,
       endpoint_type & peer_endpoint,
@@ -10429,12 +10429,12 @@ The endpoint type.
 Get an option from the acceptor. 
 
   template<
-      typename GettableSocketOption>
+      typename ``[link boost_asio.reference.GettableSocketOption GettableSocketOption]``>
   void ``[link boost_asio.reference.basic_socket_acceptor.get_option.overload1 get_option]``(
       GettableSocketOption & option);
 
   template<
-      typename GettableSocketOption>
+      typename ``[link boost_asio.reference.GettableSocketOption GettableSocketOption]``>
   boost::system::error_code ``[link boost_asio.reference.basic_socket_acceptor.get_option.overload2 get_option]``(
       GettableSocketOption & option,
       boost::system::error_code & ec);
@@ -10445,7 +10445,7 @@ Get an option from the acceptor.
 Get an option from the acceptor. 
 
   template<
-      typename GettableSocketOption>
+      typename ``[link boost_asio.reference.GettableSocketOption GettableSocketOption]``>
   void get_option(
       GettableSocketOption & option);
 
@@ -10495,7 +10495,7 @@ Getting the value of the SOL\_SOCKET/SO\_REUSEADDR option:
 Get an option from the acceptor. 
 
   template<
-      typename GettableSocketOption>
+      typename ``[link boost_asio.reference.GettableSocketOption GettableSocketOption]``>
   boost::system::error_code get_option(
       GettableSocketOption & option,
       boost::system::error_code & ec);
@@ -11354,12 +11354,12 @@ The type of the service that will be used to provide I/O operations.
 Set an option on the acceptor. 
 
   template<
-      typename SettableSocketOption>
+      typename ``[link boost_asio.reference.SettableSocketOption SettableSocketOption]``>
   void ``[link boost_asio.reference.basic_socket_acceptor.set_option.overload1 set_option]``(
       const SettableSocketOption & option);
 
   template<
-      typename SettableSocketOption>
+      typename ``[link boost_asio.reference.SettableSocketOption SettableSocketOption]``>
   boost::system::error_code ``[link boost_asio.reference.basic_socket_acceptor.set_option.overload2 set_option]``(
       const SettableSocketOption & option,
       boost::system::error_code & ec);
@@ -11370,7 +11370,7 @@ Set an option on the acceptor.
 Set an option on the acceptor. 
 
   template<
-      typename SettableSocketOption>
+      typename ``[link boost_asio.reference.SettableSocketOption SettableSocketOption]``>
   void set_option(
       const SettableSocketOption & option);
 
@@ -11419,7 +11419,7 @@ Setting the SOL\_SOCKET/SO\_REUSEADDR option:
 Set an option on the acceptor. 
 
   template<
-      typename SettableSocketOption>
+      typename ``[link boost_asio.reference.SettableSocketOption SettableSocketOption]``>
   boost::system::error_code set_option(
       const SettableSocketOption & option,
       boost::system::error_code & ec);
@@ -11506,8 +11506,8 @@ Different ways a socket may be shutdown.
 Iostream interface for a socket. 
 
   template<
-      typename Protocol,
-      typename StreamSocketService = stream_socket_service<Protocol>>
+      typename ``[link boost_asio.reference.Protocol Protocol]``,
+      typename ``[link boost_asio.reference.StreamSocketService StreamSocketService]`` = stream_socket_service<Protocol>>
   class basic_socket_iostream
 
 
@@ -11640,8 +11640,8 @@ Return a pointer to the underlying streambuf.
 Iostream streambuf for a socket. 
 
   template<
-      typename Protocol,
-      typename StreamSocketService = stream_socket_service<Protocol>>
+      typename ``[link boost_asio.reference.Protocol Protocol]``,
+      typename ``[link boost_asio.reference.StreamSocketService StreamSocketService]`` = stream_socket_service<Protocol>>
   class basic_socket_streambuf :
     public basic_socket< Protocol, StreamSocketService >
 
@@ -14478,8 +14478,8 @@ Destructor flushes buffered data.
 Provides stream-oriented socket functionality. 
 
   template<
-      typename Protocol,
-      typename StreamSocketService = stream_socket_service<Protocol>>
+      typename ``[link boost_asio.reference.Protocol Protocol]``,
+      typename ``[link boost_asio.reference.StreamSocketService StreamSocketService]`` = stream_socket_service<Protocol>>
   class basic_stream_socket :
     public basic_socket< Protocol, StreamSocketService >
 
@@ -14938,8 +14938,8 @@ Regardless of whether the asynchronous operation completes immediately or not, t
 Start an asynchronous read. 
 
   template<
-      typename MutableBufferSequence,
-      typename ReadHandler>
+      typename ``[link boost_asio.reference.MutableBufferSequence MutableBufferSequence]``,
+      typename ``[link boost_asio.reference.ReadHandler ReadHandler]``>
   void async_read_some(
       const MutableBufferSequence & buffers,
       ReadHandler handler);
@@ -14993,15 +14993,15 @@ See the
 Start an asynchronous receive. 
 
   template<
-      typename MutableBufferSequence,
-      typename ReadHandler>
+      typename ``[link boost_asio.reference.MutableBufferSequence MutableBufferSequence]``,
+      typename ``[link boost_asio.reference.ReadHandler ReadHandler]``>
   void ``[link boost_asio.reference.basic_stream_socket.async_receive.overload1 async_receive]``(
       const MutableBufferSequence & buffers,
       ReadHandler handler);
 
   template<
-      typename MutableBufferSequence,
-      typename ReadHandler>
+      typename ``[link boost_asio.reference.MutableBufferSequence MutableBufferSequence]``,
+      typename ``[link boost_asio.reference.ReadHandler ReadHandler]``>
   void ``[link boost_asio.reference.basic_stream_socket.async_receive.overload2 async_receive]``(
       const MutableBufferSequence & buffers,
       socket_base::message_flags flags,
@@ -15013,8 +15013,8 @@ Start an asynchronous receive.
 Start an asynchronous receive. 
 
   template<
-      typename MutableBufferSequence,
-      typename ReadHandler>
+      typename ``[link boost_asio.reference.MutableBufferSequence MutableBufferSequence]``,
+      typename ``[link boost_asio.reference.ReadHandler ReadHandler]``>
   void async_receive(
       const MutableBufferSequence & buffers,
       ReadHandler handler);
@@ -15069,8 +15069,8 @@ See the
 Start an asynchronous receive. 
 
   template<
-      typename MutableBufferSequence,
-      typename ReadHandler>
+      typename ``[link boost_asio.reference.MutableBufferSequence MutableBufferSequence]``,
+      typename ``[link boost_asio.reference.ReadHandler ReadHandler]``>
   void async_receive(
       const MutableBufferSequence & buffers,
       socket_base::message_flags flags,
@@ -15129,15 +15129,15 @@ See the
 Start an asynchronous send. 
 
   template<
-      typename ConstBufferSequence,
-      typename WriteHandler>
+      typename ``[link boost_asio.reference.ConstBufferSequence ConstBufferSequence]``,
+      typename ``[link boost_asio.reference.WriteHandler WriteHandler]``>
   void ``[link boost_asio.reference.basic_stream_socket.async_send.overload1 async_send]``(
       const ConstBufferSequence & buffers,
       WriteHandler handler);
 
   template<
-      typename ConstBufferSequence,
-      typename WriteHandler>
+      typename ``[link boost_asio.reference.ConstBufferSequence ConstBufferSequence]``,
+      typename ``[link boost_asio.reference.WriteHandler WriteHandler]``>
   void ``[link boost_asio.reference.basic_stream_socket.async_send.overload2 async_send]``(
       const ConstBufferSequence & buffers,
       socket_base::message_flags flags,
@@ -15149,8 +15149,8 @@ Start an asynchronous send.
 Start an asynchronous send. 
 
   template<
-      typename ConstBufferSequence,
-      typename WriteHandler>
+      typename ``[link boost_asio.reference.ConstBufferSequence ConstBufferSequence]``,
+      typename ``[link boost_asio.reference.WriteHandler WriteHandler]``>
   void async_send(
       const ConstBufferSequence & buffers,
       WriteHandler handler);
@@ -15205,8 +15205,8 @@ See the
 Start an asynchronous send. 
 
   template<
-      typename ConstBufferSequence,
-      typename WriteHandler>
+      typename ``[link boost_asio.reference.ConstBufferSequence ConstBufferSequence]``,
+      typename ``[link boost_asio.reference.WriteHandler WriteHandler]``>
   void async_send(
       const ConstBufferSequence & buffers,
       socket_base::message_flags flags,
@@ -15266,8 +15266,8 @@ See the
 Start an asynchronous write. 
 
   template<
-      typename ConstBufferSequence,
-      typename WriteHandler>
+      typename ``[link boost_asio.reference.ConstBufferSequence ConstBufferSequence]``,
+      typename ``[link boost_asio.reference.WriteHandler WriteHandler]``>
   void async_write_some(
       const ConstBufferSequence & buffers,
       WriteHandler handler);
@@ -17291,12 +17291,12 @@ The protocol type.
 Read some data from the socket. 
 
   template<
-      typename MutableBufferSequence>
+      typename ``[link boost_asio.reference.MutableBufferSequence MutableBufferSequence]``>
   std::size_t ``[link boost_asio.reference.basic_stream_socket.read_some.overload1 read_some]``(
       const MutableBufferSequence & buffers);
 
   template<
-      typename MutableBufferSequence>
+      typename ``[link boost_asio.reference.MutableBufferSequence MutableBufferSequence]``>
   std::size_t ``[link boost_asio.reference.basic_stream_socket.read_some.overload2 read_some]``(
       const MutableBufferSequence & buffers,
       boost::system::error_code & ec);
@@ -17307,7 +17307,7 @@ Read some data from the socket.
 Read some data from the socket. 
 
   template<
-      typename MutableBufferSequence>
+      typename ``[link boost_asio.reference.MutableBufferSequence MutableBufferSequence]``>
   std::size_t read_some(
       const MutableBufferSequence & buffers);
 
@@ -17364,7 +17364,7 @@ See the
 Read some data from the socket. 
 
   template<
-      typename MutableBufferSequence>
+      typename ``[link boost_asio.reference.MutableBufferSequence MutableBufferSequence]``>
   std::size_t read_some(
       const MutableBufferSequence & buffers,
       boost::system::error_code & ec);
@@ -17405,18 +17405,18 @@ The read\_some operation may not read all of the requested number of bytes. Cons
 Receive some data on the socket. 
 
   template<
-      typename MutableBufferSequence>
+      typename ``[link boost_asio.reference.MutableBufferSequence MutableBufferSequence]``>
   std::size_t ``[link boost_asio.reference.basic_stream_socket.receive.overload1 receive]``(
       const MutableBufferSequence & buffers);
 
   template<
-      typename MutableBufferSequence>
+      typename ``[link boost_asio.reference.MutableBufferSequence MutableBufferSequence]``>
   std::size_t ``[link boost_asio.reference.basic_stream_socket.receive.overload2 receive]``(
       const MutableBufferSequence & buffers,
       socket_base::message_flags flags);
 
   template<
-      typename MutableBufferSequence>
+      typename ``[link boost_asio.reference.MutableBufferSequence MutableBufferSequence]``>
   std::size_t ``[link boost_asio.reference.basic_stream_socket.receive.overload3 receive]``(
       const MutableBufferSequence & buffers,
       socket_base::message_flags flags,
@@ -17428,7 +17428,7 @@ Receive some data on the socket.
 Receive some data on the socket. 
 
   template<
-      typename MutableBufferSequence>
+      typename ``[link boost_asio.reference.MutableBufferSequence MutableBufferSequence]``>
   std::size_t receive(
       const MutableBufferSequence & buffers);
 
@@ -17485,7 +17485,7 @@ See the
 Receive some data on the socket. 
 
   template<
-      typename MutableBufferSequence>
+      typename ``[link boost_asio.reference.MutableBufferSequence MutableBufferSequence]``>
   std::size_t receive(
       const MutableBufferSequence & buffers,
       socket_base::message_flags flags);
@@ -17545,7 +17545,7 @@ See the
 Receive some data on a connected socket. 
 
   template<
-      typename MutableBufferSequence>
+      typename ``[link boost_asio.reference.MutableBufferSequence MutableBufferSequence]``>
   std::size_t receive(
       const MutableBufferSequence & buffers,
       socket_base::message_flags flags,
@@ -17821,18 +17821,18 @@ Getting the current option value:
 Send some data on the socket. 
 
   template<
-      typename ConstBufferSequence>
+      typename ``[link boost_asio.reference.ConstBufferSequence ConstBufferSequence]``>
   std::size_t ``[link boost_asio.reference.basic_stream_socket.send.overload1 send]``(
       const ConstBufferSequence & buffers);
 
   template<
-      typename ConstBufferSequence>
+      typename ``[link boost_asio.reference.ConstBufferSequence ConstBufferSequence]``>
   std::size_t ``[link boost_asio.reference.basic_stream_socket.send.overload2 send]``(
       const ConstBufferSequence & buffers,
       socket_base::message_flags flags);
 
   template<
-      typename ConstBufferSequence>
+      typename ``[link boost_asio.reference.ConstBufferSequence ConstBufferSequence]``>
   std::size_t ``[link boost_asio.reference.basic_stream_socket.send.overload3 send]``(
       const ConstBufferSequence & buffers,
       socket_base::message_flags flags,
@@ -17844,7 +17844,7 @@ Send some data on the socket.
 Send some data on the socket. 
 
   template<
-      typename ConstBufferSequence>
+      typename ``[link boost_asio.reference.ConstBufferSequence ConstBufferSequence]``>
   std::size_t send(
       const ConstBufferSequence & buffers);
 
@@ -17901,7 +17901,7 @@ See the
 Send some data on the socket. 
 
   template<
-      typename ConstBufferSequence>
+      typename ``[link boost_asio.reference.ConstBufferSequence ConstBufferSequence]``>
   std::size_t send(
       const ConstBufferSequence & buffers,
       socket_base::message_flags flags);
@@ -17961,7 +17961,7 @@ See the
 Send some data on the socket. 
 
   template<
-      typename ConstBufferSequence>
+      typename ``[link boost_asio.reference.ConstBufferSequence ConstBufferSequence]``>
   std::size_t send(
       const ConstBufferSequence & buffers,
       socket_base::message_flags flags,
@@ -18364,12 +18364,12 @@ Different ways a socket may be shutdown.
 Write some data to the socket. 
 
   template<
-      typename ConstBufferSequence>
+      typename ``[link boost_asio.reference.ConstBufferSequence ConstBufferSequence]``>
   std::size_t ``[link boost_asio.reference.basic_stream_socket.write_some.overload1 write_some]``(
       const ConstBufferSequence & buffers);
 
   template<
-      typename ConstBufferSequence>
+      typename ``[link boost_asio.reference.ConstBufferSequence ConstBufferSequence]``>
   std::size_t ``[link boost_asio.reference.basic_stream_socket.write_some.overload2 write_some]``(
       const ConstBufferSequence & buffers,
       boost::system::error_code & ec);
@@ -18380,7 +18380,7 @@ Write some data to the socket.
 Write some data to the socket. 
 
   template<
-      typename ConstBufferSequence>
+      typename ``[link boost_asio.reference.ConstBufferSequence ConstBufferSequence]``>
   std::size_t write_some(
       const ConstBufferSequence & buffers);
 
@@ -18437,7 +18437,7 @@ See the
 Write some data to the socket. 
 
   template<
-      typename ConstBufferSequence>
+      typename ``[link boost_asio.reference.ConstBufferSequence ConstBufferSequence]``>
   std::size_t write_some(
       const ConstBufferSequence & buffers,
       boost::system::error_code & ec);
@@ -19343,7 +19343,7 @@ The buffered_read_stream class template can be used to add buffering to the sync
 Start an asynchronous fill. 
 
   template<
-      typename ReadHandler>
+      typename ``[link boost_asio.reference.ReadHandler ReadHandler]``>
   void async_fill(
       ReadHandler handler);
 
@@ -19358,8 +19358,8 @@ Start an asynchronous fill.
 Start an asynchronous read. The buffer into which the data will be read must be valid for the lifetime of the asynchronous operation. 
 
   template<
-      typename MutableBufferSequence,
-      typename ReadHandler>
+      typename ``[link boost_asio.reference.MutableBufferSequence MutableBufferSequence]``,
+      typename ``[link boost_asio.reference.ReadHandler ReadHandler]``>
   void async_read_some(
       const MutableBufferSequence & buffers,
       ReadHandler handler);
@@ -19375,8 +19375,8 @@ Start an asynchronous read. The buffer into which the data will be read must be 
 Start an asynchronous write. The data being written must be valid for the lifetime of the asynchronous operation. 
 
   template<
-      typename ConstBufferSequence,
-      typename WriteHandler>
+      typename ``[link boost_asio.reference.ConstBufferSequence ConstBufferSequence]``,
+      typename ``[link boost_asio.reference.WriteHandler WriteHandler]``>
   void async_write_some(
       const ConstBufferSequence & buffers,
       WriteHandler handler);
@@ -19621,12 +19621,12 @@ The type of the next layer.
 Peek at the incoming data on the stream. Returns the number of bytes read. Throws an exception on failure. 
 
   template<
-      typename MutableBufferSequence>
+      typename ``[link boost_asio.reference.MutableBufferSequence MutableBufferSequence]``>
   std::size_t ``[link boost_asio.reference.buffered_read_stream.peek.overload1 peek]``(
       const MutableBufferSequence & buffers);
 
   template<
-      typename MutableBufferSequence>
+      typename ``[link boost_asio.reference.MutableBufferSequence MutableBufferSequence]``>
   std::size_t ``[link boost_asio.reference.buffered_read_stream.peek.overload2 peek]``(
       const MutableBufferSequence & buffers,
       boost::system::error_code & ec);
@@ -19637,7 +19637,7 @@ Peek at the incoming data on the stream. Returns the number of bytes read. Throw
 Peek at the incoming data on the stream. Returns the number of bytes read. Throws an exception on failure. 
 
   template<
-      typename MutableBufferSequence>
+      typename ``[link boost_asio.reference.MutableBufferSequence MutableBufferSequence]``>
   std::size_t peek(
       const MutableBufferSequence & buffers);
 
@@ -19652,7 +19652,7 @@ Peek at the incoming data on the stream. Returns the number of bytes read. Throw
 Peek at the incoming data on the stream. Returns the number of bytes read, or 0 if an error occurred. 
 
   template<
-      typename MutableBufferSequence>
+      typename ``[link boost_asio.reference.MutableBufferSequence MutableBufferSequence]``>
   std::size_t peek(
       const MutableBufferSequence & buffers,
       boost::system::error_code & ec);
@@ -19669,12 +19669,12 @@ Peek at the incoming data on the stream. Returns the number of bytes read, or 0 
 Read some data from the stream. Returns the number of bytes read. Throws an exception on failure. 
 
   template<
-      typename MutableBufferSequence>
+      typename ``[link boost_asio.reference.MutableBufferSequence MutableBufferSequence]``>
   std::size_t ``[link boost_asio.reference.buffered_read_stream.read_some.overload1 read_some]``(
       const MutableBufferSequence & buffers);
 
   template<
-      typename MutableBufferSequence>
+      typename ``[link boost_asio.reference.MutableBufferSequence MutableBufferSequence]``>
   std::size_t ``[link boost_asio.reference.buffered_read_stream.read_some.overload2 read_some]``(
       const MutableBufferSequence & buffers,
       boost::system::error_code & ec);
@@ -19685,7 +19685,7 @@ Read some data from the stream. Returns the number of bytes read. Throws an exce
 Read some data from the stream. Returns the number of bytes read. Throws an exception on failure. 
 
   template<
-      typename MutableBufferSequence>
+      typename ``[link boost_asio.reference.MutableBufferSequence MutableBufferSequence]``>
   std::size_t read_some(
       const MutableBufferSequence & buffers);
 
@@ -19700,7 +19700,7 @@ Read some data from the stream. Returns the number of bytes read. Throws an exce
 Read some data from the stream. Returns the number of bytes read or 0 if an error occurred. 
 
   template<
-      typename MutableBufferSequence>
+      typename ``[link boost_asio.reference.MutableBufferSequence MutableBufferSequence]``>
   std::size_t read_some(
       const MutableBufferSequence & buffers,
       boost::system::error_code & ec);
@@ -19717,12 +19717,12 @@ Read some data from the stream. Returns the number of bytes read or 0 if an erro
 Write the given data to the stream. Returns the number of bytes written. Throws an exception on failure. 
 
   template<
-      typename ConstBufferSequence>
+      typename ``[link boost_asio.reference.ConstBufferSequence ConstBufferSequence]``>
   std::size_t ``[link boost_asio.reference.buffered_read_stream.write_some.overload1 write_some]``(
       const ConstBufferSequence & buffers);
 
   template<
-      typename ConstBufferSequence>
+      typename ``[link boost_asio.reference.ConstBufferSequence ConstBufferSequence]``>
   std::size_t ``[link boost_asio.reference.buffered_read_stream.write_some.overload2 write_some]``(
       const ConstBufferSequence & buffers,
       boost::system::error_code & ec);
@@ -19733,7 +19733,7 @@ Write the given data to the stream. Returns the number of bytes written. Throws 
 Write the given data to the stream. Returns the number of bytes written. Throws an exception on failure. 
 
   template<
-      typename ConstBufferSequence>
+      typename ``[link boost_asio.reference.ConstBufferSequence ConstBufferSequence]``>
   std::size_t write_some(
       const ConstBufferSequence & buffers);
 
@@ -19748,7 +19748,7 @@ Write the given data to the stream. Returns the number of bytes written. Throws 
 Write the given data to the stream. Returns the number of bytes written, or 0 if an error occurred. 
 
   template<
-      typename ConstBufferSequence>
+      typename ``[link boost_asio.reference.ConstBufferSequence ConstBufferSequence]``>
   std::size_t write_some(
       const ConstBufferSequence & buffers,
       boost::system::error_code & ec);
@@ -19889,7 +19889,7 @@ The buffered_stream class template can be used to add buffering to the synchrono
 Start an asynchronous fill. 
 
   template<
-      typename ReadHandler>
+      typename ``[link boost_asio.reference.ReadHandler ReadHandler]``>
   void async_fill(
       ReadHandler handler);
 
@@ -19904,7 +19904,7 @@ Start an asynchronous fill.
 Start an asynchronous flush. 
 
   template<
-      typename WriteHandler>
+      typename ``[link boost_asio.reference.WriteHandler WriteHandler]``>
   void async_flush(
       WriteHandler handler);
 
@@ -19919,8 +19919,8 @@ Start an asynchronous flush.
 Start an asynchronous read. The buffer into which the data will be read must be valid for the lifetime of the asynchronous operation. 
 
   template<
-      typename MutableBufferSequence,
-      typename ReadHandler>
+      typename ``[link boost_asio.reference.MutableBufferSequence MutableBufferSequence]``,
+      typename ``[link boost_asio.reference.ReadHandler ReadHandler]``>
   void async_read_some(
       const MutableBufferSequence & buffers,
       ReadHandler handler);
@@ -19936,8 +19936,8 @@ Start an asynchronous read. The buffer into which the data will be read must be 
 Start an asynchronous write. The data being written must be valid for the lifetime of the asynchronous operation. 
 
   template<
-      typename ConstBufferSequence,
-      typename WriteHandler>
+      typename ``[link boost_asio.reference.ConstBufferSequence ConstBufferSequence]``,
+      typename ``[link boost_asio.reference.WriteHandler WriteHandler]``>
   void async_write_some(
       const ConstBufferSequence & buffers,
       WriteHandler handler);
@@ -20208,12 +20208,12 @@ The type of the next layer.
 Peek at the incoming data on the stream. Returns the number of bytes read. Throws an exception on failure. 
 
   template<
-      typename MutableBufferSequence>
+      typename ``[link boost_asio.reference.MutableBufferSequence MutableBufferSequence]``>
   std::size_t ``[link boost_asio.reference.buffered_stream.peek.overload1 peek]``(
       const MutableBufferSequence & buffers);
 
   template<
-      typename MutableBufferSequence>
+      typename ``[link boost_asio.reference.MutableBufferSequence MutableBufferSequence]``>
   std::size_t ``[link boost_asio.reference.buffered_stream.peek.overload2 peek]``(
       const MutableBufferSequence & buffers,
       boost::system::error_code & ec);
@@ -20224,7 +20224,7 @@ Peek at the incoming data on the stream. Returns the number of bytes read. Throw
 Peek at the incoming data on the stream. Returns the number of bytes read. Throws an exception on failure. 
 
   template<
-      typename MutableBufferSequence>
+      typename ``[link boost_asio.reference.MutableBufferSequence MutableBufferSequence]``>
   std::size_t peek(
       const MutableBufferSequence & buffers);
 
@@ -20239,7 +20239,7 @@ Peek at the incoming data on the stream. Returns the number of bytes read. Throw
 Peek at the incoming data on the stream. Returns the number of bytes read, or 0 if an error occurred. 
 
   template<
-      typename MutableBufferSequence>
+      typename ``[link boost_asio.reference.MutableBufferSequence MutableBufferSequence]``>
   std::size_t peek(
       const MutableBufferSequence & buffers,
       boost::system::error_code & ec);
@@ -20256,12 +20256,12 @@ Peek at the incoming data on the stream. Returns the number of bytes read, or 0 
 Read some data from the stream. Returns the number of bytes read. Throws an exception on failure. 
 
   template<
-      typename MutableBufferSequence>
+      typename ``[link boost_asio.reference.MutableBufferSequence MutableBufferSequence]``>
   std::size_t ``[link boost_asio.reference.buffered_stream.read_some.overload1 read_some]``(
       const MutableBufferSequence & buffers);
 
   template<
-      typename MutableBufferSequence>
+      typename ``[link boost_asio.reference.MutableBufferSequence MutableBufferSequence]``>
   std::size_t ``[link boost_asio.reference.buffered_stream.read_some.overload2 read_some]``(
       const MutableBufferSequence & buffers,
       boost::system::error_code & ec);
@@ -20272,7 +20272,7 @@ Read some data from the stream. Returns the number of bytes read. Throws an exce
 Read some data from the stream. Returns the number of bytes read. Throws an exception on failure. 
 
   template<
-      typename MutableBufferSequence>
+      typename ``[link boost_asio.reference.MutableBufferSequence MutableBufferSequence]``>
   std::size_t read_some(
       const MutableBufferSequence & buffers);
 
@@ -20287,7 +20287,7 @@ Read some data from the stream. Returns the number of bytes read. Throws an exce
 Read some data from the stream. Returns the number of bytes read or 0 if an error occurred. 
 
   template<
-      typename MutableBufferSequence>
+      typename ``[link boost_asio.reference.MutableBufferSequence MutableBufferSequence]``>
   std::size_t read_some(
       const MutableBufferSequence & buffers,
       boost::system::error_code & ec);
@@ -20304,12 +20304,12 @@ Read some data from the stream. Returns the number of bytes read or 0 if an erro
 Write the given data to the stream. Returns the number of bytes written. Throws an exception on failure. 
 
   template<
-      typename ConstBufferSequence>
+      typename ``[link boost_asio.reference.ConstBufferSequence ConstBufferSequence]``>
   std::size_t ``[link boost_asio.reference.buffered_stream.write_some.overload1 write_some]``(
       const ConstBufferSequence & buffers);
 
   template<
-      typename ConstBufferSequence>
+      typename ``[link boost_asio.reference.ConstBufferSequence ConstBufferSequence]``>
   std::size_t ``[link boost_asio.reference.buffered_stream.write_some.overload2 write_some]``(
       const ConstBufferSequence & buffers,
       boost::system::error_code & ec);
@@ -20320,7 +20320,7 @@ Write the given data to the stream. Returns the number of bytes written. Throws 
 Write the given data to the stream. Returns the number of bytes written. Throws an exception on failure. 
 
   template<
-      typename ConstBufferSequence>
+      typename ``[link boost_asio.reference.ConstBufferSequence ConstBufferSequence]``>
   std::size_t write_some(
       const ConstBufferSequence & buffers);
 
@@ -20335,7 +20335,7 @@ Write the given data to the stream. Returns the number of bytes written. Throws 
 Write the given data to the stream. Returns the number of bytes written, or 0 if an error occurred. 
 
   template<
-      typename ConstBufferSequence>
+      typename ``[link boost_asio.reference.ConstBufferSequence ConstBufferSequence]``>
   std::size_t write_some(
       const ConstBufferSequence & buffers,
       boost::system::error_code & ec);
@@ -20477,7 +20477,7 @@ The buffered_write_stream class template can be used to add buffering to the syn
 Start an asynchronous flush. 
 
   template<
-      typename WriteHandler>
+      typename ``[link boost_asio.reference.WriteHandler WriteHandler]``>
   void async_flush(
       WriteHandler handler);
 
@@ -20492,8 +20492,8 @@ Start an asynchronous flush.
 Start an asynchronous read. The buffer into which the data will be read must be valid for the lifetime of the asynchronous operation. 
 
   template<
-      typename MutableBufferSequence,
-      typename ReadHandler>
+      typename ``[link boost_asio.reference.MutableBufferSequence MutableBufferSequence]``,
+      typename ``[link boost_asio.reference.ReadHandler ReadHandler]``>
   void async_read_some(
       const MutableBufferSequence & buffers,
       ReadHandler handler);
@@ -20509,8 +20509,8 @@ Start an asynchronous read. The buffer into which the data will be read must be 
 Start an asynchronous write. The data being written must be valid for the lifetime of the asynchronous operation. 
 
   template<
-      typename ConstBufferSequence,
-      typename WriteHandler>
+      typename ``[link boost_asio.reference.ConstBufferSequence ConstBufferSequence]``,
+      typename ``[link boost_asio.reference.WriteHandler WriteHandler]``>
   void async_write_some(
       const ConstBufferSequence & buffers,
       WriteHandler handler);
@@ -20755,12 +20755,12 @@ The type of the next layer.
 Peek at the incoming data on the stream. Returns the number of bytes read. Throws an exception on failure. 
 
   template<
-      typename MutableBufferSequence>
+      typename ``[link boost_asio.reference.MutableBufferSequence MutableBufferSequence]``>
   std::size_t ``[link boost_asio.reference.buffered_write_stream.peek.overload1 peek]``(
       const MutableBufferSequence & buffers);
 
   template<
-      typename MutableBufferSequence>
+      typename ``[link boost_asio.reference.MutableBufferSequence MutableBufferSequence]``>
   std::size_t ``[link boost_asio.reference.buffered_write_stream.peek.overload2 peek]``(
       const MutableBufferSequence & buffers,
       boost::system::error_code & ec);
@@ -20771,7 +20771,7 @@ Peek at the incoming data on the stream. Returns the number of bytes read. Throw
 Peek at the incoming data on the stream. Returns the number of bytes read. Throws an exception on failure. 
 
   template<
-      typename MutableBufferSequence>
+      typename ``[link boost_asio.reference.MutableBufferSequence MutableBufferSequence]``>
   std::size_t peek(
       const MutableBufferSequence & buffers);
 
@@ -20786,7 +20786,7 @@ Peek at the incoming data on the stream. Returns the number of bytes read. Throw
 Peek at the incoming data on the stream. Returns the number of bytes read, or 0 if an error occurred. 
 
   template<
-      typename MutableBufferSequence>
+      typename ``[link boost_asio.reference.MutableBufferSequence MutableBufferSequence]``>
   std::size_t peek(
       const MutableBufferSequence & buffers,
       boost::system::error_code & ec);
@@ -20803,12 +20803,12 @@ Peek at the incoming data on the stream. Returns the number of bytes read, or 0 
 Read some data from the stream. Returns the number of bytes read. Throws an exception on failure. 
 
   template<
-      typename MutableBufferSequence>
+      typename ``[link boost_asio.reference.MutableBufferSequence MutableBufferSequence]``>
   std::size_t ``[link boost_asio.reference.buffered_write_stream.read_some.overload1 read_some]``(
       const MutableBufferSequence & buffers);
 
   template<
-      typename MutableBufferSequence>
+      typename ``[link boost_asio.reference.MutableBufferSequence MutableBufferSequence]``>
   std::size_t ``[link boost_asio.reference.buffered_write_stream.read_some.overload2 read_some]``(
       const MutableBufferSequence & buffers,
       boost::system::error_code & ec);
@@ -20819,7 +20819,7 @@ Read some data from the stream. Returns the number of bytes read. Throws an exce
 Read some data from the stream. Returns the number of bytes read. Throws an exception on failure. 
 
   template<
-      typename MutableBufferSequence>
+      typename ``[link boost_asio.reference.MutableBufferSequence MutableBufferSequence]``>
   std::size_t read_some(
       const MutableBufferSequence & buffers);
 
@@ -20834,7 +20834,7 @@ Read some data from the stream. Returns the number of bytes read. Throws an exce
 Read some data from the stream. Returns the number of bytes read or 0 if an error occurred. 
 
   template<
-      typename MutableBufferSequence>
+      typename ``[link boost_asio.reference.MutableBufferSequence MutableBufferSequence]``>
   std::size_t read_some(
       const MutableBufferSequence & buffers,
       boost::system::error_code & ec);
@@ -20851,12 +20851,12 @@ Read some data from the stream. Returns the number of bytes read or 0 if an erro
 Write the given data to the stream. Returns the number of bytes written. Throws an exception on failure. 
 
   template<
-      typename ConstBufferSequence>
+      typename ``[link boost_asio.reference.ConstBufferSequence ConstBufferSequence]``>
   std::size_t ``[link boost_asio.reference.buffered_write_stream.write_some.overload1 write_some]``(
       const ConstBufferSequence & buffers);
 
   template<
-      typename ConstBufferSequence>
+      typename ``[link boost_asio.reference.ConstBufferSequence ConstBufferSequence]``>
   std::size_t ``[link boost_asio.reference.buffered_write_stream.write_some.overload2 write_some]``(
       const ConstBufferSequence & buffers,
       boost::system::error_code & ec);
@@ -20867,7 +20867,7 @@ Write the given data to the stream. Returns the number of bytes written. Throws 
 Write the given data to the stream. Returns the number of bytes written. Throws an exception on failure. 
 
   template<
-      typename ConstBufferSequence>
+      typename ``[link boost_asio.reference.ConstBufferSequence ConstBufferSequence]``>
   std::size_t write_some(
       const ConstBufferSequence & buffers);
 
@@ -20882,7 +20882,7 @@ Write the given data to the stream. Returns the number of bytes written. Throws 
 Write the given data to the stream. Returns the number of bytes written, or 0 if an error occurred and the error handler did not throw. 
 
   template<
-      typename ConstBufferSequence>
+      typename ``[link boost_asio.reference.ConstBufferSequence ConstBufferSequence]``>
   std::size_t write_some(
       const ConstBufferSequence & buffers,
       boost::system::error_code & ec);
@@ -21163,7 +21163,7 @@ The type for each element in the list of buffers.
 Default service implementation for a datagram socket. 
 
   template<
-      typename Protocol>
+      typename ``[link boost_asio.reference.Protocol Protocol]``>
   class datagram_socket_service :
     public io_service::service
 
@@ -21391,7 +21391,7 @@ Assign an existing native socket to a datagram socket.
 Start an asynchronous connect. 
 
   template<
-      typename ConnectHandler>
+      typename ``[link boost_asio.reference.ConnectHandler ConnectHandler]``>
   void async_connect(
       implementation_type & impl,
       const endpoint_type & peer_endpoint,
@@ -21408,8 +21408,8 @@ Start an asynchronous connect.
 Start an asynchronous receive. 
 
   template<
-      typename MutableBufferSequence,
-      typename ReadHandler>
+      typename ``[link boost_asio.reference.MutableBufferSequence MutableBufferSequence]``,
+      typename ``[link boost_asio.reference.ReadHandler ReadHandler]``>
   void async_receive(
       implementation_type & impl,
       const MutableBufferSequence & buffers,
@@ -21427,8 +21427,8 @@ Start an asynchronous receive.
 Start an asynchronous receive that will get the endpoint of the sender. 
 
   template<
-      typename MutableBufferSequence,
-      typename ReadHandler>
+      typename ``[link boost_asio.reference.MutableBufferSequence MutableBufferSequence]``,
+      typename ``[link boost_asio.reference.ReadHandler ReadHandler]``>
   void async_receive_from(
       implementation_type & impl,
       const MutableBufferSequence & buffers,
@@ -21447,8 +21447,8 @@ Start an asynchronous receive that will get the endpoint of the sender.
 Start an asynchronous send. 
 
   template<
-      typename ConstBufferSequence,
-      typename WriteHandler>
+      typename ``[link boost_asio.reference.ConstBufferSequence ConstBufferSequence]``,
+      typename ``[link boost_asio.reference.WriteHandler WriteHandler]``>
   void async_send(
       implementation_type & impl,
       const ConstBufferSequence & buffers,
@@ -21466,8 +21466,8 @@ Start an asynchronous send.
 Start an asynchronous send. 
 
   template<
-      typename ConstBufferSequence,
-      typename WriteHandler>
+      typename ``[link boost_asio.reference.ConstBufferSequence ConstBufferSequence]``,
+      typename ``[link boost_asio.reference.WriteHandler WriteHandler]``>
   void async_send_to(
       implementation_type & impl,
       const ConstBufferSequence & buffers,
@@ -21624,7 +21624,7 @@ The endpoint type.
 Get a socket option. 
 
   template<
-      typename GettableSocketOption>
+      typename ``[link boost_asio.reference.GettableSocketOption GettableSocketOption]``>
   boost::system::error_code get_option(
       const implementation_type & impl,
       GettableSocketOption & option,
@@ -21666,7 +21666,7 @@ The type of a datagram socket.
 Perform an IO control command on the socket. 
 
   template<
-      typename IoControlCommand>
+      typename ``[link boost_asio.reference.IoControlCommand IoControlCommand]``>
   boost::system::error_code io_control(
       implementation_type & impl,
       IoControlCommand & command,
@@ -21779,7 +21779,7 @@ The protocol type.
 Receive some data from the peer. 
 
   template<
-      typename MutableBufferSequence>
+      typename ``[link boost_asio.reference.MutableBufferSequence MutableBufferSequence]``>
   std::size_t receive(
       implementation_type & impl,
       const MutableBufferSequence & buffers,
@@ -21797,7 +21797,7 @@ Receive some data from the peer.
 Receive a datagram with the endpoint of the sender. 
 
   template<
-      typename MutableBufferSequence>
+      typename ``[link boost_asio.reference.MutableBufferSequence MutableBufferSequence]``>
   std::size_t receive_from(
       implementation_type & impl,
       const MutableBufferSequence & buffers,
@@ -21830,7 +21830,7 @@ Get the remote endpoint.
 Send the given data to the peer. 
 
   template<
-      typename ConstBufferSequence>
+      typename ``[link boost_asio.reference.ConstBufferSequence ConstBufferSequence]``>
   std::size_t send(
       implementation_type & impl,
       const ConstBufferSequence & buffers,
@@ -21848,7 +21848,7 @@ Send the given data to the peer.
 Send a datagram to the specified endpoint. 
 
   template<
-      typename ConstBufferSequence>
+      typename ``[link boost_asio.reference.ConstBufferSequence ConstBufferSequence]``>
   std::size_t send_to(
       implementation_type & impl,
       const ConstBufferSequence & buffers,
@@ -21867,7 +21867,7 @@ Send a datagram to the specified endpoint.
 Set a socket option. 
 
   template<
-      typename SettableSocketOption>
+      typename ``[link boost_asio.reference.SettableSocketOption SettableSocketOption]``>
   boost::system::error_code set_option(
       implementation_type & impl,
       const SettableSocketOption & option,
@@ -22008,8 +22008,8 @@ Typedef for the typical usage of timer.
 Default service implementation for a timer. 
 
   template<
-      typename TimeType,
-      typename TimeTraits = boost::asio::time_traits<TimeType>>
+      typename ``[link boost_asio.reference.TimeType TimeType]``,
+      typename ``[link boost_asio.reference.TimeTraits TimeTraits]`` = boost::asio::time_traits<TimeType>>
   class deadline_timer_service :
     public io_service::service
 
@@ -22121,7 +22121,7 @@ Default service implementation for a timer.
 
 
   template<
-      typename WaitHandler>
+      typename ``[link boost_asio.reference.WaitHandler WaitHandler]``>
   void async_wait(
       implementation_type & impl,
       WaitHandler handler);
@@ -23368,7 +23368,7 @@ The socket is marked non-blocking and the requested operation would block.
 
 
   template<
-      typename Service>
+      typename ``[link boost_asio.reference.Service Service]``>
   bool has_service(
       io_service & ios);
 
@@ -23577,7 +23577,7 @@ The io_service class also includes facilities intended for developers of custom 
 Add a service object to the io_service. 
 
   template<
-      typename Service>
+      typename ``[link boost_asio.reference.Service Service]``>
   friend void add_service(
       io_service & ios,
       Service * svc);
@@ -23624,7 +23624,7 @@ This function is used to add a service to the io_service.
 Request the io_service to invoke the given handler. 
 
   template<
-      typename CompletionHandler>
+      typename ``[link boost_asio.reference.CompletionHandler CompletionHandler]``>
   void dispatch(
       CompletionHandler handler);
 
@@ -23659,7 +23659,7 @@ The io_service guarantees that the handler will only be called in a thread in wh
 Determine if an io_service contains a specified service type. 
 
   template<
-      typename Service>
+      typename ``[link boost_asio.reference.Service Service]``>
   friend bool has_service(
       io_service & ios);
 
@@ -23880,7 +23880,7 @@ The number of handlers that were executed.
 Request the io_service to invoke the given handler and return immediately. 
 
   template<
-      typename CompletionHandler>
+      typename ``[link boost_asio.reference.CompletionHandler CompletionHandler]``>
   void post(
       CompletionHandler handler);
 
@@ -24093,7 +24093,7 @@ This function does not block, but instead simply signals the io_service to stop.
 Obtain the service object corresponding to the given type. 
 
   template<
-      typename Service>
+      typename ``[link boost_asio.reference.Service Service]``>
   friend Service & use_service(
       io_service & ios);
 
@@ -24125,7 +24125,7 @@ The service interface implementing the specified service type. Ownership of the 
 Create a new handler that automatically dispatches the wrapped handler on the io_service. 
 
   template<
-      typename Handler>
+      typename ``[link boost_asio.reference.Handler Handler]``>
   unspecified wrap(
       Handler handler);
 
@@ -24316,7 +24316,7 @@ The io_service::strand class provides the ability to post and dispatch handlers 
 Request the strand to invoke the given handler. 
 
   template<
-      typename Handler>
+      typename ``[link boost_asio.reference.Handler Handler]``>
   void dispatch(
       Handler handler);
 
@@ -24373,7 +24373,7 @@ A reference to the io_service object that the strand will use to dispatch handle
 Request the strand to invoke the given handler and return immediately. 
 
   template<
-      typename Handler>
+      typename ``[link boost_asio.reference.Handler Handler]``>
   void post(
       Handler handler);
 
@@ -24434,7 +24434,7 @@ Constructs the strand.
 Create a new handler that automatically dispatches the wrapped handler on the strand. 
 
   template<
-      typename Handler>
+      typename ``[link boost_asio.reference.Handler Handler]``>
   unspecified wrap(
       Handler handler);
 
@@ -26326,7 +26326,7 @@ Create an IPv4-mapped IPv6 address.
 Describes an endpoint for a version-independent IP socket. 
 
   template<
-      typename InternetProtocol>
+      typename ``[link boost_asio.reference.InternetProtocol InternetProtocol]``>
   class basic_endpoint
 
 
@@ -26786,8 +26786,8 @@ The type for the size of the endpoint structure. This type is dependent on the u
 Provides endpoint resolution functionality. 
 
   template<
-      typename InternetProtocol,
-      typename ResolverService = resolver_service<InternetProtocol>>
+      typename ``[link boost_asio.reference.InternetProtocol InternetProtocol]``,
+      typename ``[link boost_asio.reference.ResolverService ResolverService]`` = resolver_service<InternetProtocol>>
   class basic_resolver :
     public basic_io_object< ResolverService >
 
@@ -26886,13 +26886,13 @@ The basic_resolver class template provides the ability to resolve a query to a l
 Asynchronously resolve a query to a list of entries. 
 
   template<
-      typename ResolveHandler>
+      typename ``[link boost_asio.reference.ResolveHandler ResolveHandler]``>
   void ``[link boost_asio.reference.ip__basic_resolver.async_resolve.overload1 async_resolve]``(
       const query & q,
       ResolveHandler handler);
 
   template<
-      typename ResolveHandler>
+      typename ``[link boost_asio.reference.ResolveHandler ResolveHandler]``>
   void ``[link boost_asio.reference.ip__basic_resolver.async_resolve.overload2 async_resolve]``(
       const endpoint_type & e,
       ResolveHandler handler);
@@ -26903,7 +26903,7 @@ Asynchronously resolve a query to a list of entries.
 Asynchronously resolve a query to a list of entries. 
 
   template<
-      typename ResolveHandler>
+      typename ``[link boost_asio.reference.ResolveHandler ResolveHandler]``>
   void async_resolve(
       const query & q,
       ResolveHandler handler);
@@ -26949,7 +26949,7 @@ A successful resolve operation is guaranteed to pass at least one entry to the h
 Asynchronously resolve an endpoint to a list of entries. 
 
   template<
-      typename ResolveHandler>
+      typename ``[link boost_asio.reference.ResolveHandler ResolveHandler]``>
   void async_resolve(
       const endpoint_type & e,
       ResolveHandler handler);
@@ -27330,7 +27330,7 @@ The type of the service that will be used to provide I/O operations.
 An entry produced by a resolver. 
 
   template<
-      typename InternetProtocol>
+      typename ``[link boost_asio.reference.InternetProtocol InternetProtocol]``>
   class basic_resolver_entry
 
 
@@ -27518,7 +27518,7 @@ Get the service name associated with the entry.
 An iterator over the entries produced by a resolver. 
 
   template<
-      typename InternetProtocol>
+      typename ``[link boost_asio.reference.InternetProtocol InternetProtocol]``>
   class basic_resolver_iterator
 
 
@@ -27622,7 +27622,7 @@ Create an iterator from an endpoint, host name and service name.
 An query to be passed to a resolver. 
 
   template<
-      typename InternetProtocol>
+      typename ``[link boost_asio.reference.InternetProtocol InternetProtocol]``>
   class basic_resolver_query :
     public ip::resolver_query_base
 
@@ -28310,7 +28310,7 @@ If the query protocol family is specified as IPv6, return IPv4-mapped IPv6 addre
 Default service implementation for a resolver. 
 
   template<
-      typename InternetProtocol>
+      typename ``[link boost_asio.reference.InternetProtocol InternetProtocol]``>
   class resolver_service :
     public io_service::service
 
@@ -28418,14 +28418,14 @@ Default service implementation for a resolver.
 Asynchronously resolve a query to a list of entries. 
 
   template<
-      typename Handler>
+      typename ``[link boost_asio.reference.Handler Handler]``>
   void ``[link boost_asio.reference.ip__resolver_service.async_resolve.overload1 async_resolve]``(
       implementation_type & impl,
       const query_type & query,
       Handler handler);
 
   template<
-      typename ResolveHandler>
+      typename ``[link boost_asio.reference.ResolveHandler ResolveHandler]``>
   void ``[link boost_asio.reference.ip__resolver_service.async_resolve.overload2 async_resolve]``(
       implementation_type & impl,
       const endpoint_type & endpoint,
@@ -28437,7 +28437,7 @@ Asynchronously resolve a query to a list of entries.
 Asynchronously resolve a query to a list of entries. 
 
   template<
-      typename Handler>
+      typename ``[link boost_asio.reference.Handler Handler]``>
   void async_resolve(
       implementation_type & impl,
       const query_type & query,
@@ -28454,7 +28454,7 @@ Asynchronously resolve a query to a list of entries.
 Asynchronously resolve an endpoint to a list of entries. 
 
   template<
-      typename ResolveHandler>
+      typename ``[link boost_asio.reference.ResolveHandler ResolveHandler]``>
   void async_resolve(
       implementation_type & impl,
       const endpoint_type & endpoint,
@@ -31196,25 +31196,25 @@ An argument placeholder, for use with boost::bind(), that corresponds to the ite
 Attempt to read a certain amount of data from a stream before returning. 
 
   template<
-      typename SyncReadStream,
-      typename MutableBufferSequence>
+      typename ``[link boost_asio.reference.SyncReadStream SyncReadStream]``,
+      typename ``[link boost_asio.reference.MutableBufferSequence MutableBufferSequence]``>
   std::size_t ``[link boost_asio.reference.read.overload1 read]``(
       SyncReadStream & s,
       const MutableBufferSequence & buffers);
 
   template<
-      typename SyncReadStream,
-      typename MutableBufferSequence,
-      typename CompletionCondition>
+      typename ``[link boost_asio.reference.SyncReadStream SyncReadStream]``,
+      typename ``[link boost_asio.reference.MutableBufferSequence MutableBufferSequence]``,
+      typename ``[link boost_asio.reference.CompletionCondition CompletionCondition]``>
   std::size_t ``[link boost_asio.reference.read.overload2 read]``(
       SyncReadStream & s,
       const MutableBufferSequence & buffers,
       CompletionCondition completion_condition);
 
   template<
-      typename SyncReadStream,
-      typename MutableBufferSequence,
-      typename CompletionCondition>
+      typename ``[link boost_asio.reference.SyncReadStream SyncReadStream]``,
+      typename ``[link boost_asio.reference.MutableBufferSequence MutableBufferSequence]``,
+      typename ``[link boost_asio.reference.CompletionCondition CompletionCondition]``>
   std::size_t ``[link boost_asio.reference.read.overload3 read]``(
       SyncReadStream & s,
       const MutableBufferSequence & buffers,
@@ -31222,25 +31222,25 @@ Attempt to read a certain amount of data from a stream before returning.
       boost::system::error_code & ec);
 
   template<
-      typename SyncReadStream,
+      typename ``[link boost_asio.reference.SyncReadStream SyncReadStream]``,
       typename Allocator>
   std::size_t ``[link boost_asio.reference.read.overload4 read]``(
       SyncReadStream & s,
       basic_streambuf< Allocator > & b);
 
   template<
-      typename SyncReadStream,
+      typename ``[link boost_asio.reference.SyncReadStream SyncReadStream]``,
       typename Allocator,
-      typename CompletionCondition>
+      typename ``[link boost_asio.reference.CompletionCondition CompletionCondition]``>
   std::size_t ``[link boost_asio.reference.read.overload5 read]``(
       SyncReadStream & s,
       basic_streambuf< Allocator > & b,
       CompletionCondition completion_condition);
 
   template<
-      typename SyncReadStream,
+      typename ``[link boost_asio.reference.SyncReadStream SyncReadStream]``,
       typename Allocator,
-      typename CompletionCondition>
+      typename ``[link boost_asio.reference.CompletionCondition CompletionCondition]``>
   std::size_t ``[link boost_asio.reference.read.overload6 read]``(
       SyncReadStream & s,
       basic_streambuf< Allocator > & b,
@@ -31253,8 +31253,8 @@ Attempt to read a certain amount of data from a stream before returning.
 Attempt to read a certain amount of data from a stream before returning. 
 
   template<
-      typename SyncReadStream,
-      typename MutableBufferSequence>
+      typename ``[link boost_asio.reference.SyncReadStream SyncReadStream]``,
+      typename ``[link boost_asio.reference.MutableBufferSequence MutableBufferSequence]``>
   std::size_t read(
       SyncReadStream & s,
       const MutableBufferSequence & buffers);
@@ -31327,9 +31327,9 @@ This overload is equivalent to calling:
 Attempt to read a certain amount of data from a stream before returning. 
 
   template<
-      typename SyncReadStream,
-      typename MutableBufferSequence,
-      typename CompletionCondition>
+      typename ``[link boost_asio.reference.SyncReadStream SyncReadStream]``,
+      typename ``[link boost_asio.reference.MutableBufferSequence MutableBufferSequence]``,
+      typename ``[link boost_asio.reference.CompletionCondition CompletionCondition]``>
   std::size_t read(
       SyncReadStream & s,
       const MutableBufferSequence & buffers,
@@ -31406,9 +31406,9 @@ See the
 Attempt to read a certain amount of data from a stream before returning. 
 
   template<
-      typename SyncReadStream,
-      typename MutableBufferSequence,
-      typename CompletionCondition>
+      typename ``[link boost_asio.reference.SyncReadStream SyncReadStream]``,
+      typename ``[link boost_asio.reference.MutableBufferSequence MutableBufferSequence]``,
+      typename ``[link boost_asio.reference.CompletionCondition CompletionCondition]``>
   std::size_t read(
       SyncReadStream & s,
       const MutableBufferSequence & buffers,
@@ -31467,7 +31467,7 @@ The number of bytes read. If an error occurs, returns the total number of bytes 
 Attempt to read a certain amount of data from a stream before returning. 
 
   template<
-      typename SyncReadStream,
+      typename ``[link boost_asio.reference.SyncReadStream SyncReadStream]``,
       typename Allocator>
   std::size_t read(
       SyncReadStream & s,
@@ -31528,9 +31528,9 @@ This overload is equivalent to calling:
 Attempt to read a certain amount of data from a stream before returning. 
 
   template<
-      typename SyncReadStream,
+      typename ``[link boost_asio.reference.SyncReadStream SyncReadStream]``,
       typename Allocator,
-      typename CompletionCondition>
+      typename ``[link boost_asio.reference.CompletionCondition CompletionCondition]``>
   std::size_t read(
       SyncReadStream & s,
       basic_streambuf< Allocator > & b,
@@ -31593,9 +31593,9 @@ The number of bytes transferred.
 Attempt to read a certain amount of data from a stream before returning. 
 
   template<
-      typename SyncReadStream,
+      typename ``[link boost_asio.reference.SyncReadStream SyncReadStream]``,
       typename Allocator,
-      typename CompletionCondition>
+      typename ``[link boost_asio.reference.CompletionCondition CompletionCondition]``>
   std::size_t read(
       SyncReadStream & s,
       basic_streambuf< Allocator > & b,
@@ -31653,7 +31653,7 @@ The number of bytes read. If an error occurs, returns the total number of bytes 
 Read data into a streambuf until a delimiter is encountered. 
 
   template<
-      typename SyncReadStream,
+      typename ``[link boost_asio.reference.SyncReadStream SyncReadStream]``,
       typename Allocator>
   std::size_t ``[link boost_asio.reference.read_until.overload1 read_until]``(
       SyncReadStream & s,
@@ -31661,7 +31661,7 @@ Read data into a streambuf until a delimiter is encountered.
       char delim);
 
   template<
-      typename SyncReadStream,
+      typename ``[link boost_asio.reference.SyncReadStream SyncReadStream]``,
       typename Allocator>
   std::size_t ``[link boost_asio.reference.read_until.overload2 read_until]``(
       SyncReadStream & s,
@@ -31670,7 +31670,7 @@ Read data into a streambuf until a delimiter is encountered.
       boost::system::error_code & ec);
 
   template<
-      typename SyncReadStream,
+      typename ``[link boost_asio.reference.SyncReadStream SyncReadStream]``,
       typename Allocator>
   std::size_t ``[link boost_asio.reference.read_until.overload3 read_until]``(
       SyncReadStream & s,
@@ -31678,7 +31678,7 @@ Read data into a streambuf until a delimiter is encountered.
       const std::string & delim);
 
   template<
-      typename SyncReadStream,
+      typename ``[link boost_asio.reference.SyncReadStream SyncReadStream]``,
       typename Allocator>
   std::size_t ``[link boost_asio.reference.read_until.overload4 read_until]``(
       SyncReadStream & s,
@@ -31687,7 +31687,7 @@ Read data into a streambuf until a delimiter is encountered.
       boost::system::error_code & ec);
 
   template<
-      typename SyncReadStream,
+      typename ``[link boost_asio.reference.SyncReadStream SyncReadStream]``,
       typename Allocator>
   std::size_t ``[link boost_asio.reference.read_until.overload5 read_until]``(
       SyncReadStream & s,
@@ -31695,7 +31695,7 @@ Read data into a streambuf until a delimiter is encountered.
       const boost::regex & expr);
 
   template<
-      typename SyncReadStream,
+      typename ``[link boost_asio.reference.SyncReadStream SyncReadStream]``,
       typename Allocator>
   std::size_t ``[link boost_asio.reference.read_until.overload6 read_until]``(
       SyncReadStream & s,
@@ -31709,7 +31709,7 @@ Read data into a streambuf until a delimiter is encountered.
 Read data into a streambuf until a delimiter is encountered. 
 
   template<
-      typename SyncReadStream,
+      typename ``[link boost_asio.reference.SyncReadStream SyncReadStream]``,
       typename Allocator>
   std::size_t read_until(
       SyncReadStream & s,
@@ -31777,7 +31777,7 @@ To read data into a streambuf until a newline is encountered:
 Read data into a streambuf until a delimiter is encountered. 
 
   template<
-      typename SyncReadStream,
+      typename ``[link boost_asio.reference.SyncReadStream SyncReadStream]``,
       typename Allocator>
   std::size_t read_until(
       SyncReadStream & s,
@@ -31826,7 +31826,7 @@ The number of bytes in the streambuf's get area up to and including the delimite
 Read data into a streambuf until a delimiter is encountered. 
 
   template<
-      typename SyncReadStream,
+      typename ``[link boost_asio.reference.SyncReadStream SyncReadStream]``,
       typename Allocator>
   std::size_t read_until(
       SyncReadStream & s,
@@ -31894,7 +31894,7 @@ To read data into a streambuf until a newline is encountered:
 Read data into a streambuf until a delimiter is encountered. 
 
   template<
-      typename SyncReadStream,
+      typename ``[link boost_asio.reference.SyncReadStream SyncReadStream]``,
       typename Allocator>
   std::size_t read_until(
       SyncReadStream & s,
@@ -31943,7 +31943,7 @@ The number of bytes in the streambuf's get area up to and including the delimite
 Read data into a streambuf until a regular expression is located. 
 
   template<
-      typename SyncReadStream,
+      typename ``[link boost_asio.reference.SyncReadStream SyncReadStream]``,
       typename Allocator>
   std::size_t read_until(
       SyncReadStream & s,
@@ -32011,7 +32011,7 @@ To read data into a streambuf until a CR-LF sequence is encountered:
 Read data into a streambuf until a regular expression is located. 
 
   template<
-      typename SyncReadStream,
+      typename ``[link boost_asio.reference.SyncReadStream SyncReadStream]``,
       typename Allocator>
   std::size_t read_until(
       SyncReadStream & s,
@@ -32094,7 +32094,7 @@ Exception thrown when trying to add a duplicate service to an io_service.
 Default service implementation for a socket acceptor. 
 
   template<
-      typename Protocol>
+      typename ``[link boost_asio.reference.Protocol Protocol]``>
   class socket_acceptor_service :
     public io_service::service
 
@@ -32251,7 +32251,7 @@ Default service implementation for a socket acceptor.
 Accept a new connection. 
 
   template<
-      typename SocketService>
+      typename ``[link boost_asio.reference.SocketService SocketService]``>
   boost::system::error_code accept(
       implementation_type & impl,
       basic_socket< protocol_type, SocketService > & peer,
@@ -32285,8 +32285,8 @@ Assign an existing native acceptor to a socket acceptor.
 Start an asynchronous accept. 
 
   template<
-      typename SocketService,
-      typename AcceptHandler>
+      typename ``[link boost_asio.reference.SocketService SocketService]``,
+      typename ``[link boost_asio.reference.AcceptHandler AcceptHandler]``>
   void async_accept(
       implementation_type & impl,
       basic_socket< protocol_type, SocketService > & peer,
@@ -32386,7 +32386,7 @@ The endpoint type.
 Get a socket option. 
 
   template<
-      typename GettableSocketOption>
+      typename ``[link boost_asio.reference.GettableSocketOption GettableSocketOption]``>
   boost::system::error_code get_option(
       const implementation_type & impl,
       GettableSocketOption & option,
@@ -32428,7 +32428,7 @@ The native type of the socket acceptor.
 Perform an IO control command on the socket. 
 
   template<
-      typename IoControlCommand>
+      typename ``[link boost_asio.reference.IoControlCommand IoControlCommand]``>
   boost::system::error_code io_control(
       implementation_type & impl,
       IoControlCommand & command,
@@ -32556,7 +32556,7 @@ The protocol type.
 Set a socket option. 
 
   template<
-      typename SettableSocketOption>
+      typename ``[link boost_asio.reference.SettableSocketOption SettableSocketOption]``>
   boost::system::error_code set_option(
       implementation_type & impl,
       const SettableSocketOption & option,
@@ -33340,7 +33340,7 @@ Different ways a socket may be shutdown.
 SSL context. 
 
   template<
-      typename Service>
+      typename ``[link boost_asio.reference.Service Service]``>
   class basic_context :
     public ssl::context_base
 
@@ -35659,7 +35659,7 @@ Provides stream-oriented functionality using SSL.
 
   template<
       typename Stream,
-      typename Service = stream_service>
+      typename ``[link boost_asio.reference.Service Service]`` = stream_service>
   class stream :
     public ssl::stream_base
 
@@ -35856,8 +35856,8 @@ This function is used to asynchronously perform an SSL handshake on the stream. 
 Start an asynchronous read. 
 
   template<
-      typename MutableBufferSequence,
-      typename ReadHandler>
+      typename ``[link boost_asio.reference.MutableBufferSequence MutableBufferSequence]``,
+      typename ``[link boost_asio.reference.ReadHandler ReadHandler]``>
   void async_read_some(
       const MutableBufferSequence & buffers,
       ReadHandler handler);
@@ -35936,8 +35936,8 @@ This function is used to asynchronously shut down SSL on the stream. This functi
 Start an asynchronous write. 
 
   template<
-      typename ConstBufferSequence,
-      typename WriteHandler>
+      typename ``[link boost_asio.reference.ConstBufferSequence ConstBufferSequence]``,
+      typename ``[link boost_asio.reference.WriteHandler WriteHandler]``>
   void async_write_some(
       const ConstBufferSequence & buffers,
       WriteHandler handler);
@@ -36267,12 +36267,12 @@ The type of the next layer.
 Peek at the incoming data on the stream. 
 
   template<
-      typename MutableBufferSequence>
+      typename ``[link boost_asio.reference.MutableBufferSequence MutableBufferSequence]``>
   std::size_t ``[link boost_asio.reference.ssl__stream.peek.overload1 peek]``(
       const MutableBufferSequence & buffers);
 
   template<
-      typename MutableBufferSequence>
+      typename ``[link boost_asio.reference.MutableBufferSequence MutableBufferSequence]``>
   std::size_t ``[link boost_asio.reference.ssl__stream.peek.overload2 peek]``(
       const MutableBufferSequence & buffers,
       boost::system::error_code & ec);
@@ -36283,7 +36283,7 @@ Peek at the incoming data on the stream.
 Peek at the incoming data on the stream. 
 
   template<
-      typename MutableBufferSequence>
+      typename ``[link boost_asio.reference.MutableBufferSequence MutableBufferSequence]``>
   std::size_t peek(
       const MutableBufferSequence & buffers);
 
@@ -36324,7 +36324,7 @@ The number of bytes read.
 Peek at the incoming data on the stream. 
 
   template<
-      typename MutableBufferSequence>
+      typename ``[link boost_asio.reference.MutableBufferSequence MutableBufferSequence]``>
   std::size_t peek(
       const MutableBufferSequence & buffers,
       boost::system::error_code & ec);
@@ -36360,12 +36360,12 @@ The number of bytes read. Returns 0 if an error occurred.
 Read some data from the stream. 
 
   template<
-      typename MutableBufferSequence>
+      typename ``[link boost_asio.reference.MutableBufferSequence MutableBufferSequence]``>
   std::size_t ``[link boost_asio.reference.ssl__stream.read_some.overload1 read_some]``(
       const MutableBufferSequence & buffers);
 
   template<
-      typename MutableBufferSequence>
+      typename ``[link boost_asio.reference.MutableBufferSequence MutableBufferSequence]``>
   std::size_t ``[link boost_asio.reference.ssl__stream.read_some.overload2 read_some]``(
       const MutableBufferSequence & buffers,
       boost::system::error_code & ec);
@@ -36376,7 +36376,7 @@ Read some data from the stream.
 Read some data from the stream. 
 
   template<
-      typename MutableBufferSequence>
+      typename ``[link boost_asio.reference.MutableBufferSequence MutableBufferSequence]``>
   std::size_t read_some(
       const MutableBufferSequence & buffers);
 
@@ -36422,7 +36422,7 @@ The read\_some operation may not read all of the requested number of bytes. Cons
 Read some data from the stream. 
 
   template<
-      typename MutableBufferSequence>
+      typename ``[link boost_asio.reference.MutableBufferSequence MutableBufferSequence]``>
   std::size_t read_some(
       const MutableBufferSequence & buffers,
       boost::system::error_code & ec);
@@ -36570,12 +36570,12 @@ This constructor creates a stream and initialises the underlying stream object.
 Write some data to the stream. 
 
   template<
-      typename ConstBufferSequence>
+      typename ``[link boost_asio.reference.ConstBufferSequence ConstBufferSequence]``>
   std::size_t ``[link boost_asio.reference.ssl__stream.write_some.overload1 write_some]``(
       const ConstBufferSequence & buffers);
 
   template<
-      typename ConstBufferSequence>
+      typename ``[link boost_asio.reference.ConstBufferSequence ConstBufferSequence]``>
   std::size_t ``[link boost_asio.reference.ssl__stream.write_some.overload2 write_some]``(
       const ConstBufferSequence & buffers,
       boost::system::error_code & ec);
@@ -36586,7 +36586,7 @@ Write some data to the stream.
 Write some data to the stream. 
 
   template<
-      typename ConstBufferSequence>
+      typename ``[link boost_asio.reference.ConstBufferSequence ConstBufferSequence]``>
   std::size_t write_some(
       const ConstBufferSequence & buffers);
 
@@ -36632,7 +36632,7 @@ The write\_some operation may not transmit all of the data to the peer. Consider
 Write some data to the stream. 
 
   template<
-      typename ConstBufferSequence>
+      typename ``[link boost_asio.reference.ConstBufferSequence ConstBufferSequence]``>
   std::size_t write_some(
       const ConstBufferSequence & buffers,
       boost::system::error_code & ec);
@@ -36877,8 +36877,8 @@ Start an asynchronous read.
 
   template<
       typename Stream,
-      typename MutableBufferSequence,
-      typename ReadHandler>
+      typename ``[link boost_asio.reference.MutableBufferSequence MutableBufferSequence]``,
+      typename ``[link boost_asio.reference.ReadHandler ReadHandler]``>
   void async_read_some(
       impl_type & impl,
       Stream & next_layer,
@@ -36915,8 +36915,8 @@ Start an asynchronous write.
 
   template<
       typename Stream,
-      typename ConstBufferSequence,
-      typename WriteHandler>
+      typename ``[link boost_asio.reference.ConstBufferSequence ConstBufferSequence]``,
+      typename ``[link boost_asio.reference.WriteHandler WriteHandler]``>
   void async_write_some(
       impl_type & impl,
       Stream & next_layer,
@@ -37056,7 +37056,7 @@ Peek at the incoming data on the stream.
 
   template<
       typename Stream,
-      typename MutableBufferSequence>
+      typename ``[link boost_asio.reference.MutableBufferSequence MutableBufferSequence]``>
   std::size_t peek(
       impl_type & impl,
       Stream & next_layer,
@@ -37075,7 +37075,7 @@ Read some data from the stream.
 
   template<
       typename Stream,
-      typename MutableBufferSequence>
+      typename ``[link boost_asio.reference.MutableBufferSequence MutableBufferSequence]``>
   std::size_t read_some(
       impl_type & impl,
       Stream & next_layer,
@@ -37136,7 +37136,7 @@ Write some data to the stream.
 
   template<
       typename Stream,
-      typename ConstBufferSequence>
+      typename ``[link boost_asio.reference.ConstBufferSequence ConstBufferSequence]``>
   std::size_t write_some(
       impl_type & impl,
       Stream & next_layer,
@@ -37205,7 +37205,7 @@ Typedef for backwards compatibility.
 Default service implementation for a stream socket. 
 
   template<
-      typename Protocol>
+      typename ``[link boost_asio.reference.Protocol Protocol]``>
   class stream_socket_service :
     public io_service::service
 
@@ -37413,7 +37413,7 @@ Assign an existing native socket to a stream socket.
 Start an asynchronous connect. 
 
   template<
-      typename ConnectHandler>
+      typename ``[link boost_asio.reference.ConnectHandler ConnectHandler]``>
   void async_connect(
       implementation_type & impl,
       const endpoint_type & peer_endpoint,
@@ -37430,8 +37430,8 @@ Start an asynchronous connect.
 Start an asynchronous receive. 
 
   template<
-      typename MutableBufferSequence,
-      typename ReadHandler>
+      typename ``[link boost_asio.reference.MutableBufferSequence MutableBufferSequence]``,
+      typename ``[link boost_asio.reference.ReadHandler ReadHandler]``>
   void async_receive(
       implementation_type & impl,
       const MutableBufferSequence & buffers,
@@ -37449,8 +37449,8 @@ Start an asynchronous receive.
 Start an asynchronous send. 
 
   template<
-      typename ConstBufferSequence,
-      typename WriteHandler>
+      typename ``[link boost_asio.reference.ConstBufferSequence ConstBufferSequence]``,
+      typename ``[link boost_asio.reference.WriteHandler WriteHandler]``>
   void async_send(
       implementation_type & impl,
       const ConstBufferSequence & buffers,
@@ -37593,7 +37593,7 @@ The endpoint type.
 Get a socket option. 
 
   template<
-      typename GettableSocketOption>
+      typename ``[link boost_asio.reference.GettableSocketOption GettableSocketOption]``>
   boost::system::error_code get_option(
       const implementation_type & impl,
       GettableSocketOption & option,
@@ -37635,7 +37635,7 @@ The type of a stream socket implementation.
 Perform an IO control command on the socket. 
 
   template<
-      typename IoControlCommand>
+      typename ``[link boost_asio.reference.IoControlCommand IoControlCommand]``>
   boost::system::error_code io_control(
       implementation_type & impl,
       IoControlCommand & command,
@@ -37748,7 +37748,7 @@ The protocol type.
 Receive some data from the peer. 
 
   template<
-      typename MutableBufferSequence>
+      typename ``[link boost_asio.reference.MutableBufferSequence MutableBufferSequence]``>
   std::size_t receive(
       implementation_type & impl,
       const MutableBufferSequence & buffers,
@@ -37780,7 +37780,7 @@ Get the remote endpoint.
 Send the given data to the peer. 
 
   template<
-      typename ConstBufferSequence>
+      typename ``[link boost_asio.reference.ConstBufferSequence ConstBufferSequence]``>
   std::size_t send(
       implementation_type & impl,
       const ConstBufferSequence & buffers,
@@ -37798,7 +37798,7 @@ Send the given data to the peer.
 Set a socket option. 
 
   template<
-      typename SettableSocketOption>
+      typename ``[link boost_asio.reference.SettableSocketOption SettableSocketOption]``>
   boost::system::error_code set_option(
       implementation_type & impl,
       const SettableSocketOption & option,
@@ -38112,7 +38112,7 @@ Return a completion condition function object that indicates that a read or writ
 
 
   template<
-      typename Service>
+      typename ``[link boost_asio.reference.Service Service]``>
   Service & use_service(
       io_service & ios);
 
@@ -38143,25 +38143,25 @@ The service interface implementing the specified service type. Ownership of the 
 Write all of the supplied data to a stream before returning. 
 
   template<
-      typename SyncWriteStream,
-      typename ConstBufferSequence>
+      typename ``[link boost_asio.reference.SyncWriteStream SyncWriteStream]``,
+      typename ``[link boost_asio.reference.ConstBufferSequence ConstBufferSequence]``>
   std::size_t ``[link boost_asio.reference.write.overload1 write]``(
       SyncWriteStream & s,
       const ConstBufferSequence & buffers);
 
   template<
-      typename SyncWriteStream,
-      typename ConstBufferSequence,
-      typename CompletionCondition>
+      typename ``[link boost_asio.reference.SyncWriteStream SyncWriteStream]``,
+      typename ``[link boost_asio.reference.ConstBufferSequence ConstBufferSequence]``,
+      typename ``[link boost_asio.reference.CompletionCondition CompletionCondition]``>
   std::size_t ``[link boost_asio.reference.write.overload2 write]``(
       SyncWriteStream & s,
       const ConstBufferSequence & buffers,
       CompletionCondition completion_condition);
 
   template<
-      typename SyncWriteStream,
-      typename ConstBufferSequence,
-      typename CompletionCondition>
+      typename ``[link boost_asio.reference.SyncWriteStream SyncWriteStream]``,
+      typename ``[link boost_asio.reference.ConstBufferSequence ConstBufferSequence]``,
+      typename ``[link boost_asio.reference.CompletionCondition CompletionCondition]``>
   std::size_t ``[link boost_asio.reference.write.overload3 write]``(
       SyncWriteStream & s,
       const ConstBufferSequence & buffers,
@@ -38169,25 +38169,25 @@ Write all of the supplied data to a stream before returning.
       boost::system::error_code & ec);
 
   template<
-      typename SyncWriteStream,
+      typename ``[link boost_asio.reference.SyncWriteStream SyncWriteStream]``,
       typename Allocator>
   std::size_t ``[link boost_asio.reference.write.overload4 write]``(
       SyncWriteStream & s,
       basic_streambuf< Allocator > & b);
 
   template<
-      typename SyncWriteStream,
+      typename ``[link boost_asio.reference.SyncWriteStream SyncWriteStream]``,
       typename Allocator,
-      typename CompletionCondition>
+      typename ``[link boost_asio.reference.CompletionCondition CompletionCondition]``>
   std::size_t ``[link boost_asio.reference.write.overload5 write]``(
       SyncWriteStream & s,
       basic_streambuf< Allocator > & b,
       CompletionCondition completion_condition);
 
   template<
-      typename SyncWriteStream,
+      typename ``[link boost_asio.reference.SyncWriteStream SyncWriteStream]``,
       typename Allocator,
-      typename CompletionCondition>
+      typename ``[link boost_asio.reference.CompletionCondition CompletionCondition]``>
   std::size_t ``[link boost_asio.reference.write.overload6 write]``(
       SyncWriteStream & s,
       basic_streambuf< Allocator > & b,
@@ -38200,8 +38200,8 @@ Write all of the supplied data to a stream before returning.
 Write all of the supplied data to a stream before returning. 
 
   template<
-      typename SyncWriteStream,
-      typename ConstBufferSequence>
+      typename ``[link boost_asio.reference.SyncWriteStream SyncWriteStream]``,
+      typename ``[link boost_asio.reference.ConstBufferSequence ConstBufferSequence]``>
   std::size_t write(
       SyncWriteStream & s,
       const ConstBufferSequence & buffers);
@@ -38274,9 +38274,9 @@ This overload is equivalent to calling:
 Write a certain amount of data to a stream before returning. 
 
   template<
-      typename SyncWriteStream,
-      typename ConstBufferSequence,
-      typename CompletionCondition>
+      typename ``[link boost_asio.reference.SyncWriteStream SyncWriteStream]``,
+      typename ``[link boost_asio.reference.ConstBufferSequence ConstBufferSequence]``,
+      typename ``[link boost_asio.reference.CompletionCondition CompletionCondition]``>
   std::size_t write(
       SyncWriteStream & s,
       const ConstBufferSequence & buffers,
@@ -38353,9 +38353,9 @@ See the
 Write a certain amount of data to a stream before returning. 
 
   template<
-      typename SyncWriteStream,
-      typename ConstBufferSequence,
-      typename CompletionCondition>
+      typename ``[link boost_asio.reference.SyncWriteStream SyncWriteStream]``,
+      typename ``[link boost_asio.reference.ConstBufferSequence ConstBufferSequence]``,
+      typename ``[link boost_asio.reference.CompletionCondition CompletionCondition]``>
   std::size_t write(
       SyncWriteStream & s,
       const ConstBufferSequence & buffers,
@@ -38414,7 +38414,7 @@ The number of bytes written. If an error occurs, returns the total number of byt
 Write a certain amount of data to a stream before returning. 
 
   template<
-      typename SyncWriteStream,
+      typename ``[link boost_asio.reference.SyncWriteStream SyncWriteStream]``,
       typename Allocator>
   std::size_t write(
       SyncWriteStream & s,
@@ -38477,9 +38477,9 @@ This overload is equivalent to calling:
 Write a certain amount of data to a stream before returning. 
 
   template<
-      typename SyncWriteStream,
+      typename ``[link boost_asio.reference.SyncWriteStream SyncWriteStream]``,
       typename Allocator,
-      typename CompletionCondition>
+      typename ``[link boost_asio.reference.CompletionCondition CompletionCondition]``>
   std::size_t write(
       SyncWriteStream & s,
       basic_streambuf< Allocator > & b,
@@ -38544,9 +38544,9 @@ The number of bytes transferred.
 Write a certain amount of data to a stream before returning. 
 
   template<
-      typename SyncWriteStream,
+      typename ``[link boost_asio.reference.SyncWriteStream SyncWriteStream]``,
       typename Allocator,
-      typename CompletionCondition>
+      typename ``[link boost_asio.reference.CompletionCondition CompletionCondition]``>
   std::size_t write(
       SyncWriteStream & s,
       basic_streambuf< Allocator > & b,

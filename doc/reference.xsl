@@ -816,7 +816,64 @@
 
 
 <xsl:template match="templateparamlist" mode="class-detail">
-<xsl:text>  </xsl:text>template&lt;<xsl:apply-templates select="param" mode="class-detail"/>&gt;
+<xsl:text>  </xsl:text>template&lt;<xsl:apply-templates select="param" mode="class-detail-template"/>&gt;
+</xsl:template>
+
+
+<xsl:template match="param" mode="class-detail-template">
+<xsl:text>
+      </xsl:text><xsl:value-of select="type"/><xsl:text> </xsl:text>
+      <xsl:choose>
+        <xsl:when test="declname = 'Allocator'">
+          <xsl:value-of select="declname"/>
+        </xsl:when>
+        <xsl:when test="declname = 'Arg'">
+          <xsl:value-of select="declname"/>
+        </xsl:when>
+        <xsl:when test="declname = 'Context_Service'">
+          <xsl:value-of select="declname"/>
+        </xsl:when>
+        <xsl:when test="declname = 'Function'">
+          <xsl:value-of select="declname"/>
+        </xsl:when>
+        <xsl:when test="declname = 'HandshakeHandler'">
+          <xsl:value-of select="declname"/>
+        </xsl:when>
+        <xsl:when test="declname = 'N'">
+          <xsl:value-of select="declname"/>
+        </xsl:when>
+        <xsl:when test="declname = 'PasswordCallback'">
+          <xsl:value-of select="declname"/>
+        </xsl:when>
+        <xsl:when test="declname = 'PodType'">
+          <xsl:value-of select="declname"/>
+        </xsl:when>
+        <xsl:when test="declname = 'ShutdownHandler'">
+          <xsl:value-of select="declname"/>
+        </xsl:when>
+        <xsl:when test="declname = 'Stream'">
+          <xsl:value-of select="declname"/>
+        </xsl:when>
+        <xsl:when test="declname = 'T'">
+          <xsl:value-of select="declname"/>
+        </xsl:when>
+        <xsl:when test="declname = 'T1'">
+          <xsl:value-of select="declname"/>
+        </xsl:when>
+        <xsl:when test="declname = 'TN'">
+          <xsl:value-of select="declname"/>
+        </xsl:when>
+        <xsl:when test="declname = 'Time'">
+          <xsl:value-of select="declname"/>
+        </xsl:when>
+        <xsl:when test="count(declname) = 0">
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:value-of select="concat('``[link boost_asio.reference.', declname, ' ', declname, ']``')"/>
+        </xsl:otherwise>
+      </xsl:choose>
+      <xsl:if test="count(defval) > 0"> = <xsl:value-of
+        select="defval"/></xsl:if><xsl:if test="not(position() = last())">,</xsl:if>
 </xsl:template>
 
 
