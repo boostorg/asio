@@ -149,18 +149,6 @@
          select="concat(substring-before($name, '::'), '__', substring-after($name, '::'))"/>
       </xsl:call-template>
     </xsl:when>
-    <xsl:when test="contains($name, '&lt;')">
-      <xsl:call-template name="make-id">
-        <xsl:with-param name="name"
-         select="concat(substring-before($name, '&lt;'), '_', substring-after($name, '&lt;'))"/>
-      </xsl:call-template>
-    </xsl:when>
-    <xsl:when test="contains($name, '&gt;')">
-      <xsl:call-template name="make-id">
-        <xsl:with-param name="name"
-         select="concat(substring-before($name, '&gt;'), '_', substring-after($name, '&gt;'))"/>
-      </xsl:call-template>
-    </xsl:when>
     <xsl:when test="contains($name, '=')">
       <xsl:call-template name="make-id">
         <xsl:with-param name="name"
@@ -604,6 +592,41 @@
 ]
 </xsl:if>
 
+<xsl:if test="count(sectiondef[@kind='friend']/memberdef[not(type = 'friend class')]) &gt; 0">
+[heading Friends]
+[table
+  [[Name][Description]]
+<xsl:for-each select="sectiondef[@kind='friend']/memberdef[not(type = 'friend class')]" mode="class-table">
+  <xsl:sort select="name"/>
+  <xsl:variable name="name">
+    <xsl:value-of select="name"/>
+  </xsl:variable>
+  <xsl:variable name="id">
+    <xsl:call-template name="make-id">
+      <xsl:with-param name="name" select="$name"/>
+    </xsl:call-template>
+  </xsl:variable>
+  <xsl:variable name="doxygen-id">
+    <xsl:value-of select="@id"/>
+  </xsl:variable>
+  <xsl:variable name="overload-position">
+    <xsl:for-each select="../memberdef[name = $name]">
+      <xsl:if test="@id = $doxygen-id">
+        <xsl:value-of select="position()"/>
+      </xsl:if>
+    </xsl:for-each>
+  </xsl:variable>
+  <xsl:if test="$overload-position = 1">
+  [
+    [[link boost_asio.reference.<xsl:value-of select="$class-id"/>.<xsl:value-of select="$id"/>
+      <xsl:text> </xsl:text>[*<xsl:value-of select="$name"/>]]]
+    [<xsl:value-of select="briefdescription"/>]
+  ]
+  </xsl:if>
+</xsl:for-each>
+]
+</xsl:if>
+
 <xsl:if test="count(sectiondef[@kind='public-attrib' or @kind='public-static-attrib']) > 0">
 [heading Data Members]
 [table
@@ -624,7 +647,7 @@
 <xsl:template name="class-members">
 <xsl:param name="class-name"/>
 <xsl:param name="class-id"/>
-<xsl:apply-templates select="sectiondef[@kind='public-type' or @kind='public-func' or @kind='public-static-func' or @kind='public-attrib' or @kind='public-static-attrib']/memberdef" mode="class-detail">
+<xsl:apply-templates select="sectiondef[@kind='public-type' or @kind='public-func' or @kind='public-static-func' or @kind='public-attrib' or @kind='public-static-attrib' or @kind='friend']/memberdef[not(type = 'friend class')]" mode="class-detail">
   <xsl:sort select="name"/>
   <xsl:with-param name="class-name" select="$class-name"/>
   <xsl:with-param name="class-id" select="$class-id"/>
@@ -709,6 +732,9 @@
       <xsl:call-template name="enum" mode="class-detail"/>
     </xsl:when>
     <xsl:when test="@kind='function'">
+      <xsl:call-template name="function" mode="class-detail"/>
+    </xsl:when>
+    <xsl:when test="@kind='friend'">
       <xsl:call-template name="function" mode="class-detail"/>
     </xsl:when>
   </xsl:choose>

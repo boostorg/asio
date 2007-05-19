@@ -20915,7 +20915,49 @@ Holds a buffer that cannot be modified.
   
 ]
 
+[heading Friends]
+[table
+  [[Name][Description]]
+
+  [
+    [[link boost_asio.reference.const_buffer.buffer_cast_helper [*buffer_cast_helper]]]
+    []
+  ]
+  
+  [
+    [[link boost_asio.reference.const_buffer.buffer_size_helper [*buffer_size_helper]]]
+    []
+  ]
+  
+]
+
 The const_buffer class provides a safe representation of a buffer that cannot be modified. It does not own the underlying data, and so is cheap to copy or assign. 
+
+
+[section:buffer_cast_helper const_buffer::buffer_cast_helper]
+
+
+
+  friend const void * buffer_cast_helper(
+      const const_buffer & b);
+
+
+
+[endsect]
+
+
+
+[section:buffer_size_helper const_buffer::buffer_size_helper]
+
+
+
+  friend std::size_t buffer_size_helper(
+      const const_buffer & b);
+
+
+
+[endsect]
+
 
 [section:const_buffer const_buffer::const_buffer]
 
@@ -21088,6 +21130,22 @@ The type for each element in the list of buffers.
   [
     [[link boost_asio.reference.const_buffer.const_buffer [*const_buffer]]]
     [Construct an empty buffer. ]
+  ]
+  
+]
+
+[heading Friends]
+[table
+  [[Name][Description]]
+
+  [
+    [[link boost_asio.reference.const_buffer.buffer_cast_helper [*buffer_cast_helper]]]
+    []
+  ]
+  
+  [
+    [[link boost_asio.reference.const_buffer.buffer_size_helper [*buffer_size_helper]]]
+    []
   ]
   
 ]
@@ -23471,6 +23529,27 @@ Provides core I/O functionality.
   
 ]
 
+[heading Friends]
+[table
+  [[Name][Description]]
+
+  [
+    [[link boost_asio.reference.io_service.add_service [*add_service]]]
+    [Add a service object to the io_service. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.io_service.has_service [*has_service]]]
+    [Determine if an io_service contains a specified service type. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.io_service.use_service [*use_service]]]
+    [Obtain the service object corresponding to the given type. ]
+  ]
+  
+]
+
 The io_service class provides the core I/O functionality for users of the asynchronous I/O objects, including:
 
 
@@ -23490,6 +23569,53 @@ The io_service class also includes facilities intended for developers of custom 
 [*Distinct] [*objects:]  Safe.
 
 [*Shared] [*objects:]  Safe, with the exception that calling reset() while there are unfinished run() calls results in undefined behaviour.
+
+
+
+[section:add_service io_service::add_service]
+
+Add a service object to the io_service. 
+
+  template<
+      typename Service>
+  friend void add_service(
+      io_service & ios,
+      Service * svc);
+
+
+This function is used to add a service to the io_service.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[ios][The io\_service object that owns the service.]]
+
+[[svc][The service object. On success, ownership of the service object is transferred to the io\_service. When the io\_service object is destroyed, it will destroy the service object by performing: 
+``
+   delete static_cast<io_service::service*>(svc) 
+
+``
+]]
+
+]
+
+[heading Exceptions]
+    
+
+[variablelist
+  
+[[boost::asio::service_already_exists][Thrown if a service of the given type is already present in the io\_service.]]
+
+[[boost::asio::invalid_service_owner][Thrown if the service's owning io\_service is not the io\_service object specified by the ios parameter. ]]
+
+]
+
+
+
+[endsect]
 
 
 
@@ -23521,6 +23647,38 @@ The io_service guarantees that the handler will only be called in a thread in wh
 ]]
 
 ]
+
+
+
+[endsect]
+
+
+
+[section:has_service io_service::has_service]
+
+Determine if an io_service contains a specified service type. 
+
+  template<
+      typename Service>
+  friend bool has_service(
+      io_service & ios);
+
+
+This function is used to determine whether the io_service contains a service object corresponding to the given service type.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[ios][The io\_service object that owns the service.]]
+
+]
+
+[heading Return Value]
+      
+A boolean indicating whether the io_service contains the service. 
 
 
 
@@ -23924,6 +24082,38 @@ Stop the io_service's event processing loop.
 
 
 This function does not block, but instead simply signals the io_service to stop. All invocations of its run() or run\_one() member functions should return as soon as possible. Subsequent calls to run(), run\_one(), poll() or poll\_one() will return immediately until reset() is called. 
+
+
+[endsect]
+
+
+
+[section:use_service io_service::use_service]
+
+Obtain the service object corresponding to the given type. 
+
+  template<
+      typename Service>
+  friend Service & use_service(
+      io_service & ios);
+
+
+This function is used to locate a service object that corresponds to the given service type. If there is no existing implementation of the service, then the io_service will create a new instance of the service.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[ios][The io\_service object that owns the service.]]
+
+]
+
+[heading Return Value]
+      
+The service interface implementing the specified service type. Ownership of the service interface is not transferred to the caller. 
+
 
 
 [endsect]
@@ -24470,6 +24660,27 @@ Implements version-independent IP addresses.
   
 ]
 
+[heading Friends]
+[table
+  [[Name][Description]]
+
+  [
+    [[link boost_asio.reference.ip__address.operator_not__eq_ [*operator!=]]]
+    [Compare two addresses for inequality. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.ip__address.operator_lt_ [*operator<]]]
+    [Compare addresses for ordering. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.ip__address.operator_eq__eq_ [*operator==]]]
+    [Compare two addresses for equality. ]
+  ]
+  
+]
+
 The 
 [link boost_asio.reference.ip__address ip::address] class provides the ability to use either IP version 4 or version 6 addresses.
 
@@ -24647,6 +24858,34 @@ Get whether the address is an IP version 6 address.
 [endsect]
 
 
+
+[section:operator_not__eq_ ip::address::operator!=]
+
+Compare two addresses for inequality. 
+
+  friend bool operator!=(
+      const address & a1,
+      const address & a2);
+
+
+
+[endsect]
+
+
+
+[section:operator_lt_ ip::address::operator<]
+
+Compare addresses for ordering. 
+
+  friend bool operator<(
+      const address & a1,
+      const address & a2);
+
+
+
+[endsect]
+
+
 [section:operator_eq_ ip::address::operator=]
 
 Assign from another address. 
@@ -24700,6 +24939,20 @@ Assign from an IPv6 address.
 
 
 [endsect]
+
+
+[section:operator_eq__eq_ ip::address::operator==]
+
+Compare two addresses for equality. 
+
+  friend bool operator==(
+      const address & a1,
+      const address & a2);
+
+
+
+[endsect]
+
 
 [section:to_string ip::address::to_string]
 
@@ -24856,6 +25109,42 @@ Implements IP version 4 style addresses.
   [
     [[link boost_asio.reference.ip__address_v4.to_ulong [*to_ulong]]]
     [Get the address as an unsigned long in host byte order. ]
+  ]
+  
+]
+
+[heading Friends]
+[table
+  [[Name][Description]]
+
+  [
+    [[link boost_asio.reference.ip__address_v4.operator_not__eq_ [*operator!=]]]
+    [Compare two addresses for inequality. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.ip__address_v4.operator_lt_ [*operator<]]]
+    [Compare addresses for ordering. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.ip__address_v4.operator_lt__eq_ [*operator<=]]]
+    [Compare addresses for ordering. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.ip__address_v4.operator_eq__eq_ [*operator==]]]
+    [Compare two addresses for equality. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.ip__address_v4.operator_gt_ [*operator>]]]
+    [Compare addresses for ordering. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.ip__address_v4.operator_gt__eq_ [*operator>=]]]
+    [Compare addresses for ordering. ]
   ]
   
 ]
@@ -25150,12 +25439,96 @@ Obtain the netmask that corresponds to the address, based on its address class.
 
 
 
+[section:operator_not__eq_ ip::address_v4::operator!=]
+
+Compare two addresses for inequality. 
+
+  friend bool operator!=(
+      const address_v4 & a1,
+      const address_v4 & a2);
+
+
+
+[endsect]
+
+
+
+[section:operator_lt_ ip::address_v4::operator<]
+
+Compare addresses for ordering. 
+
+  friend bool operator<(
+      const address_v4 & a1,
+      const address_v4 & a2);
+
+
+
+[endsect]
+
+
+
+[section:operator_lt__eq_ ip::address_v4::operator<=]
+
+Compare addresses for ordering. 
+
+  friend bool operator<=(
+      const address_v4 & a1,
+      const address_v4 & a2);
+
+
+
+[endsect]
+
+
+
 [section:operator_eq_ ip::address_v4::operator=]
 
 Assign from another address. 
 
   address_v4 & operator=(
       const address_v4 & other);
+
+
+
+[endsect]
+
+
+
+[section:operator_eq__eq_ ip::address_v4::operator==]
+
+Compare two addresses for equality. 
+
+  friend bool operator==(
+      const address_v4 & a1,
+      const address_v4 & a2);
+
+
+
+[endsect]
+
+
+
+[section:operator_gt_ ip::address_v4::operator>]
+
+Compare addresses for ordering. 
+
+  friend bool operator>(
+      const address_v4 & a1,
+      const address_v4 & a2);
+
+
+
+[endsect]
+
+
+
+[section:operator_gt__eq_ ip::address_v4::operator>=]
+
+Compare addresses for ordering. 
+
+  friend bool operator>=(
+      const address_v4 & a1,
+      const address_v4 & a2);
 
 
 
@@ -25362,6 +25735,42 @@ Implements IP version 6 style addresses.
   [
     [[link boost_asio.reference.ip__address_v6.v4_mapped [*v4_mapped]]]
     [Create an IPv4-mapped IPv6 address. ]
+  ]
+  
+]
+
+[heading Friends]
+[table
+  [[Name][Description]]
+
+  [
+    [[link boost_asio.reference.ip__address_v6.operator_not__eq_ [*operator!=]]]
+    [Compare two addresses for inequality. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.ip__address_v6.operator_lt_ [*operator<]]]
+    [Compare addresses for ordering. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.ip__address_v6.operator_lt__eq_ [*operator<=]]]
+    [Compare addresses for ordering. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.ip__address_v6.operator_eq__eq_ [*operator==]]]
+    [Compare two addresses for equality. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.ip__address_v6.operator_gt_ [*operator>]]]
+    [Compare addresses for ordering. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.ip__address_v6.operator_gt__eq_ [*operator>=]]]
+    [Compare addresses for ordering. ]
   ]
   
 ]
@@ -25687,12 +26096,96 @@ Obtain an address object that represents the loopback address.
 
 
 
+[section:operator_not__eq_ ip::address_v6::operator!=]
+
+Compare two addresses for inequality. 
+
+  friend bool operator!=(
+      const address_v6 & a1,
+      const address_v6 & a2);
+
+
+
+[endsect]
+
+
+
+[section:operator_lt_ ip::address_v6::operator<]
+
+Compare addresses for ordering. 
+
+  friend bool operator<(
+      const address_v6 & a1,
+      const address_v6 & a2);
+
+
+
+[endsect]
+
+
+
+[section:operator_lt__eq_ ip::address_v6::operator<=]
+
+Compare addresses for ordering. 
+
+  friend bool operator<=(
+      const address_v6 & a1,
+      const address_v6 & a2);
+
+
+
+[endsect]
+
+
+
 [section:operator_eq_ ip::address_v6::operator=]
 
 Assign from another address. 
 
   address_v6 & operator=(
       const address_v6 & other);
+
+
+
+[endsect]
+
+
+
+[section:operator_eq__eq_ ip::address_v6::operator==]
+
+Compare two addresses for equality. 
+
+  friend bool operator==(
+      const address_v6 & a1,
+      const address_v6 & a2);
+
+
+
+[endsect]
+
+
+
+[section:operator_gt_ ip::address_v6::operator>]
+
+Compare addresses for ordering. 
+
+  friend bool operator>(
+      const address_v6 & a1,
+      const address_v6 & a2);
+
+
+
+[endsect]
+
+
+
+[section:operator_gt__eq_ ip::address_v6::operator>=]
+
+Compare addresses for ordering. 
+
+  friend bool operator>=(
+      const address_v6 & a1,
+      const address_v6 & a2);
 
 
 
@@ -25915,6 +26408,27 @@ Describes an endpoint for a version-independent IP socket.
   
 ]
 
+[heading Friends]
+[table
+  [[Name][Description]]
+
+  [
+    [[link boost_asio.reference.ip__basic_endpoint.operator_not__eq_ [*operator!=]]]
+    [Compare two endpoints for inequality. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.ip__basic_endpoint.operator_lt_ [*operator<]]]
+    [Compare endpoints for ordering. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.ip__basic_endpoint.operator_eq__eq_ [*operator==]]]
+    [Compare two endpoints for equality. ]
+  ]
+  
+]
+
 The 
 [link boost_asio.reference.ip__basic_endpoint ip::basic_endpoint] class template describes an endpoint that may be associated with a particular socket.
 
@@ -26111,12 +26625,54 @@ The type of the endpoint structure. This type is dependent on the underlying imp
 
 
 
+[section:operator_not__eq_ ip::basic_endpoint::operator!=]
+
+Compare two endpoints for inequality. 
+
+  friend bool operator!=(
+      const basic_endpoint< InternetProtocol > & e1,
+      const basic_endpoint< InternetProtocol > & e2);
+
+
+
+[endsect]
+
+
+
+[section:operator_lt_ ip::basic_endpoint::operator<]
+
+Compare endpoints for ordering. 
+
+  friend bool operator<(
+      const basic_endpoint< InternetProtocol > & e1,
+      const basic_endpoint< InternetProtocol > & e2);
+
+
+
+[endsect]
+
+
+
 [section:operator_eq_ ip::basic_endpoint::operator=]
 
 Assign from another endpoint. 
 
   basic_endpoint & operator=(
       const basic_endpoint & other);
+
+
+
+[endsect]
+
+
+
+[section:operator_eq__eq_ ip::basic_endpoint::operator==]
+
+Compare two endpoints for equality. 
+
+  friend bool operator==(
+      const basic_endpoint< InternetProtocol > & e1,
+      const basic_endpoint< InternetProtocol > & e2);
 
 
 
@@ -28216,6 +28772,22 @@ Encapsulates the flags needed for TCP.
   
 ]
 
+[heading Friends]
+[table
+  [[Name][Description]]
+
+  [
+    [[link boost_asio.reference.ip__tcp.operator_not__eq_ [*operator!=]]]
+    [Compare two protocols for inequality. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.ip__tcp.operator_eq__eq_ [*operator==]]]
+    [Compare two protocols for equality. ]
+  ]
+  
+]
+
 The 
 [link boost_asio.reference.ip__tcp ip::tcp] class contains flags necessary for TCP sockets.
 
@@ -28579,6 +29151,27 @@ The type of a TCP endpoint.
   
 ]
 
+[heading Friends]
+[table
+  [[Name][Description]]
+
+  [
+    [[link boost_asio.reference.ip__basic_endpoint.operator_not__eq_ [*operator!=]]]
+    [Compare two endpoints for inequality. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.ip__basic_endpoint.operator_lt_ [*operator<]]]
+    [Compare endpoints for ordering. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.ip__basic_endpoint.operator_eq__eq_ [*operator==]]]
+    [Compare two endpoints for equality. ]
+  ]
+  
+]
+
 
 
 [endsect]
@@ -28669,6 +29262,34 @@ Getting the current option value:
 
 
 
+
+
+
+[endsect]
+
+
+
+[section:operator_not__eq_ ip::tcp::operator!=]
+
+Compare two protocols for inequality. 
+
+  friend bool operator!=(
+      const tcp & p1,
+      const tcp & p2);
+
+
+
+[endsect]
+
+
+
+[section:operator_eq__eq_ ip::tcp::operator==]
+
+Compare two protocols for equality. 
+
+  friend bool operator==(
+      const tcp & p1,
+      const tcp & p2);
 
 
 
@@ -29357,6 +29978,22 @@ Encapsulates the flags needed for UDP.
   
 ]
 
+[heading Friends]
+[table
+  [[Name][Description]]
+
+  [
+    [[link boost_asio.reference.ip__udp.operator_not__eq_ [*operator!=]]]
+    [Compare two protocols for inequality. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.ip__udp.operator_eq__eq_ [*operator==]]]
+    [Compare two protocols for equality. ]
+  ]
+  
+]
+
 The 
 [link boost_asio.reference.ip__udp ip::udp] class contains flags necessary for UDP sockets.
 
@@ -29454,6 +30091,27 @@ The type of a UDP endpoint.
   
 ]
 
+[heading Friends]
+[table
+  [[Name][Description]]
+
+  [
+    [[link boost_asio.reference.ip__basic_endpoint.operator_not__eq_ [*operator!=]]]
+    [Compare two endpoints for inequality. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.ip__basic_endpoint.operator_lt_ [*operator<]]]
+    [Compare endpoints for ordering. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.ip__basic_endpoint.operator_eq__eq_ [*operator==]]]
+    [Compare two endpoints for equality. ]
+  ]
+  
+]
+
 
 
 [endsect]
@@ -29465,6 +30123,34 @@ The type of a UDP endpoint.
 Obtain an identifier for the protocol family. 
 
   int family() const;
+
+
+
+[endsect]
+
+
+
+[section:operator_not__eq_ ip::udp::operator!=]
+
+Compare two protocols for inequality. 
+
+  friend bool operator!=(
+      const udp & p1,
+      const udp & p2);
+
+
+
+[endsect]
+
+
+
+[section:operator_eq__eq_ ip::udp::operator==]
+
+Compare two protocols for equality. 
+
+  friend bool operator==(
+      const udp & p1,
+      const udp & p2);
 
 
 
@@ -30242,7 +30928,49 @@ Holds a buffer that can be modified.
   
 ]
 
+[heading Friends]
+[table
+  [[Name][Description]]
+
+  [
+    [[link boost_asio.reference.mutable_buffer.buffer_cast_helper [*buffer_cast_helper]]]
+    []
+  ]
+  
+  [
+    [[link boost_asio.reference.mutable_buffer.buffer_size_helper [*buffer_size_helper]]]
+    []
+  ]
+  
+]
+
 The mutable_buffer class provides a safe representation of a buffer that can be modified. It does not own the underlying data, and so is cheap to copy or assign. 
+
+
+[section:buffer_cast_helper mutable_buffer::buffer_cast_helper]
+
+
+
+  friend void * buffer_cast_helper(
+      const mutable_buffer & b);
+
+
+
+[endsect]
+
+
+
+[section:buffer_size_helper mutable_buffer::buffer_size_helper]
+
+
+
+  friend std::size_t buffer_size_helper(
+      const mutable_buffer & b);
+
+
+
+[endsect]
+
 
 [section:mutable_buffer mutable_buffer::mutable_buffer]
 
@@ -30399,6 +31127,22 @@ The type for each element in the list of buffers.
   [
     [[link boost_asio.reference.mutable_buffer.mutable_buffer [*mutable_buffer]]]
     [Construct an empty buffer. ]
+  ]
+  
+]
+
+[heading Friends]
+[table
+  [[Name][Description]]
+
+  [
+    [[link boost_asio.reference.mutable_buffer.buffer_cast_helper [*buffer_cast_helper]]]
+    []
+  ]
+  
+  [
+    [[link boost_asio.reference.mutable_buffer.buffer_size_helper [*buffer_size_helper]]]
+    []
   ]
   
 ]
@@ -37182,7 +37926,7 @@ Typedef for the typical usage of basic_streambuf.
 [endsect]
 
 
-[section:time_traits__boost__posix_time__ptime__ time_traits< boost::posix_time::ptime >]
+[section:time_traits_lt__boost__posix_time__ptime__gt_ time_traits< boost::posix_time::ptime >]
 
 Time traits specialised for posix_time. 
 
@@ -37196,14 +37940,14 @@ Time traits specialised for posix_time.
 
   [
 
-    [[link boost_asio.reference.time_traits__boost__posix_time__ptime__.duration_type [*duration_type]]]
+    [[link boost_asio.reference.time_traits_lt__boost__posix_time__ptime__gt_.duration_type [*duration_type]]]
     [The duration type. ]
   
   ]
 
   [
 
-    [[link boost_asio.reference.time_traits__boost__posix_time__ptime__.time_type [*time_type]]]
+    [[link boost_asio.reference.time_traits_lt__boost__posix_time__ptime__gt_.time_type [*time_type]]]
     [The time type. ]
   
   ]
@@ -37215,27 +37959,27 @@ Time traits specialised for posix_time.
   [[Name][Description]]
 
   [
-    [[link boost_asio.reference.time_traits__boost__posix_time__ptime__.add [*add]]]
+    [[link boost_asio.reference.time_traits_lt__boost__posix_time__ptime__gt_.add [*add]]]
     [Add a duration to a time. ]
   ]
   
   [
-    [[link boost_asio.reference.time_traits__boost__posix_time__ptime__.less_than [*less_than]]]
+    [[link boost_asio.reference.time_traits_lt__boost__posix_time__ptime__gt_.less_than [*less_than]]]
     [Test whether one time is less than another. ]
   ]
   
   [
-    [[link boost_asio.reference.time_traits__boost__posix_time__ptime__.now [*now]]]
+    [[link boost_asio.reference.time_traits_lt__boost__posix_time__ptime__gt_.now [*now]]]
     [Get the current time. ]
   ]
   
   [
-    [[link boost_asio.reference.time_traits__boost__posix_time__ptime__.subtract [*subtract]]]
+    [[link boost_asio.reference.time_traits_lt__boost__posix_time__ptime__gt_.subtract [*subtract]]]
     [Subtract one time from another. ]
   ]
   
   [
-    [[link boost_asio.reference.time_traits__boost__posix_time__ptime__.to_posix_duration [*to_posix_duration]]]
+    [[link boost_asio.reference.time_traits_lt__boost__posix_time__ptime__gt_.to_posix_duration [*to_posix_duration]]]
     [Convert to POSIX duration type. ]
   ]
   
