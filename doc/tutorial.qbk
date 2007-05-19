@@ -30,7 +30,7 @@ The tutorial programs in this first section introduce the fundamental concepts r
 
 [heading Introduction to Sockets]
 
-The tutorial programs in this section show how to use asio to develop simple client and server programs. These tutorial programs are based around the daytime protocol, which supports both TCP and UDP.
+The tutorial programs in this section show how to use asio to develop simple client and server programs. These tutorial programs are based around the [@http://www.ietf.org/rfc/rfc867.txt daytime] protocol, which supports both TCP and UDP.
 
 The first three tutorial programs implement the daytime protocol using TCP.
 
