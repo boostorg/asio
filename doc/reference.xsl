@@ -831,6 +831,9 @@
         <xsl:when test="declname = 'Arg'">
           <xsl:value-of select="declname"/>
         </xsl:when>
+        <xsl:when test="declname = 'CompletionCondition'">
+          <xsl:value-of select="declname"/>
+        </xsl:when>
         <xsl:when test="declname = 'Context_Service'">
           <xsl:value-of select="declname"/>
         </xsl:when>

@@ -229,7 +229,7 @@ Start an asynchronous operation to read a certain amount of data from a stream.
   template<
       typename ``[link boost_asio.reference.AsyncReadStream AsyncReadStream]``,
       typename ``[link boost_asio.reference.MutableBufferSequence MutableBufferSequence]``,
-      typename ``[link boost_asio.reference.CompletionCondition CompletionCondition]``,
+      typename CompletionCondition,
       typename ``[link boost_asio.reference.ReadHandler ReadHandler]``>
   void ``[link boost_asio.reference.async_read.overload2 async_read]``(
       AsyncReadStream & s,
@@ -249,7 +249,7 @@ Start an asynchronous operation to read a certain amount of data from a stream.
   template<
       typename ``[link boost_asio.reference.AsyncReadStream AsyncReadStream]``,
       typename Allocator,
-      typename ``[link boost_asio.reference.CompletionCondition CompletionCondition]``,
+      typename CompletionCondition,
       typename ``[link boost_asio.reference.ReadHandler ReadHandler]``>
   void ``[link boost_asio.reference.async_read.overload4 async_read]``(
       AsyncReadStream & s,
@@ -344,7 +344,7 @@ Start an asynchronous operation to read a certain amount of data from a stream.
   template<
       typename ``[link boost_asio.reference.AsyncReadStream AsyncReadStream]``,
       typename ``[link boost_asio.reference.MutableBufferSequence MutableBufferSequence]``,
-      typename ``[link boost_asio.reference.CompletionCondition CompletionCondition]``,
+      typename CompletionCondition,
       typename ``[link boost_asio.reference.ReadHandler ReadHandler]``>
   void async_read(
       AsyncReadStream & s,
@@ -492,7 +492,7 @@ Start an asynchronous operation to read a certain amount of data from a stream.
   template<
       typename ``[link boost_asio.reference.AsyncReadStream AsyncReadStream]``,
       typename Allocator,
-      typename ``[link boost_asio.reference.CompletionCondition CompletionCondition]``,
+      typename CompletionCondition,
       typename ``[link boost_asio.reference.ReadHandler ReadHandler]``>
   void async_read(
       AsyncReadStream & s,
@@ -849,7 +849,7 @@ Start an asynchronous operation to write of all of the supplied data to a stream
   template<
       typename ``[link boost_asio.reference.AsyncWriteStream AsyncWriteStream]``,
       typename ``[link boost_asio.reference.ConstBufferSequence ConstBufferSequence]``,
-      typename ``[link boost_asio.reference.CompletionCondition CompletionCondition]``,
+      typename CompletionCondition,
       typename ``[link boost_asio.reference.WriteHandler WriteHandler]``>
   void ``[link boost_asio.reference.async_write.overload2 async_write]``(
       AsyncWriteStream & s,
@@ -869,7 +869,7 @@ Start an asynchronous operation to write of all of the supplied data to a stream
   template<
       typename ``[link boost_asio.reference.AsyncWriteStream AsyncWriteStream]``,
       typename Allocator,
-      typename ``[link boost_asio.reference.CompletionCondition CompletionCondition]``,
+      typename CompletionCondition,
       typename ``[link boost_asio.reference.WriteHandler WriteHandler]``>
   void ``[link boost_asio.reference.async_write.overload4 async_write]``(
       AsyncWriteStream & s,
@@ -951,7 +951,7 @@ Start an asynchronous operation to write a certain amount of data to a stream.
   template<
       typename ``[link boost_asio.reference.AsyncWriteStream AsyncWriteStream]``,
       typename ``[link boost_asio.reference.ConstBufferSequence ConstBufferSequence]``,
-      typename ``[link boost_asio.reference.CompletionCondition CompletionCondition]``,
+      typename CompletionCondition,
       typename ``[link boost_asio.reference.WriteHandler WriteHandler]``>
   void async_write(
       AsyncWriteStream & s,
@@ -1090,7 +1090,7 @@ Start an asynchronous operation to write a certain amount of data to a stream.
   template<
       typename ``[link boost_asio.reference.AsyncWriteStream AsyncWriteStream]``,
       typename Allocator,
-      typename ``[link boost_asio.reference.CompletionCondition CompletionCondition]``,
+      typename CompletionCondition,
       typename ``[link boost_asio.reference.WriteHandler WriteHandler]``>
   void async_write(
       AsyncWriteStream & s,
@@ -31538,7 +31538,7 @@ Attempt to read a certain amount of data from a stream before returning.
   template<
       typename ``[link boost_asio.reference.SyncReadStream SyncReadStream]``,
       typename ``[link boost_asio.reference.MutableBufferSequence MutableBufferSequence]``,
-      typename ``[link boost_asio.reference.CompletionCondition CompletionCondition]``>
+      typename CompletionCondition>
   std::size_t ``[link boost_asio.reference.read.overload2 read]``(
       SyncReadStream & s,
       const MutableBufferSequence & buffers,
@@ -31547,7 +31547,7 @@ Attempt to read a certain amount of data from a stream before returning.
   template<
       typename ``[link boost_asio.reference.SyncReadStream SyncReadStream]``,
       typename ``[link boost_asio.reference.MutableBufferSequence MutableBufferSequence]``,
-      typename ``[link boost_asio.reference.CompletionCondition CompletionCondition]``>
+      typename CompletionCondition>
   std::size_t ``[link boost_asio.reference.read.overload3 read]``(
       SyncReadStream & s,
       const MutableBufferSequence & buffers,
@@ -31564,7 +31564,7 @@ Attempt to read a certain amount of data from a stream before returning.
   template<
       typename ``[link boost_asio.reference.SyncReadStream SyncReadStream]``,
       typename Allocator,
-      typename ``[link boost_asio.reference.CompletionCondition CompletionCondition]``>
+      typename CompletionCondition>
   std::size_t ``[link boost_asio.reference.read.overload5 read]``(
       SyncReadStream & s,
       basic_streambuf< Allocator > & b,
@@ -31573,7 +31573,7 @@ Attempt to read a certain amount of data from a stream before returning.
   template<
       typename ``[link boost_asio.reference.SyncReadStream SyncReadStream]``,
       typename Allocator,
-      typename ``[link boost_asio.reference.CompletionCondition CompletionCondition]``>
+      typename CompletionCondition>
   std::size_t ``[link boost_asio.reference.read.overload6 read]``(
       SyncReadStream & s,
       basic_streambuf< Allocator > & b,
@@ -31662,7 +31662,7 @@ Attempt to read a certain amount of data from a stream before returning.
   template<
       typename ``[link boost_asio.reference.SyncReadStream SyncReadStream]``,
       typename ``[link boost_asio.reference.MutableBufferSequence MutableBufferSequence]``,
-      typename ``[link boost_asio.reference.CompletionCondition CompletionCondition]``>
+      typename CompletionCondition>
   std::size_t read(
       SyncReadStream & s,
       const MutableBufferSequence & buffers,
@@ -31741,7 +31741,7 @@ Attempt to read a certain amount of data from a stream before returning.
   template<
       typename ``[link boost_asio.reference.SyncReadStream SyncReadStream]``,
       typename ``[link boost_asio.reference.MutableBufferSequence MutableBufferSequence]``,
-      typename ``[link boost_asio.reference.CompletionCondition CompletionCondition]``>
+      typename CompletionCondition>
   std::size_t read(
       SyncReadStream & s,
       const MutableBufferSequence & buffers,
@@ -31863,7 +31863,7 @@ Attempt to read a certain amount of data from a stream before returning.
   template<
       typename ``[link boost_asio.reference.SyncReadStream SyncReadStream]``,
       typename Allocator,
-      typename ``[link boost_asio.reference.CompletionCondition CompletionCondition]``>
+      typename CompletionCondition>
   std::size_t read(
       SyncReadStream & s,
       basic_streambuf< Allocator > & b,
@@ -31928,7 +31928,7 @@ Attempt to read a certain amount of data from a stream before returning.
   template<
       typename ``[link boost_asio.reference.SyncReadStream SyncReadStream]``,
       typename Allocator,
-      typename ``[link boost_asio.reference.CompletionCondition CompletionCondition]``>
+      typename CompletionCondition>
   std::size_t read(
       SyncReadStream & s,
       basic_streambuf< Allocator > & b,
@@ -38495,7 +38495,7 @@ Write all of the supplied data to a stream before returning.
   template<
       typename ``[link boost_asio.reference.SyncWriteStream SyncWriteStream]``,
       typename ``[link boost_asio.reference.ConstBufferSequence ConstBufferSequence]``,
-      typename ``[link boost_asio.reference.CompletionCondition CompletionCondition]``>
+      typename CompletionCondition>
   std::size_t ``[link boost_asio.reference.write.overload2 write]``(
       SyncWriteStream & s,
       const ConstBufferSequence & buffers,
@@ -38504,7 +38504,7 @@ Write all of the supplied data to a stream before returning.
   template<
       typename ``[link boost_asio.reference.SyncWriteStream SyncWriteStream]``,
       typename ``[link boost_asio.reference.ConstBufferSequence ConstBufferSequence]``,
-      typename ``[link boost_asio.reference.CompletionCondition CompletionCondition]``>
+      typename CompletionCondition>
   std::size_t ``[link boost_asio.reference.write.overload3 write]``(
       SyncWriteStream & s,
       const ConstBufferSequence & buffers,
@@ -38521,7 +38521,7 @@ Write all of the supplied data to a stream before returning.
   template<
       typename ``[link boost_asio.reference.SyncWriteStream SyncWriteStream]``,
       typename Allocator,
-      typename ``[link boost_asio.reference.CompletionCondition CompletionCondition]``>
+      typename CompletionCondition>
   std::size_t ``[link boost_asio.reference.write.overload5 write]``(
       SyncWriteStream & s,
       basic_streambuf< Allocator > & b,
@@ -38530,7 +38530,7 @@ Write all of the supplied data to a stream before returning.
   template<
       typename ``[link boost_asio.reference.SyncWriteStream SyncWriteStream]``,
       typename Allocator,
-      typename ``[link boost_asio.reference.CompletionCondition CompletionCondition]``>
+      typename CompletionCondition>
   std::size_t ``[link boost_asio.reference.write.overload6 write]``(
       SyncWriteStream & s,
       basic_streambuf< Allocator > & b,
@@ -38619,7 +38619,7 @@ Write a certain amount of data to a stream before returning.
   template<
       typename ``[link boost_asio.reference.SyncWriteStream SyncWriteStream]``,
       typename ``[link boost_asio.reference.ConstBufferSequence ConstBufferSequence]``,
-      typename ``[link boost_asio.reference.CompletionCondition CompletionCondition]``>
+      typename CompletionCondition>
   std::size_t write(
       SyncWriteStream & s,
       const ConstBufferSequence & buffers,
@@ -38698,7 +38698,7 @@ Write a certain amount of data to a stream before returning.
   template<
       typename ``[link boost_asio.reference.SyncWriteStream SyncWriteStream]``,
       typename ``[link boost_asio.reference.ConstBufferSequence ConstBufferSequence]``,
-      typename ``[link boost_asio.reference.CompletionCondition CompletionCondition]``>
+      typename CompletionCondition>
   std::size_t write(
       SyncWriteStream & s,
       const ConstBufferSequence & buffers,
@@ -38822,7 +38822,7 @@ Write a certain amount of data to a stream before returning.
   template<
       typename ``[link boost_asio.reference.SyncWriteStream SyncWriteStream]``,
       typename Allocator,
-      typename ``[link boost_asio.reference.CompletionCondition CompletionCondition]``>
+      typename CompletionCondition>
   std::size_t write(
       SyncWriteStream & s,
       basic_streambuf< Allocator > & b,
@@ -38889,7 +38889,7 @@ Write a certain amount of data to a stream before returning.
   template<
       typename ``[link boost_asio.reference.SyncWriteStream SyncWriteStream]``,
       typename Allocator,
-      typename ``[link boost_asio.reference.CompletionCondition CompletionCondition]``>
+      typename CompletionCondition>
   std::size_t write(
       SyncWriteStream & s,
       basic_streambuf< Allocator > & b,
