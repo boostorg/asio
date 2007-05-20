@@ -28,11 +28,11 @@
 
 namespace ip_multicast_compile {
 
-using namespace boost::asio;
-namespace ip = boost::asio::ip;
-
 void test()
 {
+  using namespace boost::asio;
+  namespace ip = boost::asio::ip;
+
   try
   {
     io_service ios;
@@ -104,11 +104,11 @@ void test()
 
 namespace ip_multicast_runtime {
 
-using namespace boost::asio;
-namespace ip = boost::asio::ip;
-
 void test()
 {
+  using namespace boost::asio;
+  namespace ip = boost::asio::ip;
+
   io_service ios;
   boost::system::error_code ec;
 

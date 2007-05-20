@@ -27,11 +27,11 @@
 
 namespace ip_address_v6_compile {
 
-using namespace boost::asio;
-namespace ip = boost::asio::ip;
-
 void test()
 {
+  using namespace boost::asio;
+  namespace ip = boost::asio::ip;
+
   try
   {
     boost::system::error_code ec;

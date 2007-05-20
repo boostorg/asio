@@ -29,8 +29,6 @@
 
 namespace ssl_stream_compile {
 
-using namespace boost::asio;
-
 void handshake_handler(const boost::system::error_code&)
 {
 }
@@ -49,6 +47,9 @@ void read_some_handler(const boost::system::error_code&, std::size_t)
 
 void test()
 {
+  using namespace boost::asio;
+  namespace ip = boost::asio::ip;
+
   try
   {
     io_service ios;

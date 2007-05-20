@@ -30,11 +30,11 @@
 
 namespace ip_tcp_compile {
 
-using namespace boost::asio;
-namespace ip = boost::asio::ip;
-
 void test()
 {
+  using namespace boost::asio;
+  namespace ip = boost::asio::ip;
+
   try
   {
     io_service ios;
@@ -66,11 +66,11 @@ void test()
 
 namespace ip_tcp_runtime {
 
-using namespace boost::asio;
-namespace ip = boost::asio::ip;
-
 void test()
 {
+  using namespace boost::asio;
+  namespace ip = boost::asio::ip;
+
   io_service ios;
   ip::tcp::socket sock(ios, ip::tcp::v4());
   boost::system::error_code ec;
@@ -117,9 +117,6 @@ void test()
 
 namespace ip_tcp_socket_compile {
 
-using namespace boost::asio;
-namespace ip = boost::asio::ip;
-
 void connect_handler(const boost::system::error_code&)
 {
 }
@@ -142,6 +139,9 @@ void read_some_handler(const boost::system::error_code&, std::size_t)
 
 void test()
 {
+  using namespace boost::asio;
+  namespace ip = boost::asio::ip;
+
   try
   {
     io_service ios;
@@ -286,9 +286,6 @@ void test()
 
 namespace ip_tcp_acceptor_runtime {
 
-using namespace boost::asio;
-namespace ip = boost::asio::ip;
-
 void handle_accept(const boost::system::error_code& err)
 {
   BOOST_CHECK(!err);
@@ -301,6 +298,9 @@ void handle_connect(const boost::system::error_code& err)
 
 void test()
 {
+  using namespace boost::asio;
+  namespace ip = boost::asio::ip;
+
   io_service ios;
 
   ip::tcp::acceptor acceptor(ios, ip::tcp::endpoint(ip::tcp::v4(), 0));

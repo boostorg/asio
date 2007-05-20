@@ -59,9 +59,9 @@ boost_asio.reference.async_read_until] functions.
 
 [heading HTTP Server]
 
-This example illustrates the use of asio in a server implementation of HTTP 1.0.
-It demonstrates how to perform a clean shutdown by cancelling all outstanding
-asynchronous operations.
+This example illustrates the use of asio in a simple single-threaded server
+implementation of HTTP 1.0. It demonstrates how to perform a clean shutdown by
+cancelling all outstanding asynchronous operations.
 
 * [@../../example/http/server/connection.cpp]
 * [@../../example/http/server/connection.hpp]
@@ -81,6 +81,60 @@ asynchronous operations.
 * [@../../example/http/server/server.cpp]
 * [@../../example/http/server/server.hpp]
 * [@../../example/http/server/win_main.cpp]
+
+
+[heading HTTP Server 2]
+
+An HTTP server using an io_service-per-CPU design.
+
+* [@../../example/http/server2/connection.cpp]
+* [@../../example/http/server2/connection.hpp]
+* [@../../example/http/server2/header.hpp]
+* [@../../example/http/server2/io_service_pool.cpp]
+* [@../../example/http/server2/io_service_pool.hpp]
+* [@../../example/http/server2/mime_types.cpp]
+* [@../../example/http/server2/mime_types.hpp]
+* [@../../example/http/server2/posix_main.cpp]
+* [@../../example/http/server2/reply.cpp]
+* [@../../example/http/server2/reply.hpp]
+* [@../../example/http/server2/request.hpp]
+* [@../../example/http/server2/request_handler.cpp]
+* [@../../example/http/server2/request_handler.hpp]
+* [@../../example/http/server2/request_parser.cpp]
+* [@../../example/http/server2/request_parser.hpp]
+* [@../../example/http/server2/server.cpp]
+* [@../../example/http/server2/server.hpp]
+* [@../../example/http/server2/win_main.cpp]
+
+
+[heading HTTP Server 3]
+
+An HTTP server using a single io_service and a thread pool calling `io_service::run()`.
+
+* [@../../example/http/server3/connection.cpp]
+* [@../../example/http/server3/connection.hpp]
+* [@../../example/http/server3/header.hpp]
+* [@../../example/http/server3/mime_types.cpp]
+* [@../../example/http/server3/mime_types.hpp]
+* [@../../example/http/server3/posix_main.cpp]
+* [@../../example/http/server3/reply.cpp]
+* [@../../example/http/server3/reply.hpp]
+* [@../../example/http/server3/request.hpp]
+* [@../../example/http/server3/request_handler.cpp]
+* [@../../example/http/server3/request_handler.hpp]
+* [@../../example/http/server3/request_parser.cpp]
+* [@../../example/http/server3/request_parser.hpp]
+* [@../../example/http/server3/server.cpp]
+* [@../../example/http/server3/server.hpp]
+* [@../../example/http/server3/win_main.cpp]
+
+
+[heading Invocation]
+
+This example shows how to customise handler invocation. Completion handlers are
+added to a priority queue rather than executed immediately.
+
+* [@../../example/invocation/prioritised_handlers.cpp]
 
 
 [heading Iostreams]
