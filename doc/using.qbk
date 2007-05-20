@@ -12,13 +12,14 @@
 The following platforms and compilers have been tested:
 
 * Win32 and Win64 using Visual C++ 7.1 and Visual C++ 8.0.
-* Win32 using Borland C++Builder 6 patch 4.
 * Win32 using MinGW.
 * Win32 using Cygwin. (`__USE_W32_SOCKETS` must be defined.)
 * Linux (2.4 or 2.6 kernels) using g++ 3.3 or later.
 * Solaris using g++ 3.3 or later.
 * Mac OS X 10.4 using g++ 3.3 or later.
 * QNX Neutrino 6.3 using g++ 3.3 or later.
+
+[/ * Win32 using Borland C++Builder 6 patch 4.]
 
 [heading Dependencies]
 
