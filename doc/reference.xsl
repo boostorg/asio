@@ -778,6 +778,7 @@
         </xsl:call-template>
       </xsl:with-param>
     </xsl:call-template>
+    <xsl:apply-templates select="detaileddescription" mode="markup"/>
   </xsl:for-each>
 </xsl:if>
 </xsl:template>

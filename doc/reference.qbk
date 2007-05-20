@@ -3815,6 +3815,16 @@ A basic_socket is always the lowest layer.
 
 ]
 
+The basic_socket class template provides functionality that is common to both stream-oriented and datagram-oriented sockets.
+
+
+[heading Thread Safety]
+  
+[*Distinct] [*objects:]  Safe.
+
+[*Shared] [*objects:]  Unsafe. 
+
+
 
 
 [endsect]
@@ -5500,6 +5510,43 @@ Performing an asynchronous wait:
 
 
 
+[heading Changing an active deadline_timer's expiry time]
+  
+
+
+Changing the expiry time of a timer while there are pending asynchronous waits causes those wait operations to be cancelled. To ensure that the action associated with the timer is performed only once, use something like this: used:
+
+
+
+   void on_some_event()
+   {
+     if (my_timer.expires_from_now(seconds(5)) > 0)
+     {
+       // We managed to cancel the timer. Start new asynchronous wait.
+       my_timer.async_wait(on_timeout);
+     }
+     else
+     {
+       // Too late, timer has already expired!
+     }
+   }
+
+   void on_timeout(const boost::system::error_code& e)
+   {
+     if (e != boost::asio::error::operation_aborted)
+     {
+       // Timer was not cancelled, take necessary action.
+     }
+   }
+
+
+
+
+
+* The boost::asio::basic_deadline_timer::expires_from_now() function cancels any pending asynchronous waits, and returns the number of asynchronous waits that were cancelled. If it returns 0 then you were too late and the wait handler has already been executed, or will soon be executed. If it returns 1 then the wait handler was successfully cancelled.
+
+* If a wait handler is cancelled, the boost::system::error_code passed to it contains the value boost::asio::error::operation_aborted. 
+
 
 
 [section:async_wait basic_deadline_timer::async_wait]
@@ -5768,8 +5815,6 @@ Set the timer's expiry time as an absolute time.
 
 This function sets the expiry time. Any pending asynchronous wait operations will be cancelled. The handler for each cancelled operation will be invoked with the boost::asio::error::operation\_aborted error code.
 
-See Changing an active deadline_timer's expiry time  for more information on altering the expiry time of an active timer.
-
 
 [heading Parameters]
     
@@ -5809,8 +5854,6 @@ Set the timer's expiry time as an absolute time.
 
 
 This function sets the expiry time. Any pending asynchronous wait operations will be cancelled. The handler for each cancelled operation will be invoked with the boost::asio::error::operation\_aborted error code.
-
-See Changing an active deadline_timer's expiry time  for more information on altering the expiry time of an active timer.
 
 
 [heading Parameters]
@@ -5873,8 +5916,6 @@ Set the timer's expiry time relative to now.
 
 This function sets the expiry time. Any pending asynchronous wait operations will be cancelled. The handler for each cancelled operation will be invoked with the boost::asio::error::operation\_aborted error code.
 
-See Changing an active deadline_timer's expiry time  for more information on altering the expiry time of an active timer.
-
 
 [heading Parameters]
     
@@ -5914,8 +5955,6 @@ Set the timer's expiry time relative to now.
 
 
 This function sets the expiry time. Any pending asynchronous wait operations will be cancelled. The handler for each cancelled operation will be invoked with the boost::asio::error::operation\_aborted error code.
-
-See Changing an active deadline_timer's expiry time  for more information on altering the expiry time of an active timer.
 
 
 [heading Parameters]
@@ -8246,6 +8285,16 @@ A basic_socket is always the lowest layer.
   ]
 
 ]
+
+The basic_socket class template provides functionality that is common to both stream-oriented and datagram-oriented sockets.
+
+
+[heading Thread Safety]
+  
+[*Distinct] [*objects:]  Safe.
+
+[*Shared] [*objects:]  Unsafe. 
+
 
 
 
@@ -13597,6 +13646,16 @@ A basic_socket is always the lowest layer.
 
 ]
 
+The basic_socket class template provides functionality that is common to both stream-oriented and datagram-oriented sockets.
+
+
+[heading Thread Safety]
+  
+[*Distinct] [*objects:]  Safe.
+
+[*Shared] [*objects:]  Unsafe. 
+
+
 
 
 [endsect]
@@ -17021,6 +17080,16 @@ A basic_socket is always the lowest layer.
   ]
 
 ]
+
+The basic_socket class template provides functionality that is common to both stream-oriented and datagram-oriented sockets.
+
+
+[heading Thread Safety]
+  
+[*Distinct] [*objects:]  Safe.
+
+[*Shared] [*objects:]  Unsafe. 
+
 
 
 
@@ -21150,6 +21219,8 @@ The type for each element in the list of buffers.
   
 ]
 
+The const_buffer class provides a safe representation of a buffer that cannot be modified. It does not own the underlying data, and so is cheap to copy or assign. 
+
 
 
 [endsect]
@@ -21997,6 +22068,93 @@ Typedef for the typical usage of timer.
   ]
   
 ]
+
+The basic_deadline_timer class template provides the ability to perform a blocking or asynchronous wait for a timer to expire.
+
+Most applications will use the boost::asio::deadline\_timer typedef.
+
+
+[heading Thread Safety]
+  
+[*Distinct] [*objects:]  Safe.
+
+[*Shared] [*objects:]  Unsafe.
+
+[heading Examples]
+  
+Performing a blocking wait: 
+
+   // Construct a timer without setting an expiry time.
+   boost::asio::deadline_timer timer(io_service);
+
+   // Set an expiry time relative to now.
+   timer.expires_from_now(boost::posix_time::seconds(5));
+
+   // Wait for the timer to expire.
+   timer.wait();
+
+
+
+
+Performing an asynchronous wait: 
+
+   void handler(const boost::system::error_code& error)
+   {
+     if (!error)
+     {
+       // Timer expired.
+     }
+   }
+
+   ...
+
+   // Construct a timer with an absolute expiry time.
+   boost::asio::deadline_timer timer(io_service,
+       boost::posix_time::time_from_string("2005-12-07 23:59:59.000"));
+
+   // Start an asynchronous wait.
+   timer.async_wait(handler);
+
+
+
+
+[heading Changing an active deadline_timer's expiry time]
+  
+
+
+Changing the expiry time of a timer while there are pending asynchronous waits causes those wait operations to be cancelled. To ensure that the action associated with the timer is performed only once, use something like this: used:
+
+
+
+   void on_some_event()
+   {
+     if (my_timer.expires_from_now(seconds(5)) > 0)
+     {
+       // We managed to cancel the timer. Start new asynchronous wait.
+       my_timer.async_wait(on_timeout);
+     }
+     else
+     {
+       // Too late, timer has already expired!
+     }
+   }
+
+   void on_timeout(const boost::system::error_code& e)
+   {
+     if (e != boost::asio::error::operation_aborted)
+     {
+       // Timer was not cancelled, take necessary action.
+     }
+   }
+
+
+
+
+
+* The boost::asio::basic_deadline_timer::expires_from_now() function cancels any pending asynchronous waits, and returns the number of asynchronous waits that were cancelled. If it returns 0 then you were too late and the wait handler has already been executed, or will soon be executed. If it returns 1 then the wait handler was successfully cancelled.
+
+* If a wait handler is cancelled, the boost::system::error_code passed to it contains the value boost::asio::error::operation_aborted. 
+
 
 
 
@@ -23569,6 +23727,35 @@ The io_service class also includes facilities intended for developers of custom 
 [*Distinct] [*objects:]  Safe.
 
 [*Shared] [*objects:]  Safe, with the exception that calling reset() while there are unfinished run() calls results in undefined behaviour.
+
+[heading Effect of exceptions thrown from handlers]
+  
+
+
+If an exception is thrown from a handler, the exception is allowed to propagate through the throwing thread's invocation of boost::asio::io\_service::run(), boost::asio::io\_service::run\_one(), boost::asio::io\_service::poll() or boost::asio::io\_service::poll\_one(). No other threads that are calling any of these functions are affected. It is then the responsibility of the application to catch the exception.
+
+After the exception has been caught, the boost::asio::io\_service::run(), boost::asio::io\_service::run\_one(), boost::asio::io\_service::poll() or boost::asio::io\_service::poll\_one() call may be restarted [*without]  the need for an intervening call to boost::asio::io\_service::reset(). This allows the thread to rejoin the io\_service's thread pool without impacting any other threads in the pool.
+
+For example:
+
+
+
+   boost::asio::io_service io_service;
+   ...
+   for (;;)
+   {
+     try
+     {
+       io_service.run();
+       break; // run() exited normally
+     }
+     catch (my_exception& e)
+     {
+       // Deal with exception as appropriate.
+     }
+   }
+
+
 
 
 
@@ -29060,6 +29247,30 @@ The TCP acceptor type.
 
 ]
 
+The basic_socket_acceptor class template is used for accepting new socket connections.
+
+
+[heading Thread Safety]
+  
+[*Distinct] [*objects:]  Safe.
+
+[*Shared] [*objects:]  Unsafe.
+
+[heading Example]
+  
+Opening a socket acceptor with the SO\_REUSEADDR option enabled: 
+
+   boost::asio::ip::tcp::acceptor acceptor(io_service);
+   boost::asio::ip::tcp::endpoint endpoint(boost::asio::ip::tcp::v4(), port);
+   acceptor.open(endpoint.protocol());
+   acceptor.set_option(boost::asio::ip::tcp::acceptor::reuse_address(true));
+   acceptor.bind(endpoint);
+   acceptor.listen();
+
+
+
+
+
 
 
 [endsect]
@@ -29171,6 +29382,17 @@ The type of a TCP endpoint.
   ]
   
 ]
+
+The 
+[link boost_asio.reference.ip__basic_endpoint ip::basic_endpoint] class template describes an endpoint that may be associated with a particular socket.
+
+
+[heading Thread Safety]
+  
+[*Distinct] [*objects:]  Safe.
+
+[*Shared] [*objects:]  Unsafe.
+
 
 
 
@@ -29395,6 +29617,16 @@ The TCP resolver type.
   
 ]
 
+The basic_resolver class template provides the ability to resolve a query to a list of endpoints.
+
+
+[heading Thread Safety]
+  
+[*Distinct] [*objects:]  Safe.
+
+[*Shared] [*objects:]  Unsafe. 
+
+
 
 
 [endsect]
@@ -29423,6 +29655,24 @@ The type of a resolver iterator.
   ]
   
 ]
+
+The 
+[link boost_asio.reference.ip__basic_resolver_iterator ip::basic_resolver_iterator] class template is used to define iterators over the results returned by a resolver.
+
+The iterator's value\_type, obtained when the iterator is dereferenced, is: 
+
+   const basic_resolver_entry<InternetProtocol> 
+
+
+
+
+
+[heading Thread Safety]
+  
+[*Distinct] [*objects:]  Safe.
+
+[*Shared] [*objects:]  Unsafe. 
+
 
 
 
@@ -29516,6 +29766,17 @@ The type of a resolver query.
   ]
 
 ]
+
+The 
+[link boost_asio.reference.ip__basic_resolver_query ip::basic_resolver_query] class template describes a query that can be passed to a resolver.
+
+
+[heading Thread Safety]
+  
+[*Distinct] [*objects:]  Safe.
+
+[*Shared] [*objects:]  Unsafe. 
+
 
 
 
@@ -29855,6 +30116,16 @@ The TCP socket type.
 
 ]
 
+The basic_stream_socket class template provides asynchronous and blocking stream-oriented socket functionality.
+
+
+[heading Thread Safety]
+  
+[*Distinct] [*objects:]  Safe.
+
+[*Shared] [*objects:]  Unsafe.
+
+
 
 
 [endsect]
@@ -30112,6 +30383,17 @@ The type of a UDP endpoint.
   
 ]
 
+The 
+[link boost_asio.reference.ip__basic_endpoint ip::basic_endpoint] class template describes an endpoint that may be associated with a particular socket.
+
+
+[heading Thread Safety]
+  
+[*Distinct] [*objects:]  Safe.
+
+[*Shared] [*objects:]  Unsafe.
+
+
 
 
 [endsect]
@@ -30256,6 +30538,16 @@ The UDP resolver type.
   
 ]
 
+The basic_resolver class template provides the ability to resolve a query to a list of endpoints.
+
+
+[heading Thread Safety]
+  
+[*Distinct] [*objects:]  Safe.
+
+[*Shared] [*objects:]  Unsafe. 
+
+
 
 
 [endsect]
@@ -30284,6 +30576,24 @@ The type of a resolver iterator.
   ]
   
 ]
+
+The 
+[link boost_asio.reference.ip__basic_resolver_iterator ip::basic_resolver_iterator] class template is used to define iterators over the results returned by a resolver.
+
+The iterator's value\_type, obtained when the iterator is dereferenced, is: 
+
+   const basic_resolver_entry<InternetProtocol> 
+
+
+
+
+
+[heading Thread Safety]
+  
+[*Distinct] [*objects:]  Safe.
+
+[*Shared] [*objects:]  Unsafe. 
+
 
 
 
@@ -30377,6 +30687,17 @@ The type of a resolver query.
   ]
 
 ]
+
+The 
+[link boost_asio.reference.ip__basic_resolver_query ip::basic_resolver_query] class template describes a query that can be passed to a resolver.
+
+
+[heading Thread Safety]
+  
+[*Distinct] [*objects:]  Safe.
+
+[*Shared] [*objects:]  Unsafe. 
+
 
 
 
@@ -30715,6 +31036,16 @@ The IPv4 UDP socket type.
   ]
 
 ]
+
+The basic_datagram_socket class template provides asynchronous and blocking datagram-oriented socket functionality.
+
+
+[heading Thread Safety]
+  
+[*Distinct] [*objects:]  Safe.
+
+[*Shared] [*objects:]  Unsafe. 
+
 
 
 
@@ -31146,6 +31477,8 @@ The type for each element in the list of buffers.
   ]
   
 ]
+
+The mutable_buffer class provides a safe representation of a buffer that can be modified. It does not own the underlying data, and so is cheap to copy or assign. 
 
 
 
@@ -37194,6 +37527,16 @@ Typedef for backwards compatibility.
   ]
   
 ]
+
+The io_service::strand class provides the ability to post and dispatch handlers with the guarantee that none of those handlers will execute concurrently.
+
+
+[heading Thread Safety]
+  
+[*Distinct] [*objects:]  Safe.
+
+[*Shared] [*objects:]  Safe.
+
 
 
 
