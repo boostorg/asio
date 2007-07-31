@@ -38432,6 +38432,31 @@ Return a completion condition function object that indicates that a read or writ
   unspecified transfer_all();
 
 
+This function is used to create an object, of unspecified type, that meets CompletionCondition requirements.
+
+
+[heading Example]
+  
+Reading until a buffer is full: 
+
+   boost::array<char, 128> buf;
+   boost::system::error_code ec;
+   std::size_t n = boost::asio::read(
+       sock, boost::asio::buffer(buf),
+       boost::asio::transfer_all(), ec);
+   if (ec)
+   {
+     // An error occurred.
+   }
+   else
+   {
+     // n == 128
+   }
+
+
+
+
+
 
 [endsect]
 
@@ -38443,6 +38468,31 @@ Return a completion condition function object that indicates that a read or writ
 
   unspecified transfer_at_least(
       std::size_t minimum);
+
+
+This function is used to create an object, of unspecified type, that meets CompletionCondition requirements.
+
+
+[heading Example]
+  
+Reading until a buffer is full or contains at least 64 bytes: 
+
+   boost::array<char, 128> buf;
+   boost::system::error_code ec;
+   std::size_t n = boost::asio::read(
+       sock, boost::asio::buffer(buf),
+       boost::asio::transfer_at_least(64), ec);
+   if (ec)
+   {
+     // An error occurred.
+   }
+   else
+   {
+     // n >= 64 && n <= 128
+   }
+
+
+
 
 
 

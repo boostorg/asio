@@ -95,6 +95,8 @@
             <listitem><link linkend="boost_asio.reference.ip__host_name">ip::host_name</link></listitem>
             <listitem><link linkend="boost_asio.reference.read">read</link></listitem>
             <listitem><link linkend="boost_asio.reference.read_until">read_until</link></listitem>
+            <listitem><link linkend="boost_asio.reference.transfer_all">transfer_all</link></listitem>
+            <listitem><link linkend="boost_asio.reference.transfer_at_least">transfer_at_least</link></listitem>
             <listitem><link linkend="boost_asio.reference.use_service">use_service</link></listitem>
             <listitem><link linkend="boost_asio.reference.write">write</link></listitem>
           </itemizedlist>
