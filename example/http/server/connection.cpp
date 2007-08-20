@@ -82,6 +82,12 @@ void connection::handle_read(const boost::system::error_code& e,
 
 void connection::handle_write(const boost::system::error_code& e)
 {
+  if (!e)
+  {
+    // Initiate graceful connection closure.
+    socket_.shutdown(boost::asio::ip::tcp::socket::shutdown_both);
+  }
+
   if (e != boost::asio::error::operation_aborted)
   {
     connection_manager_.stop(shared_from_this());
