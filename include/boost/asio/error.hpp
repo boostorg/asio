@@ -51,7 +51,7 @@
         boost::system::native_ecat)
 # define BOOST_ASIO_MISC_ERROR(e) \
     boost::system::error_code(e, \
-        boost::asio::detail::error_base<T>::misc_ecat)
+        boost::asio::detail::error_base<T>::misc_ecat())
 # define BOOST_ASIO_WIN_OR_POSIX(e_win, e_posix) e_win
 #else
 # define BOOST_ASIO_NATIVE_ERROR(e) \
@@ -62,13 +62,13 @@
         boost::system::native_ecat)
 # define BOOST_ASIO_NETDB_ERROR(e) \
     boost::system::error_code(e, \
-        boost::asio::detail::error_base<T>::netdb_ecat)
+        boost::asio::detail::error_base<T>::netdb_ecat())
 # define BOOST_ASIO_GETADDRINFO_ERROR(e) \
     boost::system::error_code(e, \
-        boost::asio::detail::error_base<T>::addrinfo_ecat)
+        boost::asio::detail::error_base<T>::addrinfo_ecat())
 # define BOOST_ASIO_MISC_ERROR(e) \
     boost::system::error_code(e, \
-        boost::asio::detail::error_base<T>::misc_ecat)
+        boost::asio::detail::error_base<T>::misc_ecat())
 # define BOOST_ASIO_WIN_OR_POSIX(e_win, e_posix) e_posix
 #endif
 
@@ -83,25 +83,25 @@ class error_base
 {
 public:
 #if !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
-  static boost::system::error_category netdb_ecat;
+  static boost::system::error_category netdb_ecat();
   static int netdb_ed(const boost::system::error_code& ec);
   static std::string netdb_md(const boost::system::error_code& ec);
   static boost::system::wstring_t netdb_wmd(
       const boost::system::error_code& ec);
 
-  static boost::system::error_category addrinfo_ecat;
+  static boost::system::error_category addrinfo_ecat();
   static int addrinfo_ed(const boost::system::error_code& ec);
   static std::string addrinfo_md(const boost::system::error_code& ec);
   static boost::system::wstring_t addrinfo_wmd(
       const boost::system::error_code& ec);
 #endif // !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
 
-  static boost::system::error_category misc_ecat;
+  static boost::system::error_category misc_ecat();
   static int misc_ed(const boost::system::error_code& ec);
   static std::string misc_md(const boost::system::error_code& ec);
   static boost::system::wstring_t misc_wmd(const boost::system::error_code& ec);
 
-  static boost::system::error_category ssl_ecat;
+  static boost::system::error_category ssl_ecat();
   static int ssl_ed(const boost::system::error_code& ec);
   static std::string ssl_md(const boost::system::error_code& ec);
   static boost::system::wstring_t ssl_wmd(const boost::system::error_code& ec);
@@ -233,9 +233,13 @@ private:
 #if !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
 
 template <typename T>
-boost::system::error_category error_base<T>::netdb_ecat(
+boost::system::error_category error_base<T>::netdb_ecat()
+{
+  static boost::system::error_category ecat =
     boost::system::error_code::new_category(&error_base<T>::netdb_ed,
-      &error_base<T>::netdb_md, &error_base<T>::netdb_wmd));
+      &error_base<T>::netdb_md, &error_base<T>::netdb_wmd);
+  return ecat;
+}
 
 template <typename T>
 int error_base<T>::netdb_ed(const boost::system::error_code& ec)
@@ -273,9 +277,13 @@ boost::system::wstring_t error_base<T>::netdb_wmd(
 }
 
 template <typename T>
-boost::system::error_category error_base<T>::addrinfo_ecat(
+boost::system::error_category error_base<T>::addrinfo_ecat()
+{
+  static boost::system::error_category ecat =
     boost::system::error_code::new_category(&error_base<T>::addrinfo_ed,
-      &error_base<T>::addrinfo_md, &error_base<T>::addrinfo_wmd));
+      &error_base<T>::addrinfo_md, &error_base<T>::addrinfo_wmd);
+  return ecat;
+}
 
 template <typename T>
 int error_base<T>::addrinfo_ed(const boost::system::error_code& ec)
@@ -307,9 +315,13 @@ boost::system::wstring_t error_base<T>::addrinfo_wmd(
 #endif // !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
 
 template <typename T>
-boost::system::error_category error_base<T>::misc_ecat(
+boost::system::error_category error_base<T>::misc_ecat()
+{
+  static boost::system::error_category ecat =
     boost::system::error_code::new_category(&error_base<T>::misc_ed,
-      &error_base<T>::misc_md, &error_base<T>::misc_wmd));
+      &error_base<T>::misc_md, &error_base<T>::misc_wmd);
+  return ecat;
+}
 
 template <typename T>
 int error_base<T>::misc_ed(const boost::system::error_code& ec)
@@ -343,9 +355,13 @@ boost::system::wstring_t error_base<T>::misc_wmd(
 }
 
 template <typename T>
-boost::system::error_category error_base<T>::ssl_ecat(
+boost::system::error_category error_base<T>::ssl_ecat()
+{
+  static boost::system::error_category ecat =
     boost::system::error_code::new_category(&error_base<T>::ssl_ed,
-      &error_base<T>::ssl_md, &error_base<T>::ssl_wmd));
+      &error_base<T>::ssl_md, &error_base<T>::ssl_wmd);
+  return ecat;
+}
 
 template <typename T>
 int error_base<T>::ssl_ed(const boost::system::error_code& ec)

@@ -180,7 +180,7 @@ public:
       else
       {
         return handler_(boost::system::error_code(
-              error_code, boost::asio::error::ssl_ecat), rc); 
+              error_code, boost::asio::error::ssl_ecat()), rc); 
       }
     }
 
