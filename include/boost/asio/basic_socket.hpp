@@ -239,6 +239,9 @@ public:
    * with the boost::asio::error::operation_aborted error.
    *
    * @throws boost::system::system_error Thrown on failure.
+   *
+   * @note For portable behaviour with respect to graceful closure of a
+   * connected socket, call shutdown() before closing the socket.
    */
   void close()
   {
@@ -266,6 +269,9 @@ public:
    *   // An error occurred.
    * }
    * @endcode
+   *
+   * @note For portable behaviour with respect to graceful closure of a
+   * connected socket, call shutdown() before closing the socket.
    */
   boost::system::error_code close(boost::system::error_code& ec)
   {
