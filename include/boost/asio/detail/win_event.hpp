@@ -28,6 +28,7 @@
 #include <boost/asio/detail/socket_types.hpp>
 
 #include <boost/asio/detail/push_options.hpp>
+#include <boost/assert.hpp>
 #include <boost/throw_exception.hpp>
 #include <boost/asio/detail/pop_options.hpp>
 
@@ -60,21 +61,31 @@ public:
   }
 
   // Signal the event.
-  void signal()
+  template <typename Lock>
+  void signal(Lock& lock)
   {
+    BOOST_ASSERT(lock.locked());
+    (void)lock;
     ::SetEvent(event_);
   }
 
   // Reset the event.
-  void clear()
+  template <typename Lock>
+  void clear(Lock& lock)
   {
+    BOOST_ASSERT(lock.locked());
+    (void)lock;
     ::ResetEvent(event_);
   }
 
   // Wait for the event to become signalled.
-  void wait()
+  template <typename Lock>
+  void wait(Lock& lock)
   {
+    BOOST_ASSERT(lock.locked());
+    lock.unlock();
     ::WaitForSingleObject(event_, INFINITE);
+    lock.lock();
   }
 
 private:
