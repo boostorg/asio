@@ -79,7 +79,8 @@ void connection::handle_write(const boost::system::error_code& e)
   if (!e)
   {
     // Initiate graceful connection closure.
-    socket_.shutdown(boost::asio::ip::tcp::socket::shutdown_both);
+    boost::system::error_code ignored_ec;
+    socket_.shutdown(boost::asio::ip::tcp::socket::shutdown_both, ignored_ec);
   }
 
   // No new asynchronous operations are started. This means that all shared_ptr
