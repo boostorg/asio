@@ -173,7 +173,7 @@ public:
   /// The protocol associated with the endpoint.
   protocol_type protocol() const
   {
-    if (is_v4())
+    if (is_v4(data_))
       return InternetProtocol::v4();
     return InternetProtocol::v6();
   }
@@ -193,7 +193,7 @@ public:
   /// Get the underlying size of the endpoint in the native type.
   size_type size() const
   {
-    if (is_v4())
+    if (is_v4(data_))
       return sizeof(boost::asio::detail::sockaddr_in4_type);
     else
       return sizeof(boost::asio::detail::sockaddr_in6_type);
@@ -219,7 +219,7 @@ public:
   /// the host's byte order.
   unsigned short port() const
   {
-    if (is_v4())
+    if (is_v4(data_))
     {
       return boost::asio::detail::socket_ops::network_to_host_short(
           reinterpret_cast<const boost::asio::detail::sockaddr_in4_type&>(
@@ -237,7 +237,7 @@ public:
   /// the host's byte order.
   void port(unsigned short port_num)
   {
-    if (is_v4())
+    if (is_v4(data_))
     {
       reinterpret_cast<boost::asio::detail::sockaddr_in4_type&>(data_).sin_port
         = boost::asio::detail::socket_ops::host_to_network_short(port_num);
@@ -253,7 +253,7 @@ public:
   boost::asio::ip::address address() const
   {
     using namespace std; // For memcpy.
-    if (is_v4())
+    if (is_v4(data_))
     {
       const boost::asio::detail::sockaddr_in4_type& data
         = reinterpret_cast<const boost::asio::detail::sockaddr_in4_type&>(
@@ -307,14 +307,26 @@ public:
 
 private:
   // Helper function to determine whether the endpoint is IPv4.
-  bool is_v4() const
-  {
 #if defined(_AIX)
-    return data_.__ss_family == AF_INET;
-#else
-    return data_.ss_family == AF_INET;
-#endif
+  template <typename T, unsigned short (T::*)> struct is_v4_helper {};
+
+  template <typename T>
+  static bool is_v4(const T& ss, is_v4_helper<T, &T::ss_family>* = 0)
+  {
+    return ss.ss_family == AF_INET;
   }
+
+  template <typename T>
+  static bool is_v4(const T& ss, is_v4_helper<T, &T::__ss_family>* = 0)
+  {
+    return ss.__ss_family == AF_INET;
+  }
+#else
+  static bool is_v4(const boost::asio::detail::sockaddr_storage_type& ss)
+  {
+    return ss.ss_family == AF_INET;
+  }
+#endif
 
   // The underlying IP socket address.
   boost::asio::detail::sockaddr_storage_type data_;
