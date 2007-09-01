@@ -26,8 +26,10 @@ project
     <threading>multi
     <os>SOLARIS:<library>socket
     <os>SOLARIS:<library>nsl
+    <os>NT:<define>_WIN32_WINNT=0x0500
     <os>NT,<toolset>gcc:<library>ws2_32
     <os>NT,<toolset>gcc:<library>mswsock
+    <os>NT,<toolset>gcc-cygwin:<define>__USE_W32_SOCKETS
   ;
 
 exe async_tcp_echo_server : async_tcp_echo_server.cpp ;
