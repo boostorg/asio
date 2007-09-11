@@ -8,6 +8,7 @@
 subproject libs/asio/test ;
 
 project boost : $(BOOST_ROOT) ;
+project boost_system : $(BOOST_SYSTEM_ROOT) ;
 
 # bring in the rules for testing
 import testing ;
@@ -25,8 +26,8 @@ if $(UNIX)
 
 template asio_unit_test
   : <lib>@boost/libs/thread/build/boost_thread
-    <lib>@boost/libs/system/build/boost_system
-  : <include>../../..
+    <lib>@boost_system/libs/system/build/boost_system
+  : <include>../../.. <include>@boost <include>@boost_system
     <define>BOOST_ALL_NO_LIB=1
     <threading>multi
     <mingw><*><find-library>ws2_32

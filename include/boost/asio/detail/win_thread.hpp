@@ -24,6 +24,7 @@
 
 #if defined(BOOST_WINDOWS)
 
+#include <boost/asio/error.hpp>
 #include <boost/asio/detail/noncopyable.hpp>
 #include <boost/asio/detail/socket_types.hpp>
 
@@ -55,7 +56,8 @@ public:
     {
       DWORD last_error = ::GetLastError();
       boost::system::system_error e(
-          boost::system::error_code(last_error, boost::system::native_ecat),
+          boost::system::error_code(last_error,
+            boost::asio::error::system_category),
           "thread");
       boost::throw_exception(e);
     }

@@ -53,9 +53,10 @@ inline ReturnType error_wrapper(ReturnType return_value,
     boost::system::error_code& ec)
 {
 #if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
-  ec = boost::system::error_code(WSAGetLastError(), boost::system::native_ecat);
+  ec = boost::system::error_code(WSAGetLastError(),
+      boost::asio::error::system_category);
 #else
-  ec = boost::system::error_code(errno, boost::system::native_ecat);
+  ec = boost::system::error_code(errno, boost::asio::error::system_category);
 #endif
   return return_value;
 }
@@ -1519,10 +1520,10 @@ inline boost::system::error_code translate_addrinfo_error(int error)
   default: // Possibly the non-portable EAI_SYSTEM.
 #if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
     return boost::system::error_code(
-        WSAGetLastError(), boost::system::native_ecat);
+        WSAGetLastError(), boost::asio::error::system_category);
 #else
     return boost::system::error_code(
-        errno, boost::system::native_ecat);
+        errno, boost::asio::error::system_category);
 #endif
   }
 }

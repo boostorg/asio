@@ -86,7 +86,8 @@ public:
     if (this != &instance_ && ref_->result() != 0)
     {
       boost::system::system_error e(
-          boost::system::error_code(ref_->result(), boost::system::native_ecat),
+          boost::system::error_code(ref_->result(),
+            boost::asio::error::system_category),
           "winsock");
       boost::throw_exception(e);
     }
