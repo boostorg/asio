@@ -417,13 +417,13 @@ public:
     }
     else
     {
-      boost::asio::detail::mutex::scoped_lock lock(impl->mutex_);
-
       // Allocate and construct an object to wrap the handler.
       typedef handler_wrapper<Handler> value_type;
       typedef handler_alloc_traits<Handler, value_type> alloc_traits;
       raw_handler_ptr<alloc_traits> raw_ptr(handler);
       handler_ptr<alloc_traits> ptr(raw_ptr, handler);
+
+      boost::asio::detail::mutex::scoped_lock lock(impl->mutex_);
 
       if (impl->current_handler_ == 0)
       {
@@ -457,13 +457,13 @@ public:
   template <typename Handler>
   void post(implementation_type& impl, Handler handler)
   {
-    boost::asio::detail::mutex::scoped_lock lock(impl->mutex_);
-
     // Allocate and construct an object to wrap the handler.
     typedef handler_wrapper<Handler> value_type;
     typedef handler_alloc_traits<Handler, value_type> alloc_traits;
     raw_handler_ptr<alloc_traits> raw_ptr(handler);
     handler_ptr<alloc_traits> ptr(raw_ptr, handler);
+
+    boost::asio::detail::mutex::scoped_lock lock(impl->mutex_);
 
     if (impl->current_handler_ == 0)
     {

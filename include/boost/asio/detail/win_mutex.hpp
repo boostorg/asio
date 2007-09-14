@@ -24,6 +24,7 @@
 
 #if defined(BOOST_WINDOWS)
 
+#include <boost/asio/error.hpp>
 #include <boost/asio/detail/noncopyable.hpp>
 #include <boost/asio/detail/socket_types.hpp>
 #include <boost/asio/detail/scoped_lock.hpp>
@@ -49,7 +50,7 @@ public:
     if (error != 0)
     {
       boost::system::system_error e(
-          boost::system::error_code(error, boost::system::native_ecat),
+          boost::system::error_code(error, boost::asio::error::system_category),
           "mutex");
       boost::throw_exception(e);
     }
@@ -68,7 +69,7 @@ public:
     if (error != 0)
     {
       boost::system::system_error e(
-          boost::system::error_code(error, boost::system::native_ecat),
+          boost::system::error_code(error, boost::asio::error::system_category),
           "mutex");
       boost::throw_exception(e);
     }

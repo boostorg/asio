@@ -158,7 +158,7 @@ public:
 
     if (int err = reactor_.register_descriptor(sock.get()))
     {
-      ec = boost::system::error_code(err, boost::system::native_ecat);
+      ec = boost::system::error_code(err, boost::asio::error::system_category);
       return ec;
     }
 
@@ -182,7 +182,7 @@ public:
 
     if (int err = reactor_.register_descriptor(native_socket))
     {
-      ec = boost::system::error_code(err, boost::system::native_ecat);
+      ec = boost::system::error_code(err, boost::asio::error::system_category);
       return ec;
     }
 
@@ -1125,7 +1125,7 @@ public:
     bool operator()(const boost::system::error_code& result)
     {
       // Check whether the operation was successful.
-      if (result != 0)
+      if (result)
       {
         io_service_.post(bind_handler(handler_, result, 0));
         return true;
@@ -1490,7 +1490,7 @@ public:
       if (connect_error)
       {
         ec = boost::system::error_code(connect_error,
-            boost::system::native_ecat);
+            boost::asio::error::system_category);
         io_service_.post(bind_handler(handler_, ec));
         return true;
       }

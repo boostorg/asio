@@ -175,12 +175,12 @@ public:
       if (error_code == SSL_ERROR_SYSCALL)
       {
         return handler_(boost::system::error_code(
-              sys_error_code, boost::system::native_ecat), rc); 
+              sys_error_code, boost::asio::error::system_category), rc); 
       }
       else
       {
         return handler_(boost::system::error_code(
-              error_code, boost::asio::error::ssl_ecat()), rc); 
+              error_code, boost::asio::error::ssl_category), rc); 
       }
     }
 
