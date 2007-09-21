@@ -25,7 +25,7 @@ boostbook standalone
     <xsl:param>toc.section.depth=2
     <xsl:param>toc.max.depth=1
     <xsl:param>generate.section.toc.level=1
-    <xsl:param>generate.toc="\"chapter nop section nop\""
+    <xsl:param>generate.toc="chapter nop section nop"
   ;
 
 
