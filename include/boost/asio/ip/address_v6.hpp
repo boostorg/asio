@@ -387,7 +387,12 @@ std::basic_ostream<Elem, Traits>& operator<<(
   boost::system::error_code ec;
   std::string s = addr.to_string(ec);
   if (ec)
-    os.setstate(std::ios_base::failbit);
+  {
+    if (os.exceptions() & std::ios::failbit)
+      boost::asio::detail::throw_error(ec);
+    else
+      os.setstate(std::ios_base::failbit);
+  }
   else
     for (std::string::iterator i = s.begin(); i != s.end(); ++i)
       os << os.widen(*i);
