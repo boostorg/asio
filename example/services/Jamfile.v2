@@ -31,4 +31,5 @@ exe daytime_client
     <os>NT,<toolset>gcc:<library>ws2_32
     <os>NT,<toolset>gcc:<library>mswsock
     <os>NT,<toolset>gcc-cygwin:<define>__USE_W32_SOCKETS
+    <os>HPUX:<library>ipv6
   ;

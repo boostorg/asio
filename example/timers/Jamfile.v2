@@ -29,6 +29,7 @@ exe time_t_timer
     <os>NT,<toolset>gcc:<library>ws2_32
     <os>NT,<toolset>gcc:<library>mswsock
     <os>NT,<toolset>gcc-cygwin:<define>__USE_W32_SOCKETS
+    <os>HPUX:<library>ipv6
   ;
 
 if [ os.name ] = NT
