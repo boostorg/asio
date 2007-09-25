@@ -102,7 +102,10 @@
           </itemizedlist>
           <bridgehead renderas="sect3">Error Codes</bridgehead>
           <itemizedlist>
-            <listitem><link linkend="boost_asio.reference.error">error</link></listitem>
+            <listitem><link linkend="boost_asio.reference.error__basic_errors">error::basic_errors</link></listitem>
+            <listitem><link linkend="boost_asio.reference.error__netdb_errors">error::netdb_errors</link></listitem>
+            <listitem><link linkend="boost_asio.reference.error__addrinfo_errors">error::addrinfo_errors</link></listitem>
+            <listitem><link linkend="boost_asio.reference.error__misc_errors">error::misc_errors</link></listitem>
           </itemizedlist>
           <bridgehead renderas="sect3">Type Traits</bridgehead>
           <itemizedlist>

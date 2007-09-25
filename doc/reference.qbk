@@ -2710,9 +2710,13 @@ This function is used to close the socket. Any asynchronous send, receive or con
 
 [variablelist
   
-[[boost::system::system_error][Thrown on failure. ]]
+[[boost::system::system_error][Thrown on failure.]]
 
 ]
+
+[heading Remarks]
+      
+For portable behaviour with respect to graceful closure of a connected socket, call shutdown() before closing the socket. 
 
 
 
@@ -2758,6 +2762,10 @@ This function is used to close the socket. Any asynchronous send, receive or con
 
 
 
+
+[heading Remarks]
+      
+For portable behaviour with respect to graceful closure of a connected socket, call shutdown() before closing the socket. 
 
 
 
@@ -7201,9 +7209,13 @@ This function is used to close the socket. Any asynchronous send, receive or con
 
 [variablelist
   
-[[boost::system::system_error][Thrown on failure. ]]
+[[boost::system::system_error][Thrown on failure.]]
 
 ]
+
+[heading Remarks]
+      
+For portable behaviour with respect to graceful closure of a connected socket, call shutdown() before closing the socket. 
 
 
 
@@ -7246,6 +7258,10 @@ This function is used to close the socket. Any asynchronous send, receive or con
 
 
 
+
+[heading Remarks]
+      
+For portable behaviour with respect to graceful closure of a connected socket, call shutdown() before closing the socket. 
 
 
 
@@ -12585,6 +12601,10 @@ This function is used to close the socket. Any asynchronous send, receive or con
 
 
 
+[heading Remarks]
+      
+For portable behaviour with respect to graceful closure of a connected socket, call shutdown() before closing the socket. 
+
 
 
 [endsect]
@@ -15976,9 +15996,13 @@ This function is used to close the socket. Any asynchronous send, receive or con
 
 [variablelist
   
-[[boost::system::system_error][Thrown on failure. ]]
+[[boost::system::system_error][Thrown on failure.]]
 
 ]
+
+[heading Remarks]
+      
+For portable behaviour with respect to graceful closure of a connected socket, call shutdown() before closing the socket. 
 
 
 
@@ -16024,6 +16048,10 @@ This function is used to close the socket. Any asynchronous send, receive or con
 
 
 
+
+[heading Remarks]
+      
+For portable behaviour with respect to graceful closure of a connected socket, call shutdown() before closing the socket. 
 
 
 
@@ -22534,311 +22562,240 @@ The time traits type.
 
 [endsect]
 
-[section:error error]
 
-Contains error constants. 
-
-  class error
+[section:error__addrinfo_category error::addrinfo_category]
 
 
-[heading Member Functions]
-[table
-  [[Name][Description]]
+
+  static const boost::system::error_category & addrinfo_category;
+
+
+
+[endsect]
+
+
+
+[section:error__addrinfo_errors error::addrinfo_errors]
+
+
+
+  enum addrinfo_errors
+
+[heading Values]
+[variablelist
 
   [
-    [[link boost_asio.reference.error.addrinfo_ed [*addrinfo_ed]]]
-    []
-  ]
-  
-  [
-    [[link boost_asio.reference.error.addrinfo_md [*addrinfo_md]]]
-    []
-  ]
-  
-  [
-    [[link boost_asio.reference.error.addrinfo_wmd [*addrinfo_wmd]]]
-    []
-  ]
-  
-  [
-    [[link boost_asio.reference.error.misc_ed [*misc_ed]]]
-    []
-  ]
-  
-  [
-    [[link boost_asio.reference.error.misc_md [*misc_md]]]
-    []
-  ]
-  
-  [
-    [[link boost_asio.reference.error.misc_wmd [*misc_wmd]]]
-    []
-  ]
-  
-  [
-    [[link boost_asio.reference.error.netdb_ed [*netdb_ed]]]
-    []
-  ]
-  
-  [
-    [[link boost_asio.reference.error.netdb_md [*netdb_md]]]
-    []
-  ]
-  
-  [
-    [[link boost_asio.reference.error.netdb_wmd [*netdb_wmd]]]
-    []
-  ]
-  
-  [
-    [[link boost_asio.reference.error.ssl_ed [*ssl_ed]]]
-    []
-  ]
-  
-  [
-    [[link boost_asio.reference.error.ssl_md [*ssl_md]]]
-    []
-  ]
-  
-  [
-    [[link boost_asio.reference.error.ssl_wmd [*ssl_wmd]]]
-    []
-  ]
-  
-]
-
-[heading Data Members]
-[table
-  [[Name][Description]]
-
-  [
-    [[link boost_asio.reference.error.access_denied [*access_denied]]]
-    [Permission denied. ]
-  ]
-
-  [
-    [[link boost_asio.reference.error.address_family_not_supported [*address_family_not_supported]]]
-    [Address family not supported by protocol. ]
-  ]
-
-  [
-    [[link boost_asio.reference.error.address_in_use [*address_in_use]]]
-    [Address already in use. ]
-  ]
-
-  [
-    [[link boost_asio.reference.error.addrinfo_ecat [*addrinfo_ecat]]]
-    []
-  ]
-
-  [
-    [[link boost_asio.reference.error.already_connected [*already_connected]]]
-    [Transport endpoint is already connected. ]
-  ]
-
-  [
-    [[link boost_asio.reference.error.already_open [*already_open]]]
-    [Already open. ]
-  ]
-
-  [
-    [[link boost_asio.reference.error.already_started [*already_started]]]
-    [Operation already in progress. ]
-  ]
-
-  [
-    [[link boost_asio.reference.error.bad_descriptor [*bad_descriptor]]]
-    [Bad file descriptor. ]
-  ]
-
-  [
-    [[link boost_asio.reference.error.connection_aborted [*connection_aborted]]]
-    [A connection has been aborted. ]
-  ]
-
-  [
-    [[link boost_asio.reference.error.connection_refused [*connection_refused]]]
-    [Connection refused. ]
-  ]
-
-  [
-    [[link boost_asio.reference.error.connection_reset [*connection_reset]]]
-    [Connection reset by peer. ]
-  ]
-
-  [
-    [[link boost_asio.reference.error.eof [*eof]]]
-    [End of file or stream. ]
-  ]
-
-  [
-    [[link boost_asio.reference.error.fault [*fault]]]
-    [Bad address. ]
-  ]
-
-  [
-    [[link boost_asio.reference.error.host_not_found [*host_not_found]]]
-    [Host not found (authoritative). ]
-  ]
-
-  [
-    [[link boost_asio.reference.error.host_not_found_try_again [*host_not_found_try_again]]]
-    [Host not found (non-authoritative). ]
-  ]
-
-  [
-    [[link boost_asio.reference.error.host_unreachable [*host_unreachable]]]
-    [No route to host. ]
-  ]
-
-  [
-    [[link boost_asio.reference.error.in_progress [*in_progress]]]
-    [Operation now in progress. ]
-  ]
-
-  [
-    [[link boost_asio.reference.error.interrupted [*interrupted]]]
-    [Interrupted system call. ]
-  ]
-
-  [
-    [[link boost_asio.reference.error.invalid_argument [*invalid_argument]]]
-    [Invalid argument. ]
-  ]
-
-  [
-    [[link boost_asio.reference.error.message_size [*message_size]]]
-    [Message too long. ]
-  ]
-
-  [
-    [[link boost_asio.reference.error.misc_ecat [*misc_ecat]]]
-    []
-  ]
-
-  [
-    [[link boost_asio.reference.error.netdb_ecat [*netdb_ecat]]]
-    []
-  ]
-
-  [
-    [[link boost_asio.reference.error.network_down [*network_down]]]
-    [Network is down. ]
-  ]
-
-  [
-    [[link boost_asio.reference.error.network_reset [*network_reset]]]
-    [Network dropped connection on reset. ]
-  ]
-
-  [
-    [[link boost_asio.reference.error.network_unreachable [*network_unreachable]]]
-    [Network is unreachable. ]
-  ]
-
-  [
-    [[link boost_asio.reference.error.no_buffer_space [*no_buffer_space]]]
-    [No buffer space available. ]
-  ]
-
-  [
-    [[link boost_asio.reference.error.no_data [*no_data]]]
-    [The query is valid but does not have associated address data. ]
-  ]
-
-  [
-    [[link boost_asio.reference.error.no_descriptors [*no_descriptors]]]
-    [Too many open files. ]
-  ]
-
-  [
-    [[link boost_asio.reference.error.no_memory [*no_memory]]]
-    [Cannot allocate memory. ]
-  ]
-
-  [
-    [[link boost_asio.reference.error.no_permission [*no_permission]]]
-    [Operation not permitted. ]
-  ]
-
-  [
-    [[link boost_asio.reference.error.no_protocol_option [*no_protocol_option]]]
-    [Protocol not available. ]
-  ]
-
-  [
-    [[link boost_asio.reference.error.no_recovery [*no_recovery]]]
-    [A non-recoverable error occurred. ]
-  ]
-
-  [
-    [[link boost_asio.reference.error.not_connected [*not_connected]]]
-    [Transport endpoint is not connected. ]
-  ]
-
-  [
-    [[link boost_asio.reference.error.not_found [*not_found]]]
-    [Element not found. ]
-  ]
-
-  [
-    [[link boost_asio.reference.error.not_socket [*not_socket]]]
-    [Socket operation on non-socket. ]
-  ]
-
-  [
-    [[link boost_asio.reference.error.operation_aborted [*operation_aborted]]]
-    [Operation cancelled. ]
-  ]
-
-  [
-    [[link boost_asio.reference.error.operation_not_supported [*operation_not_supported]]]
-    [Operation not supported. ]
-  ]
-
-  [
-    [[link boost_asio.reference.error.service_not_found [*service_not_found]]]
+    [service_not_found]
     [The service is not supported for the given socket type. ]
   ]
 
   [
-    [[link boost_asio.reference.error.shut_down [*shut_down]]]
+    [socket_type_not_supported]
+    [The socket type is not supported. ]
+  ]
+
+]
+
+
+
+[endsect]
+
+
+
+[section:error__basic_errors error::basic_errors]
+
+
+
+  enum basic_errors
+
+[heading Values]
+[variablelist
+
+  [
+    [access_denied]
+    [Permission denied. ]
+  ]
+
+  [
+    [address_family_not_supported]
+    [Address family not supported by protocol. ]
+  ]
+
+  [
+    [address_in_use]
+    [Address already in use. ]
+  ]
+
+  [
+    [already_connected]
+    [Transport endpoint is already connected. ]
+  ]
+
+  [
+    [already_started]
+    [Operation already in progress. ]
+  ]
+
+  [
+    [connection_aborted]
+    [A connection has been aborted. ]
+  ]
+
+  [
+    [connection_refused]
+    [Connection refused. ]
+  ]
+
+  [
+    [connection_reset]
+    [Connection reset by peer. ]
+  ]
+
+  [
+    [bad_descriptor]
+    [Bad file descriptor. ]
+  ]
+
+  [
+    [fault]
+    [Bad address. ]
+  ]
+
+  [
+    [host_unreachable]
+    [No route to host. ]
+  ]
+
+  [
+    [in_progress]
+    [Operation now in progress. ]
+  ]
+
+  [
+    [interrupted]
+    [Interrupted system call. ]
+  ]
+
+  [
+    [invalid_argument]
+    [Invalid argument. ]
+  ]
+
+  [
+    [message_size]
+    [Message too long. ]
+  ]
+
+  [
+    [network_down]
+    [Network is down. ]
+  ]
+
+  [
+    [network_reset]
+    [Network dropped connection on reset. ]
+  ]
+
+  [
+    [network_unreachable]
+    [Network is unreachable. ]
+  ]
+
+  [
+    [no_descriptors]
+    [Too many open files. ]
+  ]
+
+  [
+    [no_buffer_space]
+    [No buffer space available. ]
+  ]
+
+  [
+    [no_memory]
+    [Cannot allocate memory. ]
+  ]
+
+  [
+    [no_permission]
+    [Operation not permitted. ]
+  ]
+
+  [
+    [no_protocol_option]
+    [Protocol not available. ]
+  ]
+
+  [
+    [not_connected]
+    [Transport endpoint is not connected. ]
+  ]
+
+  [
+    [not_socket]
+    [Socket operation on non-socket. ]
+  ]
+
+  [
+    [operation_aborted]
+    [Operation cancelled. ]
+  ]
+
+  [
+    [operation_not_supported]
+    [Operation not supported. ]
+  ]
+
+  [
+    [shut_down]
     [Cannot send after transport endpoint shutdown. ]
   ]
 
   [
-    [[link boost_asio.reference.error.socket_type_not_supported [*socket_type_not_supported]]]
-    [The socket type is not supported. ]
-  ]
-
-  [
-    [[link boost_asio.reference.error.ssl_ecat [*ssl_ecat]]]
-    []
-  ]
-
-  [
-    [[link boost_asio.reference.error.timed_out [*timed_out]]]
+    [timed_out]
     [Connection timed out. ]
   ]
 
   [
-    [[link boost_asio.reference.error.try_again [*try_again]]]
+    [try_again]
     [Resource temporarily unavailable. ]
   ]
 
   [
-    [[link boost_asio.reference.error.would_block [*would_block]]]
+    [would_block]
     [The socket is marked non-blocking and the requested operation would block. ]
   ]
 
 ]
 
 
-[section:access_denied error::access_denied]
 
-Permission denied. 
+[endsect]
 
-  static const boost::system::error_code access_denied;
+
+[section:error__make_error_code error::make_error_code]
+
+
+
+  boost::system::error_code ``[link boost_asio.reference.error__make_error_code.overload1 make_error_code]``(
+      basic_errors e);
+
+  boost::system::error_code ``[link boost_asio.reference.error__make_error_code.overload2 make_error_code]``(
+      netdb_errors e);
+
+  boost::system::error_code ``[link boost_asio.reference.error__make_error_code.overload3 make_error_code]``(
+      addrinfo_errors e);
+
+  boost::system::error_code ``[link boost_asio.reference.error__make_error_code.overload4 make_error_code]``(
+      misc_errors e);
+
+
+[section:overload1 error::make_error_code (1 of 4 overloads)]
+
+
+
+  boost::system::error_code make_error_code(
+      basic_errors e);
 
 
 
@@ -22846,23 +22803,12 @@ Permission denied.
 
 
 
-[section:address_family_not_supported error::address_family_not_supported]
-
-Address family not supported by protocol. 
-
-  static const boost::system::error_code address_family_not_supported;
+[section:overload2 error::make_error_code (2 of 4 overloads)]
 
 
 
-[endsect]
-
-
-
-[section:address_in_use error::address_in_use]
-
-Address already in use. 
-
-  static const boost::system::error_code address_in_use;
+  boost::system::error_code make_error_code(
+      netdb_errors e);
 
 
 
@@ -22870,24 +22816,12 @@ Address already in use.
 
 
 
-[section:addrinfo_ecat error::addrinfo_ecat]
+[section:overload3 error::make_error_code (3 of 4 overloads)]
 
 
 
-  static boost::system::error_category addrinfo_ecat;
-
-
-
-[endsect]
-
-
-
-[section:addrinfo_ed error::addrinfo_ed]
-
-
-
-  static int addrinfo_ed(
-      const boost::system::error_code & ec);
+  boost::system::error_code make_error_code(
+      addrinfo_errors e);
 
 
 
@@ -22895,12 +22829,26 @@ Address already in use.
 
 
 
-[section:addrinfo_md error::addrinfo_md]
+[section:overload4 error::make_error_code (4 of 4 overloads)]
 
 
 
-  static std::string addrinfo_md(
-      const boost::system::error_code & ec);
+  boost::system::error_code make_error_code(
+      misc_errors e);
+
+
+
+[endsect]
+
+
+[endsect]
+
+
+[section:error__misc_category error::misc_category]
+
+
+
+  static const boost::system::error_category & misc_category;
 
 
 
@@ -22908,36 +22856,31 @@ Address already in use.
 
 
 
-[section:addrinfo_wmd error::addrinfo_wmd]
+[section:error__misc_errors error::misc_errors]
 
 
 
-  static boost::system::wstring_t addrinfo_wmd(
-      const boost::system::error_code & ec);
+  enum misc_errors
 
+[heading Values]
+[variablelist
 
+  [
+    [already_open]
+    [Already open. ]
+  ]
 
-[endsect]
+  [
+    [eof]
+    [End of file or stream. ]
+  ]
 
+  [
+    [not_found]
+    [Element not found. ]
+  ]
 
-
-[section:already_connected error::already_connected]
-
-Transport endpoint is already connected. 
-
-  static const boost::system::error_code already_connected;
-
-
-
-[endsect]
-
-
-
-[section:already_open error::already_open]
-
-Already open. 
-
-  static const boost::system::error_code already_open;
+]
 
 
 
@@ -22945,23 +22888,11 @@ Already open.
 
 
 
-[section:already_started error::already_started]
-
-Operation already in progress. 
-
-  static const boost::system::error_code already_started;
+[section:error__netdb_category error::netdb_category]
 
 
 
-[endsect]
-
-
-
-[section:bad_descriptor error::bad_descriptor]
-
-Bad file descriptor. 
-
-  static const boost::system::error_code bad_descriptor;
+  static const boost::system::error_category & netdb_category;
 
 
 
@@ -22969,47 +22900,36 @@ Bad file descriptor.
 
 
 
-[section:connection_aborted error::connection_aborted]
-
-A connection has been aborted. 
-
-  static const boost::system::error_code connection_aborted;
+[section:error__netdb_errors error::netdb_errors]
 
 
 
-[endsect]
+  enum netdb_errors
 
+[heading Values]
+[variablelist
 
+  [
+    [host_not_found]
+    [Host not found (authoritative). ]
+  ]
 
-[section:connection_refused error::connection_refused]
+  [
+    [host_not_found_try_again]
+    [Host not found (non-authoritative). ]
+  ]
 
-Connection refused. 
+  [
+    [no_data]
+    [The query is valid but does not have associated address data. ]
+  ]
 
-  static const boost::system::error_code connection_refused;
+  [
+    [no_recovery]
+    [A non-recoverable error occurred. ]
+  ]
 
-
-
-[endsect]
-
-
-
-[section:connection_reset error::connection_reset]
-
-Connection reset by peer. 
-
-  static const boost::system::error_code connection_reset;
-
-
-
-[endsect]
-
-
-
-[section:eof error::eof]
-
-End of file or stream. 
-
-  static const boost::system::error_code eof;
+]
 
 
 
@@ -23017,23 +22937,11 @@ End of file or stream.
 
 
 
-[section:fault error::fault]
-
-Bad address. 
-
-  static const boost::system::error_code fault;
+[section:error__ssl_category error::ssl_category]
 
 
 
-[endsect]
-
-
-
-[section:host_not_found error::host_not_found]
-
-Host not found (authoritative). 
-
-  static const boost::system::error_code host_not_found;
+  static const boost::system::error_category & ssl_category;
 
 
 
@@ -23041,484 +22949,16 @@ Host not found (authoritative).
 
 
 
-[section:host_not_found_try_again error::host_not_found_try_again]
-
-Host not found (non-authoritative). 
-
-  static const boost::system::error_code host_not_found_try_again;
+[section:error__system_category error::system_category]
 
 
 
-[endsect]
-
-
-
-[section:host_unreachable error::host_unreachable]
-
-No route to host. 
-
-  static const boost::system::error_code host_unreachable;
+  static const boost::system::error_category & system_category;
 
 
 
 [endsect]
 
-
-
-[section:in_progress error::in_progress]
-
-Operation now in progress. 
-
-  static const boost::system::error_code in_progress;
-
-
-
-[endsect]
-
-
-
-[section:interrupted error::interrupted]
-
-Interrupted system call. 
-
-  static const boost::system::error_code interrupted;
-
-
-
-[endsect]
-
-
-
-[section:invalid_argument error::invalid_argument]
-
-Invalid argument. 
-
-  static const boost::system::error_code invalid_argument;
-
-
-
-[endsect]
-
-
-
-[section:message_size error::message_size]
-
-Message too long. 
-
-  static const boost::system::error_code message_size;
-
-
-
-[endsect]
-
-
-
-[section:misc_ecat error::misc_ecat]
-
-
-
-  static boost::system::error_category misc_ecat;
-
-
-
-[endsect]
-
-
-
-[section:misc_ed error::misc_ed]
-
-
-
-  static int misc_ed(
-      const boost::system::error_code & ec);
-
-
-
-[endsect]
-
-
-
-[section:misc_md error::misc_md]
-
-
-
-  static std::string misc_md(
-      const boost::system::error_code & ec);
-
-
-
-[endsect]
-
-
-
-[section:misc_wmd error::misc_wmd]
-
-
-
-  static boost::system::wstring_t misc_wmd(
-      const boost::system::error_code & ec);
-
-
-
-[endsect]
-
-
-
-[section:netdb_ecat error::netdb_ecat]
-
-
-
-  static boost::system::error_category netdb_ecat;
-
-
-
-[endsect]
-
-
-
-[section:netdb_ed error::netdb_ed]
-
-
-
-  static int netdb_ed(
-      const boost::system::error_code & ec);
-
-
-
-[endsect]
-
-
-
-[section:netdb_md error::netdb_md]
-
-
-
-  static std::string netdb_md(
-      const boost::system::error_code & ec);
-
-
-
-[endsect]
-
-
-
-[section:netdb_wmd error::netdb_wmd]
-
-
-
-  static boost::system::wstring_t netdb_wmd(
-      const boost::system::error_code & ec);
-
-
-
-[endsect]
-
-
-
-[section:network_down error::network_down]
-
-Network is down. 
-
-  static const boost::system::error_code network_down;
-
-
-
-[endsect]
-
-
-
-[section:network_reset error::network_reset]
-
-Network dropped connection on reset. 
-
-  static const boost::system::error_code network_reset;
-
-
-
-[endsect]
-
-
-
-[section:network_unreachable error::network_unreachable]
-
-Network is unreachable. 
-
-  static const boost::system::error_code network_unreachable;
-
-
-
-[endsect]
-
-
-
-[section:no_buffer_space error::no_buffer_space]
-
-No buffer space available. 
-
-  static const boost::system::error_code no_buffer_space;
-
-
-
-[endsect]
-
-
-
-[section:no_data error::no_data]
-
-The query is valid but does not have associated address data. 
-
-  static const boost::system::error_code no_data;
-
-
-
-[endsect]
-
-
-
-[section:no_descriptors error::no_descriptors]
-
-Too many open files. 
-
-  static const boost::system::error_code no_descriptors;
-
-
-
-[endsect]
-
-
-
-[section:no_memory error::no_memory]
-
-Cannot allocate memory. 
-
-  static const boost::system::error_code no_memory;
-
-
-
-[endsect]
-
-
-
-[section:no_permission error::no_permission]
-
-Operation not permitted. 
-
-  static const boost::system::error_code no_permission;
-
-
-
-[endsect]
-
-
-
-[section:no_protocol_option error::no_protocol_option]
-
-Protocol not available. 
-
-  static const boost::system::error_code no_protocol_option;
-
-
-
-[endsect]
-
-
-
-[section:no_recovery error::no_recovery]
-
-A non-recoverable error occurred. 
-
-  static const boost::system::error_code no_recovery;
-
-
-
-[endsect]
-
-
-
-[section:not_connected error::not_connected]
-
-Transport endpoint is not connected. 
-
-  static const boost::system::error_code not_connected;
-
-
-
-[endsect]
-
-
-
-[section:not_found error::not_found]
-
-Element not found. 
-
-  static const boost::system::error_code not_found;
-
-
-
-[endsect]
-
-
-
-[section:not_socket error::not_socket]
-
-Socket operation on non-socket. 
-
-  static const boost::system::error_code not_socket;
-
-
-
-[endsect]
-
-
-
-[section:operation_aborted error::operation_aborted]
-
-Operation cancelled. 
-
-  static const boost::system::error_code operation_aborted;
-
-
-
-[endsect]
-
-
-
-[section:operation_not_supported error::operation_not_supported]
-
-Operation not supported. 
-
-  static const boost::system::error_code operation_not_supported;
-
-
-
-[endsect]
-
-
-
-[section:service_not_found error::service_not_found]
-
-The service is not supported for the given socket type. 
-
-  static const boost::system::error_code service_not_found;
-
-
-
-[endsect]
-
-
-
-[section:shut_down error::shut_down]
-
-Cannot send after transport endpoint shutdown. 
-
-  static const boost::system::error_code shut_down;
-
-
-
-[endsect]
-
-
-
-[section:socket_type_not_supported error::socket_type_not_supported]
-
-The socket type is not supported. 
-
-  static const boost::system::error_code socket_type_not_supported;
-
-
-
-[endsect]
-
-
-
-[section:ssl_ecat error::ssl_ecat]
-
-
-
-  static boost::system::error_category ssl_ecat;
-
-
-
-[endsect]
-
-
-
-[section:ssl_ed error::ssl_ed]
-
-
-
-  static int ssl_ed(
-      const boost::system::error_code & ec);
-
-
-
-[endsect]
-
-
-
-[section:ssl_md error::ssl_md]
-
-
-
-  static std::string ssl_md(
-      const boost::system::error_code & ec);
-
-
-
-[endsect]
-
-
-
-[section:ssl_wmd error::ssl_wmd]
-
-
-
-  static boost::system::wstring_t ssl_wmd(
-      const boost::system::error_code & ec);
-
-
-
-[endsect]
-
-
-
-[section:timed_out error::timed_out]
-
-Connection timed out. 
-
-  static const boost::system::error_code timed_out;
-
-
-
-[endsect]
-
-
-
-[section:try_again error::try_again]
-
-Resource temporarily unavailable. 
-
-  static const boost::system::error_code try_again;
-
-
-
-[endsect]
-
-
-
-[section:would_block error::would_block]
-
-The socket is marked non-blocking and the requested operation would block. 
-
-  static const boost::system::error_code would_block;
-
-
-
-[endsect]
-
-
-
-[endsect]
 
 
 [section:has_service has_service]
@@ -26535,13 +25975,6 @@ Describes an endpoint for a version-independent IP socket.
   
   ]
 
-  [
-
-    [[link boost_asio.reference.ip__basic_endpoint.size_type [*size_type]]]
-    [The type for the size of the endpoint structure. This type is dependent on the underlying implementation of the socket layer. ]
-  
-  ]
-
 ]
 
 [heading Member Functions]
@@ -26757,7 +26190,7 @@ Copy constructor.
 
 Get the capacity of the endpoint in the native type. 
 
-  size_type capacity() const;
+  std::size_t capacity() const;
 
 
 
@@ -26933,7 +26366,7 @@ The protocol type associated with the endpoint.
 Set the underlying size of the endpoint in the native type. 
 
   void resize(
-      size_type size);
+      std::size_t size);
 
 
 
@@ -26945,20 +26378,7 @@ Set the underlying size of the endpoint in the native type.
 
 Get the underlying size of the endpoint in the native type. 
 
-  size_type size() const;
-
-
-
-[endsect]
-
-
-
-[section:size_type ip::basic_endpoint::size_type]
-
-The type for the size of the endpoint structure. This type is dependent on the underlying implementation of the socket layer. 
-
-  typedef implementation_defined size_type;
-
+  std::size_t size() const;
 
 
 
@@ -29302,13 +28722,6 @@ The type of a TCP endpoint.
   
   ]
 
-  [
-
-    [[link boost_asio.reference.ip__basic_endpoint.size_type [*size_type]]]
-    [The type for the size of the endpoint structure. This type is dependent on the underlying implementation of the socket layer. ]
-  
-  ]
-
 ]
 
 [heading Member Functions]
@@ -30299,13 +29712,6 @@ The type of a UDP endpoint.
 
     [[link boost_asio.reference.ip__basic_endpoint.protocol_type [*protocol_type]]]
     [The protocol type associated with the endpoint. ]
-  
-  ]
-
-  [
-
-    [[link boost_asio.reference.ip__basic_endpoint.size_type [*size_type]]]
-    [The type for the size of the endpoint structure. This type is dependent on the underlying implementation of the socket layer. ]
   
   ]
 
@@ -38990,6 +38396,142 @@ The number of bytes written. If an error occurs, returns the total number of byt
 
 
 [endsect]
+
+
+[endsect]
+
+[section:error__addrinfo_errors__gt_ error::addrinfo_errors >]
+
+
+
+  template<>
+  struct is_error_code_enum< boost::asio::error::addrinfo_errors >
+
+
+[heading Data Members]
+[table
+  [[Name][Description]]
+
+  [
+    [[link boost_asio.reference.error__addrinfo_errors__gt_.value [*value]]]
+    []
+  ]
+
+]
+
+
+[section:value error::addrinfo_errors >::value]
+
+
+
+  static const bool value;
+
+
+
+[endsect]
+
+
+
+[endsect]
+
+[section:error__basic_errors__gt_ error::basic_errors >]
+
+
+
+  template<>
+  struct is_error_code_enum< boost::asio::error::basic_errors >
+
+
+[heading Data Members]
+[table
+  [[Name][Description]]
+
+  [
+    [[link boost_asio.reference.error__basic_errors__gt_.value [*value]]]
+    []
+  ]
+
+]
+
+
+[section:value error::basic_errors >::value]
+
+
+
+  static const bool value;
+
+
+
+[endsect]
+
+
+
+[endsect]
+
+[section:error__misc_errors__gt_ error::misc_errors >]
+
+
+
+  template<>
+  struct is_error_code_enum< boost::asio::error::misc_errors >
+
+
+[heading Data Members]
+[table
+  [[Name][Description]]
+
+  [
+    [[link boost_asio.reference.error__misc_errors__gt_.value [*value]]]
+    []
+  ]
+
+]
+
+
+[section:value error::misc_errors >::value]
+
+
+
+  static const bool value;
+
+
+
+[endsect]
+
+
+
+[endsect]
+
+[section:error__netdb_errors__gt_ error::netdb_errors >]
+
+
+
+  template<>
+  struct is_error_code_enum< boost::asio::error::netdb_errors >
+
+
+[heading Data Members]
+[table
+  [[Name][Description]]
+
+  [
+    [[link boost_asio.reference.error__netdb_errors__gt_.value [*value]]]
+    []
+  ]
+
+]
+
+
+[section:value error::netdb_errors >::value]
+
+
+
+  static const bool value;
+
+
+
+[endsect]
+
 
 
 [endsect]

@@ -17,6 +17,10 @@ else if [ os.name ] = NT
   lib ws2_32 ;
   lib mswsock ;
 }
+else if [ os.name ] = HPUX
+{
+  lib ipv6 ;
+}
 
 project
   : requirements
@@ -29,6 +33,7 @@ project
     <os>NT,<toolset>gcc:<library>ws2_32
     <os>NT,<toolset>gcc:<library>mswsock
     <os>NT,<toolset>gcc-cygwin:<define>__USE_W32_SOCKETS
+    <os>HPUX:<library>ipv6
   ;
 
 exe accept_timeout : accept_timeout.cpp ;
