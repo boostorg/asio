@@ -21,6 +21,7 @@
 #include <limits>
 #include <boost/asio/detail/pop_options.hpp>
 
+#include <boost/asio/detail/dev_poll_reactor.hpp>
 #include <boost/asio/detail/epoll_reactor.hpp>
 #include <boost/asio/detail/kqueue_reactor.hpp>
 #include <boost/asio/detail/select_reactor.hpp>
