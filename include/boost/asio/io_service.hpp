@@ -26,6 +26,7 @@
 #include <boost/system/error_code.hpp>
 #include <boost/asio/detail/pop_options.hpp>
 
+#include <boost/asio/detail/dev_poll_reactor_fwd.hpp>
 #include <boost/asio/detail/epoll_reactor_fwd.hpp>
 #include <boost/asio/detail/kqueue_reactor_fwd.hpp>
 #include <boost/asio/detail/noncopyable.hpp>
@@ -39,6 +40,11 @@
 
 namespace boost {
 namespace asio {
+
+class io_service;
+template <typename Service> Service& use_service(io_service& ios);
+template <typename Service> void add_service(io_service& ios, Service* svc);
+template <typename Service> bool has_service(io_service& ios);
 
 /// Provides core I/O functionality.
 /**
@@ -107,6 +113,8 @@ private:
   typedef detail::task_io_service<detail::epoll_reactor<false> > impl_type;
 #elif defined(BOOST_ASIO_HAS_KQUEUE)
   typedef detail::task_io_service<detail::kqueue_reactor<false> > impl_type;
+#elif defined(BOOST_ASIO_HAS_DEV_POLL)
+  typedef detail::task_io_service<detail::dev_poll_reactor<false> > impl_type;
 #else
   typedef detail::task_io_service<detail::select_reactor<false> > impl_type;
 #endif
@@ -374,7 +382,7 @@ public:
 private:
 #if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
   detail::winsock_init<> init_;
-#elif defined(__sun) || defined(__QNX__)
+#elif defined(__sun) || defined(__QNX__) || defined(__hpux) || defined(_AIX)
   detail::signal_init<> init_;
 #endif
 

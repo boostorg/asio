@@ -562,7 +562,7 @@ public:
     }
 
     endpoint_type endpoint;
-    socket_addr_len_type addr_len = endpoint.capacity();
+    std::size_t addr_len = endpoint.capacity();
     if (socket_ops::getsockname(impl.socket_, endpoint.data(), &addr_len, ec))
       return endpoint_type();
     endpoint.resize(addr_len);
@@ -601,7 +601,7 @@ public:
     else
     {
       endpoint_type endpoint;
-      socket_addr_len_type addr_len = endpoint.capacity();
+      std::size_t addr_len = endpoint.capacity();
       if (socket_ops::getpeername(impl.socket_, endpoint.data(), &addr_len, ec))
         return endpoint_type();
       endpoint.resize(addr_len);
@@ -1262,7 +1262,7 @@ public:
     // Receive some data.
     DWORD bytes_transferred = 0;
     DWORD recv_flags = flags;
-    int endpoint_size = sender_endpoint.capacity();
+    int endpoint_size = static_cast<int>(sender_endpoint.capacity());
     int result = ::WSARecvFrom(impl.socket_, bufs, i, &bytes_transferred,
         &recv_flags, sender_endpoint.data(), &endpoint_size, 0, 0);
     if (result != 0)
@@ -1280,7 +1280,7 @@ public:
       return 0;
     }
 
-    sender_endpoint.resize(endpoint_size);
+    sender_endpoint.resize(static_cast<std::size_t>(endpoint_size));
 
     ec = boost::system::error_code();
     return bytes_transferred;
@@ -1300,7 +1300,7 @@ public:
           &receive_from_operation<
             MutableBufferSequence, Handler>::destroy_impl),
         endpoint_(endpoint),
-        endpoint_size_(endpoint.capacity()),
+        endpoint_size_(static_cast<int>(endpoint.capacity())),
         work_(io_service),
         buffers_(buffers),
         handler_(handler)
@@ -1464,7 +1464,7 @@ public:
     {
       boost::system::error_code ec;
       socket_holder new_socket;
-      socket_addr_len_type addr_len = 0;
+      std::size_t addr_len = 0;
       if (peer_endpoint)
       {
         addr_len = peer_endpoint->capacity();
@@ -1619,7 +1619,8 @@ public:
         GetAcceptExSockaddrs(handler_op->output_buffer(), 0,
             handler_op->address_length(), handler_op->address_length(),
             &local_addr, &local_addr_length, &remote_addr, &remote_addr_length);
-        if (remote_addr_length > peer_endpoint.capacity())
+        if (static_cast<std::size_t>(remote_addr_length)
+            > peer_endpoint.capacity())
         {
           last_error = WSAEINVAL;
         }
@@ -1627,7 +1628,7 @@ public:
         {
           using namespace std; // For memcpy.
           memcpy(peer_endpoint.data(), remote_addr, remote_addr_length);
-          peer_endpoint.resize(remote_addr_length);
+          peer_endpoint.resize(static_cast<std::size_t>(remote_addr_length));
         }
       }
 
