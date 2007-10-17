@@ -24,6 +24,7 @@ else if [ os.name ] = HPUX
 }
 
 local USE_SELECT =
+  <define>BOOST_ASIO_DISABLE_DEV_POLL
   <define>BOOST_ASIO_DISABLE_EPOLL
   <define>BOOST_ASIO_DISABLE_KQUEUE
   <define>BOOST_ASIO_DISABLE_IOCP
