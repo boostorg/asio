@@ -625,7 +625,7 @@ public:
   {
     if (!is_open(impl))
     {
-      this->io_service().post(bind_handler(handler,
+      this->get_io_service().post(bind_handler(handler,
             boost::asio::error::bad_descriptor, 0));
     }
     else
@@ -646,7 +646,7 @@ public:
         // A request to receive 0 bytes on a stream socket is a no-op.
         if (total_buffer_size == 0)
         {
-          this->io_service().post(bind_handler(handler,
+          this->get_io_service().post(bind_handler(handler,
                 boost::system::error_code(), 0));
           return;
         }
@@ -659,7 +659,7 @@ public:
         boost::system::error_code ec;
         if (socket_ops::ioctl(impl.socket_, FIONBIO, &non_blocking, ec))
         {
-          this->io_service().post(bind_handler(handler, ec, 0));
+          this->get_io_service().post(bind_handler(handler, ec, 0));
           return;
         }
         impl.flags_ |= implementation_type::internal_non_blocking;
@@ -667,7 +667,7 @@ public:
 
       reactor_.start_write_op(impl.socket_,
           send_handler<ConstBufferSequence, Handler>(
-            impl.socket_, this->io_service(), buffers, flags, handler));
+            impl.socket_, this->get_io_service(), buffers, flags, handler));
     }
   }
 
@@ -805,7 +805,7 @@ public:
   {
     if (!is_open(impl))
     {
-      this->io_service().post(bind_handler(handler,
+      this->get_io_service().post(bind_handler(handler,
             boost::asio::error::bad_descriptor, 0));
     }
     else
@@ -817,7 +817,7 @@ public:
         boost::system::error_code ec;
         if (socket_ops::ioctl(impl.socket_, FIONBIO, &non_blocking, ec))
         {
-          this->io_service().post(bind_handler(handler, ec, 0));
+          this->get_io_service().post(bind_handler(handler, ec, 0));
           return;
         }
         impl.flags_ |= implementation_type::internal_non_blocking;
@@ -825,7 +825,7 @@ public:
 
       reactor_.start_write_op(impl.socket_,
           send_to_handler<ConstBufferSequence, Handler>(
-            impl.socket_, this->io_service(), buffers,
+            impl.socket_, this->get_io_service(), buffers,
             destination, flags, handler));
     }
   }
@@ -976,7 +976,7 @@ public:
   {
     if (!is_open(impl))
     {
-      this->io_service().post(bind_handler(handler,
+      this->get_io_service().post(bind_handler(handler,
             boost::asio::error::bad_descriptor, 0));
     }
     else
@@ -997,7 +997,7 @@ public:
         // A request to receive 0 bytes on a stream socket is a no-op.
         if (total_buffer_size == 0)
         {
-          this->io_service().post(bind_handler(handler,
+          this->get_io_service().post(bind_handler(handler,
                 boost::system::error_code(), 0));
           return;
         }
@@ -1010,7 +1010,7 @@ public:
         boost::system::error_code ec;
         if (socket_ops::ioctl(impl.socket_, FIONBIO, &non_blocking, ec))
         {
-          this->io_service().post(bind_handler(handler, ec, 0));
+          this->get_io_service().post(bind_handler(handler, ec, 0));
           return;
         }
         impl.flags_ |= implementation_type::internal_non_blocking;
@@ -1020,13 +1020,13 @@ public:
       {
         reactor_.start_except_op(impl.socket_,
             receive_handler<MutableBufferSequence, Handler>(
-              impl.socket_, this->io_service(), buffers, flags, handler));
+              impl.socket_, this->get_io_service(), buffers, flags, handler));
       }
       else
       {
         reactor_.start_read_op(impl.socket_,
             receive_handler<MutableBufferSequence, Handler>(
-              impl.socket_, this->io_service(), buffers, flags, handler));
+              impl.socket_, this->get_io_service(), buffers, flags, handler));
       }
     }
   }
@@ -1182,7 +1182,7 @@ public:
   {
     if (!is_open(impl))
     {
-      this->io_service().post(bind_handler(handler,
+      this->get_io_service().post(bind_handler(handler,
             boost::asio::error::bad_descriptor, 0));
     }
     else
@@ -1194,7 +1194,7 @@ public:
         boost::system::error_code ec;
         if (socket_ops::ioctl(impl.socket_, FIONBIO, &non_blocking, ec))
         {
-          this->io_service().post(bind_handler(handler, ec, 0));
+          this->get_io_service().post(bind_handler(handler, ec, 0));
           return;
         }
         impl.flags_ |= implementation_type::internal_non_blocking;
@@ -1202,7 +1202,7 @@ public:
 
       reactor_.start_read_op(impl.socket_,
           receive_from_handler<MutableBufferSequence, Handler>(
-            impl.socket_, this->io_service(), buffers,
+            impl.socket_, this->get_io_service(), buffers,
             sender_endpoint, flags, handler));
     }
   }
@@ -1385,12 +1385,12 @@ public:
   {
     if (!is_open(impl))
     {
-      this->io_service().post(bind_handler(handler,
+      this->get_io_service().post(bind_handler(handler,
             boost::asio::error::bad_descriptor));
     }
     else if (peer.is_open())
     {
-      this->io_service().post(bind_handler(handler,
+      this->get_io_service().post(bind_handler(handler,
             boost::asio::error::already_open));
     }
     else
@@ -1402,7 +1402,7 @@ public:
         boost::system::error_code ec;
         if (socket_ops::ioctl(impl.socket_, FIONBIO, &non_blocking, ec))
         {
-          this->io_service().post(bind_handler(handler, ec));
+          this->get_io_service().post(bind_handler(handler, ec));
           return;
         }
         impl.flags_ |= implementation_type::internal_non_blocking;
@@ -1410,7 +1410,7 @@ public:
 
       reactor_.start_read_op(impl.socket_,
           accept_handler<Socket, Handler>(
-            impl.socket_, this->io_service(),
+            impl.socket_, this->get_io_service(),
             peer, impl.protocol_, peer_endpoint,
             (impl.flags_ & implementation_type::enable_connection_aborted) != 0,
             handler));
@@ -1516,7 +1516,7 @@ public:
   {
     if (!is_open(impl))
     {
-      this->io_service().post(bind_handler(handler,
+      this->get_io_service().post(bind_handler(handler,
             boost::asio::error::bad_descriptor));
       return;
     }
@@ -1528,7 +1528,7 @@ public:
       boost::system::error_code ec;
       if (socket_ops::ioctl(impl.socket_, FIONBIO, &non_blocking, ec))
       {
-        this->io_service().post(bind_handler(handler, ec));
+        this->get_io_service().post(bind_handler(handler, ec));
         return;
       }
       impl.flags_ |= implementation_type::internal_non_blocking;
@@ -1542,7 +1542,7 @@ public:
     {
       // The connect operation has finished successfully so we need to post the
       // handler immediately.
-      this->io_service().post(bind_handler(handler,
+      this->get_io_service().post(bind_handler(handler,
             boost::system::error_code()));
     }
     else if (ec == boost::asio::error::in_progress
@@ -1552,13 +1552,13 @@ public:
       // until the socket becomes writeable.
       boost::shared_ptr<bool> completed(new bool(false));
       reactor_.start_write_and_except_ops(impl.socket_,
-          connect_handler<Handler>(
-            impl.socket_, completed, this->io_service(), reactor_, handler));
+          connect_handler<Handler>(impl.socket_, completed,
+            this->get_io_service(), reactor_, handler));
     }
     else
     {
       // The connect operation has failed, so post the handler immediately.
-      this->io_service().post(bind_handler(handler, ec));
+      this->get_io_service().post(bind_handler(handler, ec));
     }
   }
 

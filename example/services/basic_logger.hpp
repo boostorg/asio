@@ -53,9 +53,9 @@ public:
   }
 
   /// Get the io_service associated with the object.
-  boost::asio::io_service& io_service()
+  boost::asio::io_service& get_io_service()
   {
-    return service_.io_service();
+    return service_.get_io_service();
   }
 
   /// Set the output file for all logger instances.

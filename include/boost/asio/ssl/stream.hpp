@@ -86,7 +86,7 @@ public:
   template <typename Arg, typename Context_Service>
   explicit stream(Arg& arg, basic_context<Context_Service>& context)
     : next_layer_(arg),
-      service_(boost::asio::use_service<Service>(next_layer_.io_service())),
+      service_(boost::asio::use_service<Service>(next_layer_.get_io_service())),
       impl_(service_.null())
   {
     service_.create(impl_, next_layer_, context);
@@ -98,7 +98,8 @@ public:
     service_.destroy(impl_, next_layer_);
   }
 
-  /// Get the io_service associated with the object.
+  /// [Deprecated: use get_io_service().] Get the io_service associated with
+  /// the object.
   /**
    * This function may be used to obtain the io_service object that the stream
    * uses to dispatch handlers for asynchronous operations.
@@ -108,7 +109,20 @@ public:
    */
   boost::asio::io_service& io_service()
   {
-    return next_layer_.io_service();
+    return next_layer_.get_io_service();
+  }
+
+  /// Get the io_service associated with the object.
+  /**
+   * This function may be used to obtain the io_service object that the stream
+   * uses to dispatch handlers for asynchronous operations.
+   *
+   * @return A reference to the io_service object that stream will use to
+   * dispatch handlers. Ownership is not transferred to the caller.
+   */
+  boost::asio::io_service& get_io_service()
+  {
+    return next_layer_.get_io_service();
   }
 
   /// Get a reference to the next layer.
