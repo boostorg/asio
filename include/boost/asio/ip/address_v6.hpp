@@ -301,7 +301,7 @@ public:
   {
     using namespace std; // For memcmp.
     int memcmp_result = memcmp(&a1.addr_, &a2.addr_,
-        sizeof(boost::asio::detail::in6_addr_type)) < 0;
+        sizeof(boost::asio::detail::in6_addr_type));
     if (memcmp_result < 0)
       return true;
     if (memcmp_result > 0)
