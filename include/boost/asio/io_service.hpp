@@ -431,7 +431,7 @@ public:
    */
   ~work();
 
-  /// [Deprecated: use get_io_service().] Get the io_service associated with the
+  /// (Deprecated: use get_io_service().) Get the io_service associated with the
   /// work.
   boost::asio::io_service& io_service();
 
@@ -460,7 +460,7 @@ class io_service::service
   : private noncopyable
 {
 public:
-  /// [Deprecated: use get_io_service().] Get the io_service object that owns
+  /// (Deprecated: use get_io_service().) Get the io_service object that owns
   /// the service.
   boost::asio::io_service& io_service();
 
