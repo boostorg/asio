@@ -382,7 +382,8 @@ public:
 private:
 #if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
   detail::winsock_init<> init_;
-#elif defined(__sun) || defined(__QNX__) || defined(__hpux) || defined(_AIX)
+#elif defined(__sun) || defined(__QNX__) || defined(__hpux) || defined(_AIX) \
+  || defined(__osf__)
   detail::signal_init<> init_;
 #endif
 
@@ -430,8 +431,12 @@ public:
    */
   ~work();
 
-  /// Get the io_service associated with the work.
+  /// (Deprecated: use get_io_service().) Get the io_service associated with the
+  /// work.
   boost::asio::io_service& io_service();
+
+  /// Get the io_service associated with the work.
+  boost::asio::io_service& get_io_service();
 
 private:
   // Prevent assignment.
@@ -455,8 +460,12 @@ class io_service::service
   : private noncopyable
 {
 public:
-  /// Get the io_service object that owns the service.
+  /// (Deprecated: use get_io_service().) Get the io_service object that owns
+  /// the service.
   boost::asio::io_service& io_service();
+
+  /// Get the io_service object that owns the service.
+  boost::asio::io_service& get_io_service();
 
 protected:
   /// Constructor.

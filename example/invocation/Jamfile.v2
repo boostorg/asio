@@ -29,7 +29,7 @@ exe prioritised_handlers
     <threading>multi
     <os>SOLARIS:<library>socket
     <os>SOLARIS:<library>nsl
-    <os>NT:<define>_WIN32_WINNT=0x0500
+    <os>NT:<define>_WIN32_WINNT=0x0501
     <os>NT,<toolset>gcc:<library>ws2_32
     <os>NT,<toolset>gcc:<library>mswsock
     <os>NT,<toolset>gcc-cygwin:<define>__USE_W32_SOCKETS

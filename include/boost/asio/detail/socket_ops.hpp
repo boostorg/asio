@@ -40,6 +40,13 @@ namespace socket_ops {
 struct msghdr { int msg_namelen; };
 #endif // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
 
+#if defined(__hpux)
+// HP-UX doesn't declare these functions extern "C", so they are declared again
+// here to avoid linker errors about undefined symbols.
+extern "C" char* if_indextoname(unsigned int, char*);
+extern "C" unsigned int if_nametoindex(const char*);
+#endif // defined(__hpux)
+
 inline void clear_error(boost::system::error_code& ec)
 {
   errno = 0;
@@ -542,15 +549,8 @@ inline int select(int nfds, fd_set* readfds, fd_set* writefds,
       && timeout->tv_usec > 0 && timeout->tv_usec < 1000)
     timeout->tv_usec = 1000;
 #endif // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
-
-#if defined(__hpux) && defined(__HP_aCC) && !defined(_XOPEN_SOURCE_EXTENDED)
-  return error_wrapper(::select(nfds,
-        reinterpret_cast<int*>(readfds), reinterpret_cast<int*>(writefds),
-        reinterpret_cast<int*>(exceptfds), timeout), ec);
-#else
   return error_wrapper(::select(nfds, readfds,
         writefds, exceptfds, timeout), ec);
-#endif
 }
 
 inline int poll_read(socket_type s, boost::system::error_code& ec)

@@ -198,6 +198,10 @@ enum misc_errors
   not_found
 };
 
+enum ssl_errors
+{
+};
+
 namespace detail {
 
 inline const boost::system::error_category& get_system_category()
@@ -321,8 +325,6 @@ inline const boost::system::error_category& get_ssl_category()
 
 } // namespace detail
 
-#if BOOST_WORKAROUND(BOOST_MSVC, < 1400)
-
 static const boost::system::error_category& system_category
   = boost::asio::error::detail::get_system_category();
 static const boost::system::error_category& netdb_category
@@ -333,24 +335,6 @@ static const boost::system::error_category& misc_category
   = boost::asio::error::detail::get_misc_category();
 static const boost::system::error_category& ssl_category
   = boost::asio::error::detail::get_ssl_category();
-
-#else
-
-namespace
-{
-  const boost::system::error_category& system_category
-    = boost::asio::error::detail::get_system_category();
-  const boost::system::error_category& netdb_category
-    = boost::asio::error::detail::get_netdb_category();
-  const boost::system::error_category& addrinfo_category
-    = boost::asio::error::detail::get_addrinfo_category();
-  const boost::system::error_category& misc_category
-    = boost::asio::error::detail::get_misc_category();
-  const boost::system::error_category& ssl_category
-    = boost::asio::error::detail::get_ssl_category();
-} // namespace
-
-#endif
 
 } // namespace error
 } // namespace asio
@@ -373,6 +357,11 @@ template<> struct is_error_code_enum<boost::asio::error::addrinfo_errors>
 };
 
 template<> struct is_error_code_enum<boost::asio::error::misc_errors>
+{
+  static const bool value = true;
+};
+
+template<> struct is_error_code_enum<boost::asio::error::ssl_errors>
 {
   static const bool value = true;
 };
@@ -400,6 +389,11 @@ inline boost::system::error_code make_error_code(addrinfo_errors e)
 inline boost::system::error_code make_error_code(misc_errors e)
 {
   return boost::system::error_code(static_cast<int>(e), misc_category);
+}
+
+inline boost::system::error_code make_error_code(ssl_errors e)
+{
+  return boost::system::error_code(static_cast<int>(e), ssl_category);
 }
 
 } // namespace error
