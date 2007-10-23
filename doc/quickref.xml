@@ -79,6 +79,12 @@
             <listitem><link linkend="boost_asio.reference.ssl__stream_service">ssl::stream_service</link></listitem>
             <listitem><link linkend="boost_asio.reference.stream_socket_service">stream_socket_service</link></listitem>
           </itemizedlist>
+          <bridgehead renderas="sect3">Placeholders</bridgehead>
+          <itemizedlist>
+            <listitem><link linkend="boost_asio.reference.placeholders__bytes_transferred">placeholders::bytes_transferred</link></listitem>
+            <listitem><link linkend="boost_asio.reference.placeholders__error">placeholders::error</link></listitem>
+            <listitem><link linkend="boost_asio.reference.placeholders__iterator">placeholders::iterator</link></listitem>
+          </itemizedlist>
         </entry>
         <entry valign="top">
           <bridgehead renderas="sect3">Free Functions</bridgehead>

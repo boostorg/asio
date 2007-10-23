@@ -1388,6 +1388,11 @@ Provides datagram-oriented socket functionality.
   ]
   
   [
+    [[link boost_asio.reference.basic_datagram_socket.get_io_service [*get_io_service]]]
+    [Get the io_service associated with the object. ]
+  ]
+  
+  [
     [[link boost_asio.reference.basic_datagram_socket.get_option [*get_option]]]
     [Get an option from the socket. ]
   ]
@@ -1399,7 +1404,7 @@ Provides datagram-oriented socket functionality.
   
   [
     [[link boost_asio.reference.basic_datagram_socket.io_service [*io_service]]]
-    [Get the io_service associated with the object. ]
+    [(Deprecated: use get_io_service().) Get the io_service associated with the object. ]
   ]
   
   [
@@ -1786,8 +1791,8 @@ This function is used to asynchronously receive a datagram. The function call al
 [[handler][The handler to be called when the receive operation completes. Copies will be made of the handler as required. The function signature of the handler must be: 
 ``
    void handler(
-     const boost::system::system_error& error, // Result of operation.
-     std::size_t bytes_transferred             // Number of bytes received.
+     const boost::system::error_code& error, // Result of operation.
+     std::size_t bytes_transferred           // Number of bytes received.
    ); 
 
 ``
@@ -3032,6 +3037,29 @@ The endpoint type.
 [endsect]
 
 
+
+[section:get_io_service basic_datagram_socket::get_io_service]
+
+
+['Inherited from basic_io_object.]
+
+Get the io_service associated with the object. 
+
+  boost::asio::io_service & get_io_service();
+
+
+This function may be used to obtain the io_service object that the I/O object uses to dispatch handlers for asynchronous operations.
+
+
+[heading Return Value]
+      
+A reference to the io_service object that the I/O object will use to dispatch handlers. Ownership is not transferred to the caller. 
+
+
+
+[endsect]
+
+
 [section:get_option basic_datagram_socket::get_option]
 
 Get an option from the socket. 
@@ -3282,7 +3310,7 @@ Getting the number of bytes ready to read:
 
 ['Inherited from basic_io_object.]
 
-Get the io_service associated with the object. 
+(Deprecated: use get_io_service().) Get the io_service associated with the object. 
 
   boost::asio::io_service & io_service();
 
@@ -3741,6 +3769,11 @@ A basic_socket is always the lowest layer.
   ]
   
   [
+    [[link boost_asio.reference.basic_socket.get_io_service [*get_io_service]]]
+    [Get the io_service associated with the object. ]
+  ]
+  
+  [
     [[link boost_asio.reference.basic_socket.get_option [*get_option]]]
     [Get an option from the socket. ]
   ]
@@ -3752,7 +3785,7 @@ A basic_socket is always the lowest layer.
   
   [
     [[link boost_asio.reference.basic_socket.io_service [*io_service]]]
-    [Get the io_service associated with the object. ]
+    [(Deprecated: use get_io_service().) Get the io_service associated with the object. ]
   ]
   
   [
@@ -5458,8 +5491,13 @@ Provides waitable timer functionality.
   ]
   
   [
-    [[link boost_asio.reference.basic_deadline_timer.io_service [*io_service]]]
+    [[link boost_asio.reference.basic_deadline_timer.get_io_service [*get_io_service]]]
     [Get the io_service associated with the object. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.basic_deadline_timer.io_service [*io_service]]]
+    [(Deprecated: use get_io_service().) Get the io_service associated with the object. ]
   ]
   
   [
@@ -5988,6 +6026,29 @@ The number of asynchronous operations that were cancelled.
 [endsect]
 
 
+[section:get_io_service basic_deadline_timer::get_io_service]
+
+
+['Inherited from basic_io_object.]
+
+Get the io_service associated with the object. 
+
+  boost::asio::io_service & get_io_service();
+
+
+This function may be used to obtain the io_service object that the I/O object uses to dispatch handlers for asynchronous operations.
+
+
+[heading Return Value]
+      
+A reference to the io_service object that the I/O object will use to dispatch handlers. Ownership is not transferred to the caller. 
+
+
+
+[endsect]
+
+
+
 [section:implementation_type basic_deadline_timer::implementation_type]
 
 
@@ -6009,7 +6070,7 @@ The underlying implementation type of I/O object.
 
 ['Inherited from basic_io_object.]
 
-Get the io_service associated with the object. 
+(Deprecated: use get_io_service().) Get the io_service associated with the object. 
 
   boost::asio::io_service & io_service();
 
@@ -6139,7 +6200,8 @@ Base class for all I/O objects.
 
   template<
       typename ``[link boost_asio.reference.IoObjectService IoObjectService]``>
-  class basic_io_object
+  class basic_io_object :
+    noncopyable
 
 
 [heading Types]
@@ -6167,11 +6229,36 @@ Base class for all I/O objects.
   [[Name][Description]]
 
   [
-    [[link boost_asio.reference.basic_io_object.io_service [*io_service]]]
+    [[link boost_asio.reference.basic_io_object.get_io_service [*get_io_service]]]
     [Get the io_service associated with the object. ]
   ]
   
+  [
+    [[link boost_asio.reference.basic_io_object.io_service [*io_service]]]
+    [(Deprecated: use get_io_service().) Get the io_service associated with the object. ]
+  ]
+  
 ]
+
+
+[section:get_io_service basic_io_object::get_io_service]
+
+Get the io_service associated with the object. 
+
+  boost::asio::io_service & get_io_service();
+
+
+This function may be used to obtain the io_service object that the I/O object uses to dispatch handlers for asynchronous operations.
+
+
+[heading Return Value]
+      
+A reference to the io_service object that the I/O object will use to dispatch handlers. Ownership is not transferred to the caller. 
+
+
+
+[endsect]
+
 
 
 [section:implementation_type basic_io_object::implementation_type]
@@ -6189,7 +6276,7 @@ The underlying implementation type of I/O object.
 
 [section:io_service basic_io_object::io_service]
 
-Get the io_service associated with the object. 
+(Deprecated: use get_io_service().) Get the io_service associated with the object. 
 
   boost::asio::io_service & io_service();
 
@@ -6437,6 +6524,11 @@ Provides socket functionality.
   ]
   
   [
+    [[link boost_asio.reference.basic_socket.get_io_service [*get_io_service]]]
+    [Get the io_service associated with the object. ]
+  ]
+  
+  [
     [[link boost_asio.reference.basic_socket.get_option [*get_option]]]
     [Get an option from the socket. ]
   ]
@@ -6448,7 +6540,7 @@ Provides socket functionality.
   
   [
     [[link boost_asio.reference.basic_socket.io_service [*io_service]]]
-    [Get the io_service associated with the object. ]
+    [(Deprecated: use get_io_service().) Get the io_service associated with the object. ]
   ]
   
   [
@@ -7522,6 +7614,29 @@ The endpoint type.
 [endsect]
 
 
+
+[section:get_io_service basic_socket::get_io_service]
+
+
+['Inherited from basic_io_object.]
+
+Get the io_service associated with the object. 
+
+  boost::asio::io_service & get_io_service();
+
+
+This function may be used to obtain the io_service object that the I/O object uses to dispatch handlers for asynchronous operations.
+
+
+[heading Return Value]
+      
+A reference to the io_service object that the I/O object will use to dispatch handlers. Ownership is not transferred to the caller. 
+
+
+
+[endsect]
+
+
 [section:get_option basic_socket::get_option]
 
 Get an option from the socket. 
@@ -7776,7 +7891,7 @@ Getting the number of bytes ready to read:
 
 ['Inherited from basic_io_object.]
 
-Get the io_service associated with the object. 
+(Deprecated: use get_io_service().) Get the io_service associated with the object. 
 
   boost::asio::io_service & io_service();
 
@@ -8220,6 +8335,11 @@ A basic_socket is always the lowest layer.
   ]
   
   [
+    [[link boost_asio.reference.basic_socket.get_io_service [*get_io_service]]]
+    [Get the io_service associated with the object. ]
+  ]
+  
+  [
     [[link boost_asio.reference.basic_socket.get_option [*get_option]]]
     [Get an option from the socket. ]
   ]
@@ -8231,7 +8351,7 @@ A basic_socket is always the lowest layer.
   
   [
     [[link boost_asio.reference.basic_socket.io_service [*io_service]]]
-    [Get the io_service associated with the object. ]
+    [(Deprecated: use get_io_service().) Get the io_service associated with the object. ]
   ]
   
   [
@@ -9349,13 +9469,18 @@ Provides the ability to accept new connections.
   ]
   
   [
+    [[link boost_asio.reference.basic_socket_acceptor.get_io_service [*get_io_service]]]
+    [Get the io_service associated with the object. ]
+  ]
+  
+  [
     [[link boost_asio.reference.basic_socket_acceptor.get_option [*get_option]]]
     [Get an option from the acceptor. ]
   ]
   
   [
     [[link boost_asio.reference.basic_socket_acceptor.io_service [*io_service]]]
-    [Get the io_service associated with the object. ]
+    [(Deprecated: use get_io_service().) Get the io_service associated with the object. ]
   ]
   
   [
@@ -10489,6 +10614,29 @@ The endpoint type.
 [endsect]
 
 
+
+[section:get_io_service basic_socket_acceptor::get_io_service]
+
+
+['Inherited from basic_io_object.]
+
+Get the io_service associated with the object. 
+
+  boost::asio::io_service & get_io_service();
+
+
+This function may be used to obtain the io_service object that the I/O object uses to dispatch handlers for asynchronous operations.
+
+
+[heading Return Value]
+      
+A reference to the io_service object that the I/O object will use to dispatch handlers. Ownership is not transferred to the caller. 
+
+
+
+[endsect]
+
+
 [section:get_option basic_socket_acceptor::get_option]
 
 Get an option from the acceptor. 
@@ -10627,7 +10775,7 @@ The underlying implementation type of I/O object.
 
 ['Inherited from basic_io_object.]
 
-Get the io_service associated with the object. 
+(Deprecated: use get_io_service().) Get the io_service associated with the object. 
 
   boost::asio::io_service & io_service();
 
@@ -11914,6 +12062,11 @@ Iostream streambuf for a socket.
   ]
   
   [
+    [[link boost_asio.reference.basic_socket_streambuf.get_io_service [*get_io_service]]]
+    [Get the io_service associated with the object. ]
+  ]
+  
+  [
     [[link boost_asio.reference.basic_socket_streambuf.get_option [*get_option]]]
     [Get an option from the socket. ]
   ]
@@ -11925,7 +12078,7 @@ Iostream streambuf for a socket.
   
   [
     [[link boost_asio.reference.basic_socket_streambuf.io_service [*io_service]]]
-    [Get the io_service associated with the object. ]
+    [(Deprecated: use get_io_service().) Get the io_service associated with the object. ]
   ]
   
   [
@@ -12875,6 +13028,29 @@ The endpoint type.
 [endsect]
 
 
+
+[section:get_io_service basic_socket_streambuf::get_io_service]
+
+
+['Inherited from basic_io_object.]
+
+Get the io_service associated with the object. 
+
+  boost::asio::io_service & get_io_service();
+
+
+This function may be used to obtain the io_service object that the I/O object uses to dispatch handlers for asynchronous operations.
+
+
+[heading Return Value]
+      
+A reference to the io_service object that the I/O object will use to dispatch handlers. Ownership is not transferred to the caller. 
+
+
+
+[endsect]
+
+
 [section:get_option basic_socket_streambuf::get_option]
 
 Get an option from the socket. 
@@ -13125,7 +13301,7 @@ Getting the number of bytes ready to read:
 
 ['Inherited from basic_io_object.]
 
-Get the io_service associated with the object. 
+(Deprecated: use get_io_service().) Get the io_service associated with the object. 
 
   boost::asio::io_service & io_service();
 
@@ -13584,6 +13760,11 @@ A basic_socket is always the lowest layer.
   ]
   
   [
+    [[link boost_asio.reference.basic_socket.get_io_service [*get_io_service]]]
+    [Get the io_service associated with the object. ]
+  ]
+  
+  [
     [[link boost_asio.reference.basic_socket.get_option [*get_option]]]
     [Get an option from the socket. ]
   ]
@@ -13595,7 +13776,7 @@ A basic_socket is always the lowest layer.
   
   [
     [[link boost_asio.reference.basic_socket.io_service [*io_service]]]
-    [Get the io_service associated with the object. ]
+    [(Deprecated: use get_io_service().) Get the io_service associated with the object. ]
   ]
   
   [
@@ -14786,6 +14967,11 @@ Provides stream-oriented socket functionality.
   ]
   
   [
+    [[link boost_asio.reference.basic_stream_socket.get_io_service [*get_io_service]]]
+    [Get the io_service associated with the object. ]
+  ]
+  
+  [
     [[link boost_asio.reference.basic_stream_socket.get_option [*get_option]]]
     [Get an option from the socket. ]
   ]
@@ -14797,7 +14983,7 @@ Provides stream-oriented socket functionality.
   
   [
     [[link boost_asio.reference.basic_stream_socket.io_service [*io_service]]]
-    [Get the io_service associated with the object. ]
+    [(Deprecated: use get_io_service().) Get the io_service associated with the object. ]
   ]
   
   [
@@ -16318,6 +16504,29 @@ The endpoint type.
 [endsect]
 
 
+
+[section:get_io_service basic_stream_socket::get_io_service]
+
+
+['Inherited from basic_io_object.]
+
+Get the io_service associated with the object. 
+
+  boost::asio::io_service & get_io_service();
+
+
+This function may be used to obtain the io_service object that the I/O object uses to dispatch handlers for asynchronous operations.
+
+
+[heading Return Value]
+      
+A reference to the io_service object that the I/O object will use to dispatch handlers. Ownership is not transferred to the caller. 
+
+
+
+[endsect]
+
+
 [section:get_option basic_stream_socket::get_option]
 
 Get an option from the socket. 
@@ -16568,7 +16777,7 @@ Getting the number of bytes ready to read:
 
 ['Inherited from basic_io_object.]
 
-Get the io_service associated with the object. 
+(Deprecated: use get_io_service().) Get the io_service associated with the object. 
 
   boost::asio::io_service & io_service();
 
@@ -17027,6 +17236,11 @@ A basic_socket is always the lowest layer.
   ]
   
   [
+    [[link boost_asio.reference.basic_socket.get_io_service [*get_io_service]]]
+    [Get the io_service associated with the object. ]
+  ]
+  
+  [
     [[link boost_asio.reference.basic_socket.get_option [*get_option]]]
     [Get an option from the socket. ]
   ]
@@ -17038,7 +17252,7 @@ A basic_socket is always the lowest layer.
   
   [
     [[link boost_asio.reference.basic_socket.io_service [*io_service]]]
-    [Get the io_service associated with the object. ]
+    [(Deprecated: use get_io_service().) Get the io_service associated with the object. ]
   ]
   
   [
@@ -18579,7 +18793,8 @@ Automatically resizable buffer class based on std::streambuf.
 
   template<
       typename Allocator = std::allocator<char>>
-  class basic_streambuf
+  class basic_streambuf :
+    noncopyable
 
 
 [heading Types]
@@ -19319,7 +19534,8 @@ Adds buffering to the read-related operations of a stream.
 
   template<
       typename Stream>
-  class buffered_read_stream
+  class buffered_read_stream :
+    noncopyable
 
 
 [heading Types]
@@ -19377,13 +19593,18 @@ Adds buffering to the read-related operations of a stream.
   ]
   
   [
+    [[link boost_asio.reference.buffered_read_stream.get_io_service [*get_io_service]]]
+    [Get the io_service associated with the object. ]
+  ]
+  
+  [
     [[link boost_asio.reference.buffered_read_stream.in_avail [*in_avail]]]
     [Determine the amount of data that may be read without blocking. ]
   ]
   
   [
     [[link boost_asio.reference.buffered_read_stream.io_service [*io_service]]]
-    [Get the io_service associated with the object. ]
+    [(Deprecated: use get_io_service().) Get the io_service associated with the object. ]
   ]
   
   [
@@ -19615,6 +19836,18 @@ Fill the buffer with some data. Returns the number of bytes placed in the buffer
 
 [endsect]
 
+
+[section:get_io_service buffered_read_stream::get_io_service]
+
+Get the io_service associated with the object. 
+
+  boost::asio::io_service & get_io_service();
+
+
+
+[endsect]
+
+
 [section:in_avail buffered_read_stream::in_avail]
 
 Determine the amount of data that may be read without blocking. 
@@ -19654,7 +19887,7 @@ Determine the amount of data that may be read without blocking.
 
 [section:io_service buffered_read_stream::io_service]
 
-Get the io_service associated with the object. 
+(Deprecated: use get_io_service().) Get the io_service associated with the object. 
 
   boost::asio::io_service & io_service();
 
@@ -19866,7 +20099,8 @@ Adds buffering to the read- and write-related operations of a stream.
 
   template<
       typename Stream>
-  class buffered_stream
+  class buffered_stream :
+    noncopyable
 
 
 [heading Types]
@@ -19934,13 +20168,18 @@ Adds buffering to the read- and write-related operations of a stream.
   ]
   
   [
+    [[link boost_asio.reference.buffered_stream.get_io_service [*get_io_service]]]
+    [Get the io_service associated with the object. ]
+  ]
+  
+  [
     [[link boost_asio.reference.buffered_stream.in_avail [*in_avail]]]
     [Determine the amount of data that may be read without blocking. ]
   ]
   
   [
     [[link boost_asio.reference.buffered_stream.io_service [*io_service]]]
-    [Get the io_service associated with the object. ]
+    [(Deprecated: use get_io_service().) Get the io_service associated with the object. ]
   ]
   
   [
@@ -20202,6 +20441,18 @@ Flush all data from the buffer to the next layer. Returns the number of bytes wr
 
 [endsect]
 
+
+[section:get_io_service buffered_stream::get_io_service]
+
+Get the io_service associated with the object. 
+
+  boost::asio::io_service & get_io_service();
+
+
+
+[endsect]
+
+
 [section:in_avail buffered_stream::in_avail]
 
 Determine the amount of data that may be read without blocking. 
@@ -20241,7 +20492,7 @@ Determine the amount of data that may be read without blocking.
 
 [section:io_service buffered_stream::io_service]
 
-Get the io_service associated with the object. 
+(Deprecated: use get_io_service().) Get the io_service associated with the object. 
 
   boost::asio::io_service & io_service();
 
@@ -20453,7 +20704,8 @@ Adds buffering to the write-related operations of a stream.
 
   template<
       typename Stream>
-  class buffered_write_stream
+  class buffered_write_stream :
+    noncopyable
 
 
 [heading Types]
@@ -20511,13 +20763,18 @@ Adds buffering to the write-related operations of a stream.
   ]
   
   [
+    [[link boost_asio.reference.buffered_write_stream.get_io_service [*get_io_service]]]
+    [Get the io_service associated with the object. ]
+  ]
+  
+  [
     [[link boost_asio.reference.buffered_write_stream.in_avail [*in_avail]]]
     [Determine the amount of data that may be read without blocking. ]
   ]
   
   [
     [[link boost_asio.reference.buffered_write_stream.io_service [*io_service]]]
-    [Get the io_service associated with the object. ]
+    [(Deprecated: use get_io_service().) Get the io_service associated with the object. ]
   ]
   
   [
@@ -20749,6 +21006,18 @@ Flush all data from the buffer to the next layer. Returns the number of bytes wr
 
 [endsect]
 
+
+[section:get_io_service buffered_write_stream::get_io_service]
+
+Get the io_service associated with the object. 
+
+  boost::asio::io_service & get_io_service();
+
+
+
+[endsect]
+
+
 [section:in_avail buffered_write_stream::in_avail]
 
 Determine the amount of data that may be read without blocking. 
@@ -20788,7 +21057,7 @@ Determine the amount of data that may be read without blocking.
 
 [section:io_service buffered_write_stream::io_service]
 
-Get the io_service associated with the object. 
+(Deprecated: use get_io_service().) Get the io_service associated with the object. 
 
   boost::asio::io_service & io_service();
 
@@ -21381,6 +21650,11 @@ Default service implementation for a datagram socket.
   ]
   
   [
+    [[link boost_asio.reference.datagram_socket_service.get_io_service [*get_io_service]]]
+    [Get the io_service object that owns the service. ]
+  ]
+  
+  [
     [[link boost_asio.reference.datagram_socket_service.get_option [*get_option]]]
     [Get a socket option. ]
   ]
@@ -21392,7 +21666,7 @@ Default service implementation for a datagram socket.
   
   [
     [[link boost_asio.reference.datagram_socket_service.io_service [*io_service]]]
-    [Get the io_service object that owns the service. ]
+    [(Deprecated: use get_io_service().) Get the io_service object that owns the service. ]
   ]
   
   [
@@ -21718,6 +21992,21 @@ The endpoint type.
 
 
 
+[section:get_io_service datagram_socket_service::get_io_service]
+
+
+['Inherited from io_service.]
+
+Get the io_service object that owns the service. 
+
+  boost::asio::io_service & get_io_service();
+
+
+
+[endsect]
+
+
+
 [section:get_option datagram_socket_service::get_option]
 
 Get a socket option. 
@@ -21782,7 +22071,7 @@ Perform an IO control command on the socket.
 
 ['Inherited from io_service.]
 
-Get the io_service object that owns the service. 
+(Deprecated: use get_io_service().) Get the io_service object that owns the service. 
 
   boost::asio::io_service & io_service();
 
@@ -22086,8 +22375,13 @@ Typedef for the typical usage of timer.
   ]
   
   [
-    [[link boost_asio.reference.basic_deadline_timer.io_service [*io_service]]]
+    [[link boost_asio.reference.basic_deadline_timer.get_io_service [*get_io_service]]]
     [Get the io_service associated with the object. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.basic_deadline_timer.io_service [*io_service]]]
+    [(Deprecated: use get_io_service().) Get the io_service associated with the object. ]
   ]
   
   [
@@ -22274,8 +22568,13 @@ Default service implementation for a timer.
   ]
   
   [
-    [[link boost_asio.reference.deadline_timer_service.io_service [*io_service]]]
+    [[link boost_asio.reference.deadline_timer_service.get_io_service [*get_io_service]]]
     [Get the io_service object that owns the service. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.deadline_timer_service.io_service [*io_service]]]
+    [(Deprecated: use get_io_service().) Get the io_service object that owns the service. ]
   ]
   
   [
@@ -22468,6 +22767,21 @@ Set the expiry time for the timer relative to now.
 [endsect]
 
 
+[section:get_io_service deadline_timer_service::get_io_service]
+
+
+['Inherited from io_service.]
+
+Get the io_service object that owns the service. 
+
+  boost::asio::io_service & get_io_service();
+
+
+
+[endsect]
+
+
+
 [section:id deadline_timer_service::id]
 
 The unique service identifier. 
@@ -22498,7 +22812,7 @@ The implementation type of the deadline timer.
 
 ['Inherited from io_service.]
 
-Get the io_service object that owns the service. 
+(Deprecated: use get_io_service().) Get the io_service object that owns the service. 
 
   boost::asio::io_service & io_service();
 
@@ -22789,8 +23103,11 @@ The time traits type.
   boost::system::error_code ``[link boost_asio.reference.error__make_error_code.overload4 make_error_code]``(
       misc_errors e);
 
+  boost::system::error_code ``[link boost_asio.reference.error__make_error_code.overload5 make_error_code]``(
+      ssl_errors e);
 
-[section:overload1 error::make_error_code (1 of 4 overloads)]
+
+[section:overload1 error::make_error_code (1 of 5 overloads)]
 
 
 
@@ -22803,7 +23120,7 @@ The time traits type.
 
 
 
-[section:overload2 error::make_error_code (2 of 4 overloads)]
+[section:overload2 error::make_error_code (2 of 5 overloads)]
 
 
 
@@ -22816,7 +23133,7 @@ The time traits type.
 
 
 
-[section:overload3 error::make_error_code (3 of 4 overloads)]
+[section:overload3 error::make_error_code (3 of 5 overloads)]
 
 
 
@@ -22829,12 +23146,25 @@ The time traits type.
 
 
 
-[section:overload4 error::make_error_code (4 of 4 overloads)]
+[section:overload4 error::make_error_code (4 of 5 overloads)]
 
 
 
   boost::system::error_code make_error_code(
       misc_errors e);
+
+
+
+[endsect]
+
+
+
+[section:overload5 error::make_error_code (5 of 5 overloads)]
+
+
+
+  boost::system::error_code make_error_code(
+      ssl_errors e);
 
 
 
@@ -22949,6 +23279,23 @@ The time traits type.
 
 
 
+[section:error__ssl_errors error::ssl_errors]
+
+
+
+  enum ssl_errors
+
+[heading Values]
+[variablelist
+
+]
+
+
+
+[endsect]
+
+
+
 [section:error__system_category error::system_category]
 
 
@@ -23029,7 +23376,8 @@ Exception thrown when trying to add a service object to an io_service where the 
 
 Provides core I/O functionality. 
 
-  class io_service
+  class io_service :
+    noncopyable
 
 
 [heading Types]
@@ -23822,7 +24170,8 @@ Destructor.
 
 Class used to uniquely identify a service. 
 
-  class id
+  class id :
+    noncopyable
 
 
 [heading Member Functions]
@@ -23855,7 +24204,8 @@ Constructor.
 
 Base class for all io_service services. 
 
-  class service
+  class service :
+    noncopyable
 
 
 [heading Member Functions]
@@ -23863,16 +24213,33 @@ Base class for all io_service services.
   [[Name][Description]]
 
   [
-    [[link boost_asio.reference.io_service__service.io_service [*io_service]]]
+    [[link boost_asio.reference.io_service__service.get_io_service [*get_io_service]]]
     [Get the io_service object that owns the service. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.io_service__service.io_service [*io_service]]]
+    [(Deprecated: use get_io_service().) Get the io_service object that owns the service. ]
   ]
   
 ]
 
 
-[section:io_service io_service::service::io_service]
+[section:get_io_service io_service::service::get_io_service]
 
 Get the io_service object that owns the service. 
+
+  boost::asio::io_service & get_io_service();
+
+
+
+[endsect]
+
+
+
+[section:io_service io_service::service::io_service]
+
+(Deprecated: use get_io_service().) Get the io_service object that owns the service. 
 
   boost::asio::io_service & io_service();
 
@@ -23901,8 +24268,13 @@ Provides serialised handler execution.
   ]
   
   [
-    [[link boost_asio.reference.io_service__strand.io_service [*io_service]]]
+    [[link boost_asio.reference.io_service__strand.get_io_service [*get_io_service]]]
     [Get the io_service associated with the strand. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.io_service__strand.io_service [*io_service]]]
+    [(Deprecated: use get_io_service().) Get the io_service associated with the strand. ]
   ]
   
   [
@@ -23975,9 +24347,29 @@ The strand's guarantee is in addition to the guarantee provided by the underlyin
 
 
 
-[section:io_service io_service::strand::io_service]
+[section:get_io_service io_service::strand::get_io_service]
 
 Get the io_service associated with the strand. 
+
+  boost::asio::io_service & get_io_service();
+
+
+This function may be used to obtain the io_service object that the strand uses to dispatch handlers for asynchronous operations.
+
+
+[heading Return Value]
+      
+A reference to the io_service object that the strand will use to dispatch handlers. Ownership is not transferred to the caller. 
+
+
+
+[endsect]
+
+
+
+[section:io_service io_service::strand::io_service]
+
+(Deprecated: use get_io_service().) Get the io_service associated with the strand. 
 
   boost::asio::io_service & io_service();
 
@@ -24143,8 +24535,13 @@ Class to inform the io_service when it has work to do.
   [[Name][Description]]
 
   [
-    [[link boost_asio.reference.io_service__work.io_service [*io_service]]]
+    [[link boost_asio.reference.io_service__work.get_io_service [*get_io_service]]]
     [Get the io_service associated with the work. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.io_service__work.io_service [*io_service]]]
+    [(Deprecated: use get_io_service().) Get the io_service associated with the work. ]
   ]
   
   [
@@ -24164,9 +24561,21 @@ The work class is used to inform the io_service when work starts and finishes. T
 The work class is copy-constructible so that it may be used as a data member in a handler class. It is not assignable. 
 
 
-[section:io_service io_service::work::io_service]
+[section:get_io_service io_service::work::get_io_service]
 
 Get the io_service associated with the work. 
+
+  boost::asio::io_service & get_io_service();
+
+
+
+[endsect]
+
+
+
+[section:io_service io_service::work::io_service]
+
+(Deprecated: use get_io_service().) Get the io_service associated with the work. 
 
   boost::asio::io_service & io_service();
 
@@ -26467,8 +26876,13 @@ Provides endpoint resolution functionality.
   ]
   
   [
-    [[link boost_asio.reference.ip__basic_resolver.io_service [*io_service]]]
+    [[link boost_asio.reference.ip__basic_resolver.get_io_service [*get_io_service]]]
     [Get the io_service associated with the object. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.ip__basic_resolver.io_service [*io_service]]]
+    [(Deprecated: use get_io_service().) Get the io_service associated with the object. ]
   ]
   
   [
@@ -26652,6 +27066,29 @@ The endpoint type.
 
 
 
+[section:get_io_service ip::basic_resolver::get_io_service]
+
+
+['Inherited from basic_io_object.]
+
+Get the io_service associated with the object. 
+
+  boost::asio::io_service & get_io_service();
+
+
+This function may be used to obtain the io_service object that the I/O object uses to dispatch handlers for asynchronous operations.
+
+
+[heading Return Value]
+      
+A reference to the io_service object that the I/O object will use to dispatch handlers. Ownership is not transferred to the caller. 
+
+
+
+[endsect]
+
+
+
 [section:implementation_type ip::basic_resolver::implementation_type]
 
 
@@ -26673,7 +27110,7 @@ The underlying implementation type of I/O object.
 
 ['Inherited from basic_io_object.]
 
-Get the io_service associated with the object. 
+(Deprecated: use get_io_service().) Get the io_service associated with the object. 
 
   boost::asio::io_service & io_service();
 
@@ -27988,8 +28425,13 @@ Default service implementation for a resolver.
   ]
   
   [
-    [[link boost_asio.reference.ip__resolver_service.io_service [*io_service]]]
+    [[link boost_asio.reference.ip__resolver_service.get_io_service [*get_io_service]]]
     [Get the io_service object that owns the service. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.ip__resolver_service.io_service [*io_service]]]
+    [(Deprecated: use get_io_service().) Get the io_service object that owns the service. ]
   ]
   
   [
@@ -28127,6 +28569,21 @@ The endpoint type.
 
 
 
+[section:get_io_service ip::resolver_service::get_io_service]
+
+
+['Inherited from io_service.]
+
+Get the io_service object that owns the service. 
+
+  boost::asio::io_service & get_io_service();
+
+
+
+[endsect]
+
+
+
 [section:id ip::resolver_service::id]
 
 The unique service identifier. 
@@ -28157,7 +28614,7 @@ The type of a resolver implementation.
 
 ['Inherited from io_service.]
 
-Get the io_service object that owns the service. 
+(Deprecated: use get_io_service().) Get the io_service object that owns the service. 
 
   boost::asio::io_service & io_service();
 
@@ -28600,13 +29057,18 @@ The TCP acceptor type.
   ]
   
   [
+    [[link boost_asio.reference.basic_socket_acceptor.get_io_service [*get_io_service]]]
+    [Get the io_service associated with the object. ]
+  ]
+  
+  [
     [[link boost_asio.reference.basic_socket_acceptor.get_option [*get_option]]]
     [Get an option from the acceptor. ]
   ]
   
   [
     [[link boost_asio.reference.basic_socket_acceptor.io_service [*io_service]]]
-    [Get the io_service associated with the object. ]
+    [(Deprecated: use get_io_service().) Get the io_service associated with the object. ]
   ]
   
   [
@@ -29019,8 +29481,13 @@ The TCP resolver type.
   ]
   
   [
-    [[link boost_asio.reference.ip__basic_resolver.io_service [*io_service]]]
+    [[link boost_asio.reference.ip__basic_resolver.get_io_service [*get_io_service]]]
     [Get the io_service associated with the object. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.ip__basic_resolver.io_service [*io_service]]]
+    [(Deprecated: use get_io_service().) Get the io_service associated with the object. ]
   ]
   
   [
@@ -29427,6 +29894,11 @@ The TCP socket type.
   ]
   
   [
+    [[link boost_asio.reference.basic_stream_socket.get_io_service [*get_io_service]]]
+    [Get the io_service associated with the object. ]
+  ]
+  
+  [
     [[link boost_asio.reference.basic_stream_socket.get_option [*get_option]]]
     [Get an option from the socket. ]
   ]
@@ -29438,7 +29910,7 @@ The TCP socket type.
   
   [
     [[link boost_asio.reference.basic_stream_socket.io_service [*io_service]]]
-    [Get the io_service associated with the object. ]
+    [(Deprecated: use get_io_service().) Get the io_service associated with the object. ]
   ]
   
   [
@@ -29933,8 +30405,13 @@ The UDP resolver type.
   ]
   
   [
-    [[link boost_asio.reference.ip__basic_resolver.io_service [*io_service]]]
+    [[link boost_asio.reference.ip__basic_resolver.get_io_service [*get_io_service]]]
     [Get the io_service associated with the object. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.ip__basic_resolver.io_service [*io_service]]]
+    [(Deprecated: use get_io_service().) Get the io_service associated with the object. ]
   ]
   
   [
@@ -30341,6 +30818,11 @@ The UDP socket type.
   ]
   
   [
+    [[link boost_asio.reference.basic_datagram_socket.get_io_service [*get_io_service]]]
+    [Get the io_service associated with the object. ]
+  ]
+  
+  [
     [[link boost_asio.reference.basic_datagram_socket.get_option [*get_option]]]
     [Get an option from the socket. ]
   ]
@@ -30352,7 +30834,7 @@ The UDP socket type.
   
   [
     [[link boost_asio.reference.basic_datagram_socket.io_service [*io_service]]]
-    [Get the io_service associated with the object. ]
+    [(Deprecated: use get_io_service().) Get the io_service associated with the object. ]
   ]
   
   [
@@ -31917,6 +32399,11 @@ Default service implementation for a socket acceptor.
   ]
   
   [
+    [[link boost_asio.reference.socket_acceptor_service.get_io_service [*get_io_service]]]
+    [Get the io_service object that owns the service. ]
+  ]
+  
+  [
     [[link boost_asio.reference.socket_acceptor_service.get_option [*get_option]]]
     [Get a socket option. ]
   ]
@@ -31928,7 +32415,7 @@ Default service implementation for a socket acceptor.
   
   [
     [[link boost_asio.reference.socket_acceptor_service.io_service [*io_service]]]
-    [Get the io_service object that owns the service. ]
+    [(Deprecated: use get_io_service().) Get the io_service object that owns the service. ]
   ]
   
   [
@@ -32120,6 +32607,21 @@ The endpoint type.
 
 
 
+[section:get_io_service socket_acceptor_service::get_io_service]
+
+
+['Inherited from io_service.]
+
+Get the io_service object that owns the service. 
+
+  boost::asio::io_service & get_io_service();
+
+
+
+[endsect]
+
+
+
 [section:get_option socket_acceptor_service::get_option]
 
 Get a socket option. 
@@ -32184,7 +32686,7 @@ Perform an IO control command on the socket.
 
 ['Inherited from io_service.]
 
-Get the io_service object that owns the service. 
+(Deprecated: use get_io_service().) Get the io_service object that owns the service. 
 
   boost::asio::io_service & io_service();
 
@@ -35058,8 +35560,13 @@ Default service implementation for a context.
   ]
   
   [
-    [[link boost_asio.reference.ssl__context_service.io_service [*io_service]]]
+    [[link boost_asio.reference.ssl__context_service.get_io_service [*get_io_service]]]
     [Get the io_service object that owns the service. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.ssl__context_service.io_service [*io_service]]]
+    [(Deprecated: use get_io_service().) Get the io_service object that owns the service. ]
   ]
   
   [
@@ -35186,6 +35693,21 @@ Destroy a context implementation.
 
 
 
+[section:get_io_service ssl::context_service::get_io_service]
+
+
+['Inherited from io_service.]
+
+Get the io_service object that owns the service. 
+
+  boost::asio::io_service & get_io_service();
+
+
+
+[endsect]
+
+
+
 [section:id ssl::context_service::id]
 
 The unique service identifier. 
@@ -35216,7 +35738,7 @@ The type of the context.
 
 ['Inherited from io_service.]
 
-Get the io_service object that owns the service. 
+(Deprecated: use get_io_service().) Get the io_service object that owns the service. 
 
   boost::asio::io_service & io_service();
 
@@ -35469,6 +35991,11 @@ Provides stream-oriented functionality using SSL.
   ]
   
   [
+    [[link boost_asio.reference.ssl__stream.get_io_service [*get_io_service]]]
+    [Get the io_service associated with the object. ]
+  ]
+  
+  [
     [[link boost_asio.reference.ssl__stream.handshake [*handshake]]]
     [Perform SSL handshaking. ]
   ]
@@ -35485,7 +36012,7 @@ Provides stream-oriented functionality using SSL.
   
   [
     [[link boost_asio.reference.ssl__stream.io_service [*io_service]]]
-    [Get the io_service associated with the object. ]
+    [(Deprecated: use get_io_service().) Get the io_service associated with the object. ]
   ]
   
   [
@@ -35714,6 +36241,26 @@ The async\_write\_some operation may not transmit all of the data to the peer. C
 [endsect]
 
 
+
+[section:get_io_service ssl::stream::get_io_service]
+
+Get the io_service associated with the object. 
+
+  boost::asio::io_service & get_io_service();
+
+
+This function may be used to obtain the io_service object that the stream uses to dispatch handlers for asynchronous operations.
+
+
+[heading Return Value]
+      
+A reference to the io_service object that stream will use to dispatch handlers. Ownership is not transferred to the caller. 
+
+
+
+[endsect]
+
+
 [section:handshake ssl::stream::handshake]
 
 Perform SSL handshaking. 
@@ -35918,7 +36465,7 @@ The number of bytes of data that can be read without blocking.
 
 [section:io_service ssl::stream::io_service]
 
-Get the io_service associated with the object. 
+(Deprecated: use get_io_service().) Get the io_service associated with the object. 
 
   boost::asio::io_service & io_service();
 
@@ -36528,6 +37075,11 @@ Default service implementation for an SSL stream.
   ]
   
   [
+    [[link boost_asio.reference.ssl__stream_service.get_io_service [*get_io_service]]]
+    [Get the io_service object that owns the service. ]
+  ]
+  
+  [
     [[link boost_asio.reference.ssl__stream_service.handshake [*handshake]]]
     [Perform SSL handshaking. ]
   ]
@@ -36539,7 +37091,7 @@ Default service implementation for an SSL stream.
   
   [
     [[link boost_asio.reference.ssl__stream_service.io_service [*io_service]]]
-    [Get the io_service object that owns the service. ]
+    [(Deprecated: use get_io_service().) Get the io_service object that owns the service. ]
   ]
   
   [
@@ -36702,6 +37254,21 @@ Destroy a stream implementation.
 
 
 
+[section:get_io_service ssl::stream_service::get_io_service]
+
+
+['Inherited from io_service.]
+
+Get the io_service object that owns the service. 
+
+  boost::asio::io_service & get_io_service();
+
+
+
+[endsect]
+
+
+
 [section:handshake ssl::stream_service::handshake]
 
 Perform SSL handshaking. 
@@ -36767,7 +37334,7 @@ Determine the amount of data that may be read without blocking.
 
 ['Inherited from io_service.]
 
-Get the io_service object that owns the service. 
+(Deprecated: use get_io_service().) Get the io_service object that owns the service. 
 
   boost::asio::io_service & io_service();
 
@@ -36908,8 +37475,13 @@ Typedef for backwards compatibility.
   ]
   
   [
-    [[link boost_asio.reference.io_service__strand.io_service [*io_service]]]
+    [[link boost_asio.reference.io_service__strand.get_io_service [*get_io_service]]]
     [Get the io_service associated with the strand. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.io_service__strand.io_service [*io_service]]]
+    [(Deprecated: use get_io_service().) Get the io_service associated with the strand. ]
   ]
   
   [
@@ -37058,6 +37630,11 @@ Default service implementation for a stream socket.
   ]
   
   [
+    [[link boost_asio.reference.stream_socket_service.get_io_service [*get_io_service]]]
+    [Get the io_service object that owns the service. ]
+  ]
+  
+  [
     [[link boost_asio.reference.stream_socket_service.get_option [*get_option]]]
     [Get a socket option. ]
   ]
@@ -37069,7 +37646,7 @@ Default service implementation for a stream socket.
   
   [
     [[link boost_asio.reference.stream_socket_service.io_service [*io_service]]]
-    [Get the io_service object that owns the service. ]
+    [(Deprecated: use get_io_service().) Get the io_service object that owns the service. ]
   ]
   
   [
@@ -37337,6 +37914,21 @@ The endpoint type.
 
 
 
+[section:get_io_service stream_socket_service::get_io_service]
+
+
+['Inherited from io_service.]
+
+Get the io_service object that owns the service. 
+
+  boost::asio::io_service & get_io_service();
+
+
+
+[endsect]
+
+
+
 [section:get_option stream_socket_service::get_option]
 
 Get a socket option. 
@@ -37401,7 +37993,7 @@ Perform an IO control command on the socket.
 
 ['Inherited from io_service.]
 
-Get the io_service object that owns the service. 
+(Deprecated: use get_io_service().) Get the io_service object that owns the service. 
 
   boost::asio::io_service & io_service();
 
@@ -37675,7 +38267,7 @@ Typedef for the typical usage of basic_streambuf.
 [endsect]
 
 
-[section:time_traits_lt__boost__posix_time__ptime__gt_ time_traits< boost::posix_time::ptime >]
+[section:time_traits_lt__ptime__gt_ time_traits< boost::posix_time::ptime >]
 
 Time traits specialised for posix_time. 
 
@@ -37689,14 +38281,14 @@ Time traits specialised for posix_time.
 
   [
 
-    [[link boost_asio.reference.time_traits_lt__boost__posix_time__ptime__gt_.duration_type [*duration_type]]]
+    [[link boost_asio.reference.time_traits_lt__ptime__gt_.duration_type [*duration_type]]]
     [The duration type. ]
   
   ]
 
   [
 
-    [[link boost_asio.reference.time_traits_lt__boost__posix_time__ptime__gt_.time_type [*time_type]]]
+    [[link boost_asio.reference.time_traits_lt__ptime__gt_.time_type [*time_type]]]
     [The time type. ]
   
   ]
@@ -37708,27 +38300,27 @@ Time traits specialised for posix_time.
   [[Name][Description]]
 
   [
-    [[link boost_asio.reference.time_traits_lt__boost__posix_time__ptime__gt_.add [*add]]]
+    [[link boost_asio.reference.time_traits_lt__ptime__gt_.add [*add]]]
     [Add a duration to a time. ]
   ]
   
   [
-    [[link boost_asio.reference.time_traits_lt__boost__posix_time__ptime__gt_.less_than [*less_than]]]
+    [[link boost_asio.reference.time_traits_lt__ptime__gt_.less_than [*less_than]]]
     [Test whether one time is less than another. ]
   ]
   
   [
-    [[link boost_asio.reference.time_traits_lt__boost__posix_time__ptime__gt_.now [*now]]]
+    [[link boost_asio.reference.time_traits_lt__ptime__gt_.now [*now]]]
     [Get the current time. ]
   ]
   
   [
-    [[link boost_asio.reference.time_traits_lt__boost__posix_time__ptime__gt_.subtract [*subtract]]]
+    [[link boost_asio.reference.time_traits_lt__ptime__gt_.subtract [*subtract]]]
     [Subtract one time from another. ]
   ]
   
   [
-    [[link boost_asio.reference.time_traits_lt__boost__posix_time__ptime__gt_.to_posix_duration [*to_posix_duration]]]
+    [[link boost_asio.reference.time_traits_lt__ptime__gt_.to_posix_duration [*to_posix_duration]]]
     [Convert to POSIX duration type. ]
   ]
   
@@ -38523,6 +39115,40 @@ The number of bytes written. If an error occurs, returns the total number of byt
 
 
 [section:value error::netdb_errors >::value]
+
+
+
+  static const bool value;
+
+
+
+[endsect]
+
+
+
+[endsect]
+
+[section:error__ssl_errors__gt_ error::ssl_errors >]
+
+
+
+  template<>
+  struct is_error_code_enum< boost::asio::error::ssl_errors >
+
+
+[heading Data Members]
+[table
+  [[Name][Description]]
+
+  [
+    [[link boost_asio.reference.error__ssl_errors__gt_.value [*value]]]
+    []
+  ]
+
+]
+
+
+[section:value error::ssl_errors >::value]
 
 
 

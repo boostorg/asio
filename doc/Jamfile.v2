@@ -18,7 +18,7 @@ boostbook standalone
   :
     <xsl:param>boost.root=../../../..
     <xsl:param>boost.libraries=../../../../libs/libraries.htm
-    <xsl:param>navig.graphics.path="../../../../doc/html/images/ "
+    <xsl:param>navig.graphics.path="../../../../doc/html/images/"
     <xsl:param>chapter.autolabel=0
     <xsl:param>chunk.section.depth=8
     <xsl:param>chunk.first.sections=1
