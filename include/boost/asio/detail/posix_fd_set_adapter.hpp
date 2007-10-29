@@ -59,7 +59,7 @@ public:
   }
 
 private:
-  fd_set fd_set_;
+  mutable fd_set fd_set_;
   socket_type max_descriptor_;
 };
 
