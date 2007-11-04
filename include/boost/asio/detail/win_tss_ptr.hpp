@@ -41,11 +41,17 @@ class win_tss_ptr
   : private noncopyable
 {
 public:
+#if defined(UNDER_CE)
+  enum { out_of_indexes = 0xFFFFFFFF };
+#else
+  enum { out_of_indexes = TLS_OUT_OF_INDEXES };
+#endif
+
   // Constructor.
   win_tss_ptr()
   {
     tss_key_ = ::TlsAlloc();
-    if (tss_key_ == TLS_OUT_OF_INDEXES)
+    if (tss_key_ == out_of_indexes)
     {
       DWORD last_error = ::GetLastError();
       boost::system::system_error e(

@@ -1,6 +1,6 @@
 //
-// win_thread.hpp
-// ~~~~~~~~~~~~~~
+// wince_thread.hpp
+// ~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2007 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
@@ -8,8 +8,8 @@
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
-#ifndef BOOST_ASIO_DETAIL_WIN_THREAD_HPP
-#define BOOST_ASIO_DETAIL_WIN_THREAD_HPP
+#ifndef BOOST_ASIO_DETAIL_WINCE_THREAD_HPP
+#define BOOST_ASIO_DETAIL_WINCE_THREAD_HPP
 
 #if defined(_MSC_VER) && (_MSC_VER >= 1200)
 # pragma once
@@ -22,7 +22,7 @@
 #include <boost/system/system_error.hpp>
 #include <boost/asio/detail/pop_options.hpp>
 
-#if defined(BOOST_WINDOWS) && !defined(UNDER_CE)
+#if defined(BOOST_WINDOWS) && defined(UNDER_CE)
 
 #include <boost/asio/error.hpp>
 #include <boost/asio/detail/noncopyable.hpp>
@@ -31,27 +31,26 @@
 #include <boost/asio/detail/push_options.hpp>
 #include <boost/throw_exception.hpp>
 #include <memory>
-#include <process.h>
 #include <boost/asio/detail/pop_options.hpp>
 
 namespace boost {
 namespace asio {
 namespace detail {
 
-unsigned int __stdcall win_thread_function(void* arg);
+DWORD WINAPI wince_thread_function(LPVOID arg);
 
-class win_thread
+class wince_thread
   : private noncopyable
 {
 public:
   // Constructor.
   template <typename Function>
-  win_thread(Function f)
+  wince_thread(Function f)
   {
     std::auto_ptr<func_base> arg(new func<Function>(f));
-    unsigned int thread_id = 0;
-    thread_ = reinterpret_cast<HANDLE>(::_beginthreadex(0, 0,
-          win_thread_function, arg.get(), 0, &thread_id));
+    DWORD thread_id = 0;
+    thread_ = ::CreateThread(0, 0, wince_thread_function,
+        arg.get(), 0, &thread_id);
     if (!thread_)
     {
       DWORD last_error = ::GetLastError();
@@ -65,7 +64,7 @@ public:
   }
 
   // Destructor.
-  ~win_thread()
+  ~wince_thread()
   {
     ::CloseHandle(thread_);
   }
@@ -77,7 +76,7 @@ public:
   }
 
 private:
-  friend unsigned int __stdcall win_thread_function(void* arg);
+  friend DWORD WINAPI wince_thread_function(LPVOID arg);
 
   class func_base
   {
@@ -108,10 +107,10 @@ private:
   ::HANDLE thread_;
 };
 
-inline unsigned int __stdcall win_thread_function(void* arg)
+inline DWORD WINAPI wince_thread_function(LPVOID arg)
 {
-  std::auto_ptr<win_thread::func_base> func(
-      static_cast<win_thread::func_base*>(arg));
+  std::auto_ptr<wince_thread::func_base> func(
+      static_cast<wince_thread::func_base*>(arg));
   func->run();
   return 0;
 }
@@ -120,8 +119,8 @@ inline unsigned int __stdcall win_thread_function(void* arg)
 } // namespace asio
 } // namespace boost
 
-#endif // defined(BOOST_WINDOWS) && !defined(UNDER_CE)
+#endif // defined(BOOST_WINDOWS) && defined(UNDER_CE)
 
 #include <boost/asio/detail/pop_options.hpp>
 
-#endif // BOOST_ASIO_DETAIL_WIN_THREAD_HPP
+#endif // BOOST_ASIO_DETAIL_WINCE_THREAD_HPP
