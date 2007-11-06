@@ -62,14 +62,6 @@ public:
   typedef boost::asio::detail::socket_addr_type data_type;
 #endif
 
-  /// The type for the size of the endpoint structure. This type is dependent on
-  /// the underlying implementation of the socket layer.
-#if defined(GENERATING_DOCUMENTATION)
-  typedef implementation_defined size_type;
-#else
-  typedef boost::asio::detail::socket_addr_len_type size_type;
-#endif
-
   /// Default constructor.
   basic_endpoint()
     : data_()
@@ -173,7 +165,7 @@ public:
   /// The protocol associated with the endpoint.
   protocol_type protocol() const
   {
-    if (is_v4())
+    if (is_v4(data_))
       return InternetProtocol::v4();
     return InternetProtocol::v6();
   }
@@ -191,18 +183,18 @@ public:
   }
 
   /// Get the underlying size of the endpoint in the native type.
-  size_type size() const
+  std::size_t size() const
   {
-    if (is_v4())
+    if (is_v4(data_))
       return sizeof(boost::asio::detail::sockaddr_in4_type);
     else
       return sizeof(boost::asio::detail::sockaddr_in6_type);
   }
 
   /// Set the underlying size of the endpoint in the native type.
-  void resize(size_type size)
+  void resize(std::size_t size)
   {
-    if (size > size_type(sizeof(data_)))
+    if (size > sizeof(data_))
     {
       boost::system::system_error e(boost::asio::error::invalid_argument);
       boost::throw_exception(e);
@@ -210,7 +202,7 @@ public:
   }
 
   /// Get the capacity of the endpoint in the native type.
-  size_type capacity() const
+  std::size_t capacity() const
   {
     return sizeof(data_);
   }
@@ -219,7 +211,7 @@ public:
   /// the host's byte order.
   unsigned short port() const
   {
-    if (is_v4())
+    if (is_v4(data_))
     {
       return boost::asio::detail::socket_ops::network_to_host_short(
           reinterpret_cast<const boost::asio::detail::sockaddr_in4_type&>(
@@ -237,7 +229,7 @@ public:
   /// the host's byte order.
   void port(unsigned short port_num)
   {
-    if (is_v4())
+    if (is_v4(data_))
     {
       reinterpret_cast<boost::asio::detail::sockaddr_in4_type&>(data_).sin_port
         = boost::asio::detail::socket_ops::host_to_network_short(port_num);
@@ -253,7 +245,7 @@ public:
   boost::asio::ip::address address() const
   {
     using namespace std; // For memcpy.
-    if (is_v4())
+    if (is_v4(data_))
     {
       const boost::asio::detail::sockaddr_in4_type& data
         = reinterpret_cast<const boost::asio::detail::sockaddr_in4_type&>(
@@ -307,14 +299,26 @@ public:
 
 private:
   // Helper function to determine whether the endpoint is IPv4.
-  bool is_v4() const
-  {
 #if defined(_AIX)
-    return data_.__ss_family == AF_INET;
-#else
-    return data_.ss_family == AF_INET;
-#endif
+  template <typename T, unsigned char (T::*)> struct is_v4_helper {};
+
+  template <typename T>
+  static bool is_v4(const T& ss, is_v4_helper<T, &T::ss_family>* = 0)
+  {
+    return ss.ss_family == AF_INET;
   }
+
+  template <typename T>
+  static bool is_v4(const T& ss, is_v4_helper<T, &T::__ss_family>* = 0)
+  {
+    return ss.__ss_family == AF_INET;
+  }
+#else
+  static bool is_v4(const boost::asio::detail::sockaddr_storage_type& ss)
+  {
+    return ss.ss_family == AF_INET;
+  }
+#endif
 
   // The underlying IP socket address.
   boost::asio::detail::sockaddr_storage_type data_;
@@ -338,11 +342,23 @@ std::ostream& operator<<(std::ostream& os,
     const basic_endpoint<InternetProtocol>& endpoint)
 {
   const address& addr = endpoint.address();
-  if (addr.is_v4())
-    os << addr.to_string();
+  boost::system::error_code ec;
+  std::string a = addr.to_string(ec);
+  if (ec)
+  {
+    if (os.exceptions() & std::ios::failbit)
+      boost::asio::detail::throw_error(ec);
+    else
+      os.setstate(std::ios_base::failbit);
+  }
   else
-    os << '[' << addr.to_string() << ']';
-  os << ':' << endpoint.port();
+  {
+    if (addr.is_v4())
+      os << a;
+    else
+      os << '[' << a << ']';
+    os << ':' << endpoint.port();
+  }
   return os;
 }
 #else // BOOST_WORKAROUND(__BORLANDC__, BOOST_TESTED_AT(0x564))
@@ -352,11 +368,23 @@ std::basic_ostream<Elem, Traits>& operator<<(
     const basic_endpoint<InternetProtocol>& endpoint)
 {
   const address& addr = endpoint.address();
-  if (addr.is_v4())
-    os << addr.to_string();
+  boost::system::error_code ec;
+  std::string a = addr.to_string(ec);
+  if (ec)
+  {
+    if (os.exceptions() & std::ios::failbit)
+      boost::asio::detail::throw_error(ec);
+    else
+      os.setstate(std::ios_base::failbit);
+  }
   else
-    os << '[' << addr.to_string() << ']';
-  os << ':' << endpoint.port();
+  {
+    if (addr.is_v4())
+      os << a;
+    else
+      os << '[' << a << ']';
+    os << ':' << endpoint.port();
+  }
   return os;
 }
 #endif // BOOST_WORKAROUND(__BORLANDC__, BOOST_TESTED_AT(0x564))

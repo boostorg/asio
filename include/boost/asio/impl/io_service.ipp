@@ -21,6 +21,7 @@
 #include <limits>
 #include <boost/asio/detail/pop_options.hpp>
 
+#include <boost/asio/detail/dev_poll_reactor.hpp>
 #include <boost/asio/detail/epoll_reactor.hpp>
 #include <boost/asio/detail/kqueue_reactor.hpp>
 #include <boost/asio/detail/select_reactor.hpp>
@@ -129,11 +130,11 @@ template <typename Handler>
 #if defined(GENERATING_DOCUMENTATION)
 unspecified
 #else
-inline detail::wrapped_handler<io_service, Handler>
+inline detail::wrapped_handler<io_service&, Handler>
 #endif
 io_service::wrap(Handler handler)
 {
-  return detail::wrapped_handler<io_service, Handler>(*this, handler);
+  return detail::wrapped_handler<io_service&, Handler>(*this, handler);
 }
 
 inline io_service::work::work(boost::asio::io_service& io_service)
@@ -158,6 +159,11 @@ inline boost::asio::io_service& io_service::work::io_service()
   return io_service_;
 }
 
+inline boost::asio::io_service& io_service::work::get_io_service()
+{
+  return io_service_;
+}
+
 inline io_service::service::service(boost::asio::io_service& owner)
   : owner_(owner),
     type_info_(0),
@@ -170,6 +176,11 @@ inline io_service::service::~service()
 }
 
 inline boost::asio::io_service& io_service::service::io_service()
+{
+  return owner_;
+}
+
+inline boost::asio::io_service& io_service::service::get_io_service()
 {
   return owner_;
 }

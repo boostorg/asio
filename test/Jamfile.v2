@@ -18,8 +18,13 @@ else if [ os.name ] = NT
   lib ws2_32 ;
   lib mswsock ;
 }
+else if [ os.name ] = HPUX
+{
+  lib ipv6 ;
+}
 
 local USE_SELECT =
+  <define>BOOST_ASIO_DISABLE_DEV_POLL
   <define>BOOST_ASIO_DISABLE_EPOLL
   <define>BOOST_ASIO_DISABLE_KQUEUE
   <define>BOOST_ASIO_DISABLE_IOCP
@@ -36,10 +41,13 @@ project
     <os>SOLARIS:<define>__EXTENSIONS__
     <os>SOLARIS:<library>socket
     <os>SOLARIS:<library>nsl
+    <os>NT:<define>_WIN32_WINNT=0x0501
     <os>NT,<toolset>cw:<library>ws2_32
     <os>NT,<toolset>cw:<library>mswsock
     <os>NT,<toolset>gcc:<library>ws2_32
     <os>NT,<toolset>gcc:<library>mswsock
+    <os>NT,<toolset>gcc-cygwin:<define>__USE_W32_SOCKETS
+    <os>HPUX:<library>ipv6
   ;
 
 test-suite "asio" :

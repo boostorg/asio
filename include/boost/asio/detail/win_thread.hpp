@@ -22,8 +22,9 @@
 #include <boost/system/system_error.hpp>
 #include <boost/asio/detail/pop_options.hpp>
 
-#if defined(BOOST_WINDOWS)
+#if defined(BOOST_WINDOWS) && !defined(UNDER_CE)
 
+#include <boost/asio/error.hpp>
 #include <boost/asio/detail/noncopyable.hpp>
 #include <boost/asio/detail/socket_types.hpp>
 
@@ -55,7 +56,8 @@ public:
     {
       DWORD last_error = ::GetLastError();
       boost::system::system_error e(
-          boost::system::error_code(last_error, boost::system::native_ecat),
+          boost::system::error_code(last_error,
+            boost::asio::error::system_category),
           "thread");
       boost::throw_exception(e);
     }
@@ -118,7 +120,7 @@ inline unsigned int __stdcall win_thread_function(void* arg)
 } // namespace asio
 } // namespace boost
 
-#endif // defined(BOOST_WINDOWS)
+#endif // defined(BOOST_WINDOWS) && !defined(UNDER_CE)
 
 #include <boost/asio/detail/pop_options.hpp>
 

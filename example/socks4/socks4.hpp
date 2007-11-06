@@ -55,13 +55,15 @@ public:
   {
     boost::array<boost::asio::const_buffer, 7> bufs =
     {
-      boost::asio::buffer(&version_, 1),
-      boost::asio::buffer(&command_, 1),
-      boost::asio::buffer(&port_high_byte_, 1),
-      boost::asio::buffer(&port_low_byte_, 1),
-      boost::asio::buffer(address_),
-      boost::asio::buffer(user_id_),
-      boost::asio::buffer(&null_byte_, 1)
+      {
+        boost::asio::buffer(&version_, 1),
+        boost::asio::buffer(&command_, 1),
+        boost::asio::buffer(&port_high_byte_, 1),
+        boost::asio::buffer(&port_low_byte_, 1),
+        boost::asio::buffer(address_),
+        boost::asio::buffer(user_id_),
+        boost::asio::buffer(&null_byte_, 1)
+      }
     };
     return bufs;
   }
@@ -97,11 +99,13 @@ public:
   {
     boost::array<boost::asio::mutable_buffer, 5> bufs =
     {
-      boost::asio::buffer(&null_byte_, 1),
-      boost::asio::buffer(&status_, 1),
-      boost::asio::buffer(&port_high_byte_, 1),
-      boost::asio::buffer(&port_low_byte_, 1),
-      boost::asio::buffer(address_)
+      {
+        boost::asio::buffer(&null_byte_, 1),
+        boost::asio::buffer(&status_, 1),
+        boost::asio::buffer(&port_high_byte_, 1),
+        boost::asio::buffer(&port_low_byte_, 1),
+        boost::asio::buffer(address_)
+      }
     };
     return bufs;
   }

@@ -185,6 +185,12 @@
          select="concat(substring-before($name, ' '), '_', substring-after($name, ' '))"/>
       </xsl:call-template>
     </xsl:when>
+    <xsl:when test="contains($name, 'boost__posix_time__ptime')">
+      <xsl:call-template name="make-id">
+        <xsl:with-param name="name"
+         select="concat(substring-before($name, 'boost__posix_time__ptime'), 'ptime', substring-after($name, 'boost__posix_time__ptime'))"/>
+      </xsl:call-template>
+    </xsl:when>
     <xsl:otherwise>
       <xsl:value-of select="$name"/>
     </xsl:otherwise>

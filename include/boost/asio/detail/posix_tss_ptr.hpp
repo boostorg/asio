@@ -29,6 +29,7 @@
 #include <pthread.h>
 #include <boost/asio/detail/pop_options.hpp>
 
+#include <boost/asio/error.hpp>
 #include <boost/asio/detail/noncopyable.hpp>
 
 namespace boost {
@@ -47,7 +48,7 @@ public:
     if (error != 0)
     {
       boost::system::system_error e(
-          boost::system::error_code(error, boost::system::native_ecat),
+          boost::system::error_code(error, boost::asio::error::system_category),
           "tss");
       boost::throw_exception(e);
     }

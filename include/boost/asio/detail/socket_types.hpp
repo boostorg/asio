@@ -29,12 +29,12 @@
 # if !defined(_WIN32_WINNT) && !defined(_WIN32_WINDOWS)
 #  if defined(_MSC_VER) || defined(__BORLANDC__)
 #   pragma message("Please define _WIN32_WINNT or _WIN32_WINDOWS appropriately")
-#   pragma message("Assuming _WIN32_WINNT=0x0500 (i.e. Windows 2000 target)")
+#   pragma message("Assuming _WIN32_WINNT=0x0501 (i.e. Windows XP target)")
 #  else // defined(_MSC_VER) || defined(__BORLANDC__)
 #   warning Please define _WIN32_WINNT or _WIN32_WINDOWS appropriately
-#   warning Assuming _WIN32_WINNT=0x0500 (i.e. Windows 2000 target)
+#   warning Assuming _WIN32_WINNT=0x0501 (i.e. Windows XP target)
 #  endif // defined(_MSC_VER) || defined(__BORLANDC__)
-#  define _WIN32_WINNT 0x0500
+#  define _WIN32_WINNT 0x0501
 # endif // !defined(_WIN32_WINNT) && !defined(_WIN32_WINDOWS)
 # if defined(_MSC_VER)
 #  if defined(_WIN32) && !defined(WIN32)
@@ -80,7 +80,9 @@
 #  undef BOOST_ASIO_WSPIAPI_H_DEFINED
 # endif // defined(BOOST_ASIO_WSPIAPI_H_DEFINED)
 # if !defined(BOOST_ASIO_NO_DEFAULT_LINKED_LIBS)
-#  if defined(_MSC_VER) || defined(__BORLANDC__)
+#  if defined(UNDER_CE)
+#   pragma comment(lib, "ws2.lib")
+#  elif defined(_MSC_VER) || defined(__BORLANDC__)
 #   pragma comment(lib, "ws2_32.lib")
 #   pragma comment(lib, "mswsock.lib")
 #  endif // defined(_MSC_VER) || defined(__BORLANDC__)
@@ -98,6 +100,7 @@
 # include <arpa/inet.h>
 # include <netdb.h>
 # include <net/if.h>
+# include <limits.h>
 # if defined(__sun)
 #  include <sys/filio.h>
 #  include <sys/sockio.h>
@@ -116,7 +119,6 @@ const int socket_error_retval = SOCKET_ERROR;
 const int max_addr_v4_str_len = 256;
 const int max_addr_v6_str_len = 256;
 typedef sockaddr socket_addr_type;
-typedef int socket_addr_len_type;
 typedef in_addr in4_addr_type;
 typedef ip_mreq in4_mreq_type;
 typedef sockaddr_in sockaddr_in4_type;
@@ -142,6 +144,11 @@ const int shutdown_both = SD_BOTH;
 const int message_peek = MSG_PEEK;
 const int message_out_of_band = MSG_OOB;
 const int message_do_not_route = MSG_DONTROUTE;
+# if defined (_WIN32_WINNT)
+const int max_iov_len = 64;
+# else
+const int max_iov_len = 16;
+# endif
 #else
 typedef int socket_type;
 const int invalid_socket = -1;
@@ -149,7 +156,6 @@ const int socket_error_retval = -1;
 const int max_addr_v4_str_len = INET_ADDRSTRLEN;
 const int max_addr_v6_str_len = INET6_ADDRSTRLEN + 1 + IF_NAMESIZE;
 typedef sockaddr socket_addr_type;
-typedef socklen_t socket_addr_len_type;
 typedef in_addr in4_addr_type;
 typedef ip_mreq in4_mreq_type;
 typedef sockaddr_in sockaddr_in4_type;
@@ -167,6 +173,7 @@ const int shutdown_both = SHUT_RDWR;
 const int message_peek = MSG_PEEK;
 const int message_out_of_band = MSG_OOB;
 const int message_do_not_route = MSG_DONTROUTE;
+const int max_iov_len = IOV_MAX;
 #endif
 const int custom_socket_option_level = 0xA5100000;
 const int enable_connection_aborted_option = 1;

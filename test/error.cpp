@@ -24,8 +24,8 @@ void test_error_code(const boost::system::error_code& code)
   boost::system::error_code error(code);
   BOOST_CHECK(code == error);
 
-  BOOST_CHECK(code == 0 || error);
-  BOOST_CHECK(code == 0 || !!error);
+  BOOST_CHECK(!code || error);
+  BOOST_CHECK(!code || !!error);
 
   boost::system::error_code error2(error);
   BOOST_CHECK(error == error2);

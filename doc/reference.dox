@@ -33,7 +33,7 @@ SUBGROUPING            = YES
 #---------------------------------------------------------------------------
 # Build related configuration options
 #---------------------------------------------------------------------------
-EXTRACT_ALL            = NO
+EXTRACT_ALL            = YES
 EXTRACT_PRIVATE        = YES
 EXTRACT_STATIC         = YES
 EXTRACT_LOCAL_CLASSES  = NO
@@ -76,7 +76,9 @@ INPUT                  = ./../../../boost/asio.hpp \
                          ./../../../boost/asio \
                          ./../../../boost/asio/impl \
                          ./../../../boost/asio/ip \
-                         ./../../../boost/asio/ssl
+                         ./../../../boost/asio/ssl \
+                         ./noncopyable_dox.txt \
+                         ./std_exception_dox.txt
 FILE_PATTERNS          = 
 RECURSIVE              = NO
 EXCLUDE                = 
