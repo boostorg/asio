@@ -29,6 +29,7 @@
 #include <boost/asio/detail/kqueue_reactor.hpp>
 #include <boost/asio/detail/select_reactor.hpp>
 #include <boost/asio/detail/service_base.hpp>
+#include <boost/asio/detail/win_iocp_io_service.hpp>
 
 namespace boost {
 namespace asio {
@@ -63,7 +64,7 @@ private:
   // The type of the platform-specific implementation.
 #if defined(BOOST_ASIO_HAS_IOCP)
   typedef detail::deadline_timer_service<
-    traits_type, detail::select_reactor<true> > service_impl_type;
+    traits_type, detail::win_iocp_io_service> service_impl_type;
 #elif defined(BOOST_ASIO_HAS_EPOLL)
   typedef detail::deadline_timer_service<
     traits_type, detail::epoll_reactor<false> > service_impl_type;
