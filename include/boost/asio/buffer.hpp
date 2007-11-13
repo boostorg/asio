@@ -27,7 +27,7 @@
 #include <boost/asio/detail/pop_options.hpp>
 
 #if defined(BOOST_MSVC)
-# if defined(_HAS_ITERATOR_DEBUGGING)
+# if defined(_HAS_ITERATOR_DEBUGGING) && (_HAS_ITERATOR_DEBUGGING != 0)
 #  if !defined(BOOST_ASIO_DISABLE_BUFFER_DEBUGGING)
 #   define BOOST_ASIO_ENABLE_BUFFER_DEBUGGING
 #  endif // !defined(BOOST_ASIO_DISABLE_BUFFER_DEBUGGING)
@@ -389,6 +389,11 @@ public:
   buffer_debug_check(Iterator iter)
     : iter_(iter)
   {
+  }
+
+  ~buffer_debug_check()
+  {
+    iter_ = Iterator();
   }
 
   void operator()()
