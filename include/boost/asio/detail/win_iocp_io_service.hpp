@@ -69,7 +69,7 @@ public:
       DWORD last_error = ::GetLastError();
       boost::system::system_error e(
           boost::system::error_code(last_error,
-            boost::asio::error::system_category),
+            boost::asio::error::get_system_category()),
           "iocp");
       boost::throw_exception(e);
     }
@@ -184,7 +184,7 @@ public:
         DWORD last_error = ::GetLastError();
         boost::system::system_error e(
             boost::system::error_code(last_error,
-              boost::asio::error::system_category),
+              boost::asio::error::get_system_category()),
             "pqcs");
         boost::throw_exception(e);
       }
@@ -240,7 +240,7 @@ public:
       DWORD last_error = ::GetLastError();
       boost::system::system_error e(
           boost::system::error_code(last_error,
-            boost::asio::error::system_category),
+            boost::asio::error::get_system_category()),
           "pqcs");
       boost::throw_exception(e);
     }
@@ -260,7 +260,7 @@ public:
       DWORD last_error = ::GetLastError();
       boost::system::system_error e(
           boost::system::error_code(last_error,
-            boost::asio::error::system_category),
+            boost::asio::error::get_system_category()),
           "pqcs");
       boost::throw_exception(e);
     }
@@ -460,7 +460,7 @@ private:
           {
             DWORD last_error = ::GetLastError();
             ec = boost::system::error_code(last_error,
-                boost::asio::error::system_category);
+                boost::asio::error::get_system_category());
             return 0;
           }
 

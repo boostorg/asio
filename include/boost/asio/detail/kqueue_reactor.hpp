@@ -152,7 +152,7 @@ public:
       if (::kevent(kqueue_fd_, &event, 1, 0, 0, 0) == -1)
       {
         boost::system::error_code ec(errno,
-            boost::asio::error::system_category);
+            boost::asio::error::get_system_category());
         read_op_queue_.dispatch_all_operations(descriptor, ec);
       }
     }
@@ -179,7 +179,7 @@ public:
       if (::kevent(kqueue_fd_, &event, 1, 0, 0, 0) == -1)
       {
         boost::system::error_code ec(errno,
-            boost::asio::error::system_category);
+            boost::asio::error::get_system_category());
         write_op_queue_.dispatch_all_operations(descriptor, ec);
       }
     }
@@ -205,7 +205,7 @@ public:
       if (::kevent(kqueue_fd_, &event, 1, 0, 0, 0) == -1)
       {
         boost::system::error_code ec(errno,
-            boost::asio::error::system_category);
+            boost::asio::error::get_system_category());
         except_op_queue_.dispatch_all_operations(descriptor, ec);
       }
     }
@@ -229,7 +229,7 @@ public:
       if (::kevent(kqueue_fd_, &event, 1, 0, 0, 0) == -1)
       {
         boost::system::error_code ec(errno,
-            boost::asio::error::system_category);
+            boost::asio::error::get_system_category());
         write_op_queue_.dispatch_all_operations(descriptor, ec);
       }
     }
@@ -244,7 +244,7 @@ public:
       if (::kevent(kqueue_fd_, &event, 1, 0, 0, 0) == -1)
       {
         boost::system::error_code ec(errno,
-            boost::asio::error::system_category);
+            boost::asio::error::get_system_category());
         except_op_queue_.dispatch_all_operations(descriptor, ec);
         write_op_queue_.dispatch_all_operations(descriptor, ec);
       }
@@ -398,7 +398,7 @@ private:
         if (events[i].flags & EV_ERROR)
         {
           boost::system::error_code error(
-              events[i].data, boost::asio::error::system_category);
+              events[i].data, boost::asio::error::get_system_category());
           except_op_queue_.dispatch_all_operations(descriptor, error);
           read_op_queue_.dispatch_all_operations(descriptor, error);
         }
@@ -429,7 +429,7 @@ private:
         if (::kevent(kqueue_fd_, &event, 1, 0, 0, 0) == -1)
         {
           boost::system::error_code error(errno,
-              boost::asio::error::system_category);
+              boost::asio::error::get_system_category());
           except_op_queue_.dispatch_all_operations(descriptor, error);
           read_op_queue_.dispatch_all_operations(descriptor, error);
         }
@@ -441,7 +441,7 @@ private:
         if (events[i].flags & EV_ERROR)
         {
           boost::system::error_code error(
-              events[i].data, boost::asio::error::system_category);
+              events[i].data, boost::asio::error::get_system_category());
           write_op_queue_.dispatch_all_operations(descriptor, error);
         }
         else
@@ -459,7 +459,7 @@ private:
         if (::kevent(kqueue_fd_, &event, 1, 0, 0, 0) == -1)
         {
           boost::system::error_code error(errno,
-              boost::asio::error::system_category);
+              boost::asio::error::get_system_category());
           write_op_queue_.dispatch_all_operations(descriptor, error);
         }
       }
@@ -516,7 +516,7 @@ private:
       boost::throw_exception(
           boost::system::system_error(
             boost::system::error_code(errno,
-              boost::asio::error::system_category),
+              boost::asio::error::get_system_category()),
             "kqueue"));
     }
     return fd;

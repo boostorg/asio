@@ -158,7 +158,8 @@ public:
 
     if (int err = reactor_.register_descriptor(sock.get()))
     {
-      ec = boost::system::error_code(err, boost::asio::error::system_category);
+      ec = boost::system::error_code(err,
+          boost::asio::error::get_system_category());
       return ec;
     }
 
@@ -182,7 +183,8 @@ public:
 
     if (int err = reactor_.register_descriptor(native_socket))
     {
-      ec = boost::system::error_code(err, boost::asio::error::system_category);
+      ec = boost::system::error_code(err,
+          boost::asio::error::get_system_category());
       return ec;
     }
 
@@ -1490,7 +1492,7 @@ public:
       if (connect_error)
       {
         ec = boost::system::error_code(connect_error,
-            boost::asio::error::system_category);
+            boost::asio::error::get_system_category());
         io_service_.post(bind_handler(handler_, ec));
         return true;
       }
