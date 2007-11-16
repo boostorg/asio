@@ -161,7 +161,7 @@ public:
       if (result != 0)
       {
         boost::system::error_code ec(errno,
-            boost::asio::error::system_category);
+            boost::asio::error::get_system_category());
         read_op_queue_.dispatch_all_operations(descriptor, ec);
       }
     }
@@ -197,7 +197,7 @@ public:
       if (result != 0)
       {
         boost::system::error_code ec(errno,
-            boost::asio::error::system_category);
+            boost::asio::error::get_system_category());
         write_op_queue_.dispatch_all_operations(descriptor, ec);
       }
     }
@@ -229,7 +229,7 @@ public:
       if (result != 0)
       {
         boost::system::error_code ec(errno,
-            boost::asio::error::system_category);
+            boost::asio::error::get_system_category());
         except_op_queue_.dispatch_all_operations(descriptor, ec);
       }
     }
@@ -263,7 +263,7 @@ public:
       if (result != 0)
       {
         boost::system::error_code ec(errno,
-            boost::asio::error::system_category);
+            boost::asio::error::get_system_category());
         write_op_queue_.dispatch_all_operations(descriptor, ec);
         except_op_queue_.dispatch_all_operations(descriptor, ec);
       }
@@ -457,7 +457,7 @@ private:
           if (result != 0)
           {
             ec = boost::system::error_code(errno,
-                boost::asio::error::system_category);
+                boost::asio::error::get_system_category());
             read_op_queue_.dispatch_all_operations(descriptor, ec);
             write_op_queue_.dispatch_all_operations(descriptor, ec);
             except_op_queue_.dispatch_all_operations(descriptor, ec);
@@ -519,7 +519,7 @@ private:
       boost::throw_exception(
           boost::system::system_error(
             boost::system::error_code(errno,
-              boost::asio::error::system_category),
+              boost::asio::error::get_system_category()),
             "epoll"));
     }
     return fd;

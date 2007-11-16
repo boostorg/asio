@@ -54,7 +54,8 @@ public:
     if (error != 0)
     {
       boost::system::system_error e(
-          boost::system::error_code(error, boost::asio::error::system_category),
+          boost::system::error_code(error,
+            boost::asio::error::get_system_category()),
           "thread");
       boost::throw_exception(e);
     }

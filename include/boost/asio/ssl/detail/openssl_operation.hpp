@@ -180,7 +180,7 @@ public:
       else
       {
         return handler_(boost::system::error_code(
-              error_code, boost::asio::error::ssl_category), rc); 
+              error_code, boost::asio::error::get_ssl_category()), rc); 
       }
     }
 

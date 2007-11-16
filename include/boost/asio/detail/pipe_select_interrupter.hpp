@@ -52,7 +52,8 @@ public:
     }
     else
     {
-      boost::system::error_code ec(errno, boost::asio::error::system_category);
+      boost::system::error_code ec(errno,
+          boost::asio::error::get_system_category());
       boost::system::system_error e(ec, "pipe_select_interrupter");
       boost::throw_exception(e);
     }

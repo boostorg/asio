@@ -347,7 +347,7 @@ private:
       {
         int descriptor = pending_event_changes_[i].fd;
         boost::system::error_code ec = boost::system::error_code(
-            errno, boost::asio::error::system_category);
+            errno, boost::asio::error::get_system_category());
         read_op_queue_.dispatch_all_operations(descriptor, ec);
         write_op_queue_.dispatch_all_operations(descriptor, ec);
         except_op_queue_.dispatch_all_operations(descriptor, ec);
@@ -436,7 +436,7 @@ private:
           if (result != sizeof(ev))
           {
             ec = boost::system::error_code(errno,
-                boost::asio::error::system_category);
+                boost::asio::error::get_system_category());
             read_op_queue_.dispatch_all_operations(descriptor, ec);
             write_op_queue_.dispatch_all_operations(descriptor, ec);
             except_op_queue_.dispatch_all_operations(descriptor, ec);
@@ -495,7 +495,7 @@ private:
       boost::throw_exception(
           boost::system::system_error(
             boost::system::error_code(errno,
-              boost::asio::error::system_category),
+              boost::asio::error::get_system_category()),
             "/dev/poll"));
     }
     return fd;
