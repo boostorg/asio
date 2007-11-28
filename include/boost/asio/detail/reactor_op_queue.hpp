@@ -174,8 +174,13 @@ public:
     typename operation_map::iterator i = operations_.begin();
     while (i != operations_.end())
     {
-      descriptors.set(i->first);
+      Descriptor descriptor = i->first;
       ++i;
+      if (!descriptors.set(descriptor))
+      {
+        boost::system::error_code ec(error::fd_set_failure);
+        dispatch_all_operations(descriptor, ec);
+      }
     }
   }
 
