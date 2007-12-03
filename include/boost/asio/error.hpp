@@ -195,7 +195,10 @@ enum misc_errors
   eof,
 
   /// Element not found.
-  not_found
+  not_found,
+
+  /// The descriptor cannot fit into the select system call's fd_set.
+  fd_set_failure
 };
 
 enum ssl_errors
@@ -301,6 +304,8 @@ public:
       return "End of file";
     if (value == error::not_found)
       return "Element not found";
+    if (value == error::fd_set_failure)
+      return "The descriptor does not fit into the select call's fd_set";
     return "asio.misc error";
   }
 };
