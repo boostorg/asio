@@ -1125,7 +1125,7 @@ inline void gai_free(void* p)
 inline void gai_strcpy(char* target, const char* source, std::size_t max_size)
 {
   using namespace std;
-#if BOOST_WORKAROUND(BOOST_MSVC, >= 1400)
+#if BOOST_WORKAROUND(BOOST_MSVC, >= 1400) && !defined(UNDER_CE)
   strcpy_s(target, max_size, source);
 #else
   *target = 0;
@@ -1663,7 +1663,7 @@ inline boost::system::error_code getnameinfo_emulation(
       {
         return ec = boost::asio::error::no_buffer_space;
       }
-#if BOOST_WORKAROUND(BOOST_MSVC, >= 1400)
+#if BOOST_WORKAROUND(BOOST_MSVC, >= 1400) && !defined(UNDER_CE)
       sprintf_s(serv, servlen, "%u", ntohs(port));
 #else
       sprintf(serv, "%u", ntohs(port));
@@ -1686,7 +1686,7 @@ inline boost::system::error_code getnameinfo_emulation(
         {
           return ec = boost::asio::error::no_buffer_space;
         }
-#if BOOST_WORKAROUND(BOOST_MSVC, >= 1400)
+#if BOOST_WORKAROUND(BOOST_MSVC, >= 1400) && !defined(UNDER_CE)
         sprintf_s(serv, servlen, "%u", ntohs(port));
 #else
         sprintf(serv, "%u", ntohs(port));
