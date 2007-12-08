@@ -3879,7 +3879,7 @@ The basic_socket class template provides functionality that is common to both st
 
 The maximum length of the queue of pending incoming connections. 
 
-  static const int max_connections;
+  static const int max_connections = implementation_defined;
 
 
 
@@ -3894,7 +3894,7 @@ The maximum length of the queue of pending incoming connections.
 
 Specify that the data should not be subject to routing. 
 
-  static const int message_do_not_route;
+  static const int message_do_not_route = implementation_defined;
 
 
 
@@ -3925,7 +3925,7 @@ Bitmask type for flags that can be passed to send and receive operations.
 
 Process out-of-band data. 
 
-  static const int message_out_of_band;
+  static const int message_out_of_band = implementation_defined;
 
 
 
@@ -3940,7 +3940,7 @@ Process out-of-band data.
 
 Peek at incoming data without removing it from the input queue. 
 
-  static const int message_peek;
+  static const int message_peek = implementation_defined;
 
 
 
@@ -8445,7 +8445,7 @@ The basic_socket class template provides functionality that is common to both st
 
 The maximum length of the queue of pending incoming connections. 
 
-  static const int max_connections;
+  static const int max_connections = implementation_defined;
 
 
 
@@ -8460,7 +8460,7 @@ The maximum length of the queue of pending incoming connections.
 
 Specify that the data should not be subject to routing. 
 
-  static const int message_do_not_route;
+  static const int message_do_not_route = implementation_defined;
 
 
 
@@ -8491,7 +8491,7 @@ Bitmask type for flags that can be passed to send and receive operations.
 
 Process out-of-band data. 
 
-  static const int message_out_of_band;
+  static const int message_out_of_band = implementation_defined;
 
 
 
@@ -8506,7 +8506,7 @@ Process out-of-band data.
 
 Peek at incoming data without removing it from the input queue. 
 
-  static const int message_peek;
+  static const int message_peek = implementation_defined;
 
 
 
@@ -11089,7 +11089,7 @@ An object that represents the local endpoint of the acceptor. Returns a default-
 
 The maximum length of the queue of pending incoming connections. 
 
-  static const int max_connections;
+  static const int max_connections = implementation_defined;
 
 
 
@@ -11104,7 +11104,7 @@ The maximum length of the queue of pending incoming connections.
 
 Specify that the data should not be subject to routing. 
 
-  static const int message_do_not_route;
+  static const int message_do_not_route = implementation_defined;
 
 
 
@@ -11135,7 +11135,7 @@ Bitmask type for flags that can be passed to send and receive operations.
 
 Process out-of-band data. 
 
-  static const int message_out_of_band;
+  static const int message_out_of_band = implementation_defined;
 
 
 
@@ -11150,7 +11150,7 @@ Process out-of-band data.
 
 Peek at incoming data without removing it from the input queue. 
 
-  static const int message_peek;
+  static const int message_peek = implementation_defined;
 
 
 
@@ -13870,7 +13870,7 @@ The basic_socket class template provides functionality that is common to both st
 
 The maximum length of the queue of pending incoming connections. 
 
-  static const int max_connections;
+  static const int max_connections = implementation_defined;
 
 
 
@@ -13885,7 +13885,7 @@ The maximum length of the queue of pending incoming connections.
 
 Specify that the data should not be subject to routing. 
 
-  static const int message_do_not_route;
+  static const int message_do_not_route = implementation_defined;
 
 
 
@@ -13916,7 +13916,7 @@ Bitmask type for flags that can be passed to send and receive operations.
 
 Process out-of-band data. 
 
-  static const int message_out_of_band;
+  static const int message_out_of_band = implementation_defined;
 
 
 
@@ -13931,7 +13931,7 @@ Process out-of-band data.
 
 Peek at incoming data without removing it from the input queue. 
 
-  static const int message_peek;
+  static const int message_peek = implementation_defined;
 
 
 
@@ -17346,7 +17346,7 @@ The basic_socket class template provides functionality that is common to both st
 
 The maximum length of the queue of pending incoming connections. 
 
-  static const int max_connections;
+  static const int max_connections = implementation_defined;
 
 
 
@@ -17361,7 +17361,7 @@ The maximum length of the queue of pending incoming connections.
 
 Specify that the data should not be subject to routing. 
 
-  static const int message_do_not_route;
+  static const int message_do_not_route = implementation_defined;
 
 
 
@@ -17392,7 +17392,7 @@ Bitmask type for flags that can be passed to send and receive operations.
 
 Process out-of-band data. 
 
-  static const int message_out_of_band;
+  static const int message_out_of_band = implementation_defined;
 
 
 
@@ -17407,7 +17407,7 @@ Process out-of-band data.
 
 Peek at incoming data without removing it from the input queue. 
 
-  static const int message_peek;
+  static const int message_peek = implementation_defined;
 
 
 
@@ -19793,7 +19793,7 @@ Close the stream.
 
 The default buffer size. 
 
-  static const std::size_t default_buffer_size;
+  static const std::size_t default_buffer_size = implementation_defined;
 
 
 
@@ -20963,7 +20963,7 @@ Close the stream.
 
 The default buffer size. 
 
-  static const std::size_t default_buffer_size;
+  static const std::size_t default_buffer_size = implementation_defined;
 
 
 
@@ -22881,7 +22881,7 @@ The time traits type.
 
 
 
-  static const boost::system::error_category & addrinfo_category;
+  static const boost::system::error_category & addrinfo_category = boost::asio::error::get_addrinfo_category();
 
 
 
@@ -23087,6 +23087,66 @@ The time traits type.
 [endsect]
 
 
+
+[section:error__get_addrinfo_category error::get_addrinfo_category]
+
+
+
+  const boost::system::error_category & get_addrinfo_category();
+
+
+
+[endsect]
+
+
+
+[section:error__get_misc_category error::get_misc_category]
+
+
+
+  const boost::system::error_category & get_misc_category();
+
+
+
+[endsect]
+
+
+
+[section:error__get_netdb_category error::get_netdb_category]
+
+
+
+  const boost::system::error_category & get_netdb_category();
+
+
+
+[endsect]
+
+
+
+[section:error__get_ssl_category error::get_ssl_category]
+
+
+
+  const boost::system::error_category & get_ssl_category();
+
+
+
+[endsect]
+
+
+
+[section:error__get_system_category error::get_system_category]
+
+
+
+  const boost::system::error_category & get_system_category();
+
+
+
+[endsect]
+
+
 [section:error__make_error_code error::make_error_code]
 
 
@@ -23178,7 +23238,7 @@ The time traits type.
 
 
 
-  static const boost::system::error_category & misc_category;
+  static const boost::system::error_category & misc_category = boost::asio::error::get_misc_category();
 
 
 
@@ -23210,6 +23270,11 @@ The time traits type.
     [Element not found. ]
   ]
 
+  [
+    [fd_set_failure]
+    [The descriptor cannot fit into the select system call's fd_set. ]
+  ]
+
 ]
 
 
@@ -23222,7 +23287,7 @@ The time traits type.
 
 
 
-  static const boost::system::error_category & netdb_category;
+  static const boost::system::error_category & netdb_category = boost::asio::error::get_netdb_category();
 
 
 
@@ -23271,7 +23336,7 @@ The time traits type.
 
 
 
-  static const boost::system::error_category & ssl_category;
+  static const boost::system::error_category & ssl_category = boost::asio::error::get_ssl_category();
 
 
 
@@ -23300,7 +23365,7 @@ The time traits type.
 
 
 
-  static const boost::system::error_category & system_category;
+  static const boost::system::error_category & system_category = boost::asio::error::get_system_category();
 
 
 
@@ -27770,7 +27835,7 @@ The
 
 Only return IPv4 addresses if a non-loopback IPv4 address is configured for the system. Only return IPv6 addresses if a non-loopback IPv6 address is configured for the system. 
 
-  static const int address_configured;
+  static const int address_configured = implementation_defined;
 
 
 
@@ -27785,7 +27850,7 @@ Only return IPv4 addresses if a non-loopback IPv4 address is configured for the 
 
 If used with v4_mapped, return all matching IPv6 and IPv4 addresses. 
 
-  static const int all_matching;
+  static const int all_matching = implementation_defined;
 
 
 
@@ -27886,7 +27951,7 @@ Construct with specified host name and service name for a given protocol.
 
 Determine the canonical name of the host specified in the query. 
 
-  static const int canonical_name;
+  static const int canonical_name = implementation_defined;
 
 
 
@@ -27925,7 +27990,7 @@ Get the host name associated with the query.
 
 Host name should be treated as a numeric string defining an IPv4 or IPv6 address and no name resolution should be attempted. 
 
-  static const int numeric_host;
+  static const int numeric_host = implementation_defined;
 
 
 
@@ -27940,7 +28005,7 @@ Host name should be treated as a numeric string defining an IPv4 or IPv6 address
 
 Service name should be treated as a numeric string defining a port number and no name resolution should be attempted. 
 
-  static const int numeric_service;
+  static const int numeric_service = implementation_defined;
 
 
 
@@ -27955,7 +28020,7 @@ Service name should be treated as a numeric string defining a port number and no
 
 Indicate that returned endpoint is intended for use as a locally bound socket endpoint. 
 
-  static const int passive;
+  static const int passive = implementation_defined;
 
 
 
@@ -27995,7 +28060,7 @@ Get the service name associated with the query.
 
 If the query protocol family is specified as IPv6, return IPv4-mapped IPv6 addresses on finding no IPv6 addresses. 
 
-  static const int v4_mapped;
+  static const int v4_mapped = implementation_defined;
 
 
 
@@ -28267,7 +28332,7 @@ The resolver_query_base class is used as a base for the basic_resolver_query cla
 
 Only return IPv4 addresses if a non-loopback IPv4 address is configured for the system. Only return IPv6 addresses if a non-loopback IPv6 address is configured for the system. 
 
-  static const int address_configured;
+  static const int address_configured = implementation_defined;
 
 
 
@@ -28279,7 +28344,7 @@ Only return IPv4 addresses if a non-loopback IPv4 address is configured for the 
 
 If used with v4_mapped, return all matching IPv6 and IPv4 addresses. 
 
-  static const int all_matching;
+  static const int all_matching = implementation_defined;
 
 
 
@@ -28291,7 +28356,7 @@ If used with v4_mapped, return all matching IPv6 and IPv4 addresses.
 
 Determine the canonical name of the host specified in the query. 
 
-  static const int canonical_name;
+  static const int canonical_name = implementation_defined;
 
 
 
@@ -28303,7 +28368,7 @@ Determine the canonical name of the host specified in the query.
 
 Host name should be treated as a numeric string defining an IPv4 or IPv6 address and no name resolution should be attempted. 
 
-  static const int numeric_host;
+  static const int numeric_host = implementation_defined;
 
 
 
@@ -28315,7 +28380,7 @@ Host name should be treated as a numeric string defining an IPv4 or IPv6 address
 
 Service name should be treated as a numeric string defining a port number and no name resolution should be attempted. 
 
-  static const int numeric_service;
+  static const int numeric_service = implementation_defined;
 
 
 
@@ -28327,7 +28392,7 @@ Service name should be treated as a numeric string defining a port number and no
 
 Indicate that returned endpoint is intended for use as a locally bound socket endpoint. 
 
-  static const int passive;
+  static const int passive = implementation_defined;
 
 
 
@@ -28339,7 +28404,7 @@ Indicate that returned endpoint is intended for use as a locally bound socket en
 
 If the query protocol family is specified as IPv6, return IPv4-mapped IPv6 addresses on finding no IPv6 addresses. 
 
-  static const int v4_mapped;
+  static const int v4_mapped = implementation_defined;
 
 
 
@@ -33256,7 +33321,7 @@ Getting the current option value:
 
 The maximum length of the queue of pending incoming connections. 
 
-  static const int max_connections;
+  static const int max_connections = implementation_defined;
 
 
 
@@ -33268,7 +33333,7 @@ The maximum length of the queue of pending incoming connections.
 
 Specify that the data should not be subject to routing. 
 
-  static const int message_do_not_route;
+  static const int message_do_not_route = implementation_defined;
 
 
 
@@ -33293,7 +33358,7 @@ Bitmask type for flags that can be passed to send and receive operations.
 
 Process out-of-band data. 
 
-  static const int message_out_of_band;
+  static const int message_out_of_band = implementation_defined;
 
 
 
@@ -33305,7 +33370,7 @@ Process out-of-band data.
 
 Peek at incoming data without removing it from the input queue. 
 
-  static const int message_peek;
+  static const int message_peek = implementation_defined;
 
 
 
@@ -33862,7 +33927,7 @@ Constructor.
 
 Implement various bug workarounds. 
 
-  static const int default_workarounds;
+  static const int default_workarounds = implementation_defined;
 
 
 
@@ -34091,7 +34156,7 @@ Different methods supported by a context.
 
 Disable SSL v2. 
 
-  static const int no_sslv2;
+  static const int no_sslv2 = implementation_defined;
 
 
 
@@ -34106,7 +34171,7 @@ Disable SSL v2.
 
 Disable SSL v3. 
 
-  static const int no_sslv3;
+  static const int no_sslv3 = implementation_defined;
 
 
 
@@ -34121,7 +34186,7 @@ Disable SSL v3.
 
 Disable TLS v1. 
 
-  static const int no_tlsv1;
+  static const int no_tlsv1 = implementation_defined;
 
 
 
@@ -34450,7 +34515,7 @@ This function may be used to configure the peer verification mode used by the co
 
 Always create a new key when using tmp_dh parameters. 
 
-  static const int single_dh_use;
+  static const int single_dh_use = implementation_defined;
 
 
 
@@ -34874,7 +34939,7 @@ This function is used to load Diffie-Hellman parameters into the context from a 
 
 Do not request client certificate on renegotiation. Ignored unless verify_peer is set. 
 
-  static const int verify_client_once;
+  static const int verify_client_once = implementation_defined;
 
 
 
@@ -34889,7 +34954,7 @@ Do not request client certificate on renegotiation. Ignored unless verify_peer i
 
 Fail verification if the peer has no certificate. Ignored unless verify_peer is set. 
 
-  static const int verify_fail_if_no_peer_cert;
+  static const int verify_fail_if_no_peer_cert = implementation_defined;
 
 
 
@@ -34920,7 +34985,7 @@ Bitmask type for peer verification.
 
 No verification. 
 
-  static const int verify_none;
+  static const int verify_none = implementation_defined;
 
 
 
@@ -34935,7 +35000,7 @@ No verification.
 
 Verify the peer. 
 
-  static const int verify_peer;
+  static const int verify_peer = implementation_defined;
 
 
 
@@ -35251,7 +35316,7 @@ The context_base class is used as a base for the basic_context class template so
 
 Implement various bug workarounds. 
 
-  static const int default_workarounds;
+  static const int default_workarounds = implementation_defined;
 
 
 
@@ -35367,7 +35432,7 @@ Different methods supported by a context.
 
 Disable SSL v2. 
 
-  static const int no_sslv2;
+  static const int no_sslv2 = implementation_defined;
 
 
 
@@ -35379,7 +35444,7 @@ Disable SSL v2.
 
 Disable SSL v3. 
 
-  static const int no_sslv3;
+  static const int no_sslv3 = implementation_defined;
 
 
 
@@ -35391,7 +35456,7 @@ Disable SSL v3.
 
 Disable TLS v1. 
 
-  static const int no_tlsv1;
+  static const int no_tlsv1 = implementation_defined;
 
 
 
@@ -35443,7 +35508,7 @@ Purpose of PEM password.
 
 Always create a new key when using tmp_dh parameters. 
 
-  static const int single_dh_use;
+  static const int single_dh_use = implementation_defined;
 
 
 
@@ -35455,7 +35520,7 @@ Always create a new key when using tmp_dh parameters.
 
 Do not request client certificate on renegotiation. Ignored unless verify_peer is set. 
 
-  static const int verify_client_once;
+  static const int verify_client_once = implementation_defined;
 
 
 
@@ -35467,7 +35532,7 @@ Do not request client certificate on renegotiation. Ignored unless verify_peer i
 
 Fail verification if the peer has no certificate. Ignored unless verify_peer is set. 
 
-  static const int verify_fail_if_no_peer_cert;
+  static const int verify_fail_if_no_peer_cert = implementation_defined;
 
 
 
@@ -35492,7 +35557,7 @@ Bitmask type for peer verification.
 
 No verification. 
 
-  static const int verify_none;
+  static const int verify_none = implementation_defined;
 
 
 
@@ -35504,7 +35569,7 @@ No verification.
 
 Verify the peer. 
 
-  static const int verify_peer;
+  static const int verify_peer = implementation_defined;
 
 
 
@@ -38992,12 +39057,12 @@ The number of bytes written. If an error occurs, returns the total number of byt
 
 [endsect]
 
-[section:error__addrinfo_errors__gt_ error::addrinfo_errors >]
+[section:is_error_code_enum_lt__addrinfo_errors__gt_ boost::system::is_error_code_enum< boost::asio::error::addrinfo_errors >]
 
 
 
   template<>
-  struct is_error_code_enum< boost::asio::error::addrinfo_errors >
+  struct boost::system::is_error_code_enum< boost::asio::error::addrinfo_errors >
 
 
 [heading Data Members]
@@ -39005,33 +39070,33 @@ The number of bytes written. If an error occurs, returns the total number of byt
   [[Name][Description]]
 
   [
-    [[link boost_asio.reference.error__addrinfo_errors__gt_.value [*value]]]
+    [[link boost_asio.reference.is_error_code_enum_lt__addrinfo_errors__gt_.value [*value]]]
     []
   ]
 
 ]
 
 
-[section:value error::addrinfo_errors >::value]
+[section:value boost::system::is_error_code_enum< boost::asio::error::addrinfo_errors >::value]
 
 
 
-  static const bool value;
-
-
-
-[endsect]
+  static const bool value = true;
 
 
 
 [endsect]
 
-[section:error__basic_errors__gt_ error::basic_errors >]
+
+
+[endsect]
+
+[section:is_error_code_enum_lt__basic_errors__gt_ boost::system::is_error_code_enum< boost::asio::error::basic_errors >]
 
 
 
   template<>
-  struct is_error_code_enum< boost::asio::error::basic_errors >
+  struct boost::system::is_error_code_enum< boost::asio::error::basic_errors >
 
 
 [heading Data Members]
@@ -39039,33 +39104,33 @@ The number of bytes written. If an error occurs, returns the total number of byt
   [[Name][Description]]
 
   [
-    [[link boost_asio.reference.error__basic_errors__gt_.value [*value]]]
+    [[link boost_asio.reference.is_error_code_enum_lt__basic_errors__gt_.value [*value]]]
     []
   ]
 
 ]
 
 
-[section:value error::basic_errors >::value]
+[section:value boost::system::is_error_code_enum< boost::asio::error::basic_errors >::value]
 
 
 
-  static const bool value;
-
-
-
-[endsect]
+  static const bool value = true;
 
 
 
 [endsect]
 
-[section:error__misc_errors__gt_ error::misc_errors >]
+
+
+[endsect]
+
+[section:is_error_code_enum_lt__misc_errors__gt_ boost::system::is_error_code_enum< boost::asio::error::misc_errors >]
 
 
 
   template<>
-  struct is_error_code_enum< boost::asio::error::misc_errors >
+  struct boost::system::is_error_code_enum< boost::asio::error::misc_errors >
 
 
 [heading Data Members]
@@ -39073,33 +39138,33 @@ The number of bytes written. If an error occurs, returns the total number of byt
   [[Name][Description]]
 
   [
-    [[link boost_asio.reference.error__misc_errors__gt_.value [*value]]]
+    [[link boost_asio.reference.is_error_code_enum_lt__misc_errors__gt_.value [*value]]]
     []
   ]
 
 ]
 
 
-[section:value error::misc_errors >::value]
+[section:value boost::system::is_error_code_enum< boost::asio::error::misc_errors >::value]
 
 
 
-  static const bool value;
-
-
-
-[endsect]
+  static const bool value = true;
 
 
 
 [endsect]
 
-[section:error__netdb_errors__gt_ error::netdb_errors >]
+
+
+[endsect]
+
+[section:is_error_code_enum_lt__netdb_errors__gt_ boost::system::is_error_code_enum< boost::asio::error::netdb_errors >]
 
 
 
   template<>
-  struct is_error_code_enum< boost::asio::error::netdb_errors >
+  struct boost::system::is_error_code_enum< boost::asio::error::netdb_errors >
 
 
 [heading Data Members]
@@ -39107,33 +39172,33 @@ The number of bytes written. If an error occurs, returns the total number of byt
   [[Name][Description]]
 
   [
-    [[link boost_asio.reference.error__netdb_errors__gt_.value [*value]]]
+    [[link boost_asio.reference.is_error_code_enum_lt__netdb_errors__gt_.value [*value]]]
     []
   ]
 
 ]
 
 
-[section:value error::netdb_errors >::value]
+[section:value boost::system::is_error_code_enum< boost::asio::error::netdb_errors >::value]
 
 
 
-  static const bool value;
-
-
-
-[endsect]
+  static const bool value = true;
 
 
 
 [endsect]
 
-[section:error__ssl_errors__gt_ error::ssl_errors >]
+
+
+[endsect]
+
+[section:is_error_code_enum_lt__ssl_errors__gt_ boost::system::is_error_code_enum< boost::asio::error::ssl_errors >]
 
 
 
   template<>
-  struct is_error_code_enum< boost::asio::error::ssl_errors >
+  struct boost::system::is_error_code_enum< boost::asio::error::ssl_errors >
 
 
 [heading Data Members]
@@ -39141,18 +39206,18 @@ The number of bytes written. If an error occurs, returns the total number of byt
   [[Name][Description]]
 
   [
-    [[link boost_asio.reference.error__ssl_errors__gt_.value [*value]]]
+    [[link boost_asio.reference.is_error_code_enum_lt__ssl_errors__gt_.value [*value]]]
     []
   ]
 
 ]
 
 
-[section:value error::ssl_errors >::value]
+[section:value boost::system::is_error_code_enum< boost::asio::error::ssl_errors >::value]
 
 
 
-  static const bool value;
+  static const bool value = true;
 
 
 
