@@ -17,7 +17,6 @@
     [authors [Kohlhoff, Christopher]]
     [category template]
     [category generic]
-    [last-revision $Date$]
 ]
 
 [template mdash[] '''&mdash; ''']
