@@ -103,6 +103,9 @@
 <xsl:template name="strip-asio-ns">
   <xsl:param name="name"/>
   <xsl:choose>
+    <xsl:when test="contains($name, 'boost::system::is_error_code_enum')">
+      <xsl:value-of select="$name"/>
+    </xsl:when>
     <xsl:when test="contains($name, 'asio::')">
       <xsl:value-of select="substring-after($name, 'asio::')"/>
     </xsl:when>
@@ -116,6 +119,9 @@
 <xsl:template name="strip-ns">
   <xsl:param name="name"/>
   <xsl:choose>
+    <xsl:when test="contains($name, 'boost::system::is_error_code_enum')">
+      <xsl:value-of select="$name"/>
+    </xsl:when>
     <xsl:when test="contains($name, '::') and contains($name, '&lt;')">
       <xsl:choose>
         <xsl:when test="string-length(substring-before($name, '::')) &lt; string-length(substring-before($name, '&lt;'))">
@@ -143,6 +149,18 @@
 <xsl:template name="make-id">
   <xsl:param name="name"/>
   <xsl:choose>
+    <xsl:when test="contains($name, 'boost::system::')">
+      <xsl:call-template name="make-id">
+        <xsl:with-param name="name"
+         select="substring-after($name, 'boost::system::')"/>
+      </xsl:call-template>
+    </xsl:when>
+    <xsl:when test="contains($name, 'boost::asio::error::')">
+      <xsl:call-template name="make-id">
+        <xsl:with-param name="name"
+         select="concat(substring-before($name, 'boost::asio::error::'), substring-after($name, 'boost::asio::error::'))"/>
+      </xsl:call-template>
+    </xsl:when>
     <xsl:when test="contains($name, '::')">
       <xsl:call-template name="make-id">
         <xsl:with-param name="name"
@@ -793,7 +811,9 @@
 <xsl:template name="variable">
 <xsl:text>
   </xsl:text><xsl:if test="@static='yes'">static </xsl:if><xsl:value-of
- select="type"/><xsl:text> </xsl:text><xsl:value-of select="name"/>;
+ select="type"/><xsl:text> </xsl:text><xsl:value-of select="name"/>
+ <xsl:if test="count(initializer) = 1"><xsl:text> =</xsl:text>
+ <xsl:value-of select="initializer"/></xsl:if>;
 </xsl:template>
 
 
