@@ -45,16 +45,15 @@ namespace ssl {
  * @e Shared @e objects: Unsafe.
  *
  * @par Example
- * To use the SSL stream template with a stream_socket, you would write:
+ * To use the SSL stream template with an ip::tcp::socket, you would write:
  * @code
  * boost::asio::io_service io_service;
  * boost::asio::ssl::context context(io_service, boost::asio::ssl::context::sslv23);
- * boost::asio::ssl::stream<boost::asio::stream_socket> sock(io_service, context);
+ * boost::asio::ssl::stream<boost::asio::ip::tcp::socket> sock(io_service, context);
  * @endcode
  *
  * @par Concepts:
- * Async_Object, Async_Read_Stream, Async_Write_Stream, Error_Source, Stream,
- * Sync_Read_Stream, Sync_Write_Stream.
+ * AsyncReadStream, AsyncWriteStream, Stream, SyncRead_Stream, SyncWriteStream.
  */
 template <typename Stream, typename Service = stream_service>
 class stream
