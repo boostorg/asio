@@ -36133,11 +36133,11 @@ The stream class template provides asynchronous and blocking stream-oriented fun
 
 [heading Example]
   
-To use the SSL stream template with a stream\_socket, you would write: 
+To use the SSL stream template with an ip::tcp::socket, you would write: 
 
    boost::asio::io_service io_service;
    boost::asio::ssl::context context(io_service, boost::asio::ssl::context::sslv23);
-   boost::asio::ssl::stream<boost::asio::stream_socket> sock(io_service, context);
+   boost::asio::ssl::stream<boost::asio::ip::tcp::socket> sock(io_service, context);
 
 
 
