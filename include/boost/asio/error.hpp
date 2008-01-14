@@ -71,6 +71,11 @@ enum basic_errors
   /// Operation already in progress.
   already_started = BOOST_ASIO_SOCKET_ERROR(EALREADY),
 
+  /// Broken pipe.
+  broken_pipe = BOOST_ASIO_WIN_OR_POSIX(
+      BOOST_ASIO_NATIVE_ERROR(ERROR_BROKEN_PIPE),
+      BOOST_ASIO_NATIVE_ERROR(EPIPE)),
+
   /// A connection has been aborted.
   connection_aborted = BOOST_ASIO_SOCKET_ERROR(ECONNABORTED),
 
