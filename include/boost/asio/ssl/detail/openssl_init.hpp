@@ -20,10 +20,12 @@
 
 #include <boost/asio/detail/push_options.hpp>
 #include <vector>
+#include <boost/assert.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/asio/detail/pop_options.hpp>
 
 #include <boost/asio/detail/mutex.hpp>
+#include <boost/asio/detail/tss_ptr.hpp>
 #include <boost/asio/ssl/detail/openssl_types.hpp>
 
 namespace boost {
@@ -52,6 +54,7 @@ private:
         for (size_t i = 0; i < mutexes_.size(); ++i)
           mutexes_[i].reset(new boost::asio::detail::mutex);
         ::CRYPTO_set_locking_callback(&do_init::openssl_locking_func);
+        ::CRYPTO_set_id_callback(&do_init::openssl_id_func);
       }
     }
 
@@ -59,6 +62,7 @@ private:
     {
       if (Do_Init)
       {
+        ::CRYPTO_set_id_callback(0);
         ::CRYPTO_set_locking_callback(0);
         ::ERR_free_strings();
         ::ERR_remove_state(0);
@@ -81,6 +85,15 @@ private:
     }
 
   private:
+    static unsigned long openssl_id_func()
+    {
+      void* id = instance()->thread_id_;
+      if (id == 0)
+        instance()->thread_id_ = id = &id; // Ugh.
+      BOOST_ASSERT(sizeof(unsigned long) >= sizeof(void*));
+      return reinterpret_cast<unsigned long>(id);
+    }
+
     static void openssl_locking_func(int mode, int n, 
       const char *file, int line)
     {
@@ -92,6 +105,9 @@ private:
 
     // Mutexes to be used in locking callbacks.
     std::vector<boost::shared_ptr<boost::asio::detail::mutex> > mutexes_;
+
+    // The thread identifiers to be used by openssl.
+    boost::asio::detail::tss_ptr<void> thread_id_;
   };
 
 public:

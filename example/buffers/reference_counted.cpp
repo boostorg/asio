@@ -27,7 +27,7 @@ public:
   {
   }
 
-  // Implement the Const_Buffers concept.
+  // Implement the ConstBufferSequence requirements.
   typedef boost::asio::const_buffer value_type;
   typedef const boost::asio::const_buffer* const_iterator;
   const boost::asio::const_buffer* begin() const { return &buffer_; }
