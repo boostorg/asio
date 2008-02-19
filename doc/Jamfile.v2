@@ -7,14 +7,17 @@
 
 using quickbook ;
 
-xml asio
+########################################################################
+# Standalone HTML documentation
+
+xml standalone_doc
   :
     asio.qbk
   ;
 
 boostbook standalone
   :
-    asio
+    standalone_doc
   :
     <xsl:param>boost.root=../../../..
     <xsl:param>boost.libraries=../../../../libs/libraries.htm
@@ -28,9 +31,34 @@ boostbook standalone
     <xsl:param>generate.toc="chapter nop section nop"
   ;
 
-
 install html
   :
     /boost//doc/html/boostbook.css
     design/proactor.png
   ;
+
+########################################################################
+# HTML documentation for $(BOOST_ROOT)/doc/html
+
+xml asio_doc
+  :
+    asio.qbk
+  ;
+
+explicit asio_doc ;
+
+boostbook asio
+  :
+    asio_doc
+  :
+    <xsl:param>chapter.autolabel=0
+    <xsl:param>chunk.section.depth=8
+    <xsl:param>chunk.first.sections=1
+    <xsl:param>toc.section.depth=2
+    <xsl:param>toc.max.depth=1
+    <xsl:param>generate.section.toc.level=1
+    <xsl:param>generate.toc="chapter nop section nop"
+    <xsl:param>root.filename=boost_asio
+  ;
+
+explicit asio ;
