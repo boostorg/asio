@@ -15,6 +15,20 @@ xml standalone_doc
     asio.qbk
   ;
 
+install css
+  :
+    /boost//doc/html/boostbook.css
+  :
+    <location>html
+  ;
+
+install images
+  :
+    design/proactor.png
+  :
+    <location>html/boost_asio
+  ;
+
 boostbook standalone
   :
     standalone_doc
@@ -31,12 +45,6 @@ boostbook standalone
     <xsl:param>generate.toc="chapter nop section nop"
   ;
 
-install html
-  :
-    /boost//doc/html/boostbook.css
-    design/proactor.png
-  ;
-
 ########################################################################
 # HTML documentation for $(BOOST_ROOT)/doc/html
 
@@ -46,6 +54,15 @@ xml asio_doc
   ;
 
 explicit asio_doc ;
+
+install asio_doc_images
+  :
+    design/proactor.png
+  :
+    <location>$(BOOST_ROOT)/doc/html/boost_asio
+  ;
+
+explicit asio_doc_images ;
 
 boostbook asio
   :
@@ -59,6 +76,8 @@ boostbook asio
     <xsl:param>generate.section.toc.level=1
     <xsl:param>generate.toc="chapter nop section nop"
     <xsl:param>root.filename=boost_asio
+  :
+    <dependency>asio_doc_images
   ;
 
 explicit asio ;

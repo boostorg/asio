@@ -18,7 +18,7 @@ synchronous-only or Reactor approach, are outlined below.
 Let us examine how the Proactor design pattern is implemented in Boost.Asio,
 without reference to platform-specific details.
 
-[$proactor.png]
+[$boost_asio/proactor.png]
 
 [*Proactor design pattern (adapted from \[POSA2\])]
 
