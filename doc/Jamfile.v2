@@ -29,6 +29,15 @@ install images
     <location>html/boost_asio
   ;
 
+local example-names = allocation buffers chat echo http/client http/server
+  http/server2 http/server3 invocation iostreams multicast serialization
+  services socks4 ssl timeouts timers ;
+
+for local l in $(example-names)
+{
+  install ex_$(l) : [ glob ../example/$(l)/*.*pp ] : <location>html/boost_asio/example/$(l) ;
+}
+
 boostbook standalone
   :
     standalone_doc
@@ -64,6 +73,16 @@ install asio_doc_images
 
 explicit asio_doc_images ;
 
+for local l in $(example-names)
+{
+  install asio_ex_$(l) : [ glob ../example/$(l)/*.*pp ] : <location>$(BOOST_ROOT)/doc/html/boost_asio/example/$(l) ;
+  explicit asio_ex_$(l) ;
+}
+
+alias asio_examples : asio_ex_$(example-names) ;
+
+explicit asio_examples ;
+
 boostbook asio
   :
     asio_doc
@@ -78,6 +97,7 @@ boostbook asio
     <xsl:param>root.filename=boost_asio
   :
     <dependency>asio_doc_images
+    <dependency>asio_examples
   ;
 
 explicit asio ;
