@@ -33,5 +33,6 @@ exe server
     <os>NT,<toolset>gcc:<library>ws2_32
     <os>NT,<toolset>gcc:<library>mswsock
     <os>NT,<toolset>gcc-cygwin:<define>__USE_W32_SOCKETS
+    <os>HPUX,<toolset>gcc:<define>_XOPEN_SOURCE_EXTENDED
     <os>HPUX:<library>ipv6
   ;

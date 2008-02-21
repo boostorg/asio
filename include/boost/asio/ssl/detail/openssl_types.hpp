@@ -17,6 +17,8 @@
 
 #include <boost/asio/detail/push_options.hpp>
 
+#include <boost/asio/detail/socket_types.hpp>
+
 #include <boost/asio/detail/push_options.hpp>
 #include <openssl/conf.h>
 #include <openssl/ssl.h>
