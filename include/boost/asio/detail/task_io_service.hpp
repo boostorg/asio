@@ -162,7 +162,7 @@ public:
   void dispatch(Handler handler)
   {
     if (call_stack<task_io_service>::contains(this))
-      asio_handler_invoke_helpers::invoke(handler, &handler);
+      boost_asio_handler_invoke_helpers::invoke(handler, &handler);
     else
       post(handler);
   }

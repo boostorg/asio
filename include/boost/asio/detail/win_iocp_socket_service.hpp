@@ -765,7 +765,7 @@ public:
       ptr.reset();
 
       // Call the handler.
-      asio_handler_invoke_helpers::invoke(
+      boost_asio_handler_invoke_helpers::invoke(
           detail::bind_handler(handler, ec, bytes_transferred), &handler);
     }
 
@@ -958,7 +958,7 @@ public:
       ptr.reset();
 
       // Call the handler.
-      asio_handler_invoke_helpers::invoke(
+      boost_asio_handler_invoke_helpers::invoke(
           detail::bind_handler(handler, ec, bytes_transferred), &handler);
     }
 
@@ -1170,7 +1170,7 @@ public:
       ptr.reset();
 
       // Call the handler.
-      asio_handler_invoke_helpers::invoke(
+      boost_asio_handler_invoke_helpers::invoke(
           detail::bind_handler(handler, ec, bytes_transferred), &handler);
     }
 
@@ -1390,7 +1390,7 @@ public:
       ptr.reset();
 
       // Call the handler.
-      asio_handler_invoke_helpers::invoke(
+      boost_asio_handler_invoke_helpers::invoke(
           detail::bind_handler(handler, ec, bytes_transferred), &handler);
     }
 
@@ -1704,7 +1704,7 @@ public:
       // Call the handler.
       boost::system::error_code ec(last_error,
           boost::asio::error::get_system_category());
-      asio_handler_invoke_helpers::invoke(
+      boost_asio_handler_invoke_helpers::invoke(
           detail::bind_handler(handler, ec), &handler);
     }
 

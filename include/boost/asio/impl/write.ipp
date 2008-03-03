@@ -172,7 +172,7 @@ namespace detail
       write_handler<AsyncWriteStream, ConstBufferSequence,
         CompletionCondition, WriteHandler>* this_handler)
   {
-    asio_handler_invoke_helpers::invoke(
+    boost_asio_handler_invoke_helpers::invoke(
         function, &this_handler->handler_);
   }
 } // namespace detail
@@ -250,7 +250,7 @@ namespace detail
       write_streambuf_handler<AsyncWriteStream,
         Allocator, WriteHandler>* this_handler)
   {
-    asio_handler_invoke_helpers::invoke(
+    boost_asio_handler_invoke_helpers::invoke(
         function, &this_handler->handler_);
   }
 } // namespace detail

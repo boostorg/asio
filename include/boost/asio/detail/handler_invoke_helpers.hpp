@@ -24,9 +24,9 @@
 #include <boost/asio/handler_invoke_hook.hpp>
 
 // Calls to asio_handler_invoke must be made from a namespace that does not
-// contain overloads of this function. The asio_handler_invoke_helpers
+// contain overloads of this function. The boost_asio_handler_invoke_helpers
 // namespace is defined here for that purpose.
-namespace asio_handler_invoke_helpers {
+namespace boost_asio_handler_invoke_helpers {
 
 template <typename Function, typename Context>
 inline void invoke(const Function& function, Context* context)
@@ -40,7 +40,7 @@ inline void invoke(const Function& function, Context* context)
 #endif
 }
 
-} // namespace asio_handler_invoke_helpers
+} // namespace boost_asio_handler_invoke_helpers
 
 #include <boost/asio/detail/pop_options.hpp>
 

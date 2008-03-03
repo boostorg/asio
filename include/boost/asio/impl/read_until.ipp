@@ -358,7 +358,7 @@ namespace detail
       read_until_delim_handler<AsyncReadStream,
         Allocator, ReadHandler>* this_handler)
   {
-    asio_handler_invoke_helpers::invoke(
+    boost_asio_handler_invoke_helpers::invoke(
         function, &this_handler->handler_);
   }
 } // namespace detail
@@ -515,7 +515,7 @@ namespace detail
       read_until_delim_string_handler<AsyncReadStream,
         Allocator, ReadHandler>* this_handler)
   {
-    asio_handler_invoke_helpers::invoke(
+    boost_asio_handler_invoke_helpers::invoke(
         function, &this_handler->handler_);
   }
 } // namespace detail
@@ -689,7 +689,7 @@ namespace detail
       read_until_expr_handler<AsyncReadStream,
         Allocator, ReadHandler>* this_handler)
   {
-    asio_handler_invoke_helpers::invoke(
+    boost_asio_handler_invoke_helpers::invoke(
         function, &this_handler->handler_);
   }
 } // namespace detail

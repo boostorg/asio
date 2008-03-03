@@ -186,7 +186,7 @@ namespace detail
       read_handler<AsyncReadStream, MutableBufferSequence,
         CompletionCondition, ReadHandler>* this_handler)
   {
-    asio_handler_invoke_helpers::invoke(
+    boost_asio_handler_invoke_helpers::invoke(
         function, &this_handler->handler_);
   }
 } // namespace detail
@@ -282,7 +282,7 @@ namespace detail
       read_streambuf_handler<AsyncReadStream, Allocator,
         CompletionCondition, ReadHandler>* this_handler)
   {
-    asio_handler_invoke_helpers::invoke(
+    boost_asio_handler_invoke_helpers::invoke(
         function, &this_handler->handler_);
   }
 } // namespace detail
