@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2003-2007 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+# Copyright (c) 2003-2008 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 #
 # Distributed under the Boost Software License, Version 1.0. (See accompanying
 # file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -33,6 +33,7 @@ project
     <os>NT,<toolset>gcc:<library>ws2_32
     <os>NT,<toolset>gcc:<library>mswsock
     <os>NT,<toolset>gcc-cygwin:<define>__USE_W32_SOCKETS
+    <os>HPUX,<toolset>gcc:<define>_XOPEN_SOURCE_EXTENDED
     <os>HPUX:<library>ipv6
   ;
 
