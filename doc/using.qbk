@@ -1,5 +1,5 @@
 [/
- / Copyright (c) 2003-2007 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+ / Copyright (c) 2003-2008 Christopher M. Kohlhoff (chris at kohlhoff dot com)
  /
  / Distributed under the Boost Software License, Version 1.0. (See accompanying
  / file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -222,6 +222,37 @@ Boost.Asio.
       Determines the maximum number of arguments that may be passed to the 
       `basic_socket_iostream` class template's constructor and `connect` member
       function. Defaults to 5.
+    ]
+  ]
+  [
+    [`BOOST_ASIO_ENABLE_CANCELIO`]
+    [
+      Enables use of the `CancelIo` function on older versions of Windows. If
+      not enabled, calls to `cancel()` on a socket object will always fail with
+      `asio::error::operation_not_supported` when run on Windows XP, Windows
+      Server 2003, and earlier versions of Windows. When running on Windows
+      Vista, Windows Server 2008, and later, the `CancelIoEx` function is
+      always used.
+
+      The `CancelIo` function has two issues that should be considered before
+      enabling its use:
+
+      * It will only cancel asynchronous operations that were initiated in the
+        current thread.
+
+      * It can appear to complete without error, but the request
+        to cancel the unfinished operations may be silently ignored by the
+        operating system. Whether it works or not seems to depend on the
+        drivers that are installed.
+
+      For portable cancellation, consider using one of the following
+      alternatives:
+
+      * Disable asio's I/O completion port backend by defining
+        BOOST_ASIO_DISABLE_IOCP.
+
+      * Use the socket object's close() function to simultaneously
+        cancel the outstanding operations and close the socket.
     ]
   ]
 ]
