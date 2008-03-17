@@ -7,14 +7,40 @@
 
 using quickbook ;
 
-xml asio
+########################################################################
+# Standalone HTML documentation
+
+xml standalone_doc
   :
     asio.qbk
   ;
 
+install css
+  :
+    /boost//doc/html/boostbook.css
+  :
+    <location>html
+  ;
+
+install images
+  :
+    design/proactor.png
+  :
+    <location>html/boost_asio
+  ;
+
+local example-names = allocation buffers chat echo http/client http/server
+  http/server2 http/server3 invocation iostreams multicast serialization
+  services socks4 ssl timeouts timers ;
+
+for local l in $(example-names)
+{
+  install ex_$(l) : [ glob ../example/$(l)/*.*pp ] : <location>html/boost_asio/example/$(l) ;
+}
+
 boostbook standalone
   :
-    asio
+    standalone_doc
   :
     <xsl:param>boost.root=../../../..
     <xsl:param>boost.libraries=../../../../libs/libraries.htm
@@ -28,9 +54,50 @@ boostbook standalone
     <xsl:param>generate.toc="chapter nop section nop"
   ;
 
+########################################################################
+# HTML documentation for $(BOOST_ROOT)/doc/html
 
-install html
+xml asio_doc
   :
-    /boost//doc/html/boostbook.css
-    design/proactor.png
+    asio.qbk
   ;
+
+explicit asio_doc ;
+
+install asio_doc_images
+  :
+    design/proactor.png
+  :
+    <location>$(BOOST_ROOT)/doc/html/boost_asio
+  ;
+
+explicit asio_doc_images ;
+
+for local l in $(example-names)
+{
+  install asio_ex_$(l) : [ glob ../example/$(l)/*.*pp ] : <location>$(BOOST_ROOT)/doc/html/boost_asio/example/$(l) ;
+  explicit asio_ex_$(l) ;
+}
+
+alias asio_examples : asio_ex_$(example-names) ;
+
+explicit asio_examples ;
+
+boostbook asio
+  :
+    asio_doc
+  :
+    <xsl:param>chapter.autolabel=0
+    <xsl:param>chunk.section.depth=8
+    <xsl:param>chunk.first.sections=1
+    <xsl:param>toc.section.depth=2
+    <xsl:param>toc.max.depth=1
+    <xsl:param>generate.section.toc.level=1
+    <xsl:param>generate.toc="chapter nop section nop"
+    <xsl:param>root.filename=boost_asio
+  :
+    <dependency>asio_doc_images
+    <dependency>asio_examples
+  ;
+
+explicit asio ;

@@ -393,7 +393,7 @@ private:
             &timer_thread_, this_thread_id, 0) == 0);
 
       // Calculate timeout for GetQueuedCompletionStatus call.
-      DWORD timeout = INFINITE;
+      DWORD timeout = max_timeout;
       if (dispatching_timers)
       {
         boost::asio::detail::mutex::scoped_lock lock(timer_mutex_);
