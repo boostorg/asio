@@ -58,7 +58,16 @@
 #include <boost/asio/ip/v6_only.hpp>
 #include <boost/asio/is_read_buffered.hpp>
 #include <boost/asio/is_write_buffered.hpp>
+#include <boost/asio/local/basic_endpoint.hpp>
+#include <boost/asio/local/connect_pair.hpp>
+#include <boost/asio/local/datagram_protocol.hpp>
+#include <boost/asio/local/stream_protocol.hpp>
 #include <boost/asio/placeholders.hpp>
+#include <boost/asio/posix/basic_descriptor.hpp>
+#include <boost/asio/posix/basic_stream_descriptor.hpp>
+#include <boost/asio/posix/descriptor_base.hpp>
+#include <boost/asio/posix/stream_descriptor.hpp>
+#include <boost/asio/posix/stream_descriptor_service.hpp>
 #include <boost/asio/read.hpp>
 #include <boost/asio/read_until.hpp>
 #include <boost/asio/socket_acceptor_service.hpp>
@@ -68,6 +77,10 @@
 #include <boost/asio/streambuf.hpp>
 #include <boost/asio/time_traits.hpp>
 #include <boost/asio/version.hpp>
+#include <boost/asio/windows/basic_handle.hpp>
+#include <boost/asio/windows/basic_stream_handle.hpp>
+#include <boost/asio/windows/stream_handle.hpp>
+#include <boost/asio/windows/stream_handle_service.hpp>
 #include <boost/asio/write.hpp>
 
 #endif // BOOST_ASIO_HPP
