@@ -150,9 +150,20 @@ public:
   }
 
   // Register a handle with the IO completion port.
-  void register_handle(HANDLE handle)
+  boost::system::error_code register_handle(
+      HANDLE handle, boost::system::error_code& ec)
   {
-    ::CreateIoCompletionPort(handle, iocp_.handle, 0, 0);
+    if (::CreateIoCompletionPort(handle, iocp_.handle, 0, 0) == 0)
+    {
+      DWORD last_error = ::GetLastError();
+      ec = boost::system::error_code(last_error,
+          boost::asio::error::get_system_category());
+    }
+    else
+    {
+      ec = boost::system::error_code();
+    }
+    return ec;
   }
 
   // Run the event loop until stopped or no more work.

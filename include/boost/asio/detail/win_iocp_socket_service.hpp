@@ -253,7 +253,8 @@ public:
       return ec;
 
     HANDLE sock_as_handle = reinterpret_cast<HANDLE>(sock.get());
-    iocp_service_.register_handle(sock_as_handle);
+    if (iocp_service_.register_handle(sock_as_handle, ec))
+      return ec;
 
     impl.socket_ = sock.release();
     impl.flags_ = 0;
@@ -274,7 +275,8 @@ public:
       return ec;
     }
 
-    iocp_service_.register_handle(native_socket.as_handle());
+    if (iocp_service_.register_handle(native_socket.as_handle(), ec))
+      return ec;
 
     impl.socket_ = native_socket;
     impl.flags_ = 0;

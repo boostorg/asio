@@ -86,5 +86,9 @@ test-suite "asio"
   [ run strand.cpp <template>asio_unit_test ]
   [ run stream_socket_service.cpp <template>asio_unit_test ]
   [ run time_traits.cpp <template>asio_unit_test ]
+  [ run windows/basic_handle.cpp <template>asio_unit_test ]
+  [ run windows/basic_stream_handle.cpp <template>asio_unit_test ]
+  [ run windows/stream_handle.cpp <template>asio_unit_test ]
+  [ run windows/stream_handle_service.cpp <template>asio_unit_test ]
   [ run write.cpp <template>asio_unit_test ]
   ;
