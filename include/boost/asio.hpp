@@ -58,6 +58,10 @@
 #include <boost/asio/ip/v6_only.hpp>
 #include <boost/asio/is_read_buffered.hpp>
 #include <boost/asio/is_write_buffered.hpp>
+#include <boost/asio/local/basic_endpoint.hpp>
+#include <boost/asio/local/connect_pair.hpp>
+#include <boost/asio/local/datagram_protocol.hpp>
+#include <boost/asio/local/stream_protocol.hpp>
 #include <boost/asio/placeholders.hpp>
 #include <boost/asio/read.hpp>
 #include <boost/asio/read_until.hpp>
