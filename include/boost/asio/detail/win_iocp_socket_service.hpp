@@ -1768,7 +1768,6 @@ public:
 
     for (;;)
     {
-      boost::system::error_code ec;
       socket_holder new_socket;
       std::size_t addr_len = 0;
       if (peer_endpoint)
