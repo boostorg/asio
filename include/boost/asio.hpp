@@ -63,6 +63,11 @@
 #include <boost/asio/local/datagram_protocol.hpp>
 #include <boost/asio/local/stream_protocol.hpp>
 #include <boost/asio/placeholders.hpp>
+#include <boost/asio/posix/basic_descriptor.hpp>
+#include <boost/asio/posix/basic_stream_descriptor.hpp>
+#include <boost/asio/posix/descriptor_base.hpp>
+#include <boost/asio/posix/stream_descriptor.hpp>
+#include <boost/asio/posix/stream_descriptor_service.hpp>
 #include <boost/asio/read.hpp>
 #include <boost/asio/read_until.hpp>
 #include <boost/asio/socket_acceptor_service.hpp>
