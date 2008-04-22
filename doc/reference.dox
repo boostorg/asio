@@ -76,7 +76,10 @@ INPUT                  = ./../../../boost/asio.hpp \
                          ./../../../boost/asio \
                          ./../../../boost/asio/impl \
                          ./../../../boost/asio/ip \
+                         ./../../../boost/asio/local \
+                         ./../../../boost/asio/posix \
                          ./../../../boost/asio/ssl \
+                         ./../../../boost/asio/windows \
                          ./noncopyable_dox.txt \
                          ./std_exception_dox.txt
 FILE_PATTERNS          = 
