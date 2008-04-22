@@ -180,6 +180,10 @@ inline int socketpair(int af, int type, int protocol,
     socket_type sv[2], boost::system::error_code& ec)
 {
 #if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
+  (void)(af);
+  (void)(type);
+  (void)(protocol);
+  (void)(sv);
   ec = boost::asio::error::operation_not_supported;
   return -1;
 #else
