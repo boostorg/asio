@@ -128,16 +128,18 @@ public:
   // Start a new read operation. The handler object will be invoked when the
   // given descriptor is ready to be read, or an error has occurred.
   template <typename Handler>
-  void start_read_op(socket_type descriptor, Handler handler)
+  void start_read_op(socket_type descriptor, Handler handler,
+      bool allow_speculative_read = true)
   {
     boost::asio::detail::mutex::scoped_lock lock(mutex_);
 
     if (shutdown_)
       return;
 
-    if (!read_op_queue_.has_operation(descriptor))
-      if (handler(boost::system::error_code()))
-        return;
+    if (allow_speculative_read)
+      if (!read_op_queue_.has_operation(descriptor))
+        if (handler(boost::system::error_code()))
+          return;
 
     if (read_op_queue_.enqueue_operation(descriptor, handler))
     {
@@ -154,16 +156,18 @@ public:
   // Start a new write operation. The handler object will be invoked when the
   // given descriptor is ready to be written, or an error has occurred.
   template <typename Handler>
-  void start_write_op(socket_type descriptor, Handler handler)
+  void start_write_op(socket_type descriptor, Handler handler,
+      bool allow_speculative_write = true)
   {
     boost::asio::detail::mutex::scoped_lock lock(mutex_);
 
     if (shutdown_)
       return;
 
-    if (!write_op_queue_.has_operation(descriptor))
-      if (handler(boost::system::error_code()))
-        return;
+    if (allow_speculative_write)
+      if (!write_op_queue_.has_operation(descriptor))
+        if (handler(boost::system::error_code()))
+          return;
 
     if (write_op_queue_.enqueue_operation(descriptor, handler))
     {

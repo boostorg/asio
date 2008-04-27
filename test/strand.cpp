@@ -163,7 +163,7 @@ void strand_test()
   BOOST_CHECK(exception_count == 2);
 }
 
-test_suite* init_unit_test_suite(int argc, char* argv[])
+test_suite* init_unit_test_suite(int, char*[])
 {
   test_suite* test = BOOST_TEST_SUITE("strand");
   test->add(BOOST_TEST_CASE(&strand_test));

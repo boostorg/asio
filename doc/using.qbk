@@ -255,6 +255,13 @@ Boost.Asio.
         cancel the outstanding operations and close the socket.
     ]
   ]
+  [
+    [`BOOST_ASIO_NO_TYPEID`]
+    [
+      Disables uses of the `typeid` operator in Boost.Asio. Defined
+      automatically if `BOOST_NO_TYPEID` is defined.
+    ]
+  ]
 ]
 
 [endsect]
