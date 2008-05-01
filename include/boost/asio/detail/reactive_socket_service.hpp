@@ -84,6 +84,9 @@ public:
 
     // The protocol associated with the socket.
     protocol_type protocol_;
+
+    // Per-descriptor data used by the reactor.
+    typename Reactor::per_descriptor_data reactor_data_;
   };
 
   // The maximum number of buffers to support in a single operation.
@@ -114,7 +117,7 @@ public:
   {
     if (impl.socket_ != invalid_socket)
     {
-      reactor_.close_descriptor(impl.socket_);
+      reactor_.close_descriptor(impl.socket_, impl.reactor_data_);
 
       if (impl.flags_ & implementation_type::internal_non_blocking)
       {
@@ -156,7 +159,7 @@ public:
     if (sock.get() == invalid_socket)
       return ec;
 
-    if (int err = reactor_.register_descriptor(sock.get()))
+    if (int err = reactor_.register_descriptor(sock.get(), impl.reactor_data_))
     {
       ec = boost::system::error_code(err,
           boost::asio::error::get_system_category());
@@ -181,7 +184,8 @@ public:
       return ec;
     }
 
-    if (int err = reactor_.register_descriptor(native_socket))
+    if (int err = reactor_.register_descriptor(
+          native_socket, impl.reactor_data_))
     {
       ec = boost::system::error_code(err,
           boost::asio::error::get_system_category());
@@ -207,7 +211,7 @@ public:
   {
     if (is_open(impl))
     {
-      reactor_.close_descriptor(impl.socket_);
+      reactor_.close_descriptor(impl.socket_, impl.reactor_data_);
 
       if (impl.flags_ & implementation_type::internal_non_blocking)
       {
@@ -243,7 +247,7 @@ public:
       return ec;
     }
 
-    reactor_.cancel_ops(impl.socket_);
+    reactor_.cancel_ops(impl.socket_, impl.reactor_data_);
     ec = boost::system::error_code();
     return ec;
   }
@@ -683,7 +687,7 @@ public:
         impl.flags_ |= implementation_type::internal_non_blocking;
       }
 
-      reactor_.start_write_op(impl.socket_,
+      reactor_.start_write_op(impl.socket_, impl.reactor_data_,
           send_handler<ConstBufferSequence, Handler>(
             impl.socket_, this->get_io_service(), buffers, flags, handler));
     }
@@ -722,7 +726,7 @@ public:
     }
     else
     {
-      reactor_.start_write_op(impl.socket_,
+      reactor_.start_write_op(impl.socket_, impl.reactor_data_,
           null_buffers_handler<Handler>(this->get_io_service(), handler),
           false);
     }
@@ -897,7 +901,7 @@ public:
         impl.flags_ |= implementation_type::internal_non_blocking;
       }
 
-      reactor_.start_write_op(impl.socket_,
+      reactor_.start_write_op(impl.socket_, impl.reactor_data_,
           send_to_handler<ConstBufferSequence, Handler>(
             impl.socket_, this->get_io_service(), buffers,
             destination, flags, handler));
@@ -916,7 +920,7 @@ public:
     }
     else
     {
-      reactor_.start_write_op(impl.socket_,
+      reactor_.start_write_op(impl.socket_, impl.reactor_data_,
           null_buffers_handler<Handler>(this->get_io_service(), handler),
           false);
     }
@@ -998,8 +1002,7 @@ public:
   }
 
   // Wait until data can be received without blocking.
-  size_t receive(implementation_type& impl,
-      const null_buffers& buffers,
+  size_t receive(implementation_type& impl, const null_buffers&,
       socket_base::message_flags, boost::system::error_code& ec)
   {
     if (!is_open(impl))
@@ -1127,13 +1130,13 @@ public:
 
       if (flags & socket_base::message_out_of_band)
       {
-        reactor_.start_except_op(impl.socket_,
+        reactor_.start_except_op(impl.socket_, impl.reactor_data_,
             receive_handler<MutableBufferSequence, Handler>(
               impl.socket_, this->get_io_service(), buffers, flags, handler));
       }
       else
       {
-        reactor_.start_read_op(impl.socket_,
+        reactor_.start_read_op(impl.socket_, impl.reactor_data_,
             receive_handler<MutableBufferSequence, Handler>(
               impl.socket_, this->get_io_service(), buffers, flags, handler));
       }
@@ -1152,12 +1155,12 @@ public:
     }
     else if (flags & socket_base::message_out_of_band)
     {
-      reactor_.start_except_op(impl.socket_,
+      reactor_.start_except_op(impl.socket_, impl.reactor_data_,
           null_buffers_handler<Handler>(this->get_io_service(), handler));
     }
     else
     {
-      reactor_.start_read_op(impl.socket_,
+      reactor_.start_read_op(impl.socket_, impl.reactor_data_,
           null_buffers_handler<Handler>(this->get_io_service(), handler),
           false);
     }
@@ -1237,9 +1240,9 @@ public:
   }
 
   // Wait until data can be received without blocking.
-  size_t receive_from(implementation_type& impl,
-      const null_buffers& buffers, endpoint_type& sender_endpoint,
-      socket_base::message_flags, boost::system::error_code& ec)
+  size_t receive_from(implementation_type& impl, const null_buffers&,
+      endpoint_type& sender_endpoint, socket_base::message_flags,
+      boost::system::error_code& ec)
   {
     if (!is_open(impl))
     {
@@ -1352,7 +1355,7 @@ public:
         impl.flags_ |= implementation_type::internal_non_blocking;
       }
 
-      reactor_.start_read_op(impl.socket_,
+      reactor_.start_read_op(impl.socket_, impl.reactor_data_,
           receive_from_handler<MutableBufferSequence, Handler>(
             impl.socket_, this->get_io_service(), buffers,
             sender_endpoint, flags, handler));
@@ -1377,12 +1380,12 @@ public:
 
       if (flags & socket_base::message_out_of_band)
       {
-        reactor_.start_except_op(impl.socket_,
+        reactor_.start_except_op(impl.socket_, impl.reactor_data_,
             null_buffers_handler<Handler>(this->get_io_service(), handler));
       }
       else
       {
-        reactor_.start_read_op(impl.socket_,
+        reactor_.start_read_op(impl.socket_, impl.reactor_data_,
             null_buffers_handler<Handler>(this->get_io_service(), handler),
             false);
       }
@@ -1590,7 +1593,7 @@ public:
         impl.flags_ |= implementation_type::internal_non_blocking;
       }
 
-      reactor_.start_read_op(impl.socket_,
+      reactor_.start_read_op(impl.socket_, impl.reactor_data_,
           accept_handler<Socket, Handler>(
             impl.socket_, this->get_io_service(),
             peer, impl.protocol_, peer_endpoint,
@@ -1628,28 +1631,17 @@ public:
   class connect_handler
   {
   public:
-    connect_handler(socket_type socket, boost::shared_ptr<bool> completed,
-        boost::asio::io_service& io_service, Reactor& reactor, Handler handler)
+    connect_handler(socket_type socket,
+        boost::asio::io_service& io_service, Handler handler)
       : socket_(socket),
-        completed_(completed),
         io_service_(io_service),
         work_(io_service),
-        reactor_(reactor),
         handler_(handler)
     {
     }
 
     bool operator()(const boost::system::error_code& result)
     {
-      // Check whether a handler has already been called for the connection.
-      // If it has, then we don't want to do anything in this handler.
-      if (*completed_)
-        return true;
-
-      // Cancel the other reactor operation for the connection.
-      *completed_ = true;
-      reactor_.enqueue_cancel_ops_unlocked(socket_);
-
       // Check whether the operation was successful.
       if (result)
       {
@@ -1684,10 +1676,8 @@ public:
 
   private:
     socket_type socket_;
-    boost::shared_ptr<bool> completed_;
     boost::asio::io_service& io_service_;
     boost::asio::io_service::work work_;
-    Reactor& reactor_;
     Handler handler_;
   };
 
@@ -1732,10 +1722,9 @@ public:
     {
       // The connection is happening in the background, and we need to wait
       // until the socket becomes writeable.
-      boost::shared_ptr<bool> completed(new bool(false));
-      reactor_.start_write_and_except_ops(impl.socket_,
-          connect_handler<Handler>(impl.socket_, completed,
-            this->get_io_service(), reactor_, handler));
+      reactor_.start_connect_op(impl.socket_, impl.reactor_data_,
+          connect_handler<Handler>(impl.socket_,
+            this->get_io_service(), handler));
     }
     else
     {

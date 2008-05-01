@@ -54,6 +54,13 @@ class epoll_reactor
   : public boost::asio::detail::service_base<epoll_reactor<Own_Thread> >
 {
 public:
+  // Per-descriptor data.
+  struct per_descriptor_data
+  {
+    bool allow_speculative_read;
+    bool allow_speculative_write;
+  };
+
   // Constructor.
   epoll_reactor(boost::asio::io_service& io_service)
     : boost::asio::detail::service_base<epoll_reactor<Own_Thread> >(io_service),
@@ -119,9 +126,13 @@ public:
 
   // Register a socket with the reactor. Returns 0 on success, system error
   // code on failure.
-  int register_descriptor(socket_type descriptor)
+  int register_descriptor(socket_type descriptor,
+      per_descriptor_data& descriptor_data)
   {
     // No need to lock according to epoll documentation.
+
+    descriptor_data.allow_speculative_read = true;
+    descriptor_data.allow_speculative_write = true;
 
     epoll_event ev = { 0, { 0 } };
     ev.events = 0;
@@ -135,9 +146,19 @@ public:
   // Start a new read operation. The handler object will be invoked when the
   // given descriptor is ready to be read, or an error has occurred.
   template <typename Handler>
-  void start_read_op(socket_type descriptor, Handler handler,
-      bool allow_speculative_read = true)
+  void start_read_op(socket_type descriptor,
+      per_descriptor_data& descriptor_data,
+      Handler handler, bool allow_speculative_read = true)
   {
+    if (allow_speculative_read && descriptor_data.allow_speculative_read)
+    {
+      if (handler(boost::system::error_code()))
+        return;
+
+      // We only get one shot at a speculative read in this function.
+      allow_speculative_read = false;
+    }
+
     boost::asio::detail::mutex::scoped_lock lock(mutex_);
 
     if (shutdown_)
@@ -146,8 +167,16 @@ public:
     if (!allow_speculative_read)
       need_epoll_wait_ = true;
     else if (!read_op_queue_.has_operation(descriptor))
+    {
+      // Speculative reads are ok as there are no queued read operations.
+      descriptor_data.allow_speculative_read = true;
+
       if (handler(boost::system::error_code()))
         return;
+    }
+
+    // Speculative reads are not ok as there will be queued read operations.
+    descriptor_data.allow_speculative_read = false;
 
     if (read_op_queue_.enqueue_operation(descriptor, handler))
     {
@@ -174,9 +203,19 @@ public:
   // Start a new write operation. The handler object will be invoked when the
   // given descriptor is ready to be written, or an error has occurred.
   template <typename Handler>
-  void start_write_op(socket_type descriptor, Handler handler,
-      bool allow_speculative_write = true)
+  void start_write_op(socket_type descriptor,
+      per_descriptor_data& descriptor_data,
+      Handler handler, bool allow_speculative_write = true)
   {
+    if (allow_speculative_write && descriptor_data.allow_speculative_write)
+    {
+      if (handler(boost::system::error_code()))
+        return;
+
+      // We only get one shot at a speculative write in this function.
+      allow_speculative_write = false;
+    }
+
     boost::asio::detail::mutex::scoped_lock lock(mutex_);
 
     if (shutdown_)
@@ -185,8 +224,16 @@ public:
     if (!allow_speculative_write)
       need_epoll_wait_ = true;
     else if (!write_op_queue_.has_operation(descriptor))
+    {
+      // Speculative writes are ok as there are no queued write operations.
+      descriptor_data.allow_speculative_write = true;
+
       if (handler(boost::system::error_code()))
         return;
+    }
+
+    // Speculative writes are not ok as there will be queued write operations.
+    descriptor_data.allow_speculative_write = false;
 
     if (write_op_queue_.enqueue_operation(descriptor, handler))
     {
@@ -213,7 +260,8 @@ public:
   // Start a new exception operation. The handler object will be invoked when
   // the given descriptor has exception information, or an error has occurred.
   template <typename Handler>
-  void start_except_op(socket_type descriptor, Handler handler)
+  void start_except_op(socket_type descriptor,
+      per_descriptor_data&, Handler handler)
   {
     boost::asio::detail::mutex::scoped_lock lock(mutex_);
 
@@ -242,26 +290,29 @@ public:
     }
   }
 
-  // Start new write and exception operations. The handler object will be
-  // invoked when the given descriptor is ready for writing or has exception
-  // information available, or an error has occurred.
+  // Start a new write operation. The handler object will be invoked when the
+  // given descriptor is ready for writing or an error has occurred. Speculative
+  // writes are not allowed.
   template <typename Handler>
-  void start_write_and_except_ops(socket_type descriptor, Handler handler)
+  void start_connect_op(socket_type descriptor,
+      per_descriptor_data& descriptor_data, Handler handler)
   {
     boost::asio::detail::mutex::scoped_lock lock(mutex_);
 
     if (shutdown_)
       return;
 
-    bool need_mod = write_op_queue_.enqueue_operation(descriptor, handler);
-    need_mod = except_op_queue_.enqueue_operation(descriptor, handler)
-      && need_mod;
-    if (need_mod)
+    // Speculative writes are not ok as there will be queued write operations.
+    descriptor_data.allow_speculative_write = false;
+
+    if (write_op_queue_.enqueue_operation(descriptor, handler))
     {
       epoll_event ev = { 0, { 0 } };
-      ev.events = EPOLLOUT | EPOLLPRI | EPOLLERR | EPOLLHUP;
+      ev.events = EPOLLOUT | EPOLLERR | EPOLLHUP;
       if (read_op_queue_.has_operation(descriptor))
         ev.events |= EPOLLIN;
+      if (except_op_queue_.has_operation(descriptor))
+        ev.events |= EPOLLPRI;
       ev.data.fd = descriptor;
 
       int result = epoll_ctl(epoll_fd_, EPOLL_CTL_MOD, descriptor, &ev);
@@ -272,7 +323,6 @@ public:
         boost::system::error_code ec(errno,
             boost::asio::error::get_system_category());
         write_op_queue_.dispatch_all_operations(descriptor, ec);
-        except_op_queue_.dispatch_all_operations(descriptor, ec);
       }
     }
   }
@@ -280,25 +330,15 @@ public:
   // Cancel all operations associated with the given descriptor. The
   // handlers associated with the descriptor will be invoked with the
   // operation_aborted error.
-  void cancel_ops(socket_type descriptor)
+  void cancel_ops(socket_type descriptor, per_descriptor_data&)
   {
     boost::asio::detail::mutex::scoped_lock lock(mutex_);
     cancel_ops_unlocked(descriptor);
   }
 
-  // Enqueue cancellation of all operations associated with the given
-  // descriptor. The handlers associated with the descriptor will be invoked
-  // with the operation_aborted error. This function does not acquire the
-  // epoll_reactor's mutex, and so should only be used from within a reactor
-  // handler.
-  void enqueue_cancel_ops_unlocked(socket_type descriptor)
-  {
-    pending_cancellations_.push_back(descriptor);
-  }
-
   // Cancel any operations that are running against the descriptor and remove
   // its registration from the reactor.
-  void close_descriptor(socket_type descriptor)
+  void close_descriptor(socket_type descriptor, per_descriptor_data&)
   {
     boost::asio::detail::mutex::scoped_lock lock(mutex_);
 

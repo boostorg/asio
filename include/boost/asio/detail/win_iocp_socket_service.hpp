@@ -114,6 +114,9 @@ public:
     endpoint_type remote_endpoint_;
   };
 
+  // The type of the reactor used for connect operations.
+  typedef detail::select_reactor<true> reactor_type;
+
   // The implementation type of the socket.
   class implementation_type
   {
@@ -156,6 +159,9 @@ public:
 
     // The protocol associated with the socket.
     protocol_type protocol_;
+
+    // Per-descriptor data used by the reactor.
+    reactor_type::per_descriptor_data reactor_data_;
 
 #if defined(BOOST_ASIO_ENABLE_CANCELIO)
     // The ID of the thread from which it is safe to cancel asynchronous
@@ -305,7 +311,7 @@ public:
             interlocked_compare_exchange_pointer(
               reinterpret_cast<void**>(&reactor_), 0, 0));
       if (reactor)
-        reactor->close_descriptor(impl.socket_);
+        reactor->close_descriptor(impl.socket_, impl.reactor_data_);
 
       if (socket_ops::close(impl.socket_, ec) == socket_error_retval)
         return ec;
@@ -335,6 +341,7 @@ public:
     if (!is_open(impl))
     {
       ec = boost::asio::error::bad_descriptor;
+      return ec;
     }
     else if (FARPROC cancel_io_ex_ptr = ::GetProcAddress(
           ::GetModuleHandleA("KERNEL32"), "CancelIoEx"))
@@ -922,7 +929,7 @@ public:
             reinterpret_cast<void**>(&reactor_), reactor);
       }
 
-      reactor->start_write_op(impl.socket_,
+      reactor->start_write_op(impl.socket_, impl.reactor_data_,
           null_buffers_handler<Handler>(this->get_io_service(), handler),
           false);
     }
@@ -1149,7 +1156,7 @@ public:
             reinterpret_cast<void**>(&reactor_), reactor);
       }
 
-      reactor->start_write_op(impl.socket_,
+      reactor->start_write_op(impl.socket_, impl.reactor_data_,
           null_buffers_handler<Handler>(this->get_io_service(), handler),
           false);
     }
@@ -1462,12 +1469,12 @@ public:
 
       if (flags & socket_base::message_out_of_band)
       {
-        reactor->start_except_op(impl.socket_,
+        reactor->start_except_op(impl.socket_, impl.reactor_data_,
             null_buffers_handler<Handler>(this->get_io_service(), handler));
       }
       else
       {
-        reactor->start_read_op(impl.socket_,
+        reactor->start_read_op(impl.socket_, impl.reactor_data_,
             null_buffers_handler<Handler>(this->get_io_service(), handler),
             false);
       }
@@ -1735,12 +1742,12 @@ public:
 
       if (flags & socket_base::message_out_of_band)
       {
-        reactor->start_except_op(impl.socket_,
+        reactor->start_except_op(impl.socket_, impl.reactor_data_,
             null_buffers_handler<Handler>(this->get_io_service(), handler));
       }
       else
       {
-        reactor->start_read_op(impl.socket_,
+        reactor->start_read_op(impl.socket_, impl.reactor_data_,
             null_buffers_handler<Handler>(this->get_io_service(), handler),
             false);
       }
@@ -2109,14 +2116,10 @@ public:
   {
   public:
     connect_handler(socket_type socket, bool user_set_non_blocking,
-        boost::shared_ptr<bool> completed,
-        boost::asio::io_service& io_service,
-        reactor_type& reactor, Handler handler)
+        boost::asio::io_service& io_service, Handler handler)
       : socket_(socket),
         user_set_non_blocking_(user_set_non_blocking),
-        completed_(completed),
         io_service_(io_service),
-        reactor_(reactor),
         work_(io_service),
         handler_(handler)
     {
@@ -2124,15 +2127,6 @@ public:
 
     bool operator()(const boost::system::error_code& result)
     {
-      // Check whether a handler has already been called for the connection.
-      // If it has, then we don't want to do anything in this handler.
-      if (*completed_)
-        return true;
-
-      // Cancel the other reactor operation for the connection.
-      *completed_ = true;
-      reactor_.enqueue_cancel_ops_unlocked(socket_);
-
       // Check whether the operation was successful.
       if (result)
       {
@@ -2180,9 +2174,7 @@ public:
   private:
     socket_type socket_;
     bool user_set_non_blocking_;
-    boost::shared_ptr<bool> completed_;
     boost::asio::io_service& io_service_;
-    reactor_type& reactor_;
     boost::asio::io_service::work work_;
     Handler handler_;
   };
@@ -2250,11 +2242,11 @@ public:
       // The connection is happening in the background, and we need to wait
       // until the socket becomes writeable.
       boost::shared_ptr<bool> completed(new bool(false));
-      reactor->start_write_and_except_ops(impl.socket_,
+      reactor->start_connect_op(impl.socket_, impl.reactor_data_,
           connect_handler<Handler>(
             impl.socket_,
             (impl.flags_ & implementation_type::user_set_non_blocking) != 0,
-            completed, this->get_io_service(), *reactor, handler));
+            this->get_io_service(), handler));
     }
     else
     {
@@ -2285,7 +2277,7 @@ private:
             interlocked_compare_exchange_pointer(
               reinterpret_cast<void**>(&reactor_), 0, 0));
       if (reactor)
-        reactor->close_descriptor(impl.socket_);
+        reactor->close_descriptor(impl.socket_, impl.reactor_data_);
 
       // The socket destructor must not block. If the user has changed the
       // linger option to block in the foreground, we will change it back to the
