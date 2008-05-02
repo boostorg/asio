@@ -67,6 +67,9 @@ public:
 
     // Flags indicating the current state of the descriptor.
     unsigned char flags_;
+
+    // Per-descriptor data used by the reactor.
+    typename Reactor::per_descriptor_data reactor_data_;
   };
 
   // The maximum number of buffers to support in a single operation.
@@ -97,7 +100,7 @@ public:
   {
     if (impl.descriptor_ != -1)
     {
-      reactor_.close_descriptor(impl.descriptor_);
+      reactor_.close_descriptor(impl.descriptor_, impl.reactor_data_);
 
       if (impl.flags_ & implementation_type::internal_non_blocking)
       {
@@ -125,7 +128,8 @@ public:
       return ec;
     }
 
-    if (int err = reactor_.register_descriptor(native_descriptor))
+    if (int err = reactor_.register_descriptor(
+          native_descriptor, impl.reactor_data_))
     {
       ec = boost::system::error_code(err,
           boost::asio::error::get_system_category());
@@ -150,7 +154,7 @@ public:
   {
     if (is_open(impl))
     {
-      reactor_.close_descriptor(impl.descriptor_);
+      reactor_.close_descriptor(impl.descriptor_, impl.reactor_data_);
 
       if (impl.flags_ & implementation_type::internal_non_blocking)
       {
@@ -187,7 +191,7 @@ public:
       return ec;
     }
 
-    reactor_.cancel_ops(impl.descriptor_);
+    reactor_.cancel_ops(impl.descriptor_, impl.reactor_data_);
     ec = boost::system::error_code();
     return ec;
   }
@@ -269,7 +273,8 @@ public:
     for (;;)
     {
       // Try to complete the operation without blocking.
-      int bytes_sent = descriptor_ops::writev(impl.descriptor_, bufs, i, ec);
+      int bytes_sent = descriptor_ops::gather_write(
+          impl.descriptor_, bufs, i, ec);
 
       // Check if operation succeeded.
       if (bytes_sent >= 0)
@@ -341,7 +346,7 @@ public:
 
       // Write the data.
       boost::system::error_code ec;
-      int bytes = descriptor_ops::writev(descriptor_, bufs, i, ec);
+      int bytes = descriptor_ops::gather_write(descriptor_, bufs, i, ec);
 
       // Check if we need to run the operation again.
       if (ec == boost::asio::error::would_block
@@ -405,7 +410,7 @@ public:
         impl.flags_ |= implementation_type::internal_non_blocking;
       }
 
-      reactor_.start_write_op(impl.descriptor_,
+      reactor_.start_write_op(impl.descriptor_, impl.reactor_data_,
           write_handler<ConstBufferSequence, Handler>(
             impl.descriptor_, this->get_io_service(), buffers, handler));
     }
@@ -444,7 +449,7 @@ public:
     }
     else
     {
-      reactor_.start_write_op(impl.descriptor_,
+      reactor_.start_write_op(impl.descriptor_, impl.reactor_data_,
           null_buffers_handler<Handler>(this->get_io_service(), handler),
           false);
     }
@@ -499,7 +504,8 @@ public:
     for (;;)
     {
       // Try to complete the operation without blocking.
-      int bytes_read = descriptor_ops::readv(impl.descriptor_, bufs, i, ec);
+      int bytes_read = descriptor_ops::scatter_read(
+          impl.descriptor_, bufs, i, ec);
 
       // Check if operation succeeded.
       if (bytes_read > 0)
@@ -526,7 +532,7 @@ public:
 
   // Wait until data can be read without blocking.
   size_t read_some(implementation_type& impl,
-      const null_buffers& buffers, boost::system::error_code& ec)
+      const null_buffers&, boost::system::error_code& ec)
   {
     if (!is_open(impl))
     {
@@ -578,7 +584,7 @@ public:
 
       // Read some data.
       boost::system::error_code ec;
-      int bytes = descriptor_ops::readv(descriptor_, bufs, i, ec);
+      int bytes = descriptor_ops::scatter_read(descriptor_, bufs, i, ec);
       if (bytes == 0)
         ec = boost::asio::error::eof;
 
@@ -644,7 +650,7 @@ public:
         impl.flags_ |= implementation_type::internal_non_blocking;
       }
 
-      reactor_.start_read_op(impl.descriptor_,
+      reactor_.start_read_op(impl.descriptor_, impl.reactor_data_,
           read_handler<MutableBufferSequence, Handler>(
             impl.descriptor_, this->get_io_service(), buffers, handler));
     }
@@ -662,7 +668,7 @@ public:
     }
     else
     {
-      reactor_.start_read_op(impl.descriptor_,
+      reactor_.start_read_op(impl.descriptor_, impl.reactor_data_,
           null_buffers_handler<Handler>(this->get_io_service(), handler),
           false);
     }

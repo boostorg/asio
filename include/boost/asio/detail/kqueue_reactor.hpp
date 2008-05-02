@@ -61,6 +61,11 @@ class kqueue_reactor
   : public boost::asio::detail::service_base<kqueue_reactor<Own_Thread> >
 {
 public:
+  // Per-descriptor data.
+  struct per_descriptor_data
+  {
+  };
+
   // Constructor.
   kqueue_reactor(boost::asio::io_service& io_service)
     : boost::asio::detail::service_base<
@@ -127,7 +132,7 @@ public:
 
   // Register a socket with the reactor. Returns 0 on success, system error
   // code on failure.
-  int register_descriptor(socket_type)
+  int register_descriptor(socket_type, per_descriptor_data&)
   {
     return 0;
   }
@@ -135,8 +140,8 @@ public:
   // Start a new read operation. The handler object will be invoked when the
   // given descriptor is ready to be read, or an error has occurred.
   template <typename Handler>
-  void start_read_op(socket_type descriptor, Handler handler,
-      bool allow_speculative_read = true)
+  void start_read_op(socket_type descriptor, per_descriptor_data&,
+      Handler handler, bool allow_speculative_read = true)
   {
     boost::asio::detail::mutex::scoped_lock lock(mutex_);
 
@@ -165,8 +170,8 @@ public:
   // Start a new write operation. The handler object will be invoked when the
   // given descriptor is ready to be written, or an error has occurred.
   template <typename Handler>
-  void start_write_op(socket_type descriptor, Handler handler,
-      bool allow_speculative_write = true)
+  void start_write_op(socket_type descriptor, per_descriptor_data&,
+      Handler handler, bool allow_speculative_write = true)
   {
     boost::asio::detail::mutex::scoped_lock lock(mutex_);
 
@@ -195,7 +200,8 @@ public:
   // Start a new exception operation. The handler object will be invoked when
   // the given descriptor has exception information, or an error has occurred.
   template <typename Handler>
-  void start_except_op(socket_type descriptor, Handler handler)
+  void start_except_op(socket_type descriptor,
+      per_descriptor_data&, Handler handler)
   {
     boost::asio::detail::mutex::scoped_lock lock(mutex_);
 
@@ -218,11 +224,11 @@ public:
     }
   }
 
-  // Start new write and exception operations. The handler object will be
-  // invoked when the given descriptor is ready for writing or has exception
-  // information available, or an error has occurred.
+  // Start a new write operation. The handler object will be invoked when the
+  // given descriptor is ready to be written, or an error has occurred.
   template <typename Handler>
-  void start_write_and_except_ops(socket_type descriptor, Handler handler)
+  void start_connect_op(socket_type descriptor,
+      per_descriptor_data&, Handler handler)
   {
     boost::asio::detail::mutex::scoped_lock lock(mutex_);
 
@@ -240,46 +246,20 @@ public:
         write_op_queue_.dispatch_all_operations(descriptor, ec);
       }
     }
-
-    if (except_op_queue_.enqueue_operation(descriptor, handler))
-    {
-      struct kevent event;
-      if (read_op_queue_.has_operation(descriptor))
-        EV_SET(&event, descriptor, EVFILT_READ, EV_ADD, 0, 0, 0);
-      else
-        EV_SET(&event, descriptor, EVFILT_READ, EV_ADD, EV_OOBAND, 0, 0);
-      if (::kevent(kqueue_fd_, &event, 1, 0, 0, 0) == -1)
-      {
-        boost::system::error_code ec(errno,
-            boost::asio::error::get_system_category());
-        except_op_queue_.dispatch_all_operations(descriptor, ec);
-        write_op_queue_.dispatch_all_operations(descriptor, ec);
-      }
-    }
   }
 
   // Cancel all operations associated with the given descriptor. The
   // handlers associated with the descriptor will be invoked with the
   // operation_aborted error.
-  void cancel_ops(socket_type descriptor)
+  void cancel_ops(socket_type descriptor, per_descriptor_data&)
   {
     boost::asio::detail::mutex::scoped_lock lock(mutex_);
     cancel_ops_unlocked(descriptor);
   }
 
-  // Enqueue cancellation of all operations associated with the given
-  // descriptor. The handlers associated with the descriptor will be invoked
-  // with the operation_aborted error. This function does not acquire the
-  // kqueue_reactor's mutex, and so should only be used from within a reactor
-  // handler.
-  void enqueue_cancel_ops_unlocked(socket_type descriptor)
-  {
-    pending_cancellations_.push_back(descriptor);
-  }
-
   // Cancel any operations that are running against the descriptor and remove
   // its registration from the reactor.
-  void close_descriptor(socket_type descriptor)
+  void close_descriptor(socket_type descriptor, per_descriptor_data&)
   {
     boost::asio::detail::mutex::scoped_lock lock(mutex_);
 
