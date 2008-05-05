@@ -21,6 +21,7 @@
 #include <boost/asio/error.hpp>
 #include <boost/asio/io_service.hpp>
 #include <boost/asio/detail/bind_handler.hpp>
+#include <boost/asio/detail/handler_base_from_member.hpp>
 #include <boost/asio/detail/noncopyable.hpp>
 #include <boost/asio/detail/service_base.hpp>
 #include <boost/asio/detail/descriptor_ops.hpp>
@@ -309,25 +310,27 @@ public:
   }
 
   template <typename ConstBufferSequence, typename Handler>
-  class write_handler
+  class write_operation :
+    public handler_base_from_member<Handler>
   {
   public:
-    write_handler(int descriptor, boost::asio::io_service& io_service,
+    write_operation(int descriptor, boost::asio::io_service& io_service,
         const ConstBufferSequence& buffers, Handler handler)
-      : descriptor_(descriptor),
+      : handler_base_from_member<Handler>(handler),
+        descriptor_(descriptor),
         io_service_(io_service),
         work_(io_service),
-        buffers_(buffers),
-        handler_(handler)
+        buffers_(buffers)
     {
     }
 
-    bool operator()(const boost::system::error_code& result)
+    bool perform(boost::system::error_code& ec,
+        std::size_t& bytes_transferred)
     {
       // Check whether the operation was successful.
-      if (result)
+      if (ec)
       {
-        io_service_.post(bind_handler(handler_, result, 0));
+        bytes_transferred = 0;
         return true;
       }
 
@@ -345,7 +348,6 @@ public:
       }
 
       // Write the data.
-      boost::system::error_code ec;
       int bytes = descriptor_ops::gather_write(descriptor_, bufs, i, ec);
 
       // Check if we need to run the operation again.
@@ -353,8 +355,14 @@ public:
           || ec == boost::asio::error::try_again)
         return false;
 
-      io_service_.post(bind_handler(handler_, ec, bytes < 0 ? 0 : bytes));
+      bytes_transferred = (bytes < 0 ? 0 : bytes);
       return true;
+    }
+
+    void complete(const boost::system::error_code& ec,
+        std::size_t bytes_transferred)
+    {
+      io_service_.post(bind_handler(this->handler_, ec, bytes_transferred));
     }
 
   private:
@@ -362,7 +370,6 @@ public:
     boost::asio::io_service& io_service_;
     boost::asio::io_service::work work_;
     ConstBufferSequence buffers_;
-    Handler handler_;
   };
 
   // Start an asynchronous write. The data being sent must be valid for the
@@ -411,30 +418,38 @@ public:
       }
 
       reactor_.start_write_op(impl.descriptor_, impl.reactor_data_,
-          write_handler<ConstBufferSequence, Handler>(
+          write_operation<ConstBufferSequence, Handler>(
             impl.descriptor_, this->get_io_service(), buffers, handler));
     }
   }
 
   template <typename Handler>
-  class null_buffers_handler
+  class null_buffers_operation :
+    public handler_base_from_member<Handler>
   {
   public:
-    null_buffers_handler(boost::asio::io_service& io_service, Handler handler)
-      : work_(io_service),
-        handler_(handler)
+    null_buffers_operation(boost::asio::io_service& io_service, Handler handler)
+      : handler_base_from_member<Handler>(handler),
+        work_(io_service)
     {
     }
 
-    bool operator()(const boost::system::error_code& result)
+    bool perform(boost::system::error_code&,
+        std::size_t& bytes_transferred)
     {
-      work_.get_io_service().post(bind_handler(handler_, result, 0));
+      bytes_transferred = 0;
       return true;
+    }
+
+    void complete(const boost::system::error_code& ec,
+        std::size_t bytes_transferred)
+    {
+      work_.get_io_service().post(bind_handler(
+            this->handler_, ec, bytes_transferred));
     }
 
   private:
     boost::asio::io_service::work work_;
-    Handler handler_;
   };
 
   // Start an asynchronous wait until data can be written without blocking.
@@ -450,7 +465,7 @@ public:
     else
     {
       reactor_.start_write_op(impl.descriptor_, impl.reactor_data_,
-          null_buffers_handler<Handler>(this->get_io_service(), handler),
+          null_buffers_operation<Handler>(this->get_io_service(), handler),
           false);
     }
   }
@@ -547,25 +562,27 @@ public:
   }
 
   template <typename MutableBufferSequence, typename Handler>
-  class read_handler
+  class read_operation :
+    public handler_base_from_member<Handler>
   {
   public:
-    read_handler(int descriptor, boost::asio::io_service& io_service,
+    read_operation(int descriptor, boost::asio::io_service& io_service,
         const MutableBufferSequence& buffers, Handler handler)
-      : descriptor_(descriptor),
+      : handler_base_from_member<Handler>(handler),
+        descriptor_(descriptor),
         io_service_(io_service),
         work_(io_service),
-        buffers_(buffers),
-        handler_(handler)
+        buffers_(buffers)
     {
     }
 
-    bool operator()(const boost::system::error_code& result)
+    bool perform(boost::system::error_code& ec,
+        std::size_t& bytes_transferred)
     {
       // Check whether the operation was successful.
-      if (result)
+      if (ec)
       {
-        io_service_.post(bind_handler(handler_, result, 0));
+        bytes_transferred = 0;
         return true;
       }
 
@@ -583,7 +600,6 @@ public:
       }
 
       // Read some data.
-      boost::system::error_code ec;
       int bytes = descriptor_ops::scatter_read(descriptor_, bufs, i, ec);
       if (bytes == 0)
         ec = boost::asio::error::eof;
@@ -593,8 +609,14 @@ public:
           || ec == boost::asio::error::try_again)
         return false;
 
-      io_service_.post(bind_handler(handler_, ec, bytes < 0 ? 0 : bytes));
+      bytes_transferred = (bytes < 0 ? 0 : bytes);
       return true;
+    }
+
+    void complete(const boost::system::error_code& ec,
+        std::size_t bytes_transferred)
+    {
+      io_service_.post(bind_handler(this->handler_, ec, bytes_transferred));
     }
 
   private:
@@ -602,7 +624,6 @@ public:
     boost::asio::io_service& io_service_;
     boost::asio::io_service::work work_;
     MutableBufferSequence buffers_;
-    Handler handler_;
   };
 
   // Start an asynchronous read. The buffer for the data being read must be
@@ -651,7 +672,7 @@ public:
       }
 
       reactor_.start_read_op(impl.descriptor_, impl.reactor_data_,
-          read_handler<MutableBufferSequence, Handler>(
+          read_operation<MutableBufferSequence, Handler>(
             impl.descriptor_, this->get_io_service(), buffers, handler));
     }
   }
@@ -669,7 +690,7 @@ public:
     else
     {
       reactor_.start_read_op(impl.descriptor_, impl.reactor_data_,
-          null_buffers_handler<Handler>(this->get_io_service(), handler),
+          null_buffers_operation<Handler>(this->get_io_service(), handler),
           false);
     }
   }
