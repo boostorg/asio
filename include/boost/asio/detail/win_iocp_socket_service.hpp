@@ -885,19 +885,27 @@ public:
   }
 
   template <typename Handler>
-  class null_buffers_handler
+  class null_buffers_operation
   {
   public:
-    null_buffers_handler(boost::asio::io_service& io_service, Handler handler)
+    null_buffers_operation(boost::asio::io_service& io_service, Handler handler)
       : work_(io_service),
         handler_(handler)
     {
     }
 
-    bool operator()(const boost::system::error_code& result)
+    bool perform(boost::system::error_code&,
+        std::size_t& bytes_transferred)
     {
-      work_.get_io_service().post(bind_handler(handler_, result, 0));
+      bytes_transferred = 0;
       return true;
+    }
+
+    void complete(const boost::system::error_code& ec,
+        std::size_t bytes_transferred)
+    {
+      work_.get_io_service().post(bind_handler(
+            handler_, ec, bytes_transferred));
     }
 
   private:
@@ -930,7 +938,7 @@ public:
       }
 
       reactor->start_write_op(impl.socket_, impl.reactor_data_,
-          null_buffers_handler<Handler>(this->get_io_service(), handler),
+          null_buffers_operation<Handler>(this->get_io_service(), handler),
           false);
     }
   }
@@ -1157,7 +1165,7 @@ public:
       }
 
       reactor->start_write_op(impl.socket_, impl.reactor_data_,
-          null_buffers_handler<Handler>(this->get_io_service(), handler),
+          null_buffers_operation<Handler>(this->get_io_service(), handler),
           false);
     }
   }
@@ -1470,12 +1478,12 @@ public:
       if (flags & socket_base::message_out_of_band)
       {
         reactor->start_except_op(impl.socket_, impl.reactor_data_,
-            null_buffers_handler<Handler>(this->get_io_service(), handler));
+            null_buffers_operation<Handler>(this->get_io_service(), handler));
       }
       else
       {
         reactor->start_read_op(impl.socket_, impl.reactor_data_,
-            null_buffers_handler<Handler>(this->get_io_service(), handler),
+            null_buffers_operation<Handler>(this->get_io_service(), handler),
             false);
       }
     }
@@ -1743,12 +1751,12 @@ public:
       if (flags & socket_base::message_out_of_band)
       {
         reactor->start_except_op(impl.socket_, impl.reactor_data_,
-            null_buffers_handler<Handler>(this->get_io_service(), handler));
+            null_buffers_operation<Handler>(this->get_io_service(), handler));
       }
       else
       {
         reactor->start_read_op(impl.socket_, impl.reactor_data_,
-            null_buffers_handler<Handler>(this->get_io_service(), handler),
+            null_buffers_operation<Handler>(this->get_io_service(), handler),
             false);
       }
     }
@@ -2112,10 +2120,10 @@ public:
   }
 
   template <typename Handler>
-  class connect_handler
+  class connect_operation
   {
   public:
-    connect_handler(socket_type socket, bool user_set_non_blocking,
+    connect_operation(socket_type socket, bool user_set_non_blocking,
         boost::asio::io_service& io_service, Handler handler)
       : socket_(socket),
         user_set_non_blocking_(user_set_non_blocking),
@@ -2125,32 +2133,25 @@ public:
     {
     }
 
-    bool operator()(const boost::system::error_code& result)
+    bool perform(boost::system::error_code& ec,
+        std::size_t& bytes_transferred)
     {
       // Check whether the operation was successful.
-      if (result)
-      {
-        io_service_.post(bind_handler(handler_, result));
+      if (ec)
         return true;
-      }
 
       // Get the error code from the connect operation.
       int connect_error = 0;
       size_t connect_error_len = sizeof(connect_error);
-      boost::system::error_code ec;
       if (socket_ops::getsockopt(socket_, SOL_SOCKET, SO_ERROR,
             &connect_error, &connect_error_len, ec) == socket_error_retval)
-      {
-        io_service_.post(bind_handler(handler_, ec));
         return true;
-      }
 
       // If connection failed then post the handler with the error code.
       if (connect_error)
       {
         ec = boost::system::error_code(connect_error,
             boost::asio::error::get_system_category());
-        io_service_.post(bind_handler(handler_, ec));
         return true;
       }
 
@@ -2159,16 +2160,17 @@ public:
       {
         ioctl_arg_type non_blocking = 0;
         if (socket_ops::ioctl(socket_, FIONBIO, &non_blocking, ec))
-        {
-          io_service_.post(bind_handler(handler_, ec));
           return true;
-        }
       }
 
       // Post the result of the successful connection operation.
       ec = boost::system::error_code();
-      io_service_.post(bind_handler(handler_, ec));
       return true;
+    }
+
+    void complete(const boost::system::error_code& ec, std::size_t)
+    {
+      io_service_.post(bind_handler(handler_, ec));
     }
 
   private:
@@ -2243,7 +2245,7 @@ public:
       // until the socket becomes writeable.
       boost::shared_ptr<bool> completed(new bool(false));
       reactor->start_connect_op(impl.socket_, impl.reactor_data_,
-          connect_handler<Handler>(
+          connect_operation<Handler>(
             impl.socket_,
             (impl.flags_ & implementation_type::user_set_non_blocking) != 0,
             this->get_io_service(), handler));
