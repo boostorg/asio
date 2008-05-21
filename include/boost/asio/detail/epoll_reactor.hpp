@@ -436,7 +436,7 @@ private:
     // Check if the thread is supposed to stop.
     if (stop_thread_)
     {
-      complete_operations_and_cleanup_timers(lock);
+      complete_operations_and_timers(lock);
       return;
     }
 
@@ -445,7 +445,7 @@ private:
     if (!block && read_op_queue_.empty() && write_op_queue_.empty()
         && except_op_queue_.empty() && all_timer_queues_are_empty())
     {
-      complete_operations_and_cleanup_timers(lock);
+      complete_operations_and_timers(lock);
       return;
     }
 
@@ -552,7 +552,7 @@ private:
     need_epoll_wait_ = !read_op_queue_.empty()
       || !write_op_queue_.empty() || !except_op_queue_.empty();
 
-    complete_operations_and_cleanup_timers(lock);
+    complete_operations_and_timers(lock);
   }
 
   // Run the select loop in the thread.
@@ -655,7 +655,7 @@ private:
   // destructors may make calls back into this reactor. We make a copy of the
   // vector of timer queues since the original may be modified while the lock
   // is not held.
-  void complete_operations_and_cleanup_timers(
+  void complete_operations_and_timers(
       boost::asio::detail::mutex::scoped_lock& lock)
   {
     timer_queues_for_cleanup_ = timer_queues_;
@@ -664,7 +664,7 @@ private:
     write_op_queue_.complete_operations();
     except_op_queue_.complete_operations();
     for (std::size_t i = 0; i < timer_queues_for_cleanup_.size(); ++i)
-      timer_queues_for_cleanup_[i]->cleanup_timers();
+      timer_queues_for_cleanup_[i]->complete_timers();
   }
 
   // Mutex to protect access to internal data.

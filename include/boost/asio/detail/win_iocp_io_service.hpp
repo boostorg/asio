@@ -436,7 +436,7 @@ private:
           {
             timer_queues_copy_[i]->dispatch_timers();
             timer_queues_copy_[i]->dispatch_cancellations();
-            timer_queues_copy_[i]->cleanup_timers();
+            timer_queues_copy_[i]->complete_timers();
           }
         }
         catch (...)
