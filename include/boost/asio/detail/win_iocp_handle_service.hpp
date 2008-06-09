@@ -155,7 +155,7 @@ public:
 
   // Destroy a handle implementation.
   boost::system::error_code close(implementation_type& impl,
-                                  boost::system::error_code& ec)
+      boost::system::error_code& ec)
   {
     if (is_open(impl))
     {
@@ -176,7 +176,7 @@ public:
   }
 
   // Get the native handle representation.
-  native_type native(implementation_type& impl)
+  native_type native(const implementation_type& impl) const
   {
     return impl.handle_;
   }

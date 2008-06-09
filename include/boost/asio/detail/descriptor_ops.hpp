@@ -47,6 +47,12 @@ inline ReturnType error_wrapper(ReturnType return_value,
   return return_value;
 }
 
+inline int open(const char* path, int flags, boost::system::error_code& ec)
+{
+  clear_error(ec);
+  return error_wrapper(::open(path, flags), ec);
+}
+
 inline int close(int d, boost::system::error_code& ec)
 {
   clear_error(ec);
@@ -86,6 +92,18 @@ inline int ioctl(int d, long cmd, ioctl_arg_type* arg,
 {
   clear_error(ec);
   return error_wrapper(::ioctl(d, cmd, arg), ec);
+}
+
+inline int fcntl(int d, long cmd, boost::system::error_code& ec)
+{
+  clear_error(ec);
+  return error_wrapper(::fcntl(d, cmd), ec);
+}
+
+inline int fcntl(int d, long cmd, long arg, boost::system::error_code& ec)
+{
+  clear_error(ec);
+  return error_wrapper(::fcntl(d, cmd, arg), ec);
 }
 
 inline int poll_read(int d, boost::system::error_code& ec)

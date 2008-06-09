@@ -21,6 +21,7 @@
 #include <boost/asio/basic_deadline_timer.hpp>
 #include <boost/asio/basic_io_object.hpp>
 #include <boost/asio/basic_raw_socket.hpp>
+#include <boost/asio/basic_serial_port.hpp>
 #include <boost/asio/basic_socket_acceptor.hpp>
 #include <boost/asio/basic_socket_iostream.hpp>
 #include <boost/asio/basic_socket_streambuf.hpp>
@@ -73,6 +74,9 @@
 #include <boost/asio/raw_socket_service.hpp>
 #include <boost/asio/read.hpp>
 #include <boost/asio/read_until.hpp>
+#include <boost/asio/serial_port.hpp>
+#include <boost/asio/serial_port_base.hpp>
+#include <boost/asio/serial_port_service.hpp>
 #include <boost/asio/socket_acceptor_service.hpp>
 #include <boost/asio/socket_base.hpp>
 #include <boost/asio/strand.hpp>
