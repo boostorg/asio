@@ -73,6 +73,7 @@
 #include <boost/asio/posix/stream_descriptor_service.hpp>
 #include <boost/asio/raw_socket_service.hpp>
 #include <boost/asio/read.hpp>
+#include <boost/asio/read_at.hpp>
 #include <boost/asio/read_until.hpp>
 #include <boost/asio/serial_port.hpp>
 #include <boost/asio/serial_port_base.hpp>
@@ -85,9 +86,13 @@
 #include <boost/asio/time_traits.hpp>
 #include <boost/asio/version.hpp>
 #include <boost/asio/windows/basic_handle.hpp>
+#include <boost/asio/windows/basic_random_access_handle.hpp>
 #include <boost/asio/windows/basic_stream_handle.hpp>
+#include <boost/asio/windows/random_access_handle.hpp>
+#include <boost/asio/windows/random_access_handle_service.hpp>
 #include <boost/asio/windows/stream_handle.hpp>
 #include <boost/asio/windows/stream_handle_service.hpp>
 #include <boost/asio/write.hpp>
+#include <boost/asio/write_at.hpp>
 
 #endif // BOOST_ASIO_HPP
