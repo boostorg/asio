@@ -68,6 +68,8 @@ test-suite "asio" :
   [ run buffered_stream.cpp : : : $(USE_SELECT) : buffered_stream_select ]
   [ run buffered_write_stream.cpp ]
   [ run buffered_write_stream.cpp : : : $(USE_SELECT) : buffered_write_stream_select ]
+  [ run buffers_iterator.cpp ]
+  [ run buffers_iterator.cpp : : : $(USE_SELECT) : buffers_iterator_select ]
   [ link completion_condition.cpp ]
   [ link completion_condition.cpp : $(USE_SELECT) : completion_condition_select ]
   [ link datagram_socket_service.cpp ]

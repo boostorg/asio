@@ -45,6 +45,7 @@ test-suite "asio"
   [ run buffered_read_stream.cpp <template>asio_unit_test ]
   [ run buffered_stream.cpp <template>asio_unit_test ]
   [ run buffered_write_stream.cpp <template>asio_unit_test ]
+  [ run buffers_iterator.cpp <template>asio_unit_test ]
   [ run completion_condition.cpp <template>asio_unit_test ]
   [ run datagram_socket_service.cpp <template>asio_unit_test ]
   [ run deadline_timer_service.cpp <template>asio_unit_test ]

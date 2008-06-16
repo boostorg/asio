@@ -34,6 +34,7 @@
 #include <boost/asio/buffered_stream.hpp>
 #include <boost/asio/buffered_write_stream_fwd.hpp>
 #include <boost/asio/buffered_write_stream.hpp>
+#include <boost/asio/buffers_iterator.hpp>
 #include <boost/asio/completion_condition.hpp>
 #include <boost/asio/datagram_socket_service.hpp>
 #include <boost/asio/deadline_timer_service.hpp>
