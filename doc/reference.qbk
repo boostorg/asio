@@ -559,6 +559,364 @@ Regardless of whether the asynchronous operation completes immediately or not, t
 
 [endsect]
 
+[section:async_read_at async_read_at]
+
+Start an asynchronous operation to read a certain amount of data at the specified offset. 
+
+  template<
+      typename ``[link boost_asio.reference.AsyncRandomAccessReadDevice AsyncRandomAccessReadDevice]``,
+      typename ``[link boost_asio.reference.MutableBufferSequence MutableBufferSequence]``,
+      typename ``[link boost_asio.reference.ReadHandler ReadHandler]``>
+  void ``[link boost_asio.reference.async_read_at.overload1 async_read_at]``(
+      AsyncRandomAccessReadDevice & d,
+      boost::uint64_t offset,
+      const MutableBufferSequence & buffers,
+      ReadHandler handler);
+
+  template<
+      typename ``[link boost_asio.reference.AsyncRandomAccessReadDevice AsyncRandomAccessReadDevice]``,
+      typename ``[link boost_asio.reference.MutableBufferSequence MutableBufferSequence]``,
+      typename CompletionCondition,
+      typename ``[link boost_asio.reference.ReadHandler ReadHandler]``>
+  void ``[link boost_asio.reference.async_read_at.overload2 async_read_at]``(
+      AsyncRandomAccessReadDevice & d,
+      boost::uint64_t offset,
+      const MutableBufferSequence & buffers,
+      CompletionCondition completion_condition,
+      ReadHandler handler);
+
+  template<
+      typename ``[link boost_asio.reference.AsyncRandomAccessReadDevice AsyncRandomAccessReadDevice]``,
+      typename Allocator,
+      typename ``[link boost_asio.reference.ReadHandler ReadHandler]``>
+  void ``[link boost_asio.reference.async_read_at.overload3 async_read_at]``(
+      AsyncRandomAccessReadDevice & d,
+      boost::uint64_t offset,
+      basic_streambuf< Allocator > & b,
+      ReadHandler handler);
+
+  template<
+      typename ``[link boost_asio.reference.AsyncRandomAccessReadDevice AsyncRandomAccessReadDevice]``,
+      typename Allocator,
+      typename CompletionCondition,
+      typename ``[link boost_asio.reference.ReadHandler ReadHandler]``>
+  void ``[link boost_asio.reference.async_read_at.overload4 async_read_at]``(
+      AsyncRandomAccessReadDevice & d,
+      boost::uint64_t offset,
+      basic_streambuf< Allocator > & b,
+      CompletionCondition completion_condition,
+      ReadHandler handler);
+
+
+[section:overload1 async_read_at (1 of 4 overloads)]
+
+Start an asynchronous operation to read a certain amount of data at the specified offset. 
+
+  template<
+      typename ``[link boost_asio.reference.AsyncRandomAccessReadDevice AsyncRandomAccessReadDevice]``,
+      typename ``[link boost_asio.reference.MutableBufferSequence MutableBufferSequence]``,
+      typename ``[link boost_asio.reference.ReadHandler ReadHandler]``>
+  void async_read_at(
+      AsyncRandomAccessReadDevice & d,
+      boost::uint64_t offset,
+      const MutableBufferSequence & buffers,
+      ReadHandler handler);
+
+
+This function is used to asynchronously read a certain number of bytes of data from a random access device at the specified offset. The function call always returns immediately. The asynchronous operation will continue until one of the following conditions is true:
+
+
+* The supplied buffers are full. That is, the bytes transferred is equal to the sum of the buffer sizes.
+
+* An error occurred.
+
+This operation is implemented in terms of one or more calls to the device's async\_read\_some\_at function.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[d][The device from which the data is to be read. The type must support the AsyncRandomAccessReadDevice concept.]]
+
+[[offset][The offset at which the data will be read.]]
+
+[[buffers][One or more buffers into which the data will be read. The sum of the buffer sizes indicates the maximum number of bytes to read from the device. Although the buffers object may be copied as necessary, ownership of the underlying memory blocks is retained by the caller, which must guarantee that they remain valid until the handler is called.]]
+
+[[handler][The handler to be called when the read operation completes. Copies will be made of the handler as required. The function signature of the handler must be: 
+``
+   void handler(
+     // Result of operation.
+     const boost::system::error_code& error,
+
+     // Number of bytes copied into the buffers. If an error
+     // occurred, this will be the number of bytes successfully
+     // transferred prior to the error.
+     std::size_t bytes_transferred
+   ); 
+
+``
+Regardless of whether the asynchronous operation completes immediately or not, the handler will not be invoked from within this function. Invocation of the handler will be performed in a manner equivalent to using boost::asio::io\_service::post().]]
+
+]
+
+[heading Example]
+  
+To read into a single data buffer use the 
+[link boost_asio.reference.buffer buffer]  function as follows: 
+
+   boost::asio::async_read_at(d, 42, boost::asio::buffer(data, size), handler);
+
+
+See the 
+[link boost_asio.reference.buffer buffer]  documentation for information on reading into multiple buffers in one go, and how to use it with arrays, boost::array or std::vector.
+
+[heading Remarks]
+      
+This overload is equivalent to calling: 
+
+   boost::asio::async_read_at(
+       d, 42, buffers,
+       boost::asio::transfer_all(),
+       handler); 
+
+
+
+
+
+
+[endsect]
+
+
+
+[section:overload2 async_read_at (2 of 4 overloads)]
+
+Start an asynchronous operation to read a certain amount of data at the specified offset. 
+
+  template<
+      typename ``[link boost_asio.reference.AsyncRandomAccessReadDevice AsyncRandomAccessReadDevice]``,
+      typename ``[link boost_asio.reference.MutableBufferSequence MutableBufferSequence]``,
+      typename CompletionCondition,
+      typename ``[link boost_asio.reference.ReadHandler ReadHandler]``>
+  void async_read_at(
+      AsyncRandomAccessReadDevice & d,
+      boost::uint64_t offset,
+      const MutableBufferSequence & buffers,
+      CompletionCondition completion_condition,
+      ReadHandler handler);
+
+
+This function is used to asynchronously read a certain number of bytes of data from a random access device at the specified offset. The function call always returns immediately. The asynchronous operation will continue until one of the following conditions is true:
+
+
+* The supplied buffers are full. That is, the bytes transferred is equal to the sum of the buffer sizes.
+
+* The completion_condition function object returns true.
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[d][The device from which the data is to be read. The type must support the AsyncRandomAccessReadDevice concept.]]
+
+[[offset][The offset at which the data will be read.]]
+
+[[buffers][One or more buffers into which the data will be read. The sum of the buffer sizes indicates the maximum number of bytes to read from the device. Although the buffers object may be copied as necessary, ownership of the underlying memory blocks is retained by the caller, which must guarantee that they remain valid until the handler is called.]]
+
+[[completion_condition][The function object to be called to determine whether the read operation is complete. The signature of the function object must be: 
+``
+   bool completion_condition(
+     // Result of latest read_some_at operation.
+     const boost::system::error_code& error,
+
+     // Number of bytes transferred so far.
+     std::size_t bytes_transferred
+   ); 
+
+``
+A return value of true indicates that the read operation is complete. False indicates that further calls to the device's async\_read\_some\_at function are required.]]
+
+[[handler][The handler to be called when the read operation completes. Copies will be made of the handler as required. The function signature of the handler must be: 
+``
+   void handler(
+     // Result of operation.
+     const boost::system::error_code& error,
+
+     // Number of bytes copied into the buffers. If an error
+     // occurred, this will be the number of bytes successfully
+     // transferred prior to the error.
+     std::size_t bytes_transferred
+   ); 
+
+``
+Regardless of whether the asynchronous operation completes immediately or not, the handler will not be invoked from within this function. Invocation of the handler will be performed in a manner equivalent to using boost::asio::io\_service::post().]]
+
+]
+
+[heading Example]
+  
+To read into a single data buffer use the 
+[link boost_asio.reference.buffer buffer]  function as follows: 
+
+   boost::asio::async_read_at(d, 42,
+       boost::asio::buffer(data, size),
+       boost::asio::transfer_at_least(32),
+       handler); 
+
+
+See the 
+[link boost_asio.reference.buffer buffer]  documentation for information on reading into multiple buffers in one go, and how to use it with arrays, boost::array or std::vector. 
+
+
+
+[endsect]
+
+
+
+[section:overload3 async_read_at (3 of 4 overloads)]
+
+Start an asynchronous operation to read a certain amount of data at the specified offset. 
+
+  template<
+      typename ``[link boost_asio.reference.AsyncRandomAccessReadDevice AsyncRandomAccessReadDevice]``,
+      typename Allocator,
+      typename ``[link boost_asio.reference.ReadHandler ReadHandler]``>
+  void async_read_at(
+      AsyncRandomAccessReadDevice & d,
+      boost::uint64_t offset,
+      basic_streambuf< Allocator > & b,
+      ReadHandler handler);
+
+
+This function is used to asynchronously read a certain number of bytes of data from a random access device at the specified offset. The function call always returns immediately. The asynchronous operation will continue until one of the following conditions is true:
+
+
+* An error occurred.
+
+This operation is implemented in terms of one or more calls to the device's async\_read\_some\_at function.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[d][The device from which the data is to be read. The type must support the AsyncRandomAccessReadDevice concept.]]
+
+[[offset][The offset at which the data will be read.]]
+
+[[b][A basic\_streambuf object into which the data will be read. Ownership of the streambuf is retained by the caller, which must guarantee that it remains valid until the handler is called.]]
+
+[[handler][The handler to be called when the read operation completes. Copies will be made of the handler as required. The function signature of the handler must be: 
+``
+   void handler(
+     // Result of operation.
+     const boost::system::error_code& error,
+
+     // Number of bytes copied into the buffers. If an error
+     // occurred, this will be the number of bytes successfully
+     // transferred prior to the error.
+     std::size_t bytes_transferred
+   ); 
+
+``
+Regardless of whether the asynchronous operation completes immediately or not, the handler will not be invoked from within this function. Invocation of the handler will be performed in a manner equivalent to using boost::asio::io\_service::post().]]
+
+]
+
+[heading Remarks]
+      
+This overload is equivalent to calling: 
+
+   boost::asio::async_read_at(
+       d, 42, b,
+       boost::asio::transfer_all(),
+       handler); 
+
+
+
+
+
+
+[endsect]
+
+
+
+[section:overload4 async_read_at (4 of 4 overloads)]
+
+Start an asynchronous operation to read a certain amount of data at the specified offset. 
+
+  template<
+      typename ``[link boost_asio.reference.AsyncRandomAccessReadDevice AsyncRandomAccessReadDevice]``,
+      typename Allocator,
+      typename CompletionCondition,
+      typename ``[link boost_asio.reference.ReadHandler ReadHandler]``>
+  void async_read_at(
+      AsyncRandomAccessReadDevice & d,
+      boost::uint64_t offset,
+      basic_streambuf< Allocator > & b,
+      CompletionCondition completion_condition,
+      ReadHandler handler);
+
+
+This function is used to asynchronously read a certain number of bytes of data from a random access device at the specified offset. The function call always returns immediately. The asynchronous operation will continue until one of the following conditions is true:
+
+
+* The completion_condition function object returns true.
+
+This operation is implemented in terms of one or more calls to the device's async\_read\_some\_at function.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[d][The device from which the data is to be read. The type must support the AsyncRandomAccessReadDevice concept.]]
+
+[[offset][The offset at which the data will be read.]]
+
+[[b][A basic\_streambuf object into which the data will be read. Ownership of the streambuf is retained by the caller, which must guarantee that it remains valid until the handler is called.]]
+
+[[completion_condition][The function object to be called to determine whether the read operation is complete. The signature of the function object must be: 
+``
+   bool completion_condition(
+     // Result of latest read_some_at operation.
+     const boost::system::error_code& error,
+
+     // Number of bytes transferred so far.
+     std::size_t bytes_transferred
+   ); 
+
+``
+A return value of true indicates that the read operation is complete. False indicates that further calls to the device's async\_read\_some\_at function are required.]]
+
+[[handler][The handler to be called when the read operation completes. Copies will be made of the handler as required. The function signature of the handler must be: 
+``
+   void handler(
+     // Result of operation.
+     const boost::system::error_code& error,
+
+     // Number of bytes copied into the buffers. If an error
+     // occurred, this will be the number of bytes successfully
+     // transferred prior to the error.
+     std::size_t bytes_transferred
+   ); 
+
+``
+Regardless of whether the asynchronous operation completes immediately or not, the handler will not be invoked from within this function. Invocation of the handler will be performed in a manner equivalent to using boost::asio::io\_service::post(). ]]
+
+]
+
+
+
+[endsect]
+
+
+[endsect]
+
 [section:async_read_until async_read_until]
 
 Start an asynchronous operation to read data into a streambuf until a delimiter is encountered. 
@@ -593,8 +951,20 @@ Start an asynchronous operation to read data into a streambuf until a delimiter 
       const boost::regex & expr,
       ReadHandler handler);
 
+  template<
+      typename ``[link boost_asio.reference.AsyncReadStream AsyncReadStream]``,
+      typename Allocator,
+      typename ``[link boost_asio.reference.MatchCondition MatchCondition]``,
+      typename ``[link boost_asio.reference.ReadHandler ReadHandler]``>
+  void ``[link boost_asio.reference.async_read_until.overload4 async_read_until]``(
+      AsyncReadStream & s,
+      boost::asio::basic_streambuf< Allocator > & b,
+      MatchCondition match_condition,
+      ReadHandler handler,
+      typename boost::enable_if< is_match_condition< MatchCondition > >::type *  = 0);
 
-[section:overload1 async_read_until (1 of 3 overloads)]
+
+[section:overload1 async_read_until (1 of 4 overloads)]
 
 Start an asynchronous operation to read data into a streambuf until a delimiter is encountered. 
 
@@ -674,7 +1044,7 @@ To asynchronously read data into a streambuf until a newline is encountered:
 
 
 
-[section:overload2 async_read_until (2 of 3 overloads)]
+[section:overload2 async_read_until (2 of 4 overloads)]
 
 Start an asynchronous operation to read data into a streambuf until a delimiter is encountered. 
 
@@ -754,7 +1124,7 @@ To asynchronously read data into a streambuf until a newline is encountered:
 
 
 
-[section:overload3 async_read_until (3 of 3 overloads)]
+[section:overload3 async_read_until (3 of 4 overloads)]
 
 Start an asynchronous operation to read data into a streambuf until a regular expression is located. 
 
@@ -835,11 +1205,145 @@ To asynchronously read data into a streambuf until a CR-LF sequence is encounter
 [endsect]
 
 
+
+[section:overload4 async_read_until (4 of 4 overloads)]
+
+Start an asynchronous operation to read data into a streambuf until a function object indicates a match. 
+
+  template<
+      typename ``[link boost_asio.reference.AsyncReadStream AsyncReadStream]``,
+      typename Allocator,
+      typename ``[link boost_asio.reference.MatchCondition MatchCondition]``,
+      typename ``[link boost_asio.reference.ReadHandler ReadHandler]``>
+  void async_read_until(
+      AsyncReadStream & s,
+      boost::asio::basic_streambuf< Allocator > & b,
+      MatchCondition match_condition,
+      ReadHandler handler,
+      typename boost::enable_if< is_match_condition< MatchCondition > >::type *  = 0);
+
+
+This function is used to asynchronously read data into the specified streambuf until a user-defined match condition function object, when applied to the data contained in the streambuf, indicates a successful match. The function call always returns immediately. The asynchronous operation will continue until one of the following conditions is true:
+
+
+* The match condition function object returns a std::pair where the second element evaluates to true.
+
+* An error occurred.
+
+This operation is implemented in terms of zero or more calls to the stream's async\_read\_some function. If the match condition function object already indicates a match, the operation completes immediately.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[s][The stream from which the data is to be read. The type must support the AsyncReadStream concept.]]
+
+[[b][A streambuf object into which the data will be read.]]
+
+[[match_condition][The function object to be called to determine whether a match exists. The signature of the function object must be: 
+``
+   pair<iterator, bool> match_condition(iterator begin, iterator end);
+
+``
+where iterator represents the type: 
+``
+   buffers_iterator<basic_streambuf<Allocator>::const_buffers_type>
+
+``
+The iterator parameters begin and end define the range of bytes to be scanned to determine whether there is a match. The first member of the return value is an iterator marking one-past-the-end of the bytes that have been consumed by the match function. This iterator is used to calculate the begin parameter for any subsequent invocation of the match condition. The second member of the return value is true if a match has been found, false otherwise.]]
+
+[[handler][The handler to be called when the read operation completes. Copies will be made of the handler as required. The function signature of the handler must be: 
+``
+   void handler(
+     // Result of operation.
+     const boost::system::error_code& error,
+
+     // The number of bytes in the streambuf's get
+     // area that have been fully consumed by the
+     // match function. O if an error occurred.
+     std::size_t bytes_transferred
+   ); 
+
+``
+Regardless of whether the asynchronous operation completes immediately or not, the handler will not be invoked from within this function. Invocation of the handler will be performed in a manner equivalent to using boost::asio::io\_service::post().]]
+
+]
+
+[heading Remarks]
+      
+The default implementation of the is_match_condition type trait evaluates to true for function pointers and function objects with a result\_type typedef. It must be specialised for other user-defined function objects.
+
+[heading Examples]
+  
+To asynchronously read data into a streambuf until whitespace is encountered: 
+
+   typedef boost::asio::buffers_iterator<
+       boost::asio::streambuf::const_buffers_type> iterator;
+
+   std::pair<iterator, bool>
+   match_whitespace(iterator begin, iterator end)
+   {
+     iterator i = begin;
+     while (i != end)
+       if (std::isspace(*i++))
+         return std::make_pair(i, true);
+     return std::make_pair(i, false);
+   }
+   ...
+   void handler(const boost::system::error_code& e, std::size_t size);
+   ...
+   boost::asio::streambuf b;
+   boost::asio::async_read_until(s, b, match_whitespace, handler);
+
+
+
+
+To asynchronously read data into a streambuf until a matching character is found: 
+
+   class match_char
+   {
+   public:
+     explicit match_char(char c) : c_(c) {}
+
+     template <typename Iterator>
+     std::pair<Iterator, bool> operator()(
+         Iterator begin, Iterator end) const
+     {
+       Iterator i = begin;
+       while (i != end)
+         if (c_ == *i++)
+           return std::make_pair(i, true);
+       return std::make_pair(i, false);
+     }
+
+   private:
+     char c_;
+   };
+
+   namespace asio {
+     template <> struct is_match_condition<match_char>
+       : public boost::true_type {};
+   } // namespace asio
+   ...
+   void handler(const boost::system::error_code& e, std::size_t size);
+   ...
+   boost::asio::streambuf b;
+   boost::asio::async_read_until(s, b, match_char('a'), handler);
+
+
+
+
+
+[endsect]
+
+
 [endsect]
 
 [section:async_write async_write]
 
-Start an asynchronous operation to write of all of the supplied data to a stream. 
+Start an asynchronous operation to write all of the supplied data to a stream. 
 
   template<
       typename ``[link boost_asio.reference.AsyncWriteStream AsyncWriteStream]``,
@@ -884,7 +1388,7 @@ Start an asynchronous operation to write of all of the supplied data to a stream
 
 [section:overload1 async_write (1 of 4 overloads)]
 
-Start an asynchronous operation to write of all of the supplied data to a stream. 
+Start an asynchronous operation to write all of the supplied data to a stream. 
 
   template<
       typename ``[link boost_asio.reference.AsyncWriteStream AsyncWriteStream]``,
@@ -1034,7 +1538,7 @@ See the
 
 [section:overload3 async_write (3 of 4 overloads)]
 
-Start an asynchronous operation to write a certain amount of data to a stream. 
+Start an asynchronous operation to write all of the supplied data to a stream. 
 
   template<
       typename ``[link boost_asio.reference.AsyncWriteStream AsyncWriteStream]``,
@@ -1144,6 +1648,343 @@ A return value of true indicates that the write operation is complete. False ind
                                              // buffers. If an error occurred,
                                              // this will be less than the sum
                                              // of the buffer sizes.
+   ); 
+
+``
+Regardless of whether the asynchronous operation completes immediately or not, the handler will not be invoked from within this function. Invocation of the handler will be performed in a manner equivalent to using boost::asio::io\_service::post(). ]]
+
+]
+
+
+
+[endsect]
+
+
+[endsect]
+
+[section:async_write_at async_write_at]
+
+Start an asynchronous operation to write all of the supplied data at the specified offset. 
+
+  template<
+      typename ``[link boost_asio.reference.AsyncRandomAccessWriteDevice AsyncRandomAccessWriteDevice]``,
+      typename ``[link boost_asio.reference.ConstBufferSequence ConstBufferSequence]``,
+      typename ``[link boost_asio.reference.WriteHandler WriteHandler]``>
+  void ``[link boost_asio.reference.async_write_at.overload1 async_write_at]``(
+      AsyncRandomAccessWriteDevice & d,
+      boost::uint64_t offset,
+      const ConstBufferSequence & buffers,
+      WriteHandler handler);
+
+  template<
+      typename ``[link boost_asio.reference.AsyncRandomAccessWriteDevice AsyncRandomAccessWriteDevice]``,
+      typename ``[link boost_asio.reference.ConstBufferSequence ConstBufferSequence]``,
+      typename CompletionCondition,
+      typename ``[link boost_asio.reference.WriteHandler WriteHandler]``>
+  void ``[link boost_asio.reference.async_write_at.overload2 async_write_at]``(
+      AsyncRandomAccessWriteDevice & d,
+      boost::uint64_t offset,
+      const ConstBufferSequence & buffers,
+      CompletionCondition completion_condition,
+      WriteHandler handler);
+
+  template<
+      typename ``[link boost_asio.reference.AsyncRandomAccessWriteDevice AsyncRandomAccessWriteDevice]``,
+      typename Allocator,
+      typename ``[link boost_asio.reference.WriteHandler WriteHandler]``>
+  void ``[link boost_asio.reference.async_write_at.overload3 async_write_at]``(
+      AsyncRandomAccessWriteDevice & d,
+      boost::uint64_t offset,
+      basic_streambuf< Allocator > & b,
+      WriteHandler handler);
+
+  template<
+      typename ``[link boost_asio.reference.AsyncRandomAccessWriteDevice AsyncRandomAccessWriteDevice]``,
+      typename Allocator,
+      typename CompletionCondition,
+      typename ``[link boost_asio.reference.WriteHandler WriteHandler]``>
+  void ``[link boost_asio.reference.async_write_at.overload4 async_write_at]``(
+      AsyncRandomAccessWriteDevice & d,
+      boost::uint64_t offset,
+      basic_streambuf< Allocator > & b,
+      CompletionCondition completion_condition,
+      WriteHandler handler);
+
+
+[section:overload1 async_write_at (1 of 4 overloads)]
+
+Start an asynchronous operation to write all of the supplied data at the specified offset. 
+
+  template<
+      typename ``[link boost_asio.reference.AsyncRandomAccessWriteDevice AsyncRandomAccessWriteDevice]``,
+      typename ``[link boost_asio.reference.ConstBufferSequence ConstBufferSequence]``,
+      typename ``[link boost_asio.reference.WriteHandler WriteHandler]``>
+  void async_write_at(
+      AsyncRandomAccessWriteDevice & d,
+      boost::uint64_t offset,
+      const ConstBufferSequence & buffers,
+      WriteHandler handler);
+
+
+This function is used to asynchronously write a certain number of bytes of data to a random access device at a specified offset. The function call always returns immediately. The asynchronous operation will continue until one of the following conditions is true:
+
+
+* All of the data in the supplied buffers has been written. That is, the bytes transferred is equal to the sum of the buffer sizes.
+
+* An error occurred.
+
+This operation is implemented in terms of one or more calls to the device's async\_write\_some\_at function.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[d][The device to which the data is to be written. The type must support the AsyncRandomAccessWriteDevice concept.]]
+
+[[offset][The offset at which the data will be written.]]
+
+[[buffers][One or more buffers containing the data to be written. Although the buffers object may be copied as necessary, ownership of the underlying memory blocks is retained by the caller, which must guarantee that they remain valid until the handler is called.]]
+
+[[handler][The handler to be called when the write operation completes. Copies will be made of the handler as required. The function signature of the handler must be: 
+``
+   void handler(
+     // Result of operation.
+     const boost::system::error_code& error,
+
+     // Number of bytes written from the buffers. If an error
+     // occurred, this will be less than the sum of the buffer sizes.
+     std::size_t bytes_transferred
+   ); 
+
+``
+Regardless of whether the asynchronous operation completes immediately or not, the handler will not be invoked from within this function. Invocation of the handler will be performed in a manner equivalent to using boost::asio::io\_service::post().]]
+
+]
+
+[heading Example]
+  
+To write a single data buffer use the 
+[link boost_asio.reference.buffer buffer]  function as follows: 
+
+   boost::asio::async_write_at(d, 42, boost::asio::buffer(data, size), handler);
+
+
+See the 
+[link boost_asio.reference.buffer buffer]  documentation for information on writing multiple buffers in one go, and how to use it with arrays, boost::array or std::vector. 
+
+
+
+[endsect]
+
+
+
+[section:overload2 async_write_at (2 of 4 overloads)]
+
+Start an asynchronous operation to write a certain amount of data at the specified offset. 
+
+  template<
+      typename ``[link boost_asio.reference.AsyncRandomAccessWriteDevice AsyncRandomAccessWriteDevice]``,
+      typename ``[link boost_asio.reference.ConstBufferSequence ConstBufferSequence]``,
+      typename CompletionCondition,
+      typename ``[link boost_asio.reference.WriteHandler WriteHandler]``>
+  void async_write_at(
+      AsyncRandomAccessWriteDevice & d,
+      boost::uint64_t offset,
+      const ConstBufferSequence & buffers,
+      CompletionCondition completion_condition,
+      WriteHandler handler);
+
+
+This function is used to asynchronously write a certain number of bytes of data to a random access device at a specified offset. The function call always returns immediately. The asynchronous operation will continue until one of the following conditions is true:
+
+
+* All of the data in the supplied buffers has been written. That is, the bytes transferred is equal to the sum of the buffer sizes.
+
+* The completion_condition function object returns true.
+
+This operation is implemented in terms of one or more calls to the device's async\_write\_some\_at function.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[d][The device to which the data is to be written. The type must support the AsyncRandomAccessWriteDevice concept.]]
+
+[[offset][The offset at which the data will be written.]]
+
+[[buffers][One or more buffers containing the data to be written. Although the buffers object may be copied as necessary, ownership of the underlying memory blocks is retained by the caller, which must guarantee that they remain valid until the handler is called.]]
+
+[[completion_condition][The function object to be called to determine whether the write operation is complete. The signature of the function object must be: 
+``
+   bool completion_condition(
+     // Result of latest write_some_at operation.
+     const boost::system::error_code& error,
+
+     // Number of bytes transferred so far.
+     std::size_t bytes_transferred
+   ); 
+
+``
+A return value of true indicates that the write operation is complete. False indicates that further calls to the device's async\_write\_some\_at function are required.]]
+
+[[handler][The handler to be called when the write operation completes. Copies will be made of the handler as required. The function signature of the handler must be: 
+``
+   void handler(
+     // Result of operation.
+     const boost::system::error_code& error,
+
+     // Number of bytes written from the buffers. If an error
+     // occurred, this will be less than the sum of the buffer sizes.
+     std::size_t bytes_transferred
+   ); 
+
+``
+Regardless of whether the asynchronous operation completes immediately or not, the handler will not be invoked from within this function. Invocation of the handler will be performed in a manner equivalent to using boost::asio::io\_service::post().]]
+
+]
+
+[heading Example]
+  
+To write a single data buffer use the 
+[link boost_asio.reference.buffer buffer]  function as follows: 
+
+   boost::asio::async_write_at(d, 42,
+       boost::asio::buffer(data, size),
+       boost::asio::transfer_at_least(32),
+       handler); 
+
+
+See the 
+[link boost_asio.reference.buffer buffer]  documentation for information on writing multiple buffers in one go, and how to use it with arrays, boost::array or std::vector. 
+
+
+
+[endsect]
+
+
+
+[section:overload3 async_write_at (3 of 4 overloads)]
+
+Start an asynchronous operation to write all of the supplied data at the specified offset. 
+
+  template<
+      typename ``[link boost_asio.reference.AsyncRandomAccessWriteDevice AsyncRandomAccessWriteDevice]``,
+      typename Allocator,
+      typename ``[link boost_asio.reference.WriteHandler WriteHandler]``>
+  void async_write_at(
+      AsyncRandomAccessWriteDevice & d,
+      boost::uint64_t offset,
+      basic_streambuf< Allocator > & b,
+      WriteHandler handler);
+
+
+This function is used to asynchronously write a certain number of bytes of data to a random access device at a specified offset. The function call always returns immediately. The asynchronous operation will continue until one of the following conditions is true:
+
+
+* All of the data in the supplied basic_streambuf has been written.
+
+* An error occurred.
+
+This operation is implemented in terms of one or more calls to the device's async\_write\_some\_at function.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[d][The device to which the data is to be written. The type must support the AsyncRandomAccessWriteDevice concept.]]
+
+[[offset][The offset at which the data will be written.]]
+
+[[b][A basic\_streambuf object from which data will be written. Ownership of the streambuf is retained by the caller, which must guarantee that it remains valid until the handler is called.]]
+
+[[handler][The handler to be called when the write operation completes. Copies will be made of the handler as required. The function signature of the handler must be: 
+``
+   void handler(
+     // Result of operation.
+     const boost::system::error_code& error,
+
+     // Number of bytes written from the buffers. If an error
+     // occurred, this will be less than the sum of the buffer sizes.
+     std::size_t bytes_transferred
+   ); 
+
+``
+Regardless of whether the asynchronous operation completes immediately or not, the handler will not be invoked from within this function. Invocation of the handler will be performed in a manner equivalent to using boost::asio::io\_service::post(). ]]
+
+]
+
+
+
+[endsect]
+
+
+
+[section:overload4 async_write_at (4 of 4 overloads)]
+
+Start an asynchronous operation to write a certain amount of data at the specified offset. 
+
+  template<
+      typename ``[link boost_asio.reference.AsyncRandomAccessWriteDevice AsyncRandomAccessWriteDevice]``,
+      typename Allocator,
+      typename CompletionCondition,
+      typename ``[link boost_asio.reference.WriteHandler WriteHandler]``>
+  void async_write_at(
+      AsyncRandomAccessWriteDevice & d,
+      boost::uint64_t offset,
+      basic_streambuf< Allocator > & b,
+      CompletionCondition completion_condition,
+      WriteHandler handler);
+
+
+This function is used to asynchronously write a certain number of bytes of data to a random access device at a specified offset. The function call always returns immediately. The asynchronous operation will continue until one of the following conditions is true:
+
+
+* All of the data in the supplied basic_streambuf has been written.
+
+* The completion_condition function object returns true.
+
+This operation is implemented in terms of one or more calls to the device's async\_write\_some\_at function.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[d][The device to which the data is to be written. The type must support the AsyncRandomAccessWriteDevice concept.]]
+
+[[offset][The offset at which the data will be written.]]
+
+[[b][A basic\_streambuf object from which data will be written. Ownership of the streambuf is retained by the caller, which must guarantee that it remains valid until the handler is called.]]
+
+[[completion_condition][The function object to be called to determine whether the write operation is complete. The signature of the function object must be: 
+``
+   bool completion_condition(
+     // Result of latest async_write_some_at operation.
+     const boost::system::error_code& error,
+
+     // Number of bytes transferred so far.
+     std::size_t bytes_transferred
+   ); 
+
+``
+A return value of true indicates that the write operation is complete. False indicates that further calls to the device's async\_write\_some\_at function are required.]]
+
+[[handler][The handler to be called when the write operation completes. Copies will be made of the handler as required. The function signature of the handler must be: 
+``
+   void handler(
+     // Result of operation.
+     const boost::system::error_code& error,
+
+     // Number of bytes written from the buffers. If an error
+     // occurred, this will be less than the sum of the buffer sizes.
+     std::size_t bytes_transferred
    ); 
 
 ``
@@ -10914,6 +11755,1458 @@ Different ways a socket may be shutdown.
 
 [endsect]
 
+
+
+[endsect]
+
+[section:basic_serial_port basic_serial_port]
+
+Provides serial port functionality. 
+
+  template<
+      typename ``[link boost_asio.reference.SerialPortService SerialPortService]`` = serial_port_service>
+  class basic_serial_port :
+    public basic_io_object< SerialPortService >,
+    public serial_port_base
+
+
+[heading Types]
+[table
+  [[Name][Description]]
+
+  [
+
+    [[link boost_asio.reference.basic_serial_port.implementation_type [*implementation_type]]]
+    [The underlying implementation type of I/O object. ]
+  
+  ]
+
+  [
+
+    [[link boost_asio.reference.basic_serial_port.lowest_layer_type [*lowest_layer_type]]]
+    [A basic_serial_port is always the lowest layer. ]
+  
+  ]
+
+  [
+
+    [[link boost_asio.reference.basic_serial_port.native_type [*native_type]]]
+    [The native representation of a serial port. ]
+  
+  ]
+
+  [
+
+    [[link boost_asio.reference.basic_serial_port.service_type [*service_type]]]
+    [The type of the service that will be used to provide I/O operations. ]
+  
+  ]
+
+]
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link boost_asio.reference.basic_serial_port.assign [*assign]]]
+    [Assign an existing native serial port to the serial port. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.basic_serial_port.async_read_some [*async_read_some]]]
+    [Start an asynchronous read. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.basic_serial_port.async_write_some [*async_write_some]]]
+    [Start an asynchronous write. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.basic_serial_port.basic_serial_port [*basic_serial_port]]]
+    [Construct a basic_serial_port without opening it. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.basic_serial_port.cancel [*cancel]]]
+    [Cancel all asynchronous operations associated with the serial port. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.basic_serial_port.close [*close]]]
+    [Close the serial port. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.basic_serial_port.get_io_service [*get_io_service]]]
+    [Get the io_service associated with the object. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.basic_serial_port.get_option [*get_option]]]
+    [Get an option from the serial port. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.basic_serial_port.io_service [*io_service]]]
+    [(Deprecated: use get_io_service().) Get the io_service associated with the object. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.basic_serial_port.is_open [*is_open]]]
+    [Determine whether the serial port is open. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.basic_serial_port.lowest_layer [*lowest_layer]]]
+    [Get a reference to the lowest layer. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.basic_serial_port.native [*native]]]
+    [Get the native serial port representation. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.basic_serial_port.open [*open]]]
+    [Open the serial port using the specified device name. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.basic_serial_port.read_some [*read_some]]]
+    [Read some data from the serial port. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.basic_serial_port.send_break [*send_break]]]
+    [Send a break sequence to the serial port. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.basic_serial_port.set_option [*set_option]]]
+    [Set an option on the serial port. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.basic_serial_port.write_some [*write_some]]]
+    [Write some data to the serial port. ]
+  ]
+  
+]
+
+[heading Protected Data Members]
+[table
+  [[Name][Description]]
+
+  [
+    [[link boost_asio.reference.basic_serial_port.implementation [*implementation]]]
+    [The underlying implementation of the I/O object. ]
+  ]
+
+  [
+    [[link boost_asio.reference.basic_serial_port.service [*service]]]
+    [The service associated with the I/O object. ]
+  ]
+
+]
+
+The basic_serial_port class template provides functionality that is common to all serial ports.
+
+
+[heading Thread Safety]
+  
+[*Distinct] [*objects:]  Safe.
+
+[*Shared] [*objects:]  Unsafe. 
+
+
+[section:assign basic_serial_port::assign]
+
+Assign an existing native serial port to the serial port. 
+
+  void ``[link boost_asio.reference.basic_serial_port.assign.overload1 assign]``(
+      const native_type & native_serial_port);
+
+  boost::system::error_code ``[link boost_asio.reference.basic_serial_port.assign.overload2 assign]``(
+      const native_type & native_serial_port,
+      boost::system::error_code & ec);
+
+
+[section:overload1 basic_serial_port::assign (1 of 2 overloads)]
+
+Assign an existing native serial port to the serial port. 
+
+  void assign(
+      const native_type & native_serial_port);
+
+
+
+[endsect]
+
+
+
+[section:overload2 basic_serial_port::assign (2 of 2 overloads)]
+
+Assign an existing native serial port to the serial port. 
+
+  boost::system::error_code assign(
+      const native_type & native_serial_port,
+      boost::system::error_code & ec);
+
+
+
+[endsect]
+
+
+[endsect]
+
+
+[section:async_read_some basic_serial_port::async_read_some]
+
+Start an asynchronous read. 
+
+  template<
+      typename ``[link boost_asio.reference.MutableBufferSequence MutableBufferSequence]``,
+      typename ``[link boost_asio.reference.ReadHandler ReadHandler]``>
+  void async_read_some(
+      const MutableBufferSequence & buffers,
+      ReadHandler handler);
+
+
+This function is used to asynchronously read data from the serial port. The function call always returns immediately.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[buffers][One or more buffers into which the data will be read. Although the buffers object may be copied as necessary, ownership of the underlying memory blocks is retained by the caller, which must guarantee that they remain valid until the handler is called.]]
+
+[[handler][The handler to be called when the read operation completes. Copies will be made of the handler as required. The function signature of the handler must be: 
+``
+   void handler(
+     const boost::system::error_code& error, // Result of operation.
+     std::size_t bytes_transferred           // Number of bytes read.
+   ); 
+
+``
+Regardless of whether the asynchronous operation completes immediately or not, the handler will not be invoked from within this function. Invocation of the handler will be performed in a manner equivalent to using boost::asio::io\_service::post().]]
+
+]
+
+[heading Remarks]
+      
+The read operation may not read all of the requested number of bytes. Consider using the 
+[link boost_asio.reference.async_read async_read]  function if you need to ensure that the requested amount of data is read before the asynchronous operation completes.
+
+[heading Example]
+  
+To read into a single data buffer use the 
+[link boost_asio.reference.buffer buffer]  function as follows: 
+
+   serial_port.async_read_some(boost::asio::buffer(data, size), handler);
+
+
+See the 
+[link boost_asio.reference.buffer buffer]  documentation for information on reading into multiple buffers in one go, and how to use it with arrays, boost::array or std::vector. 
+
+
+
+[endsect]
+
+
+
+[section:async_write_some basic_serial_port::async_write_some]
+
+Start an asynchronous write. 
+
+  template<
+      typename ``[link boost_asio.reference.ConstBufferSequence ConstBufferSequence]``,
+      typename ``[link boost_asio.reference.WriteHandler WriteHandler]``>
+  void async_write_some(
+      const ConstBufferSequence & buffers,
+      WriteHandler handler);
+
+
+This function is used to asynchronously write data to the serial port. The function call always returns immediately.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[buffers][One or more data buffers to be written to the serial port. Although the buffers object may be copied as necessary, ownership of the underlying memory blocks is retained by the caller, which must guarantee that they remain valid until the handler is called.]]
+
+[[handler][The handler to be called when the write operation completes. Copies will be made of the handler as required. The function signature of the handler must be: 
+``
+   void handler(
+     const boost::system::error_code& error, // Result of operation.
+     std::size_t bytes_transferred           // Number of bytes written.
+   ); 
+
+``
+Regardless of whether the asynchronous operation completes immediately or not, the handler will not be invoked from within this function. Invocation of the handler will be performed in a manner equivalent to using boost::asio::io\_service::post().]]
+
+]
+
+[heading Remarks]
+      
+The write operation may not transmit all of the data to the peer. Consider using the 
+[link boost_asio.reference.async_write async_write]  function if you need to ensure that all data is written before the asynchronous operation completes.
+
+[heading Example]
+  
+To write a single data buffer use the 
+[link boost_asio.reference.buffer buffer]  function as follows: 
+
+   serial_port.async_write_some(boost::asio::buffer(data, size), handler);
+
+
+See the 
+[link boost_asio.reference.buffer buffer]  documentation for information on writing multiple buffers in one go, and how to use it with arrays, boost::array or std::vector. 
+
+
+
+[endsect]
+
+
+[section:basic_serial_port basic_serial_port::basic_serial_port]
+
+Construct a basic_serial_port without opening it. 
+
+  ``[link boost_asio.reference.basic_serial_port.basic_serial_port.overload1 basic_serial_port]``(
+      boost::asio::io_service & io_service);
+
+  ``[link boost_asio.reference.basic_serial_port.basic_serial_port.overload2 basic_serial_port]``(
+      boost::asio::io_service & io_service,
+      const char * device);
+
+  ``[link boost_asio.reference.basic_serial_port.basic_serial_port.overload3 basic_serial_port]``(
+      boost::asio::io_service & io_service,
+      const std::string & device);
+
+  ``[link boost_asio.reference.basic_serial_port.basic_serial_port.overload4 basic_serial_port]``(
+      boost::asio::io_service & io_service,
+      const native_type & native_serial_port);
+
+
+[section:overload1 basic_serial_port::basic_serial_port (1 of 4 overloads)]
+
+Construct a basic_serial_port without opening it. 
+
+  basic_serial_port(
+      boost::asio::io_service & io_service);
+
+
+This constructor creates a serial port without opening it.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[io_service][The io\_service object that the serial port will use to dispatch handlers for any asynchronous operations performed on the port. ]]
+
+]
+
+
+
+[endsect]
+
+
+
+[section:overload2 basic_serial_port::basic_serial_port (2 of 4 overloads)]
+
+Construct and open a basic_serial_port. 
+
+  basic_serial_port(
+      boost::asio::io_service & io_service,
+      const char * device);
+
+
+This constructor creates and opens a serial port for the specified device name.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[io_service][The io\_service object that the serial port will use to dispatch handlers for any asynchronous operations performed on the port.]]
+
+[[device][The platform-specific device name for this serial port. ]]
+
+]
+
+
+
+[endsect]
+
+
+
+[section:overload3 basic_serial_port::basic_serial_port (3 of 4 overloads)]
+
+Construct and open a basic_serial_port. 
+
+  basic_serial_port(
+      boost::asio::io_service & io_service,
+      const std::string & device);
+
+
+This constructor creates and opens a serial port for the specified device name.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[io_service][The io\_service object that the serial port will use to dispatch handlers for any asynchronous operations performed on the port.]]
+
+[[device][The platform-specific device name for this serial port. ]]
+
+]
+
+
+
+[endsect]
+
+
+
+[section:overload4 basic_serial_port::basic_serial_port (4 of 4 overloads)]
+
+Construct a basic_serial_port on an existing native serial port. 
+
+  basic_serial_port(
+      boost::asio::io_service & io_service,
+      const native_type & native_serial_port);
+
+
+This constructor creates a serial port object to hold an existing native serial port.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[io_service][The io\_service object that the serial port will use to dispatch handlers for any asynchronous operations performed on the port.]]
+
+[[native_serial_port][A native serial port.]]
+
+]
+
+[heading Exceptions]
+    
+
+[variablelist
+  
+[[boost::system::system_error][Thrown on failure. ]]
+
+]
+
+
+
+[endsect]
+
+
+[endsect]
+
+[section:cancel basic_serial_port::cancel]
+
+Cancel all asynchronous operations associated with the serial port. 
+
+  void ``[link boost_asio.reference.basic_serial_port.cancel.overload1 cancel]``();
+
+  boost::system::error_code ``[link boost_asio.reference.basic_serial_port.cancel.overload2 cancel]``(
+      boost::system::error_code & ec);
+
+
+[section:overload1 basic_serial_port::cancel (1 of 2 overloads)]
+
+Cancel all asynchronous operations associated with the serial port. 
+
+  void cancel();
+
+
+This function causes all outstanding asynchronous read or write operations to finish immediately, and the handlers for cancelled operations will be passed the boost::asio::error::operation\_aborted error.
+
+
+[heading Exceptions]
+    
+
+[variablelist
+  
+[[boost::system::system_error][Thrown on failure. ]]
+
+]
+
+
+
+[endsect]
+
+
+
+[section:overload2 basic_serial_port::cancel (2 of 2 overloads)]
+
+Cancel all asynchronous operations associated with the serial port. 
+
+  boost::system::error_code cancel(
+      boost::system::error_code & ec);
+
+
+This function causes all outstanding asynchronous read or write operations to finish immediately, and the handlers for cancelled operations will be passed the boost::asio::error::operation\_aborted error.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[ec][Set to indicate what error occurred, if any. ]]
+
+]
+
+
+
+[endsect]
+
+
+[endsect]
+
+[section:close basic_serial_port::close]
+
+Close the serial port. 
+
+  void ``[link boost_asio.reference.basic_serial_port.close.overload1 close]``();
+
+  boost::system::error_code ``[link boost_asio.reference.basic_serial_port.close.overload2 close]``(
+      boost::system::error_code & ec);
+
+
+[section:overload1 basic_serial_port::close (1 of 2 overloads)]
+
+Close the serial port. 
+
+  void close();
+
+
+This function is used to close the serial port. Any asynchronous read or write operations will be cancelled immediately, and will complete with the boost::asio::error::operation\_aborted error.
+
+
+[heading Exceptions]
+    
+
+[variablelist
+  
+[[boost::system::system_error][Thrown on failure. ]]
+
+]
+
+
+
+[endsect]
+
+
+
+[section:overload2 basic_serial_port::close (2 of 2 overloads)]
+
+Close the serial port. 
+
+  boost::system::error_code close(
+      boost::system::error_code & ec);
+
+
+This function is used to close the serial port. Any asynchronous read or write operations will be cancelled immediately, and will complete with the boost::asio::error::operation\_aborted error.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[ec][Set to indicate what error occurred, if any. ]]
+
+]
+
+
+
+[endsect]
+
+
+[endsect]
+
+
+[section:get_io_service basic_serial_port::get_io_service]
+
+
+['Inherited from basic_io_object.]
+
+Get the io_service associated with the object. 
+
+  boost::asio::io_service & get_io_service();
+
+
+This function may be used to obtain the io_service object that the I/O object uses to dispatch handlers for asynchronous operations.
+
+
+[heading Return Value]
+      
+A reference to the io_service object that the I/O object will use to dispatch handlers. Ownership is not transferred to the caller. 
+
+
+
+[endsect]
+
+
+[section:get_option basic_serial_port::get_option]
+
+Get an option from the serial port. 
+
+  template<
+      typename ``[link boost_asio.reference.GettableSerialPortOption GettableSerialPortOption]``>
+  void ``[link boost_asio.reference.basic_serial_port.get_option.overload1 get_option]``(
+      GettableSerialPortOption & option);
+
+  template<
+      typename ``[link boost_asio.reference.GettableSerialPortOption GettableSerialPortOption]``>
+  boost::system::error_code ``[link boost_asio.reference.basic_serial_port.get_option.overload2 get_option]``(
+      GettableSerialPortOption & option,
+      boost::system::error_code & ec);
+
+
+[section:overload1 basic_serial_port::get_option (1 of 2 overloads)]
+
+Get an option from the serial port. 
+
+  template<
+      typename ``[link boost_asio.reference.GettableSerialPortOption GettableSerialPortOption]``>
+  void get_option(
+      GettableSerialPortOption & option);
+
+
+This function is used to get the current value of an option on the serial port.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[option][The option value to be obtained from the serial port.]]
+
+]
+
+[heading Exceptions]
+    
+
+[variablelist
+  
+[[boost::system::system_error][Thrown on failure.]]
+
+]
+
+
+
+[endsect]
+
+
+
+[section:overload2 basic_serial_port::get_option (2 of 2 overloads)]
+
+Get an option from the serial port. 
+
+  template<
+      typename ``[link boost_asio.reference.GettableSerialPortOption GettableSerialPortOption]``>
+  boost::system::error_code get_option(
+      GettableSerialPortOption & option,
+      boost::system::error_code & ec);
+
+
+This function is used to get the current value of an option on the serial port.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[option][The option value to be obtained from the serial port.]]
+
+[[ec][Set to indicate what error occured, if any.]]
+
+]
+
+
+
+[endsect]
+
+
+[endsect]
+
+
+[section:implementation basic_serial_port::implementation]
+
+
+['Inherited from basic_io_object.]
+
+The underlying implementation of the I/O object. 
+
+  implementation_type implementation;
+
+
+
+[endsect]
+
+
+
+[section:implementation_type basic_serial_port::implementation_type]
+
+
+['Inherited from basic_io_object.]
+
+The underlying implementation type of I/O object. 
+
+  typedef service_type::implementation_type implementation_type;
+
+
+
+
+[endsect]
+
+
+
+[section:io_service basic_serial_port::io_service]
+
+
+['Inherited from basic_io_object.]
+
+(Deprecated: use get_io_service().) Get the io_service associated with the object. 
+
+  boost::asio::io_service & io_service();
+
+
+This function may be used to obtain the io_service object that the I/O object uses to dispatch handlers for asynchronous operations.
+
+
+[heading Return Value]
+      
+A reference to the io_service object that the I/O object will use to dispatch handlers. Ownership is not transferred to the caller. 
+
+
+
+[endsect]
+
+
+
+[section:is_open basic_serial_port::is_open]
+
+Determine whether the serial port is open. 
+
+  bool is_open() const;
+
+
+
+[endsect]
+
+
+
+[section:lowest_layer basic_serial_port::lowest_layer]
+
+Get a reference to the lowest layer. 
+
+  lowest_layer_type & lowest_layer();
+
+
+This function returns a reference to the lowest layer in a stack of layers. Since a basic_serial_port cannot contain any further layers, it simply returns a reference to itself.
+
+
+[heading Return Value]
+      
+A reference to the lowest layer in the stack of layers. Ownership is not transferred to the caller. 
+
+
+
+[endsect]
+
+
+
+[section:lowest_layer_type basic_serial_port::lowest_layer_type]
+
+A basic_serial_port is always the lowest layer. 
+
+  typedef basic_serial_port< SerialPortService > lowest_layer_type;
+
+
+[heading Types]
+[table
+  [[Name][Description]]
+
+  [
+
+    [[link boost_asio.reference.basic_serial_port.implementation_type [*implementation_type]]]
+    [The underlying implementation type of I/O object. ]
+  
+  ]
+
+  [
+
+    [[link boost_asio.reference.basic_serial_port.lowest_layer_type [*lowest_layer_type]]]
+    [A basic_serial_port is always the lowest layer. ]
+  
+  ]
+
+  [
+
+    [[link boost_asio.reference.basic_serial_port.native_type [*native_type]]]
+    [The native representation of a serial port. ]
+  
+  ]
+
+  [
+
+    [[link boost_asio.reference.basic_serial_port.service_type [*service_type]]]
+    [The type of the service that will be used to provide I/O operations. ]
+  
+  ]
+
+]
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link boost_asio.reference.basic_serial_port.assign [*assign]]]
+    [Assign an existing native serial port to the serial port. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.basic_serial_port.async_read_some [*async_read_some]]]
+    [Start an asynchronous read. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.basic_serial_port.async_write_some [*async_write_some]]]
+    [Start an asynchronous write. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.basic_serial_port.basic_serial_port [*basic_serial_port]]]
+    [Construct a basic_serial_port without opening it. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.basic_serial_port.cancel [*cancel]]]
+    [Cancel all asynchronous operations associated with the serial port. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.basic_serial_port.close [*close]]]
+    [Close the serial port. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.basic_serial_port.get_io_service [*get_io_service]]]
+    [Get the io_service associated with the object. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.basic_serial_port.get_option [*get_option]]]
+    [Get an option from the serial port. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.basic_serial_port.io_service [*io_service]]]
+    [(Deprecated: use get_io_service().) Get the io_service associated with the object. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.basic_serial_port.is_open [*is_open]]]
+    [Determine whether the serial port is open. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.basic_serial_port.lowest_layer [*lowest_layer]]]
+    [Get a reference to the lowest layer. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.basic_serial_port.native [*native]]]
+    [Get the native serial port representation. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.basic_serial_port.open [*open]]]
+    [Open the serial port using the specified device name. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.basic_serial_port.read_some [*read_some]]]
+    [Read some data from the serial port. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.basic_serial_port.send_break [*send_break]]]
+    [Send a break sequence to the serial port. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.basic_serial_port.set_option [*set_option]]]
+    [Set an option on the serial port. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.basic_serial_port.write_some [*write_some]]]
+    [Write some data to the serial port. ]
+  ]
+  
+]
+
+[heading Protected Data Members]
+[table
+  [[Name][Description]]
+
+  [
+    [[link boost_asio.reference.basic_serial_port.implementation [*implementation]]]
+    [The underlying implementation of the I/O object. ]
+  ]
+
+  [
+    [[link boost_asio.reference.basic_serial_port.service [*service]]]
+    [The service associated with the I/O object. ]
+  ]
+
+]
+
+The basic_serial_port class template provides functionality that is common to all serial ports.
+
+
+[heading Thread Safety]
+  
+[*Distinct] [*objects:]  Safe.
+
+[*Shared] [*objects:]  Unsafe. 
+
+
+
+
+[endsect]
+
+
+
+[section:native basic_serial_port::native]
+
+Get the native serial port representation. 
+
+  native_type native();
+
+
+This function may be used to obtain the underlying representation of the serial port. This is intended to allow access to native serial port functionality that is not otherwise provided. 
+
+
+[endsect]
+
+
+
+[section:native_type basic_serial_port::native_type]
+
+The native representation of a serial port. 
+
+  typedef SerialPortService::native_type native_type;
+
+
+
+
+[endsect]
+
+
+[section:open basic_serial_port::open]
+
+Open the serial port using the specified device name. 
+
+  void ``[link boost_asio.reference.basic_serial_port.open.overload1 open]``(
+      const std::string & device);
+
+  boost::system::error_code ``[link boost_asio.reference.basic_serial_port.open.overload2 open]``(
+      const std::string & device,
+      boost::system::error_code & ec);
+
+
+[section:overload1 basic_serial_port::open (1 of 2 overloads)]
+
+Open the serial port using the specified device name. 
+
+  void open(
+      const std::string & device);
+
+
+This function opens the serial port for the specified device name.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[device][The platform-specific device name.]]
+
+]
+
+[heading Exceptions]
+    
+
+[variablelist
+  
+[[boost::system::system_error][Thrown on failure. ]]
+
+]
+
+
+
+[endsect]
+
+
+
+[section:overload2 basic_serial_port::open (2 of 2 overloads)]
+
+Open the serial port using the specified device name. 
+
+  boost::system::error_code open(
+      const std::string & device,
+      boost::system::error_code & ec);
+
+
+This function opens the serial port using the given platform-specific device name.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[device][The platform-specific device name.]]
+
+[[ec][Set the indicate what error occurred, if any. ]]
+
+]
+
+
+
+[endsect]
+
+
+[endsect]
+
+[section:read_some basic_serial_port::read_some]
+
+Read some data from the serial port. 
+
+  template<
+      typename ``[link boost_asio.reference.MutableBufferSequence MutableBufferSequence]``>
+  std::size_t ``[link boost_asio.reference.basic_serial_port.read_some.overload1 read_some]``(
+      const MutableBufferSequence & buffers);
+
+  template<
+      typename ``[link boost_asio.reference.MutableBufferSequence MutableBufferSequence]``>
+  std::size_t ``[link boost_asio.reference.basic_serial_port.read_some.overload2 read_some]``(
+      const MutableBufferSequence & buffers,
+      boost::system::error_code & ec);
+
+
+[section:overload1 basic_serial_port::read_some (1 of 2 overloads)]
+
+Read some data from the serial port. 
+
+  template<
+      typename ``[link boost_asio.reference.MutableBufferSequence MutableBufferSequence]``>
+  std::size_t read_some(
+      const MutableBufferSequence & buffers);
+
+
+This function is used to read data from the serial port. The function call will block until one or more bytes of data has been read successfully, or until an error occurs.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[buffers][One or more buffers into which the data will be read.]]
+
+]
+
+[heading Return Value]
+      
+The number of bytes read.
+
+[heading Exceptions]
+    
+
+[variablelist
+  
+[[boost::system::system_error][Thrown on failure. An error code of boost::asio::error::eof indicates that the connection was closed by the peer.]]
+
+]
+
+[heading Remarks]
+      
+The read\_some operation may not read all of the requested number of bytes. Consider using the 
+[link boost_asio.reference.read read]  function if you need to ensure that the requested amount of data is read before the blocking operation completes.
+
+[heading Example]
+  
+To read into a single data buffer use the 
+[link boost_asio.reference.buffer buffer]  function as follows: 
+
+   serial_port.read_some(boost::asio::buffer(data, size));
+
+
+See the 
+[link boost_asio.reference.buffer buffer]  documentation for information on reading into multiple buffers in one go, and how to use it with arrays, boost::array or std::vector. 
+
+
+
+[endsect]
+
+
+
+[section:overload2 basic_serial_port::read_some (2 of 2 overloads)]
+
+Read some data from the serial port. 
+
+  template<
+      typename ``[link boost_asio.reference.MutableBufferSequence MutableBufferSequence]``>
+  std::size_t read_some(
+      const MutableBufferSequence & buffers,
+      boost::system::error_code & ec);
+
+
+This function is used to read data from the serial port. The function call will block until one or more bytes of data has been read successfully, or until an error occurs.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[buffers][One or more buffers into which the data will be read.]]
+
+[[ec][Set to indicate what error occurred, if any.]]
+
+]
+
+[heading Return Value]
+      
+The number of bytes read. Returns 0 if an error occurred.
+
+[heading Remarks]
+      
+The read\_some operation may not read all of the requested number of bytes. Consider using the 
+[link boost_asio.reference.read read]  function if you need to ensure that the requested amount of data is read before the blocking operation completes. 
+
+
+
+[endsect]
+
+
+[endsect]
+
+[section:send_break basic_serial_port::send_break]
+
+Send a break sequence to the serial port. 
+
+  void ``[link boost_asio.reference.basic_serial_port.send_break.overload1 send_break]``();
+
+  boost::system::error_code ``[link boost_asio.reference.basic_serial_port.send_break.overload2 send_break]``(
+      boost::system::error_code & ec);
+
+
+[section:overload1 basic_serial_port::send_break (1 of 2 overloads)]
+
+Send a break sequence to the serial port. 
+
+  void send_break();
+
+
+This function causes a break sequence of platform-specific duration to be sent out the serial port.
+
+
+[heading Exceptions]
+    
+
+[variablelist
+  
+[[boost::system::system_error][Thrown on failure. ]]
+
+]
+
+
+
+[endsect]
+
+
+
+[section:overload2 basic_serial_port::send_break (2 of 2 overloads)]
+
+Send a break sequence to the serial port. 
+
+  boost::system::error_code send_break(
+      boost::system::error_code & ec);
+
+
+This function causes a break sequence of platform-specific duration to be sent out the serial port.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[ec][Set to indicate what error occurred, if any. ]]
+
+]
+
+
+
+[endsect]
+
+
+[endsect]
+
+
+[section:service basic_serial_port::service]
+
+
+['Inherited from basic_io_object.]
+
+The service associated with the I/O object. 
+
+  service_type & service;
+
+
+
+[endsect]
+
+
+
+[section:service_type basic_serial_port::service_type]
+
+
+['Inherited from basic_io_object.]
+
+The type of the service that will be used to provide I/O operations. 
+
+  typedef SerialPortService service_type;
+
+
+
+
+[endsect]
+
+
+[section:set_option basic_serial_port::set_option]
+
+Set an option on the serial port. 
+
+  template<
+      typename ``[link boost_asio.reference.SettableSerialPortOption SettableSerialPortOption]``>
+  void ``[link boost_asio.reference.basic_serial_port.set_option.overload1 set_option]``(
+      const SettableSerialPortOption & option);
+
+  template<
+      typename ``[link boost_asio.reference.SettableSerialPortOption SettableSerialPortOption]``>
+  boost::system::error_code ``[link boost_asio.reference.basic_serial_port.set_option.overload2 set_option]``(
+      const SettableSerialPortOption & option,
+      boost::system::error_code & ec);
+
+
+[section:overload1 basic_serial_port::set_option (1 of 2 overloads)]
+
+Set an option on the serial port. 
+
+  template<
+      typename ``[link boost_asio.reference.SettableSerialPortOption SettableSerialPortOption]``>
+  void set_option(
+      const SettableSerialPortOption & option);
+
+
+This function is used to set an option on the serial port.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[option][The option value to be set on the serial port.]]
+
+]
+
+[heading Exceptions]
+    
+
+[variablelist
+  
+[[boost::system::system_error][Thrown on failure.]]
+
+]
+
+
+
+[endsect]
+
+
+
+[section:overload2 basic_serial_port::set_option (2 of 2 overloads)]
+
+Set an option on the serial port. 
+
+  template<
+      typename ``[link boost_asio.reference.SettableSerialPortOption SettableSerialPortOption]``>
+  boost::system::error_code set_option(
+      const SettableSerialPortOption & option,
+      boost::system::error_code & ec);
+
+
+This function is used to set an option on the serial port.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[option][The option value to be set on the serial port.]]
+
+[[ec][Set to indicate what error occurred, if any.]]
+
+]
+
+
+
+[endsect]
+
+
+[endsect]
+
+[section:write_some basic_serial_port::write_some]
+
+Write some data to the serial port. 
+
+  template<
+      typename ``[link boost_asio.reference.ConstBufferSequence ConstBufferSequence]``>
+  std::size_t ``[link boost_asio.reference.basic_serial_port.write_some.overload1 write_some]``(
+      const ConstBufferSequence & buffers);
+
+  template<
+      typename ``[link boost_asio.reference.ConstBufferSequence ConstBufferSequence]``>
+  std::size_t ``[link boost_asio.reference.basic_serial_port.write_some.overload2 write_some]``(
+      const ConstBufferSequence & buffers,
+      boost::system::error_code & ec);
+
+
+[section:overload1 basic_serial_port::write_some (1 of 2 overloads)]
+
+Write some data to the serial port. 
+
+  template<
+      typename ``[link boost_asio.reference.ConstBufferSequence ConstBufferSequence]``>
+  std::size_t write_some(
+      const ConstBufferSequence & buffers);
+
+
+This function is used to write data to the serial port. The function call will block until one or more bytes of the data has been written successfully, or until an error occurs.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[buffers][One or more data buffers to be written to the serial port.]]
+
+]
+
+[heading Return Value]
+      
+The number of bytes written.
+
+[heading Exceptions]
+    
+
+[variablelist
+  
+[[boost::system::system_error][Thrown on failure. An error code of boost::asio::error::eof indicates that the connection was closed by the peer.]]
+
+]
+
+[heading Remarks]
+      
+The write\_some operation may not transmit all of the data to the peer. Consider using the 
+[link boost_asio.reference.write write]  function if you need to ensure that all data is written before the blocking operation completes.
+
+[heading Example]
+  
+To write a single data buffer use the 
+[link boost_asio.reference.buffer buffer]  function as follows: 
+
+   serial_port.write_some(boost::asio::buffer(data, size));
+
+
+See the 
+[link boost_asio.reference.buffer buffer]  documentation for information on writing multiple buffers in one go, and how to use it with arrays, boost::array or std::vector. 
+
+
+
+[endsect]
+
+
+
+[section:overload2 basic_serial_port::write_some (2 of 2 overloads)]
+
+Write some data to the serial port. 
+
+  template<
+      typename ``[link boost_asio.reference.ConstBufferSequence ConstBufferSequence]``>
+  std::size_t write_some(
+      const ConstBufferSequence & buffers,
+      boost::system::error_code & ec);
+
+
+This function is used to write data to the serial port. The function call will block until one or more bytes of the data has been written successfully, or until an error occurs.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[buffers][One or more data buffers to be written to the serial port.]]
+
+[[ec][Set to indicate what error occurred, if any.]]
+
+]
+
+[heading Return Value]
+      
+The number of bytes written. Returns 0 if an error occurred.
+
+[heading Remarks]
+      
+The write\_some operation may not transmit all of the data to the peer. Consider using the 
+[link boost_asio.reference.write write]  function if you need to ensure that all data is written before the blocking operation completes. 
+
+
+
+[endsect]
+
+
+[endsect]
 
 
 [endsect]
@@ -26392,6 +28685,108 @@ Write the given data to the stream. Returns the number of bytes written, or 0 if
 
 [endsect]
 
+
+[section:buffers_begin buffers_begin]
+
+Construct an iterator representing the beginning of the buffers' data. 
+
+  template<
+      typename ``[link boost_asio.reference.BufferSequence BufferSequence]``>
+  buffers_iterator< BufferSequence > buffers_begin(
+      const BufferSequence & buffers);
+
+
+
+[endsect]
+
+
+
+[section:buffers_end buffers_end]
+
+Construct an iterator representing the end of the buffers' data. 
+
+  template<
+      typename ``[link boost_asio.reference.BufferSequence BufferSequence]``>
+  buffers_iterator< BufferSequence > buffers_end(
+      const BufferSequence & buffers);
+
+
+
+[endsect]
+
+
+[section:buffers_iterator buffers_iterator]
+
+A random access iterator over the bytes in a buffer sequence. 
+
+  template<
+      typename ``[link boost_asio.reference.BufferSequence BufferSequence]``,
+      typename ``[link boost_asio.reference.ByteType ByteType]`` = char>
+  class buffers_iterator
+
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link boost_asio.reference.buffers_iterator.begin [*begin]]]
+    [Construct an iterator representing the beginning of the buffers' data. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.buffers_iterator.buffers_iterator [*buffers_iterator]]]
+    [Default constructor. Creates an iterator in an undefined state. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.buffers_iterator.end [*end]]]
+    [Construct an iterator representing the end of the buffers' data. ]
+  ]
+  
+]
+
+
+[section:begin buffers_iterator::begin]
+
+Construct an iterator representing the beginning of the buffers' data. 
+
+  static buffers_iterator begin(
+      const BufferSequence & buffers);
+
+
+
+[endsect]
+
+
+
+[section:buffers_iterator buffers_iterator::buffers_iterator]
+
+Default constructor. Creates an iterator in an undefined state. 
+
+  buffers_iterator();
+
+
+
+[endsect]
+
+
+
+[section:end buffers_iterator::end]
+
+Construct an iterator representing the end of the buffers' data. 
+
+  static buffers_iterator end(
+      const BufferSequence & buffers);
+
+
+
+[endsect]
+
+
+
+[endsect]
+
 [section:const_buffer const_buffer]
 
 Holds a buffer that cannot be modified. 
@@ -37806,6 +40201,41 @@ Getting the current option value:
 [endsect]
 
 
+[section:is_match_condition is_match_condition]
+
+Type trait used to determine whether a type can be used as a match condition function with read_until and async_read_until. 
+
+  template<
+      typename T>
+  struct is_match_condition
+
+
+[heading Data Members]
+[table
+  [[Name][Description]]
+
+  [
+    [[link boost_asio.reference.is_match_condition.value [*value]]]
+    [The value member is true if the type may be used as a match condition. ]
+  ]
+
+]
+
+
+[section:value is_match_condition::value]
+
+The value member is true if the type may be used as a match condition. 
+
+  static const bool value;
+
+
+
+[endsect]
+
+
+
+[endsect]
+
 [section:is_read_buffered is_read_buffered]
 
 The is_read_buffered class is a traits class that may be used to determine whether a stream type supports buffering of read data. 
@@ -44575,6 +47005,487 @@ The number of bytes read. If an error occurs, returns the total number of bytes 
 
 [endsect]
 
+[section:read_at read_at]
+
+Attempt to read a certain amount of data at the specified offset before returning. 
+
+  template<
+      typename ``[link boost_asio.reference.SyncRandomAccessReadDevice SyncRandomAccessReadDevice]``,
+      typename ``[link boost_asio.reference.MutableBufferSequence MutableBufferSequence]``>
+  std::size_t ``[link boost_asio.reference.read_at.overload1 read_at]``(
+      SyncRandomAccessReadDevice & d,
+      boost::uint64_t offset,
+      const MutableBufferSequence & buffers);
+
+  template<
+      typename ``[link boost_asio.reference.SyncRandomAccessReadDevice SyncRandomAccessReadDevice]``,
+      typename ``[link boost_asio.reference.MutableBufferSequence MutableBufferSequence]``,
+      typename CompletionCondition>
+  std::size_t ``[link boost_asio.reference.read_at.overload2 read_at]``(
+      SyncRandomAccessReadDevice & d,
+      boost::uint64_t offset,
+      const MutableBufferSequence & buffers,
+      CompletionCondition completion_condition);
+
+  template<
+      typename ``[link boost_asio.reference.SyncRandomAccessReadDevice SyncRandomAccessReadDevice]``,
+      typename ``[link boost_asio.reference.MutableBufferSequence MutableBufferSequence]``,
+      typename CompletionCondition>
+  std::size_t ``[link boost_asio.reference.read_at.overload3 read_at]``(
+      SyncRandomAccessReadDevice & d,
+      boost::uint64_t offset,
+      const MutableBufferSequence & buffers,
+      CompletionCondition completion_condition,
+      boost::system::error_code & ec);
+
+  template<
+      typename ``[link boost_asio.reference.SyncRandomAccessReadDevice SyncRandomAccessReadDevice]``,
+      typename Allocator>
+  std::size_t ``[link boost_asio.reference.read_at.overload4 read_at]``(
+      SyncRandomAccessReadDevice & d,
+      boost::uint64_t offset,
+      basic_streambuf< Allocator > & b);
+
+  template<
+      typename ``[link boost_asio.reference.SyncRandomAccessReadDevice SyncRandomAccessReadDevice]``,
+      typename Allocator,
+      typename CompletionCondition>
+  std::size_t ``[link boost_asio.reference.read_at.overload5 read_at]``(
+      SyncRandomAccessReadDevice & d,
+      boost::uint64_t offset,
+      basic_streambuf< Allocator > & b,
+      CompletionCondition completion_condition);
+
+  template<
+      typename ``[link boost_asio.reference.SyncRandomAccessReadDevice SyncRandomAccessReadDevice]``,
+      typename Allocator,
+      typename CompletionCondition>
+  std::size_t ``[link boost_asio.reference.read_at.overload6 read_at]``(
+      SyncRandomAccessReadDevice & d,
+      boost::uint64_t offset,
+      basic_streambuf< Allocator > & b,
+      CompletionCondition completion_condition,
+      boost::system::error_code & ec);
+
+
+[section:overload1 read_at (1 of 6 overloads)]
+
+Attempt to read a certain amount of data at the specified offset before returning. 
+
+  template<
+      typename ``[link boost_asio.reference.SyncRandomAccessReadDevice SyncRandomAccessReadDevice]``,
+      typename ``[link boost_asio.reference.MutableBufferSequence MutableBufferSequence]``>
+  std::size_t read_at(
+      SyncRandomAccessReadDevice & d,
+      boost::uint64_t offset,
+      const MutableBufferSequence & buffers);
+
+
+This function is used to read a certain number of bytes of data from a random access device at the specified offset. The call will block until one of the following conditions is true:
+
+
+* The supplied buffers are full. That is, the bytes transferred is equal to the sum of the buffer sizes.
+
+* An error occurred.
+
+This operation is implemented in terms of one or more calls to the device's read\_some\_at function.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[d][The device from which the data is to be read. The type must support the SyncRandomAccessReadDevice concept.]]
+
+[[offset][The offset at which the data will be read.]]
+
+[[buffers][One or more buffers into which the data will be read. The sum of the buffer sizes indicates the maximum number of bytes to read from the device.]]
+
+]
+
+[heading Return Value]
+      
+The number of bytes transferred.
+
+[heading Exceptions]
+    
+
+[variablelist
+  
+[[boost::system::system_error][Thrown on failure.]]
+
+]
+
+[heading Example]
+  
+To read into a single data buffer use the 
+[link boost_asio.reference.buffer buffer]  function as follows: 
+
+   boost::asio::read_at(d, 42, boost::asio::buffer(data, size)); 
+
+
+See the 
+[link boost_asio.reference.buffer buffer]  documentation for information on reading into multiple buffers in one go, and how to use it with arrays, boost::array or std::vector.
+
+[heading Remarks]
+      
+This overload is equivalent to calling: 
+
+   boost::asio::read_at(
+       d, 42, buffers,
+       boost::asio::transfer_all()); 
+
+
+
+
+
+
+[endsect]
+
+
+
+[section:overload2 read_at (2 of 6 overloads)]
+
+Attempt to read a certain amount of data at the specified offset before returning. 
+
+  template<
+      typename ``[link boost_asio.reference.SyncRandomAccessReadDevice SyncRandomAccessReadDevice]``,
+      typename ``[link boost_asio.reference.MutableBufferSequence MutableBufferSequence]``,
+      typename CompletionCondition>
+  std::size_t read_at(
+      SyncRandomAccessReadDevice & d,
+      boost::uint64_t offset,
+      const MutableBufferSequence & buffers,
+      CompletionCondition completion_condition);
+
+
+This function is used to read a certain number of bytes of data from a random access device at the specified offset. The call will block until one of the following conditions is true:
+
+
+* The supplied buffers are full. That is, the bytes transferred is equal to the sum of the buffer sizes.
+
+* The completion_condition function object returns true.
+
+This operation is implemented in terms of one or more calls to the device's read\_some\_at function.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[d][The device from which the data is to be read. The type must support the SyncRandomAccessReadDevice concept.]]
+
+[[offset][The offset at which the data will be read.]]
+
+[[buffers][One or more buffers into which the data will be read. The sum of the buffer sizes indicates the maximum number of bytes to read from the device.]]
+
+[[completion_condition][The function object to be called to determine whether the read operation is complete. The signature of the function object must be: 
+``
+   bool completion_condition(
+     // Result of latest read_some_at operation.
+     const boost::system::error_code& error,
+
+     // Number of bytes transferred so far.
+     std::size_t bytes_transferred
+   ); 
+
+``
+A return value of true indicates that the read operation is complete. False indicates that further calls to the device's read\_some\_at function are required.]]
+
+]
+
+[heading Return Value]
+      
+The number of bytes transferred.
+
+[heading Exceptions]
+    
+
+[variablelist
+  
+[[boost::system::system_error][Thrown on failure.]]
+
+]
+
+[heading Example]
+  
+To read into a single data buffer use the 
+[link boost_asio.reference.buffer buffer]  function as follows: 
+
+   boost::asio::read_at(d, 42, boost::asio::buffer(data, size),
+       boost::asio::transfer_at_least(32)); 
+
+
+See the 
+[link boost_asio.reference.buffer buffer]  documentation for information on reading into multiple buffers in one go, and how to use it with arrays, boost::array or std::vector. 
+
+
+
+[endsect]
+
+
+
+[section:overload3 read_at (3 of 6 overloads)]
+
+Attempt to read a certain amount of data at the specified offset before returning. 
+
+  template<
+      typename ``[link boost_asio.reference.SyncRandomAccessReadDevice SyncRandomAccessReadDevice]``,
+      typename ``[link boost_asio.reference.MutableBufferSequence MutableBufferSequence]``,
+      typename CompletionCondition>
+  std::size_t read_at(
+      SyncRandomAccessReadDevice & d,
+      boost::uint64_t offset,
+      const MutableBufferSequence & buffers,
+      CompletionCondition completion_condition,
+      boost::system::error_code & ec);
+
+
+This function is used to read a certain number of bytes of data from a random access device at the specified offset. The call will block until one of the following conditions is true:
+
+
+* The supplied buffers are full. That is, the bytes transferred is equal to the sum of the buffer sizes.
+
+* The completion_condition function object returns true.
+
+This operation is implemented in terms of one or more calls to the device's read\_some\_at function.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[d][The device from which the data is to be read. The type must support the SyncRandomAccessReadDevice concept.]]
+
+[[offset][The offset at which the data will be read.]]
+
+[[buffers][One or more buffers into which the data will be read. The sum of the buffer sizes indicates the maximum number of bytes to read from the device.]]
+
+[[completion_condition][The function object to be called to determine whether the read operation is complete. The signature of the function object must be: 
+``
+   bool completion_condition(
+     const boost::system::error_code& error, // Result of latest read_some_at
+                                             // operation.
+
+     std::size_t bytes_transferred           // Number of bytes transferred
+                                             // so far.
+   ); 
+
+``
+A return value of true indicates that the read operation is complete. False indicates that further calls to the device's read\_some\_at function are required.]]
+
+[[ec][Set to indicate what error occurred, if any.]]
+
+]
+
+[heading Return Value]
+      
+The number of bytes read. If an error occurs, returns the total number of bytes successfully transferred prior to the error. 
+
+
+
+[endsect]
+
+
+
+[section:overload4 read_at (4 of 6 overloads)]
+
+Attempt to read a certain amount of data at the specified offset before returning. 
+
+  template<
+      typename ``[link boost_asio.reference.SyncRandomAccessReadDevice SyncRandomAccessReadDevice]``,
+      typename Allocator>
+  std::size_t read_at(
+      SyncRandomAccessReadDevice & d,
+      boost::uint64_t offset,
+      basic_streambuf< Allocator > & b);
+
+
+This function is used to read a certain number of bytes of data from a random access device at the specified offset. The call will block until one of the following conditions is true:
+
+
+* An error occurred.
+
+This operation is implemented in terms of one or more calls to the device's read\_some\_at function.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[d][The device from which the data is to be read. The type must support the SyncRandomAccessReadDevice concept.]]
+
+[[offset][The offset at which the data will be read.]]
+
+[[b][The basic\_streambuf object into which the data will be read.]]
+
+]
+
+[heading Return Value]
+      
+The number of bytes transferred.
+
+[heading Exceptions]
+    
+
+[variablelist
+  
+[[boost::system::system_error][Thrown on failure.]]
+
+]
+
+[heading Remarks]
+      
+This overload is equivalent to calling: 
+
+   boost::asio::read_at(
+       d, 42, b,
+       boost::asio::transfer_all()); 
+
+
+
+
+
+
+[endsect]
+
+
+
+[section:overload5 read_at (5 of 6 overloads)]
+
+Attempt to read a certain amount of data at the specified offset before returning. 
+
+  template<
+      typename ``[link boost_asio.reference.SyncRandomAccessReadDevice SyncRandomAccessReadDevice]``,
+      typename Allocator,
+      typename CompletionCondition>
+  std::size_t read_at(
+      SyncRandomAccessReadDevice & d,
+      boost::uint64_t offset,
+      basic_streambuf< Allocator > & b,
+      CompletionCondition completion_condition);
+
+
+This function is used to read a certain number of bytes of data from a random access device at the specified offset. The call will block until one of the following conditions is true:
+
+
+* The completion_condition function object returns true.
+
+This operation is implemented in terms of one or more calls to the device's read\_some\_at function.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[d][The device from which the data is to be read. The type must support the SyncRandomAccessReadDevice concept.]]
+
+[[offset][The offset at which the data will be read.]]
+
+[[b][The basic\_streambuf object into which the data will be read.]]
+
+[[completion_condition][The function object to be called to determine whether the read operation is complete. The signature of the function object must be: 
+``
+   bool completion_condition(
+     // Result of latest read_some_at operation.
+     const boost::system::error_code& error,
+
+     // Number of bytes transferred so far.
+     std::size_t bytes_transferred
+   ); 
+
+``
+A return value of true indicates that the read operation is complete. False indicates that further calls to the device's read\_some\_at function are required.]]
+
+]
+
+[heading Return Value]
+      
+The number of bytes transferred.
+
+[heading Exceptions]
+    
+
+[variablelist
+  
+[[boost::system::system_error][Thrown on failure. ]]
+
+]
+
+
+
+[endsect]
+
+
+
+[section:overload6 read_at (6 of 6 overloads)]
+
+Attempt to read a certain amount of data at the specified offset before returning. 
+
+  template<
+      typename ``[link boost_asio.reference.SyncRandomAccessReadDevice SyncRandomAccessReadDevice]``,
+      typename Allocator,
+      typename CompletionCondition>
+  std::size_t read_at(
+      SyncRandomAccessReadDevice & d,
+      boost::uint64_t offset,
+      basic_streambuf< Allocator > & b,
+      CompletionCondition completion_condition,
+      boost::system::error_code & ec);
+
+
+This function is used to read a certain number of bytes of data from a random access device at the specified offset. The call will block until one of the following conditions is true:
+
+
+* The completion_condition function object returns true.
+
+This operation is implemented in terms of one or more calls to the device's read\_some\_at function.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[d][The device from which the data is to be read. The type must support the SyncRandomAccessReadDevice concept.]]
+
+[[offset][The offset at which the data will be read.]]
+
+[[b][The basic\_streambuf object into which the data will be read.]]
+
+[[completion_condition][The function object to be called to determine whether the read operation is complete. The signature of the function object must be: 
+``
+   bool completion_condition(
+     // Result of latest read_some_at operation.
+     const boost::system::error_code& error,
+
+     // Number of bytes transferred so far.
+     std::size_t bytes_transferred
+   ); 
+
+``
+A return value of true indicates that the read operation is complete. False indicates that further calls to the device's read\_some\_at function are required.]]
+
+[[ec][Set to indicate what error occurred, if any.]]
+
+]
+
+[heading Return Value]
+      
+The number of bytes read. If an error occurs, returns the total number of bytes successfully transferred prior to the error. 
+
+
+
+[endsect]
+
+
+[endsect]
+
 [section:read_until read_until]
 
 Read data into a streambuf until a delimiter is encountered. 
@@ -44630,8 +47541,29 @@ Read data into a streambuf until a delimiter is encountered.
       const boost::regex & expr,
       boost::system::error_code & ec);
 
+  template<
+      typename ``[link boost_asio.reference.SyncReadStream SyncReadStream]``,
+      typename Allocator,
+      typename ``[link boost_asio.reference.MatchCondition MatchCondition]``>
+  std::size_t ``[link boost_asio.reference.read_until.overload7 read_until]``(
+      SyncReadStream & s,
+      boost::asio::basic_streambuf< Allocator > & b,
+      MatchCondition match_condition,
+      typename boost::enable_if< is_match_condition< MatchCondition > >::type *  = 0);
 
-[section:overload1 read_until (1 of 6 overloads)]
+  template<
+      typename ``[link boost_asio.reference.SyncReadStream SyncReadStream]``,
+      typename Allocator,
+      typename ``[link boost_asio.reference.MatchCondition MatchCondition]``>
+  std::size_t ``[link boost_asio.reference.read_until.overload8 read_until]``(
+      SyncReadStream & s,
+      boost::asio::basic_streambuf< Allocator > & b,
+      MatchCondition match_condition,
+      boost::system::error_code & ec,
+      typename boost::enable_if< is_match_condition< MatchCondition > >::type *  = 0);
+
+
+[section:overload1 read_until (1 of 8 overloads)]
 
 Read data into a streambuf until a delimiter is encountered. 
 
@@ -44699,7 +47631,7 @@ To read data into a streambuf until a newline is encountered:
 
 
 
-[section:overload2 read_until (2 of 6 overloads)]
+[section:overload2 read_until (2 of 8 overloads)]
 
 Read data into a streambuf until a delimiter is encountered. 
 
@@ -44748,7 +47680,7 @@ The number of bytes in the streambuf's get area up to and including the delimite
 
 
 
-[section:overload3 read_until (3 of 6 overloads)]
+[section:overload3 read_until (3 of 8 overloads)]
 
 Read data into a streambuf until a delimiter is encountered. 
 
@@ -44816,7 +47748,7 @@ To read data into a streambuf until a newline is encountered:
 
 
 
-[section:overload4 read_until (4 of 6 overloads)]
+[section:overload4 read_until (4 of 8 overloads)]
 
 Read data into a streambuf until a delimiter is encountered. 
 
@@ -44865,7 +47797,7 @@ The number of bytes in the streambuf's get area up to and including the delimite
 
 
 
-[section:overload5 read_until (5 of 6 overloads)]
+[section:overload5 read_until (5 of 8 overloads)]
 
 Read data into a streambuf until a regular expression is located. 
 
@@ -44933,7 +47865,7 @@ To read data into a streambuf until a CR-LF sequence is encountered:
 
 
 
-[section:overload6 read_until (6 of 6 overloads)]
+[section:overload6 read_until (6 of 8 overloads)]
 
 Read data into a streambuf until a regular expression is located. 
 
@@ -44979,6 +47911,1489 @@ The number of bytes in the streambuf's get area up to and including the substrin
 
 
 [endsect]
+
+
+
+[section:overload7 read_until (7 of 8 overloads)]
+
+Read data into a streambuf until a function object indicates a match. 
+
+  template<
+      typename ``[link boost_asio.reference.SyncReadStream SyncReadStream]``,
+      typename Allocator,
+      typename ``[link boost_asio.reference.MatchCondition MatchCondition]``>
+  std::size_t read_until(
+      SyncReadStream & s,
+      boost::asio::basic_streambuf< Allocator > & b,
+      MatchCondition match_condition,
+      typename boost::enable_if< is_match_condition< MatchCondition > >::type *  = 0);
+
+
+This function is used to read data into the specified streambuf until a user-defined match condition function object, when applied to the data contained in the streambuf, indicates a successful match. The call will block until one of the following conditions is true:
+
+
+* The match condition function object returns a std::pair where the second element evaluates to true.
+
+* An error occurred.
+
+This operation is implemented in terms of zero or more calls to the stream's read\_some function. If the match condition function object already indicates a match, the function returns immediately.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[s][The stream from which the data is to be read. The type must support the SyncReadStream concept.]]
+
+[[b][A streambuf object into which the data will be read.]]
+
+[[match_condition][The function object to be called to determine whether a match exists. The signature of the function object must be: 
+``
+   pair<iterator, bool> match_condition(iterator begin, iterator end);
+
+``
+where iterator represents the type: 
+``
+   buffers_iterator<basic_streambuf<Allocator>::const_buffers_type>
+
+``
+The iterator parameters begin and end define the range of bytes to be scanned to determine whether there is a match. The first member of the return value is an iterator marking one-past-the-end of the bytes that have been consumed by the match function. This iterator is used to calculate the begin parameter for any subsequent invocation of the match condition. The second member of the return value is true if a match has been found, false otherwise.]]
+
+]
+
+[heading Return Value]
+      
+The number of bytes in the streambuf's get area that have been fully consumed by the match function.
+
+[heading Exceptions]
+    
+
+[variablelist
+  
+[[boost::system::system_error][Thrown on failure.]]
+
+]
+
+[heading Remarks]
+      
+The default implementation of the is_match_condition type trait evaluates to true for function pointers and function objects with a result\_type typedef. It must be specialised for other user-defined function objects.
+
+[heading Examples]
+  
+To read data into a streambuf until whitespace is encountered: 
+
+   typedef boost::asio::buffers_iterator<
+       boost::asio::streambuf::const_buffers_type> iterator;
+
+   std::pair<iterator, bool>
+   match_whitespace(iterator begin, iterator end)
+   {
+     iterator i = begin;
+     while (i != end)
+       if (std::isspace(*i++))
+         return std::make_pair(i, true);
+     return std::make_pair(i, false);
+   }
+   ...
+   boost::asio::streambuf b;
+   boost::asio::read_until(s, b, match_whitespace);
+
+
+
+
+To read data into a streambuf until a matching character is found: 
+
+   class match_char
+   {
+   public:
+     explicit match_char(char c) : c_(c) {}
+
+     template <typename Iterator>
+     std::pair<Iterator, bool> operator()(
+         Iterator begin, Iterator end) const
+     {
+       Iterator i = begin;
+       while (i != end)
+         if (c_ == *i++)
+           return std::make_pair(i, true);
+       return std::make_pair(i, false);
+     }
+
+   private:
+     char c_;
+   };
+
+   namespace asio {
+     template <> struct is_match_condition<match_char>
+       : public boost::true_type {};
+   } // namespace asio
+   ...
+   boost::asio::streambuf b;
+   boost::asio::read_until(s, b, match_char('a'));
+
+
+
+
+
+[endsect]
+
+
+
+[section:overload8 read_until (8 of 8 overloads)]
+
+Read data into a streambuf until a function object indicates a match. 
+
+  template<
+      typename ``[link boost_asio.reference.SyncReadStream SyncReadStream]``,
+      typename Allocator,
+      typename ``[link boost_asio.reference.MatchCondition MatchCondition]``>
+  std::size_t read_until(
+      SyncReadStream & s,
+      boost::asio::basic_streambuf< Allocator > & b,
+      MatchCondition match_condition,
+      boost::system::error_code & ec,
+      typename boost::enable_if< is_match_condition< MatchCondition > >::type *  = 0);
+
+
+This function is used to read data into the specified streambuf until a user-defined match condition function object, when applied to the data contained in the streambuf, indicates a successful match. The call will block until one of the following conditions is true:
+
+
+* The match condition function object returns a std::pair where the second element evaluates to true.
+
+* An error occurred.
+
+This operation is implemented in terms of zero or more calls to the stream's read\_some function. If the match condition function object already indicates a match, the function returns immediately.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[s][The stream from which the data is to be read. The type must support the SyncReadStream concept.]]
+
+[[b][A streambuf object into which the data will be read.]]
+
+[[match_condition][The function object to be called to determine whether a match exists. The signature of the function object must be: 
+``
+   pair<iterator, bool> match_condition(iterator begin, iterator end);
+
+``
+where iterator represents the type: 
+``
+   buffers_iterator<basic_streambuf<Allocator>::const_buffers_type>
+
+``
+The iterator parameters begin and end define the range of bytes to be scanned to determine whether there is a match. The first member of the return value is an iterator marking one-past-the-end of the bytes that have been consumed by the match function. This iterator is used to calculate the begin parameter for any subsequent invocation of the match condition. The second member of the return value is true if a match has been found, false otherwise.]]
+
+[[ec][Set to indicate what error occurred, if any.]]
+
+]
+
+[heading Return Value]
+      
+The number of bytes in the streambuf's get area that have been fully consumed by the match function. Returns 0 if an error occurred.
+
+[heading Remarks]
+      
+The default implementation of the is_match_condition type trait evaluates to true for function pointers and function objects with a result\_type typedef. It must be specialised for other user-defined function objects. 
+
+
+
+[endsect]
+
+
+[endsect]
+
+
+[section:serial_port serial_port]
+
+Typedef for the typical usage of a serial port. 
+
+  typedef basic_serial_port serial_port;
+
+
+[heading Types]
+[table
+  [[Name][Description]]
+
+  [
+
+    [[link boost_asio.reference.basic_serial_port.implementation_type [*implementation_type]]]
+    [The underlying implementation type of I/O object. ]
+  
+  ]
+
+  [
+
+    [[link boost_asio.reference.basic_serial_port.lowest_layer_type [*lowest_layer_type]]]
+    [A basic_serial_port is always the lowest layer. ]
+  
+  ]
+
+  [
+
+    [[link boost_asio.reference.basic_serial_port.native_type [*native_type]]]
+    [The native representation of a serial port. ]
+  
+  ]
+
+  [
+
+    [[link boost_asio.reference.basic_serial_port.service_type [*service_type]]]
+    [The type of the service that will be used to provide I/O operations. ]
+  
+  ]
+
+]
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link boost_asio.reference.basic_serial_port.assign [*assign]]]
+    [Assign an existing native serial port to the serial port. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.basic_serial_port.async_read_some [*async_read_some]]]
+    [Start an asynchronous read. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.basic_serial_port.async_write_some [*async_write_some]]]
+    [Start an asynchronous write. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.basic_serial_port.basic_serial_port [*basic_serial_port]]]
+    [Construct a basic_serial_port without opening it. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.basic_serial_port.cancel [*cancel]]]
+    [Cancel all asynchronous operations associated with the serial port. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.basic_serial_port.close [*close]]]
+    [Close the serial port. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.basic_serial_port.get_io_service [*get_io_service]]]
+    [Get the io_service associated with the object. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.basic_serial_port.get_option [*get_option]]]
+    [Get an option from the serial port. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.basic_serial_port.io_service [*io_service]]]
+    [(Deprecated: use get_io_service().) Get the io_service associated with the object. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.basic_serial_port.is_open [*is_open]]]
+    [Determine whether the serial port is open. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.basic_serial_port.lowest_layer [*lowest_layer]]]
+    [Get a reference to the lowest layer. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.basic_serial_port.native [*native]]]
+    [Get the native serial port representation. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.basic_serial_port.open [*open]]]
+    [Open the serial port using the specified device name. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.basic_serial_port.read_some [*read_some]]]
+    [Read some data from the serial port. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.basic_serial_port.send_break [*send_break]]]
+    [Send a break sequence to the serial port. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.basic_serial_port.set_option [*set_option]]]
+    [Set an option on the serial port. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.basic_serial_port.write_some [*write_some]]]
+    [Write some data to the serial port. ]
+  ]
+  
+]
+
+[heading Protected Data Members]
+[table
+  [[Name][Description]]
+
+  [
+    [[link boost_asio.reference.basic_serial_port.implementation [*implementation]]]
+    [The underlying implementation of the I/O object. ]
+  ]
+
+  [
+    [[link boost_asio.reference.basic_serial_port.service [*service]]]
+    [The service associated with the I/O object. ]
+  ]
+
+]
+
+The basic_serial_port class template provides functionality that is common to all serial ports.
+
+
+[heading Thread Safety]
+  
+[*Distinct] [*objects:]  Safe.
+
+[*Shared] [*objects:]  Unsafe. 
+
+
+
+
+[endsect]
+
+
+[section:serial_port_base serial_port_base]
+
+The serial_port_base class is used as a base for the basic_serial_port class template so that we have a common place to define the serial port options. 
+
+  class serial_port_base
+
+
+[heading Types]
+[table
+  [[Name][Description]]
+
+  [
+
+    [[link boost_asio.reference.serial_port_base__baud_rate [*baud_rate]]]
+    [Serial port option to permit changing the baud rate. ]
+  
+  ]
+
+  [
+
+    [[link boost_asio.reference.serial_port_base__character_size [*character_size]]]
+    [Serial port option to permit changing the character size. ]
+  
+  ]
+
+  [
+
+    [[link boost_asio.reference.serial_port_base__flow_control [*flow_control]]]
+    [Serial port option to permit changing the flow control. ]
+  
+  ]
+
+  [
+
+    [[link boost_asio.reference.serial_port_base__parity [*parity]]]
+    [Serial port option to permit changing the parity. ]
+  
+  ]
+
+  [
+
+    [[link boost_asio.reference.serial_port_base__stop_bits [*stop_bits]]]
+    [Serial port option to permit changing the number of stop bits. ]
+  
+  ]
+
+]
+
+[heading Protected Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link boost_asio.reference.serial_port_base._serial_port_base [*~serial_port_base]]]
+    [Protected destructor to prevent deletion through this type. ]
+  ]
+  
+]
+
+
+[section:_serial_port_base serial_port_base::~serial_port_base]
+
+Protected destructor to prevent deletion through this type. 
+
+  ~serial_port_base();
+
+
+
+[endsect]
+
+
+
+[endsect]
+
+[section:serial_port_base__baud_rate serial_port_base::baud_rate]
+
+Serial port option to permit changing the baud rate. 
+
+  class baud_rate
+
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link boost_asio.reference.serial_port_base__baud_rate.baud_rate [*baud_rate]]]
+    []
+  ]
+  
+  [
+    [[link boost_asio.reference.serial_port_base__baud_rate.load [*load]]]
+    []
+  ]
+  
+  [
+    [[link boost_asio.reference.serial_port_base__baud_rate.store [*store]]]
+    []
+  ]
+  
+  [
+    [[link boost_asio.reference.serial_port_base__baud_rate.value [*value]]]
+    []
+  ]
+  
+]
+
+Implements changing the baud rate for a given serial port. 
+
+
+[section:baud_rate serial_port_base::baud_rate::baud_rate]
+
+
+
+  baud_rate(
+      unsigned int rate = 0);
+
+
+
+[endsect]
+
+
+
+[section:load serial_port_base::baud_rate::load]
+
+
+
+  boost::system::error_code load(
+      const BOOST_ASIO_OPTION_STORAGE & storage,
+      boost::system::error_code & ec);
+
+
+
+[endsect]
+
+
+
+[section:store serial_port_base::baud_rate::store]
+
+
+
+  boost::system::error_code store(
+      BOOST_ASIO_OPTION_STORAGE & storage,
+      boost::system::error_code & ec) const;
+
+
+
+[endsect]
+
+
+
+[section:value serial_port_base::baud_rate::value]
+
+
+
+  unsigned int value() const;
+
+
+
+[endsect]
+
+
+
+[endsect]
+
+[section:serial_port_base__character_size serial_port_base::character_size]
+
+Serial port option to permit changing the character size. 
+
+  class character_size
+
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link boost_asio.reference.serial_port_base__character_size.character_size [*character_size]]]
+    []
+  ]
+  
+  [
+    [[link boost_asio.reference.serial_port_base__character_size.load [*load]]]
+    []
+  ]
+  
+  [
+    [[link boost_asio.reference.serial_port_base__character_size.store [*store]]]
+    []
+  ]
+  
+  [
+    [[link boost_asio.reference.serial_port_base__character_size.value [*value]]]
+    []
+  ]
+  
+]
+
+Implements changing the character size for a given serial port. 
+
+
+[section:character_size serial_port_base::character_size::character_size]
+
+
+
+  character_size(
+      unsigned int t = 8);
+
+
+
+[endsect]
+
+
+
+[section:load serial_port_base::character_size::load]
+
+
+
+  boost::system::error_code load(
+      const BOOST_ASIO_OPTION_STORAGE & storage,
+      boost::system::error_code & ec);
+
+
+
+[endsect]
+
+
+
+[section:store serial_port_base::character_size::store]
+
+
+
+  boost::system::error_code store(
+      BOOST_ASIO_OPTION_STORAGE & storage,
+      boost::system::error_code & ec) const;
+
+
+
+[endsect]
+
+
+
+[section:value serial_port_base::character_size::value]
+
+
+
+  unsigned int value() const;
+
+
+
+[endsect]
+
+
+
+[endsect]
+
+[section:serial_port_base__flow_control serial_port_base::flow_control]
+
+Serial port option to permit changing the flow control. 
+
+  class flow_control
+
+
+[heading Types]
+[table
+  [[Name][Description]]
+
+  [
+
+    [[link boost_asio.reference.serial_port_base__flow_control.type [*type]]]
+    []
+  
+  ]
+
+]
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link boost_asio.reference.serial_port_base__flow_control.flow_control [*flow_control]]]
+    []
+  ]
+  
+  [
+    [[link boost_asio.reference.serial_port_base__flow_control.load [*load]]]
+    []
+  ]
+  
+  [
+    [[link boost_asio.reference.serial_port_base__flow_control.store [*store]]]
+    []
+  ]
+  
+  [
+    [[link boost_asio.reference.serial_port_base__flow_control.value [*value]]]
+    []
+  ]
+  
+]
+
+Implements changing the flow control for a given serial port. 
+
+
+[section:flow_control serial_port_base::flow_control::flow_control]
+
+
+
+  flow_control(
+      type t = none);
+
+
+
+[endsect]
+
+
+
+[section:load serial_port_base::flow_control::load]
+
+
+
+  boost::system::error_code load(
+      const BOOST_ASIO_OPTION_STORAGE & storage,
+      boost::system::error_code & ec);
+
+
+
+[endsect]
+
+
+
+[section:store serial_port_base::flow_control::store]
+
+
+
+  boost::system::error_code store(
+      BOOST_ASIO_OPTION_STORAGE & storage,
+      boost::system::error_code & ec) const;
+
+
+
+[endsect]
+
+
+
+[section:type serial_port_base::flow_control::type]
+
+
+
+  enum type
+
+[heading Values]
+[variablelist
+
+  [
+    [none]
+    []
+  ]
+
+  [
+    [software]
+    []
+  ]
+
+  [
+    [hardware]
+    []
+  ]
+
+]
+
+
+
+[endsect]
+
+
+
+[section:value serial_port_base::flow_control::value]
+
+
+
+  type value() const;
+
+
+
+[endsect]
+
+
+
+[endsect]
+
+[section:serial_port_base__parity serial_port_base::parity]
+
+Serial port option to permit changing the parity. 
+
+  class parity
+
+
+[heading Types]
+[table
+  [[Name][Description]]
+
+  [
+
+    [[link boost_asio.reference.serial_port_base__parity.type [*type]]]
+    []
+  
+  ]
+
+]
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link boost_asio.reference.serial_port_base__parity.load [*load]]]
+    []
+  ]
+  
+  [
+    [[link boost_asio.reference.serial_port_base__parity.parity [*parity]]]
+    []
+  ]
+  
+  [
+    [[link boost_asio.reference.serial_port_base__parity.store [*store]]]
+    []
+  ]
+  
+  [
+    [[link boost_asio.reference.serial_port_base__parity.value [*value]]]
+    []
+  ]
+  
+]
+
+Implements changing the parity for a given serial port. 
+
+
+[section:load serial_port_base::parity::load]
+
+
+
+  boost::system::error_code load(
+      const BOOST_ASIO_OPTION_STORAGE & storage,
+      boost::system::error_code & ec);
+
+
+
+[endsect]
+
+
+
+[section:parity serial_port_base::parity::parity]
+
+
+
+  parity(
+      type t = none);
+
+
+
+[endsect]
+
+
+
+[section:store serial_port_base::parity::store]
+
+
+
+  boost::system::error_code store(
+      BOOST_ASIO_OPTION_STORAGE & storage,
+      boost::system::error_code & ec) const;
+
+
+
+[endsect]
+
+
+
+[section:type serial_port_base::parity::type]
+
+
+
+  enum type
+
+[heading Values]
+[variablelist
+
+  [
+    [none]
+    []
+  ]
+
+  [
+    [odd]
+    []
+  ]
+
+  [
+    [even]
+    []
+  ]
+
+]
+
+
+
+[endsect]
+
+
+
+[section:value serial_port_base::parity::value]
+
+
+
+  type value() const;
+
+
+
+[endsect]
+
+
+
+[endsect]
+
+[section:serial_port_base__stop_bits serial_port_base::stop_bits]
+
+Serial port option to permit changing the number of stop bits. 
+
+  class stop_bits
+
+
+[heading Types]
+[table
+  [[Name][Description]]
+
+  [
+
+    [[link boost_asio.reference.serial_port_base__stop_bits.type [*type]]]
+    []
+  
+  ]
+
+]
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link boost_asio.reference.serial_port_base__stop_bits.load [*load]]]
+    []
+  ]
+  
+  [
+    [[link boost_asio.reference.serial_port_base__stop_bits.stop_bits [*stop_bits]]]
+    []
+  ]
+  
+  [
+    [[link boost_asio.reference.serial_port_base__stop_bits.store [*store]]]
+    []
+  ]
+  
+  [
+    [[link boost_asio.reference.serial_port_base__stop_bits.value [*value]]]
+    []
+  ]
+  
+]
+
+Implements changing the number of stop bits for a given serial port. 
+
+
+[section:load serial_port_base::stop_bits::load]
+
+
+
+  boost::system::error_code load(
+      const BOOST_ASIO_OPTION_STORAGE & storage,
+      boost::system::error_code & ec);
+
+
+
+[endsect]
+
+
+
+[section:stop_bits serial_port_base::stop_bits::stop_bits]
+
+
+
+  stop_bits(
+      type t = one);
+
+
+
+[endsect]
+
+
+
+[section:store serial_port_base::stop_bits::store]
+
+
+
+  boost::system::error_code store(
+      BOOST_ASIO_OPTION_STORAGE & storage,
+      boost::system::error_code & ec) const;
+
+
+
+[endsect]
+
+
+
+[section:type serial_port_base::stop_bits::type]
+
+
+
+  enum type
+
+[heading Values]
+[variablelist
+
+  [
+    [one]
+    []
+  ]
+
+  [
+    [onepointfive]
+    []
+  ]
+
+  [
+    [two]
+    []
+  ]
+
+]
+
+
+
+[endsect]
+
+
+
+[section:value serial_port_base::stop_bits::value]
+
+
+
+  type value() const;
+
+
+
+[endsect]
+
+
+
+[endsect]
+
+[section:serial_port_service serial_port_service]
+
+Default service implementation for a serial port. 
+
+  class serial_port_service :
+    public io_service::service
+
+
+[heading Types]
+[table
+  [[Name][Description]]
+
+  [
+
+    [[link boost_asio.reference.serial_port_service.implementation_type [*implementation_type]]]
+    [The type of a serial port implementation. ]
+  
+  ]
+
+  [
+
+    [[link boost_asio.reference.serial_port_service.native_type [*native_type]]]
+    [The native handle type. ]
+  
+  ]
+
+]
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link boost_asio.reference.serial_port_service.assign [*assign]]]
+    [Assign an existing native handle to a serial port. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.serial_port_service.async_read_some [*async_read_some]]]
+    [Start an asynchronous read. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.serial_port_service.async_write_some [*async_write_some]]]
+    [Start an asynchronous write. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.serial_port_service.cancel [*cancel]]]
+    [Cancel all asynchronous operations associated with the handle. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.serial_port_service.close [*close]]]
+    [Close a serial port implementation. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.serial_port_service.construct [*construct]]]
+    [Construct a new serial port implementation. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.serial_port_service.destroy [*destroy]]]
+    [Destroy a serial port implementation. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.serial_port_service.get_io_service [*get_io_service]]]
+    [Get the io_service object that owns the service. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.serial_port_service.get_option [*get_option]]]
+    [Get a serial port option. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.serial_port_service.io_service [*io_service]]]
+    [(Deprecated: use get_io_service().) Get the io_service object that owns the service. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.serial_port_service.is_open [*is_open]]]
+    [Determine whether the handle is open. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.serial_port_service.native [*native]]]
+    [Get the native handle implementation. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.serial_port_service.open [*open]]]
+    [Open a serial port. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.serial_port_service.read_some [*read_some]]]
+    [Read some data from the stream. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.serial_port_service.send_break [*send_break]]]
+    [Send a break sequence to the serial port. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.serial_port_service.serial_port_service [*serial_port_service]]]
+    [Construct a new serial port service for the specified io_service. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.serial_port_service.set_option [*set_option]]]
+    [Set a serial port option. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.serial_port_service.shutdown_service [*shutdown_service]]]
+    [Destroy all user-defined handler objects owned by the service. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.serial_port_service.write_some [*write_some]]]
+    [Write the given data to the stream. ]
+  ]
+  
+]
+
+[heading Data Members]
+[table
+  [[Name][Description]]
+
+  [
+    [[link boost_asio.reference.serial_port_service.id [*id]]]
+    [The unique service identifier. ]
+  ]
+
+]
+
+
+[section:assign serial_port_service::assign]
+
+Assign an existing native handle to a serial port. 
+
+  boost::system::error_code assign(
+      implementation_type & impl,
+      const native_type & native_handle,
+      boost::system::error_code & ec);
+
+
+
+[endsect]
+
+
+
+[section:async_read_some serial_port_service::async_read_some]
+
+Start an asynchronous read. 
+
+  template<
+      typename ``[link boost_asio.reference.MutableBufferSequence MutableBufferSequence]``,
+      typename ``[link boost_asio.reference.ReadHandler ReadHandler]``>
+  void async_read_some(
+      implementation_type & impl,
+      const MutableBufferSequence & buffers,
+      ReadHandler handler);
+
+
+
+[endsect]
+
+
+
+[section:async_write_some serial_port_service::async_write_some]
+
+Start an asynchronous write. 
+
+  template<
+      typename ``[link boost_asio.reference.ConstBufferSequence ConstBufferSequence]``,
+      typename ``[link boost_asio.reference.WriteHandler WriteHandler]``>
+  void async_write_some(
+      implementation_type & impl,
+      const ConstBufferSequence & buffers,
+      WriteHandler handler);
+
+
+
+[endsect]
+
+
+
+[section:cancel serial_port_service::cancel]
+
+Cancel all asynchronous operations associated with the handle. 
+
+  boost::system::error_code cancel(
+      implementation_type & impl,
+      boost::system::error_code & ec);
+
+
+
+[endsect]
+
+
+
+[section:close serial_port_service::close]
+
+Close a serial port implementation. 
+
+  boost::system::error_code close(
+      implementation_type & impl,
+      boost::system::error_code & ec);
+
+
+
+[endsect]
+
+
+
+[section:construct serial_port_service::construct]
+
+Construct a new serial port implementation. 
+
+  void construct(
+      implementation_type & impl);
+
+
+
+[endsect]
+
+
+
+[section:destroy serial_port_service::destroy]
+
+Destroy a serial port implementation. 
+
+  void destroy(
+      implementation_type & impl);
+
+
+
+[endsect]
+
+
+
+[section:get_io_service serial_port_service::get_io_service]
+
+
+['Inherited from io_service.]
+
+Get the io_service object that owns the service. 
+
+  boost::asio::io_service & get_io_service();
+
+
+
+[endsect]
+
+
+
+[section:get_option serial_port_service::get_option]
+
+Get a serial port option. 
+
+  template<
+      typename ``[link boost_asio.reference.GettableSerialPortOption GettableSerialPortOption]``>
+  boost::system::error_code get_option(
+      const implementation_type & impl,
+      GettableSerialPortOption & option,
+      boost::system::error_code & ec) const;
+
+
+
+[endsect]
+
+
+
+[section:id serial_port_service::id]
+
+The unique service identifier. 
+
+  static boost::asio::io_service::id id;
+
+
+
+[endsect]
+
+
+
+[section:implementation_type serial_port_service::implementation_type]
+
+The type of a serial port implementation. 
+
+  typedef implementation_defined implementation_type;
+
+
+
+
+[endsect]
+
+
+
+[section:io_service serial_port_service::io_service]
+
+
+['Inherited from io_service.]
+
+(Deprecated: use get_io_service().) Get the io_service object that owns the service. 
+
+  boost::asio::io_service & io_service();
+
+
+
+[endsect]
+
+
+
+[section:is_open serial_port_service::is_open]
+
+Determine whether the handle is open. 
+
+  bool is_open(
+      const implementation_type & impl) const;
+
+
+
+[endsect]
+
+
+
+[section:native serial_port_service::native]
+
+Get the native handle implementation. 
+
+  native_type native(
+      implementation_type & impl);
+
+
+
+[endsect]
+
+
+
+[section:native_type serial_port_service::native_type]
+
+The native handle type. 
+
+  typedef implementation_defined native_type;
+
+
+
+
+[endsect]
+
+
+
+[section:open serial_port_service::open]
+
+Open a serial port. 
+
+  boost::system::error_code open(
+      implementation_type & impl,
+      const std::string & device,
+      boost::system::error_code & ec);
+
+
+
+[endsect]
+
+
+
+[section:read_some serial_port_service::read_some]
+
+Read some data from the stream. 
+
+  template<
+      typename ``[link boost_asio.reference.MutableBufferSequence MutableBufferSequence]``>
+  std::size_t read_some(
+      implementation_type & impl,
+      const MutableBufferSequence & buffers,
+      boost::system::error_code & ec);
+
+
+
+[endsect]
+
+
+
+[section:send_break serial_port_service::send_break]
+
+Send a break sequence to the serial port. 
+
+  boost::system::error_code send_break(
+      implementation_type & impl,
+      boost::system::error_code & ec);
+
+
+
+[endsect]
+
+
+
+[section:serial_port_service serial_port_service::serial_port_service]
+
+Construct a new serial port service for the specified io_service. 
+
+  serial_port_service(
+      boost::asio::io_service & io_service);
+
+
+
+[endsect]
+
+
+
+[section:set_option serial_port_service::set_option]
+
+Set a serial port option. 
+
+  template<
+      typename ``[link boost_asio.reference.SettableSerialPortOption SettableSerialPortOption]``>
+  boost::system::error_code set_option(
+      implementation_type & impl,
+      const SettableSerialPortOption & option,
+      boost::system::error_code & ec);
+
+
+
+[endsect]
+
+
+
+[section:shutdown_service serial_port_service::shutdown_service]
+
+Destroy all user-defined handler objects owned by the service. 
+
+  void shutdown_service();
+
+
+
+[endsect]
+
+
+
+[section:write_some serial_port_service::write_some]
+
+Write the given data to the stream. 
+
+  template<
+      typename ``[link boost_asio.reference.ConstBufferSequence ConstBufferSequence]``>
+  std::size_t write_some(
+      implementation_type & impl,
+      const ConstBufferSequence & buffers,
+      boost::system::error_code & ec);
+
+
+
+[endsect]
+
 
 
 [endsect]
@@ -52015,6 +56430,1085 @@ Protected destructor to prevent deletion through this type.
 
 [endsect]
 
+[section:windows__basic_random_access_handle windows::basic_random_access_handle]
+
+Provides random-access handle functionality. 
+
+  template<
+      typename ``[link boost_asio.reference.RandomAccessHandleService RandomAccessHandleService]`` = random_access_handle_service>
+  class basic_random_access_handle :
+    public windows::basic_handle< RandomAccessHandleService >
+
+
+[heading Types]
+[table
+  [[Name][Description]]
+
+  [
+
+    [[link boost_asio.reference.windows__basic_random_access_handle.implementation_type [*implementation_type]]]
+    [The underlying implementation type of I/O object. ]
+  
+  ]
+
+  [
+
+    [[link boost_asio.reference.windows__basic_random_access_handle.lowest_layer_type [*lowest_layer_type]]]
+    [A basic_handle is always the lowest layer. ]
+  
+  ]
+
+  [
+
+    [[link boost_asio.reference.windows__basic_random_access_handle.native_type [*native_type]]]
+    [The native representation of a handle. ]
+  
+  ]
+
+  [
+
+    [[link boost_asio.reference.windows__basic_random_access_handle.service_type [*service_type]]]
+    [The type of the service that will be used to provide I/O operations. ]
+  
+  ]
+
+]
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link boost_asio.reference.windows__basic_random_access_handle.assign [*assign]]]
+    [Assign an existing native handle to the handle. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.windows__basic_random_access_handle.async_read_some_at [*async_read_some_at]]]
+    [Start an asynchronous read at the specified offset. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.windows__basic_random_access_handle.async_write_some_at [*async_write_some_at]]]
+    [Start an asynchronous write at the specified offset. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.windows__basic_random_access_handle.basic_random_access_handle [*basic_random_access_handle]]]
+    [Construct a basic_random_access_handle without opening it. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.windows__basic_random_access_handle.cancel [*cancel]]]
+    [Cancel all asynchronous operations associated with the handle. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.windows__basic_random_access_handle.close [*close]]]
+    [Close the handle. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.windows__basic_random_access_handle.get_io_service [*get_io_service]]]
+    [Get the io_service associated with the object. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.windows__basic_random_access_handle.io_service [*io_service]]]
+    [(Deprecated: use get_io_service().) Get the io_service associated with the object. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.windows__basic_random_access_handle.is_open [*is_open]]]
+    [Determine whether the handle is open. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.windows__basic_random_access_handle.lowest_layer [*lowest_layer]]]
+    [Get a reference to the lowest layer. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.windows__basic_random_access_handle.native [*native]]]
+    [Get the native handle representation. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.windows__basic_random_access_handle.read_some_at [*read_some_at]]]
+    [Read some data from the handle at the specified offset. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.windows__basic_random_access_handle.write_some_at [*write_some_at]]]
+    [Write some data to the handle at the specified offset. ]
+  ]
+  
+]
+
+[heading Protected Data Members]
+[table
+  [[Name][Description]]
+
+  [
+    [[link boost_asio.reference.windows__basic_random_access_handle.implementation [*implementation]]]
+    [The underlying implementation of the I/O object. ]
+  ]
+
+  [
+    [[link boost_asio.reference.windows__basic_random_access_handle.service [*service]]]
+    [The service associated with the I/O object. ]
+  ]
+
+]
+
+The windows::basic_random_access_handle class template provides asynchronous and blocking random-access handle functionality.
+
+
+[heading Thread Safety]
+  
+[*Distinct] [*objects:]  Safe.
+
+[*Shared] [*objects:]  Unsafe. 
+
+
+[section:assign windows::basic_random_access_handle::assign]
+
+Assign an existing native handle to the handle. 
+
+  void ``[link boost_asio.reference.windows__basic_random_access_handle.assign.overload1 assign]``(
+      const native_type & native_handle);
+
+  boost::system::error_code ``[link boost_asio.reference.windows__basic_random_access_handle.assign.overload2 assign]``(
+      const native_type & native_handle,
+      boost::system::error_code & ec);
+
+
+[section:overload1 windows::basic_random_access_handle::assign (1 of 2 overloads)]
+
+
+['Inherited from windows::basic_handle.]
+
+Assign an existing native handle to the handle. 
+
+  void assign(
+      const native_type & native_handle);
+
+
+
+[endsect]
+
+
+
+[section:overload2 windows::basic_random_access_handle::assign (2 of 2 overloads)]
+
+
+['Inherited from windows::basic_handle.]
+
+Assign an existing native handle to the handle. 
+
+  boost::system::error_code assign(
+      const native_type & native_handle,
+      boost::system::error_code & ec);
+
+
+
+[endsect]
+
+
+[endsect]
+
+
+[section:async_read_some_at windows::basic_random_access_handle::async_read_some_at]
+
+Start an asynchronous read at the specified offset. 
+
+  template<
+      typename ``[link boost_asio.reference.MutableBufferSequence MutableBufferSequence]``,
+      typename ``[link boost_asio.reference.ReadHandler ReadHandler]``>
+  void async_read_some_at(
+      boost::uint64_t offset,
+      const MutableBufferSequence & buffers,
+      ReadHandler handler);
+
+
+This function is used to asynchronously read data from the random-access handle. The function call always returns immediately.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[offset][The offset at which the data will be read.]]
+
+[[buffers][One or more buffers into which the data will be read. Although the buffers object may be copied as necessary, ownership of the underlying memory blocks is retained by the caller, which must guarantee that they remain valid until the handler is called.]]
+
+[[handler][The handler to be called when the read operation completes. Copies will be made of the handler as required. The function signature of the handler must be: 
+``
+   void handler(
+     const boost::system::error_code& error, // Result of operation.
+     std::size_t bytes_transferred           // Number of bytes read.
+   ); 
+
+``
+Regardless of whether the asynchronous operation completes immediately or not, the handler will not be invoked from within this function. Invocation of the handler will be performed in a manner equivalent to using boost::asio::io\_service::post().]]
+
+]
+
+[heading Remarks]
+      
+The read operation may not read all of the requested number of bytes. Consider using the 
+[link boost_asio.reference.async_read_at async_read_at]  function if you need to ensure that the requested amount of data is read before the asynchronous operation completes.
+
+[heading Example]
+  
+To read into a single data buffer use the 
+[link boost_asio.reference.buffer buffer]  function as follows: 
+
+   handle.async_read_some_at(42, boost::asio::buffer(data, size), handler);
+
+
+See the 
+[link boost_asio.reference.buffer buffer]  documentation for information on reading into multiple buffers in one go, and how to use it with arrays, boost::array or std::vector. 
+
+
+
+[endsect]
+
+
+
+[section:async_write_some_at windows::basic_random_access_handle::async_write_some_at]
+
+Start an asynchronous write at the specified offset. 
+
+  template<
+      typename ``[link boost_asio.reference.ConstBufferSequence ConstBufferSequence]``,
+      typename ``[link boost_asio.reference.WriteHandler WriteHandler]``>
+  void async_write_some_at(
+      boost::uint64_t offset,
+      const ConstBufferSequence & buffers,
+      WriteHandler handler);
+
+
+This function is used to asynchronously write data to the random-access handle. The function call always returns immediately.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[offset][The offset at which the data will be written.]]
+
+[[buffers][One or more data buffers to be written to the handle. Although the buffers object may be copied as necessary, ownership of the underlying memory blocks is retained by the caller, which must guarantee that they remain valid until the handler is called.]]
+
+[[handler][The handler to be called when the write operation completes. Copies will be made of the handler as required. The function signature of the handler must be: 
+``
+   void handler(
+     const boost::system::error_code& error, // Result of operation.
+     std::size_t bytes_transferred           // Number of bytes written.
+   ); 
+
+``
+Regardless of whether the asynchronous operation completes immediately or not, the handler will not be invoked from within this function. Invocation of the handler will be performed in a manner equivalent to using boost::asio::io\_service::post().]]
+
+]
+
+[heading Remarks]
+      
+The write operation may not transmit all of the data to the peer. Consider using the 
+[link boost_asio.reference.async_write_at async_write_at]  function if you need to ensure that all data is written before the asynchronous operation completes.
+
+[heading Example]
+  
+To write a single data buffer use the 
+[link boost_asio.reference.buffer buffer]  function as follows: 
+
+   handle.async_write_some_at(42, boost::asio::buffer(data, size), handler);
+
+
+See the 
+[link boost_asio.reference.buffer buffer]  documentation for information on writing multiple buffers in one go, and how to use it with arrays, boost::array or std::vector. 
+
+
+
+[endsect]
+
+
+[section:basic_random_access_handle windows::basic_random_access_handle::basic_random_access_handle]
+
+Construct a basic_random_access_handle without opening it. 
+
+  ``[link boost_asio.reference.windows__basic_random_access_handle.basic_random_access_handle.overload1 basic_random_access_handle]``(
+      boost::asio::io_service & io_service);
+
+  ``[link boost_asio.reference.windows__basic_random_access_handle.basic_random_access_handle.overload2 basic_random_access_handle]``(
+      boost::asio::io_service & io_service,
+      const native_type & native_handle);
+
+
+[section:overload1 windows::basic_random_access_handle::basic_random_access_handle (1 of 2 overloads)]
+
+Construct a basic_random_access_handle without opening it. 
+
+  basic_random_access_handle(
+      boost::asio::io_service & io_service);
+
+
+This constructor creates a random-access handle without opening it. The handle needs to be opened before data can be written to or or read from it.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[io_service][The io\_service object that the random-access handle will use to dispatch handlers for any asynchronous operations performed on the handle. ]]
+
+]
+
+
+
+[endsect]
+
+
+
+[section:overload2 windows::basic_random_access_handle::basic_random_access_handle (2 of 2 overloads)]
+
+Construct a basic_random_access_handle on an existing native handle. 
+
+  basic_random_access_handle(
+      boost::asio::io_service & io_service,
+      const native_type & native_handle);
+
+
+This constructor creates a random-access handle object to hold an existing native handle.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[io_service][The io\_service object that the random-access handle will use to dispatch handlers for any asynchronous operations performed on the handle.]]
+
+[[native_handle][The new underlying handle implementation.]]
+
+]
+
+[heading Exceptions]
+    
+
+[variablelist
+  
+[[boost::system::system_error][Thrown on failure. ]]
+
+]
+
+
+
+[endsect]
+
+
+[endsect]
+
+[section:cancel windows::basic_random_access_handle::cancel]
+
+Cancel all asynchronous operations associated with the handle. 
+
+  void ``[link boost_asio.reference.windows__basic_random_access_handle.cancel.overload1 cancel]``();
+
+  boost::system::error_code ``[link boost_asio.reference.windows__basic_random_access_handle.cancel.overload2 cancel]``(
+      boost::system::error_code & ec);
+
+
+[section:overload1 windows::basic_random_access_handle::cancel (1 of 2 overloads)]
+
+
+['Inherited from windows::basic_handle.]
+
+Cancel all asynchronous operations associated with the handle. 
+
+  void cancel();
+
+
+This function causes all outstanding asynchronous read or write operations to finish immediately, and the handlers for cancelled operations will be passed the boost::asio::error::operation\_aborted error.
+
+
+[heading Exceptions]
+    
+
+[variablelist
+  
+[[boost::system::system_error][Thrown on failure. ]]
+
+]
+
+
+
+[endsect]
+
+
+
+[section:overload2 windows::basic_random_access_handle::cancel (2 of 2 overloads)]
+
+
+['Inherited from windows::basic_handle.]
+
+Cancel all asynchronous operations associated with the handle. 
+
+  boost::system::error_code cancel(
+      boost::system::error_code & ec);
+
+
+This function causes all outstanding asynchronous read or write operations to finish immediately, and the handlers for cancelled operations will be passed the boost::asio::error::operation\_aborted error.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[ec][Set to indicate what error occurred, if any. ]]
+
+]
+
+
+
+[endsect]
+
+
+[endsect]
+
+[section:close windows::basic_random_access_handle::close]
+
+Close the handle. 
+
+  void ``[link boost_asio.reference.windows__basic_random_access_handle.close.overload1 close]``();
+
+  boost::system::error_code ``[link boost_asio.reference.windows__basic_random_access_handle.close.overload2 close]``(
+      boost::system::error_code & ec);
+
+
+[section:overload1 windows::basic_random_access_handle::close (1 of 2 overloads)]
+
+
+['Inherited from windows::basic_handle.]
+
+Close the handle. 
+
+  void close();
+
+
+This function is used to close the handle. Any asynchronous read or write operations will be cancelled immediately, and will complete with the boost::asio::error::operation\_aborted error.
+
+
+[heading Exceptions]
+    
+
+[variablelist
+  
+[[boost::system::system_error][Thrown on failure. ]]
+
+]
+
+
+
+[endsect]
+
+
+
+[section:overload2 windows::basic_random_access_handle::close (2 of 2 overloads)]
+
+
+['Inherited from windows::basic_handle.]
+
+Close the handle. 
+
+  boost::system::error_code close(
+      boost::system::error_code & ec);
+
+
+This function is used to close the handle. Any asynchronous read or write operations will be cancelled immediately, and will complete with the boost::asio::error::operation\_aborted error.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[ec][Set to indicate what error occurred, if any. ]]
+
+]
+
+
+
+[endsect]
+
+
+[endsect]
+
+
+[section:get_io_service windows::basic_random_access_handle::get_io_service]
+
+
+['Inherited from basic_io_object.]
+
+Get the io_service associated with the object. 
+
+  boost::asio::io_service & get_io_service();
+
+
+This function may be used to obtain the io_service object that the I/O object uses to dispatch handlers for asynchronous operations.
+
+
+[heading Return Value]
+      
+A reference to the io_service object that the I/O object will use to dispatch handlers. Ownership is not transferred to the caller. 
+
+
+
+[endsect]
+
+
+
+[section:implementation windows::basic_random_access_handle::implementation]
+
+
+['Inherited from basic_io_object.]
+
+The underlying implementation of the I/O object. 
+
+  implementation_type implementation;
+
+
+
+[endsect]
+
+
+
+[section:implementation_type windows::basic_random_access_handle::implementation_type]
+
+
+['Inherited from basic_io_object.]
+
+The underlying implementation type of I/O object. 
+
+  typedef service_type::implementation_type implementation_type;
+
+
+
+
+[endsect]
+
+
+
+[section:io_service windows::basic_random_access_handle::io_service]
+
+
+['Inherited from basic_io_object.]
+
+(Deprecated: use get_io_service().) Get the io_service associated with the object. 
+
+  boost::asio::io_service & io_service();
+
+
+This function may be used to obtain the io_service object that the I/O object uses to dispatch handlers for asynchronous operations.
+
+
+[heading Return Value]
+      
+A reference to the io_service object that the I/O object will use to dispatch handlers. Ownership is not transferred to the caller. 
+
+
+
+[endsect]
+
+
+
+[section:is_open windows::basic_random_access_handle::is_open]
+
+
+['Inherited from windows::basic_handle.]
+
+Determine whether the handle is open. 
+
+  bool is_open() const;
+
+
+
+[endsect]
+
+
+
+[section:lowest_layer windows::basic_random_access_handle::lowest_layer]
+
+
+['Inherited from windows::basic_handle.]
+
+Get a reference to the lowest layer. 
+
+  lowest_layer_type & lowest_layer();
+
+
+This function returns a reference to the lowest layer in a stack of layers. Since a basic_handle cannot contain any further layers, it simply returns a reference to itself.
+
+
+[heading Return Value]
+      
+A reference to the lowest layer in the stack of layers. Ownership is not transferred to the caller. 
+
+
+
+[endsect]
+
+
+
+[section:lowest_layer_type windows::basic_random_access_handle::lowest_layer_type]
+
+
+['Inherited from windows::basic_handle.]
+
+A basic_handle is always the lowest layer. 
+
+  typedef basic_handle< RandomAccessHandleService > lowest_layer_type;
+
+
+[heading Types]
+[table
+  [[Name][Description]]
+
+  [
+
+    [[link boost_asio.reference.windows__basic_handle.implementation_type [*implementation_type]]]
+    [The underlying implementation type of I/O object. ]
+  
+  ]
+
+  [
+
+    [[link boost_asio.reference.windows__basic_handle.lowest_layer_type [*lowest_layer_type]]]
+    [A basic_handle is always the lowest layer. ]
+  
+  ]
+
+  [
+
+    [[link boost_asio.reference.windows__basic_handle.native_type [*native_type]]]
+    [The native representation of a handle. ]
+  
+  ]
+
+  [
+
+    [[link boost_asio.reference.windows__basic_handle.service_type [*service_type]]]
+    [The type of the service that will be used to provide I/O operations. ]
+  
+  ]
+
+]
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link boost_asio.reference.windows__basic_handle.assign [*assign]]]
+    [Assign an existing native handle to the handle. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.windows__basic_handle.basic_handle [*basic_handle]]]
+    [Construct a basic_handle without opening it. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.windows__basic_handle.cancel [*cancel]]]
+    [Cancel all asynchronous operations associated with the handle. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.windows__basic_handle.close [*close]]]
+    [Close the handle. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.windows__basic_handle.get_io_service [*get_io_service]]]
+    [Get the io_service associated with the object. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.windows__basic_handle.io_service [*io_service]]]
+    [(Deprecated: use get_io_service().) Get the io_service associated with the object. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.windows__basic_handle.is_open [*is_open]]]
+    [Determine whether the handle is open. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.windows__basic_handle.lowest_layer [*lowest_layer]]]
+    [Get a reference to the lowest layer. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.windows__basic_handle.native [*native]]]
+    [Get the native handle representation. ]
+  ]
+  
+]
+
+[heading Protected Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link boost_asio.reference.windows__basic_handle._basic_handle [*~basic_handle]]]
+    [Protected destructor to prevent deletion through this type. ]
+  ]
+  
+]
+
+[heading Protected Data Members]
+[table
+  [[Name][Description]]
+
+  [
+    [[link boost_asio.reference.windows__basic_handle.implementation [*implementation]]]
+    [The underlying implementation of the I/O object. ]
+  ]
+
+  [
+    [[link boost_asio.reference.windows__basic_handle.service [*service]]]
+    [The service associated with the I/O object. ]
+  ]
+
+]
+
+The windows::basic_handle class template provides the ability to wrap a Windows handle.
+
+
+[heading Thread Safety]
+  
+[*Distinct] [*objects:]  Safe.
+
+[*Shared] [*objects:]  Unsafe. 
+
+
+
+
+[endsect]
+
+
+
+[section:native windows::basic_random_access_handle::native]
+
+
+['Inherited from windows::basic_handle.]
+
+Get the native handle representation. 
+
+  native_type native();
+
+
+This function may be used to obtain the underlying representation of the handle. This is intended to allow access to native handle functionality that is not otherwise provided. 
+
+
+[endsect]
+
+
+
+[section:native_type windows::basic_random_access_handle::native_type]
+
+The native representation of a handle. 
+
+  typedef RandomAccessHandleService::native_type native_type;
+
+
+
+
+[endsect]
+
+
+[section:read_some_at windows::basic_random_access_handle::read_some_at]
+
+Read some data from the handle at the specified offset. 
+
+  template<
+      typename ``[link boost_asio.reference.MutableBufferSequence MutableBufferSequence]``>
+  std::size_t ``[link boost_asio.reference.windows__basic_random_access_handle.read_some_at.overload1 read_some_at]``(
+      boost::uint64_t offset,
+      const MutableBufferSequence & buffers);
+
+  template<
+      typename ``[link boost_asio.reference.MutableBufferSequence MutableBufferSequence]``>
+  std::size_t ``[link boost_asio.reference.windows__basic_random_access_handle.read_some_at.overload2 read_some_at]``(
+      boost::uint64_t offset,
+      const MutableBufferSequence & buffers,
+      boost::system::error_code & ec);
+
+
+[section:overload1 windows::basic_random_access_handle::read_some_at (1 of 2 overloads)]
+
+Read some data from the handle at the specified offset. 
+
+  template<
+      typename ``[link boost_asio.reference.MutableBufferSequence MutableBufferSequence]``>
+  std::size_t read_some_at(
+      boost::uint64_t offset,
+      const MutableBufferSequence & buffers);
+
+
+This function is used to read data from the random-access handle. The function call will block until one or more bytes of data has been read successfully, or until an error occurs.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[offset][The offset at which the data will be read.]]
+
+[[buffers][One or more buffers into which the data will be read.]]
+
+]
+
+[heading Return Value]
+      
+The number of bytes read.
+
+[heading Exceptions]
+    
+
+[variablelist
+  
+[[boost::system::system_error][Thrown on failure. An error code of boost::asio::error::eof indicates that the connection was closed by the peer.]]
+
+]
+
+[heading Remarks]
+      
+The read\_some operation may not read all of the requested number of bytes. Consider using the 
+[link boost_asio.reference.read_at read_at]  function if you need to ensure that the requested amount of data is read before the blocking operation completes.
+
+[heading Example]
+  
+To read into a single data buffer use the 
+[link boost_asio.reference.buffer buffer]  function as follows: 
+
+   handle.read_some_at(42, boost::asio::buffer(data, size));
+
+
+See the 
+[link boost_asio.reference.buffer buffer]  documentation for information on reading into multiple buffers in one go, and how to use it with arrays, boost::array or std::vector. 
+
+
+
+[endsect]
+
+
+
+[section:overload2 windows::basic_random_access_handle::read_some_at (2 of 2 overloads)]
+
+Read some data from the handle at the specified offset. 
+
+  template<
+      typename ``[link boost_asio.reference.MutableBufferSequence MutableBufferSequence]``>
+  std::size_t read_some_at(
+      boost::uint64_t offset,
+      const MutableBufferSequence & buffers,
+      boost::system::error_code & ec);
+
+
+This function is used to read data from the random-access handle. The function call will block until one or more bytes of data has been read successfully, or until an error occurs.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[offset][The offset at which the data will be read.]]
+
+[[buffers][One or more buffers into which the data will be read.]]
+
+[[ec][Set to indicate what error occurred, if any.]]
+
+]
+
+[heading Return Value]
+      
+The number of bytes read. Returns 0 if an error occurred.
+
+[heading Remarks]
+      
+The read\_some operation may not read all of the requested number of bytes. Consider using the 
+[link boost_asio.reference.read_at read_at]  function if you need to ensure that the requested amount of data is read before the blocking operation completes. 
+
+
+
+[endsect]
+
+
+[endsect]
+
+
+[section:service windows::basic_random_access_handle::service]
+
+
+['Inherited from basic_io_object.]
+
+The service associated with the I/O object. 
+
+  service_type & service;
+
+
+
+[endsect]
+
+
+
+[section:service_type windows::basic_random_access_handle::service_type]
+
+
+['Inherited from basic_io_object.]
+
+The type of the service that will be used to provide I/O operations. 
+
+  typedef RandomAccessHandleService service_type;
+
+
+
+
+[endsect]
+
+
+[section:write_some_at windows::basic_random_access_handle::write_some_at]
+
+Write some data to the handle at the specified offset. 
+
+  template<
+      typename ``[link boost_asio.reference.ConstBufferSequence ConstBufferSequence]``>
+  std::size_t ``[link boost_asio.reference.windows__basic_random_access_handle.write_some_at.overload1 write_some_at]``(
+      boost::uint64_t offset,
+      const ConstBufferSequence & buffers);
+
+  template<
+      typename ``[link boost_asio.reference.ConstBufferSequence ConstBufferSequence]``>
+  std::size_t ``[link boost_asio.reference.windows__basic_random_access_handle.write_some_at.overload2 write_some_at]``(
+      boost::uint64_t offset,
+      const ConstBufferSequence & buffers,
+      boost::system::error_code & ec);
+
+
+[section:overload1 windows::basic_random_access_handle::write_some_at (1 of 2 overloads)]
+
+Write some data to the handle at the specified offset. 
+
+  template<
+      typename ``[link boost_asio.reference.ConstBufferSequence ConstBufferSequence]``>
+  std::size_t write_some_at(
+      boost::uint64_t offset,
+      const ConstBufferSequence & buffers);
+
+
+This function is used to write data to the random-access handle. The function call will block until one or more bytes of the data has been written successfully, or until an error occurs.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[offset][The offset at which the data will be written.]]
+
+[[buffers][One or more data buffers to be written to the handle.]]
+
+]
+
+[heading Return Value]
+      
+The number of bytes written.
+
+[heading Exceptions]
+    
+
+[variablelist
+  
+[[boost::system::system_error][Thrown on failure. An error code of boost::asio::error::eof indicates that the connection was closed by the peer.]]
+
+]
+
+[heading Remarks]
+      
+The write\_some\_at operation may not write all of the data. Consider using the 
+[link boost_asio.reference.write_at write_at]  function if you need to ensure that all data is written before the blocking operation completes.
+
+[heading Example]
+  
+To write a single data buffer use the 
+[link boost_asio.reference.buffer buffer]  function as follows: 
+
+   handle.write_some_at(42, boost::asio::buffer(data, size));
+
+
+See the 
+[link boost_asio.reference.buffer buffer]  documentation for information on writing multiple buffers in one go, and how to use it with arrays, boost::array or std::vector. 
+
+
+
+[endsect]
+
+
+
+[section:overload2 windows::basic_random_access_handle::write_some_at (2 of 2 overloads)]
+
+Write some data to the handle at the specified offset. 
+
+  template<
+      typename ``[link boost_asio.reference.ConstBufferSequence ConstBufferSequence]``>
+  std::size_t write_some_at(
+      boost::uint64_t offset,
+      const ConstBufferSequence & buffers,
+      boost::system::error_code & ec);
+
+
+This function is used to write data to the random-access handle. The function call will block until one or more bytes of the data has been written successfully, or until an error occurs.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[offset][The offset at which the data will be written.]]
+
+[[buffers][One or more data buffers to be written to the handle.]]
+
+[[ec][Set to indicate what error occurred, if any.]]
+
+]
+
+[heading Return Value]
+      
+The number of bytes written. Returns 0 if an error occurred.
+
+[heading Remarks]
+      
+The write\_some operation may not transmit all of the data to the peer. Consider using the 
+[link boost_asio.reference.write_at write_at]  function if you need to ensure that all data is written before the blocking operation completes. 
+
+
+
+[endsect]
+
+
+[endsect]
+
+
+[endsect]
+
 [section:windows__basic_stream_handle windows::basic_stream_handle]
 
 Provides stream-oriented handle functionality. 
@@ -53073,6 +58567,535 @@ The write\_some operation may not transmit all of the data to the peer. Consider
 [endsect]
 
 
+[section:windows__random_access_handle windows::random_access_handle]
+
+Typedef for the typical usage of a random-access handle. 
+
+  typedef basic_random_access_handle random_access_handle;
+
+
+[heading Types]
+[table
+  [[Name][Description]]
+
+  [
+
+    [[link boost_asio.reference.windows__basic_random_access_handle.implementation_type [*implementation_type]]]
+    [The underlying implementation type of I/O object. ]
+  
+  ]
+
+  [
+
+    [[link boost_asio.reference.windows__basic_random_access_handle.lowest_layer_type [*lowest_layer_type]]]
+    [A basic_handle is always the lowest layer. ]
+  
+  ]
+
+  [
+
+    [[link boost_asio.reference.windows__basic_random_access_handle.native_type [*native_type]]]
+    [The native representation of a handle. ]
+  
+  ]
+
+  [
+
+    [[link boost_asio.reference.windows__basic_random_access_handle.service_type [*service_type]]]
+    [The type of the service that will be used to provide I/O operations. ]
+  
+  ]
+
+]
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link boost_asio.reference.windows__basic_random_access_handle.assign [*assign]]]
+    [Assign an existing native handle to the handle. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.windows__basic_random_access_handle.async_read_some_at [*async_read_some_at]]]
+    [Start an asynchronous read at the specified offset. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.windows__basic_random_access_handle.async_write_some_at [*async_write_some_at]]]
+    [Start an asynchronous write at the specified offset. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.windows__basic_random_access_handle.basic_random_access_handle [*basic_random_access_handle]]]
+    [Construct a basic_random_access_handle without opening it. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.windows__basic_random_access_handle.cancel [*cancel]]]
+    [Cancel all asynchronous operations associated with the handle. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.windows__basic_random_access_handle.close [*close]]]
+    [Close the handle. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.windows__basic_random_access_handle.get_io_service [*get_io_service]]]
+    [Get the io_service associated with the object. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.windows__basic_random_access_handle.io_service [*io_service]]]
+    [(Deprecated: use get_io_service().) Get the io_service associated with the object. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.windows__basic_random_access_handle.is_open [*is_open]]]
+    [Determine whether the handle is open. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.windows__basic_random_access_handle.lowest_layer [*lowest_layer]]]
+    [Get a reference to the lowest layer. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.windows__basic_random_access_handle.native [*native]]]
+    [Get the native handle representation. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.windows__basic_random_access_handle.read_some_at [*read_some_at]]]
+    [Read some data from the handle at the specified offset. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.windows__basic_random_access_handle.write_some_at [*write_some_at]]]
+    [Write some data to the handle at the specified offset. ]
+  ]
+  
+]
+
+[heading Protected Data Members]
+[table
+  [[Name][Description]]
+
+  [
+    [[link boost_asio.reference.windows__basic_random_access_handle.implementation [*implementation]]]
+    [The underlying implementation of the I/O object. ]
+  ]
+
+  [
+    [[link boost_asio.reference.windows__basic_random_access_handle.service [*service]]]
+    [The service associated with the I/O object. ]
+  ]
+
+]
+
+The windows::basic_random_access_handle class template provides asynchronous and blocking random-access handle functionality.
+
+
+[heading Thread Safety]
+  
+[*Distinct] [*objects:]  Safe.
+
+[*Shared] [*objects:]  Unsafe. 
+
+
+
+
+[endsect]
+
+
+[section:windows__random_access_handle_service windows::random_access_handle_service]
+
+Default service implementation for a random-access handle. 
+
+  class random_access_handle_service :
+    public io_service::service
+
+
+[heading Types]
+[table
+  [[Name][Description]]
+
+  [
+
+    [[link boost_asio.reference.windows__random_access_handle_service.implementation_type [*implementation_type]]]
+    [The type of a random-access handle implementation. ]
+  
+  ]
+
+  [
+
+    [[link boost_asio.reference.windows__random_access_handle_service.native_type [*native_type]]]
+    [The native handle type. ]
+  
+  ]
+
+]
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link boost_asio.reference.windows__random_access_handle_service.assign [*assign]]]
+    [Assign an existing native handle to a random-access handle. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.windows__random_access_handle_service.async_read_some_at [*async_read_some_at]]]
+    [Start an asynchronous read at the specified offset. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.windows__random_access_handle_service.async_write_some_at [*async_write_some_at]]]
+    [Start an asynchronous write at the specified offset. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.windows__random_access_handle_service.cancel [*cancel]]]
+    [Cancel all asynchronous operations associated with the handle. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.windows__random_access_handle_service.close [*close]]]
+    [Close a random-access handle implementation. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.windows__random_access_handle_service.construct [*construct]]]
+    [Construct a new random-access handle implementation. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.windows__random_access_handle_service.destroy [*destroy]]]
+    [Destroy a random-access handle implementation. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.windows__random_access_handle_service.get_io_service [*get_io_service]]]
+    [Get the io_service object that owns the service. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.windows__random_access_handle_service.io_service [*io_service]]]
+    [(Deprecated: use get_io_service().) Get the io_service object that owns the service. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.windows__random_access_handle_service.is_open [*is_open]]]
+    [Determine whether the handle is open. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.windows__random_access_handle_service.native [*native]]]
+    [Get the native handle implementation. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.windows__random_access_handle_service.random_access_handle_service [*random_access_handle_service]]]
+    [Construct a new random-access handle service for the specified io_service. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.windows__random_access_handle_service.read_some_at [*read_some_at]]]
+    [Read some data from the specified offset. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.windows__random_access_handle_service.shutdown_service [*shutdown_service]]]
+    [Destroy all user-defined handler objects owned by the service. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.windows__random_access_handle_service.write_some_at [*write_some_at]]]
+    [Write the given data at the specified offset. ]
+  ]
+  
+]
+
+[heading Data Members]
+[table
+  [[Name][Description]]
+
+  [
+    [[link boost_asio.reference.windows__random_access_handle_service.id [*id]]]
+    [The unique service identifier. ]
+  ]
+
+]
+
+
+[section:assign windows::random_access_handle_service::assign]
+
+Assign an existing native handle to a random-access handle. 
+
+  boost::system::error_code assign(
+      implementation_type & impl,
+      const native_type & native_handle,
+      boost::system::error_code & ec);
+
+
+
+[endsect]
+
+
+
+[section:async_read_some_at windows::random_access_handle_service::async_read_some_at]
+
+Start an asynchronous read at the specified offset. 
+
+  template<
+      typename ``[link boost_asio.reference.MutableBufferSequence MutableBufferSequence]``,
+      typename ``[link boost_asio.reference.ReadHandler ReadHandler]``>
+  void async_read_some_at(
+      implementation_type & impl,
+      boost::uint64_t offset,
+      const MutableBufferSequence & buffers,
+      ReadHandler handler);
+
+
+
+[endsect]
+
+
+
+[section:async_write_some_at windows::random_access_handle_service::async_write_some_at]
+
+Start an asynchronous write at the specified offset. 
+
+  template<
+      typename ``[link boost_asio.reference.ConstBufferSequence ConstBufferSequence]``,
+      typename ``[link boost_asio.reference.WriteHandler WriteHandler]``>
+  void async_write_some_at(
+      implementation_type & impl,
+      boost::uint64_t offset,
+      const ConstBufferSequence & buffers,
+      WriteHandler handler);
+
+
+
+[endsect]
+
+
+
+[section:cancel windows::random_access_handle_service::cancel]
+
+Cancel all asynchronous operations associated with the handle. 
+
+  boost::system::error_code cancel(
+      implementation_type & impl,
+      boost::system::error_code & ec);
+
+
+
+[endsect]
+
+
+
+[section:close windows::random_access_handle_service::close]
+
+Close a random-access handle implementation. 
+
+  boost::system::error_code close(
+      implementation_type & impl,
+      boost::system::error_code & ec);
+
+
+
+[endsect]
+
+
+
+[section:construct windows::random_access_handle_service::construct]
+
+Construct a new random-access handle implementation. 
+
+  void construct(
+      implementation_type & impl);
+
+
+
+[endsect]
+
+
+
+[section:destroy windows::random_access_handle_service::destroy]
+
+Destroy a random-access handle implementation. 
+
+  void destroy(
+      implementation_type & impl);
+
+
+
+[endsect]
+
+
+
+[section:get_io_service windows::random_access_handle_service::get_io_service]
+
+
+['Inherited from io_service.]
+
+Get the io_service object that owns the service. 
+
+  boost::asio::io_service & get_io_service();
+
+
+
+[endsect]
+
+
+
+[section:id windows::random_access_handle_service::id]
+
+The unique service identifier. 
+
+  static boost::asio::io_service::id id;
+
+
+
+[endsect]
+
+
+
+[section:implementation_type windows::random_access_handle_service::implementation_type]
+
+The type of a random-access handle implementation. 
+
+  typedef implementation_defined implementation_type;
+
+
+
+
+[endsect]
+
+
+
+[section:io_service windows::random_access_handle_service::io_service]
+
+
+['Inherited from io_service.]
+
+(Deprecated: use get_io_service().) Get the io_service object that owns the service. 
+
+  boost::asio::io_service & io_service();
+
+
+
+[endsect]
+
+
+
+[section:is_open windows::random_access_handle_service::is_open]
+
+Determine whether the handle is open. 
+
+  bool is_open(
+      const implementation_type & impl) const;
+
+
+
+[endsect]
+
+
+
+[section:native windows::random_access_handle_service::native]
+
+Get the native handle implementation. 
+
+  native_type native(
+      implementation_type & impl);
+
+
+
+[endsect]
+
+
+
+[section:native_type windows::random_access_handle_service::native_type]
+
+The native handle type. 
+
+  typedef implementation_defined native_type;
+
+
+
+
+[endsect]
+
+
+
+[section:random_access_handle_service windows::random_access_handle_service::random_access_handle_service]
+
+Construct a new random-access handle service for the specified io_service. 
+
+  random_access_handle_service(
+      boost::asio::io_service & io_service);
+
+
+
+[endsect]
+
+
+
+[section:read_some_at windows::random_access_handle_service::read_some_at]
+
+Read some data from the specified offset. 
+
+  template<
+      typename ``[link boost_asio.reference.MutableBufferSequence MutableBufferSequence]``>
+  std::size_t read_some_at(
+      implementation_type & impl,
+      boost::uint64_t offset,
+      const MutableBufferSequence & buffers,
+      boost::system::error_code & ec);
+
+
+
+[endsect]
+
+
+
+[section:shutdown_service windows::random_access_handle_service::shutdown_service]
+
+Destroy all user-defined handler objects owned by the service. 
+
+  void shutdown_service();
+
+
+
+[endsect]
+
+
+
+[section:write_some_at windows::random_access_handle_service::write_some_at]
+
+Write the given data at the specified offset. 
+
+  template<
+      typename ``[link boost_asio.reference.ConstBufferSequence ConstBufferSequence]``>
+  std::size_t write_some_at(
+      implementation_type & impl,
+      boost::uint64_t offset,
+      const ConstBufferSequence & buffers,
+      boost::system::error_code & ec);
+
+
+
+[endsect]
+
+
+
+[endsect]
+
+
 [section:windows__stream_handle windows::stream_handle]
 
 Typedef for the typical usage of a stream-oriented handle. 
@@ -53870,7 +59893,7 @@ The number of bytes written. If an error occurs, returns the total number of byt
 
 [section:overload4 write (4 of 6 overloads)]
 
-Write a certain amount of data to a stream before returning. 
+Write all of the supplied data to a stream before returning. 
 
   template<
       typename ``[link boost_asio.reference.SyncWriteStream SyncWriteStream]``,
@@ -54044,6 +60067,493 @@ This operation is implemented in terms of one or more calls to the stream's writ
 
 ``
 A return value of true indicates that the write operation is complete. False indicates that further calls to the stream's write\_some function are required.]]
+
+[[ec][Set to indicate what error occurred, if any.]]
+
+]
+
+[heading Return Value]
+      
+The number of bytes written. If an error occurs, returns the total number of bytes successfully transferred prior to the error. 
+
+
+
+[endsect]
+
+
+[endsect]
+
+[section:write_at write_at]
+
+Write all of the supplied data at the specified offset before returning. 
+
+  template<
+      typename ``[link boost_asio.reference.SyncRandomAccessWriteDevice SyncRandomAccessWriteDevice]``,
+      typename ``[link boost_asio.reference.ConstBufferSequence ConstBufferSequence]``>
+  std::size_t ``[link boost_asio.reference.write_at.overload1 write_at]``(
+      SyncRandomAccessWriteDevice & d,
+      boost::uint64_t offset,
+      const ConstBufferSequence & buffers);
+
+  template<
+      typename ``[link boost_asio.reference.SyncRandomAccessWriteDevice SyncRandomAccessWriteDevice]``,
+      typename ``[link boost_asio.reference.ConstBufferSequence ConstBufferSequence]``,
+      typename CompletionCondition>
+  std::size_t ``[link boost_asio.reference.write_at.overload2 write_at]``(
+      SyncRandomAccessWriteDevice & d,
+      boost::uint64_t offset,
+      const ConstBufferSequence & buffers,
+      CompletionCondition completion_condition);
+
+  template<
+      typename ``[link boost_asio.reference.SyncRandomAccessWriteDevice SyncRandomAccessWriteDevice]``,
+      typename ``[link boost_asio.reference.ConstBufferSequence ConstBufferSequence]``,
+      typename CompletionCondition>
+  std::size_t ``[link boost_asio.reference.write_at.overload3 write_at]``(
+      SyncRandomAccessWriteDevice & d,
+      boost::uint64_t offset,
+      const ConstBufferSequence & buffers,
+      CompletionCondition completion_condition,
+      boost::system::error_code & ec);
+
+  template<
+      typename ``[link boost_asio.reference.SyncRandomAccessWriteDevice SyncRandomAccessWriteDevice]``,
+      typename Allocator>
+  std::size_t ``[link boost_asio.reference.write_at.overload4 write_at]``(
+      SyncRandomAccessWriteDevice & d,
+      boost::uint64_t offset,
+      basic_streambuf< Allocator > & b);
+
+  template<
+      typename ``[link boost_asio.reference.SyncRandomAccessWriteDevice SyncRandomAccessWriteDevice]``,
+      typename Allocator,
+      typename CompletionCondition>
+  std::size_t ``[link boost_asio.reference.write_at.overload5 write_at]``(
+      SyncRandomAccessWriteDevice & d,
+      boost::uint64_t offset,
+      basic_streambuf< Allocator > & b,
+      CompletionCondition completion_condition);
+
+  template<
+      typename ``[link boost_asio.reference.SyncRandomAccessWriteDevice SyncRandomAccessWriteDevice]``,
+      typename Allocator,
+      typename CompletionCondition>
+  std::size_t ``[link boost_asio.reference.write_at.overload6 write_at]``(
+      SyncRandomAccessWriteDevice & d,
+      boost::uint64_t offset,
+      basic_streambuf< Allocator > & b,
+      CompletionCondition completion_condition,
+      boost::system::error_code & ec);
+
+
+[section:overload1 write_at (1 of 6 overloads)]
+
+Write all of the supplied data at the specified offset before returning. 
+
+  template<
+      typename ``[link boost_asio.reference.SyncRandomAccessWriteDevice SyncRandomAccessWriteDevice]``,
+      typename ``[link boost_asio.reference.ConstBufferSequence ConstBufferSequence]``>
+  std::size_t write_at(
+      SyncRandomAccessWriteDevice & d,
+      boost::uint64_t offset,
+      const ConstBufferSequence & buffers);
+
+
+This function is used to write a certain number of bytes of data to a random access device at a specified offset. The call will block until one of the following conditions is true:
+
+
+* All of the data in the supplied buffers has been written. That is, the bytes transferred is equal to the sum of the buffer sizes.
+
+* An error occurred.
+
+This operation is implemented in terms of one or more calls to the device's write\_some\_at function.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[d][The device to which the data is to be written. The type must support the SyncRandomAccessWriteDevice concept.]]
+
+[[offset][The offset at which the data will be written.]]
+
+[[buffers][One or more buffers containing the data to be written. The sum of the buffer sizes indicates the maximum number of bytes to write to the device.]]
+
+]
+
+[heading Return Value]
+      
+The number of bytes transferred.
+
+[heading Exceptions]
+    
+
+[variablelist
+  
+[[boost::system::system_error][Thrown on failure.]]
+
+]
+
+[heading Example]
+  
+To write a single data buffer use the 
+[link boost_asio.reference.buffer buffer]  function as follows: 
+
+   boost::asio::write_at(d, 42, boost::asio::buffer(data, size)); 
+
+
+See the 
+[link boost_asio.reference.buffer buffer]  documentation for information on writing multiple buffers in one go, and how to use it with arrays, boost::array or std::vector.
+
+[heading Remarks]
+      
+This overload is equivalent to calling: 
+
+   boost::asio::write_at(
+       d, offset, buffers,
+       boost::asio::transfer_all()); 
+
+
+
+
+
+
+[endsect]
+
+
+
+[section:overload2 write_at (2 of 6 overloads)]
+
+Write a certain amount of data at a specified offset before returning. 
+
+  template<
+      typename ``[link boost_asio.reference.SyncRandomAccessWriteDevice SyncRandomAccessWriteDevice]``,
+      typename ``[link boost_asio.reference.ConstBufferSequence ConstBufferSequence]``,
+      typename CompletionCondition>
+  std::size_t write_at(
+      SyncRandomAccessWriteDevice & d,
+      boost::uint64_t offset,
+      const ConstBufferSequence & buffers,
+      CompletionCondition completion_condition);
+
+
+This function is used to write a certain number of bytes of data to a random access device at a specified offset. The call will block until one of the following conditions is true:
+
+
+* All of the data in the supplied buffers has been written. That is, the bytes transferred is equal to the sum of the buffer sizes.
+
+* The completion_condition function object returns true.
+
+This operation is implemented in terms of one or more calls to the device's write\_some\_at function.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[d][The device to which the data is to be written. The type must support the SyncRandomAccessWriteDevice concept.]]
+
+[[offset][The offset at which the data will be written.]]
+
+[[buffers][One or more buffers containing the data to be written. The sum of the buffer sizes indicates the maximum number of bytes to write to the device.]]
+
+[[completion_condition][The function object to be called to determine whether the write operation is complete. The signature of the function object must be: 
+``
+   bool completion_condition(
+     // Result of latest write_some_at operation.
+     const boost::system::error_code& error,
+
+     // Number of bytes transferred so far.
+     std::size_t bytes_transferred
+   ); 
+
+``
+A return value of true indicates that the write operation is complete. False indicates that further calls to the device's write\_some\_at function are required.]]
+
+]
+
+[heading Return Value]
+      
+The number of bytes transferred.
+
+[heading Exceptions]
+    
+
+[variablelist
+  
+[[boost::system::system_error][Thrown on failure.]]
+
+]
+
+[heading Example]
+  
+To write a single data buffer use the 
+[link boost_asio.reference.buffer buffer]  function as follows: 
+
+   boost::asio::write_at(d, 42, boost::asio::buffer(data, size),
+       boost::asio::transfer_at_least(32)); 
+
+
+See the 
+[link boost_asio.reference.buffer buffer]  documentation for information on writing multiple buffers in one go, and how to use it with arrays, boost::array or std::vector. 
+
+
+
+[endsect]
+
+
+
+[section:overload3 write_at (3 of 6 overloads)]
+
+Write a certain amount of data at a specified offset before returning. 
+
+  template<
+      typename ``[link boost_asio.reference.SyncRandomAccessWriteDevice SyncRandomAccessWriteDevice]``,
+      typename ``[link boost_asio.reference.ConstBufferSequence ConstBufferSequence]``,
+      typename CompletionCondition>
+  std::size_t write_at(
+      SyncRandomAccessWriteDevice & d,
+      boost::uint64_t offset,
+      const ConstBufferSequence & buffers,
+      CompletionCondition completion_condition,
+      boost::system::error_code & ec);
+
+
+This function is used to write a certain number of bytes of data to a random access device at a specified offset. The call will block until one of the following conditions is true:
+
+
+* All of the data in the supplied buffers has been written. That is, the bytes transferred is equal to the sum of the buffer sizes.
+
+* The completion_condition function object returns true.
+
+This operation is implemented in terms of one or more calls to the device's write\_some\_at function.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[d][The device to which the data is to be written. The type must support the SyncRandomAccessWriteDevice concept.]]
+
+[[offset][The offset at which the data will be written.]]
+
+[[buffers][One or more buffers containing the data to be written. The sum of the buffer sizes indicates the maximum number of bytes to write to the device.]]
+
+[[completion_condition][The function object to be called to determine whether the write operation is complete. The signature of the function object must be: 
+``
+   bool completion_condition(
+     // Result of latest write_some_at operation.
+     const boost::system::error_code& error,
+
+     // Number of bytes transferred so far.
+     std::size_t bytes_transferred
+   ); 
+
+``
+A return value of true indicates that the write operation is complete. False indicates that further calls to the device's write\_some\_at function are required.]]
+
+[[ec][Set to indicate what error occurred, if any.]]
+
+]
+
+[heading Return Value]
+      
+The number of bytes written. If an error occurs, returns the total number of bytes successfully transferred prior to the error. 
+
+
+
+[endsect]
+
+
+
+[section:overload4 write_at (4 of 6 overloads)]
+
+Write all of the supplied data at the specified offset before returning. 
+
+  template<
+      typename ``[link boost_asio.reference.SyncRandomAccessWriteDevice SyncRandomAccessWriteDevice]``,
+      typename Allocator>
+  std::size_t write_at(
+      SyncRandomAccessWriteDevice & d,
+      boost::uint64_t offset,
+      basic_streambuf< Allocator > & b);
+
+
+This function is used to write a certain number of bytes of data to a random access device at a specified offset. The call will block until one of the following conditions is true:
+
+
+* All of the data in the supplied basic_streambuf has been written.
+
+* An error occurred.
+
+This operation is implemented in terms of one or more calls to the device's write\_some\_at function.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[d][The device to which the data is to be written. The type must support the SyncRandomAccessWriteDevice concept.]]
+
+[[offset][The offset at which the data will be written.]]
+
+[[b][The basic\_streambuf object from which data will be written.]]
+
+]
+
+[heading Return Value]
+      
+The number of bytes transferred.
+
+[heading Exceptions]
+    
+
+[variablelist
+  
+[[boost::system::system_error][Thrown on failure.]]
+
+]
+
+[heading Remarks]
+      
+This overload is equivalent to calling: 
+
+   boost::asio::write_at(
+       d, 42, b,
+       boost::asio::transfer_all()); 
+
+
+
+
+
+
+[endsect]
+
+
+
+[section:overload5 write_at (5 of 6 overloads)]
+
+Write a certain amount of data at a specified offset before returning. 
+
+  template<
+      typename ``[link boost_asio.reference.SyncRandomAccessWriteDevice SyncRandomAccessWriteDevice]``,
+      typename Allocator,
+      typename CompletionCondition>
+  std::size_t write_at(
+      SyncRandomAccessWriteDevice & d,
+      boost::uint64_t offset,
+      basic_streambuf< Allocator > & b,
+      CompletionCondition completion_condition);
+
+
+This function is used to write a certain number of bytes of data to a random access device at a specified offset. The call will block until one of the following conditions is true:
+
+
+* All of the data in the supplied basic_streambuf has been written.
+
+* The completion_condition function object returns true.
+
+This operation is implemented in terms of one or more calls to the device's write\_some\_at function.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[d][The device to which the data is to be written. The type must support the SyncRandomAccessWriteDevice concept.]]
+
+[[offset][The offset at which the data will be written.]]
+
+[[b][The basic\_streambuf object from which data will be written.]]
+
+[[completion_condition][The function object to be called to determine whether the write operation is complete. The signature of the function object must be: 
+``
+   bool completion_condition(
+     // Result of latest write_some_at operation.
+     const boost::system::error_code& error,
+
+     // Number of bytes transferred so far.
+     std::size_t bytes_transferred
+   ); 
+
+``
+A return value of true indicates that the write operation is complete. False indicates that further calls to the device's write\_some\_at function are required.]]
+
+]
+
+[heading Return Value]
+      
+The number of bytes transferred.
+
+[heading Exceptions]
+    
+
+[variablelist
+  
+[[boost::system::system_error][Thrown on failure. ]]
+
+]
+
+
+
+[endsect]
+
+
+
+[section:overload6 write_at (6 of 6 overloads)]
+
+Write a certain amount of data at a specified offset before returning. 
+
+  template<
+      typename ``[link boost_asio.reference.SyncRandomAccessWriteDevice SyncRandomAccessWriteDevice]``,
+      typename Allocator,
+      typename CompletionCondition>
+  std::size_t write_at(
+      SyncRandomAccessWriteDevice & d,
+      boost::uint64_t offset,
+      basic_streambuf< Allocator > & b,
+      CompletionCondition completion_condition,
+      boost::system::error_code & ec);
+
+
+This function is used to write a certain number of bytes of data to a random access device at a specified offset. The call will block until one of the following conditions is true:
+
+
+* All of the data in the supplied basic_streambuf has been written.
+
+* The completion_condition function object returns true.
+
+This operation is implemented in terms of one or more calls to the device's write\_some\_at function.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[d][The device to which the data is to be written. The type must support the SyncRandomAccessWriteDevice concept.]]
+
+[[offset][The offset at which the data will be written.]]
+
+[[b][The basic\_streambuf object from which data will be written.]]
+
+[[completion_condition][The function object to be called to determine whether the write operation is complete. The signature of the function object must be: 
+``
+   bool completion_condition(
+     // Result of latest write_some_at operation.
+     const boost::system::error_code& error,
+
+     // Number of bytes transferred so far.
+     std::size_t bytes_transferred
+   ); 
+
+``
+A return value of true indicates that the write operation is complete. False indicates that further calls to the device's write\_some\_at function are required.]]
 
 [[ec][Set to indicate what error occurred, if any.]]
 
