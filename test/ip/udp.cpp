@@ -144,15 +144,20 @@ void test()
 
     socket1.send(buffer(mutable_char_buffer));
     socket1.send(buffer(const_char_buffer));
+    socket1.send(null_buffers());
     socket1.send(buffer(mutable_char_buffer), in_flags);
     socket1.send(buffer(const_char_buffer), in_flags);
+    socket1.send(null_buffers(), in_flags);
     socket1.send(buffer(mutable_char_buffer), in_flags, ec);
     socket1.send(buffer(const_char_buffer), in_flags, ec);
+    socket1.send(null_buffers(), in_flags, ec);
 
     socket1.async_send(buffer(mutable_char_buffer), send_handler);
     socket1.async_send(buffer(const_char_buffer), send_handler);
+    socket1.async_send(null_buffers(), send_handler);
     socket1.async_send(buffer(mutable_char_buffer), in_flags, send_handler);
     socket1.async_send(buffer(const_char_buffer), in_flags, send_handler);
+    socket1.async_send(null_buffers(), in_flags, send_handler);
 
     socket1.send_to(buffer(mutable_char_buffer),
         ip::udp::endpoint(ip::udp::v4(), 0));
@@ -162,6 +167,10 @@ void test()
         ip::udp::endpoint(ip::udp::v4(), 0));
     socket1.send_to(buffer(const_char_buffer),
         ip::udp::endpoint(ip::udp::v6(), 0));
+    socket1.send_to(null_buffers(),
+        ip::udp::endpoint(ip::udp::v4(), 0));
+    socket1.send_to(null_buffers(),
+        ip::udp::endpoint(ip::udp::v6(), 0));
     socket1.send_to(buffer(mutable_char_buffer),
         ip::udp::endpoint(ip::udp::v4(), 0), in_flags);
     socket1.send_to(buffer(mutable_char_buffer),
@@ -169,6 +178,10 @@ void test()
     socket1.send_to(buffer(const_char_buffer),
         ip::udp::endpoint(ip::udp::v4(), 0), in_flags);
     socket1.send_to(buffer(const_char_buffer),
+        ip::udp::endpoint(ip::udp::v6(), 0), in_flags);
+    socket1.send_to(null_buffers(),
+        ip::udp::endpoint(ip::udp::v4(), 0), in_flags);
+    socket1.send_to(null_buffers(),
         ip::udp::endpoint(ip::udp::v6(), 0), in_flags);
     socket1.send_to(buffer(mutable_char_buffer),
         ip::udp::endpoint(ip::udp::v4(), 0), in_flags, ec);
@@ -177,6 +190,10 @@ void test()
     socket1.send_to(buffer(const_char_buffer),
         ip::udp::endpoint(ip::udp::v4(), 0), in_flags, ec);
     socket1.send_to(buffer(const_char_buffer),
+        ip::udp::endpoint(ip::udp::v6(), 0), in_flags, ec);
+    socket1.send_to(null_buffers(),
+        ip::udp::endpoint(ip::udp::v4(), 0), in_flags, ec);
+    socket1.send_to(null_buffers(),
         ip::udp::endpoint(ip::udp::v6(), 0), in_flags, ec);
 
     socket1.async_send_to(buffer(mutable_char_buffer),
@@ -186,6 +203,10 @@ void test()
     socket1.async_send_to(buffer(const_char_buffer),
         ip::udp::endpoint(ip::udp::v4(), 0), send_handler);
     socket1.async_send_to(buffer(const_char_buffer),
+        ip::udp::endpoint(ip::udp::v6(), 0), send_handler);
+    socket1.async_send_to(null_buffers(),
+        ip::udp::endpoint(ip::udp::v4(), 0), send_handler);
+    socket1.async_send_to(null_buffers(),
         ip::udp::endpoint(ip::udp::v6(), 0), send_handler);
     socket1.async_send_to(buffer(mutable_char_buffer),
         ip::udp::endpoint(ip::udp::v4(), 0), in_flags, send_handler);
@@ -194,24 +215,40 @@ void test()
     socket1.async_send_to(buffer(const_char_buffer),
         ip::udp::endpoint(ip::udp::v4(), 0), in_flags, send_handler);
     socket1.async_send_to(buffer(const_char_buffer),
+        ip::udp::endpoint(ip::udp::v6(), 0), in_flags, send_handler);
+    socket1.async_send_to(null_buffers(),
+        ip::udp::endpoint(ip::udp::v4(), 0), in_flags, send_handler);
+    socket1.async_send_to(null_buffers(),
         ip::udp::endpoint(ip::udp::v6(), 0), in_flags, send_handler);
 
     socket1.receive(buffer(mutable_char_buffer));
+    socket1.receive(null_buffers());
     socket1.receive(buffer(mutable_char_buffer), in_flags);
+    socket1.receive(null_buffers(), in_flags);
     socket1.receive(buffer(mutable_char_buffer), in_flags, ec);
+    socket1.receive(null_buffers(), in_flags, ec);
 
     socket1.async_receive(buffer(mutable_char_buffer), receive_handler);
+    socket1.async_receive(null_buffers(), receive_handler);
     socket1.async_receive(buffer(mutable_char_buffer), in_flags,
         receive_handler);
+    socket1.async_receive(null_buffers(), in_flags, receive_handler);
 
     ip::udp::endpoint endpoint;
     socket1.receive_from(buffer(mutable_char_buffer), endpoint);
+    socket1.receive_from(null_buffers(), endpoint);
     socket1.receive_from(buffer(mutable_char_buffer), endpoint, in_flags);
+    socket1.receive_from(null_buffers(), endpoint, in_flags);
     socket1.receive_from(buffer(mutable_char_buffer), endpoint, in_flags, ec);
+    socket1.receive_from(null_buffers(), endpoint, in_flags, ec);
 
     socket1.async_receive_from(buffer(mutable_char_buffer),
         endpoint, receive_handler);
+    socket1.async_receive_from(null_buffers(),
+        endpoint, receive_handler);
     socket1.async_receive_from(buffer(mutable_char_buffer),
+        endpoint, in_flags, receive_handler);
+    socket1.async_receive_from(null_buffers(),
         endpoint, in_flags, receive_handler);
   }
   catch (std::exception&)
@@ -274,10 +311,12 @@ void test()
   target_endpoint = sender_endpoint;
   s1.async_send_to(buffer(send_msg, sizeof(send_msg)), target_endpoint,
       boost::bind(handle_send, sizeof(send_msg),
-        placeholders::error, placeholders::bytes_transferred));
+        boost::asio::placeholders::error,
+        boost::asio::placeholders::bytes_transferred));
   s2.async_receive_from(buffer(recv_msg, sizeof(recv_msg)), sender_endpoint,
       boost::bind(handle_recv, sizeof(recv_msg),
-        placeholders::error, placeholders::bytes_transferred));
+        boost::asio::placeholders::error,
+        boost::asio::placeholders::bytes_transferred));
 
   ios.run();
 
@@ -288,7 +327,7 @@ void test()
 
 //------------------------------------------------------------------------------
 
-test_suite* init_unit_test_suite(int argc, char* argv[])
+test_suite* init_unit_test_suite(int, char*[])
 {
   test_suite* test = BOOST_TEST_SUITE("ip/udp");
   test->add(BOOST_TEST_CASE(&ip_udp_socket_compile::test));
