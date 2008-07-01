@@ -30,6 +30,8 @@ namespace asio {
 
 /**
  * @defgroup write boost::asio::write
+ *
+ * @brief Write a certain amount of data to a stream before returning.
  */
 /*@{*/
 
@@ -280,6 +282,9 @@ std::size_t write(SyncWriteStream& s, basic_streambuf<Allocator>& b,
 /*@}*/
 /**
  * @defgroup async_write boost::asio::async_write
+ *
+ * @brief Start an asynchronous operation to write a certain amount of data to a
+ * stream.
  */
 /*@{*/
 

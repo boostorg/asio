@@ -31,6 +31,9 @@ namespace asio {
 
 /**
  * @defgroup read_at boost::asio::read_at
+ *
+ * @brief Attempt to read a certain amount of data at the specified offset
+ * before returning.
  */
 /*@{*/
 
@@ -305,6 +308,9 @@ std::size_t read_at(SyncRandomAccessReadDevice& d,
 /*@}*/
 /**
  * @defgroup async_read_at boost::asio::async_read_at
+ *
+ * @brief Start an asynchronous operation to read a certain amount of data at
+ * the specified offset.
  */
 /*@{*/
 
