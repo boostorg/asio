@@ -24,14 +24,14 @@ install css
 
 install images
   :
-    design/proactor.png
+    overview/proactor.png
   :
     <location>html/boost_asio
   ;
 
 local example-names = allocation buffers chat echo http/client http/server
-  http/server2 http/server3 invocation iostreams multicast serialization
-  services socks4 ssl timeouts timers ;
+  http/server2 http/server3 invocation iostreams local multicast nonblocking
+  porthopper serialization services socks4 ssl timeouts timers ;
 
 for local l in $(example-names)
 {
@@ -66,7 +66,7 @@ explicit asio_doc ;
 
 install asio_doc_images
   :
-    design/proactor.png
+    overview/proactor.png
   :
     <location>$(BOOST_ROOT)/doc/html/boost_asio
   ;
