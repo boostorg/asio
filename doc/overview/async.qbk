@@ -5,13 +5,13 @@
  / file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
  /]
 
-[section:async Asynchronous Operations]
+[section:async The Proactor Design Pattern: Concurrency Without Threads]
 
-The proposed library offers side-by-side support for synchronous and
-asynchronous operations. The asynchronous support is based on the Proactor
-design pattern [link boost_asio.design.async.references \[POSA2\]], and the
-advantages and disadvantages of this approach, when compared to a
-synchronous-only or Reactor approach, are outlined below.
+The Boost.Asio library offers side-by-side support for synchronous and asynchronous
+operations. The asynchronous support is based on the Proactor design pattern
+[link boost_asio.overview.core.async.references \[POSA2\]]. The advantages and
+disadvantages of this approach, when compared to a synchronous-only or Reactor
+approach, are outlined below.
 
 [heading Proactor and Boost.Asio]
 
@@ -31,7 +31,7 @@ read or write on a socket.]
 
 [:Executes asynchronous operations and queues events on a completion event
 queue when operations complete. From a high-level point of view, services like
-asio::stream_socket_service are asynchronous operation processors.]
+`stream_socket_service` are asynchronous operation processors.]
 
 [mdash] Completion Event Queue
 
@@ -52,14 +52,14 @@ a completed event to its caller.]
 
 [:Calls the asynchronous event demultiplexer to dequeue events, and dispatches
 the completion handler (i.e. invokes the function object) associated with the
-event. This abstraction is represented by `boost::asio::io_service`.]
+event. This abstraction is represented by the `io_service` class.]
 
 [mdash] Initiator
 
 [:Application-specific code that starts asynchronous operations. The initiator
 interacts with an asynchronous operation processor via a high-level interface
-such as `asio::basic_stream_socket`, which in turn delegates to a service like
-`asio::stream_socket_service`.]
+such as `basic_stream_socket`, which in turn delegates to a service like
+`stream_socket_service`.]
 
 [heading Implementation Using Reactor]
 
@@ -97,7 +97,7 @@ calling an overlapped function such as `AcceptEx`.]
 [mdash] Completion Event Queue
 
 [:This is implemented by the operating system, and is associated with an I/O
-completion port. There is one I/O completion port for each asio::io_service
+completion port. There is one I/O completion port for each `io_service`
 instance.]
 
 [mdash] Asynchronous Event Demultiplexer
@@ -111,9 +111,9 @@ handlers.]
 
 [:Many operating systems offer a native asynchronous I/O API (such as
 overlapped I/O on __Windows__) as the preferred option for developing high
-performance network applications. The proposed library may be implemented in
-terms of native asynchronous I/O. However, if native support is not available,
-the library may also be implemented using synchronous event demultiplexors that
+performance network applications. The library may be implemented in terms of
+native asynchronous I/O. However, if native support is not available, the
+library may also be implemented using synchronous event demultiplexors that
 typify the Reactor pattern, such as __POSIX__ `select()`.]
 
 [mdash] Decoupling threading from concurrency.
