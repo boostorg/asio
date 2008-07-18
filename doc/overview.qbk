@@ -9,6 +9,7 @@
 
 * [link boost_asio.overview.rationale Rationale]
 * [link boost_asio.overview.core Core Concepts and Functionality]
+  * [link boost_asio.overview.core.basics Basic Boost.Asio Anatomy]
   * [link boost_asio.overview.core.async The Proactor Design Pattern: Concurrency Without Threads]
   * [link boost_asio.overview.core.threads Threads and Boost.Asio]
   * [link boost_asio.overview.core.strands Strands: Use Threads Without Explicit Locking]
@@ -18,14 +19,9 @@
   * [link boost_asio.overview.core.line_based Line-Based Operations]
   * [link boost_asio.overview.core.allocation Custom Memory Allocation]
 * [link boost_asio.overview.networking Networking]
+  * [link boost_asio.overview.networking.protocols TCP, UDP and ICMP]
   * [link boost_asio.overview.networking.iostreams Socket Iostreams]
   * [link boost_asio.overview.networking.bsd_sockets The BSD Socket API and Boost.Asio]
-  [/ * IPv4 and IPv6 independence
-  * TCP
-  * UDP
-  * Multicast
-  * Raw sockets
-  * ICMP ]
 * [link boost_asio.overview.timers Timers]
 * [link boost_asio.overview.serial_ports Serial Ports]
 * [link boost_asio.overview.posix POSIX-Specific Functionality]
@@ -41,6 +37,7 @@
 
 [section:core Core Concepts and Functionality]
 
+* [link boost_asio.overview.core.basics Basic Boost.Asio Anatomy]
 * [link boost_asio.overview.core.async The Proactor Design Pattern: Concurrency Without Threads]
 * [link boost_asio.overview.core.threads Threads and Boost.Asio]
 * [link boost_asio.overview.core.strands Strands: Use Threads Without Explicit Locking]
@@ -50,6 +47,7 @@
 * [link boost_asio.overview.core.line_based Line-Based Operations]
 * [link boost_asio.overview.core.allocation Custom Memory Allocation]
 
+[include overview/basics.qbk]
 [include overview/async.qbk]
 [include overview/threads.qbk]
 [include overview/strands.qbk]
@@ -63,9 +61,11 @@
 
 [section:networking Networking]
 
+* [link boost_asio.overview.networking.protocols TCP, UDP and ICMP]
 * [link boost_asio.overview.networking.iostreams Socket Iostreams]
 * [link boost_asio.overview.networking.bsd_sockets The BSD Socket API and Boost.Asio]
 
+[include overview/protocols.qbk]
 [include overview/iostreams.qbk]
 [include overview/bsd_sockets.qbk]
 

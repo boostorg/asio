@@ -25,6 +25,9 @@ install css
 install images
   :
     overview/proactor.png
+    overview/sync_op.png
+    overview/async_op1.png
+    overview/async_op2.png
   :
     <location>html/boost_asio
   ;
@@ -67,6 +70,9 @@ explicit asio_doc ;
 install asio_doc_images
   :
     overview/proactor.png
+    overview/sync_op.png
+    overview/async_op1.png
+    overview/async_op2.png
   :
     <location>$(BOOST_ROOT)/doc/html/boost_asio
   ;
