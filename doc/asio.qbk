@@ -20,6 +20,8 @@
 ]
 
 [template mdash[] '''&mdash; ''']
+[template indexterm1[term1] '''<indexterm><primary>'''[term1]'''</primary></indexterm>''']
+[template indexterm2[term1 term2] '''<indexterm><primary>'''[term1]'''</primary><secondary>'''[term2]'''</secondary></indexterm>''']
 [def __POSIX__ /POSIX/]
 [def __Windows__ /Windows/]
 [def __accept__ [@http://www.opengroup.org/onlinepubs/000095399/functions/accept.html `accept()`]]
@@ -35,11 +37,19 @@
 
 [/=============================================================================]
 
-Boost.Asio is a cross-platform C++ library for network programming that
-provides developers with a consistent asynchronous I/O model using a modern C++
-approach.
+Boost.Asio is a cross-platform C++ library for network and low-level I/O
+programming that provides developers with a consistent asynchronous model using
+a modern C++ approach.
 
 [variablelist
+  [
+    [
+      [link boost_asio.overview Overview]
+    ]
+    [
+      An overview of the features included in Boost.Asio, plus rationale and design information.
+    ]
+  ]
   [
     [
       [link boost_asio.using Using Boost.Asio]
@@ -78,16 +88,17 @@ approach.
   ]
   [
     [
-      [link boost_asio.design Design]
+      [link boost_asio.index Index]
     ]
     [
-      Rationale and design information for Boost.Asio.
+      Book-style text index of Boost.Asio documentation.
     ]
   ]
 ]
 
+[include overview.qbk]
 [include using.qbk]
 [include tutorial.qbk]
 [include examples.qbk]
 [include reference.qbk]
-[include design.qbk]
+[xinclude index.xml]

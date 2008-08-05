@@ -108,7 +108,12 @@ inline boost::system::error_code serial_port_base::baud_rate::store(
     ec = boost::asio::error::invalid_argument;
     return ec;
   }
+# if defined(_BSD_SOURCE)
   ::cfsetspeed(&storage, baud);
+# else
+  ::cfsetispeed(&storage, baud);
+  ::cfsetospeed(&storage, baud);
+# endif
 #endif
   ec = boost::system::error_code();
   return ec;
@@ -242,16 +247,25 @@ inline boost::system::error_code serial_port_base::flow_control::store(
   {
   case none:
     storage.c_iflag &= ~(IXOFF | IXON);
+# if defined(_BSD_SOURCE)
     storage.c_cflag &= ~CRTSCTS;
+# endif
     break;
   case software:
     storage.c_iflag |= IXOFF | IXON;
+# if defined(_BSD_SOURCE)
     storage.c_cflag &= ~CRTSCTS;
+# endif
     break;
   case hardware:
+# if defined(_BSD_SOURCE)
     storage.c_iflag &= ~(IXOFF | IXON);
     storage.c_cflag |= CRTSCTS;
     break;
+# else
+    ec = boost::asio::error::operation_not_supported;
+    return ec;
+# endif
   default:
     break;
   }
@@ -281,10 +295,12 @@ inline boost::system::error_code serial_port_base::flow_control::load(
   {
     value_ = software;
   }
+# if defined(_BSD_SOURCE)
   else if (storage.c_cflag & CRTSCTS)
   {
     value_ = hardware;
   }
+# endif
   else
   {
     value_ = none;
