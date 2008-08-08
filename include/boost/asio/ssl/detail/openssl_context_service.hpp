@@ -309,9 +309,9 @@ public:
 
     ::BIO_free(bio);
     int result = ::SSL_CTX_set_tmp_dh(impl, dh);
+    ::DH_free(dh);
     if (result != 1)
     {
-      ::DH_free(dh);
       ec = boost::asio::error::invalid_argument;
       return ec;
     }
