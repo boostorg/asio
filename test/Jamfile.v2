@@ -142,6 +142,8 @@ test-suite "asio" :
   [ link posix/stream_descriptor_service.cpp : $(USE_SELECT) : posix_stream_descriptor_service_select ]
   [ run read.cpp ]
   [ run read.cpp : : : $(USE_SELECT) : read_select ]
+  [ run read_at.cpp ]
+  [ run read_at.cpp : : : $(USE_SELECT) : read_at_select ]
   [ run read_until.cpp ]
   [ run read_until.cpp : : : $(USE_SELECT) : read_until_select ]
   [ link socket_acceptor_service.cpp ]
@@ -170,4 +172,6 @@ test-suite "asio" :
   [ link windows/stream_handle_service.cpp : $(USE_SELECT) : windows_stream_handle_service_select ]
   [ run write.cpp ]
   [ run write.cpp : : : $(USE_SELECT) : write_select ]
+  [ run write_at.cpp ]
+  [ run write_at.cpp : : : $(USE_SELECT) : write_at_select ]
   ;

@@ -81,6 +81,7 @@ test-suite "asio"
   [ run posix/stream_descriptor.cpp <template>asio_unit_test ]
   [ run posix/stream_descriptor_service.cpp <template>asio_unit_test ]
   [ run read.cpp <template>asio_unit_test ]
+  [ run read_at.cpp <template>asio_unit_test ]
   [ run read_until.cpp <template>asio_unit_test ]
   [ run socket_acceptor_service.cpp <template>asio_unit_test ]
   [ run socket_base.cpp <template>asio_unit_test ]
@@ -95,4 +96,5 @@ test-suite "asio"
   [ run windows/stream_handle.cpp <template>asio_unit_test ]
   [ run windows/stream_handle_service.cpp <template>asio_unit_test ]
   [ run write.cpp <template>asio_unit_test ]
+  [ run write_at.cpp <template>asio_unit_test ]
   ;
