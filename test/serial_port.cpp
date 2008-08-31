@@ -39,6 +39,7 @@ void read_some_handler(const boost::system::error_code&, std::size_t)
 
 void test()
 {
+#if defined(BOOST_ASIO_HAS_SERIAL_PORT)
   using namespace boost::asio;
 
   try
@@ -111,6 +112,7 @@ void test()
   catch (std::exception&)
   {
   }
+#endif // defined(BOOST_ASIO_HAS_SERIAL_PORT)
 }
 
 } // namespace serial_port_compile
