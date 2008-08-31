@@ -162,6 +162,8 @@ test-suite "asio" :
   [ link windows/basic_random_access_handle.cpp : $(USE_SELECT) : windows_basic_random_access_handle_select ]
   [ link windows/basic_stream_handle.cpp : : windows_basic_stream_handle ]
   [ link windows/basic_stream_handle.cpp : $(USE_SELECT) : windows_basic_stream_handle_select ]
+  [ link windows/overlapped_ptr.cpp : : windows_overlapped_ptr ]
+  [ link windows/overlapped_ptr.cpp : $(USE_SELECT) : windows_overlapped_ptr_select ]
   [ link windows/random_access_handle.cpp : : windows_random_access_handle ]
   [ link windows/random_access_handle.cpp : $(USE_SELECT) : windows_random_access_handle_select ]
   [ link windows/random_access_handle_service.cpp : : windows_random_access_handle_service ]

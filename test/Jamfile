@@ -91,6 +91,7 @@ test-suite "asio"
   [ run windows/basic_handle.cpp <template>asio_unit_test ]
   [ run windows/basic_random_access_handle.cpp <template>asio_unit_test ]
   [ run windows/basic_stream_handle.cpp <template>asio_unit_test ]
+  [ run windows/overlapped_ptr.cpp <template>asio_unit_test ]
   [ run windows/random_access_handle.cpp <template>asio_unit_test ]
   [ run windows/random_access_handle_service.cpp <template>asio_unit_test ]
   [ run windows/stream_handle.cpp <template>asio_unit_test ]
