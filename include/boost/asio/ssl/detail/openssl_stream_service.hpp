@@ -337,7 +337,7 @@ public:
         buffer_size = max_buffer_size;
 
       boost::function<int (SSL*)> send_func =
-        boost::bind(&::SSL_write, boost::arg<1>(),  
+        boost::bind<int>(&::SSL_write, boost::arg<1>(),  
             boost::asio::buffer_cast<const void*>(*buffers.begin()),
             static_cast<int>(buffer_size));
       openssl_operation<Stream> op(
@@ -373,7 +373,7 @@ public:
       buffer_size = max_buffer_size;
 
     boost::function<int (SSL*)> send_func =
-      boost::bind(&::SSL_write, boost::arg<1>(),
+      boost::bind<int>(&::SSL_write, boost::arg<1>(),
           boost::asio::buffer_cast<const void*>(*buffers.begin()),
           static_cast<int>(buffer_size));
 
@@ -411,7 +411,7 @@ public:
         buffer_size = max_buffer_size;
 
       boost::function<int (SSL*)> recv_func =
-        boost::bind(&::SSL_read, boost::arg<1>(),
+        boost::bind<int>(&::SSL_read, boost::arg<1>(),
             boost::asio::buffer_cast<void*>(*buffers.begin()),
             static_cast<int>(buffer_size));
       openssl_operation<Stream> op(recv_func,
@@ -447,7 +447,7 @@ public:
       buffer_size = max_buffer_size;
 
     boost::function<int (SSL*)> recv_func =
-      boost::bind(&::SSL_read, boost::arg<1>(),
+      boost::bind<int>(&::SSL_read, boost::arg<1>(),
           boost::asio::buffer_cast<void*>(*buffers.begin()),
           static_cast<int>(buffer_size));
 
