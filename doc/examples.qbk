@@ -246,4 +246,12 @@ Examples showing how to use UNIX domain (local) sockets.
 * [@boost_asio/example/local/stream_client.cpp]
 
 
+[heading Windows]
+
+An example showing how to use the Windows-specific function `TransmitFile`
+with Boost.Asio.
+
+* [@boost_asio/example/windows/transmit_file.cpp]
+
+
 [endsect]
