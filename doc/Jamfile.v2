@@ -34,7 +34,7 @@ install images
 
 local example-names = allocation buffers chat echo http/client http/server
   http/server2 http/server3 invocation iostreams local multicast nonblocking
-  porthopper serialization services socks4 ssl timeouts timers ;
+  porthopper serialization services socks4 ssl timeouts timers windows ;
 
 for local l in $(example-names)
 {
