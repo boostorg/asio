@@ -33,7 +33,7 @@ SUBGROUPING            = YES
 #---------------------------------------------------------------------------
 # Build related configuration options
 #---------------------------------------------------------------------------
-EXTRACT_ALL            = NO
+EXTRACT_ALL            = YES
 EXTRACT_PRIVATE        = YES
 EXTRACT_STATIC         = YES
 EXTRACT_LOCAL_CLASSES  = NO
@@ -76,7 +76,12 @@ INPUT                  = ./../../../boost/asio.hpp \
                          ./../../../boost/asio \
                          ./../../../boost/asio/impl \
                          ./../../../boost/asio/ip \
-                         ./../../../boost/asio/ssl
+                         ./../../../boost/asio/local \
+                         ./../../../boost/asio/posix \
+                         ./../../../boost/asio/ssl \
+                         ./../../../boost/asio/windows \
+                         ./noncopyable_dox.txt \
+                         ./std_exception_dox.txt
 FILE_PATTERNS          = 
 RECURSIVE              = NO
 EXCLUDE                = 
@@ -195,7 +200,7 @@ SKIP_FUNCTION_MACROS   = YES
 # Configuration::additions related to external references   
 #---------------------------------------------------------------------------
 TAGFILES               = 
-GENERATE_TAGFILE       = 
+GENERATE_TAGFILE       = reference.tags
 ALLEXTERNALS           = NO
 EXTERNAL_GROUPS        = YES
 PERL_PATH              = /usr/bin/perl

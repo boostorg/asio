@@ -2,7 +2,7 @@
 // pipe_select_interrupter.hpp
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2007 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2008 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -19,6 +19,8 @@
 
 #include <boost/asio/detail/push_options.hpp>
 #include <boost/config.hpp>
+#include <boost/throw_exception.hpp>
+#include <boost/system/system_error.hpp>
 #include <boost/asio/detail/pop_options.hpp>
 
 #if !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
@@ -27,6 +29,7 @@
 #include <fcntl.h>
 #include <boost/asio/detail/pop_options.hpp>
 
+#include <boost/asio/error.hpp>
 #include <boost/asio/detail/socket_types.hpp>
 
 namespace boost {
@@ -46,6 +49,13 @@ public:
       ::fcntl(read_descriptor_, F_SETFL, O_NONBLOCK);
       write_descriptor_ = pipe_fds[1];
       ::fcntl(write_descriptor_, F_SETFL, O_NONBLOCK);
+    }
+    else
+    {
+      boost::system::error_code ec(errno,
+          boost::asio::error::get_system_category());
+      boost::system::system_error e(ec, "pipe_select_interrupter");
+      boost::throw_exception(e);
     }
   }
 

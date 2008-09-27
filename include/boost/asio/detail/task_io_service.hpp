@@ -2,7 +2,7 @@
 // task_io_service.hpp
 // ~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2007 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2008 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -14,6 +14,10 @@
 #if defined(_MSC_VER) && (_MSC_VER >= 1200)
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
+
+#if defined(BOOST_ASIO_ENABLE_TWO_LOCK_QUEUE)
+#include <boost/asio/detail/task_io_service_2lock.hpp>
+#else // defined(BOOST_ASIO_ENABLE_TWO_LOCK_QUEUE)
 
 #include <boost/asio/detail/push_options.hpp>
 
@@ -162,7 +166,7 @@ public:
   void dispatch(Handler handler)
   {
     if (call_stack<task_io_service>::contains(this))
-      asio_handler_invoke_helpers::invoke(handler, &handler);
+      boost_asio_handler_invoke_helpers::invoke(handler, &handler);
     else
       post(handler);
   }
@@ -225,16 +229,18 @@ private:
         {
           bool more_handlers = (!handler_queue_.empty());
           task_interrupted_ = more_handlers || polling;
-          lock.unlock();
 
           // If the task has already run and we're polling then we're done.
           if (task_has_run && polling)
           {
+            task_interrupted_ = true;
+            handler_queue_.push(&task_handler_);
             ec = boost::system::error_code();
             return 0;
           }
           task_has_run = true;
-          
+
+          lock.unlock();
           task_cleanup c(lock, *this);
 
           // Run the task. May throw an exception. Only block if the handler
@@ -316,6 +322,8 @@ private:
   }
 
   // Helper class to perform task-related operations on block exit.
+  class task_cleanup;
+  friend class task_cleanup;
   class task_cleanup
   {
   public:
@@ -413,5 +421,7 @@ private:
 
 #include <boost/system/error_code.hpp>
 #include <boost/asio/detail/pop_options.hpp>
+
+#endif // defined(BOOST_ASIO_ENABLE_TWO_LOCK_QUEUE)
 
 #endif // BOOST_ASIO_DETAIL_TASK_IO_SERVICE_HPP

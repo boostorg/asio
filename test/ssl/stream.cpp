@@ -2,7 +2,7 @@
 // stream.cpp
 // ~~~~~~~~~~
 //
-// Copyright (c) 2003-2007 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2008 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -75,6 +75,11 @@ void test()
       = stream1.lowest_layer();
     (void)lowest_layer;
 
+    const ssl::stream<ip::tcp::socket>& stream3 = stream1;
+    const ssl::stream<ip::tcp::socket>::lowest_layer_type& lowest_layer2
+      = stream3.lowest_layer();
+    (void)lowest_layer2;
+
     stream1.handshake(ssl::stream_base::client);
     stream1.handshake(ssl::stream_base::server);
     stream1.handshake(ssl::stream_base::client, ec);
@@ -118,7 +123,7 @@ void test()
 
 //------------------------------------------------------------------------------
 
-test_suite* init_unit_test_suite(int argc, char* argv[])
+test_suite* init_unit_test_suite(int, char*[])
 {
   test_suite* test = BOOST_TEST_SUITE("ssl/stream");
   test->add(BOOST_TEST_CASE(&ssl_stream_compile::test));

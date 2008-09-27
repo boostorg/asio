@@ -3,7 +3,7 @@
 // ~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2005 Voipster / Indrek dot Juhani at voipster dot com
-// Copyright (c) 2005 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2005-2008 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -20,6 +20,7 @@
 
 #include <boost/asio/detail/push_options.hpp>
 #include <cstddef>
+#include <climits>
 #include <boost/config.hpp>
 #include <boost/noncopyable.hpp>
 #include <boost/function.hpp>
@@ -28,6 +29,7 @@
 
 #include <boost/asio/error.hpp>
 #include <boost/asio/io_service.hpp>
+#include <boost/asio/strand.hpp>
 #include <boost/asio/detail/service_base.hpp>
 #include <boost/asio/ssl/basic_context.hpp>
 #include <boost/asio/ssl/stream_base.hpp>
@@ -43,6 +45,8 @@ class openssl_stream_service
   : public boost::asio::detail::service_base<openssl_stream_service>
 {
 private:
+  enum { max_buffer_size = INT_MAX };
+
   //Base handler for asyncrhonous operations
   template <typename Stream>
   class base_handler
@@ -161,7 +165,8 @@ public:
 
   // Construct a new stream socket service for the specified io_service.
   explicit openssl_stream_service(boost::asio::io_service& io_service)
-    : boost::asio::detail::service_base<openssl_stream_service>(io_service)
+    : boost::asio::detail::service_base<openssl_stream_service>(io_service),
+      strand_(io_service)
   {
   }
 
@@ -239,7 +244,7 @@ public:
     typedef handshake_handler<Stream, Handler> connect_handler;
 
     connect_handler* local_handler = 
-      new connect_handler(handler, io_service());
+      new connect_handler(handler, get_io_service());
 
     openssl_operation<Stream>* op = new openssl_operation<Stream>
     (
@@ -256,11 +261,12 @@ public:
         local_handler,
         boost::arg<1>(),
         boost::arg<2>()
-      )
+      ),
+      strand_
     );
     local_handler->set_operation(op);
 
-    io_service().post(boost::bind(&openssl_operation<Stream>::start, op));
+    strand_.post(boost::bind(&openssl_operation<Stream>::start, op));
   }
 
   // Shut down SSL on the stream.
@@ -295,7 +301,7 @@ public:
     typedef shutdown_handler<Stream, Handler> disconnect_handler;
 
     disconnect_handler* local_handler = 
-      new disconnect_handler(handler, io_service());
+      new disconnect_handler(handler, get_io_service());
 
     openssl_operation<Stream>* op = new openssl_operation<Stream>
     (
@@ -310,11 +316,12 @@ public:
         local_handler, 
         boost::arg<1>(),
         boost::arg<2>()
-      )
+      ),
+      strand_
     );
     local_handler->set_operation(op);
 
-    io_service().post(boost::bind(&openssl_operation<Stream>::start, op));        
+    strand_.post(boost::bind(&openssl_operation<Stream>::start, op));        
   }
 
   // Write some data to the stream.
@@ -325,10 +332,14 @@ public:
     size_t bytes_transferred = 0;
     try
     {
+      std::size_t buffer_size = boost::asio::buffer_size(*buffers.begin());
+      if (buffer_size > max_buffer_size)
+        buffer_size = max_buffer_size;
+
       boost::function<int (SSL*)> send_func =
-        boost::bind(&::SSL_write, boost::arg<1>(),  
+        boost::bind<int>(&::SSL_write, boost::arg<1>(),  
             boost::asio::buffer_cast<const void*>(*buffers.begin()),
-            static_cast<int>(boost::asio::buffer_size(*buffers.begin())));
+            static_cast<int>(buffer_size));
       openssl_operation<Stream> op(
         send_func,
         next_layer,
@@ -355,12 +366,16 @@ public:
   {
     typedef io_handler<Stream, Handler> send_handler;
 
-    send_handler* local_handler = new send_handler(handler, io_service());
+    send_handler* local_handler = new send_handler(handler, get_io_service());
+
+    std::size_t buffer_size = boost::asio::buffer_size(*buffers.begin());
+    if (buffer_size > max_buffer_size)
+      buffer_size = max_buffer_size;
 
     boost::function<int (SSL*)> send_func =
-      boost::bind(&::SSL_write, boost::arg<1>(),
+      boost::bind<int>(&::SSL_write, boost::arg<1>(),
           boost::asio::buffer_cast<const void*>(*buffers.begin()),
-          static_cast<int>(boost::asio::buffer_size(*buffers.begin())));
+          static_cast<int>(buffer_size));
 
     openssl_operation<Stream>* op = new openssl_operation<Stream>
     (
@@ -375,11 +390,12 @@ public:
         local_handler, 
         boost::arg<1>(),
         boost::arg<2>()
-      )
+      ),
+      strand_
     );
     local_handler->set_operation(op);
 
-    io_service().post(boost::bind(&openssl_operation<Stream>::start, op));        
+    strand_.post(boost::bind(&openssl_operation<Stream>::start, op));        
   }
 
   // Read some data from the stream.
@@ -390,10 +406,14 @@ public:
     size_t bytes_transferred = 0;
     try
     {
+      std::size_t buffer_size = boost::asio::buffer_size(*buffers.begin());
+      if (buffer_size > max_buffer_size)
+        buffer_size = max_buffer_size;
+
       boost::function<int (SSL*)> recv_func =
-        boost::bind(&::SSL_read, boost::arg<1>(),
+        boost::bind<int>(&::SSL_read, boost::arg<1>(),
             boost::asio::buffer_cast<void*>(*buffers.begin()),
-            boost::asio::buffer_size(*buffers.begin()));
+            static_cast<int>(buffer_size));
       openssl_operation<Stream> op(recv_func,
         next_layer,
         impl->recv_buf,
@@ -420,12 +440,16 @@ public:
   {
     typedef io_handler<Stream, Handler> recv_handler;
 
-    recv_handler* local_handler = new recv_handler(handler, io_service());
+    recv_handler* local_handler = new recv_handler(handler, get_io_service());
+
+    std::size_t buffer_size = boost::asio::buffer_size(*buffers.begin());
+    if (buffer_size > max_buffer_size)
+      buffer_size = max_buffer_size;
 
     boost::function<int (SSL*)> recv_func =
-      boost::bind(&::SSL_read, boost::arg<1>(),
+      boost::bind<int>(&::SSL_read, boost::arg<1>(),
           boost::asio::buffer_cast<void*>(*buffers.begin()),
-          boost::asio::buffer_size(*buffers.begin()));
+          static_cast<int>(buffer_size));
 
     openssl_operation<Stream>* op = new openssl_operation<Stream>
     (
@@ -440,11 +464,12 @@ public:
         local_handler, 
         boost::arg<1>(),
         boost::arg<2>()
-      )
+      ),
+      strand_
     );
     local_handler->set_operation(op);
 
-    io_service().post(boost::bind(&openssl_operation<Stream>::start, op));        
+    strand_.post(boost::bind(&openssl_operation<Stream>::start, op));        
   }
 
   // Peek at the incoming data on the stream.
@@ -466,6 +491,8 @@ public:
   }
 
 private:  
+  boost::asio::io_service::strand strand_;
+
   typedef boost::asio::detail::mutex mutex_type;
   
   template<typename Mutex>

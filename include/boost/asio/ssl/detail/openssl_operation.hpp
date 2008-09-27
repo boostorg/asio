@@ -19,6 +19,7 @@
 
 #include <boost/asio/detail/push_options.hpp>
 #include <boost/function.hpp>
+#include <boost/assert.hpp>
 #include <boost/bind.hpp>
 #include <boost/asio/detail/pop_options.hpp>
 
@@ -88,10 +89,12 @@ public:
                     net_buffer& recv_buf,
                     SSL* session,
                     BIO* ssl_bio,
-                    user_handler_func  handler
+                    user_handler_func  handler,
+                    boost::asio::io_service::strand& strand
                     )
     : primitive_(primitive)
     , user_handler_(handler)
+    , strand_(&strand)
     , recv_buf_(recv_buf)
     , socket_(socket)
     , ssl_bio_(ssl_bio)
@@ -100,6 +103,10 @@ public:
     write_ = boost::bind(
       &openssl_operation::do_async_write, 
       this, boost::arg<1>(), boost::arg<2>()
+    );
+    read_ = boost::bind(
+      &openssl_operation::do_async_read, 
+      this
     );
     handler_= boost::bind(
       &openssl_operation::async_user_handler, 
@@ -114,6 +121,7 @@ public:
                     SSL* session,
                     BIO* ssl_bio)
     : primitive_(primitive)
+    , strand_(0)
     , recv_buf_(recv_buf)
     , socket_(socket)
     , ssl_bio_(ssl_bio)
@@ -122,6 +130,10 @@ public:
     write_ = boost::bind(
       &openssl_operation::do_sync_write, 
       this, boost::arg<1>(), boost::arg<2>()
+    );
+    read_ = boost::bind(
+      &openssl_operation::do_sync_read, 
+      this
     );
     handler_ = boost::bind(
       &openssl_operation::sync_user_handler, 
@@ -135,7 +147,7 @@ public:
   int start()
   {
     int rc = primitive_( session_ );
-    int sys_error_code = ERR_get_error();
+
     bool is_operation_done = (rc > 0);  
                 // For connect/accept/shutdown, the operation
                 // is done, when return code is 1
@@ -145,6 +157,12 @@ public:
     int error_code =  !is_operation_done ?
           ::SSL_get_error( session_, rc ) :
           0;        
+    int sys_error_code = ERR_get_error();
+
+    if (error_code == SSL_ERROR_SSL)
+      return handler_(boost::system::error_code(
+            error_code, boost::asio::error::get_ssl_category()), rc);
+
     bool is_read_needed = (error_code == SSL_ERROR_WANT_READ);
     bool is_write_needed = (error_code == SSL_ERROR_WANT_WRITE ||
                               ::BIO_ctrl_pending( ssl_bio_ ));
@@ -155,14 +173,11 @@ public:
       ((::SSL_get_shutdown( session_ ) & SSL_SENT_SHUTDOWN) ==
             SSL_SENT_SHUTDOWN);
 
-    if (is_shut_down_sent && is_shut_down_received && is_operation_done)
+    if (is_shut_down_sent && is_shut_down_received && is_operation_done && !is_write_needed)
       // SSL connection is shut down cleanly
       return handler_(boost::system::error_code(), 1);
 
-    if (is_shut_down_received && !is_write_needed)
-      return handler_(boost::asio::error::eof, 0);
-
-    if (is_shut_down_received)
+    if (is_shut_down_received && !is_operation_done)
       // Shutdown has been requested, while we were reading or writing...
       // abort our action...
       return handler_(boost::asio::error::shut_down, 0);
@@ -180,7 +195,7 @@ public:
       else
       {
         return handler_(boost::system::error_code(
-              error_code, boost::asio::error::ssl_category), rc); 
+              error_code, boost::asio::error::get_ssl_category()), rc); 
       }
     }
 
@@ -212,6 +227,10 @@ public:
 
         return start();
       }
+      else if (is_read_needed || (is_shut_down_sent && !is_shut_down_received))
+      {
+        return read_();
+      }
     }
 
     // Continue with operation, flush any SSL data out to network...
@@ -223,10 +242,13 @@ private:
   typedef boost::function<int (const boost::system::error_code&, int)>
     int_handler_func;
   typedef boost::function<int (bool, int)> write_func;
+  typedef boost::function<int ()> read_func;
 
   ssl_primitive_func  primitive_;
   user_handler_func  user_handler_;
+  boost::asio::io_service::strand* strand_;
   write_func  write_;
+  read_func  read_;
   int_handler_func handler_;
     
   net_buffer send_buf_; // buffers for network IO
@@ -250,8 +272,15 @@ private:
     throw boost::system::system_error(error);
   }
     
-  int async_user_handler(const boost::system::error_code& error, int rc)
+  int async_user_handler(boost::system::error_code error, int rc)
   {
+    if (rc < 0)
+    {
+      if (!error)
+        error = boost::asio::error::no_recovery;
+      rc = 0;
+    }
+
     user_handler_(error, rc);
     return 0;
   }
@@ -281,19 +310,23 @@ private:
       {
         unsigned char *data_start = send_buf_.get_unused_start();
         send_buf_.data_added(len);
-  
+ 
+        BOOST_ASSERT(strand_); 
         boost::asio::async_write
         ( 
           socket_, 
           boost::asio::buffer(data_start, len),
-          boost::bind
+          strand_->wrap
           (
-            &openssl_operation::async_write_handler, 
-            this, 
-            is_operation_done,
-            rc, 
-            boost::asio::placeholders::error, 
-            boost::asio::placeholders::bytes_transferred
+            boost::bind
+            (
+              &openssl_operation::async_write_handler, 
+              this, 
+              is_operation_done,
+              rc, 
+              boost::asio::placeholders::error, 
+              boost::asio::placeholders::bytes_transferred
+            )
           )
         );
                   
@@ -316,8 +349,8 @@ private:
     }
     
     // OPeration is not done and writing to net has been made...
-    // start reading...
-    do_async_read();
+    // start operation again
+    start();
           
     return 0;
   }
@@ -340,21 +373,26 @@ private:
       handler_(error, rc);
   }
 
-  void do_async_read()
+  int do_async_read()
   {
     // Wait for new data
+    BOOST_ASSERT(strand_);
     socket_.async_read_some
     ( 
       boost::asio::buffer(recv_buf_.get_unused_start(),
         recv_buf_.get_unused_len()),
-      boost::bind
+      strand_->wrap
       (
-        &openssl_operation::async_read_handler, 
-        this, 
-        boost::asio::placeholders::error, 
-        boost::asio::placeholders::bytes_transferred
-      ) 
+        boost::bind
+        (
+          &openssl_operation::async_read_handler, 
+          this, 
+          boost::asio::placeholders::error, 
+          boost::asio::placeholders::bytes_transferred
+        )
+      )
     );
+    return 0;
   }
 
   void async_read_handler(const boost::system::error_code& error,
@@ -433,8 +471,8 @@ private:
       // Finish the operation, with success
       return rc;
                 
-    // Operation is not finished, read data from net...
-    return do_sync_read();
+    // Operation is not finished, start again.
+    return start();
   }
 
   int do_sync_read()

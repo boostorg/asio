@@ -2,7 +2,7 @@
 // error.hpp
 // ~~~~~~~~~
 //
-// Copyright (c) 2003-2007 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2008 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -71,6 +71,11 @@ enum basic_errors
   /// Operation already in progress.
   already_started = BOOST_ASIO_SOCKET_ERROR(EALREADY),
 
+  /// Broken pipe.
+  broken_pipe = BOOST_ASIO_WIN_OR_POSIX(
+      BOOST_ASIO_NATIVE_ERROR(ERROR_BROKEN_PIPE),
+      BOOST_ASIO_NATIVE_ERROR(EPIPE)),
+
   /// A connection has been aborted.
   connection_aborted = BOOST_ASIO_SOCKET_ERROR(ECONNABORTED),
 
@@ -100,6 +105,9 @@ enum basic_errors
 
   /// Message too long.
   message_size = BOOST_ASIO_SOCKET_ERROR(EMSGSIZE),
+
+  /// The name was too long.
+  name_too_long = BOOST_ASIO_SOCKET_ERROR(ENAMETOOLONG),
 
   /// Network is down.
   network_down = BOOST_ASIO_SOCKET_ERROR(ENETDOWN),
@@ -195,17 +203,24 @@ enum misc_errors
   eof,
 
   /// Element not found.
-  not_found
+  not_found,
+
+  /// The descriptor cannot fit into the select system call's fd_set.
+  fd_set_failure
 };
 
-namespace detail {
+enum ssl_errors
+{
+};
 
 inline const boost::system::error_category& get_system_category()
 {
-  return boost::system::system_category;
+  return boost::system::get_system_category();
 }
 
 #if !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
+
+namespace detail {
 
 class netdb_category : public boost::system::error_category
 {
@@ -229,11 +244,15 @@ public:
   }
 };
 
+} // namespace detail
+
 inline const boost::system::error_category& get_netdb_category()
 {
-  static netdb_category instance;
+  static detail::netdb_category instance;
   return instance;
 }
+
+namespace detail {
 
 class addrinfo_category : public boost::system::error_category
 {
@@ -253,9 +272,11 @@ public:
   }
 };
 
+} // namespace detail
+
 inline const boost::system::error_category& get_addrinfo_category()
 {
-  static addrinfo_category instance;
+  static detail::addrinfo_category instance;
   return instance;
 }
 
@@ -273,6 +294,8 @@ inline const boost::system::error_category& get_addrinfo_category()
 
 #endif // !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
 
+namespace detail {
+
 class misc_category : public boost::system::error_category
 {
 public:
@@ -289,15 +312,21 @@ public:
       return "End of file";
     if (value == error::not_found)
       return "Element not found";
+    if (value == error::fd_set_failure)
+      return "The descriptor does not fit into the select call's fd_set";
     return "asio.misc error";
   }
 };
 
+} // namespace detail
+
 inline const boost::system::error_category& get_misc_category()
 {
-  static misc_category instance;
+  static detail::misc_category instance;
   return instance;
 }
+
+namespace detail {
 
 class ssl_category : public boost::system::error_category
 {
@@ -313,44 +342,24 @@ public:
   }
 };
 
+} // namespace detail
+
 inline const boost::system::error_category& get_ssl_category()
 {
-  static ssl_category instance;
+  static detail::ssl_category instance;
   return instance;
 }
 
-} // namespace detail
-
-#if BOOST_WORKAROUND(BOOST_MSVC, < 1400)
-
 static const boost::system::error_category& system_category
-  = boost::asio::error::detail::get_system_category();
+  = boost::asio::error::get_system_category();
 static const boost::system::error_category& netdb_category
-  = boost::asio::error::detail::get_netdb_category();
+  = boost::asio::error::get_netdb_category();
 static const boost::system::error_category& addrinfo_category
-  = boost::asio::error::detail::get_addrinfo_category();
+  = boost::asio::error::get_addrinfo_category();
 static const boost::system::error_category& misc_category
-  = boost::asio::error::detail::get_misc_category();
+  = boost::asio::error::get_misc_category();
 static const boost::system::error_category& ssl_category
-  = boost::asio::error::detail::get_ssl_category();
-
-#else
-
-namespace
-{
-  const boost::system::error_category& system_category
-    = boost::asio::error::detail::get_system_category();
-  const boost::system::error_category& netdb_category
-    = boost::asio::error::detail::get_netdb_category();
-  const boost::system::error_category& addrinfo_category
-    = boost::asio::error::detail::get_addrinfo_category();
-  const boost::system::error_category& misc_category
-    = boost::asio::error::detail::get_misc_category();
-  const boost::system::error_category& ssl_category
-    = boost::asio::error::detail::get_ssl_category();
-} // namespace
-
-#endif
+  = boost::asio::error::get_ssl_category();
 
 } // namespace error
 } // namespace asio
@@ -377,6 +386,11 @@ template<> struct is_error_code_enum<boost::asio::error::misc_errors>
   static const bool value = true;
 };
 
+template<> struct is_error_code_enum<boost::asio::error::ssl_errors>
+{
+  static const bool value = true;
+};
+
 } // namespace system
 
 namespace asio {
@@ -384,22 +398,32 @@ namespace error {
 
 inline boost::system::error_code make_error_code(basic_errors e)
 {
-  return boost::system::error_code(static_cast<int>(e), system_category);
+  return boost::system::error_code(
+      static_cast<int>(e), get_system_category());
 }
 
 inline boost::system::error_code make_error_code(netdb_errors e)
 {
-  return boost::system::error_code(static_cast<int>(e), netdb_category);
+  return boost::system::error_code(
+      static_cast<int>(e), get_netdb_category());
 }
 
 inline boost::system::error_code make_error_code(addrinfo_errors e)
 {
-  return boost::system::error_code(static_cast<int>(e), addrinfo_category);
+  return boost::system::error_code(
+      static_cast<int>(e), get_addrinfo_category());
 }
 
 inline boost::system::error_code make_error_code(misc_errors e)
 {
-  return boost::system::error_code(static_cast<int>(e), misc_category);
+  return boost::system::error_code(
+      static_cast<int>(e), get_misc_category());
+}
+
+inline boost::system::error_code make_error_code(ssl_errors e)
+{
+  return boost::system::error_code(
+      static_cast<int>(e), get_ssl_category());
 }
 
 } // namespace error

@@ -2,7 +2,7 @@
 // timer_queue_base.hpp
 // ~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2007 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2008 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -48,8 +48,8 @@ public:
   // Dispatch any pending cancels for timers.
   virtual void dispatch_cancellations() = 0;
 
-  // Destroy timers that are waiting to be cleaned up.
-  virtual void cleanup_timers() = 0;
+  // Complete all timers that are waiting to be completed.
+  virtual void complete_timers() = 0;
 
   // Destroy all timers.
   virtual void destroy_timers() = 0;

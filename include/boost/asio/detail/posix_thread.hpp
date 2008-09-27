@@ -2,7 +2,7 @@
 // posix_thread.hpp
 // ~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2007 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2008 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -43,9 +43,12 @@ class posix_thread
   : private noncopyable
 {
 public:
+  // The purpose of the thread.
+  enum purpose { internal, external };
+
   // Constructor.
   template <typename Function>
-  posix_thread(Function f)
+  posix_thread(Function f, purpose = internal)
     : joined_(false)
   {
     std::auto_ptr<func_base> arg(new func<Function>(f));
@@ -54,7 +57,8 @@ public:
     if (error != 0)
     {
       boost::system::system_error e(
-          boost::system::error_code(error, boost::asio::error::system_category),
+          boost::system::error_code(error,
+            boost::asio::error::get_system_category()),
           "thread");
       boost::throw_exception(e);
     }

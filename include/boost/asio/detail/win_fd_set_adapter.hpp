@@ -2,7 +2,7 @@
 // win_fd_set_adapter.hpp
 // ~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2007 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2008 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -37,13 +37,17 @@ public:
     fd_set_.fd_count = 0;
   }
 
-  void set(socket_type descriptor)
+  bool set(socket_type descriptor)
   {
     for (u_int i = 0; i < fd_set_.fd_count; ++i)
       if (fd_set_.fd_array[i] == descriptor)
-        return;
+        return true;
     if (fd_set_.fd_count < win_fd_set_size)
+    {
       fd_set_.fd_array[fd_set_.fd_count++] = descriptor;
+      return true;
+    }
+    return false;
   }
 
   bool is_set(socket_type descriptor) const

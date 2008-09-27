@@ -2,7 +2,7 @@
 // socket_option.hpp
 // ~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2007 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2008 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -33,52 +33,60 @@ namespace ip {
 namespace detail {
 namespace socket_option {
 
-// Helper template for implementing boolean-based options.
+// Helper template for implementing multicast enable loopback options.
 template <int IPv4_Level, int IPv4_Name, int IPv6_Level, int IPv6_Name>
-class boolean
+class multicast_enable_loopback
 {
 public:
-#if defined(__sun) || defined(_AIX) || defined(__osf__)
-  typedef unsigned char value_type;
+#if defined(__sun) || defined(__osf__)
+  typedef unsigned char ipv4_value_type;
+  typedef unsigned char ipv6_value_type;
+#elif defined(_AIX) || defined(__hpux)
+  typedef unsigned char ipv4_value_type;
+  typedef unsigned int ipv6_value_type;
 #else
-  typedef int value_type;
+  typedef int ipv4_value_type;
+  typedef int ipv6_value_type;
 #endif
 
   // Default constructor.
-  boolean()
-    : value_(0)
+  multicast_enable_loopback()
+    : ipv4_value_(0),
+      ipv6_value_(0)
   {
   }
 
   // Construct with a specific option value.
-  explicit boolean(bool v)
-    : value_(v ? 1 : 0)
+  explicit multicast_enable_loopback(bool v)
+    : ipv4_value_(v ? 1 : 0),
+      ipv6_value_(v ? 1 : 0)
   {
   }
 
   // Set the value of the boolean.
-  boolean& operator=(bool v)
+  multicast_enable_loopback& operator=(bool v)
   {
-    value_ = v ? 1 : 0;
+    ipv4_value_ = v ? 1 : 0;
+    ipv6_value_ = v ? 1 : 0;
     return *this;
   }
 
   // Get the current value of the boolean.
   bool value() const
   {
-    return !!value_;
+    return !!ipv4_value_;
   }
 
   // Convert to bool.
   operator bool() const
   {
-    return !!value_;
+    return !!ipv4_value_;
   }
 
   // Test for false.
   bool operator!() const
   {
-    return !value_;
+    return !ipv4_value_;
   }
 
   // Get the level of the socket option.
@@ -101,35 +109,58 @@ public:
 
   // Get the address of the boolean data.
   template <typename Protocol>
-  value_type* data(const Protocol&)
+  void* data(const Protocol& protocol)
   {
-    return &value_;
+    if (protocol.family() == PF_INET6)
+      return &ipv6_value_;
+    return &ipv4_value_;
   }
 
   // Get the address of the boolean data.
   template <typename Protocol>
-  const value_type* data(const Protocol&) const
+  const void* data(const Protocol& protocol) const
   {
-    return &value_;
+    if (protocol.family() == PF_INET6)
+      return &ipv6_value_;
+    return &ipv4_value_;
   }
 
   // Get the size of the boolean data.
   template <typename Protocol>
-  std::size_t size(const Protocol&) const
+  std::size_t size(const Protocol& protocol) const
   {
-    return sizeof(value_);
+    if (protocol.family() == PF_INET6)
+      return sizeof(ipv6_value_);
+    return sizeof(ipv4_value_);
   }
 
   // Set the size of the boolean data.
   template <typename Protocol>
-  void resize(const Protocol&, std::size_t s)
+  void resize(const Protocol& protocol, std::size_t s)
   {
-    if (s != sizeof(value_))
-      throw std::length_error("boolean socket option resize");
+    if (protocol.family() == PF_INET6)
+    {
+      if (s != sizeof(ipv6_value_))
+      {
+        throw std::length_error(
+            "multicast_enable_loopback socket option resize");
+      }
+      ipv4_value_ = ipv6_value_ ? 1 : 0;
+    }
+    else
+    {
+      if (s != sizeof(ipv4_value_))
+      {
+        throw std::length_error(
+            "multicast_enable_loopback socket option resize");
+      }
+      ipv6_value_ = ipv4_value_ ? 1 : 0;
+    }
   }
 
 private:
-  value_type value_;
+  ipv4_value_type ipv4_value_;
+  ipv6_value_type ipv6_value_;
 };
 
 // Helper template for implementing unicast hops options.
@@ -207,6 +238,10 @@ public:
   {
     if (s != sizeof(value_))
       throw std::length_error("unicast hops socket option resize");
+#if defined(__hpux)
+    if (value_ < 0)
+      value_ = value_ & 0xFF;
+#endif
   }
 
 private:
@@ -218,6 +253,13 @@ template <int IPv4_Level, int IPv4_Name, int IPv6_Level, int IPv6_Name>
 class multicast_hops
 {
 public:
+#if defined(BOOST_WINDOWS) && defined(UNDER_CE)
+  typedef int ipv4_value_type;
+#else
+  typedef unsigned char ipv4_value_type;
+#endif
+  typedef int ipv6_value_type;
+
   // Default constructor.
   multicast_hops()
     : ipv4_value_(0),
@@ -230,7 +272,7 @@ public:
   {
     if (v < 0 || v > 255)
       throw std::out_of_range("multicast hops value out of range");
-    ipv4_value_ = static_cast<unsigned char>(v);
+    ipv4_value_ = (ipv4_value_type)v;
     ipv6_value_ = v;
   }
 
@@ -239,7 +281,7 @@ public:
   {
     if (v < 0 || v > 255)
       throw std::out_of_range("multicast hops value out of range");
-    ipv4_value_ = static_cast<unsigned char>(v);
+    ipv4_value_ = (ipv4_value_type)v;
     ipv6_value_ = v;
     return *this;
   }
@@ -308,7 +350,7 @@ public:
       else if (ipv6_value_ > 255)
         ipv4_value_ = 255;
       else
-        ipv4_value_ = static_cast<unsigned char>(ipv6_value_);
+        ipv4_value_ = (ipv4_value_type)ipv6_value_;
     }
     else
     {
@@ -319,8 +361,8 @@ public:
   }
 
 private:
-  unsigned char ipv4_value_;
-  int ipv6_value_;
+  ipv4_value_type ipv4_value_;
+  ipv6_value_type ipv6_value_;
 };
 
 // Helper template for implementing ip_mreq-based options.
@@ -478,7 +520,7 @@ public:
   }
 
   // Construct with IPv6 interface.
-  explicit network_interface(unsigned long ipv6_interface)
+  explicit network_interface(unsigned int ipv6_interface)
   {
     ipv4_value_.s_addr =
       boost::asio::detail::socket_ops::host_to_network_long(
@@ -524,7 +566,7 @@ public:
 
 private:
   boost::asio::detail::in4_addr_type ipv4_value_;
-  unsigned long ipv6_value_;
+  unsigned int ipv6_value_;
 };
 
 } // namespace socket_option

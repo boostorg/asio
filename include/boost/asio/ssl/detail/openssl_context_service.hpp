@@ -3,7 +3,7 @@
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2005 Voipster / Indrek dot Juhani at voipster dot com
-// Copyright (c) 2005 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2005-2008 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -309,9 +309,9 @@ public:
 
     ::BIO_free(bio);
     int result = ::SSL_CTX_set_tmp_dh(impl, dh);
+    ::DH_free(dh);
     if (result != 1)
     {
-      ::DH_free(dh);
       ec = boost::asio::error::invalid_argument;
       return ec;
     }

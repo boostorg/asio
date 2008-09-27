@@ -2,7 +2,7 @@
 // tcp.cpp
 // ~~~~~~~
 //
-// Copyright (c) 2003-2007 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2008 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -172,6 +172,11 @@ void test()
     ip::tcp::socket::lowest_layer_type& lowest_layer = socket1.lowest_layer();
     (void)lowest_layer;
 
+    const ip::tcp::socket& socket7 = socket1;
+    const ip::tcp::socket::lowest_layer_type& lowest_layer2
+      = socket7.lowest_layer();
+    (void)lowest_layer2;
+
     socket1.open(ip::tcp::v4());
     socket1.open(ip::tcp::v6());
     socket1.open(ip::tcp::v4(), ec);
@@ -239,36 +244,51 @@ void test()
 
     socket1.send(buffer(mutable_char_buffer));
     socket1.send(buffer(const_char_buffer));
+    socket1.send(null_buffers());
     socket1.send(buffer(mutable_char_buffer), in_flags);
     socket1.send(buffer(const_char_buffer), in_flags);
+    socket1.send(null_buffers(), in_flags);
     socket1.send(buffer(mutable_char_buffer), in_flags, ec);
     socket1.send(buffer(const_char_buffer), in_flags, ec);
+    socket1.send(null_buffers(), in_flags, ec);
 
     socket1.async_send(buffer(mutable_char_buffer), send_handler);
     socket1.async_send(buffer(const_char_buffer), send_handler);
+    socket1.async_send(null_buffers(), send_handler);
     socket1.async_send(buffer(mutable_char_buffer), in_flags, send_handler);
     socket1.async_send(buffer(const_char_buffer), in_flags, send_handler);
+    socket1.async_send(null_buffers(), in_flags, send_handler);
 
     socket1.receive(buffer(mutable_char_buffer));
+    socket1.receive(null_buffers());
     socket1.receive(buffer(mutable_char_buffer), in_flags);
+    socket1.receive(null_buffers(), in_flags);
     socket1.receive(buffer(mutable_char_buffer), in_flags, ec);
+    socket1.receive(null_buffers(), in_flags, ec);
 
     socket1.async_receive(buffer(mutable_char_buffer), receive_handler);
+    socket1.async_receive(null_buffers(), receive_handler);
     socket1.async_receive(buffer(mutable_char_buffer), in_flags,
         receive_handler);
+    socket1.async_receive(null_buffers(), in_flags, receive_handler);
 
     socket1.write_some(buffer(mutable_char_buffer));
     socket1.write_some(buffer(const_char_buffer));
+    socket1.write_some(null_buffers());
     socket1.write_some(buffer(mutable_char_buffer), ec);
     socket1.write_some(buffer(const_char_buffer), ec);
+    socket1.write_some(null_buffers(), ec);
 
     socket1.async_write_some(buffer(mutable_char_buffer), write_some_handler);
     socket1.async_write_some(buffer(const_char_buffer), write_some_handler);
+    socket1.async_write_some(null_buffers(), write_some_handler);
 
     socket1.read_some(buffer(mutable_char_buffer));
     socket1.read_some(buffer(mutable_char_buffer), ec);
+    socket1.read_some(null_buffers(), ec);
 
     socket1.async_read_some(buffer(mutable_char_buffer), read_some_handler);
+    socket1.async_read_some(null_buffers(), read_some_handler);
   }
   catch (std::exception&)
   {
@@ -356,7 +376,7 @@ void test()
 
 //------------------------------------------------------------------------------
 
-test_suite* init_unit_test_suite(int argc, char* argv[])
+test_suite* init_unit_test_suite(int, char*[])
 {
   test_suite* test = BOOST_TEST_SUITE("ip/tcp");
   test->add(BOOST_TEST_CASE(&ip_tcp_compile::test));

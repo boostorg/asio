@@ -2,7 +2,7 @@
 // basic_logger.hpp
 // ~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2007 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2008 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -53,9 +53,9 @@ public:
   }
 
   /// Get the io_service associated with the object.
-  boost::asio::io_service& io_service()
+  boost::asio::io_service& get_io_service()
   {
-    return service_.io_service();
+    return service_.get_io_service();
   }
 
   /// Set the output file for all logger instances.

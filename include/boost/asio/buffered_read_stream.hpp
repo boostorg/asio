@@ -2,7 +2,7 @@
 // buffered_read_stream.hpp
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2007 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2008 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -94,10 +94,23 @@ public:
     return next_layer_.lowest_layer();
   }
 
-  /// Get the io_service associated with the object.
+  /// Get a const reference to the lowest layer.
+  const lowest_layer_type& lowest_layer() const
+  {
+    return next_layer_.lowest_layer();
+  }
+
+  /// (Deprecated: use get_io_service().) Get the io_service associated with
+  /// the object.
   boost::asio::io_service& io_service()
   {
-    return next_layer_.io_service();
+    return next_layer_.get_io_service();
+  }
+
+  /// Get the io_service associated with the object.
+  boost::asio::io_service& get_io_service()
+  {
+    return next_layer_.get_io_service();
   }
 
   /// Close the stream.
@@ -208,7 +221,7 @@ public:
         buffer(
           storage_.data() + previous_size,
           storage_.size() - previous_size),
-        fill_handler<ReadHandler>(io_service(),
+        fill_handler<ReadHandler>(get_io_service(),
           storage_, previous_size, handler));
   }
 
@@ -296,12 +309,12 @@ public:
     if (storage_.empty())
     {
       async_fill(read_some_handler<MutableBufferSequence, ReadHandler>(
-            io_service(), storage_, buffers, handler));
+            get_io_service(), storage_, buffers, handler));
     }
     else
     {
       std::size_t length = copy(buffers);
-      io_service().post(detail::bind_handler(
+      get_io_service().post(detail::bind_handler(
             handler, boost::system::error_code(), length));
     }
   }

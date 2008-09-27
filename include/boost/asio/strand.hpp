@@ -2,7 +2,7 @@
 // strand.hpp
 // ~~~~~~~~~~
 //
-// Copyright (c) 2003-2007 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2008 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -66,7 +66,8 @@ public:
     service_.destroy(impl_);
   }
 
-  /// Get the io_service associated with the strand.
+  /// (Deprecated: use get_io_service().) Get the io_service associated with
+  /// the strand.
   /**
    * This function may be used to obtain the io_service object that the strand
    * uses to dispatch handlers for asynchronous operations.
@@ -76,7 +77,20 @@ public:
    */
   boost::asio::io_service& io_service()
   {
-    return service_.io_service();
+    return service_.get_io_service();
+  }
+
+  /// Get the io_service associated with the strand.
+  /**
+   * This function may be used to obtain the io_service object that the strand
+   * uses to dispatch handlers for asynchronous operations.
+   *
+   * @return A reference to the io_service object that the strand will use to
+   * dispatch handlers. Ownership is not transferred to the caller.
+   */
+  boost::asio::io_service& get_io_service()
+  {
+    return service_.get_io_service();
   }
 
   /// Request the strand to invoke the given handler.

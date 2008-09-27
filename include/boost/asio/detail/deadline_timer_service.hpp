@@ -2,7 +2,7 @@
 // deadline_timer_service.hpp
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2007 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2008 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -26,6 +26,7 @@
 #include <boost/asio/error.hpp>
 #include <boost/asio/io_service.hpp>
 #include <boost/asio/detail/bind_handler.hpp>
+#include <boost/asio/detail/handler_base_from_member.hpp>
 #include <boost/asio/detail/noncopyable.hpp>
 #include <boost/asio/detail/service_base.hpp>
 #include <boost/asio/detail/socket_ops.hpp>
@@ -154,25 +155,25 @@ public:
   }
 
   template <typename Handler>
-  class wait_handler
+  class wait_handler : 
+    public handler_base_from_member<Handler>
   {
   public:
     wait_handler(boost::asio::io_service& io_service, Handler handler)
-      : io_service_(io_service),
-        work_(io_service),
-        handler_(handler)
+      : handler_base_from_member<Handler>(handler),
+        io_service_(io_service),
+        work_(io_service)
     {
     }
 
     void operator()(const boost::system::error_code& result)
     {
-      io_service_.post(detail::bind_handler(handler_, result));
+      io_service_.post(detail::bind_handler(this->handler_, result));
     }
 
   private:
     boost::asio::io_service& io_service_;
     boost::asio::io_service::work work_;
-    Handler handler_;
   };
 
   // Start an asynchronous wait on the timer.
@@ -181,7 +182,7 @@ public:
   {
     impl.might_have_pending_waits = true;
     scheduler_.schedule_timer(timer_queue_, impl.expiry,
-        wait_handler<Handler>(this->io_service(), handler), &impl);
+        wait_handler<Handler>(this->get_io_service(), handler), &impl);
   }
 
 private:

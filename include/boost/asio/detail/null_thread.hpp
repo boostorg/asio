@@ -2,7 +2,7 @@
 // null_thread.hpp
 // ~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2007 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2008 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -39,9 +39,12 @@ class null_thread
   : private noncopyable
 {
 public:
+  // The purpose of the thread.
+  enum purpose { internal, external };
+
   // Constructor.
   template <typename Function>
-  null_thread(Function f)
+  null_thread(Function f, purpose = internal)
   {
     boost::system::system_error e(
         boost::asio::error::operation_not_supported, "thread");

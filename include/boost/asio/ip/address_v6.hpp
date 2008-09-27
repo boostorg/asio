@@ -2,7 +2,7 @@
 // address_v6.hpp
 // ~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2007 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2008 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -301,7 +301,7 @@ public:
   {
     using namespace std; // For memcmp.
     int memcmp_result = memcmp(&a1.addr_, &a2.addr_,
-        sizeof(boost::asio::detail::in6_addr_type)) < 0;
+        sizeof(boost::asio::detail::in6_addr_type));
     if (memcmp_result < 0)
       return true;
     if (memcmp_result > 0)

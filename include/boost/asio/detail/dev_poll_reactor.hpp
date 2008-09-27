@@ -2,7 +2,7 @@
 // dev_poll_reactor.hpp
 // ~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2007 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2008 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -54,6 +54,11 @@ class dev_poll_reactor
   : public boost::asio::detail::service_base<dev_poll_reactor<Own_Thread> >
 {
 public:
+  // Per-descriptor data.
+  struct per_descriptor_data
+  {
+  };
+
   // Constructor.
   dev_poll_reactor(boost::asio::io_service& io_service)
     : boost::asio::detail::service_base<
@@ -116,11 +121,11 @@ public:
     for (std::size_t i = 0; i < timer_queues_.size(); ++i)
       timer_queues_[i]->destroy_timers();
     timer_queues_.clear();
-  }
+  } 
 
   // Register a socket with the reactor. Returns 0 on success, system error
   // code on failure.
-  int register_descriptor(socket_type descriptor)
+  int register_descriptor(socket_type, per_descriptor_data&)
   {
     return 0;
   }
@@ -128,77 +133,82 @@ public:
   // Start a new read operation. The handler object will be invoked when the
   // given descriptor is ready to be read, or an error has occurred.
   template <typename Handler>
-  void start_read_op(socket_type descriptor, Handler handler)
+  void start_read_op(socket_type descriptor, per_descriptor_data&,
+      Handler handler, bool allow_speculative_read = true)
   {
     boost::asio::detail::mutex::scoped_lock lock(mutex_);
 
     if (shutdown_)
       return;
 
-    if (!read_op_queue_.has_operation(descriptor))
-      if (handler(boost::system::error_code()))
-        return;
+    if (allow_speculative_read)
+    {
+      if (!read_op_queue_.has_operation(descriptor))
+      {
+        boost::system::error_code ec;
+        std::size_t bytes_transferred = 0;
+        if (handler.perform(ec, bytes_transferred))
+        {
+          handler.complete(ec, bytes_transferred);
+          return;
+        }
+      }
+    }
 
     if (read_op_queue_.enqueue_operation(descriptor, handler))
     {
-      ::pollfd ev = { 0 };
-      ev.fd = descriptor;
+      ::pollfd& ev = add_pending_event_change(descriptor);
       ev.events = POLLIN | POLLERR | POLLHUP;
       if (write_op_queue_.has_operation(descriptor))
         ev.events |= POLLOUT;
       if (except_op_queue_.has_operation(descriptor))
         ev.events |= POLLPRI;
-      ev.revents = 0;
-
-      int result = ::write(dev_poll_fd_, &ev, sizeof(ev));
-      if (result != sizeof(ev))
-      {
-        boost::system::error_code ec(errno,
-            boost::asio::error::system_category);
-        read_op_queue_.dispatch_all_operations(descriptor, ec);
-      }
+      interrupter_.interrupt();
     }
   }
 
   // Start a new write operation. The handler object will be invoked when the
   // given descriptor is ready to be written, or an error has occurred.
   template <typename Handler>
-  void start_write_op(socket_type descriptor, Handler handler)
+  void start_write_op(socket_type descriptor, per_descriptor_data&,
+      Handler handler, bool allow_speculative_write = true)
   {
     boost::asio::detail::mutex::scoped_lock lock(mutex_);
 
     if (shutdown_)
       return;
 
-    if (!write_op_queue_.has_operation(descriptor))
-      if (handler(boost::system::error_code()))
-        return;
+    if (allow_speculative_write)
+    {
+      if (!write_op_queue_.has_operation(descriptor))
+      {
+        boost::system::error_code ec;
+        std::size_t bytes_transferred = 0;
+        if (handler.perform(ec, bytes_transferred))
+        {
+          handler.complete(ec, bytes_transferred);
+          return;
+        }
+      }
+    }
 
     if (write_op_queue_.enqueue_operation(descriptor, handler))
     {
-      ::pollfd ev = { 0 };
-      ev.fd = descriptor;
+      ::pollfd& ev = add_pending_event_change(descriptor);
       ev.events = POLLOUT | POLLERR | POLLHUP;
       if (read_op_queue_.has_operation(descriptor))
         ev.events |= POLLIN;
       if (except_op_queue_.has_operation(descriptor))
         ev.events |= POLLPRI;
-      ev.revents = 0;
-
-      int result = ::write(dev_poll_fd_, &ev, sizeof(ev));
-      if (result != sizeof(ev))
-      {
-        boost::system::error_code ec(errno,
-            boost::asio::error::system_category);
-        write_op_queue_.dispatch_all_operations(descriptor, ec);
-      }
+      interrupter_.interrupt();
     }
   }
 
   // Start a new exception operation. The handler object will be invoked when
   // the given descriptor has exception information, or an error has occurred.
   template <typename Handler>
-  void start_except_op(socket_type descriptor, Handler handler)
+  void start_except_op(socket_type descriptor,
+      per_descriptor_data&, Handler handler)
   {
     boost::asio::detail::mutex::scoped_lock lock(mutex_);
 
@@ -207,90 +217,58 @@ public:
 
     if (except_op_queue_.enqueue_operation(descriptor, handler))
     {
-      ::pollfd ev = { 0 };
-      ev.fd = descriptor;
+      ::pollfd& ev = add_pending_event_change(descriptor);
       ev.events = POLLPRI | POLLERR | POLLHUP;
       if (read_op_queue_.has_operation(descriptor))
         ev.events |= POLLIN;
       if (write_op_queue_.has_operation(descriptor))
         ev.events |= POLLOUT;
-      ev.revents = 0;
-
-      int result = ::write(dev_poll_fd_, &ev, sizeof(ev));
-      if (result != sizeof(ev))
-      {
-        boost::system::error_code ec(errno,
-            boost::asio::error::system_category);
-        except_op_queue_.dispatch_all_operations(descriptor, ec);
-      }
+      interrupter_.interrupt();
     }
   }
 
-  // Start new write and exception operations. The handler object will be
-  // invoked when the given descriptor is ready for writing or has exception
+  // Start a new write operation. The handler object will be invoked when the
   // information available, or an error has occurred.
   template <typename Handler>
-  void start_write_and_except_ops(socket_type descriptor, Handler handler)
+  void start_connect_op(socket_type descriptor,
+      per_descriptor_data&, Handler handler)
   {
     boost::asio::detail::mutex::scoped_lock lock(mutex_);
 
     if (shutdown_)
       return;
 
-    bool need_mod = write_op_queue_.enqueue_operation(descriptor, handler);
-    need_mod = except_op_queue_.enqueue_operation(descriptor, handler)
-      && need_mod;
-    if (need_mod)
+    if (write_op_queue_.enqueue_operation(descriptor, handler))
     {
-      ::pollfd ev = { 0 };
-      ev.fd = descriptor;
-      ev.events = POLLOUT | POLLPRI | POLLERR | POLLHUP;
+      ::pollfd& ev = add_pending_event_change(descriptor);
+      ev.events = POLLOUT | POLLERR | POLLHUP;
       if (read_op_queue_.has_operation(descriptor))
         ev.events |= POLLIN;
-      ev.revents = 0;
-
-      int result = ::write(dev_poll_fd_, &ev, sizeof(ev));
-      if (result != sizeof(ev))
-      {
-        boost::system::error_code ec(errno,
-            boost::asio::error::system_category);
-        write_op_queue_.dispatch_all_operations(descriptor, ec);
-        except_op_queue_.dispatch_all_operations(descriptor, ec);
-      }
+      if (except_op_queue_.has_operation(descriptor))
+        ev.events |= POLLPRI;
+      interrupter_.interrupt();
     }
   }
 
   // Cancel all operations associated with the given descriptor. The
   // handlers associated with the descriptor will be invoked with the
   // operation_aborted error.
-  void cancel_ops(socket_type descriptor)
+  void cancel_ops(socket_type descriptor, per_descriptor_data&)
   {
     boost::asio::detail::mutex::scoped_lock lock(mutex_);
     cancel_ops_unlocked(descriptor);
   }
 
-  // Enqueue cancellation of all operations associated with the given
-  // descriptor. The handlers associated with the descriptor will be invoked
-  // with the operation_aborted error. This function does not acquire the
-  // dev_poll_reactor's mutex, and so should only be used from within a reactor
-  // handler.
-  void enqueue_cancel_ops_unlocked(socket_type descriptor)
-  {
-    pending_cancellations_.push_back(descriptor);
-  }
-
   // Cancel any operations that are running against the descriptor and remove
   // its registration from the reactor.
-  void close_descriptor(socket_type descriptor)
+  void close_descriptor(socket_type descriptor, per_descriptor_data&)
   {
     boost::asio::detail::mutex::scoped_lock lock(mutex_);
 
     // Remove the descriptor from /dev/poll.
-    ::pollfd ev = { 0 };
-    ev.fd = descriptor;
+    ::pollfd& ev = add_pending_event_change(descriptor);
     ev.events = POLLREMOVE;
-    ev.revents = 0;
-    ::write(dev_poll_fd_, &ev, sizeof(ev));
+    interrupter_.interrupt();
 
     // Cancel any outstanding operations associated with the descriptor.
     cancel_ops_unlocked(descriptor);
@@ -353,16 +331,16 @@ private:
 
     // Dispatch any operation cancellations that were made while the select
     // loop was not running.
-    read_op_queue_.dispatch_cancellations();
-    write_op_queue_.dispatch_cancellations();
-    except_op_queue_.dispatch_cancellations();
+    read_op_queue_.perform_cancellations();
+    write_op_queue_.perform_cancellations();
+    except_op_queue_.perform_cancellations();
     for (std::size_t i = 0; i < timer_queues_.size(); ++i)
       timer_queues_[i]->dispatch_cancellations();
 
     // Check if the thread is supposed to stop.
     if (stop_thread_)
     {
-      cleanup_operations_and_timers(lock);
+      complete_operations_and_timers(lock);
       return;
     }
 
@@ -371,9 +349,29 @@ private:
     if (!block && read_op_queue_.empty() && write_op_queue_.empty()
         && except_op_queue_.empty() && all_timer_queues_are_empty())
     {
-      cleanup_operations_and_timers(lock);
+      complete_operations_and_timers(lock);
       return;
     }
+
+    // Write the pending event registration changes to the /dev/poll descriptor.
+    std::size_t events_size = sizeof(::pollfd) * pending_event_changes_.size();
+    errno = 0;
+    int result = ::write(dev_poll_fd_,
+        &pending_event_changes_[0], events_size);
+    if (result != static_cast<int>(events_size))
+    {
+      for (std::size_t i = 0; i < pending_event_changes_.size(); ++i)
+      {
+        int descriptor = pending_event_changes_[i].fd;
+        boost::system::error_code ec = boost::system::error_code(
+            errno, boost::asio::error::get_system_category());
+        read_op_queue_.perform_all_operations(descriptor, ec);
+        write_op_queue_.perform_all_operations(descriptor, ec);
+        except_op_queue_.perform_all_operations(descriptor, ec);
+      }
+    }
+    pending_event_changes_.clear();
+    pending_event_change_index_.clear();
 
     int timeout = block ? get_timeout() : 0;
     wait_in_progress_ = true;
@@ -390,7 +388,7 @@ private:
     lock.lock();
     wait_in_progress_ = false;
 
-    // Block signals while dispatching operations.
+    // Block signals while performing operations.
     boost::asio::detail::signal_blocker sb;
 
     // Dispatch the waiting events.
@@ -411,28 +409,29 @@ private:
         // Exception operations must be processed first to ensure that any
         // out-of-band data is read before normal data.
         if (events[i].events & (POLLPRI | POLLERR | POLLHUP))
-          more_except = except_op_queue_.dispatch_operation(descriptor, ec);
+          more_except = except_op_queue_.perform_operation(descriptor, ec);
         else
           more_except = except_op_queue_.has_operation(descriptor);
 
         if (events[i].events & (POLLIN | POLLERR | POLLHUP))
-          more_reads = read_op_queue_.dispatch_operation(descriptor, ec);
+          more_reads = read_op_queue_.perform_operation(descriptor, ec);
         else
           more_reads = read_op_queue_.has_operation(descriptor);
 
         if (events[i].events & (POLLOUT | POLLERR | POLLHUP))
-          more_writes = write_op_queue_.dispatch_operation(descriptor, ec);
+          more_writes = write_op_queue_.perform_operation(descriptor, ec);
         else
           more_writes = write_op_queue_.has_operation(descriptor);
 
-        if ((events[i].events == POLLHUP)
-            && !more_except && !more_reads && !more_writes)
+        if ((events[i].events & (POLLERR | POLLHUP)) != 0
+              && (events[i].events & ~(POLLERR | POLLHUP)) == 0
+              && !more_except && !more_reads && !more_writes)
         {
-          // If we have only an POLLHUP event and no operations associated
-          // with the descriptor then we need to delete the descriptor from
-          // /dev/poll. The poll operation might produce POLLHUP events even
-          // if they are not specifically requested, so if we do not remove the
-          // descriptor we can end up in a tight polling loop.
+          // If we have an event and no operations associated with the
+          // descriptor then we need to delete the descriptor from /dev/poll.
+          // The poll operation can produce POLLHUP or POLLERR events when there
+          // is no operation pending, so if we do not remove the descriptor we
+          // can end up in a tight polling loop.
           ::pollfd ev = { 0 };
           ev.fd = descriptor;
           ev.events = POLLREMOVE;
@@ -455,17 +454,17 @@ private:
           if (result != sizeof(ev))
           {
             ec = boost::system::error_code(errno,
-                boost::asio::error::system_category);
-            read_op_queue_.dispatch_all_operations(descriptor, ec);
-            write_op_queue_.dispatch_all_operations(descriptor, ec);
-            except_op_queue_.dispatch_all_operations(descriptor, ec);
+                boost::asio::error::get_system_category());
+            read_op_queue_.perform_all_operations(descriptor, ec);
+            write_op_queue_.perform_all_operations(descriptor, ec);
+            except_op_queue_.perform_all_operations(descriptor, ec);
           }
         }
       }
     }
-    read_op_queue_.dispatch_cancellations();
-    write_op_queue_.dispatch_cancellations();
-    except_op_queue_.dispatch_cancellations();
+    read_op_queue_.perform_cancellations();
+    write_op_queue_.perform_cancellations();
+    except_op_queue_.perform_cancellations();
     for (std::size_t i = 0; i < timer_queues_.size(); ++i)
     {
       timer_queues_[i]->dispatch_timers();
@@ -477,7 +476,7 @@ private:
       cancel_ops_unlocked(pending_cancellations_[i]);
     pending_cancellations_.clear();
 
-    cleanup_operations_and_timers(lock);
+    complete_operations_and_timers(lock);
   }
 
   // Run the select loop in the thread.
@@ -514,7 +513,7 @@ private:
       boost::throw_exception(
           boost::system::system_error(
             boost::system::error_code(errno,
-              boost::asio::error::system_category),
+              boost::asio::error::get_system_category()),
             "/dev/poll"));
     }
     return fd;
@@ -577,16 +576,37 @@ private:
   // destructors may make calls back into this reactor. We make a copy of the
   // vector of timer queues since the original may be modified while the lock
   // is not held.
-  void cleanup_operations_and_timers(
+  void complete_operations_and_timers(
       boost::asio::detail::mutex::scoped_lock& lock)
   {
     timer_queues_for_cleanup_ = timer_queues_;
     lock.unlock();
-    read_op_queue_.cleanup_operations();
-    write_op_queue_.cleanup_operations();
-    except_op_queue_.cleanup_operations();
+    read_op_queue_.complete_operations();
+    write_op_queue_.complete_operations();
+    except_op_queue_.complete_operations();
     for (std::size_t i = 0; i < timer_queues_for_cleanup_.size(); ++i)
-      timer_queues_for_cleanup_[i]->cleanup_timers();
+      timer_queues_for_cleanup_[i]->complete_timers();
+  }
+
+  // Add a pending event entry for the given descriptor.
+  ::pollfd& add_pending_event_change(int descriptor)
+  {
+    hash_map<int, std::size_t>::iterator iter
+      = pending_event_change_index_.find(descriptor);
+    if (iter == pending_event_change_index_.end())
+    {
+      std::size_t index = pending_event_changes_.size();
+      pending_event_changes_.reserve(pending_event_changes_.size() + 1);
+      pending_event_change_index_.insert(std::make_pair(descriptor, index));
+      pending_event_changes_.push_back(::pollfd());
+      pending_event_changes_[index].fd = descriptor;
+      pending_event_changes_[index].revents = 0;
+      return pending_event_changes_[index];
+    }
+    else
+    {
+      return pending_event_changes_[iter->second];
+    }
   }
 
   // Mutex to protect access to internal data.
@@ -594,6 +614,12 @@ private:
 
   // The /dev/poll file descriptor.
   int dev_poll_fd_;
+
+  // Vector of /dev/poll events waiting to be written to the descriptor.
+  std::vector< ::pollfd> pending_event_changes_;
+
+  // Hash map to associate a descriptor with a pending event change index.
+  hash_map<int, std::size_t> pending_event_change_index_;
 
   // Whether the DP_POLL operation is currently in progress
   bool wait_in_progress_;

@@ -2,7 +2,7 @@
 // handler_queue.hpp
 // ~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2007 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2008 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -189,7 +189,7 @@ private:
       ptr.reset();
 
       // Make the upcall.
-      asio_handler_invoke_helpers::invoke(handler, &handler);
+      boost_asio_handler_invoke_helpers::invoke(handler, &handler);
     }
 
     static void do_destroy(handler* base)
@@ -199,6 +199,16 @@ private:
       this_type* h(static_cast<this_type*>(base));
       typedef handler_alloc_traits<Handler, this_type> alloc_traits;
       handler_ptr<alloc_traits> ptr(h->handler_, h);
+
+      // A sub-object of the handler may be the true owner of the memory
+      // associated with the handler. Consequently, a local copy of the handler
+      // is required to ensure that any owning sub-object remains valid until
+      // after we have deallocated the memory here.
+      Handler handler(h->handler_);
+      (void)handler;
+
+      // Free the memory associated with the handler.
+      ptr.reset();
     }
 
   private:

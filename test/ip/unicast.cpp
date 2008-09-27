@@ -2,7 +2,7 @@
 // unicast.cpp
 // ~~~~~~~~~~~
 //
-// Copyright (c) 2003-2007 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2008 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -92,22 +92,46 @@ void test()
     ip::unicast::hops hops1(1);
     BOOST_CHECK(hops1.value() == 1);
     sock_v4.set_option(hops1, ec);
+#if defined(BOOST_WINDOWS) && defined(UNDER_CE)
+    // Option is not supported under Windows CE.
+    BOOST_CHECK_MESSAGE(ec == boost::asio::error::no_protocol_option,
+        ec.value() << ", " << ec.message());
+#else // defined(BOOST_WINDOWS) && defined(UNDER_CE)
     BOOST_CHECK(!ec);
+#endif // defined(BOOST_WINDOWS) && defined(UNDER_CE)
 
     ip::unicast::hops hops2;
     sock_v4.get_option(hops2, ec);
+#if defined(BOOST_WINDOWS) && defined(UNDER_CE)
+    // Option is not supported under Windows CE.
+    BOOST_CHECK_MESSAGE(ec == boost::asio::error::no_protocol_option,
+        ec.value() << ", " << ec.message());
+#else // defined(BOOST_WINDOWS) && defined(UNDER_CE)
     BOOST_CHECK(!ec);
     BOOST_CHECK(hops2.value() == 1);
+#endif // defined(BOOST_WINDOWS) && defined(UNDER_CE)
 
     ip::unicast::hops hops3(255);
     BOOST_CHECK(hops3.value() == 255);
     sock_v4.set_option(hops3, ec);
+#if defined(BOOST_WINDOWS) && defined(UNDER_CE)
+    // Option is not supported under Windows CE.
+    BOOST_CHECK_MESSAGE(ec == boost::asio::error::no_protocol_option,
+        ec.value() << ", " << ec.message());
+#else // defined(BOOST_WINDOWS) && defined(UNDER_CE)
     BOOST_CHECK(!ec);
+#endif // defined(BOOST_WINDOWS) && defined(UNDER_CE)
 
     ip::unicast::hops hops4;
     sock_v4.get_option(hops4, ec);
+#if defined(BOOST_WINDOWS) && defined(UNDER_CE)
+    // Option is not supported under Windows CE.
+    BOOST_CHECK_MESSAGE(ec == boost::asio::error::no_protocol_option,
+        ec.value() << ", " << ec.message());
+#else // defined(BOOST_WINDOWS) && defined(UNDER_CE)
     BOOST_CHECK(!ec);
     BOOST_CHECK(hops4.value() == 255);
+#endif // defined(BOOST_WINDOWS) && defined(UNDER_CE)
   }
 
   if (have_v6)
@@ -138,7 +162,7 @@ void test()
 
 //------------------------------------------------------------------------------
 
-test_suite* init_unit_test_suite(int argc, char* argv[])
+test_suite* init_unit_test_suite(int, char*[])
 {
   test_suite* test = BOOST_TEST_SUITE("ip/unicast");
   test->add(BOOST_TEST_CASE(&ip_unicast_compile::test));

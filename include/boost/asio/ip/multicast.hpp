@@ -2,7 +2,7 @@
 // multicast.hpp
 // ~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2007 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2008 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -168,7 +168,7 @@ typedef boost::asio::ip::detail::socket_option::multicast_hops<
 #if defined(GENERATING_DOCUMENTATION)
 typedef implementation_defined enable_loopback;
 #else
-typedef boost::asio::ip::detail::socket_option::boolean<
+typedef boost::asio::ip::detail::socket_option::multicast_enable_loopback<
   IPPROTO_IP, IP_MULTICAST_LOOP, IPPROTO_IPV6, IPV6_MULTICAST_LOOP>
   enable_loopback;
 #endif

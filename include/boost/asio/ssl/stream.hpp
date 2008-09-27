@@ -3,7 +3,7 @@
 // ~~~~~~~~~~
 //
 // Copyright (c) 2005 Voipster / Indrek dot Juhani at voipster dot com
-// Copyright (c) 2005 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2005-2008 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -45,16 +45,15 @@ namespace ssl {
  * @e Shared @e objects: Unsafe.
  *
  * @par Example
- * To use the SSL stream template with a stream_socket, you would write:
+ * To use the SSL stream template with an ip::tcp::socket, you would write:
  * @code
  * boost::asio::io_service io_service;
  * boost::asio::ssl::context context(io_service, boost::asio::ssl::context::sslv23);
- * boost::asio::ssl::stream<boost::asio::stream_socket> sock(io_service, context);
+ * boost::asio::ssl::stream<boost::asio::ip::tcp::socket> sock(io_service, context);
  * @endcode
  *
  * @par Concepts:
- * Async_Object, Async_Read_Stream, Async_Write_Stream, Error_Source, Stream,
- * Sync_Read_Stream, Sync_Write_Stream.
+ * AsyncReadStream, AsyncWriteStream, Stream, SyncRead_Stream, SyncWriteStream.
  */
 template <typename Stream, typename Service = stream_service>
 class stream
@@ -86,7 +85,7 @@ public:
   template <typename Arg, typename Context_Service>
   explicit stream(Arg& arg, basic_context<Context_Service>& context)
     : next_layer_(arg),
-      service_(boost::asio::use_service<Service>(next_layer_.io_service())),
+      service_(boost::asio::use_service<Service>(next_layer_.get_io_service())),
       impl_(service_.null())
   {
     service_.create(impl_, next_layer_, context);
@@ -98,7 +97,8 @@ public:
     service_.destroy(impl_, next_layer_);
   }
 
-  /// Get the io_service associated with the object.
+  /// (Deprecated: use get_io_service().) Get the io_service associated with
+  /// the object.
   /**
    * This function may be used to obtain the io_service object that the stream
    * uses to dispatch handlers for asynchronous operations.
@@ -108,7 +108,20 @@ public:
    */
   boost::asio::io_service& io_service()
   {
-    return next_layer_.io_service();
+    return next_layer_.get_io_service();
+  }
+
+  /// Get the io_service associated with the object.
+  /**
+   * This function may be used to obtain the io_service object that the stream
+   * uses to dispatch handlers for asynchronous operations.
+   *
+   * @return A reference to the io_service object that stream will use to
+   * dispatch handlers. Ownership is not transferred to the caller.
+   */
+  boost::asio::io_service& get_io_service()
+  {
+    return next_layer_.get_io_service();
   }
 
   /// Get a reference to the next layer.
@@ -133,6 +146,19 @@ public:
    * Ownership is not transferred to the caller.
    */
   lowest_layer_type& lowest_layer()
+  {
+    return next_layer_.lowest_layer();
+  }
+
+  /// Get a const reference to the lowest layer.
+  /**
+   * This function returns a const reference to the lowest layer in a stack of
+   * stream layers.
+   *
+   * @return A const reference to the lowest layer in the stack of stream
+   * layers. Ownership is not transferred to the caller.
+   */
+  const lowest_layer_type& lowest_layer() const
   {
     return next_layer_.lowest_layer();
   }

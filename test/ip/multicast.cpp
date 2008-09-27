@@ -2,7 +2,7 @@
 // multicast.cpp
 // ~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2007 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2008 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -104,6 +104,12 @@ void test()
 
 namespace ip_multicast_runtime {
 
+#if defined(__hpux)
+// HP-UX doesn't declare this function extern "C", so it is declared again here
+// to avoid a linker error about an undefined symbol.
+extern "C" unsigned int if_nametoindex(const char*);
+#endif // defined(__hpux)
+
 void test()
 {
   using namespace boost::asio;
@@ -126,12 +132,20 @@ void test()
 
   BOOST_CHECK(have_v4 || have_v6);
 
+#if defined(BOOST_WINDOWS) && defined(UNDER_CE)
+  // Windows CE seems to have problems with some multicast group addresses.
+  // The following address works on CE, but as it is not a private multicast
+  // address it will not be used on other platforms.
+  const ip::address multicast_address_v4 =
+    ip::address::from_string("239.0.0.4", ec);
+#else // defined(BOOST_WINDOWS) && defined(UNDER_CE)
   const ip::address multicast_address_v4 =
     ip::address::from_string("239.255.0.1", ec);
+#endif // defined(BOOST_WINDOWS) && defined(UNDER_CE)
   BOOST_CHECK(!have_v4 || !ec);
 
   const ip::address multicast_address_v6 =
-    ip::address::from_string("ff31::8000:1234", ec);
+    ip::address::from_string("ff01::1", ec);
   BOOST_CHECK(!have_v6 || !ec);
 
   // join_group class.
@@ -178,7 +192,11 @@ void test()
 
   if (have_v6)
   {
+#if defined(__hpux)
+    ip::multicast::outbound_interface outbound_interface(if_nametoindex("lo0"));
+#else
     ip::multicast::outbound_interface outbound_interface(1);
+#endif
     sock_v6.set_option(outbound_interface, ec);
     BOOST_CHECK_MESSAGE(!ec, ec.value() << ", " << ec.message());
   }
@@ -240,28 +258,50 @@ void test()
     BOOST_CHECK(static_cast<bool>(enable_loopback1));
     BOOST_CHECK(!!enable_loopback1);
     sock_v4.set_option(enable_loopback1, ec);
+#if defined(BOOST_WINDOWS) && defined(UNDER_CE)
+    // Option is not supported under Windows CE.
+    BOOST_CHECK_MESSAGE(ec == boost::asio::error::no_protocol_option,
+        ec.value() << ", " << ec.message());
+#else // defined(BOOST_WINDOWS) && defined(UNDER_CE)
     BOOST_CHECK_MESSAGE(!ec, ec.value() << ", " << ec.message());
+#endif // defined(BOOST_WINDOWS) && defined(UNDER_CE)
 
     ip::multicast::enable_loopback enable_loopback2;
     sock_v4.get_option(enable_loopback2, ec);
+#if defined(BOOST_WINDOWS) && defined(UNDER_CE)
+    // Not supported under Windows CE but can get value.
+    BOOST_CHECK_MESSAGE(!ec, ec.value() << ", " << ec.message());
+#else // defined(BOOST_WINDOWS) && defined(UNDER_CE)
     BOOST_CHECK_MESSAGE(!ec, ec.value() << ", " << ec.message());
     BOOST_CHECK(enable_loopback2.value());
     BOOST_CHECK(static_cast<bool>(enable_loopback2));
     BOOST_CHECK(!!enable_loopback2);
+#endif // defined(BOOST_WINDOWS) && defined(UNDER_CE)
 
     ip::multicast::enable_loopback enable_loopback3(false);
     BOOST_CHECK(!enable_loopback3.value());
     BOOST_CHECK(!static_cast<bool>(enable_loopback3));
     BOOST_CHECK(!enable_loopback3);
     sock_v4.set_option(enable_loopback3, ec);
+#if defined(BOOST_WINDOWS) && defined(UNDER_CE)
+    // Option is not supported under Windows CE.
+    BOOST_CHECK_MESSAGE(ec == boost::asio::error::no_protocol_option,
+        ec.value() << ", " << ec.message());
+#else // defined(BOOST_WINDOWS) && defined(UNDER_CE)
     BOOST_CHECK_MESSAGE(!ec, ec.value() << ", " << ec.message());
+#endif // defined(BOOST_WINDOWS) && defined(UNDER_CE)
 
     ip::multicast::enable_loopback enable_loopback4;
     sock_v4.get_option(enable_loopback4, ec);
+#if defined(BOOST_WINDOWS) && defined(UNDER_CE)
+    // Not supported under Windows CE but can get value.
+    BOOST_CHECK_MESSAGE(!ec, ec.value() << ", " << ec.message());
+#else // defined(BOOST_WINDOWS) && defined(UNDER_CE)
     BOOST_CHECK_MESSAGE(!ec, ec.value() << ", " << ec.message());
     BOOST_CHECK(!enable_loopback4.value());
     BOOST_CHECK(!static_cast<bool>(enable_loopback4));
     BOOST_CHECK(!enable_loopback4);
+#endif // defined(BOOST_WINDOWS) && defined(UNDER_CE)
   }
 
   if (have_v6)
@@ -300,7 +340,7 @@ void test()
 
 //------------------------------------------------------------------------------
 
-test_suite* init_unit_test_suite(int argc, char* argv[])
+test_suite* init_unit_test_suite(int, char*[])
 {
   test_suite* test = BOOST_TEST_SUITE("ip/multicast");
   test->add(BOOST_TEST_CASE(&ip_multicast_compile::test));

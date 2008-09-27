@@ -2,7 +2,7 @@
 // winsock_init.hpp
 // ~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2007 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2008 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -88,7 +88,7 @@ public:
     {
       boost::system::system_error e(
           boost::system::error_code(ref_->result(),
-            boost::asio::error::system_category),
+            boost::asio::error::get_system_category()),
           "winsock");
       boost::throw_exception(e);
     }

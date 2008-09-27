@@ -2,7 +2,7 @@
 // basic_socket.hpp
 // ~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2007 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2008 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -16,6 +16,10 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include <boost/asio/detail/push_options.hpp>
+
+#include <boost/asio/detail/push_options.hpp>
+#include <boost/config.hpp>
+#include <boost/asio/detail/pop_options.hpp>
 
 #include <boost/asio/basic_io_object.hpp>
 #include <boost/asio/error.hpp>
@@ -142,6 +146,20 @@ public:
    * is not transferred to the caller.
    */
   lowest_layer_type& lowest_layer()
+  {
+    return *this;
+  }
+
+  /// Get a const reference to the lowest layer.
+  /**
+   * This function returns a const reference to the lowest layer in a stack of
+   * layers. Since a basic_socket cannot contain any further layers, it simply
+   * returns a reference to itself.
+   *
+   * @return A const reference to the lowest layer in the stack of layers.
+   * Ownership is not transferred to the caller.
+   */
+  const lowest_layer_type& lowest_layer() const
   {
     return *this;
   }
@@ -296,7 +314,40 @@ public:
    * will be passed the boost::asio::error::operation_aborted error.
    *
    * @throws boost::system::system_error Thrown on failure.
+   *
+   * @note Calls to cancel() will always fail with
+   * boost::asio::error::operation_not_supported when run on Windows XP, Windows
+   * Server 2003, and earlier versions of Windows, unless
+   * BOOST_ASIO_ENABLE_CANCELIO is defined. However, the CancelIo function has
+   * two issues that should be considered before enabling its use:
+   *
+   * @li It will only cancel asynchronous operations that were initiated in the
+   * current thread.
+   *
+   * @li It can appear to complete without error, but the request to cancel the
+   * unfinished operations may be silently ignored by the operating system.
+   * Whether it works or not seems to depend on the drivers that are installed.
+   *
+   * For portable cancellation, consider using one of the following
+   * alternatives:
+   *
+   * @li Disable asio's I/O completion port backend by defining
+   * BOOST_ASIO_DISABLE_IOCP.
+   *
+   * @li Use the close() function to simultaneously cancel the outstanding
+   * operations and close the socket.
+   *
+   * When running on Windows Vista, Windows Server 2008, and later, the
+   * CancelIoEx function is always used. This function does not have the
+   * problems described above.
    */
+#if defined(BOOST_MSVC) && (BOOST_MSVC >= 1400) \
+  && (!defined(_WIN32_WINNT) || _WIN32_WINNT < 0x0600) \
+  && !defined(BOOST_ASIO_ENABLE_CANCELIO)
+  __declspec(deprecated("By default, this function always fails with "
+        "operation_not_supported when used on Windows XP, Windows Server 2003, "
+        "or earlier. Consult documentation for details."))
+#endif
   void cancel()
   {
     boost::system::error_code ec;
@@ -311,7 +362,40 @@ public:
    * will be passed the boost::asio::error::operation_aborted error.
    *
    * @param ec Set to indicate what error occurred, if any.
+   *
+   * @note Calls to cancel() will always fail with
+   * boost::asio::error::operation_not_supported when run on Windows XP, Windows
+   * Server 2003, and earlier versions of Windows, unless
+   * BOOST_ASIO_ENABLE_CANCELIO is defined. However, the CancelIo function has
+   * two issues that should be considered before enabling its use:
+   *
+   * @li It will only cancel asynchronous operations that were initiated in the
+   * current thread.
+   *
+   * @li It can appear to complete without error, but the request to cancel the
+   * unfinished operations may be silently ignored by the operating system.
+   * Whether it works or not seems to depend on the drivers that are installed.
+   *
+   * For portable cancellation, consider using one of the following
+   * alternatives:
+   *
+   * @li Disable asio's I/O completion port backend by defining
+   * BOOST_ASIO_DISABLE_IOCP.
+   *
+   * @li Use the close() function to simultaneously cancel the outstanding
+   * operations and close the socket.
+   *
+   * When running on Windows Vista, Windows Server 2008, and later, the
+   * CancelIoEx function is always used. This function does not have the
+   * problems described above.
    */
+#if defined(BOOST_MSVC) && (BOOST_MSVC >= 1400) \
+  && (!defined(_WIN32_WINNT) || _WIN32_WINNT < 0x0600) \
+  && !defined(BOOST_ASIO_ENABLE_CANCELIO)
+  __declspec(deprecated("By default, this function always fails with "
+        "operation_not_supported when used on Windows XP, Windows Server 2003, "
+        "or earlier. Consult documentation for details."))
+#endif
   boost::system::error_code cancel(boost::system::error_code& ec)
   {
     return this->service.cancel(this->implementation, ec);
@@ -445,7 +529,7 @@ public:
    *
    * The socket is automatically opened if it is not already open. If the
    * connect fails, and the socket was automatically opened, the socket is
-   * returned to the closed state.
+   * not returned to the closed state.
    *
    * @param peer_endpoint The remote endpoint to which the socket will be
    * connected.
@@ -480,7 +564,7 @@ public:
    *
    * The socket is automatically opened if it is not already open. If the
    * connect fails, and the socket was automatically opened, the socket is
-   * returned to the closed state.
+   * not returned to the closed state.
    *
    * @param peer_endpoint The remote endpoint to which the socket will be
    * connected.
@@ -522,7 +606,7 @@ public:
    *
    * The socket is automatically opened if it is not already open. If the
    * connect fails, and the socket was automatically opened, the socket is
-   * returned to the closed state.
+   * not returned to the closed state.
    *
    * @param peer_endpoint The remote endpoint to which the socket will be
    * connected. Copies will be made of the endpoint object as required.
@@ -565,7 +649,8 @@ public:
       if (this->service.open(this->implementation,
             peer_endpoint.protocol(), ec))
       {
-        this->io_service().post(boost::asio::detail::bind_handler(handler, ec));
+        this->get_io_service().post(
+            boost::asio::detail::bind_handler(handler, ec));
         return;
       }
     }
