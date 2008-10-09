@@ -64,6 +64,7 @@ public:
         deadline_timer_service<Time_Traits, Timer_Scheduler> >(io_service),
       scheduler_(boost::asio::use_service<Timer_Scheduler>(io_service))
   {
+    scheduler_.init_task();
     scheduler_.add_timer_queue(timer_queue_);
   }
 
