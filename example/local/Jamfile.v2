@@ -38,6 +38,21 @@ exe connect_pair
     <os>HPUX:<library>ipv6
   ;
 
+exe iostream_client
+  : iostream_client.cpp
+    /boost/system//boost_system
+  : <define>BOOST_ALL_NO_LIB=1
+    <threading>multi
+    <os>SOLARIS:<library>socket
+    <os>SOLARIS:<library>nsl
+    <os>NT:<define>_WIN32_WINNT=0x0501
+    <os>NT,<toolset>gcc:<library>ws2_32
+    <os>NT,<toolset>gcc:<library>mswsock
+    <os>NT,<toolset>gcc-cygwin:<define>__USE_W32_SOCKETS
+    <os>HPUX,<toolset>gcc:<define>_XOPEN_SOURCE_EXTENDED
+    <os>HPUX:<library>ipv6
+  ;
+
 exe stream_client
   : stream_client.cpp
     /boost/system//boost_system
