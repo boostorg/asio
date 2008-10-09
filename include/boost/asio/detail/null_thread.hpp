@@ -39,12 +39,9 @@ class null_thread
   : private noncopyable
 {
 public:
-  // The purpose of the thread.
-  enum purpose { internal, external };
-
   // Constructor.
   template <typename Function>
-  null_thread(Function f, purpose = internal)
+  null_thread(Function f)
   {
     boost::system::system_error e(
         boost::asio::error::operation_not_supported, "thread");

@@ -43,12 +43,9 @@ class posix_thread
   : private noncopyable
 {
 public:
-  // The purpose of the thread.
-  enum purpose { internal, external };
-
   // Constructor.
   template <typename Function>
-  posix_thread(Function f, purpose = internal)
+  posix_thread(Function f)
     : joined_(false)
   {
     std::auto_ptr<func_base> arg(new func<Function>(f));
