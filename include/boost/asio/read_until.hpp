@@ -24,13 +24,12 @@
 #include <boost/type_traits/is_function.hpp>
 #include <boost/type_traits/remove_pointer.hpp>
 #include <boost/utility/enable_if.hpp>
+#include <boost/detail/workaround.hpp>
 #include <string>
 #include <boost/asio/detail/pop_options.hpp>
 
 #include <boost/asio/basic_streambuf.hpp>
 #include <boost/asio/error.hpp>
-
-#include <boost/detail/workaround.hpp>
 
 namespace boost {
 namespace asio {
@@ -50,7 +49,7 @@ namespace detail
     static const T& ref();
     enum { value = (sizeof((inner<const T&>::helper)((ref)())) == 1) };
   };
-#else
+#else // BOOST_WORKAROUND(__CODEGEARC__, BOOST_TESTED_AT(0x610))
   template <typename T>
   struct has_result_type
   {
@@ -60,7 +59,7 @@ namespace detail
     static const T& ref();
     enum { value = (sizeof((helper)((ref)())) == 1) };
   };
-#endif
+#endif // BOOST_WORKAROUND(__CODEGEARC__, BOOST_TESTED_AT(0x610))
 } // namespace detail
 
 /// Type trait used to determine whether a type can be used as a match condition
