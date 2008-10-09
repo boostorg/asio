@@ -203,6 +203,17 @@ inline int listen(socket_type s, int backlog, boost::system::error_code& ec)
   return result;
 }
 
+inline void init_buf_iov_base(void*& base, void* addr)
+{
+  base = addr;
+}
+
+template <typename T>
+inline void init_buf_iov_base(T& base, void* addr)
+{
+  base = static_cast<T>(addr);
+}
+
 #if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
 typedef WSABUF buf;
 #else // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
@@ -215,7 +226,7 @@ inline void init_buf(buf& b, void* data, size_t size)
   b.buf = static_cast<char*>(data);
   b.len = static_cast<u_long>(size);
 #else // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
-  b.iov_base = data;
+  init_buf_iov_base(b.iov_base, data);
   b.iov_len = size;
 #endif // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
 }
@@ -226,7 +237,7 @@ inline void init_buf(buf& b, const void* data, size_t size)
   b.buf = static_cast<char*>(const_cast<void*>(data));
   b.len = static_cast<u_long>(size);
 #else // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
-  b.iov_base = const_cast<void*>(data);
+  init_buf_iov_base(b.iov_base, const_cast<void*>(data));
   b.iov_len = size;
 #endif // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
 }
@@ -687,6 +698,32 @@ inline int poll_write(socket_type s, boost::system::error_code& ec)
   FD_SET(s, &fds);
   clear_error(ec);
   int result = error_wrapper(::select(s, 0, &fds, 0, 0), ec);
+# if defined(UNDER_CE)
+  if (result >= 0)
+    clear_error(ec);
+# endif
+  return result;
+#else // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
+  pollfd fds;
+  fds.fd = s;
+  fds.events = POLLOUT;
+  fds.revents = 0;
+  clear_error(ec);
+  return error_wrapper(::poll(&fds, 1, -1), ec);
+#endif // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
+}
+
+inline int poll_connect(socket_type s, boost::system::error_code& ec)
+{
+#if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
+  FD_SET write_fds;
+  FD_ZERO(&write_fds);
+  FD_SET(s, &write_fds);
+  FD_SET except_fds;
+  FD_ZERO(&except_fds);
+  FD_SET(s, &except_fds);
+  clear_error(ec);
+  int result = error_wrapper(::select(s, 0, &write_fds, &except_fds, 0), ec);
 # if defined(UNDER_CE)
   if (result >= 0)
     clear_error(ec);

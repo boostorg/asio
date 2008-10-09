@@ -89,6 +89,7 @@
 #include <boost/asio/windows/basic_handle.hpp>
 #include <boost/asio/windows/basic_random_access_handle.hpp>
 #include <boost/asio/windows/basic_stream_handle.hpp>
+#include <boost/asio/windows/overlapped_ptr.hpp>
 #include <boost/asio/windows/random_access_handle.hpp>
 #include <boost/asio/windows/random_access_handle_service.hpp>
 #include <boost/asio/windows/stream_handle.hpp>

@@ -39,6 +39,7 @@ void read_some_handler(const boost::system::error_code&, std::size_t)
 
 void test()
 {
+#if defined(BOOST_ASIO_HAS_SERIAL_PORT)
   using namespace boost::asio;
 
   try
@@ -65,6 +66,10 @@ void test()
 
     serial_port::lowest_layer_type& lowest_layer = port1.lowest_layer();
     (void)lowest_layer;
+
+    const serial_port& port4 = port1;
+    const serial_port::lowest_layer_type& lowest_layer2 = port4.lowest_layer();
+    (void)lowest_layer2;
 
     port1.open("null");
     port1.open("null", ec);
@@ -111,6 +116,7 @@ void test()
   catch (std::exception&)
   {
   }
+#endif // defined(BOOST_ASIO_HAS_SERIAL_PORT)
 }
 
 } // namespace serial_port_compile

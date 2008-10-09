@@ -291,7 +291,7 @@ This function is used to asynchronously read a certain number of bytes of data f
 
 * An error occurred.
 
-This operation is implemented in terms of one or more calls to the stream's async\_read\_some function.
+This operation is implemented in terms of zero or more calls to the stream's async\_read\_some function.
 
 
 [heading Parameters]
@@ -382,15 +382,15 @@ This function is used to asynchronously read a certain number of bytes of data f
 
 [[completion_condition][The function object to be called to determine whether the read operation is complete. The signature of the function object must be: 
 ``
-   bool completion_condition(
-     const boost::system::error_code& error, // Result of latest read_some
-                                             // operation.
+   std::size_t completion_condition(
+     // Result of latest async_read_some operation.
+     const boost::system::error_code& error,
 
-     std::size_t bytes_transferred           // Number of bytes transferred
-                                             // so far.
+     // Number of bytes transferred so far.
+     std::size_t bytes_transferred
    ); 
 ``
-A return value of true indicates that the read operation is complete. False indicates that further calls to the stream's async\_read\_some function are required.]]
+A return value of 0 indicates that the read operation is complete. A non-zero return value indicates the maximum number of bytes to be read on the next call to the stream's async\_read\_some function.]]
 
 [[handler][The handler to be called when the read operation completes. Copies will be made of the handler as required. The function signature of the handler must be: 
 ``
@@ -447,7 +447,7 @@ This function is used to asynchronously read a certain number of bytes of data f
 
 * An error occurred.
 
-This operation is implemented in terms of one or more calls to the stream's async\_read\_some function.
+This operation is implemented in terms of zero or more calls to the stream's async\_read\_some function.
 
 
 [heading Parameters]
@@ -514,7 +514,7 @@ This function is used to asynchronously read a certain number of bytes of data f
 
 * The completion_condition function object returns true.
 
-This operation is implemented in terms of one or more calls to the stream's async\_read\_some function.
+This operation is implemented in terms of zero or more calls to the stream's async\_read\_some function.
 
 
 [heading Parameters]
@@ -528,15 +528,15 @@ This operation is implemented in terms of one or more calls to the stream's asyn
 
 [[completion_condition][The function object to be called to determine whether the read operation is complete. The signature of the function object must be: 
 ``
-   bool completion_condition(
-     const boost::system::error_code& error, // Result of latest read_some
-                                             // operation.
+   std::size_t completion_condition(
+     // Result of latest async_read_some operation.
+     const boost::system::error_code& error,
 
-     std::size_t bytes_transferred           // Number of bytes transferred
-                                             // so far.
+     // Number of bytes transferred so far.
+     std::size_t bytes_transferred
    ); 
 ``
-A return value of true indicates that the read operation is complete. False indicates that further calls to the stream's async\_read\_some function are required.]]
+A return value of 0 indicates that the read operation is complete. A non-zero return value indicates the maximum number of bytes to be read on the next call to the stream's async\_read\_some function.]]
 
 [[handler][The handler to be called when the read operation completes. Copies will be made of the handler as required. The function signature of the handler must be: 
 ``
@@ -632,7 +632,7 @@ This function is used to asynchronously read a certain number of bytes of data f
 
 * An error occurred.
 
-This operation is implemented in terms of one or more calls to the device's async\_read\_some\_at function.
+This operation is implemented in terms of zero or more calls to the device's async\_read\_some\_at function.
 
 
 [heading Parameters]
@@ -728,15 +728,15 @@ This function is used to asynchronously read a certain number of bytes of data f
 
 [[completion_condition][The function object to be called to determine whether the read operation is complete. The signature of the function object must be: 
 ``
-   bool completion_condition(
-     // Result of latest read_some_at operation.
+   std::size_t completion_condition(
+     // Result of latest async_read_some_at operation.
      const boost::system::error_code& error,
 
      // Number of bytes transferred so far.
      std::size_t bytes_transferred
    ); 
 ``
-A return value of true indicates that the read operation is complete. False indicates that further calls to the device's async\_read\_some\_at function are required.]]
+A return value of 0 indicates that the read operation is complete. A non-zero return value indicates the maximum number of bytes to be read on the next call to the device's async\_read\_some\_at function.]]
 
 [[handler][The handler to be called when the read operation completes. Copies will be made of the handler as required. The function signature of the handler must be: 
 ``
@@ -794,7 +794,7 @@ This function is used to asynchronously read a certain number of bytes of data f
 
 * An error occurred.
 
-This operation is implemented in terms of one or more calls to the device's async\_read\_some\_at function.
+This operation is implemented in terms of zero or more calls to the device's async\_read\_some\_at function.
 
 
 [heading Parameters]
@@ -864,7 +864,7 @@ This function is used to asynchronously read a certain number of bytes of data f
 
 * The completion_condition function object returns true.
 
-This operation is implemented in terms of one or more calls to the device's async\_read\_some\_at function.
+This operation is implemented in terms of zero or more calls to the device's async\_read\_some\_at function.
 
 
 [heading Parameters]
@@ -880,15 +880,15 @@ This operation is implemented in terms of one or more calls to the device's asyn
 
 [[completion_condition][The function object to be called to determine whether the read operation is complete. The signature of the function object must be: 
 ``
-   bool completion_condition(
-     // Result of latest read_some_at operation.
+   std::size_t completion_condition(
+     // Result of latest async_read_some_at operation.
      const boost::system::error_code& error,
 
      // Number of bytes transferred so far.
      std::size_t bytes_transferred
    ); 
 ``
-A return value of true indicates that the read operation is complete. False indicates that further calls to the device's async\_read\_some\_at function are required.]]
+A return value of 0 indicates that the read operation is complete. A non-zero return value indicates the maximum number of bytes to be read on the next call to the device's async\_read\_some\_at function.]]
 
 [[handler][The handler to be called when the read operation completes. Copies will be made of the handler as required. The function signature of the handler must be: 
 ``
@@ -1413,7 +1413,7 @@ This function is used to asynchronously write a certain number of bytes of data 
 
 * An error occurred.
 
-This operation is implemented in terms of one or more calls to the stream's async\_write\_some function.
+This operation is implemented in terms of zero or more calls to the stream's async\_write\_some function.
 
 
 [heading Parameters]
@@ -1480,7 +1480,7 @@ This function is used to asynchronously write a certain number of bytes of data 
 
 * The completion_condition function object returns true.
 
-This operation is implemented in terms of one or more calls to the stream's async\_write\_some function.
+This operation is implemented in terms of zero or more calls to the stream's async\_write\_some function.
 
 
 [heading Parameters]
@@ -1494,15 +1494,15 @@ This operation is implemented in terms of one or more calls to the stream's asyn
 
 [[completion_condition][The function object to be called to determine whether the write operation is complete. The signature of the function object must be: 
 ``
-   bool completion_condition(
-     const boost::system::error_code& error, // Result of latest write_some
-                                             // operation.
+   std::size_t completion_condition(
+     // Result of latest async_write_some operation.
+     const boost::system::error_code& error,
 
-     std::size_t bytes_transferred           // Number of bytes transferred
-                                             // so far.
+     // Number of bytes transferred so far.
+     std::size_t bytes_transferred
    ); 
 ``
-A return value of true indicates that the write operation is complete. False indicates that further calls to the stream's async\_write\_some function are required.]]
+A return value of 0 indicates that the write operation is complete. A non-zero return value indicates the maximum number of bytes to be written on the next call to the stream's async\_write\_some function.]]
 
 [[handler][The handler to be called when the write operation completes. Copies will be made of the handler as required. The function signature of the handler must be: 
 ``
@@ -1560,7 +1560,7 @@ This function is used to asynchronously write a certain number of bytes of data 
 
 * An error occurred.
 
-This operation is implemented in terms of one or more calls to the stream's async\_write\_some function.
+This operation is implemented in terms of zero or more calls to the stream's async\_write\_some function.
 
 
 [heading Parameters]
@@ -1616,7 +1616,7 @@ This function is used to asynchronously write a certain number of bytes of data 
 
 * The completion_condition function object returns true.
 
-This operation is implemented in terms of one or more calls to the stream's async\_write\_some function.
+This operation is implemented in terms of zero or more calls to the stream's async\_write\_some function.
 
 
 [heading Parameters]
@@ -1630,15 +1630,15 @@ This operation is implemented in terms of one or more calls to the stream's asyn
 
 [[completion_condition][The function object to be called to determine whether the write operation is complete. The signature of the function object must be: 
 ``
-   bool completion_condition(
-     const boost::system::error_code& error, // Result of latest write_some
-                                             // operation.
+   std::size_t completion_condition(
+     // Result of latest async_write_some operation.
+     const boost::system::error_code& error,
 
-     std::size_t bytes_transferred           // Number of bytes transferred
-                                             // so far.
+     // Number of bytes transferred so far.
+     std::size_t bytes_transferred
    ); 
 ``
-A return value of true indicates that the write operation is complete. False indicates that further calls to the stream's async\_write\_some function are required.]]
+A return value of 0 indicates that the write operation is complete. A non-zero return value indicates the maximum number of bytes to be written on the next call to the stream's async\_write\_some function.]]
 
 [[handler][The handler to be called when the write operation completes. Copies will be made of the handler as required. The function signature of the handler must be: 
 ``
@@ -1733,7 +1733,7 @@ This function is used to asynchronously write a certain number of bytes of data 
 
 * An error occurred.
 
-This operation is implemented in terms of one or more calls to the device's async\_write\_some\_at function.
+This operation is implemented in terms of zero or more calls to the device's async\_write\_some\_at function.
 
 
 [heading Parameters]
@@ -1803,7 +1803,7 @@ This function is used to asynchronously write a certain number of bytes of data 
 
 * The completion_condition function object returns true.
 
-This operation is implemented in terms of one or more calls to the device's async\_write\_some\_at function.
+This operation is implemented in terms of zero or more calls to the device's async\_write\_some\_at function.
 
 
 [heading Parameters]
@@ -1819,15 +1819,15 @@ This operation is implemented in terms of one or more calls to the device's asyn
 
 [[completion_condition][The function object to be called to determine whether the write operation is complete. The signature of the function object must be: 
 ``
-   bool completion_condition(
-     // Result of latest write_some_at operation.
+   std::size_t completion_condition(
+     // Result of latest async_write_some_at operation.
      const boost::system::error_code& error,
 
      // Number of bytes transferred so far.
      std::size_t bytes_transferred
    ); 
 ``
-A return value of true indicates that the write operation is complete. False indicates that further calls to the device's async\_write\_some\_at function are required.]]
+A return value of 0 indicates that the write operation is complete. A non-zero return value indicates the maximum number of bytes to be written on the next call to the device's async\_write\_some\_at function.]]
 
 [[handler][The handler to be called when the write operation completes. Copies will be made of the handler as required. The function signature of the handler must be: 
 ``
@@ -1886,7 +1886,7 @@ This function is used to asynchronously write a certain number of bytes of data 
 
 * An error occurred.
 
-This operation is implemented in terms of one or more calls to the device's async\_write\_some\_at function.
+This operation is implemented in terms of zero or more calls to the device's async\_write\_some\_at function.
 
 
 [heading Parameters]
@@ -1945,7 +1945,7 @@ This function is used to asynchronously write a certain number of bytes of data 
 
 * The completion_condition function object returns true.
 
-This operation is implemented in terms of one or more calls to the device's async\_write\_some\_at function.
+This operation is implemented in terms of zero or more calls to the device's async\_write\_some\_at function.
 
 
 [heading Parameters]
@@ -1961,7 +1961,7 @@ This operation is implemented in terms of one or more calls to the device's asyn
 
 [[completion_condition][The function object to be called to determine whether the write operation is complete. The signature of the function object must be: 
 ``
-   bool completion_condition(
+   std::size_t completion_condition(
      // Result of latest async_write_some_at operation.
      const boost::system::error_code& error,
 
@@ -1969,7 +1969,7 @@ This operation is implemented in terms of one or more calls to the device's asyn
      std::size_t bytes_transferred
    ); 
 ``
-A return value of true indicates that the write operation is complete. False indicates that further calls to the device's async\_write\_some\_at function are required.]]
+A return value of 0 indicates that the write operation is complete. A non-zero return value indicates the maximum number of bytes to be written on the next call to the device's async\_write\_some\_at function.]]
 
 [[handler][The handler to be called when the write operation completes. Copies will be made of the handler as required. The function signature of the handler must be: 
 ``
@@ -4425,13 +4425,21 @@ An object that represents the local endpoint of the socket. Returns a default-co
 
 [endsect]
 
-
 [section:lowest_layer basic_datagram_socket::lowest_layer]
+
+[indexterm2 lowest_layer..basic_datagram_socket] Get a reference to the lowest layer. 
+
+  lowest_layer_type & ``[link boost_asio.reference.basic_datagram_socket.lowest_layer.overload1 lowest_layer]``();
+
+  const lowest_layer_type & ``[link boost_asio.reference.basic_datagram_socket.lowest_layer.overload2 lowest_layer]``() const;
+
+
+[section:overload1 basic_datagram_socket::lowest_layer (1 of 2 overloads)]
 
 
 ['Inherited from basic_socket.]
 
-[indexterm2 lowest_layer..basic_datagram_socket] Get a reference to the lowest layer. 
+Get a reference to the lowest layer. 
 
   lowest_layer_type & lowest_layer();
 
@@ -4447,6 +4455,31 @@ A reference to the lowest layer in the stack of layers. Ownership is not transfe
 
 [endsect]
 
+
+
+[section:overload2 basic_datagram_socket::lowest_layer (2 of 2 overloads)]
+
+
+['Inherited from basic_socket.]
+
+Get a const reference to the lowest layer. 
+
+  const lowest_layer_type & lowest_layer() const;
+
+
+This function returns a const reference to the lowest layer in a stack of layers. Since a basic_socket cannot contain any further layers, it simply returns a reference to itself.
+
+
+[heading Return Value]
+      
+A const reference to the lowest layer in the stack of layers. Ownership is not transferred to the caller. 
+
+
+
+[endsect]
+
+
+[endsect]
 
 
 [section:lowest_layer_type basic_datagram_socket::lowest_layer_type]
@@ -9816,13 +9849,21 @@ An object that represents the local endpoint of the socket. Returns a default-co
 
 [endsect]
 
-
 [section:lowest_layer basic_raw_socket::lowest_layer]
+
+[indexterm2 lowest_layer..basic_raw_socket] Get a reference to the lowest layer. 
+
+  lowest_layer_type & ``[link boost_asio.reference.basic_raw_socket.lowest_layer.overload1 lowest_layer]``();
+
+  const lowest_layer_type & ``[link boost_asio.reference.basic_raw_socket.lowest_layer.overload2 lowest_layer]``() const;
+
+
+[section:overload1 basic_raw_socket::lowest_layer (1 of 2 overloads)]
 
 
 ['Inherited from basic_socket.]
 
-[indexterm2 lowest_layer..basic_raw_socket] Get a reference to the lowest layer. 
+Get a reference to the lowest layer. 
 
   lowest_layer_type & lowest_layer();
 
@@ -9838,6 +9879,31 @@ A reference to the lowest layer in the stack of layers. Ownership is not transfe
 
 [endsect]
 
+
+
+[section:overload2 basic_raw_socket::lowest_layer (2 of 2 overloads)]
+
+
+['Inherited from basic_socket.]
+
+Get a const reference to the lowest layer. 
+
+  const lowest_layer_type & lowest_layer() const;
+
+
+This function returns a const reference to the lowest layer in a stack of layers. Since a basic_socket cannot contain any further layers, it simply returns a reference to itself.
+
+
+[heading Return Value]
+      
+A const reference to the lowest layer in the stack of layers. Ownership is not transferred to the caller. 
+
+
+
+[endsect]
+
+
+[endsect]
 
 
 [section:lowest_layer_type basic_raw_socket::lowest_layer_type]
@@ -12487,10 +12553,18 @@ A reference to the io_service object that the I/O object will use to dispatch ha
 [endsect]
 
 
-
 [section:lowest_layer basic_serial_port::lowest_layer]
 
 [indexterm2 lowest_layer..basic_serial_port] Get a reference to the lowest layer. 
+
+  lowest_layer_type & ``[link boost_asio.reference.basic_serial_port.lowest_layer.overload1 lowest_layer]``();
+
+  const lowest_layer_type & ``[link boost_asio.reference.basic_serial_port.lowest_layer.overload2 lowest_layer]``() const;
+
+
+[section:overload1 basic_serial_port::lowest_layer (1 of 2 overloads)]
+
+Get a reference to the lowest layer. 
 
   lowest_layer_type & lowest_layer();
 
@@ -12506,6 +12580,28 @@ A reference to the lowest layer in the stack of layers. Ownership is not transfe
 
 [endsect]
 
+
+
+[section:overload2 basic_serial_port::lowest_layer (2 of 2 overloads)]
+
+Get a const reference to the lowest layer. 
+
+  const lowest_layer_type & lowest_layer() const;
+
+
+This function returns a const reference to the lowest layer in a stack of layers. Since a basic_serial_port cannot contain any further layers, it simply returns a reference to itself.
+
+
+[heading Return Value]
+      
+A const reference to the lowest layer in the stack of layers. Ownership is not transferred to the caller. 
+
+
+
+[endsect]
+
+
+[endsect]
 
 
 [section:lowest_layer_type basic_serial_port::lowest_layer_type]
@@ -15052,10 +15148,18 @@ An object that represents the local endpoint of the socket. Returns a default-co
 
 [endsect]
 
-
 [section:lowest_layer basic_socket::lowest_layer]
 
 [indexterm2 lowest_layer..basic_socket] Get a reference to the lowest layer. 
+
+  lowest_layer_type & ``[link boost_asio.reference.basic_socket.lowest_layer.overload1 lowest_layer]``();
+
+  const lowest_layer_type & ``[link boost_asio.reference.basic_socket.lowest_layer.overload2 lowest_layer]``() const;
+
+
+[section:overload1 basic_socket::lowest_layer (1 of 2 overloads)]
+
+Get a reference to the lowest layer. 
 
   lowest_layer_type & lowest_layer();
 
@@ -15071,6 +15175,28 @@ A reference to the lowest layer in the stack of layers. Ownership is not transfe
 
 [endsect]
 
+
+
+[section:overload2 basic_socket::lowest_layer (2 of 2 overloads)]
+
+Get a const reference to the lowest layer. 
+
+  const lowest_layer_type & lowest_layer() const;
+
+
+This function returns a const reference to the lowest layer in a stack of layers. Since a basic_socket cannot contain any further layers, it simply returns a reference to itself.
+
+
+[heading Return Value]
+      
+A const reference to the lowest layer in the stack of layers. Ownership is not transferred to the caller. 
+
+
+
+[endsect]
+
+
+[endsect]
 
 
 [section:lowest_layer_type basic_socket::lowest_layer_type]
@@ -20657,13 +20783,21 @@ An object that represents the local endpoint of the socket. Returns a default-co
 
 [endsect]
 
-
 [section:lowest_layer basic_socket_streambuf::lowest_layer]
+
+[indexterm2 lowest_layer..basic_socket_streambuf] Get a reference to the lowest layer. 
+
+  lowest_layer_type & ``[link boost_asio.reference.basic_socket_streambuf.lowest_layer.overload1 lowest_layer]``();
+
+  const lowest_layer_type & ``[link boost_asio.reference.basic_socket_streambuf.lowest_layer.overload2 lowest_layer]``() const;
+
+
+[section:overload1 basic_socket_streambuf::lowest_layer (1 of 2 overloads)]
 
 
 ['Inherited from basic_socket.]
 
-[indexterm2 lowest_layer..basic_socket_streambuf] Get a reference to the lowest layer. 
+Get a reference to the lowest layer. 
 
   lowest_layer_type & lowest_layer();
 
@@ -20679,6 +20813,31 @@ A reference to the lowest layer in the stack of layers. Ownership is not transfe
 
 [endsect]
 
+
+
+[section:overload2 basic_socket_streambuf::lowest_layer (2 of 2 overloads)]
+
+
+['Inherited from basic_socket.]
+
+Get a const reference to the lowest layer. 
+
+  const lowest_layer_type & lowest_layer() const;
+
+
+This function returns a const reference to the lowest layer in a stack of layers. Since a basic_socket cannot contain any further layers, it simply returns a reference to itself.
+
+
+[heading Return Value]
+      
+A const reference to the lowest layer in the stack of layers. Ownership is not transferred to the caller. 
+
+
+
+[endsect]
+
+
+[endsect]
 
 
 [section:lowest_layer_type basic_socket_streambuf::lowest_layer_type]
@@ -24282,13 +24441,21 @@ An object that represents the local endpoint of the socket. Returns a default-co
 
 [endsect]
 
-
 [section:lowest_layer basic_stream_socket::lowest_layer]
+
+[indexterm2 lowest_layer..basic_stream_socket] Get a reference to the lowest layer. 
+
+  lowest_layer_type & ``[link boost_asio.reference.basic_stream_socket.lowest_layer.overload1 lowest_layer]``();
+
+  const lowest_layer_type & ``[link boost_asio.reference.basic_stream_socket.lowest_layer.overload2 lowest_layer]``() const;
+
+
+[section:overload1 basic_stream_socket::lowest_layer (1 of 2 overloads)]
 
 
 ['Inherited from basic_socket.]
 
-[indexterm2 lowest_layer..basic_stream_socket] Get a reference to the lowest layer. 
+Get a reference to the lowest layer. 
 
   lowest_layer_type & lowest_layer();
 
@@ -24304,6 +24471,31 @@ A reference to the lowest layer in the stack of layers. Ownership is not transfe
 
 [endsect]
 
+
+
+[section:overload2 basic_stream_socket::lowest_layer (2 of 2 overloads)]
+
+
+['Inherited from basic_socket.]
+
+Get a const reference to the lowest layer. 
+
+  const lowest_layer_type & lowest_layer() const;
+
+
+This function returns a const reference to the lowest layer in a stack of layers. Since a basic_socket cannot contain any further layers, it simply returns a reference to itself.
+
+
+[heading Return Value]
+      
+A const reference to the lowest layer in the stack of layers. Ownership is not transferred to the caller. 
+
+
+
+[endsect]
+
+
+[endsect]
 
 
 [section:lowest_layer_type basic_stream_socket::lowest_layer_type]
@@ -27617,10 +27809,18 @@ Determine the amount of data that may be read without blocking.
 [endsect]
 
 
-
 [section:lowest_layer buffered_read_stream::lowest_layer]
 
 [indexterm2 lowest_layer..buffered_read_stream] Get a reference to the lowest layer. 
+
+  lowest_layer_type & ``[link boost_asio.reference.buffered_read_stream.lowest_layer.overload1 lowest_layer]``();
+
+  const lowest_layer_type & ``[link boost_asio.reference.buffered_read_stream.lowest_layer.overload2 lowest_layer]``() const;
+
+
+[section:overload1 buffered_read_stream::lowest_layer (1 of 2 overloads)]
+
+Get a reference to the lowest layer. 
 
   lowest_layer_type & lowest_layer();
 
@@ -27628,6 +27828,20 @@ Determine the amount of data that may be read without blocking.
 
 [endsect]
 
+
+
+[section:overload2 buffered_read_stream::lowest_layer (2 of 2 overloads)]
+
+Get a const reference to the lowest layer. 
+
+  const lowest_layer_type & lowest_layer() const;
+
+
+
+[endsect]
+
+
+[endsect]
 
 
 [section:lowest_layer_type buffered_read_stream::lowest_layer_type]
@@ -28222,10 +28436,18 @@ Determine the amount of data that may be read without blocking.
 [endsect]
 
 
-
 [section:lowest_layer buffered_stream::lowest_layer]
 
 [indexterm2 lowest_layer..buffered_stream] Get a reference to the lowest layer. 
+
+  lowest_layer_type & ``[link boost_asio.reference.buffered_stream.lowest_layer.overload1 lowest_layer]``();
+
+  const lowest_layer_type & ``[link boost_asio.reference.buffered_stream.lowest_layer.overload2 lowest_layer]``() const;
+
+
+[section:overload1 buffered_stream::lowest_layer (1 of 2 overloads)]
+
+Get a reference to the lowest layer. 
 
   lowest_layer_type & lowest_layer();
 
@@ -28233,6 +28455,20 @@ Determine the amount of data that may be read without blocking.
 
 [endsect]
 
+
+
+[section:overload2 buffered_stream::lowest_layer (2 of 2 overloads)]
+
+Get a const reference to the lowest layer. 
+
+  const lowest_layer_type & lowest_layer() const;
+
+
+
+[endsect]
+
+
+[endsect]
 
 
 [section:lowest_layer_type buffered_stream::lowest_layer_type]
@@ -28787,10 +29023,18 @@ Determine the amount of data that may be read without blocking.
 [endsect]
 
 
-
 [section:lowest_layer buffered_write_stream::lowest_layer]
 
 [indexterm2 lowest_layer..buffered_write_stream] Get a reference to the lowest layer. 
+
+  lowest_layer_type & ``[link boost_asio.reference.buffered_write_stream.lowest_layer.overload1 lowest_layer]``();
+
+  const lowest_layer_type & ``[link boost_asio.reference.buffered_write_stream.lowest_layer.overload2 lowest_layer]``() const;
+
+
+[section:overload1 buffered_write_stream::lowest_layer (1 of 2 overloads)]
+
+Get a reference to the lowest layer. 
 
   lowest_layer_type & lowest_layer();
 
@@ -28798,6 +29042,20 @@ Determine the amount of data that may be read without blocking.
 
 [endsect]
 
+
+
+[section:overload2 buffered_write_stream::lowest_layer (2 of 2 overloads)]
+
+Get a const reference to the lowest layer. 
+
+  const lowest_layer_type & lowest_layer() const;
+
+
+
+[endsect]
+
+
+[endsect]
 
 
 [section:lowest_layer_type buffered_write_stream::lowest_layer_type]
@@ -35225,7 +35483,7 @@ Provides endpoint resolution functionality.
 
   [
     [[link boost_asio.reference.ip__basic_resolver.async_resolve [*async_resolve]]]
-    [Asynchronously resolve a query to a list of entries. ]
+    [Asynchronously perform forward resolution of a query to a list of entries. ]
   ]
   
   [
@@ -35250,7 +35508,7 @@ Provides endpoint resolution functionality.
   
   [
     [[link boost_asio.reference.ip__basic_resolver.resolve [*resolve]]]
-    [Resolve a query to a list of entries. ]
+    [Perform forward resolution of a query to a list of entries. ]
   ]
   
 ]
@@ -35283,7 +35541,7 @@ The basic_resolver class template provides the ability to resolve a query to a l
 
 [section:async_resolve ip::basic_resolver::async_resolve]
 
-[indexterm2 async_resolve..ip::basic_resolver] Asynchronously resolve a query to a list of entries. 
+[indexterm2 async_resolve..ip::basic_resolver] Asynchronously perform forward resolution of a query to a list of entries. 
 
   template<
       typename ``[link boost_asio.reference.ResolveHandler ResolveHandler]``>
@@ -35300,7 +35558,7 @@ The basic_resolver class template provides the ability to resolve a query to a l
 
 [section:overload1 ip::basic_resolver::async_resolve (1 of 2 overloads)]
 
-Asynchronously resolve a query to a list of entries. 
+Asynchronously perform forward resolution of a query to a list of entries. 
 
   template<
       typename ``[link boost_asio.reference.ResolveHandler ResolveHandler]``>
@@ -35345,7 +35603,7 @@ A successful resolve operation is guaranteed to pass at least one entry to the h
 
 [section:overload2 ip::basic_resolver::async_resolve (2 of 2 overloads)]
 
-Asynchronously resolve an endpoint to a list of entries. 
+Asynchronously perform reverse resolution of an endpoint to a list of entries. 
 
   template<
       typename ``[link boost_asio.reference.ResolveHandler ResolveHandler]``>
@@ -35560,7 +35818,7 @@ A reference to the io_service object that the I/O object will use to dispatch ha
 
 [section:resolve ip::basic_resolver::resolve]
 
-[indexterm2 resolve..ip::basic_resolver] Resolve a query to a list of entries. 
+[indexterm2 resolve..ip::basic_resolver] Perform forward resolution of a query to a list of entries. 
 
   iterator ``[link boost_asio.reference.ip__basic_resolver.resolve.overload1 resolve]``(
       const query & q);
@@ -35579,7 +35837,7 @@ A reference to the io_service object that the I/O object will use to dispatch ha
 
 [section:overload1 ip::basic_resolver::resolve (1 of 4 overloads)]
 
-Resolve a query to a list of entries. 
+Perform forward resolution of a query to a list of entries. 
 
   iterator resolve(
       const query & q);
@@ -35623,7 +35881,7 @@ A successful call to this function is guaranteed to return at least one entry.
 
 [section:overload2 ip::basic_resolver::resolve (2 of 4 overloads)]
 
-Resolve a query to a list of entries. 
+Perform forward resolution of a query to a list of entries. 
 
   iterator resolve(
       const query & q,
@@ -35661,7 +35919,7 @@ A successful call to this function is guaranteed to return at least one entry.
 
 [section:overload3 ip::basic_resolver::resolve (3 of 4 overloads)]
 
-Resolve an endpoint to a list of entries. 
+Perform reverse resolution of an endpoint to a list of entries. 
 
   iterator resolve(
       const endpoint_type & e);
@@ -35705,7 +35963,7 @@ A successful call to this function is guaranteed to return at least one entry.
 
 [section:overload4 ip::basic_resolver::resolve (4 of 4 overloads)]
 
-Resolve an endpoint to a list of entries. 
+Perform reverse resolution of an endpoint to a list of entries. 
 
   iterator resolve(
       const endpoint_type & e,
@@ -36795,7 +37053,7 @@ The
 
   [
     [[link boost_asio.reference.ip__basic_resolver.async_resolve [*async_resolve]]]
-    [Asynchronously resolve a query to a list of entries. ]
+    [Asynchronously perform forward resolution of a query to a list of entries. ]
   ]
   
   [
@@ -36820,7 +37078,7 @@ The
   
   [
     [[link boost_asio.reference.ip__basic_resolver.resolve [*resolve]]]
-    [Resolve a query to a list of entries. ]
+    [Perform forward resolution of a query to a list of entries. ]
   ]
   
 ]
@@ -38891,7 +39149,7 @@ Getting the current option value:
 
   [
     [[link boost_asio.reference.ip__basic_resolver.async_resolve [*async_resolve]]]
-    [Asynchronously resolve a query to a list of entries. ]
+    [Asynchronously perform forward resolution of a query to a list of entries. ]
   ]
   
   [
@@ -38916,7 +39174,7 @@ Getting the current option value:
   
   [
     [[link boost_asio.reference.ip__basic_resolver.resolve [*resolve]]]
-    [Resolve a query to a list of entries. ]
+    [Perform forward resolution of a query to a list of entries. ]
   ]
   
 ]
@@ -39858,7 +40116,7 @@ The
 
   [
     [[link boost_asio.reference.ip__basic_resolver.async_resolve [*async_resolve]]]
-    [Asynchronously resolve a query to a list of entries. ]
+    [Asynchronously perform forward resolution of a query to a list of entries. ]
   ]
   
   [
@@ -39883,7 +40141,7 @@ The
   
   [
     [[link boost_asio.reference.ip__basic_resolver.resolve [*resolve]]]
-    [Resolve a query to a list of entries. ]
+    [Perform forward resolution of a query to a list of entries. ]
   ]
   
 ]
@@ -43931,10 +44189,18 @@ A reference to the io_service object that the I/O object will use to dispatch ha
 [endsect]
 
 
-
 [section:lowest_layer posix::basic_descriptor::lowest_layer]
 
 [indexterm2 lowest_layer..posix::basic_descriptor] Get a reference to the lowest layer. 
+
+  lowest_layer_type & ``[link boost_asio.reference.posix__basic_descriptor.lowest_layer.overload1 lowest_layer]``();
+
+  const lowest_layer_type & ``[link boost_asio.reference.posix__basic_descriptor.lowest_layer.overload2 lowest_layer]``() const;
+
+
+[section:overload1 posix::basic_descriptor::lowest_layer (1 of 2 overloads)]
+
+Get a reference to the lowest layer. 
 
   lowest_layer_type & lowest_layer();
 
@@ -43950,6 +44216,28 @@ A reference to the lowest layer in the stack of layers. Ownership is not transfe
 
 [endsect]
 
+
+
+[section:overload2 posix::basic_descriptor::lowest_layer (2 of 2 overloads)]
+
+Get a const reference to the lowest layer. 
+
+  const lowest_layer_type & lowest_layer() const;
+
+
+This function returns a const reference to the lowest layer in a stack of layers. Since a basic_descriptor cannot contain any further layers, it simply returns a reference to itself.
+
+
+[heading Return Value]
+      
+A const reference to the lowest layer in the stack of layers. Ownership is not transferred to the caller. 
+
+
+
+[endsect]
+
+
+[endsect]
 
 
 [section:lowest_layer_type posix::basic_descriptor::lowest_layer_type]
@@ -44978,13 +45266,21 @@ A reference to the io_service object that the I/O object will use to dispatch ha
 [endsect]
 
 
-
 [section:lowest_layer posix::basic_stream_descriptor::lowest_layer]
+
+[indexterm2 lowest_layer..posix::basic_stream_descriptor] Get a reference to the lowest layer. 
+
+  lowest_layer_type & ``[link boost_asio.reference.posix__basic_stream_descriptor.lowest_layer.overload1 lowest_layer]``();
+
+  const lowest_layer_type & ``[link boost_asio.reference.posix__basic_stream_descriptor.lowest_layer.overload2 lowest_layer]``() const;
+
+
+[section:overload1 posix::basic_stream_descriptor::lowest_layer (1 of 2 overloads)]
 
 
 ['Inherited from posix::basic_descriptor.]
 
-[indexterm2 lowest_layer..posix::basic_stream_descriptor] Get a reference to the lowest layer. 
+Get a reference to the lowest layer. 
 
   lowest_layer_type & lowest_layer();
 
@@ -45000,6 +45296,31 @@ A reference to the lowest layer in the stack of layers. Ownership is not transfe
 
 [endsect]
 
+
+
+[section:overload2 posix::basic_stream_descriptor::lowest_layer (2 of 2 overloads)]
+
+
+['Inherited from posix::basic_descriptor.]
+
+Get a const reference to the lowest layer. 
+
+  const lowest_layer_type & lowest_layer() const;
+
+
+This function returns a const reference to the lowest layer in a stack of layers. Since a basic_descriptor cannot contain any further layers, it simply returns a reference to itself.
+
+
+[heading Return Value]
+      
+A const reference to the lowest layer in the stack of layers. Ownership is not transferred to the caller. 
+
+
+
+[endsect]
+
+
+[endsect]
 
 
 [section:lowest_layer_type posix::basic_stream_descriptor::lowest_layer_type]
@@ -47006,7 +47327,7 @@ This function is used to read a certain number of bytes of data from a stream. T
 
 * An error occurred.
 
-This operation is implemented in terms of one or more calls to the stream's read\_some function.
+This operation is implemented in terms of zero or more calls to the stream's read\_some function.
 
 
 [heading Parameters]
@@ -47082,7 +47403,7 @@ This function is used to read a certain number of bytes of data from a stream. T
 
 * The completion_condition function object returns true.
 
-This operation is implemented in terms of one or more calls to the stream's read\_some function.
+This operation is implemented in terms of zero or more calls to the stream's read\_some function.
 
 
 [heading Parameters]
@@ -47096,15 +47417,15 @@ This operation is implemented in terms of one or more calls to the stream's read
 
 [[completion_condition][The function object to be called to determine whether the read operation is complete. The signature of the function object must be: 
 ``
-   bool completion_condition(
-     const boost::system::error_code& error, // Result of latest read_some
-                                             // operation.
+   std::size_t completion_condition(
+     // Result of latest read_some operation.
+     const boost::system::error_code& error,
 
-     std::size_t bytes_transferred           // Number of bytes transferred
-                                             // so far.
+     // Number of bytes transferred so far.
+     std::size_t bytes_transferred
    ); 
 ``
-A return value of true indicates that the read operation is complete. False indicates that further calls to the stream's read\_some function are required.]]
+A return value of 0 indicates that the read operation is complete. A non-zero return value indicates the maximum number of bytes to be read on the next call to the stream's read\_some function.]]
 
 ]
 
@@ -47161,7 +47482,7 @@ This function is used to read a certain number of bytes of data from a stream. T
 
 * The completion_condition function object returns true.
 
-This operation is implemented in terms of one or more calls to the stream's read\_some function.
+This operation is implemented in terms of zero or more calls to the stream's read\_some function.
 
 
 [heading Parameters]
@@ -47175,15 +47496,15 @@ This operation is implemented in terms of one or more calls to the stream's read
 
 [[completion_condition][The function object to be called to determine whether the read operation is complete. The signature of the function object must be: 
 ``
-   bool completion_condition(
-     const boost::system::error_code& error, // Result of latest read_some
-                                             // operation.
+   std::size_t completion_condition(
+     // Result of latest read_some operation.
+     const boost::system::error_code& error,
 
-     std::size_t bytes_transferred           // Number of bytes transferred
-                                             // so far.
+     // Number of bytes transferred so far.
+     std::size_t bytes_transferred
    ); 
 ``
-A return value of true indicates that the read operation is complete. False indicates that further calls to the stream's read\_some function are required.]]
+A return value of 0 indicates that the read operation is complete. A non-zero return value indicates the maximum number of bytes to be read on the next call to the stream's read\_some function.]]
 
 [[ec][Set to indicate what error occurred, if any.]]
 
@@ -47216,7 +47537,7 @@ This function is used to read a certain number of bytes of data from a stream. T
 
 * An error occurred.
 
-This operation is implemented in terms of one or more calls to the stream's read\_some function.
+This operation is implemented in terms of zero or more calls to the stream's read\_some function.
 
 
 [heading Parameters]
@@ -47279,7 +47600,7 @@ This function is used to read a certain number of bytes of data from a stream. T
 
 * The completion_condition function object returns true.
 
-This operation is implemented in terms of one or more calls to the stream's read\_some function.
+This operation is implemented in terms of zero or more calls to the stream's read\_some function.
 
 
 [heading Parameters]
@@ -47293,15 +47614,15 @@ This operation is implemented in terms of one or more calls to the stream's read
 
 [[completion_condition][The function object to be called to determine whether the read operation is complete. The signature of the function object must be: 
 ``
-   bool completion_condition(
-     const boost::system::error_code& error, // Result of latest read_some
-                                             // operation.
+   std::size_t completion_condition(
+     // Result of latest read_some operation.
+     const boost::system::error_code& error,
 
-     std::size_t bytes_transferred           // Number of bytes transferred
-                                             // so far.
+     // Number of bytes transferred so far.
+     std::size_t bytes_transferred
    ); 
 ``
-A return value of true indicates that the read operation is complete. False indicates that further calls to the stream's read\_some function are required.]]
+A return value of 0 indicates that the read operation is complete. A non-zero return value indicates the maximum number of bytes to be read on the next call to the stream's read\_some function.]]
 
 ]
 
@@ -47344,7 +47665,7 @@ This function is used to read a certain number of bytes of data from a stream. T
 
 * The completion_condition function object returns true.
 
-This operation is implemented in terms of one or more calls to the stream's read\_some function.
+This operation is implemented in terms of zero or more calls to the stream's read\_some function.
 
 
 [heading Parameters]
@@ -47358,15 +47679,15 @@ This operation is implemented in terms of one or more calls to the stream's read
 
 [[completion_condition][The function object to be called to determine whether the read operation is complete. The signature of the function object must be: 
 ``
-   bool completion_condition(
-     const boost::system::error_code& error, // Result of latest read_some
-                                             // operation.
+   std::size_t completion_condition(
+     // Result of latest read_some operation.
+     const boost::system::error_code& error,
 
-     std::size_t bytes_transferred           // Number of bytes transferred
-                                             // so far.
+     // Number of bytes transferred so far.
+     std::size_t bytes_transferred
    ); 
 ``
-A return value of true indicates that the read operation is complete. False indicates that further calls to the stream's read\_some function are required.]]
+A return value of 0 indicates that the read operation is complete. A non-zero return value indicates the maximum number of bytes to be read on the next call to the stream's read\_some function.]]
 
 [[ec][Set to indicate what error occurred, if any.]]
 
@@ -47466,7 +47787,7 @@ This function is used to read a certain number of bytes of data from a random ac
 
 * An error occurred.
 
-This operation is implemented in terms of one or more calls to the device's read\_some\_at function.
+This operation is implemented in terms of zero or more calls to the device's read\_some\_at function.
 
 
 [heading Parameters]
@@ -47545,7 +47866,7 @@ This function is used to read a certain number of bytes of data from a random ac
 
 * The completion_condition function object returns true.
 
-This operation is implemented in terms of one or more calls to the device's read\_some\_at function.
+This operation is implemented in terms of zero or more calls to the device's read\_some\_at function.
 
 
 [heading Parameters]
@@ -47561,7 +47882,7 @@ This operation is implemented in terms of one or more calls to the device's read
 
 [[completion_condition][The function object to be called to determine whether the read operation is complete. The signature of the function object must be: 
 ``
-   bool completion_condition(
+   std::size_t completion_condition(
      // Result of latest read_some_at operation.
      const boost::system::error_code& error,
 
@@ -47569,7 +47890,7 @@ This operation is implemented in terms of one or more calls to the device's read
      std::size_t bytes_transferred
    ); 
 ``
-A return value of true indicates that the read operation is complete. False indicates that further calls to the device's read\_some\_at function are required.]]
+A return value of 0 indicates that the read operation is complete. A non-zero return value indicates the maximum number of bytes to be read on the next call to the device's read\_some\_at function.]]
 
 ]
 
@@ -47627,7 +47948,7 @@ This function is used to read a certain number of bytes of data from a random ac
 
 * The completion_condition function object returns true.
 
-This operation is implemented in terms of one or more calls to the device's read\_some\_at function.
+This operation is implemented in terms of zero or more calls to the device's read\_some\_at function.
 
 
 [heading Parameters]
@@ -47643,15 +47964,15 @@ This operation is implemented in terms of one or more calls to the device's read
 
 [[completion_condition][The function object to be called to determine whether the read operation is complete. The signature of the function object must be: 
 ``
-   bool completion_condition(
-     const boost::system::error_code& error, // Result of latest read_some_at
-                                             // operation.
+   std::size_t completion_condition(
+     // Result of latest read_some_at operation.
+     const boost::system::error_code& error,
 
-     std::size_t bytes_transferred           // Number of bytes transferred
-                                             // so far.
+     // Number of bytes transferred so far.
+     std::size_t bytes_transferred
    ); 
 ``
-A return value of true indicates that the read operation is complete. False indicates that further calls to the device's read\_some\_at function are required.]]
+A return value of 0 indicates that the read operation is complete. A non-zero return value indicates the maximum number of bytes to be read on the next call to the device's read\_some\_at function.]]
 
 [[ec][Set to indicate what error occurred, if any.]]
 
@@ -47685,7 +48006,7 @@ This function is used to read a certain number of bytes of data from a random ac
 
 * An error occurred.
 
-This operation is implemented in terms of one or more calls to the device's read\_some\_at function.
+This operation is implemented in terms of zero or more calls to the device's read\_some\_at function.
 
 
 [heading Parameters]
@@ -47751,7 +48072,7 @@ This function is used to read a certain number of bytes of data from a random ac
 
 * The completion_condition function object returns true.
 
-This operation is implemented in terms of one or more calls to the device's read\_some\_at function.
+This operation is implemented in terms of zero or more calls to the device's read\_some\_at function.
 
 
 [heading Parameters]
@@ -47767,7 +48088,7 @@ This operation is implemented in terms of one or more calls to the device's read
 
 [[completion_condition][The function object to be called to determine whether the read operation is complete. The signature of the function object must be: 
 ``
-   bool completion_condition(
+   std::size_t completion_condition(
      // Result of latest read_some_at operation.
      const boost::system::error_code& error,
 
@@ -47775,7 +48096,7 @@ This operation is implemented in terms of one or more calls to the device's read
      std::size_t bytes_transferred
    ); 
 ``
-A return value of true indicates that the read operation is complete. False indicates that further calls to the device's read\_some\_at function are required.]]
+A return value of 0 indicates that the read operation is complete. A non-zero return value indicates the maximum number of bytes to be read on the next call to the device's read\_some\_at function.]]
 
 ]
 
@@ -47819,7 +48140,7 @@ This function is used to read a certain number of bytes of data from a random ac
 
 * The completion_condition function object returns true.
 
-This operation is implemented in terms of one or more calls to the device's read\_some\_at function.
+This operation is implemented in terms of zero or more calls to the device's read\_some\_at function.
 
 
 [heading Parameters]
@@ -47835,7 +48156,7 @@ This operation is implemented in terms of one or more calls to the device's read
 
 [[completion_condition][The function object to be called to determine whether the read operation is complete. The signature of the function object must be: 
 ``
-   bool completion_condition(
+   std::size_t completion_condition(
      // Result of latest read_some_at operation.
      const boost::system::error_code& error,
 
@@ -47843,7 +48164,7 @@ This operation is implemented in terms of one or more calls to the device's read
      std::size_t bytes_transferred
    ); 
 ``
-A return value of true indicates that the read operation is complete. False indicates that further calls to the device's read\_some\_at function are required.]]
+A return value of 0 indicates that the read operation is complete. A non-zero return value indicates the maximum number of bytes to be read on the next call to the device's read\_some\_at function.]]
 
 [[ec][Set to indicate what error occurred, if any.]]
 
@@ -54041,10 +54362,18 @@ A reference to the io_service object that stream will use to dispatch handlers. 
 [endsect]
 
 
-
 [section:lowest_layer ssl::stream::lowest_layer]
 
 [indexterm2 lowest_layer..ssl::stream] Get a reference to the lowest layer. 
+
+  lowest_layer_type & ``[link boost_asio.reference.ssl__stream.lowest_layer.overload1 lowest_layer]``();
+
+  const lowest_layer_type & ``[link boost_asio.reference.ssl__stream.lowest_layer.overload2 lowest_layer]``() const;
+
+
+[section:overload1 ssl::stream::lowest_layer (1 of 2 overloads)]
+
+Get a reference to the lowest layer. 
 
   lowest_layer_type & lowest_layer();
 
@@ -54060,6 +54389,28 @@ A reference to the lowest layer in the stack of stream layers. Ownership is not 
 
 [endsect]
 
+
+
+[section:overload2 ssl::stream::lowest_layer (2 of 2 overloads)]
+
+Get a const reference to the lowest layer. 
+
+  const lowest_layer_type & lowest_layer() const;
+
+
+This function returns a const reference to the lowest layer in a stack of stream layers.
+
+
+[heading Return Value]
+      
+A const reference to the lowest layer in the stack of stream layers. Ownership is not transferred to the caller. 
+
+
+
+[endsect]
+
+
+[endsect]
 
 
 [section:lowest_layer_type ssl::stream::lowest_layer_type]
@@ -56594,10 +56945,18 @@ A reference to the io_service object that the I/O object will use to dispatch ha
 [endsect]
 
 
-
 [section:lowest_layer windows::basic_handle::lowest_layer]
 
 [indexterm2 lowest_layer..windows::basic_handle] Get a reference to the lowest layer. 
+
+  lowest_layer_type & ``[link boost_asio.reference.windows__basic_handle.lowest_layer.overload1 lowest_layer]``();
+
+  const lowest_layer_type & ``[link boost_asio.reference.windows__basic_handle.lowest_layer.overload2 lowest_layer]``() const;
+
+
+[section:overload1 windows::basic_handle::lowest_layer (1 of 2 overloads)]
+
+Get a reference to the lowest layer. 
 
   lowest_layer_type & lowest_layer();
 
@@ -56613,6 +56972,28 @@ A reference to the lowest layer in the stack of layers. Ownership is not transfe
 
 [endsect]
 
+
+
+[section:overload2 windows::basic_handle::lowest_layer (2 of 2 overloads)]
+
+Get a const reference to the lowest layer. 
+
+  const lowest_layer_type & lowest_layer() const;
+
+
+This function returns a const reference to the lowest layer in a stack of layers. Since a basic_handle cannot contain any further layers, it simply returns a reference to itself.
+
+
+[heading Return Value]
+      
+A const reference to the lowest layer in the stack of layers. Ownership is not transferred to the caller. 
+
+
+
+[endsect]
+
+
+[endsect]
 
 
 [section:lowest_layer_type windows::basic_handle::lowest_layer_type]
@@ -57430,13 +57811,21 @@ A reference to the io_service object that the I/O object will use to dispatch ha
 [endsect]
 
 
-
 [section:lowest_layer windows::basic_random_access_handle::lowest_layer]
+
+[indexterm2 lowest_layer..windows::basic_random_access_handle] Get a reference to the lowest layer. 
+
+  lowest_layer_type & ``[link boost_asio.reference.windows__basic_random_access_handle.lowest_layer.overload1 lowest_layer]``();
+
+  const lowest_layer_type & ``[link boost_asio.reference.windows__basic_random_access_handle.lowest_layer.overload2 lowest_layer]``() const;
+
+
+[section:overload1 windows::basic_random_access_handle::lowest_layer (1 of 2 overloads)]
 
 
 ['Inherited from windows::basic_handle.]
 
-[indexterm2 lowest_layer..windows::basic_random_access_handle] Get a reference to the lowest layer. 
+Get a reference to the lowest layer. 
 
   lowest_layer_type & lowest_layer();
 
@@ -57452,6 +57841,31 @@ A reference to the lowest layer in the stack of layers. Ownership is not transfe
 
 [endsect]
 
+
+
+[section:overload2 windows::basic_random_access_handle::lowest_layer (2 of 2 overloads)]
+
+
+['Inherited from windows::basic_handle.]
+
+Get a const reference to the lowest layer. 
+
+  const lowest_layer_type & lowest_layer() const;
+
+
+This function returns a const reference to the lowest layer in a stack of layers. Since a basic_handle cannot contain any further layers, it simply returns a reference to itself.
+
+
+[heading Return Value]
+      
+A const reference to the lowest layer in the stack of layers. Ownership is not transferred to the caller. 
+
+
+
+[endsect]
+
+
+[endsect]
 
 
 [section:lowest_layer_type windows::basic_random_access_handle::lowest_layer_type]
@@ -58501,13 +58915,21 @@ A reference to the io_service object that the I/O object will use to dispatch ha
 [endsect]
 
 
-
 [section:lowest_layer windows::basic_stream_handle::lowest_layer]
+
+[indexterm2 lowest_layer..windows::basic_stream_handle] Get a reference to the lowest layer. 
+
+  lowest_layer_type & ``[link boost_asio.reference.windows__basic_stream_handle.lowest_layer.overload1 lowest_layer]``();
+
+  const lowest_layer_type & ``[link boost_asio.reference.windows__basic_stream_handle.lowest_layer.overload2 lowest_layer]``() const;
+
+
+[section:overload1 windows::basic_stream_handle::lowest_layer (1 of 2 overloads)]
 
 
 ['Inherited from windows::basic_handle.]
 
-[indexterm2 lowest_layer..windows::basic_stream_handle] Get a reference to the lowest layer. 
+Get a reference to the lowest layer. 
 
   lowest_layer_type & lowest_layer();
 
@@ -58523,6 +58945,31 @@ A reference to the lowest layer in the stack of layers. Ownership is not transfe
 
 [endsect]
 
+
+
+[section:overload2 windows::basic_stream_handle::lowest_layer (2 of 2 overloads)]
+
+
+['Inherited from windows::basic_handle.]
+
+Get a const reference to the lowest layer. 
+
+  const lowest_layer_type & lowest_layer() const;
+
+
+This function returns a const reference to the lowest layer in a stack of layers. Since a basic_handle cannot contain any further layers, it simply returns a reference to itself.
+
+
+[heading Return Value]
+      
+A const reference to the lowest layer in the stack of layers. Ownership is not transferred to the caller. 
+
+
+
+[endsect]
+
+
+[endsect]
 
 
 [section:lowest_layer_type windows::basic_stream_handle::lowest_layer_type]
@@ -58950,6 +59397,219 @@ The write\_some operation may not transmit all of the data to the peer. Consider
 
 
 [endsect]
+
+
+[endsect]
+
+[section:windows__overlapped_ptr windows::overlapped_ptr]
+
+Wraps a handler to create an OVERLAPPED object for use with overlapped I/O. 
+
+  class overlapped_ptr :
+    noncopyable
+
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link boost_asio.reference.windows__overlapped_ptr.complete [*complete]]]
+    [Post completion notification for overlapped operation. Releases ownership. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.windows__overlapped_ptr.get [*get]]]
+    [Get the contained OVERLAPPED object. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.windows__overlapped_ptr.overlapped_ptr [*overlapped_ptr]]]
+    [Construct an empty overlapped_ptr. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.windows__overlapped_ptr.release [*release]]]
+    [Release ownership of the OVERLAPPED object. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.windows__overlapped_ptr.reset [*reset]]]
+    [Reset to empty. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.windows__overlapped_ptr._overlapped_ptr [*~overlapped_ptr]]]
+    [Destructor automatically frees the OVERLAPPED object unless released. ]
+  ]
+  
+]
+
+A special-purpose smart pointer used to wrap an application handler so that it can be passed as the LPOVERLAPPED argument to overlapped I/O functions.
+
+
+[heading Thread Safety]
+  
+[*Distinct] [*objects:]  Safe.
+
+[*Shared] [*objects:]  Unsafe. 
+
+
+
+[section:complete windows::overlapped_ptr::complete]
+
+[indexterm2 complete..windows::overlapped_ptr] Post completion notification for overlapped operation. Releases ownership. 
+
+  void complete(
+      const boost::system::error_code & ec,
+      std::size_t bytes_transferred);
+
+
+
+[endsect]
+
+
+[section:get windows::overlapped_ptr::get]
+
+[indexterm2 get..windows::overlapped_ptr] Get the contained OVERLAPPED object. 
+
+  OVERLAPPED * ``[link boost_asio.reference.windows__overlapped_ptr.get.overload1 get]``();
+
+  const OVERLAPPED * ``[link boost_asio.reference.windows__overlapped_ptr.get.overload2 get]``() const;
+
+
+[section:overload1 windows::overlapped_ptr::get (1 of 2 overloads)]
+
+Get the contained OVERLAPPED object. 
+
+  OVERLAPPED * get();
+
+
+
+[endsect]
+
+
+
+[section:overload2 windows::overlapped_ptr::get (2 of 2 overloads)]
+
+Get the contained OVERLAPPED object. 
+
+  const OVERLAPPED * get() const;
+
+
+
+[endsect]
+
+
+[endsect]
+
+[section:overlapped_ptr windows::overlapped_ptr::overlapped_ptr]
+
+[indexterm2 overlapped_ptr..windows::overlapped_ptr] Construct an empty overlapped_ptr. 
+
+  ``[link boost_asio.reference.windows__overlapped_ptr.overlapped_ptr.overload1 overlapped_ptr]``();
+
+  template<
+      typename ``[link boost_asio.reference.Handler Handler]``>
+  ``[link boost_asio.reference.windows__overlapped_ptr.overlapped_ptr.overload2 overlapped_ptr]``(
+      boost::asio::io_service & io_service,
+      Handler handler);
+
+
+[section:overload1 windows::overlapped_ptr::overlapped_ptr (1 of 2 overloads)]
+
+Construct an empty overlapped_ptr. 
+
+  overlapped_ptr();
+
+
+
+[endsect]
+
+
+
+[section:overload2 windows::overlapped_ptr::overlapped_ptr (2 of 2 overloads)]
+
+Construct an overlapped_ptr to contain the specified handler. 
+
+  template<
+      typename ``[link boost_asio.reference.Handler Handler]``>
+  overlapped_ptr(
+      boost::asio::io_service & io_service,
+      Handler handler);
+
+
+
+[endsect]
+
+
+[endsect]
+
+
+[section:release windows::overlapped_ptr::release]
+
+[indexterm2 release..windows::overlapped_ptr] Release ownership of the OVERLAPPED object. 
+
+  OVERLAPPED * release();
+
+
+
+[endsect]
+
+
+[section:reset windows::overlapped_ptr::reset]
+
+[indexterm2 reset..windows::overlapped_ptr] Reset to empty. 
+
+  void ``[link boost_asio.reference.windows__overlapped_ptr.reset.overload1 reset]``();
+
+  template<
+      typename ``[link boost_asio.reference.Handler Handler]``>
+  void ``[link boost_asio.reference.windows__overlapped_ptr.reset.overload2 reset]``(
+      boost::asio::io_service & io_service,
+      Handler handler);
+
+
+[section:overload1 windows::overlapped_ptr::reset (1 of 2 overloads)]
+
+Reset to empty. 
+
+  void reset();
+
+
+
+[endsect]
+
+
+
+[section:overload2 windows::overlapped_ptr::reset (2 of 2 overloads)]
+
+Reset to contain the specified handler, freeing any current OVERLAPPED object. 
+
+  template<
+      typename ``[link boost_asio.reference.Handler Handler]``>
+  void reset(
+      boost::asio::io_service & io_service,
+      Handler handler);
+
+
+
+[endsect]
+
+
+[endsect]
+
+
+[section:_overlapped_ptr windows::overlapped_ptr::~overlapped_ptr]
+
+[indexterm2 ~overlapped_ptr..windows::overlapped_ptr] Destructor automatically frees the OVERLAPPED object unless released. 
+
+  ~overlapped_ptr();
+
+
+
+[endsect]
+
 
 
 [endsect]
@@ -60084,7 +60744,7 @@ This function is used to write a certain number of bytes of data to a stream. Th
 
 * An error occurred.
 
-This operation is implemented in terms of one or more calls to the stream's write\_some function.
+This operation is implemented in terms of zero or more calls to the stream's write\_some function.
 
 
 [heading Parameters]
@@ -60160,7 +60820,7 @@ This function is used to write a certain number of bytes of data to a stream. Th
 
 * The completion_condition function object returns true.
 
-This operation is implemented in terms of one or more calls to the stream's write\_some function.
+This operation is implemented in terms of zero or more calls to the stream's write\_some function.
 
 
 [heading Parameters]
@@ -60174,15 +60834,15 @@ This operation is implemented in terms of one or more calls to the stream's writ
 
 [[completion_condition][The function object to be called to determine whether the write operation is complete. The signature of the function object must be: 
 ``
-   bool completion_condition(
-     const boost::system::error_code& error, // Result of latest write_some
-                                             // operation.
+   std::size_t completion_condition(
+     // Result of latest write_some operation.
+     const boost::system::error_code& error,
 
-     std::size_t bytes_transferred           // Number of bytes transferred
-                                             // so far.
+     // Number of bytes transferred so far.
+     std::size_t bytes_transferred
    ); 
 ``
-A return value of true indicates that the write operation is complete. False indicates that further calls to the stream's write\_some function are required.]]
+A return value of 0 indicates that the write operation is complete. A non-zero return value indicates the maximum number of bytes to be written on the next call to the stream's write\_some function.]]
 
 ]
 
@@ -60239,7 +60899,7 @@ This function is used to write a certain number of bytes of data to a stream. Th
 
 * The completion_condition function object returns true.
 
-This operation is implemented in terms of one or more calls to the stream's write\_some function.
+This operation is implemented in terms of zero or more calls to the stream's write\_some function.
 
 
 [heading Parameters]
@@ -60253,15 +60913,15 @@ This operation is implemented in terms of one or more calls to the stream's writ
 
 [[completion_condition][The function object to be called to determine whether the write operation is complete. The signature of the function object must be: 
 ``
-   bool completion_condition(
-     const boost::system::error_code& error, // Result of latest write_some
-                                             // operation.
+   std::size_t completion_condition(
+     // Result of latest write_some operation.
+     const boost::system::error_code& error,
 
-     std::size_t bytes_transferred           // Number of bytes transferred
-                                             // so far.
+     // Number of bytes transferred so far.
+     std::size_t bytes_transferred
    ); 
 ``
-A return value of true indicates that the write operation is complete. False indicates that further calls to the stream's write\_some function are required.]]
+A return value of 0 indicates that the write operation is complete. A non-zero return value indicates the maximum number of bytes to be written on the next call to the stream's write\_some function.]]
 
 [[ec][Set to indicate what error occurred, if any.]]
 
@@ -60296,7 +60956,7 @@ This function is used to write a certain number of bytes of data to a stream. Th
 
 * An error occurred.
 
-This operation is implemented in terms of one or more calls to the stream's write\_some function.
+This operation is implemented in terms of zero or more calls to the stream's write\_some function.
 
 
 [heading Parameters]
@@ -60361,7 +61021,7 @@ This function is used to write a certain number of bytes of data to a stream. Th
 
 * The completion_condition function object returns true.
 
-This operation is implemented in terms of one or more calls to the stream's write\_some function.
+This operation is implemented in terms of zero or more calls to the stream's write\_some function.
 
 
 [heading Parameters]
@@ -60375,15 +61035,15 @@ This operation is implemented in terms of one or more calls to the stream's writ
 
 [[completion_condition][The function object to be called to determine whether the write operation is complete. The signature of the function object must be: 
 ``
-   bool completion_condition(
-     const boost::system::error_code& error, // Result of latest write_some
-                                             // operation.
+   std::size_t completion_condition(
+     // Result of latest write_some operation.
+     const boost::system::error_code& error,
 
-     std::size_t bytes_transferred           // Number of bytes transferred
-                                             // so far.
+     // Number of bytes transferred so far.
+     std::size_t bytes_transferred
    ); 
 ``
-A return value of true indicates that the write operation is complete. False indicates that further calls to the stream's write\_some function are required.]]
+A return value of 0 indicates that the write operation is complete. A non-zero return value indicates the maximum number of bytes to be written on the next call to the stream's write\_some function.]]
 
 ]
 
@@ -60428,7 +61088,7 @@ This function is used to write a certain number of bytes of data to a stream. Th
 
 * The completion_condition function object returns true.
 
-This operation is implemented in terms of one or more calls to the stream's write\_some function.
+This operation is implemented in terms of zero or more calls to the stream's write\_some function.
 
 
 [heading Parameters]
@@ -60442,15 +61102,15 @@ This operation is implemented in terms of one or more calls to the stream's writ
 
 [[completion_condition][The function object to be called to determine whether the write operation is complete. The signature of the function object must be: 
 ``
-   bool completion_condition(
-     const boost::system::error_code& error, // Result of latest write_some
-                                             // operation.
+   std::size_t completion_condition(
+     // Result of latest write_some operation.
+     const boost::system::error_code& error,
 
-     std::size_t bytes_transferred           // Number of bytes transferred
-                                             // so far.
+     // Number of bytes transferred so far.
+     std::size_t bytes_transferred
    ); 
 ``
-A return value of true indicates that the write operation is complete. False indicates that further calls to the stream's write\_some function are required.]]
+A return value of 0 indicates that the write operation is complete. A non-zero return value indicates the maximum number of bytes to be written on the next call to the stream's write\_some function.]]
 
 [[ec][Set to indicate what error occurred, if any.]]
 
@@ -60550,7 +61210,7 @@ This function is used to write a certain number of bytes of data to a random acc
 
 * An error occurred.
 
-This operation is implemented in terms of one or more calls to the device's write\_some\_at function.
+This operation is implemented in terms of zero or more calls to the device's write\_some\_at function.
 
 
 [heading Parameters]
@@ -60629,7 +61289,7 @@ This function is used to write a certain number of bytes of data to a random acc
 
 * The completion_condition function object returns true.
 
-This operation is implemented in terms of one or more calls to the device's write\_some\_at function.
+This operation is implemented in terms of zero or more calls to the device's write\_some\_at function.
 
 
 [heading Parameters]
@@ -60645,7 +61305,7 @@ This operation is implemented in terms of one or more calls to the device's writ
 
 [[completion_condition][The function object to be called to determine whether the write operation is complete. The signature of the function object must be: 
 ``
-   bool completion_condition(
+   std::size_t completion_condition(
      // Result of latest write_some_at operation.
      const boost::system::error_code& error,
 
@@ -60653,7 +61313,7 @@ This operation is implemented in terms of one or more calls to the device's writ
      std::size_t bytes_transferred
    ); 
 ``
-A return value of true indicates that the write operation is complete. False indicates that further calls to the device's write\_some\_at function are required.]]
+A return value of 0 indicates that the write operation is complete. A non-zero return value indicates the maximum number of bytes to be written on the next call to the device's write\_some\_at function.]]
 
 ]
 
@@ -60711,7 +61371,7 @@ This function is used to write a certain number of bytes of data to a random acc
 
 * The completion_condition function object returns true.
 
-This operation is implemented in terms of one or more calls to the device's write\_some\_at function.
+This operation is implemented in terms of zero or more calls to the device's write\_some\_at function.
 
 
 [heading Parameters]
@@ -60727,7 +61387,7 @@ This operation is implemented in terms of one or more calls to the device's writ
 
 [[completion_condition][The function object to be called to determine whether the write operation is complete. The signature of the function object must be: 
 ``
-   bool completion_condition(
+   std::size_t completion_condition(
      // Result of latest write_some_at operation.
      const boost::system::error_code& error,
 
@@ -60735,7 +61395,7 @@ This operation is implemented in terms of one or more calls to the device's writ
      std::size_t bytes_transferred
    ); 
 ``
-A return value of true indicates that the write operation is complete. False indicates that further calls to the device's write\_some\_at function are required.]]
+A return value of 0 indicates that the write operation is complete. A non-zero return value indicates the maximum number of bytes to be written on the next call to the device's write\_some\_at function.]]
 
 [[ec][Set to indicate what error occurred, if any.]]
 
@@ -60771,7 +61431,7 @@ This function is used to write a certain number of bytes of data to a random acc
 
 * An error occurred.
 
-This operation is implemented in terms of one or more calls to the device's write\_some\_at function.
+This operation is implemented in terms of zero or more calls to the device's write\_some\_at function.
 
 
 [heading Parameters]
@@ -60839,7 +61499,7 @@ This function is used to write a certain number of bytes of data to a random acc
 
 * The completion_condition function object returns true.
 
-This operation is implemented in terms of one or more calls to the device's write\_some\_at function.
+This operation is implemented in terms of zero or more calls to the device's write\_some\_at function.
 
 
 [heading Parameters]
@@ -60855,7 +61515,7 @@ This operation is implemented in terms of one or more calls to the device's writ
 
 [[completion_condition][The function object to be called to determine whether the write operation is complete. The signature of the function object must be: 
 ``
-   bool completion_condition(
+   std::size_t completion_condition(
      // Result of latest write_some_at operation.
      const boost::system::error_code& error,
 
@@ -60863,7 +61523,7 @@ This operation is implemented in terms of one or more calls to the device's writ
      std::size_t bytes_transferred
    ); 
 ``
-A return value of true indicates that the write operation is complete. False indicates that further calls to the device's write\_some\_at function are required.]]
+A return value of 0 indicates that the write operation is complete. A non-zero return value indicates the maximum number of bytes to be written on the next call to the device's write\_some\_at function.]]
 
 ]
 
@@ -60909,7 +61569,7 @@ This function is used to write a certain number of bytes of data to a random acc
 
 * The completion_condition function object returns true.
 
-This operation is implemented in terms of one or more calls to the device's write\_some\_at function.
+This operation is implemented in terms of zero or more calls to the device's write\_some\_at function.
 
 
 [heading Parameters]
@@ -60925,7 +61585,7 @@ This operation is implemented in terms of one or more calls to the device's writ
 
 [[completion_condition][The function object to be called to determine whether the write operation is complete. The signature of the function object must be: 
 ``
-   bool completion_condition(
+   std::size_t completion_condition(
      // Result of latest write_some_at operation.
      const boost::system::error_code& error,
 
@@ -60933,7 +61593,7 @@ This operation is implemented in terms of one or more calls to the device's writ
      std::size_t bytes_transferred
    ); 
 ``
-A return value of true indicates that the write operation is complete. False indicates that further calls to the device's write\_some\_at function are required.]]
+A return value of 0 indicates that the write operation is complete. A non-zero return value indicates the maximum number of bytes to be written on the next call to the device's write\_some\_at function.]]
 
 [[ec][Set to indicate what error occurred, if any.]]
 
