@@ -33,6 +33,18 @@ exe connect_pair
     $(SOCKET_LIBS)
   ;
 
+exe iostream_client
+  : <lib>@boost/libs/system/build/boost_system
+    iostream_client.cpp
+  : <include>$(BOOST_ROOT)
+    <include>../../../..
+    <define>BOOST_ALL_NO_LIB=1
+    <threading>multi
+    <mingw><*><find-library>ws2_32
+    <mingw><*><find-library>mswsock
+    $(SOCKET_LIBS)
+  ;
+
 exe stream_client
   : <lib>@boost/libs/system/build/boost_system
     stream_client.cpp
