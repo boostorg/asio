@@ -43,12 +43,9 @@ class wince_thread
   : private noncopyable
 {
 public:
-  // The purpose of the thread.
-  enum purpose { internal, external };
-
   // Constructor.
   template <typename Function>
-  wince_thread(Function f, purpose = internal)
+  wince_thread(Function f)
   {
     std::auto_ptr<func_base> arg(new func<Function>(f));
     DWORD thread_id = 0;

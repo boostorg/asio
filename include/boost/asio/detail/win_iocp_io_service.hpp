@@ -149,6 +149,11 @@ public:
     timer_queues_.clear();
   }
 
+  // Initialise the task. Nothing to do here.
+  void init_task()
+  {
+  }
+
   // Register a handle with the IO completion port.
   boost::system::error_code register_handle(
       HANDLE handle, boost::system::error_code& ec)

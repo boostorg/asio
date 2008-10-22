@@ -37,6 +37,21 @@ namespace boost {
 namespace asio {
 namespace detail {
 
+#if defined(__GNUC__)
+# if (__GNUC__ == 4 && __GNUC_MINOR__ >= 1) || (__GNUC__ > 4)
+#  pragma GCC visibility push (default)
+# endif // (__GNUC__ == 4 && __GNUC_MINOR__ >= 1) || (__GNUC__ > 4)
+#endif // defined(__GNUC__)
+
+template <typename T>
+class typeid_wrapper {};
+
+#if defined(__GNUC__)
+# if (__GNUC__ == 4 && __GNUC_MINOR__ >= 1) || (__GNUC__ > 4)
+#  pragma GCC visibility pop
+# endif // (__GNUC__ == 4 && __GNUC_MINOR__ >= 1) || (__GNUC__ > 4)
+#endif // defined(__GNUC__)
+
 class service_registry
   : private noncopyable
 {
@@ -169,7 +184,7 @@ private:
   void init_service_id(boost::asio::io_service::service& service,
       const boost::asio::detail::service_id<Service>& /*id*/)
   {
-    service.type_info_ = &typeid(Service);
+    service.type_info_ = &typeid(typeid_wrapper<Service>);
     service.id_ = 0;
   }
 #endif // !defined(BOOST_ASIO_NO_TYPEID)
@@ -189,7 +204,8 @@ private:
       const boost::asio::io_service::service& service,
       const boost::asio::detail::service_id<Service>& /*id*/)
   {
-    return service.type_info_ != 0 && *service.type_info_ == typeid(Service);
+    return service.type_info_ != 0
+      && *service.type_info_ == typeid(typeid_wrapper<Service>);
   }
 #endif // !defined(BOOST_ASIO_NO_TYPEID)
 
