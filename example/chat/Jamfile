@@ -45,3 +45,16 @@ exe chat_server
     <mingw><*><find-library>mswsock
     $(SOCKET_LIBS)
   ;
+
+exe posix_chat_client
+  : <lib>@boost/libs/thread/build/boost_thread
+    <lib>@boost/libs/system/build/boost_system
+    posix_chat_client.cpp
+  : <include>$(BOOST_ROOT)
+    <include>../../../..
+    <define>BOOST_ALL_NO_LIB=1
+    <threading>multi
+    <mingw><*><find-library>ws2_32
+    <mingw><*><find-library>mswsock
+    $(SOCKET_LIBS)
+  ;
