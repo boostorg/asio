@@ -121,52 +121,81 @@ void test_char_read_until()
   boost::system::error_code ec;
 
   s.reset(read_data, sizeof(read_data));
+  sb1.consume(sb1.size());
   std::size_t length = boost::asio::read_until(s, sb1, 'Z');
   BOOST_CHECK(length == 26);
 
   s.reset(read_data, sizeof(read_data));
   s.next_read_length(1);
+  sb1.consume(sb1.size());
   length = boost::asio::read_until(s, sb1, 'Z');
   BOOST_CHECK(length == 26);
 
   s.reset(read_data, sizeof(read_data));
   s.next_read_length(10);
+  sb1.consume(sb1.size());
   length = boost::asio::read_until(s, sb1, 'Z');
   BOOST_CHECK(length == 26);
 
   s.reset(read_data, sizeof(read_data));
+  sb1.consume(sb1.size());
   length = boost::asio::read_until(s, sb1, 'Z', ec);
   BOOST_CHECK(!ec);
   BOOST_CHECK(length == 26);
 
   s.reset(read_data, sizeof(read_data));
   s.next_read_length(1);
+  sb1.consume(sb1.size());
   length = boost::asio::read_until(s, sb1, 'Z', ec);
   BOOST_CHECK(!ec);
   BOOST_CHECK(length == 26);
 
   s.reset(read_data, sizeof(read_data));
   s.next_read_length(10);
+  sb1.consume(sb1.size());
   length = boost::asio::read_until(s, sb1, 'Z', ec);
   BOOST_CHECK(!ec);
   BOOST_CHECK(length == 26);
 
   s.reset(read_data, sizeof(read_data));
+  sb2.consume(sb2.size());
   length = boost::asio::read_until(s, sb2, 'Z', ec);
   BOOST_CHECK(ec == boost::asio::error::not_found);
   BOOST_CHECK(length == 0);
 
   s.reset(read_data, sizeof(read_data));
   s.next_read_length(1);
+  sb2.consume(sb2.size());
   length = boost::asio::read_until(s, sb2, 'Z', ec);
   BOOST_CHECK(ec == boost::asio::error::not_found);
   BOOST_CHECK(length == 0);
 
   s.reset(read_data, sizeof(read_data));
   s.next_read_length(10);
+  sb2.consume(sb2.size());
   length = boost::asio::read_until(s, sb2, 'Z', ec);
   BOOST_CHECK(ec == boost::asio::error::not_found);
   BOOST_CHECK(length == 0);
+
+  s.reset(read_data, sizeof(read_data));
+  sb2.consume(sb2.size());
+  length = boost::asio::read_until(s, sb2, 'Y', ec);
+  BOOST_CHECK(!ec);
+  BOOST_CHECK(length == 25);
+
+  s.reset(read_data, sizeof(read_data));
+  s.next_read_length(1);
+  sb2.consume(sb2.size());
+  length = boost::asio::read_until(s, sb2, 'Y', ec);
+  BOOST_CHECK(!ec);
+  BOOST_CHECK(length == 25);
+
+  s.reset(read_data, sizeof(read_data));
+  s.next_read_length(10);
+  sb2.consume(sb2.size());
+  length = boost::asio::read_until(s, sb2, 'Y', ec);
+  BOOST_CHECK(!ec);
+  BOOST_CHECK(length == 25);
 }
 
 void test_string_read_until()
@@ -178,52 +207,81 @@ void test_string_read_until()
   boost::system::error_code ec;
 
   s.reset(read_data, sizeof(read_data));
+  sb1.consume(sb1.size());
   std::size_t length = boost::asio::read_until(s, sb1, "XYZ");
   BOOST_CHECK(length == 26);
 
   s.reset(read_data, sizeof(read_data));
   s.next_read_length(1);
+  sb1.consume(sb1.size());
   length = boost::asio::read_until(s, sb1, "XYZ");
   BOOST_CHECK(length == 26);
 
   s.reset(read_data, sizeof(read_data));
   s.next_read_length(10);
+  sb1.consume(sb1.size());
   length = boost::asio::read_until(s, sb1, "XYZ");
   BOOST_CHECK(length == 26);
 
   s.reset(read_data, sizeof(read_data));
+  sb1.consume(sb1.size());
   length = boost::asio::read_until(s, sb1, "XYZ", ec);
   BOOST_CHECK(!ec);
   BOOST_CHECK(length == 26);
 
   s.reset(read_data, sizeof(read_data));
   s.next_read_length(1);
+  sb1.consume(sb1.size());
   length = boost::asio::read_until(s, sb1, "XYZ", ec);
   BOOST_CHECK(!ec);
   BOOST_CHECK(length == 26);
 
   s.reset(read_data, sizeof(read_data));
   s.next_read_length(10);
+  sb1.consume(sb1.size());
   length = boost::asio::read_until(s, sb1, "XYZ", ec);
   BOOST_CHECK(!ec);
   BOOST_CHECK(length == 26);
 
   s.reset(read_data, sizeof(read_data));
+  sb2.consume(sb2.size());
   length = boost::asio::read_until(s, sb2, "XYZ", ec);
   BOOST_CHECK(ec == boost::asio::error::not_found);
   BOOST_CHECK(length == 0);
 
   s.reset(read_data, sizeof(read_data));
   s.next_read_length(1);
+  sb2.consume(sb2.size());
   length = boost::asio::read_until(s, sb2, "XYZ", ec);
   BOOST_CHECK(ec == boost::asio::error::not_found);
   BOOST_CHECK(length == 0);
 
   s.reset(read_data, sizeof(read_data));
   s.next_read_length(10);
+  sb2.consume(sb2.size());
   length = boost::asio::read_until(s, sb2, "XYZ", ec);
   BOOST_CHECK(ec == boost::asio::error::not_found);
   BOOST_CHECK(length == 0);
+
+  s.reset(read_data, sizeof(read_data));
+  sb2.consume(sb2.size());
+  length = boost::asio::read_until(s, sb2, "WXY", ec);
+  BOOST_CHECK(!ec);
+  BOOST_CHECK(length == 25);
+
+  s.reset(read_data, sizeof(read_data));
+  s.next_read_length(1);
+  sb2.consume(sb2.size());
+  length = boost::asio::read_until(s, sb2, "WXY", ec);
+  BOOST_CHECK(!ec);
+  BOOST_CHECK(length == 25);
+
+  s.reset(read_data, sizeof(read_data));
+  s.next_read_length(10);
+  sb2.consume(sb2.size());
+  length = boost::asio::read_until(s, sb2, "WXY", ec);
+  BOOST_CHECK(!ec);
+  BOOST_CHECK(length == 25);
 }
 
 class match_char
@@ -262,52 +320,81 @@ void test_match_condition_read_until()
   boost::system::error_code ec;
 
   s.reset(read_data, sizeof(read_data));
+  sb1.consume(sb1.size());
   std::size_t length = boost::asio::read_until(s, sb1, match_char('Z'));
   BOOST_CHECK(length == 26);
 
   s.reset(read_data, sizeof(read_data));
   s.next_read_length(1);
+  sb1.consume(sb1.size());
   length = boost::asio::read_until(s, sb1, match_char('Z'));
   BOOST_CHECK(length == 26);
 
   s.reset(read_data, sizeof(read_data));
   s.next_read_length(10);
+  sb1.consume(sb1.size());
   length = boost::asio::read_until(s, sb1, match_char('Z'));
   BOOST_CHECK(length == 26);
 
   s.reset(read_data, sizeof(read_data));
+  sb1.consume(sb1.size());
   length = boost::asio::read_until(s, sb1, match_char('Z'), ec);
   BOOST_CHECK(!ec);
   BOOST_CHECK(length == 26);
 
   s.reset(read_data, sizeof(read_data));
   s.next_read_length(1);
+  sb1.consume(sb1.size());
   length = boost::asio::read_until(s, sb1, match_char('Z'), ec);
   BOOST_CHECK(!ec);
   BOOST_CHECK(length == 26);
 
   s.reset(read_data, sizeof(read_data));
   s.next_read_length(10);
+  sb1.consume(sb1.size());
   length = boost::asio::read_until(s, sb1, match_char('Z'), ec);
   BOOST_CHECK(!ec);
   BOOST_CHECK(length == 26);
 
   s.reset(read_data, sizeof(read_data));
+  sb2.consume(sb2.size());
   length = boost::asio::read_until(s, sb2, match_char('Z'), ec);
   BOOST_CHECK(ec == boost::asio::error::not_found);
   BOOST_CHECK(length == 0);
 
   s.reset(read_data, sizeof(read_data));
   s.next_read_length(1);
+  sb2.consume(sb2.size());
   length = boost::asio::read_until(s, sb2, match_char('Z'), ec);
   BOOST_CHECK(ec == boost::asio::error::not_found);
   BOOST_CHECK(length == 0);
 
   s.reset(read_data, sizeof(read_data));
   s.next_read_length(10);
+  sb2.consume(sb2.size());
   length = boost::asio::read_until(s, sb2, match_char('Z'), ec);
   BOOST_CHECK(ec == boost::asio::error::not_found);
   BOOST_CHECK(length == 0);
+
+  s.reset(read_data, sizeof(read_data));
+  sb2.consume(sb2.size());
+  length = boost::asio::read_until(s, sb2, match_char('Y'), ec);
+  BOOST_CHECK(!ec);
+  BOOST_CHECK(length == 25);
+
+  s.reset(read_data, sizeof(read_data));
+  s.next_read_length(1);
+  sb2.consume(sb2.size());
+  length = boost::asio::read_until(s, sb2, match_char('Y'), ec);
+  BOOST_CHECK(!ec);
+  BOOST_CHECK(length == 25);
+
+  s.reset(read_data, sizeof(read_data));
+  s.next_read_length(10);
+  sb2.consume(sb2.size());
+  length = boost::asio::read_until(s, sb2, match_char('Y'), ec);
+  BOOST_CHECK(!ec);
+  BOOST_CHECK(length == 25);
 }
 
 void async_read_handler(
@@ -333,6 +420,7 @@ void test_char_async_read_until()
   ec = boost::system::error_code();
   length = 0;
   called = false;
+  sb1.consume(sb1.size());
   boost::asio::async_read_until(s, sb1, 'Z',
       boost::bind(async_read_handler, boost::asio::placeholders::error, &ec,
         boost::asio::placeholders::bytes_transferred, &length, &called));
@@ -347,6 +435,7 @@ void test_char_async_read_until()
   ec = boost::system::error_code();
   length = 0;
   called = false;
+  sb1.consume(sb1.size());
   boost::asio::async_read_until(s, sb1, 'Z',
       boost::bind(async_read_handler, boost::asio::placeholders::error, &ec,
         boost::asio::placeholders::bytes_transferred, &length, &called));
@@ -361,6 +450,7 @@ void test_char_async_read_until()
   ec = boost::system::error_code();
   length = 0;
   called = false;
+  sb1.consume(sb1.size());
   boost::asio::async_read_until(s, sb1, 'Z',
       boost::bind(async_read_handler, boost::asio::placeholders::error, &ec,
         boost::asio::placeholders::bytes_transferred, &length, &called));
@@ -374,6 +464,7 @@ void test_char_async_read_until()
   ec = boost::system::error_code();
   length = 0;
   called = false;
+  sb2.consume(sb2.size());
   boost::asio::async_read_until(s, sb2, 'Z',
       boost::bind(async_read_handler, boost::asio::placeholders::error, &ec,
         boost::asio::placeholders::bytes_transferred, &length, &called));
@@ -388,6 +479,7 @@ void test_char_async_read_until()
   ec = boost::system::error_code();
   length = 0;
   called = false;
+  sb2.consume(sb2.size());
   boost::asio::async_read_until(s, sb2, 'Z',
       boost::bind(async_read_handler, boost::asio::placeholders::error, &ec,
         boost::asio::placeholders::bytes_transferred, &length, &called));
@@ -402,6 +494,7 @@ void test_char_async_read_until()
   ec = boost::system::error_code();
   length = 0;
   called = false;
+  sb2.consume(sb2.size());
   boost::asio::async_read_until(s, sb2, 'Z',
       boost::bind(async_read_handler, boost::asio::placeholders::error, &ec,
         boost::asio::placeholders::bytes_transferred, &length, &called));
@@ -410,6 +503,50 @@ void test_char_async_read_until()
   BOOST_CHECK(called);
   BOOST_CHECK(ec == boost::asio::error::not_found);
   BOOST_CHECK(length == 0);
+
+  s.reset(read_data, sizeof(read_data));
+  ec = boost::system::error_code();
+  length = 0;
+  called = false;
+  sb2.consume(sb2.size());
+  boost::asio::async_read_until(s, sb2, 'Y',
+      boost::bind(async_read_handler, boost::asio::placeholders::error, &ec,
+        boost::asio::placeholders::bytes_transferred, &length, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(!ec);
+  BOOST_CHECK(length == 25);
+
+  s.reset(read_data, sizeof(read_data));
+  s.next_read_length(1);
+  ec = boost::system::error_code();
+  length = 0;
+  called = false;
+  sb2.consume(sb2.size());
+  boost::asio::async_read_until(s, sb2, 'Y',
+      boost::bind(async_read_handler, boost::asio::placeholders::error, &ec,
+        boost::asio::placeholders::bytes_transferred, &length, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(!ec);
+  BOOST_CHECK(length == 25);
+
+  s.reset(read_data, sizeof(read_data));
+  s.next_read_length(10);
+  ec = boost::system::error_code();
+  length = 0;
+  called = false;
+  sb2.consume(sb2.size());
+  boost::asio::async_read_until(s, sb2, 'Y',
+      boost::bind(async_read_handler, boost::asio::placeholders::error, &ec,
+        boost::asio::placeholders::bytes_transferred, &length, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(!ec);
+  BOOST_CHECK(length == 25);
 }
 
 void test_string_async_read_until()
@@ -426,6 +563,7 @@ void test_string_async_read_until()
   ec = boost::system::error_code();
   length = 0;
   called = false;
+  sb1.consume(sb1.size());
   boost::asio::async_read_until(s, sb1, "XYZ",
       boost::bind(async_read_handler, boost::asio::placeholders::error, &ec,
         boost::asio::placeholders::bytes_transferred, &length, &called));
@@ -440,6 +578,7 @@ void test_string_async_read_until()
   ec = boost::system::error_code();
   length = 0;
   called = false;
+  sb1.consume(sb1.size());
   boost::asio::async_read_until(s, sb1, "XYZ",
       boost::bind(async_read_handler, boost::asio::placeholders::error, &ec,
         boost::asio::placeholders::bytes_transferred, &length, &called));
@@ -454,6 +593,7 @@ void test_string_async_read_until()
   ec = boost::system::error_code();
   length = 0;
   called = false;
+  sb1.consume(sb1.size());
   boost::asio::async_read_until(s, sb1, "XYZ",
       boost::bind(async_read_handler, boost::asio::placeholders::error, &ec,
         boost::asio::placeholders::bytes_transferred, &length, &called));
@@ -467,6 +607,7 @@ void test_string_async_read_until()
   ec = boost::system::error_code();
   length = 0;
   called = false;
+  sb2.consume(sb2.size());
   boost::asio::async_read_until(s, sb2, "XYZ",
       boost::bind(async_read_handler, boost::asio::placeholders::error, &ec,
         boost::asio::placeholders::bytes_transferred, &length, &called));
@@ -481,6 +622,7 @@ void test_string_async_read_until()
   ec = boost::system::error_code();
   length = 0;
   called = false;
+  sb2.consume(sb2.size());
   boost::asio::async_read_until(s, sb2, "XYZ",
       boost::bind(async_read_handler, boost::asio::placeholders::error, &ec,
         boost::asio::placeholders::bytes_transferred, &length, &called));
@@ -495,6 +637,7 @@ void test_string_async_read_until()
   ec = boost::system::error_code();
   length = 0;
   called = false;
+  sb2.consume(sb2.size());
   boost::asio::async_read_until(s, sb2, "XYZ",
       boost::bind(async_read_handler, boost::asio::placeholders::error, &ec,
         boost::asio::placeholders::bytes_transferred, &length, &called));
@@ -503,6 +646,50 @@ void test_string_async_read_until()
   BOOST_CHECK(called);
   BOOST_CHECK(ec == boost::asio::error::not_found);
   BOOST_CHECK(length == 0);
+
+  s.reset(read_data, sizeof(read_data));
+  ec = boost::system::error_code();
+  length = 0;
+  called = false;
+  sb2.consume(sb2.size());
+  boost::asio::async_read_until(s, sb2, "WXY",
+      boost::bind(async_read_handler, boost::asio::placeholders::error, &ec,
+        boost::asio::placeholders::bytes_transferred, &length, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(!ec);
+  BOOST_CHECK(length == 25);
+
+  s.reset(read_data, sizeof(read_data));
+  s.next_read_length(1);
+  ec = boost::system::error_code();
+  length = 0;
+  called = false;
+  sb2.consume(sb2.size());
+  boost::asio::async_read_until(s, sb2, "WXY",
+      boost::bind(async_read_handler, boost::asio::placeholders::error, &ec,
+        boost::asio::placeholders::bytes_transferred, &length, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(!ec);
+  BOOST_CHECK(length == 25);
+
+  s.reset(read_data, sizeof(read_data));
+  s.next_read_length(10);
+  ec = boost::system::error_code();
+  length = 0;
+  called = false;
+  sb2.consume(sb2.size());
+  boost::asio::async_read_until(s, sb2, "WXY",
+      boost::bind(async_read_handler, boost::asio::placeholders::error, &ec,
+        boost::asio::placeholders::bytes_transferred, &length, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(!ec);
+  BOOST_CHECK(length == 25);
 }
 
 void test_match_condition_async_read_until()
@@ -519,6 +706,7 @@ void test_match_condition_async_read_until()
   ec = boost::system::error_code();
   length = 0;
   called = false;
+  sb1.consume(sb1.size());
   boost::asio::async_read_until(s, sb1, match_char('Z'),
       boost::bind(async_read_handler, boost::asio::placeholders::error, &ec,
         boost::asio::placeholders::bytes_transferred, &length, &called));
@@ -533,6 +721,7 @@ void test_match_condition_async_read_until()
   ec = boost::system::error_code();
   length = 0;
   called = false;
+  sb1.consume(sb1.size());
   boost::asio::async_read_until(s, sb1, match_char('Z'),
       boost::bind(async_read_handler, boost::asio::placeholders::error, &ec,
         boost::asio::placeholders::bytes_transferred, &length, &called));
@@ -547,6 +736,7 @@ void test_match_condition_async_read_until()
   ec = boost::system::error_code();
   length = 0;
   called = false;
+  sb1.consume(sb1.size());
   boost::asio::async_read_until(s, sb1, match_char('Z'),
       boost::bind(async_read_handler, boost::asio::placeholders::error, &ec,
         boost::asio::placeholders::bytes_transferred, &length, &called));
@@ -560,6 +750,7 @@ void test_match_condition_async_read_until()
   ec = boost::system::error_code();
   length = 0;
   called = false;
+  sb2.consume(sb2.size());
   boost::asio::async_read_until(s, sb2, match_char('Z'),
       boost::bind(async_read_handler, boost::asio::placeholders::error, &ec,
         boost::asio::placeholders::bytes_transferred, &length, &called));
@@ -574,6 +765,7 @@ void test_match_condition_async_read_until()
   ec = boost::system::error_code();
   length = 0;
   called = false;
+  sb2.consume(sb2.size());
   boost::asio::async_read_until(s, sb2, match_char('Z'),
       boost::bind(async_read_handler, boost::asio::placeholders::error, &ec,
         boost::asio::placeholders::bytes_transferred, &length, &called));
@@ -588,6 +780,7 @@ void test_match_condition_async_read_until()
   ec = boost::system::error_code();
   length = 0;
   called = false;
+  sb2.consume(sb2.size());
   boost::asio::async_read_until(s, sb2, match_char('Z'),
       boost::bind(async_read_handler, boost::asio::placeholders::error, &ec,
         boost::asio::placeholders::bytes_transferred, &length, &called));
@@ -596,6 +789,50 @@ void test_match_condition_async_read_until()
   BOOST_CHECK(called);
   BOOST_CHECK(ec == boost::asio::error::not_found);
   BOOST_CHECK(length == 0);
+
+  s.reset(read_data, sizeof(read_data));
+  ec = boost::system::error_code();
+  length = 0;
+  called = false;
+  sb2.consume(sb2.size());
+  boost::asio::async_read_until(s, sb2, match_char('Y'),
+      boost::bind(async_read_handler, boost::asio::placeholders::error, &ec,
+        boost::asio::placeholders::bytes_transferred, &length, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(!ec);
+  BOOST_CHECK(length == 25);
+
+  s.reset(read_data, sizeof(read_data));
+  s.next_read_length(1);
+  ec = boost::system::error_code();
+  length = 0;
+  called = false;
+  sb2.consume(sb2.size());
+  boost::asio::async_read_until(s, sb2, match_char('Y'),
+      boost::bind(async_read_handler, boost::asio::placeholders::error, &ec,
+        boost::asio::placeholders::bytes_transferred, &length, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(!ec);
+  BOOST_CHECK(length == 25);
+
+  s.reset(read_data, sizeof(read_data));
+  s.next_read_length(10);
+  ec = boost::system::error_code();
+  length = 0;
+  called = false;
+  sb2.consume(sb2.size());
+  boost::asio::async_read_until(s, sb2, match_char('Y'),
+      boost::bind(async_read_handler, boost::asio::placeholders::error, &ec,
+        boost::asio::placeholders::bytes_transferred, &length, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(!ec);
+  BOOST_CHECK(length == 25);
 }
 
 test_suite* init_unit_test_suite(int, char*[])

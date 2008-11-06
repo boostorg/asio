@@ -40,3 +40,4 @@ project
 
 exe chat_server : chat_server.cpp ;
 exe chat_client : chat_client.cpp ;
+exe posix_chat_client : posix_chat_client.cpp ;
