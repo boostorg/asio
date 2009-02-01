@@ -103,7 +103,7 @@ inline socket_type accept(socket_type s, socket_addr_type* addr,
   }
 #endif
 
-#if defined(BOOST_WINDOWS) && defined(UNDER_CE)
+#if defined(BOOST_WINDOWS)
   clear_error(ec);
 #endif
 
@@ -123,7 +123,7 @@ inline int bind(socket_type s, const socket_addr_type* addr,
   clear_error(ec);
   int result = error_wrapper(call_bind(
         &msghdr::msg_namelen, s, addr, addrlen), ec);
-#if defined(BOOST_WINDOWS) && defined(UNDER_CE)
+#if defined(BOOST_WINDOWS)
   if (result == 0)
     clear_error(ec);
 #endif
@@ -135,10 +135,8 @@ inline int close(socket_type s, boost::system::error_code& ec)
   clear_error(ec);
 #if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
   int result = error_wrapper(::closesocket(s), ec);
-# if defined(UNDER_CE)
   if (result == 0)
     clear_error(ec);
-# endif
   return result;
 #else // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
   return error_wrapper(::close(s), ec);
@@ -149,7 +147,7 @@ inline int shutdown(socket_type s, int what, boost::system::error_code& ec)
 {
   clear_error(ec);
   int result = error_wrapper(::shutdown(s, what), ec);
-#if defined(BOOST_WINDOWS) && defined(UNDER_CE)
+#if defined(BOOST_WINDOWS)
   if (result == 0)
     clear_error(ec);
 #endif
@@ -169,7 +167,7 @@ inline int connect(socket_type s, const socket_addr_type* addr,
   clear_error(ec);
   int result = error_wrapper(call_connect(
         &msghdr::msg_namelen, s, addr, addrlen), ec);
-#if defined(BOOST_WINDOWS) && defined(UNDER_CE)
+#if defined(BOOST_WINDOWS)
   if (result == 0)
     clear_error(ec);
 #endif
@@ -196,7 +194,7 @@ inline int listen(socket_type s, int backlog, boost::system::error_code& ec)
 {
   clear_error(ec);
   int result = error_wrapper(::listen(s, backlog), ec);
-#if defined(BOOST_WINDOWS) && defined(UNDER_CE)
+#if defined(BOOST_WINDOWS)
   if (result == 0)
     clear_error(ec);
 #endif
@@ -277,9 +275,7 @@ inline int recv(socket_type s, buf* bufs, size_t count, int flags,
         recv_buf_count, &bytes_transferred, &recv_flags, 0, 0), ec);
   if (result != 0)
     return -1;
-# if defined(UNDER_CE)
   clear_error(ec);
-# endif
   return bytes_transferred;
 #else // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
   msghdr msg = msghdr();
@@ -305,9 +301,7 @@ inline int recvfrom(socket_type s, buf* bufs, size_t count, int flags,
   *addrlen = (std::size_t)tmp_addrlen;
   if (result != 0)
     return -1;
-# if defined(UNDER_CE)
   clear_error(ec);
-# endif
   return bytes_transferred;
 #else // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
   msghdr msg = msghdr();
@@ -334,9 +328,7 @@ inline int send(socket_type s, const buf* bufs, size_t count, int flags,
         send_buf_count, &bytes_transferred, send_flags, 0, 0), ec);
   if (result != 0)
     return -1;
-# if defined(UNDER_CE)
   clear_error(ec);
-# endif
   return bytes_transferred;
 #else // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
   msghdr msg = msghdr();
@@ -363,9 +355,7 @@ inline int sendto(socket_type s, const buf* bufs, size_t count, int flags,
         static_cast<int>(addrlen), 0, 0), ec);
   if (result != 0)
     return -1;
-# if defined(UNDER_CE)
   clear_error(ec);
-# endif
   return bytes_transferred;
 #else // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
   msghdr msg = msghdr();
@@ -400,9 +390,7 @@ inline socket_type socket(int af, int type, int protocol,
         reinterpret_cast<const char*>(&optval), sizeof(optval));
   }
 
-# if defined(UNDER_CE)
   clear_error(ec);
-# endif
 
   return s;
 #elif defined(__MACH__) && defined(__APPLE__) || defined(__FreeBSD__)
@@ -464,7 +452,7 @@ inline int setsockopt(socket_type s, int level, int optname,
   clear_error(ec);
   int result = error_wrapper(call_setsockopt(&msghdr::msg_namelen,
         s, level, optname, optval, optlen), ec);
-# if defined(BOOST_WINDOWS) && defined(UNDER_CE)
+# if defined(BOOST_WINDOWS)
   if (result == 0)
     clear_error(ec);
 # endif
@@ -537,10 +525,8 @@ inline int getsockopt(socket_type s, int level, int optname, void* optval,
     *static_cast<DWORD*>(optval) = 1;
     clear_error(ec);
   }
-# if defined(UNDER_CE)
   if (result == 0)
     clear_error(ec);
-# endif
   return result;
 #else // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
   clear_error(ec);
@@ -578,7 +564,7 @@ inline int getpeername(socket_type s, socket_addr_type* addr,
   clear_error(ec);
   int result = error_wrapper(call_getpeername(
         &msghdr::msg_namelen, s, addr, addrlen), ec);
-#if defined(BOOST_WINDOWS) && defined(UNDER_CE)
+#if defined(BOOST_WINDOWS)
   if (result == 0)
     clear_error(ec);
 #endif
@@ -601,7 +587,7 @@ inline int getsockname(socket_type s, socket_addr_type* addr,
   clear_error(ec);
   int result = error_wrapper(call_getsockname(
         &msghdr::msg_namelen, s, addr, addrlen), ec);
-#if defined(BOOST_WINDOWS) && defined(UNDER_CE)
+#if defined(BOOST_WINDOWS)
   if (result == 0)
     clear_error(ec);
 #endif
@@ -614,10 +600,8 @@ inline int ioctl(socket_type s, long cmd, ioctl_arg_type* arg,
   clear_error(ec);
 #if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
   int result = error_wrapper(::ioctlsocket(s, cmd, arg), ec);
-# if defined(UNDER_CE)
   if (result == 0)
     clear_error(ec);
-# endif
   return result;
 #else // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
   return error_wrapper(::ioctl(s, cmd, arg), ec);
@@ -659,7 +643,7 @@ inline int select(int nfds, fd_set* readfds, fd_set* writefds,
 #else
   int result = error_wrapper(::select(nfds, readfds,
         writefds, exceptfds, timeout), ec);
-# if defined(BOOST_WINDOWS) && defined(UNDER_CE)
+# if defined(BOOST_WINDOWS)
   if (result >= 0)
     clear_error(ec);
 # endif
@@ -675,10 +659,8 @@ inline int poll_read(socket_type s, boost::system::error_code& ec)
   FD_SET(s, &fds);
   clear_error(ec);
   int result = error_wrapper(::select(s, &fds, 0, 0, 0), ec);
-# if defined(UNDER_CE)
   if (result >= 0)
     clear_error(ec);
-# endif
   return result;
 #else // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
   pollfd fds;
@@ -698,10 +680,8 @@ inline int poll_write(socket_type s, boost::system::error_code& ec)
   FD_SET(s, &fds);
   clear_error(ec);
   int result = error_wrapper(::select(s, 0, &fds, 0, 0), ec);
-# if defined(UNDER_CE)
   if (result >= 0)
     clear_error(ec);
-# endif
   return result;
 #else // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
   pollfd fds;
@@ -724,10 +704,8 @@ inline int poll_connect(socket_type s, boost::system::error_code& ec)
   FD_SET(s, &except_fds);
   clear_error(ec);
   int result = error_wrapper(::select(s, 0, &write_fds, &except_fds, 0), ec);
-# if defined(UNDER_CE)
   if (result >= 0)
     clear_error(ec);
-# endif
   return result;
 #else // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
   pollfd fds;
@@ -875,10 +853,8 @@ inline int inet_pton(int af, const char* src, void* dest,
   if (result == socket_error_retval && !ec)
     ec = boost::asio::error::invalid_argument;
 
-#if defined(UNDER_CE)
   if (result != socket_error_retval)
     clear_error(ec);
-#endif
 
   return result == socket_error_retval ? -1 : 1;
 #else // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
@@ -907,7 +883,7 @@ inline int gethostname(char* name, int namelen, boost::system::error_code& ec)
 {
   clear_error(ec);
   int result = error_wrapper(::gethostname(name, namelen), ec);
-#if defined(BOOST_WINDOWS) && defined(UNDER_CE)
+#if defined(BOOST_WINDOWS)
   if (result == 0)
     clear_error(ec);
 #endif
@@ -950,9 +926,7 @@ inline hostent* gethostbyaddr(const char* addr, int length, int af,
   hostent* retval = error_wrapper(::gethostbyaddr(addr, length, af), ec);
   if (!retval)
     return 0;
-# if defined(UNDER_CE)
   clear_error(ec);
-# endif
   *result = *retval;
   return retval;
 #elif defined(__sun) || defined(__QNX__)
@@ -1001,9 +975,7 @@ inline hostent* gethostbyname(const char* name, int af, struct hostent* result,
   hostent* retval = error_wrapper(::gethostbyname(name), ec);
   if (!retval)
     return 0;
-# if defined(UNDER_CE)
   clear_error(ec);
-# endif
   *result = *retval;
   return result;
 #elif defined(__sun) || defined(__QNX__)
