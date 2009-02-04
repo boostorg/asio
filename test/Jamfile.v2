@@ -22,6 +22,10 @@ else if [ os.name ] = HPUX
 {
   lib ipv6 ;
 }
+else if [ os.name ] = QNXNTO
+{
+  lib socket ;
+}
 
 local USE_SELECT =
   <define>BOOST_ASIO_DISABLE_DEV_POLL
@@ -51,6 +55,7 @@ project
     <os>NT,<toolset>gcc-cygwin:<define>__USE_W32_SOCKETS
     <os>HPUX,<toolset>gcc:<define>_XOPEN_SOURCE_EXTENDED
     <os>HPUX:<library>ipv6
+    <os>QNXNTO:<library>socket
   ;
 
 test-suite "asio" :

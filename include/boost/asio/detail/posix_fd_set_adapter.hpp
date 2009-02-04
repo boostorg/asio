@@ -17,6 +17,10 @@
 
 #include <boost/asio/detail/push_options.hpp>
 
+#include <boost/asio/detail/push_options.hpp>
+#include <cstring>
+#include <boost/asio/detail/pop_options.hpp>
+
 #include <boost/asio/detail/socket_types.hpp>
 
 #if !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
