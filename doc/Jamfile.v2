@@ -55,6 +55,7 @@ boostbook standalone
     <xsl:param>toc.max.depth=1
     <xsl:param>generate.section.toc.level=1
     <xsl:param>generate.toc="chapter nop section nop"
+    <format>pdf:<xsl:param>boost.url.prefix=http://www.boost.org/doc/libs/release/libs/asio/doc/html
   ;
 
 ########################################################################
