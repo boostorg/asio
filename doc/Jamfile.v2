@@ -105,9 +105,11 @@ boostbook asio
     <xsl:param>generate.toc="chapter nop section nop"
     <xsl:param>root.filename=boost_asio
     <format>pdf:<xsl:param>img.src.path=$(images_location)/
+    <format>pdf:<xsl:param>boost.url.prefix=http://www.boost.org/doc/libs/release/libs/asio/doc/html
   :
     <dependency>asio_doc_images
     <dependency>asio_examples
   ;
 
 explicit asio ;
+
