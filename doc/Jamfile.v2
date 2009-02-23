@@ -55,6 +55,7 @@ boostbook standalone
     <xsl:param>toc.max.depth=1
     <xsl:param>generate.section.toc.level=1
     <xsl:param>generate.toc="chapter nop section nop"
+    <format>pdf:<xsl:param>boost.url.prefix=http://www.boost.org/doc/libs/release/libs/asio/doc/html
   ;
 
 ########################################################################
@@ -89,6 +90,8 @@ alias asio_examples : asio_ex_$(example-names) ;
 
 explicit asio_examples ;
 
+path-constant images_location : ../../../doc/html ;
+
 boostbook asio
   :
     asio_doc
@@ -101,6 +104,7 @@ boostbook asio
     <xsl:param>generate.section.toc.level=1
     <xsl:param>generate.toc="chapter nop section nop"
     <xsl:param>root.filename=boost_asio
+    <format>pdf:<xsl:param>img.src.path=$(images_location)/
   :
     <dependency>asio_doc_images
     <dependency>asio_examples
