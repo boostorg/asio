@@ -21,6 +21,7 @@
 #include <boost/asio/detail/push_options.hpp>
 #include <cstddef>
 #include <climits>
+#include <memory>
 #include <boost/config.hpp>
 #include <boost/noncopyable.hpp>
 #include <boost/function.hpp>
@@ -100,8 +101,8 @@ private:
     Handler handler_;
     void handler_impl(const boost::system::error_code& error, size_t size)
     {
+      std::auto_ptr<io_handler<Stream, Handler> > this_ptr(this);
       handler_(error, size);
-      delete this;
     }
   };  // class io_handler 
 
@@ -124,8 +125,8 @@ private:
     Handler handler_;
     void handler_impl(const boost::system::error_code& error, size_t)
     {
+      std::auto_ptr<handshake_handler<Stream, Handler> > this_ptr(this);
       handler_(error);
-      delete this;
     }
 
   };  // class handshake_handler
@@ -149,8 +150,8 @@ private:
     Handler handler_;
     void handler_impl(const boost::system::error_code& error, size_t)
     {
+      std::auto_ptr<shutdown_handler<Stream, Handler> > this_ptr(this);
       handler_(error);
-      delete this;
     }
   };  // class shutdown_handler
 
