@@ -82,7 +82,7 @@ std::size_t write(SyncWriteStream& s, const ConstBufferSequence& buffers);
  * @li All of the data in the supplied buffers has been written. That is, the
  * bytes transferred is equal to the sum of the buffer sizes.
  *
- * @li The completion_condition function object returns true.
+ * @li The completion_condition function object returns 0.
  *
  * This operation is implemented in terms of zero or more calls to the stream's
  * write_some function.
@@ -133,7 +133,7 @@ std::size_t write(SyncWriteStream& s, const ConstBufferSequence& buffers,
  * @li All of the data in the supplied buffers has been written. That is, the
  * bytes transferred is equal to the sum of the buffer sizes.
  *
- * @li The completion_condition function object returns true.
+ * @li The completion_condition function object returns 0.
  *
  * This operation is implemented in terms of zero or more calls to the stream's
  * write_some function.
@@ -205,7 +205,7 @@ std::size_t write(SyncWriteStream& s, basic_streambuf<Allocator>& b);
  *
  * @li All of the data in the supplied basic_streambuf has been written.
  *
- * @li The completion_condition function object returns true.
+ * @li The completion_condition function object returns 0.
  *
  * This operation is implemented in terms of zero or more calls to the stream's
  * write_some function.
@@ -245,7 +245,7 @@ std::size_t write(SyncWriteStream& s, basic_streambuf<Allocator>& b,
  *
  * @li All of the data in the supplied basic_streambuf has been written.
  *
- * @li The completion_condition function object returns true.
+ * @li The completion_condition function object returns 0.
  *
  * This operation is implemented in terms of zero or more calls to the stream's
  * write_some function.
@@ -353,7 +353,7 @@ void async_write(AsyncWriteStream& s, const ConstBufferSequence& buffers,
  * @li All of the data in the supplied buffers has been written. That is, the
  * bytes transferred is equal to the sum of the buffer sizes.
  *
- * @li The completion_condition function object returns true.
+ * @li The completion_condition function object returns 0.
  *
  * This operation is implemented in terms of zero or more calls to the stream's
  * async_write_some function.
@@ -463,7 +463,7 @@ void async_write(AsyncWriteStream& s, basic_streambuf<Allocator>& b,
  *
  * @li All of the data in the supplied basic_streambuf has been written.
  *
- * @li The completion_condition function object returns true.
+ * @li The completion_condition function object returns 0.
  *
  * This operation is implemented in terms of zero or more calls to the stream's
  * async_write_some function.
