@@ -237,7 +237,7 @@ public:
   }
 
   // Send a break sequence to the serial port.
-  boost::system::error_code send_break(implementation_type& impl,
+  boost::system::error_code send_break(implementation_type&,
       boost::system::error_code& ec)
   {
     ec = boost::asio::error::operation_not_supported;

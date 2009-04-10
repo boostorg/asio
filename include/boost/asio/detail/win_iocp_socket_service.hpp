@@ -573,7 +573,7 @@ public:
 
     if (!ec && command.name() == static_cast<int>(FIONBIO))
     {
-      if (command.get())
+      if (*static_cast<ioctl_arg_type*>(command.data()))
         impl.flags_ |= implementation_type::user_set_non_blocking;
       else
         impl.flags_ &= ~implementation_type::user_set_non_blocking;
@@ -2192,6 +2192,8 @@ public:
     bool perform(boost::system::error_code& ec,
         std::size_t& bytes_transferred)
     {
+      bytes_transferred = 0;
+
       // Check whether the operation was successful.
       if (ec)
         return true;

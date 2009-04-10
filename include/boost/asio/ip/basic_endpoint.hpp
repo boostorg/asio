@@ -24,6 +24,7 @@
 #if BOOST_WORKAROUND(__BORLANDC__, BOOST_TESTED_AT(0x564))
 # include <ostream>
 #endif // BOOST_WORKAROUND(__BORLANDC__, BOOST_TESTED_AT(0x564))
+#include <sstream>
 #include <boost/asio/detail/pop_options.hpp>
 
 #include <boost/asio/error.hpp>
@@ -325,11 +326,14 @@ std::ostream& operator<<(std::ostream& os,
   }
   else
   {
+    std::ostringstream tmp_os;
+    tmp_os.imbue(std::locale::classic());
     if (addr.is_v4())
-      os << a;
+      tmp_os << a;
     else
-      os << '[' << a << ']';
-    os << ':' << endpoint.port();
+      tmp_os << '[' << a << ']';
+    tmp_os << ':' << endpoint.port();
+    os << tmp_os.str();
   }
   return os;
 }
@@ -351,11 +355,14 @@ std::basic_ostream<Elem, Traits>& operator<<(
   }
   else
   {
+    std::ostringstream tmp_os;
+    tmp_os.imbue(std::locale::classic());
     if (addr.is_v4())
-      os << a;
+      tmp_os << a;
     else
-      os << '[' << a << ']';
-    os << ':' << endpoint.port();
+      tmp_os << '[' << a << ']';
+    tmp_os << ':' << endpoint.port();
+    os << tmp_os.str();
   }
   return os;
 }
