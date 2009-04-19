@@ -22,11 +22,24 @@
 #include <stdexcept>
 #include <boost/config.hpp>
 #include <boost/detail/workaround.hpp>
-#if !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
-# include <termios.h>
-#endif
 #include <boost/system/error_code.hpp>
 #include <boost/asio/detail/pop_options.hpp>
+
+#if !defined(BOOST_ASIO_DISABLE_SERIAL_PORT)
+# if defined(BOOST_ASIO_HAS_IOCP) \
+    || !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
+#  define BOOST_ASIO_HAS_SERIAL_PORT 1
+# endif // defined(BOOST_ASIO_HAS_IOCP)
+#endif // !defined(BOOST_ASIO_DISABLE_STREAM_HANDLE)
+
+#if defined(BOOST_ASIO_HAS_SERIAL_PORT) \
+  || defined(GENERATING_DOCUMENTATION)
+
+#if !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
+# include <boost/asio/detail/push_options.hpp>
+# include <termios.h>
+# include <boost/asio/detail/pop_options.hpp>
+#endif // !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
 
 #include <boost/asio/detail/socket_types.hpp>
 
@@ -153,6 +166,9 @@ private:
 #include <boost/asio/impl/serial_port_base.ipp>
 
 #undef BOOST_ASIO_OPTION_STORAGE
+
+#endif // defined(BOOST_ASIO_HAS_SERIAL_PORT)
+       //   || defined(GENERATING_DOCUMENTATION)
 
 #include <boost/asio/detail/pop_options.hpp>
 

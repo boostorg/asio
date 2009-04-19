@@ -25,16 +25,10 @@
 
 #include <boost/asio/error.hpp>
 #include <boost/asio/io_service.hpp>
+#include <boost/asio/serial_port_base.hpp>
 #include <boost/asio/detail/service_base.hpp>
 #include <boost/asio/detail/reactive_serial_port_service.hpp>
 #include <boost/asio/detail/win_iocp_serial_port_service.hpp>
-
-#if !defined(BOOST_ASIO_DISABLE_SERIAL_PORT)
-# if defined(BOOST_ASIO_HAS_IOCP) \
-    || !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
-#  define BOOST_ASIO_HAS_SERIAL_PORT 1
-# endif // defined(BOOST_ASIO_HAS_IOCP)
-#endif // !defined(BOOST_ASIO_DISABLE_STREAM_HANDLE)
 
 #if defined(BOOST_ASIO_HAS_SERIAL_PORT) \
   || defined(GENERATING_DOCUMENTATION)
