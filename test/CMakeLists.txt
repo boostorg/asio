@@ -101,17 +101,18 @@ add_subdirectory(posix)
 
 # Test Windows specific Behaviors
 if (MSVC)
-foreach(test
-    windows_basic_handle
-    windows_basic_random_access_handle
-    windows_basic_stream_handle
-    windows_overlapped_ptr
-    windows_random_access_handle
-    windows_random_access_handle_service
-    windows_stream_handle
-    windows_stream_handle_service
-    )
-  boost_test_link(${test})
+  foreach(test
+      windows_basic_handle
+      windows_basic_random_access_handle
+      windows_basic_stream_handle
+      windows_overlapped_ptr
+      windows_random_access_handle
+      windows_random_access_handle_service
+      windows_stream_handle
+      windows_stream_handle_service
+      )
+    boost_test_link(${test})
+  endforeach()
 endif (MSVC)
 
 add_subdirectory(ssl)
