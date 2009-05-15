@@ -10,7 +10,7 @@ set (lib_headers
 boost_library_project(
   asio
   #  SRCDIRS 
-  #  TESTDIRS 
+  TESTDIRS test
   HEADERS ${lib_headers}
   #  DOCDIRS 
   DESCRIPTION  "Portable networking, including sockets, timers, hostname resolution and socket iostreams."
