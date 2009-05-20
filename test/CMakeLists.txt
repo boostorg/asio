@@ -29,31 +29,33 @@ message(STATUS "!!!> missing some qnx stuff")
 
 set (USE_SELECT "-DBOOST_ASIO_DISABLE_DEV_POLL -DBOOST_ASIO_DISABLE_EPOLL -DBOOST_ASIO_DISABLE_KQUEUE -DBOOST_ASIO_DISABLE_IOCP")
 
-set (depends "boost_system;boost_date_time;boost_thread")
+set (depends "boost_system-mt-static;boost_date_time-mt-static;boost_thread-mt-static")
 
 set (os_defines "${os_defines} -DBOOST_ALL_NO_LIB=1")
 
 macro(asio_test_run NAME)
-  boost_test_run(${NAME} ${NAME}.cpp 
-    COMPILE_FLAGS "${os_defines}" 
-    LINK_LIBS "${dep_libs}" 
+  boost_test_run(${NAME} ${NAME}.cpp
+    COMPILE_FLAGS "${os_defines}"
+    LINK_LIBS "${dep_libs}"
     DEPENDS ${depends}
     )
-  boost_test_run(${NAME}_select ${NAME}.cpp 
-    COMPILE_FLAGS "${os_defines} ${USE_SELECT}" 
-    LINK_LIBS "${dep_libs}" 
+  boost_test_run(${NAME}_select ${NAME}.cpp
+    COMPILE_FLAGS "${os_defines} ${USE_SELECT}"
+    LINK_LIBS "${dep_libs}"
     DEPENDS ${depends}
     )
 endmacro(asio_test_run)
 
 macro(asio_test_link NAME)
-  boost_test_link(${NAME} ${NAME}.cpp 
-    COMPILE_FLAGS "${os_defines}" 
-    LINK_LIBS "${dep_libs};${depends}" 
+  boost_test_link(${NAME} ${NAME}.cpp
+    COMPILE_FLAGS "${os_defines}"
+    LINK_LIBS "${dep_libs}"
+    DEPENDS "${depends}"
     )
-  boost_test_link(${NAME}_select ${NAME}.cpp 
-    COMPILE_FLAGS "${os_defines} ${USE_SELECT}" 
-    LINK_LIBS "${dep_libs}:${depends}" 
+  boost_test_link(${NAME}_select ${NAME}.cpp
+    COMPILE_FLAGS "${os_defines} ${USE_SELECT}"
+    LINK_LIBS "${dep_libs}"
+    DEPENDS "${depends}"
     )
 endmacro(asio_test_link)
 
