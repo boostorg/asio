@@ -3,6 +3,7 @@ boost_additional_test_dependencies(asio BOOST_DEPENDS test system)
 set (dep_libs "")
 
 if (${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+    set(dep_libs "pthread")
     set(os_defines "-D_XOPEN_SOURCE=600 -D_GNU_SOURCE=1")
 endif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
 

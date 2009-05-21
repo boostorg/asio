@@ -1,10 +1,10 @@
 foreach(test
-    local_basic_endpoint
-    local_connect_pair
-    local_datagram_protocol
-    local_stream_protocol
+    basic_endpoint
+    connect_pair
+    datagram_protocol
+    stream_protocol
     )
-  boost_test_link(${test})
+  asio_test_link(${test})
 endforeach()
 
 
