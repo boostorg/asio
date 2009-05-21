@@ -1,11 +1,11 @@
 foreach(test
-    posix_basic_descriptor
-    posix_basic_stream_descriptor
-    posix_descriptor_base
-    posix_stream_descriptor
-    posix_stream_descriptor_service
+    basic_descriptor
+    basic_stream_descriptor
+    descriptor_base
+    stream_descriptor
+    stream_descriptor_service
     )
-  boost_test_link(${test})
+  asio_test_link(${test})
 endforeach()
 
 
