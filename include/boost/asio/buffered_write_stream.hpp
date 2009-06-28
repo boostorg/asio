@@ -187,8 +187,21 @@ public:
   template <typename ConstBufferSequence>
   std::size_t write_some(const ConstBufferSequence& buffers)
   {
+    typename ConstBufferSequence::const_iterator iter = buffers.begin();
+    typename ConstBufferSequence::const_iterator end = buffers.end();
+    size_t total_buffer_size = 0;
+    for (; iter != end; ++iter)
+    {
+      boost::asio::const_buffer buffer(*iter);
+      total_buffer_size += boost::asio::buffer_size(buffer);
+    }
+
+    if (total_buffer_size == 0)
+      return 0;
+
     if (storage_.size() == storage_.capacity())
       flush();
+
     return copy(buffers);
   }
 
@@ -199,8 +212,22 @@ public:
       boost::system::error_code& ec)
   {
     ec = boost::system::error_code();
+
+    typename ConstBufferSequence::const_iterator iter = buffers.begin();
+    typename ConstBufferSequence::const_iterator end = buffers.end();
+    size_t total_buffer_size = 0;
+    for (; iter != end; ++iter)
+    {
+      boost::asio::const_buffer buffer(*iter);
+      total_buffer_size += boost::asio::buffer_size(buffer);
+    }
+
+    if (total_buffer_size == 0)
+      return 0;
+
     if (storage_.size() == storage_.capacity() && !flush(ec))
       return 0;
+
     return copy(buffers);
   }
 
@@ -264,7 +291,21 @@ public:
   void async_write_some(const ConstBufferSequence& buffers,
       WriteHandler handler)
   {
-    if (storage_.size() == storage_.capacity())
+    typename ConstBufferSequence::const_iterator iter = buffers.begin();
+    typename ConstBufferSequence::const_iterator end = buffers.end();
+    size_t total_buffer_size = 0;
+    for (; iter != end; ++iter)
+    {
+      boost::asio::const_buffer buffer(*iter);
+      total_buffer_size += boost::asio::buffer_size(buffer);
+    }
+
+    if (total_buffer_size == 0)
+    {
+      get_io_service().post(detail::bind_handler(
+            handler, boost::system::error_code(), 0));
+    }
+    else if (storage_.size() == storage_.capacity())
     {
       async_flush(write_some_handler<ConstBufferSequence, WriteHandler>(
             get_io_service(), storage_, buffers, handler));

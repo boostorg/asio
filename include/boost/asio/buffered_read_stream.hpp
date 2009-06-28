@@ -230,8 +230,21 @@ public:
   template <typename MutableBufferSequence>
   std::size_t read_some(const MutableBufferSequence& buffers)
   {
+    typename MutableBufferSequence::const_iterator iter = buffers.begin();
+    typename MutableBufferSequence::const_iterator end = buffers.end();
+    size_t total_buffer_size = 0;
+    for (; iter != end; ++iter)
+    {
+      boost::asio::mutable_buffer buffer(*iter);
+      total_buffer_size += boost::asio::buffer_size(buffer);
+    }
+
+    if (total_buffer_size == 0)
+      return 0;
+
     if (storage_.empty())
       fill();
+
     return copy(buffers);
   }
 
@@ -242,8 +255,22 @@ public:
       boost::system::error_code& ec)
   {
     ec = boost::system::error_code();
+
+    typename MutableBufferSequence::const_iterator iter = buffers.begin();
+    typename MutableBufferSequence::const_iterator end = buffers.end();
+    size_t total_buffer_size = 0;
+    for (; iter != end; ++iter)
+    {
+      boost::asio::mutable_buffer buffer(*iter);
+      total_buffer_size += boost::asio::buffer_size(buffer);
+    }
+
+    if (total_buffer_size == 0)
+      return 0;
+
     if (storage_.empty() && !fill(ec))
       return 0;
+
     return copy(buffers);
   }
 
@@ -306,7 +333,21 @@ public:
   void async_read_some(const MutableBufferSequence& buffers,
       ReadHandler handler)
   {
-    if (storage_.empty())
+    typename MutableBufferSequence::const_iterator iter = buffers.begin();
+    typename MutableBufferSequence::const_iterator end = buffers.end();
+    size_t total_buffer_size = 0;
+    for (; iter != end; ++iter)
+    {
+      boost::asio::mutable_buffer buffer(*iter);
+      total_buffer_size += boost::asio::buffer_size(buffer);
+    }
+
+    if (total_buffer_size == 0)
+    {
+      get_io_service().post(detail::bind_handler(
+            handler, boost::system::error_code(), 0));
+    }
+    else if (storage_.empty())
     {
       async_fill(read_some_handler<MutableBufferSequence, ReadHandler>(
             get_io_service(), storage_, buffers, handler));
