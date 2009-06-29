@@ -18,6 +18,10 @@
 
 #include <boost/asio/detail/push_options.hpp>
 
+#include <boost/asio/detail/push_options.hpp>
+#include <boost/throw_exception.hpp>
+#include <boost/asio/detail/pop_options.hpp>
+
 namespace boost {
 namespace asio {
 
@@ -206,7 +210,10 @@ inline serial_port_base::flow_control::flow_control(
   : value_(t)
 {
   if (t != none && t != software && t != hardware)
-    throw std::out_of_range("invalid flow_control value");
+  {
+    std::out_of_range ex("invalid flow_control value");
+    boost::throw_exception(ex);
+  }
 }
 
 inline serial_port_base::flow_control::type
@@ -314,7 +321,10 @@ inline serial_port_base::parity::parity(serial_port_base::parity::type t)
   : value_(t)
 {
   if (t != none && t != odd && t != even)
-    throw std::out_of_range("invalid parity value");
+  {
+    std::out_of_range ex("invalid parity value");
+    boost::throw_exception(ex);
+  }
 }
 
 inline serial_port_base::parity::type serial_port_base::parity::value() const
@@ -411,7 +421,10 @@ inline serial_port_base::stop_bits::stop_bits(
   : value_(t)
 {
   if (t != one && t != onepointfive && t != two)
-    throw std::out_of_range("invalid stop_bits value");
+  {
+    std::out_of_range ex("invalid stop_bits value");
+    boost::throw_exception(ex);
+  }
 }
 
 inline serial_port_base::stop_bits::type
@@ -487,7 +500,10 @@ inline serial_port_base::character_size::character_size(unsigned int t)
   : value_(t)
 {
   if (t < 5 || t > 8)
-    throw std::out_of_range("invalid character_size value");
+  {
+    std::out_of_range ex("invalid character_size value");
+    boost::throw_exception(ex);
+  }
 }
 
 inline unsigned int serial_port_base::character_size::value() const

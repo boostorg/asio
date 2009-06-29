@@ -231,9 +231,13 @@ private:
       {
         buckets_[bucket].first = buckets_[bucket].last = iter++;
       }
+      else if (++buckets_[bucket].last == iter)
+      {
+        ++iter;
+      }
       else
       {
-        values_.splice(++buckets_[bucket].last, values_, iter++);
+        values_.splice(buckets_[bucket].last, values_, iter++);
         --buckets_[bucket].last;
       }
     }
@@ -275,6 +279,8 @@ private:
   // The type for a bucket in the hash table.
   struct bucket_type
   {
+    bucket_type() {}
+    bucket_type(const bucket_type&) { /* noop */ }
     iterator first;
     iterator last;
   };

@@ -516,6 +516,31 @@
 </xsl:template>
 
 
+<xsl:template name="header-requirements">
+  <xsl:param name="file"/>
+  <xsl:value-of select="$newline"/>
+  <xsl:text>[heading Requirements]</xsl:text>
+  <xsl:value-of select="$newline"/>
+  <xsl:value-of select="$newline"/>
+  <xsl:text>[*Header: ]</xsl:text>
+  <xsl:text>[^boost/asio/</xsl:text>
+  <xsl:value-of select="substring-after($file, 'boost/asio/')"/>
+  <xsl:text>]</xsl:text>
+  <xsl:value-of select="$newline"/>
+  <xsl:value-of select="$newline"/>
+  <xsl:text>[*Convenience header: ]</xsl:text>
+  <xsl:choose>
+    <xsl:when test="contains($file, 'boost/asio/ssl')">
+      <xsl:text>[^boost/asio/ssl.hpp]</xsl:text>
+    </xsl:when>
+    <xsl:otherwise>
+      <xsl:text>[^boost/asio.hpp]</xsl:text>
+    </xsl:otherwise>
+  </xsl:choose>
+  <xsl:value-of select="$newline"/>
+</xsl:template>
+
+
 <!--========== Class ==========-->
 
 <xsl:template name="class">
@@ -534,6 +559,7 @@
       <xsl:with-param name="name" select="$class-name"/>
     </xsl:call-template>
   </xsl:variable>
+  <xsl:variable name="class-file" select="location/@file"/>
 [section:<xsl:value-of select="$class-id"/><xsl:text> </xsl:text><xsl:value-of select="$class-name"/>]
 
 <xsl:value-of select="briefdescription"/><xsl:text>
@@ -557,9 +583,14 @@
 
 <xsl:apply-templates select="detaileddescription" mode="markup"/>
 
+<xsl:call-template name="header-requirements">
+  <xsl:with-param name="file" select="$class-file"/>
+</xsl:call-template>
+
 <xsl:call-template name="class-members">
   <xsl:with-param name="class-name" select="$class-name"/>
   <xsl:with-param name="class-id" select="$class-id"/>
+  <xsl:with-param name="class-file" select="$class-file"/>
 </xsl:call-template>
 
 [endsect]
@@ -842,10 +873,12 @@
 <xsl:template name="class-members">
 <xsl:param name="class-name"/>
 <xsl:param name="class-id"/>
+<xsl:param name="class-file"/>
 <xsl:apply-templates select="sectiondef[@kind='public-type' or @kind='public-func' or @kind='public-static-func' or @kind='public-attrib' or @kind='public-static-attrib' or @kind='protected-func' or @kind='protected-static-func' or @kind='protected-attrib' or @kind='protected-static-attrib' or @kind='friend' or @kind='related']/memberdef[not(type = 'friend class') and not(contains(name, '_helper'))]" mode="class-detail">
   <xsl:sort select="name"/>
   <xsl:with-param name="class-name" select="$class-name"/>
   <xsl:with-param name="class-id" select="$class-id"/>
+  <xsl:with-param name="class-file" select="$class-file"/>
 </xsl:apply-templates>
 </xsl:template>
 
@@ -855,6 +888,7 @@
 <xsl:template match="memberdef" mode="class-detail">
   <xsl:param name="class-name"/>
   <xsl:param name="class-id"/>
+  <xsl:param name="class-file"/>
   <xsl:variable name="name">
     <xsl:value-of select="name"/>
   </xsl:variable>
@@ -904,6 +938,12 @@
  select="$id"/>.overload<xsl:value-of select="position()"/><xsl:text> </xsl:text><xsl:value-of
  select="name"/>]``(<xsl:apply-templates select="param"
  mode="class-detail"/>)<xsl:if test="@const='yes'"> const</xsl:if>;
+<xsl:text>  ``  [''''&amp;raquo;'''</xsl:text>
+<xsl:text> [link boost_asio.reference.</xsl:text>
+<xsl:value-of select="$class-id"/>.<xsl:value-of
+ select="$id"/>.overload<xsl:value-of select="position()"/>
+<xsl:text> more...]]``
+</xsl:text>
 </xsl:for-each>
 </xsl:if>
 
@@ -943,7 +983,9 @@
       <xsl:call-template name="variable" mode="class-detail"/>
     </xsl:when>
     <xsl:when test="@kind='enum'">
-      <xsl:call-template name="enum" mode="class-detail"/>
+      <xsl:call-template name="enum" mode="class-detail">
+        <xsl:with-param name="enum-name" select="$class-name"/>
+      </xsl:call-template>
     </xsl:when>
     <xsl:when test="@kind='function'">
       <xsl:call-template name="function" mode="class-detail"/>
@@ -955,6 +997,12 @@
 
 <xsl:text>
 </xsl:text><xsl:apply-templates select="detaileddescription" mode="markup"/>
+
+<xsl:if test="@kind='typedef' or @kind='friend'">
+  <xsl:call-template name="header-requirements">
+    <xsl:with-param name="file" select="$class-file"/>
+  </xsl:call-template>
+</xsl:if>
 
 [endsect]
 
@@ -1008,8 +1056,18 @@
 
 
 <xsl:template name="enum">
+<xsl:param name="enum-name"/>
   enum <xsl:value-of select="name"/><xsl:text>
 </xsl:text><xsl:if test="count(enumvalue) &gt; 0">
+<xsl:value-of select="$newline"/>
+<xsl:for-each select="enumvalue">
+  <xsl:text>[indexterm2 </xsl:text>
+  <xsl:value-of select="name"/>
+  <xsl:text>..</xsl:text>
+  <xsl:value-of select="$enum-name"/>
+  <xsl:text>]</xsl:text>
+  <xsl:value-of select="$newline"/>
+</xsl:for-each>
 [heading Values]
 [variablelist
 <xsl:for-each select="enumvalue">
@@ -1127,9 +1185,23 @@
 
 <xsl:template match="param" mode="class-detail">
 <xsl:text>
-      </xsl:text><xsl:value-of select="type"/><xsl:text> </xsl:text><xsl:value-of
-        select="declname"/><xsl:if test="count(defval) > 0"> = <xsl:value-of
-        select="defval"/></xsl:if><xsl:if test="not(position() = last())">,</xsl:if>
+      </xsl:text>
+  <xsl:choose>
+    <xsl:when test="string-length(array) &gt; 0">
+      <xsl:value-of select="substring-before(type, '&amp;')"/>
+      <xsl:text>(&amp;</xsl:text>
+      <xsl:value-of select="declname"/>
+      <xsl:text>)</xsl:text>
+      <xsl:value-of select="array"/>
+    </xsl:when>
+    <xsl:otherwise>
+      <xsl:value-of select="type"/>
+      <xsl:text> </xsl:text>
+      <xsl:value-of select="declname"/>
+    </xsl:otherwise>
+  </xsl:choose>
+  <xsl:if test="count(defval) > 0"> = <xsl:value-of select="defval"/></xsl:if>
+  <xsl:if test="not(position() = last())">,</xsl:if>
 </xsl:template>
 
 
@@ -1195,11 +1267,20 @@
  select="type"/><xsl:text> </xsl:text></xsl:if>``[link boost_asio.reference.<xsl:value-of
  select="$id"/>.overload<xsl:value-of select="position()"/><xsl:text> </xsl:text>
 <xsl:value-of select="name"/>]``(<xsl:apply-templates select="param" mode="class-detail"/>);
+<xsl:text>  ``  [''''&amp;raquo;'''</xsl:text>
+<xsl:text> [link boost_asio.reference.</xsl:text>
+<xsl:value-of select="$id"/>.overload<xsl:value-of select="position()"/>
+<xsl:text> more...]]``
+</xsl:text>
 </xsl:for-each>
 
 <xsl:for-each select="/doxygen/compounddef[@kind='group' and compoundname=$name]">
   <xsl:apply-templates select="detaileddescription" mode="markup"/>
 </xsl:for-each>
+
+<xsl:call-template name="header-requirements">
+  <xsl:with-param name="file" select="location/@file"/>
+</xsl:call-template>
 
 </xsl:if>
 
@@ -1228,7 +1309,9 @@
       <xsl:call-template name="variable"/>
     </xsl:when>
     <xsl:when test="@kind='enum'">
-      <xsl:call-template name="enum"/>
+      <xsl:call-template name="enum">
+        <xsl:with-param name="enum-name" select="$name"/>
+      </xsl:call-template>
     </xsl:when>
     <xsl:when test="@kind='function'">
       <xsl:call-template name="function"/>
@@ -1237,6 +1320,12 @@
 
 <xsl:text>
 </xsl:text><xsl:apply-templates select="detaileddescription" mode="markup"/>
+
+<xsl:if test="$overload-count = 1">
+  <xsl:call-template name="header-requirements">
+    <xsl:with-param name="file" select="location/@file"/>
+  </xsl:call-template>
+</xsl:if>
 
 [endsect]
 

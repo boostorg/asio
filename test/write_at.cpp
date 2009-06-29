@@ -174,13 +174,13 @@ void test_3_arg_write_at()
 }
 
 bool old_style_transfer_all(const boost::system::error_code& ec,
-    size_t bytes_transferred)
+    size_t /*bytes_transferred*/)
 {
   return !!ec;
 }
 
 size_t short_transfer(const boost::system::error_code& ec,
-    size_t bytes_transferred)
+    size_t /*bytes_transferred*/)
 {
   return !!ec ? 0 : 3;
 }

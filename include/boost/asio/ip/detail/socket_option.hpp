@@ -21,6 +21,7 @@
 #include <cstddef>
 #include <cstring>
 #include <boost/config.hpp>
+#include <boost/throw_exception.hpp>
 #include <boost/asio/detail/pop_options.hpp>
 
 #include <boost/asio/ip/address.hpp>
@@ -142,8 +143,8 @@ public:
     {
       if (s != sizeof(ipv6_value_))
       {
-        throw std::length_error(
-            "multicast_enable_loopback socket option resize");
+        std::length_error ex("multicast_enable_loopback socket option resize");
+        boost::throw_exception(ex);
       }
       ipv4_value_ = ipv6_value_ ? 1 : 0;
     }
@@ -151,8 +152,8 @@ public:
     {
       if (s != sizeof(ipv4_value_))
       {
-        throw std::length_error(
-            "multicast_enable_loopback socket option resize");
+        std::length_error ex("multicast_enable_loopback socket option resize");
+        boost::throw_exception(ex);
       }
       ipv6_value_ = ipv4_value_ ? 1 : 0;
     }
@@ -237,7 +238,10 @@ public:
   void resize(const Protocol&, std::size_t s)
   {
     if (s != sizeof(value_))
-      throw std::length_error("unicast hops socket option resize");
+    {
+      std::length_error ex("unicast hops socket option resize");
+      boost::throw_exception(ex);
+    }
 #if defined(__hpux)
     if (value_ < 0)
       value_ = value_ & 0xFF;
@@ -271,7 +275,10 @@ public:
   explicit multicast_hops(int v)
   {
     if (v < 0 || v > 255)
-      throw std::out_of_range("multicast hops value out of range");
+    {
+      std::out_of_range ex("multicast hops value out of range");
+      boost::throw_exception(ex);
+    }
     ipv4_value_ = (ipv4_value_type)v;
     ipv6_value_ = v;
   }
@@ -280,7 +287,10 @@ public:
   multicast_hops& operator=(int v)
   {
     if (v < 0 || v > 255)
-      throw std::out_of_range("multicast hops value out of range");
+    {
+      std::out_of_range ex("multicast hops value out of range");
+      boost::throw_exception(ex);
+    }
     ipv4_value_ = (ipv4_value_type)v;
     ipv6_value_ = v;
     return *this;
@@ -344,7 +354,10 @@ public:
     if (protocol.family() == PF_INET6)
     {
       if (s != sizeof(ipv6_value_))
-        throw std::length_error("multicast hops socket option resize");
+      {
+        std::length_error ex("multicast hops socket option resize");
+        boost::throw_exception(ex);
+      }
       if (ipv6_value_ < 0)
         ipv4_value_ = 0;
       else if (ipv6_value_ > 255)
@@ -355,7 +368,10 @@ public:
     else
     {
       if (s != sizeof(ipv4_value_))
-        throw std::length_error("multicast hops socket option resize");
+      {
+        std::length_error ex("multicast hops socket option resize");
+        boost::throw_exception(ex);
+      }
       ipv6_value_ = ipv4_value_;
     }
   }
