@@ -50,7 +50,7 @@ public:
     : boost::asio::detail::service_base<task_io_service<Task> >(io_service),
       front_mutex_(),
       back_mutex_(),
-      task_(&use_service<Task>(io_service)),
+      task_(0),
       outstanding_work_(0),
       front_stopped_(false),
       back_stopped_(false),
