@@ -15,4 +15,43 @@ ip::basic_resolver_iterator<InternetProtocol>`. `InternetProtocol` is the
 template parameter of the [link boost_asio.reference.ip__resolver_service
 `resolver_service`] which is used to initiate the asynchronous operation.
 
+[heading Examples]
+
+A free function as a resolve handler:
+
+  void resolve_handler(
+      const boost::system::error_code& ec,
+      boost::asio::ip::tcp::resolver::iterator iterator)
+  {
+    ...
+  }
+
+A resolve handler function object:
+
+  struct resolve_handler
+  {
+    ...
+    void operator()(
+        const boost::system::error_code& ec,
+        boost::asio::ip::tcp::resolver::iterator iterator)
+    {
+      ...
+    }
+    ...
+  };
+
+A non-static class member function adapted to a resolve handler using `bind()`:
+
+  void my_class::resolve_handler(
+      const boost::system::error_code& ec,
+      boost::asio::ip::tcp::resolver::iterator iterator)
+  {
+    ...
+  }
+  ...
+  resolver.async_resolve(...,
+      boost::bind(&my_class::resolve_handler,
+        this, boost::asio::placeholders::error,
+        boost::asio::placeholders::iterator));
+
 [endsect]
