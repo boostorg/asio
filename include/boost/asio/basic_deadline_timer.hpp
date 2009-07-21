@@ -200,8 +200,11 @@ public:
    *
    * @note If the timer has already expired when cancel() is called, then the
    * handlers for asynchronous wait operations will:
+   *
    * @li have already been invoked; or
+   *
    * @li have been queued for invocation in the near future.
+   *
    * These handlers can no longer be cancelled, and therefore are passed an
    * error code that indicates the successful completion of the wait operation.
    */
@@ -227,8 +230,11 @@ public:
    *
    * @note If the timer has already expired when cancel() is called, then the
    * handlers for asynchronous wait operations will:
+   *
    * @li have already been invoked; or
+   *
    * @li have been queued for invocation in the near future.
+   *
    * These handlers can no longer be cancelled, and therefore are passed an
    * error code that indicates the successful completion of the wait operation.
    */
@@ -261,8 +267,11 @@ public:
    *
    * @note If the timer has already expired when expires_at() is called, then
    * the handlers for asynchronous wait operations will:
+   *
    * @li have already been invoked; or
+   *
    * @li have been queued for invocation in the near future.
+   *
    * These handlers can no longer be cancelled, and therefore are passed an
    * error code that indicates the successful completion of the wait operation.
    */
@@ -289,8 +298,11 @@ public:
    *
    * @note If the timer has already expired when expires_at() is called, then
    * the handlers for asynchronous wait operations will:
+   *
    * @li have already been invoked; or
+   *
    * @li have been queued for invocation in the near future.
+   *
    * These handlers can no longer be cancelled, and therefore are passed an
    * error code that indicates the successful completion of the wait operation.
    */
@@ -324,8 +336,11 @@ public:
    *
    * @note If the timer has already expired when expires_from_now() is called,
    * then the handlers for asynchronous wait operations will:
+   *
    * @li have already been invoked; or
+   *
    * @li have been queued for invocation in the near future.
+   *
    * These handlers can no longer be cancelled, and therefore are passed an
    * error code that indicates the successful completion of the wait operation.
    */
@@ -352,8 +367,11 @@ public:
    *
    * @note If the timer has already expired when expires_from_now() is called,
    * then the handlers for asynchronous wait operations will:
+   *
    * @li have already been invoked; or
+   *
    * @li have been queued for invocation in the near future.
+   *
    * These handlers can no longer be cancelled, and therefore are passed an
    * error code that indicates the successful completion of the wait operation.
    */
