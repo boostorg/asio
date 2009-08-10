@@ -357,6 +357,7 @@ public:
       DWORD last_error = ::GetLastError();
       ec = boost::system::error_code(last_error,
           boost::asio::error::get_system_category());
+      return 0;
     }
 
     ec = boost::system::error_code();
@@ -604,6 +605,7 @@ public:
         ec = boost::system::error_code(last_error,
             boost::asio::error::get_system_category());
       }
+      return 0;
     }
 
     ec = boost::system::error_code();
