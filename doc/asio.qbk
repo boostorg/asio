@@ -88,6 +88,14 @@ a modern C++ approach.
   ]
   [
     [
+      [link boost_asio.history Revision History]
+    ]
+    [
+      Log of Boost.Asio changes made in each Boost release.
+    ]
+  ]
+  [
+    [
       [link boost_asio.index Index]
     ]
     [
@@ -101,4 +109,5 @@ a modern C++ approach.
 [include tutorial.qbk]
 [include examples.qbk]
 [include reference.qbk]
+[include history.qbk]
 [xinclude index.xml]
