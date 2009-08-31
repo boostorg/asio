@@ -33,7 +33,7 @@ timer:
   ...
   i.run();
 
-The deadline associated with a timer may be also be obtained as a relative time:
+The deadline associated with a timer may also be obtained as a relative time:
 
   boost::posix_time::time_duration time_until_expiry
     = t.expires_from_now();
