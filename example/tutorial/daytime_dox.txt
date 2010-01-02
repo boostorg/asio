@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2003-2008 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2010 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -195,8 +195,8 @@ operation that refers to it.
 \until }
 \until }
 
-In the function <tt>start()</tt>, we call boost::asio::async_write() to serve the data to
-the client. Note that we are using boost::asio::async_write(), rather than
+In the function <tt>start()</tt>, we call boost::asio::async_write() to serve the data
+to the client. Note that we are using boost::asio::async_write(), rather than
 boost::asio::ip::tcp::socket::async_write_some(), to ensure that the entire block of
 data is sent.
 
@@ -233,7 +233,8 @@ that it looks like:
   }
 \endcode
 
-The boost::asio::async_write() call used to initiate the call can then be changed to just:
+The boost::asio::async_write() call used to initiate the call can then be changed to
+just:
 
 \code
   boost::asio::async_write(socket_, boost::asio::buffer(message_),
