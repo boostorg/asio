@@ -25,11 +25,19 @@
 #include <boost/asio/io_service.hpp>
 #include <boost/asio/time_traits.hpp>
 #include <boost/asio/detail/deadline_timer_service.hpp>
-#include <boost/asio/detail/epoll_reactor.hpp>
-#include <boost/asio/detail/kqueue_reactor.hpp>
-#include <boost/asio/detail/select_reactor.hpp>
 #include <boost/asio/detail/service_base.hpp>
-#include <boost/asio/detail/win_iocp_io_service.hpp>
+
+#if defined(BOOST_ASIO_HAS_IOCP)
+# include <boost/asio/detail/win_iocp_io_service.hpp>
+#elif defined(BOOST_ASIO_HAS_EPOLL)
+# include <boost/asio/detail/epoll_reactor.hpp>
+#elif defined(BOOST_ASIO_HAS_KQUEUE)
+# include <boost/asio/detail/kqueue_reactor.hpp>
+#elif defined(BOOST_ASIO_HAS_DEV_POLL)
+# include <boost/asio/detail/dev_poll_reactor.hpp>
+#else
+# include <boost/asio/detail/select_reactor.hpp>
+#endif
 
 namespace boost {
 namespace asio {
