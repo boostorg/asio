@@ -21,7 +21,7 @@
 #include <cstddef>
 #include <cstring>
 #include <boost/config.hpp>
-#include <boost/type_traits.hpp>
+#include <boost/type_traits/remove_reference.hpp>
 #include <boost/asio/detail/pop_options.hpp>
 
 #include <boost/asio/buffered_read_stream_fwd.hpp>

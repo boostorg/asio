@@ -18,7 +18,7 @@
 #include <boost/asio/detail/push_options.hpp>
 
 #include <boost/asio/detail/push_options.hpp>
-#include <boost/type_traits.hpp>
+#include <boost/type_traits/add_reference.hpp>
 #include <boost/asio/detail/pop_options.hpp>
 
 #include <boost/asio/detail/bind_handler.hpp>
