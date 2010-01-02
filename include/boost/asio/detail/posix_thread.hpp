@@ -37,7 +37,7 @@ namespace boost {
 namespace asio {
 namespace detail {
 
-extern "C" void* asio_detail_posix_thread_function(void* arg);
+extern "C" void* boost_asio_detail_posix_thread_function(void* arg);
 
 class posix_thread
   : private noncopyable
@@ -50,7 +50,7 @@ public:
   {
     std::auto_ptr<func_base> arg(new func<Function>(f));
     int error = ::pthread_create(&thread_, 0,
-          asio_detail_posix_thread_function, arg.get());
+          boost_asio_detail_posix_thread_function, arg.get());
     if (error != 0)
     {
       boost::system::system_error e(
@@ -80,7 +80,7 @@ public:
   }
 
 private:
-  friend void* asio_detail_posix_thread_function(void* arg);
+  friend void* boost_asio_detail_posix_thread_function(void* arg);
 
   class func_base
   {
@@ -112,7 +112,7 @@ private:
   bool joined_;
 };
 
-inline void* asio_detail_posix_thread_function(void* arg)
+inline void* boost_asio_detail_posix_thread_function(void* arg)
 {
   std::auto_ptr<posix_thread::func_base> f(
       static_cast<posix_thread::func_base*>(arg));
