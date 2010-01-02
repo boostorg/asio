@@ -18,7 +18,10 @@
 
 #include <boost/bind.hpp>
 #include <cstring>
-#include <boost/asio.hpp>
+#include <boost/asio/buffer.hpp>
+#include <boost/asio/io_service.hpp>
+#include <boost/asio/ip/tcp.hpp>
+#include <boost/asio/placeholders.hpp>
 #include "unit_test.hpp"
 
 typedef boost::asio::buffered_stream<

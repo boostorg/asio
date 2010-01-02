@@ -18,7 +18,10 @@
 
 #include <boost/bind.hpp>
 #include <boost/noncopyable.hpp>
-#include <boost/asio.hpp>
+#include <boost/asio/buffered_read_stream.hpp>
+#include <boost/asio/buffered_write_stream.hpp>
+#include <boost/asio/io_service.hpp>
+#include <boost/asio/ip/tcp.hpp>
 #include "unit_test.hpp"
 
 using namespace std; // For memcmp, memcpy and memset.

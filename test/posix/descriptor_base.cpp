@@ -16,7 +16,6 @@
 // Test that header file is self-contained.
 #include <boost/asio/posix/descriptor_base.hpp>
 
-#include <boost/asio.hpp>
 #include "../unit_test.hpp"
 
 test_suite* init_unit_test_suite(int, char*[])
