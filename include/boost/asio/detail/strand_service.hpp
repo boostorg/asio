@@ -331,7 +331,7 @@ public:
       call_stack<strand_impl>::context ctx(impl.get());
 
       // Make the upcall.
-      boost_asio_handler_invoke_helpers::invoke(handler, &handler);
+      boost_asio_handler_invoke_helpers::invoke(handler, handler);
     }
 
     static void do_destroy(handler_base* base)
@@ -418,7 +418,7 @@ public:
   {
     if (call_stack<strand_impl>::contains(impl.get()))
     {
-      boost_asio_handler_invoke_helpers::invoke(handler, &handler);
+      boost_asio_handler_invoke_helpers::invoke(handler, handler);
     }
     else
     {

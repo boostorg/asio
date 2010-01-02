@@ -789,7 +789,7 @@ public:
 
       // Call the handler.
       boost_asio_handler_invoke_helpers::invoke(
-          detail::bind_handler(handler, ec, bytes_transferred), &handler);
+          detail::bind_handler(handler, ec, bytes_transferred), handler);
     }
 
     static void destroy_impl(operation* op)
@@ -1064,7 +1064,7 @@ public:
 
       // Call the handler.
       boost_asio_handler_invoke_helpers::invoke(
-          detail::bind_handler(handler, ec, bytes_transferred), &handler);
+          detail::bind_handler(handler, ec, bytes_transferred), handler);
     }
 
     static void destroy_impl(operation* op)
@@ -1333,7 +1333,7 @@ public:
 
       // Call the handler.
       boost_asio_handler_invoke_helpers::invoke(
-          detail::bind_handler(handler, ec, bytes_transferred), &handler);
+          detail::bind_handler(handler, ec, bytes_transferred), handler);
     }
 
     static void destroy_impl(operation* op)
@@ -1660,7 +1660,7 @@ public:
 
       // Call the handler.
       boost_asio_handler_invoke_helpers::invoke(
-          detail::bind_handler(handler, ec, bytes_transferred), &handler);
+          detail::bind_handler(handler, ec, bytes_transferred), handler);
     }
 
     static void destroy_impl(operation* op)
@@ -2021,7 +2021,7 @@ public:
       boost::system::error_code ec(last_error,
           boost::asio::error::get_system_category());
       boost_asio_handler_invoke_helpers::invoke(
-          detail::bind_handler(handler, ec), &handler);
+          detail::bind_handler(handler, ec), handler);
     }
 
     static void destroy_impl(operation* op)
