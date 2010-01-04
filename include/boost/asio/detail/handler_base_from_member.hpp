@@ -50,7 +50,7 @@ inline void* asio_handler_allocate(std::size_t size,
     handler_base_from_member<Handler>* this_handler)
 {
   return boost_asio_handler_alloc_helpers::allocate(
-      size, &this_handler->handler_);
+      size, this_handler->handler_);
 }
 
 template <typename Handler>
@@ -58,7 +58,7 @@ inline void asio_handler_deallocate(void* pointer, std::size_t size,
     handler_base_from_member<Handler>* this_handler)
 {
   boost_asio_handler_alloc_helpers::deallocate(
-      pointer, size, &this_handler->handler_);
+      pointer, size, this_handler->handler_);
 }
 
 template <typename Function, typename Handler>
@@ -66,7 +66,7 @@ inline void asio_handler_invoke(const Function& function,
     handler_base_from_member<Handler>* this_handler)
 {
   boost_asio_handler_invoke_helpers::invoke(
-      function, &this_handler->handler_);
+      function, this_handler->handler_);
 }
 
 } // namespace detail

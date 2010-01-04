@@ -18,7 +18,7 @@
 
 #include <boost/bind.hpp>
 #include <cstring>
-#include <boost/asio.hpp>
+#include <boost/asio/io_service.hpp>
 #include "../unit_test.hpp"
 #include "../archetypes/io_control_command.hpp"
 

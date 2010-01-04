@@ -16,7 +16,8 @@
 // Test that header file is self-contained.
 #include <boost/asio/ip/unicast.hpp>
 
-#include <boost/asio.hpp>
+#include <boost/asio/io_service.hpp>
+#include <boost/asio/ip/udp.hpp>
 #include "../unit_test.hpp"
 
 //------------------------------------------------------------------------------

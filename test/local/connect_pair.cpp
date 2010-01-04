@@ -16,7 +16,9 @@
 // Test that header file is self-contained.
 #include <boost/asio/local/connect_pair.hpp>
 
-#include <boost/asio.hpp>
+#include <boost/asio/io_service.hpp>
+#include <boost/asio/local/datagram_protocol.hpp>
+#include <boost/asio/local/stream_protocol.hpp>
 #include "../unit_test.hpp"
 
 //------------------------------------------------------------------------------

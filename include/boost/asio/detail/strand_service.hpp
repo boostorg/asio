@@ -20,8 +20,8 @@
 #include <boost/asio/detail/push_options.hpp>
 #include <boost/aligned_storage.hpp>
 #include <boost/assert.hpp>
-#include <boost/detail/atomic_count.hpp>
-#include <boost/intrusive_ptr.hpp>
+#include <boost/functional/hash.hpp>
+#include <boost/scoped_ptr.hpp>
 #include <boost/asio/detail/pop_options.hpp>
 
 #include <boost/asio/io_service.hpp>
@@ -49,20 +49,12 @@ public:
   // The underlying implementation of a strand.
   class strand_impl
   {
-#if defined (__BORLANDC__)
   public:
-#else
-  private:
-#endif
-    void add_ref()
+    strand_impl()
+      : current_handler_(0),
+        first_waiter_(0),
+        last_waiter_(0)
     {
-      ++ref_count_;
-    }
-
-    void release()
-    {
-      if (--ref_count_ == 0)
-        delete this;
     }
 
   private:
@@ -71,54 +63,8 @@ public:
     friend class post_next_waiter_on_exit;
     friend class invoke_current_handler;
 
-    strand_impl(strand_service& owner)
-      : owner_(owner),
-        current_handler_(0),
-        first_waiter_(0),
-        last_waiter_(0),
-        ref_count_(0)
-    {
-      // Insert implementation into linked list of all implementations.
-      boost::asio::detail::mutex::scoped_lock lock(owner_.mutex_);
-      next_ = owner_.impl_list_;
-      prev_ = 0;
-      if (owner_.impl_list_)
-        owner_.impl_list_->prev_ = this;
-      owner_.impl_list_ = this;
-    }
-
-    ~strand_impl()
-    {
-      // Remove implementation from linked list of all implementations.
-      boost::asio::detail::mutex::scoped_lock lock(owner_.mutex_);
-      if (owner_.impl_list_ == this)
-        owner_.impl_list_ = next_;
-      if (prev_)
-        prev_->next_ = next_;
-      if (next_)
-        next_->prev_= prev_;
-      next_ = 0;
-      prev_ = 0;
-      lock.unlock();
-
-      if (current_handler_)
-      {
-        current_handler_->destroy();
-      }
-
-      while (first_waiter_)
-      {
-        handler_base* next = first_waiter_->next_;
-        first_waiter_->destroy();
-        first_waiter_ = next;
-      }
-    }
-
     // Mutex to protect access to internal data.
     boost::asio::detail::mutex mutex_;
-
-    // The service that owns this implementation.
-    strand_service& owner_;
 
     // The handler that is ready to execute. If this pointer is non-null then it
     // indicates that a handler holds the lock.
@@ -137,30 +83,11 @@ public:
 #else
     handler_storage_type handler_storage_;
 #endif
-
-    // Pointers to adjacent socket implementations in linked list.
-    strand_impl* next_;
-    strand_impl* prev_;
-
-    // The reference count on the strand implementation.
-    boost::detail::atomic_count ref_count_;
-
-#if !defined(__BORLANDC__)
-    friend void intrusive_ptr_add_ref(strand_impl* p)
-    {
-      p->add_ref();
-    }
-
-    friend void intrusive_ptr_release(strand_impl* p)
-    {
-      p->release();
-    }
-#endif
   };
 
   friend class strand_impl;
 
-  typedef boost::intrusive_ptr<strand_impl> implementation_type;
+  typedef strand_impl* implementation_type;
 
   // Base class for all handler types.
   class handler_base
@@ -328,10 +255,10 @@ public:
       ptr.reset();
 
       // Indicate that this strand is executing on the current thread.
-      call_stack<strand_impl>::context ctx(impl.get());
+      call_stack<strand_impl>::context ctx(impl);
 
       // Make the upcall.
-      boost_asio_handler_invoke_helpers::invoke(handler, &handler);
+      boost_asio_handler_invoke_helpers::invoke(handler, handler);
     }
 
     static void do_destroy(handler_base* base)
@@ -361,7 +288,7 @@ public:
   explicit strand_service(boost::asio::io_service& io_service)
     : boost::asio::detail::service_base<strand_service>(io_service),
       mutex_(),
-      impl_list_(0)
+      salt_(0)
   {
   }
 
@@ -370,24 +297,25 @@ public:
   {
     // Construct a list of all handlers to be destroyed.
     boost::asio::detail::mutex::scoped_lock lock(mutex_);
-    strand_impl* impl = impl_list_;
     handler_base* first_handler = 0;
-    while (impl)
+    for (std::size_t i = 0; i < num_implementations; ++i)
     {
-      if (impl->current_handler_)
+      if (strand_impl* impl = implementations_[i].get())
       {
-        impl->current_handler_->next_ = first_handler;
-        first_handler = impl->current_handler_;
-        impl->current_handler_ = 0;
+        if (impl->current_handler_)
+        {
+          impl->current_handler_->next_ = first_handler;
+          first_handler = impl->current_handler_;
+          impl->current_handler_ = 0;
+        }
+        if (impl->first_waiter_)
+        {
+          impl->last_waiter_->next_ = first_handler;
+          first_handler = impl->first_waiter_;
+          impl->first_waiter_ = 0;
+          impl->last_waiter_ = 0;
+        }
       }
-      if (impl->first_waiter_)
-      {
-        impl->last_waiter_->next_ = first_handler;
-        first_handler = impl->first_waiter_;
-        impl->first_waiter_ = 0;
-        impl->last_waiter_ = 0;
-      }
-      impl = impl->next_;
     }
 
     // Destroy all handlers without holding the lock.
@@ -403,22 +331,30 @@ public:
   // Construct a new strand implementation.
   void construct(implementation_type& impl)
   {
-    impl = implementation_type(new strand_impl(*this));
+    std::size_t index = boost::hash_value(&impl);
+    boost::hash_combine(index, salt_++);
+    index = index % num_implementations;
+
+    boost::asio::detail::mutex::scoped_lock lock(mutex_);
+
+    if (!implementations_[index])
+      implementations_[index].reset(new strand_impl);
+    impl = implementations_[index].get();
   }
 
   // Destroy a strand implementation.
   void destroy(implementation_type& impl)
   {
-    implementation_type().swap(impl);
+    impl = 0;
   }
 
   // Request the io_service to invoke the given handler.
   template <typename Handler>
   void dispatch(implementation_type& impl, Handler handler)
   {
-    if (call_stack<strand_impl>::contains(impl.get()))
+    if (call_stack<strand_impl>::contains(impl))
     {
-      boost_asio_handler_invoke_helpers::invoke(handler, &handler);
+      boost_asio_handler_invoke_helpers::invoke(handler, handler);
     }
     else
     {
@@ -496,36 +432,23 @@ public:
   }
 
 private:
-  // Mutex to protect access to the linked list of implementations. 
+  // Mutex to protect access to the array of implementations.
   boost::asio::detail::mutex mutex_;
 
+  // Number of implementations shared between all strand objects.
+  enum { num_implementations = 193 };
+
   // The head of a linked list of all implementations.
-  strand_impl* impl_list_;
+  boost::scoped_ptr<strand_impl> implementations_[num_implementations];
+
+  // Extra value used when hashing to prevent recycled memory locations from
+  // getting the same strand implementation.
+  std::size_t salt_;
 };
 
 } // namespace detail
 } // namespace asio
 } // namespace boost
-
-#if defined(__BORLANDC__)
-
-namespace boost {
-
-inline void intrusive_ptr_add_ref(
-    boost::asio::detail::strand_service::strand_impl* p)
-{
-  p->add_ref();
-}
-
-inline void intrusive_ptr_release(
-    boost::asio::detail::strand_service::strand_impl* p)
-{
-  p->release();
-}
-
-} // namespace boost
-
-#endif // defined(__BORLANDC__)
 
 #include <boost/asio/detail/pop_options.hpp>
 

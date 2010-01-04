@@ -369,9 +369,6 @@ private:
     lock.lock();
     select_in_progress_ = false;
 
-    // Block signals while dispatching operations.
-    boost::asio::detail::signal_blocker sb;
-
     // Reset the interrupter.
     if (retval > 0 && read_fds.is_set(interrupter_.read_descriptor()))
       interrupter_.reset();

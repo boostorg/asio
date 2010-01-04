@@ -16,7 +16,7 @@
 // Test that header file is self-contained.
 #include <boost/asio/posix/stream_descriptor.hpp>
 
-#include <boost/asio.hpp>
+#include <boost/asio/io_service.hpp>
 #include "../unit_test.hpp"
 
 //------------------------------------------------------------------------------

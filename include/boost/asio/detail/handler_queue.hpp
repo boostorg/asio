@@ -189,7 +189,7 @@ private:
       ptr.reset();
 
       // Make the upcall.
-      boost_asio_handler_invoke_helpers::invoke(handler, &handler);
+      boost_asio_handler_invoke_helpers::invoke(handler, handler);
     }
 
     static void do_destroy(handler* base)

@@ -21,9 +21,12 @@
 #include <boost/config.hpp>
 #include <boost/asio/detail/pop_options.hpp>
 
-#include <boost/asio/detail/eventfd_select_interrupter.hpp>
-#include <boost/asio/detail/pipe_select_interrupter.hpp>
-#include <boost/asio/detail/socket_select_interrupter.hpp>
+#if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
+# include <boost/asio/detail/socket_select_interrupter.hpp>
+#else
+# include <boost/asio/detail/eventfd_select_interrupter.hpp>
+# include <boost/asio/detail/pipe_select_interrupter.hpp>
+#endif
 
 namespace boost {
 namespace asio {

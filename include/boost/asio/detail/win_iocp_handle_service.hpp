@@ -415,7 +415,7 @@ public:
       boost::system::error_code ec(last_error,
           boost::asio::error::get_system_category());
       boost_asio_handler_invoke_helpers::invoke(
-          bind_handler(handler, ec, bytes_transferred), &handler);
+          bind_handler(handler, ec, bytes_transferred), handler);
     }
 
     static void destroy_impl(operation* op)
@@ -457,13 +457,6 @@ public:
   void async_write_some_at(implementation_type& impl, boost::uint64_t offset,
       const ConstBufferSequence& buffers, Handler handler)
   {
-    if (!is_open(impl))
-    {
-      this->get_io_service().post(bind_handler(handler,
-            boost::asio::error::bad_descriptor, 0));
-      return;
-    }
-
     // Update the ID of the thread from which cancellation is safe.
     if (impl.safe_cancellation_thread_id_ == 0)
       impl.safe_cancellation_thread_id_ = ::GetCurrentThreadId();
@@ -475,6 +468,13 @@ public:
     typedef handler_alloc_traits<Handler, value_type> alloc_traits;
     raw_handler_ptr<alloc_traits> raw_ptr(handler);
     handler_ptr<alloc_traits> ptr(raw_ptr, iocp_service_, buffers, handler);
+
+    if (!is_open(impl))
+    {
+      ptr.get()->on_immediate_completion(WSAEBADF, 0);
+      ptr.release();
+      return;
+    }
 
     // Find first buffer of non-zero length.
     boost::asio::const_buffer buffer;
@@ -490,10 +490,8 @@ public:
     // A request to write 0 bytes on a handle is a no-op.
     if (boost::asio::buffer_size(buffer) == 0)
     {
-      boost::asio::io_service::work work(this->get_io_service());
-      ptr.reset();
-      boost::system::error_code error;
-      iocp_service_.post(bind_handler(handler, error, 0));
+      ptr.get()->on_immediate_completion(0, 0);
+      ptr.release();
       return;
     }
 
@@ -510,14 +508,12 @@ public:
     // Check if the operation completed immediately.
     if (!ok && last_error != ERROR_IO_PENDING)
     {
-      boost::asio::io_service::work work(this->get_io_service());
-      ptr.reset();
-      boost::system::error_code ec(last_error,
-          boost::asio::error::get_system_category());
-      iocp_service_.post(bind_handler(handler, ec, bytes_transferred));
+      ptr.get()->on_immediate_completion(last_error, bytes_transferred);
+      ptr.release();
     }
     else
     {
+      ptr.get()->on_pending();
       ptr.release();
     }
   }
@@ -671,7 +667,7 @@ public:
 
       // Call the handler.
       boost_asio_handler_invoke_helpers::invoke(
-        bind_handler(handler, ec, bytes_transferred), &handler);
+        bind_handler(handler, ec, bytes_transferred), handler);
     }
 
     static void destroy_impl(operation* op)
@@ -716,13 +712,6 @@ public:
   void async_read_some_at(implementation_type& impl, boost::uint64_t offset,
       const MutableBufferSequence& buffers, Handler handler)
   {
-    if (!is_open(impl))
-    {
-      this->get_io_service().post(bind_handler(handler,
-            boost::asio::error::bad_descriptor, 0));
-      return;
-    }
-
     // Update the ID of the thread from which cancellation is safe.
     if (impl.safe_cancellation_thread_id_ == 0)
       impl.safe_cancellation_thread_id_ = ::GetCurrentThreadId();
@@ -734,6 +723,13 @@ public:
     typedef handler_alloc_traits<Handler, value_type> alloc_traits;
     raw_handler_ptr<alloc_traits> raw_ptr(handler);
     handler_ptr<alloc_traits> ptr(raw_ptr, iocp_service_, buffers, handler);
+
+    if (!is_open(impl))
+    {
+      ptr.get()->on_immediate_completion(WSAEBADF, 0);
+      ptr.release();
+      return;
+    }
 
     // Find first buffer of non-zero length.
     boost::asio::mutable_buffer buffer;
@@ -749,10 +745,8 @@ public:
     // A request to receive 0 bytes on a stream handle is a no-op.
     if (boost::asio::buffer_size(buffer) == 0)
     {
-      boost::asio::io_service::work work(this->get_io_service());
-      ptr.reset();
-      boost::system::error_code error;
-      iocp_service_.post(bind_handler(handler, error, 0));
+      ptr.get()->on_immediate_completion(0, 0);
+      ptr.release();
       return;
     }
 
@@ -767,14 +761,12 @@ public:
     DWORD last_error = ::GetLastError();
     if (!ok && last_error != ERROR_IO_PENDING && last_error != ERROR_MORE_DATA)
     {
-      boost::asio::io_service::work work(this->get_io_service());
-      ptr.reset();
-      boost::system::error_code ec(last_error,
-          boost::asio::error::get_system_category());
-      iocp_service_.post(bind_handler(handler, ec, bytes_transferred));
+      ptr.get()->on_immediate_completion(last_error, bytes_transferred);
+      ptr.release();
     }
     else
     {
+      ptr.get()->on_pending();
       ptr.release();
     }
   }

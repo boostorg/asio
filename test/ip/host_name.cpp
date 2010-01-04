@@ -16,7 +16,6 @@
 // Test that header file is self-contained.
 #include <boost/asio/ip/host_name.hpp>
 
-#include <boost/asio.hpp>
 #include "../unit_test.hpp"
 
 //------------------------------------------------------------------------------

@@ -17,7 +17,8 @@
 #include <boost/asio/deadline_timer.hpp>
 
 #include <boost/bind.hpp>
-#include <boost/asio.hpp>
+#include <boost/asio/io_service.hpp>
+#include <boost/asio/placeholders.hpp>
 #include "unit_test.hpp"
 
 using namespace boost::posix_time;

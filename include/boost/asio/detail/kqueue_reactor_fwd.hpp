@@ -19,9 +19,11 @@
 #include <boost/asio/detail/push_options.hpp>
 
 #if !defined(BOOST_ASIO_DISABLE_KQUEUE)
-#if defined(__MACH__) && defined(__APPLE__)
 
-// Define this to indicate that epoll is supported on the target platform.
+#if (defined(__MACH__) && defined(__APPLE__)) \
+  || defined(__NetBSD__) || defined(__FreeBSD__) || defined(__OpenBSD__)
+
+// Define this to indicate that kqueue is supported on the target platform.
 #define BOOST_ASIO_HAS_KQUEUE 1
 
 namespace boost {
@@ -35,7 +37,9 @@ class kqueue_reactor;
 } // namespace asio
 } // namespace boost
 
-#endif // defined(__MACH__) && defined(__APPLE__)
+#endif // (defined(__MACH__) && defined(__APPLE__))
+       // || defined(__NetBSD__) || defined(__FreeBSD__) || defined(__OpenBSD__)
+
 #endif // !defined(BOOST_ASIO_DISABLE_KQUEUE)
 
 #include <boost/asio/detail/pop_options.hpp>

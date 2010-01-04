@@ -174,7 +174,7 @@ namespace detail
         CompletionCondition, ReadHandler>* this_handler)
   {
     return boost_asio_handler_alloc_helpers::allocate(
-        size, &this_handler->handler_);
+        size, this_handler->handler_);
   }
 
   template <typename AsyncReadStream, typename MutableBufferSequence,
@@ -184,7 +184,7 @@ namespace detail
         CompletionCondition, ReadHandler>* this_handler)
   {
     boost_asio_handler_alloc_helpers::deallocate(
-        pointer, size, &this_handler->handler_);
+        pointer, size, this_handler->handler_);
   }
 
   template <typename Function, typename AsyncReadStream,
@@ -195,7 +195,7 @@ namespace detail
         CompletionCondition, ReadHandler>* this_handler)
   {
     boost_asio_handler_invoke_helpers::invoke(
-        function, &this_handler->handler_);
+        function, this_handler->handler_);
   }
 } // namespace detail
 
@@ -285,7 +285,7 @@ namespace detail
         CompletionCondition, ReadHandler>* this_handler)
   {
     return boost_asio_handler_alloc_helpers::allocate(
-        size, &this_handler->handler_);
+        size, this_handler->handler_);
   }
 
   template <typename AsyncReadStream, typename Allocator,
@@ -295,7 +295,7 @@ namespace detail
         CompletionCondition, ReadHandler>* this_handler)
   {
     boost_asio_handler_alloc_helpers::deallocate(
-        pointer, size, &this_handler->handler_);
+        pointer, size, this_handler->handler_);
   }
 
   template <typename Function, typename AsyncReadStream,
@@ -305,7 +305,7 @@ namespace detail
         CompletionCondition, ReadHandler>* this_handler)
   {
     boost_asio_handler_invoke_helpers::invoke(
-        function, &this_handler->handler_);
+        function, this_handler->handler_);
   }
 } // namespace detail
 

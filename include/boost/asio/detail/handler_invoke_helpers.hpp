@@ -19,6 +19,7 @@
 
 #include <boost/asio/detail/push_options.hpp>
 #include <boost/detail/workaround.hpp>
+#include <boost/utility/addressof.hpp>
 #include <boost/asio/detail/pop_options.hpp>
 
 #include <boost/asio/handler_invoke_hook.hpp>
@@ -29,14 +30,14 @@
 namespace boost_asio_handler_invoke_helpers {
 
 template <typename Function, typename Context>
-inline void invoke(const Function& function, Context* context)
+inline void invoke(const Function& function, Context& context)
 {
 #if BOOST_WORKAROUND(__BORLANDC__, BOOST_TESTED_AT(0x564))
   Function tmp(function);
   tmp();
 #else
   using namespace boost::asio;
-  asio_handler_invoke(function, context);
+  asio_handler_invoke(function, boost::addressof(context));
 #endif
 }
 

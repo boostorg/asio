@@ -17,9 +17,9 @@
 #include <boost/asio/io_service.hpp>
 
 #include <sstream>
-#include <boost/bind.hpp>
-#include <boost/asio.hpp>
 #include <boost/thread.hpp>
+#include <boost/bind.hpp>
+#include <boost/asio/deadline_timer.hpp>
 #include "unit_test.hpp"
 
 using namespace boost::asio;
