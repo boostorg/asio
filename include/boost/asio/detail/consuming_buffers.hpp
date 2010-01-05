@@ -20,9 +20,9 @@
 #include <boost/asio/detail/push_options.hpp>
 #include <algorithm>
 #include <cstddef>
-#include <limits>
 #include <boost/config.hpp>
 #include <boost/iterator/iterator_facade.hpp>
+#include <boost/limits.hpp>
 #include <boost/asio/detail/pop_options.hpp>
 
 #include <boost/asio/buffer.hpp>
