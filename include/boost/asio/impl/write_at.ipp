@@ -76,6 +76,8 @@ inline std::size_t write_at(SyncRandomAccessWriteDevice& d,
   return bytes_transferred;
 }
 
+#if !defined(BOOST_NO_IOSTREAM)
+
 template <typename SyncRandomAccessWriteDevice, typename Allocator,
     typename CompletionCondition>
 std::size_t write_at(SyncRandomAccessWriteDevice& d,
@@ -110,6 +112,8 @@ inline std::size_t write_at(SyncRandomAccessWriteDevice& d,
   boost::asio::detail::throw_error(ec);
   return bytes_transferred;
 }
+
+#endif // !defined(BOOST_NO_IOSTREAM)
 
 namespace detail
 {
@@ -227,6 +231,8 @@ inline void async_write_at(AsyncRandomAccessWriteDevice& d,
   async_write_at(d, offset, buffers, transfer_all(), handler);
 }
 
+#if !defined(BOOST_NO_IOSTREAM)
+
 namespace detail
 {
   template <typename AsyncRandomAccessWriteDevice, typename Allocator,
@@ -304,6 +310,8 @@ inline void async_write_at(AsyncRandomAccessWriteDevice& d,
 {
   async_write_at(d, offset, b, transfer_all(), handler);
 }
+
+#endif // !defined(BOOST_NO_IOSTREAM)
 
 } // namespace asio
 } // namespace boost
