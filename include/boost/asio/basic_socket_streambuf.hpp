@@ -18,6 +18,12 @@
 #include <boost/asio/detail/push_options.hpp>
 
 #include <boost/asio/detail/push_options.hpp>
+#include <boost/config.hpp>
+#include <boost/asio/detail/pop_options.hpp>
+
+#if !defined(BOOST_NO_IOSTREAM)
+
+#include <boost/asio/detail/push_options.hpp>
 #include <streambuf>
 #include <boost/array.hpp>
 #include <boost/preprocessor/arithmetic/inc.hpp>
@@ -281,6 +287,8 @@ private:
 } // namespace boost
 
 #undef BOOST_ASIO_PRIVATE_CONNECT_DEF
+
+#endif // !defined(BOOST_NO_IOSTREAM)
 
 #include <boost/asio/detail/pop_options.hpp>
 

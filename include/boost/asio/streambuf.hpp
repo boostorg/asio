@@ -19,6 +19,8 @@
 
 #include <boost/asio/basic_streambuf.hpp>
 
+#if !defined(BOOST_NO_IOSTREAM)
+
 namespace boost {
 namespace asio {
 
@@ -27,6 +29,8 @@ typedef basic_streambuf<> streambuf;
 
 } // namespace asio
 } // namespace boost
+
+#endif // !defined(BOOST_NO_IOSTREAM)
 
 #include <boost/asio/detail/pop_options.hpp>
 

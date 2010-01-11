@@ -18,6 +18,12 @@
 #include <boost/asio/detail/push_options.hpp>
 
 #include <boost/asio/detail/push_options.hpp>
+#include <boost/config.hpp>
+#include <boost/asio/detail/pop_options.hpp>
+
+#if !defined(BOOST_NO_IOSTREAM)
+
+#include <boost/asio/detail/push_options.hpp>
 #include <boost/preprocessor/arithmetic/inc.hpp>
 #include <boost/preprocessor/repetition/enum_binary_params.hpp>
 #include <boost/preprocessor/repetition/enum_params.hpp>
@@ -144,6 +150,8 @@ public:
 
 #undef BOOST_ASIO_PRIVATE_CTR_DEF
 #undef BOOST_ASIO_PRIVATE_CONNECT_DEF
+
+#endif // defined(BOOST_NO_IOSTREAM)
 
 #include <boost/asio/detail/pop_options.hpp>
 
