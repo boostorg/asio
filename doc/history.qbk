@@ -7,6 +7,39 @@
 
 [section:history Revision History]
 
+[heading Asio 1.4.4 / Boost 1.42]
+
+* Added a new HTTP Server 4 example illustrating the use of stackless coroutines
+  with Asio.
+* Changed handler allocation and invocation to use `boost::addressof` to get the
+  address of handler objects, rather than applying `operator&` directly
+  ([@https://svn.boost.org/trac/boost/ticket/2977 #2977]).
+* Restricted MSVC buffer debugging workaround to 2008, as it causes a crash with
+  2010 beta 2 ([@https://svn.boost.org/trac/boost/ticket/3796 #3796],
+  [@https://svn.boost.org/trac/boost/ticket/3822 #3822]).
+* Fixed a problem with the lifetime of handler memory, where Windows needs the
+  `OVERLAPPED` structure to be valid until both the initiating function call
+  has returned and the completion packet has been delivered.
+* Don't block signals while performing system calls, but instead restart the
+  calls if they are interrupted.
+* Documented the guarantee made by strand objects with respect to order of
+  handler invocation.
+* Changed strands to use a pool of implementations, to make copying of strands
+  cheaper.
+* Ensured that kqueue support is enabled for BSD platforms
+  ([@https://svn.boost.org/trac/boost/ticket/3626 #3626]).
+* Added a `boost_` prefix to the `extern "C"` thread entry point function
+  ([@https://svn.boost.org/trac/boost/ticket/3809 #3809]).
+* In `getaddrinfo` emulation, only check the socket type (`SOCK_STREAM` or
+  `SOCK_DGRAM`) if a service name has been specified. This should allow the
+  emulation to work with raw sockets.
+* Added a workaround for some broken Windows firewalls that make a socket
+  appear bound to 0.0.0.0 when it is in fact bound to 127.0.0.1.
+* Applied a fix for reported excessive CPU usage under Solaris
+  ([@https://svn.boost.org/trac/boost/ticket/3670 #3670]).
+* Added some support for platforms that use older compilers such as g++ 2.95
+  ([@https://svn.boost.org/trac/boost/ticket/3743 #3743]).
+
 [heading Asio 1.4.3 / Boost 1.40]
 
 * Added a new ping example to illustrate the use of ICMP sockets.
