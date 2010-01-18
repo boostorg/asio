@@ -135,6 +135,29 @@ An HTTP server using a single io_service and a thread pool calling `io_service::
 * [@boost_asio/example/http/server3/win_main.cpp]
 
 
+[heading HTTP Server 4]
+
+A single-threaded HTTP server implemented using stackless coroutines.
+
+* [@boost_asio/example/http/server4/coroutine.hpp]
+* [@boost_asio/example/http/server4/file_handler.cpp]
+* [@boost_asio/example/http/server4/file_handler.hpp]
+* [@boost_asio/example/http/server4/header.hpp]
+* [@boost_asio/example/http/server4/mime_types.cpp]
+* [@boost_asio/example/http/server4/mime_types.hpp]
+* [@boost_asio/example/http/server4/posix_main.cpp]
+* [@boost_asio/example/http/server4/reply.cpp]
+* [@boost_asio/example/http/server4/reply.hpp]
+* [@boost_asio/example/http/server4/request.hpp]
+* [@boost_asio/example/http/server4/request_parser.cpp]
+* [@boost_asio/example/http/server4/request_parser.hpp]
+* [@boost_asio/example/http/server4/server.cpp]
+* [@boost_asio/example/http/server4/server.hpp]
+* [@boost_asio/example/http/server4/unyield.hpp]
+* [@boost_asio/example/http/server4/win_main.cpp]
+* [@boost_asio/example/http/server4/yield.hpp]
+
+
 [heading ICMP]
 
 This example shows how to use raw sockets with ICMP to ping a remote host.
