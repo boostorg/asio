@@ -62,35 +62,19 @@ public:
   // Destructor.
   ~posix_mutex()
   {
-    ::pthread_mutex_destroy(&mutex_);
+    ::pthread_mutex_destroy(&mutex_); // Ignore EBUSY.
   }
 
   // Lock the mutex.
   void lock()
   {
-    int error = ::pthread_mutex_lock(&mutex_);
-    if (error != 0)
-    {
-      boost::system::system_error e(
-          boost::system::error_code(error,
-            boost::asio::error::get_system_category()),
-          "mutex");
-      boost::throw_exception(e);
-    }
+    (void)::pthread_mutex_lock(&mutex_); // Ignore EINVAL.
   }
 
   // Unlock the mutex.
   void unlock()
   {
-    int error = ::pthread_mutex_unlock(&mutex_);
-    if (error != 0)
-    {
-      boost::system::system_error e(
-          boost::system::error_code(error,
-            boost::asio::error::get_system_category()),
-          "mutex");
-      boost::throw_exception(e);
-    }
+    (void)::pthread_mutex_unlock(&mutex_); // Ignore EINVAL.
   }
 
 private:
