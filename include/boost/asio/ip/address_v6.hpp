@@ -115,7 +115,7 @@ public:
     scope_id_ = id;
   }
 
-  /// Get the address in bytes.
+  /// Get the address in bytes, in network byte order.
   bytes_type to_bytes() const
   {
     using namespace std; // For memcpy.
