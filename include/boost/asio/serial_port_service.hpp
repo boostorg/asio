@@ -54,18 +54,8 @@ private:
   // The type of the platform-specific implementation.
 #if defined(BOOST_ASIO_HAS_IOCP)
   typedef detail::win_iocp_serial_port_service service_impl_type;
-#elif defined(BOOST_ASIO_HAS_EPOLL)
-  typedef detail::reactive_serial_port_service<
-      detail::epoll_reactor<false> > service_impl_type;
-#elif defined(BOOST_ASIO_HAS_KQUEUE)
-  typedef detail::reactive_serial_port_service<
-      detail::kqueue_reactor<false> > service_impl_type;
-#elif defined(BOOST_ASIO_HAS_DEV_POLL)
-  typedef detail::reactive_serial_port_service<
-      detail::dev_poll_reactor<false> > service_impl_type;
 #else
-  typedef detail::reactive_serial_port_service<
-      detail::select_reactor<false> > service_impl_type;
+  typedef detail::reactive_serial_port_service service_impl_type;
 #endif
 
 public:
@@ -86,13 +76,14 @@ public:
   /// Construct a new serial port service for the specified io_service.
   explicit serial_port_service(boost::asio::io_service& io_service)
     : boost::asio::detail::service_base<serial_port_service>(io_service),
-      service_impl_(boost::asio::use_service<service_impl_type>(io_service))
+      service_impl_(io_service)
   {
   }
 
   /// Destroy all user-defined handler objects owned by the service.
   void shutdown_service()
   {
+    service_impl_.shutdown_service();
   }
 
   /// Construct a new serial port implementation.
@@ -203,8 +194,8 @@ public:
   }
 
 private:
-  // The service that provides the platform-specific implementation.
-  service_impl_type& service_impl_;
+  // The platform-specific implementation.
+  service_impl_type service_impl_;
 };
 
 } // namespace asio

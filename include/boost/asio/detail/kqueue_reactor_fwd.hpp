@@ -30,7 +30,6 @@ namespace boost {
 namespace asio {
 namespace detail {
 
-template <bool Own_Thread>
 class kqueue_reactor;
 
 } // namespace detail

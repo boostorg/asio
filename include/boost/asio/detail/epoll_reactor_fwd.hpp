@@ -33,7 +33,6 @@ namespace boost {
 namespace asio {
 namespace detail {
 
-template <bool Own_Thread>
 class epoll_reactor;
 
 } // namespace detail

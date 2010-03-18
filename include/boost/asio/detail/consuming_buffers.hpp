@@ -21,12 +21,11 @@
 #include <algorithm>
 #include <cstddef>
 #include <boost/config.hpp>
-#include <boost/iterator/iterator_facade.hpp>
+#include <boost/iterator.hpp>
 #include <boost/limits.hpp>
 #include <boost/asio/detail/pop_options.hpp>
 
 #include <boost/asio/buffer.hpp>
-#include <boost/asio/completion_condition.hpp>
 
 namespace boost {
 namespace asio {
@@ -35,9 +34,7 @@ namespace detail {
 // A proxy iterator for a sub-range in a list of buffers.
 template <typename Buffer, typename Buffer_Iterator>
 class consuming_buffers_iterator
-  : public boost::iterator_facade<
-        consuming_buffers_iterator<Buffer, Buffer_Iterator>,
-        const Buffer, boost::forward_traversal_tag>
+  : public boost::iterator<std::forward_iterator_tag, const Buffer>
 {
 public:
   // Default constructor creates an end iterator.
@@ -60,9 +57,48 @@ public:
   {
   }
 
-private:
-  friend class boost::iterator_core_access;
+  // Dereference an iterator.
+  const Buffer& operator*() const
+  {
+    return dereference();
+  }
 
+  // Dereference an iterator.
+  const Buffer* operator->() const
+  {
+    return &dereference();
+  }
+
+  // Increment operator (prefix).
+  consuming_buffers_iterator& operator++()
+  {
+    increment();
+    return *this;
+  }
+
+  // Increment operator (postfix).
+  consuming_buffers_iterator operator++(int)
+  {
+    consuming_buffers_iterator tmp(*this);
+    ++*this;
+    return tmp;
+  }
+
+  // Test two iterators for equality.
+  friend bool operator==(const consuming_buffers_iterator& a,
+      const consuming_buffers_iterator& b)
+  {
+    return a.equal(b);
+  }
+
+  // Test two iterators for inequality.
+  friend bool operator!=(const consuming_buffers_iterator& a,
+      const consuming_buffers_iterator& b)
+  {
+    return !a.equal(b);
+  }
+
+private:
   void increment()
   {
     if (!at_end_)
@@ -170,7 +206,7 @@ public:
   }
 
   // Set the maximum size for a single transfer.
-  void set_max_size(std::size_t max_size)
+  void prepare(std::size_t max_size)
   {
     max_size_ = max_size;
   }
@@ -226,7 +262,7 @@ public:
     // No-op.
   }
 
-  void set_max_size(std::size_t)
+  void prepare(std::size_t)
   {
     // No-op.
   }
