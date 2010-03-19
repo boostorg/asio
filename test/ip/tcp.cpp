@@ -13,6 +13,9 @@
 #define BOOST_ALL_NO_LIB 1
 #endif // !defined(BOOST_ALL_NO_LIB)
 
+// Enable cancel() support on Windows.
+#define BOOST_ASIO_ENABLE_CANCELIO 1
+
 // Test that header file is self-contained.
 #include <boost/asio/ip/tcp.hpp>
 
@@ -444,7 +447,7 @@ void test()
   ios.poll();
   BOOST_CHECK(!read_cancel_completed);
 
-  server_side_socket.close();
+  server_side_socket.cancel();
 
   ios.reset();
   ios.run();
@@ -459,6 +462,8 @@ void test()
         boost::asio::placeholders::error,
         boost::asio::placeholders::bytes_transferred,
         &read_eof_completed));
+
+  server_side_socket.close();
 
   ios.reset();
   ios.run();
