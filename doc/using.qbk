@@ -206,6 +206,15 @@ Boost.Asio.
     ]
   ]
   [
+    [`BOOST_ASIO_NO_NOMINMAX`]
+    [
+      By default, Boost.Asio will automatically define `NOMINMAX` when
+      compiling for Windows, to suppress the definition of the `min()` and
+      `max()` macros. The presence of `BOOST_ASIO_NO_NOMINMAX` prevents
+      `NOMINMAX` from being defined.
+    ]
+  ]
+  [
     [`BOOST_ASIO_NO_DEFAULT_LINKED_LIBS`]
     [
       When compiling for Windows using Microsoft Visual C++ or Borland C++, Boost.Asio
