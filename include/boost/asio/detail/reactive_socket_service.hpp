@@ -1714,7 +1714,7 @@ private:
           {
             op->ec_ = boost::system::error_code();
             reactor_.start_op(reactor::connect_op,
-                impl.socket_, impl.reactor_data_, op, true);
+                impl.socket_, impl.reactor_data_, op, false);
             return;
           }
         }
