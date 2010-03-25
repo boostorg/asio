@@ -618,7 +618,7 @@ private:
   void start_write_op(implementation_type& impl, boost::uint64_t offset,
       const boost::asio::const_buffer& buffer, operation* op)
   {
-    update_cancellation_thread_id();
+    update_cancellation_thread_id(impl);
     iocp_service_.work_started();
 
     if (!is_open(impl))
@@ -656,7 +656,7 @@ private:
   void start_read_op(implementation_type& impl, boost::uint64_t offset,
       const boost::asio::mutable_buffer& buffer, operation* op)
   {
-    update_cancellation_thread_id();
+    update_cancellation_thread_id(impl);
     iocp_service_.work_started();
 
     if (!is_open(impl))
@@ -691,7 +691,7 @@ private:
   }
 
   // Update the ID of the thread from which cancellation is safe.
-  void update_cancellation_thread_id()
+  void update_cancellation_thread_id(implementation_type& impl)
   {
 #if defined(BOOST_ASIO_ENABLE_CANCELIO)
     if (impl.safe_cancellation_thread_id_ == 0)
