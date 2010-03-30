@@ -26,6 +26,8 @@
 
 #include <boost/asio/error.hpp>
 #include <boost/asio/io_service.hpp>
+#include <boost/asio/ip/basic_resolver_iterator.hpp>
+#include <boost/asio/ip/basic_resolver_query.hpp>
 #include <boost/asio/detail/bind_handler.hpp>
 #include <boost/asio/detail/fenced_block.hpp>
 #include <boost/asio/detail/mutex.hpp>
@@ -81,10 +83,10 @@ public:
   typedef typename Protocol::endpoint endpoint_type;
 
   // The query type.
-  typedef typename Protocol::resolver_query query_type;
+  typedef boost::asio::ip::basic_resolver_query<Protocol> query_type;
 
   // The iterator type.
-  typedef typename Protocol::resolver_iterator iterator_type;
+  typedef boost::asio::ip::basic_resolver_iterator<Protocol> iterator_type;
 
   // Constructor.
   resolver_service(boost::asio::io_service& io_service)

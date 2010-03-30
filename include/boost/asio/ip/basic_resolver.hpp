@@ -19,6 +19,8 @@
 
 #include <boost/asio/basic_io_object.hpp>
 #include <boost/asio/error.hpp>
+#include <boost/asio/ip/basic_resolver_iterator.hpp>
+#include <boost/asio/ip/basic_resolver_query.hpp>
 #include <boost/asio/ip/resolver_service.hpp>
 #include <boost/asio/detail/throw_error.hpp>
 
@@ -48,10 +50,10 @@ public:
   typedef typename InternetProtocol::endpoint endpoint_type;
 
   /// The query type.
-  typedef typename InternetProtocol::resolver_query query;
+  typedef basic_resolver_query<InternetProtocol> query;
 
   /// The iterator type.
-  typedef typename InternetProtocol::resolver_iterator iterator;
+  typedef basic_resolver_iterator<InternetProtocol> iterator;
 
   /// Constructor.
   /**

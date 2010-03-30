@@ -1934,6 +1934,8 @@ private:
       impl.safe_cancellation_thread_id_ = ::GetCurrentThreadId();
     else if (impl.safe_cancellation_thread_id_ != ::GetCurrentThreadId())
       impl.safe_cancellation_thread_id_ = ~DWORD(0);
+#else // defined(BOOST_ASIO_ENABLE_CANCELIO)
+    (void)impl;
 #endif // defined(BOOST_ASIO_ENABLE_CANCELIO)
   }
 
