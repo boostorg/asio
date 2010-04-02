@@ -21,7 +21,7 @@
 #include <boost/config.hpp>
 #include <boost/asio/detail/pop_options.hpp>
 
-#if !defined(BOOST_HAS_THREADS)
+#if !defined(BOOST_HAS_THREADS) || defined(BOOST_ASIO_DISABLE_THREADS)
 # include <boost/asio/detail/null_event.hpp>
 #elif defined(BOOST_WINDOWS)
 # include <boost/asio/detail/win_event.hpp>
@@ -35,7 +35,7 @@ namespace boost {
 namespace asio {
 namespace detail {
 
-#if !defined(BOOST_HAS_THREADS)
+#if !defined(BOOST_HAS_THREADS) || defined(BOOST_ASIO_DISABLE_THREADS)
 typedef null_event event;
 #elif defined(BOOST_WINDOWS)
 typedef win_event event;

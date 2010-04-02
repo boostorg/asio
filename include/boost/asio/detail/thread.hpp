@@ -21,7 +21,7 @@
 #include <boost/config.hpp>
 #include <boost/asio/detail/pop_options.hpp>
 
-#if !defined(BOOST_HAS_THREADS)
+#if !defined(BOOST_HAS_THREADS) || defined(BOOST_ASIO_DISABLE_THREADS)
 # include <boost/asio/detail/null_thread.hpp>
 #elif defined(BOOST_WINDOWS)
 # if defined(UNDER_CE)
@@ -39,7 +39,7 @@ namespace boost {
 namespace asio {
 namespace detail {
 
-#if !defined(BOOST_HAS_THREADS)
+#if !defined(BOOST_HAS_THREADS) || defined(BOOST_ASIO_DISABLE_THREADS)
 typedef null_thread thread;
 #elif defined(BOOST_WINDOWS)
 # if defined(UNDER_CE)

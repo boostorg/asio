@@ -21,7 +21,7 @@
 #include <boost/config.hpp>
 #include <boost/asio/detail/pop_options.hpp>
 
-#if !defined(BOOST_HAS_THREADS)
+#if !defined(BOOST_HAS_THREADS) || defined(BOOST_ASIO_DISABLE_THREADS)
 # include <boost/asio/detail/null_fenced_block.hpp>
 #elif defined(__MACH__) && defined(__APPLE__)
 # include <boost/asio/detail/macos_fenced_block.hpp>
@@ -42,7 +42,7 @@ namespace boost {
 namespace asio {
 namespace detail {
 
-#if !defined(BOOST_HAS_THREADS)
+#if !defined(BOOST_HAS_THREADS) || defined(BOOST_ASIO_DISABLE_THREADS)
 typedef null_fenced_block fenced_block;
 #elif defined(__MACH__) && defined(__APPLE__)
 typedef macos_fenced_block fenced_block;
