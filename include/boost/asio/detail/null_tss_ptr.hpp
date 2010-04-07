@@ -21,7 +21,7 @@
 #include <boost/config.hpp>
 #include <boost/asio/detail/pop_options.hpp>
 
-#if !defined(BOOST_HAS_THREADS)
+#if !defined(BOOST_HAS_THREADS) || defined(BOOST_ASIO_DISABLE_THREADS)
 
 #include <boost/asio/detail/noncopyable.hpp>
 
@@ -65,7 +65,7 @@ private:
 } // namespace asio
 } // namespace boost
 
-#endif // !defined(BOOST_HAS_THREADS)
+#endif // !defined(BOOST_HAS_THREADS) || defined(BOOST_ASIO_DISABLE_THREADS)
 
 #include <boost/asio/detail/pop_options.hpp>
 

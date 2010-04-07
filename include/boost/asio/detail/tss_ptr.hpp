@@ -21,7 +21,7 @@
 #include <boost/config.hpp>
 #include <boost/asio/detail/pop_options.hpp>
 
-#if !defined(BOOST_HAS_THREADS)
+#if !defined(BOOST_HAS_THREADS) || defined(BOOST_ASIO_DISABLE_THREADS)
 # include <boost/asio/detail/null_tss_ptr.hpp>
 #elif defined(BOOST_WINDOWS)
 # include <boost/asio/detail/win_tss_ptr.hpp>
@@ -37,7 +37,7 @@ namespace detail {
 
 template <typename T>
 class tss_ptr
-#if !defined(BOOST_HAS_THREADS)
+#if !defined(BOOST_HAS_THREADS) || defined(BOOST_ASIO_DISABLE_THREADS)
   : public null_tss_ptr<T>
 #elif defined(BOOST_WINDOWS)
   : public win_tss_ptr<T>
@@ -48,7 +48,7 @@ class tss_ptr
 public:
   void operator=(T* value)
   {
-#if !defined(BOOST_HAS_THREADS)
+#if !defined(BOOST_HAS_THREADS) || defined(BOOST_ASIO_DISABLE_THREADS)
     null_tss_ptr<T>::operator=(value);
 #elif defined(BOOST_WINDOWS)
     win_tss_ptr<T>::operator=(value);
