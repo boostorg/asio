@@ -15,10 +15,11 @@ manner. For example, a serial port may be opened using:
 where name is something like `"COM1"` on Windows, and `"/dev/ttyS0"` on POSIX
 platforms.
 
-Once opened the serial port may be used as a stream. This means the objects can
-be used with any of the [link boost_asio.reference.read read()], [link
-boost_asio.reference.async_read async_read()], [link boost_asio.reference.write write()],
-[link boost_asio.reference.async_write async_write()], [link
+Once opened, the serial port may be used as a [link
+boost_asio.overview.core.streams stream]. This means the objects can be used
+with any of the [link boost_asio.reference.read read()], [link
+boost_asio.reference.async_read async_read()], [link boost_asio.reference.write
+write()], [link boost_asio.reference.async_write async_write()], [link
 boost_asio.reference.read_until read_until()] or [link
 boost_asio.reference.async_read_until async_read_until()] free functions.
 
