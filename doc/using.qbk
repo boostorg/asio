@@ -196,6 +196,13 @@ Boost.Asio.
     ]
   ]
   [
+    [`BOOST_ASIO_DISABLE_THREADS`]
+    [
+      Explicitly disables Boost.Asio's threading support, independent of whether
+      or not Boost as a whole supports threads.
+    ]
+  ]
+  [
     [`BOOST_ASIO_NO_WIN32_LEAN_AND_MEAN`]
     [
       By default, Boost.Asio will automatically define `WIN32_LEAN_AND_MEAN` when
@@ -311,6 +318,6 @@ Gmane].
 [heading Wiki]
 
 Users are encouraged to share examples, tips and FAQs on the Boost.Asio wiki,
-which is located at [@http://asio.sourceforge.net].
+which is located at [@http://think-async.com/Asio/].
 
 [endsect]
