@@ -7,6 +7,41 @@
 
 [section:history Revision History]
 
+[heading Asio 1.4.5 / Boost 1.43]
+
+* Improved performance.
+* Reduced compile times.
+* Reduced the size of generated code.
+* Extended the guarantee that background threads don't call user code to all
+  asynchronous operations
+  ([@https://svn.boost.org/trac/boost/ticket/3923 #3923]).
+* Changed to use edge-triggered epoll on Linux.
+* Changed to use `timerfd` for dispatching timers on Linux, when available.
+* Changed to use one-shot notifications with kqueue on Mac OS X and BSD
+  platforms.
+* Added a bitmask type `ip::resolver_query_base::flags` as per the TR2 proposal.
+  This type prevents implicit conversion from `int` to `flags`, allowing the
+  compiler to catch cases where users incorrectly pass a numeric port number as
+  the service name.
+* Added `#define NOMINMAX` for all Windows compilers. Users can define
+  `BOOST_ASIO_NO_NOMINMAX` to suppress this definition
+  ([@https://svn.boost.org/trac/boost/ticket/3901 #3901]).
+* Fixed a bug where 0-byte asynchronous reads were incorrectly passing an
+  `error::eof` result to the completion handler
+  ([@https://svn.boost.org/trac/boost/ticket/4023 #4023]).
+* Changed the `io_control()` member functions to always call `ioctl` on the
+  underlying descriptor when modifying blocking mode
+  ([@https://svn.boost.org/trac/boost/ticket/3307 #3307]).
+* Changed the resolver implementation to longer require the typedefs
+  `InternetProtocol::resolver_query` and `InternetProtocol::resolver_iterator`,
+  as neither typedef is part of the documented `InternetProtocol` requirements.
+  The corresponding typedefs in the `ip::tcp`, `ip::udp` and `ip::icmp` classes
+  have been deprecated.
+* Fixed out-of-band handling for reactors not based on `select()`.
+* Added new `BOOST_ASIO_DISABLE_THREADS` macro that allows Asio's threading
+  support to be independently disabled.
+* Minor documentation improvements.
+
 [heading Asio 1.4.4 / Boost 1.42]
 
 * Added a new HTTP Server 4 example illustrating the use of stackless coroutines

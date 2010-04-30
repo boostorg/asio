@@ -129,6 +129,16 @@ struct is_match_condition
  * std::istream is(&b);
  * std::string line;
  * std::getline(is, line); @endcode
+ * After the @c read_until operation completes successfully, the buffer @c b
+ * contains the delimiter:
+ * @code { 'a', 'b', ..., 'c', '\n', 'd', 'e', ... } @endcode
+ * The call to @c std::getline then extracts the data up to and including the
+ * delimiter, so that the string @c line contains:
+ * @code { 'a', 'b', ..., 'c', '\n' } @endcode
+ * The remaining data is left in the buffer @c b as follows:
+ * @code { 'd', 'e', ... } @endcode
+ * This data may be the start of a new line, to be extracted by a subsequent
+ * @c read_until operation.
  */
 template <typename SyncReadStream, typename Allocator>
 std::size_t read_until(SyncReadStream& s,
@@ -206,6 +216,16 @@ std::size_t read_until(SyncReadStream& s,
  * std::istream is(&b);
  * std::string line;
  * std::getline(is, line); @endcode
+ * After the @c read_until operation completes successfully, the buffer @c b
+ * contains the delimiter:
+ * @code { 'a', 'b', ..., 'c', '\r', '\n', 'd', 'e', ... } @endcode
+ * The call to @c std::getline then extracts the data up to and including the
+ * delimiter, so that the string @c line contains:
+ * @code { 'a', 'b', ..., 'c', '\r', '\n' } @endcode
+ * The remaining data is left in the buffer @c b as follows:
+ * @code { 'd', 'e', ... } @endcode
+ * This data may be the start of a new line, to be extracted by a subsequent
+ * @c read_until operation.
  */
 template <typename SyncReadStream, typename Allocator>
 std::size_t read_until(SyncReadStream& s,
@@ -285,6 +305,16 @@ std::size_t read_until(SyncReadStream& s,
  * std::istream is(&b);
  * std::string line;
  * std::getline(is, line); @endcode
+ * After the @c read_until operation completes successfully, the buffer @c b
+ * contains the data which matched the regular expression:
+ * @code { 'a', 'b', ..., 'c', '\r', '\n', 'd', 'e', ... } @endcode
+ * The call to @c std::getline then extracts the data up to and including the
+ * match, so that the string @c line contains:
+ * @code { 'a', 'b', ..., 'c', '\r', '\n' } @endcode
+ * The remaining data is left in the buffer @c b as follows:
+ * @code { 'd', 'e', ... } @endcode
+ * This data may be the start of a new line, to be extracted by a subsequent
+ * @c read_until operation.
  */
 template <typename SyncReadStream, typename Allocator>
 std::size_t read_until(SyncReadStream& s,
@@ -511,8 +541,12 @@ std::size_t read_until(SyncReadStream& s,
  * @li An error occurred.
  *
  * This operation is implemented in terms of zero or more calls to the stream's
- * async_read_some function. If the streambuf's get area already contains the
- * delimiter, the asynchronous operation completes immediately.
+ * async_read_some function, and is known as a <em>composed operation</em>. If
+ * the streambuf's get area already contains the delimiter, this asynchronous
+ * operation completes immediately. The program must ensure that the stream
+ * performs no other read operations (such as async_read, async_read_until, the
+ * stream's async_read_some function, or any other composed operations that
+ * perform reads) until this operation completes.
  *
  * @param s The stream from which the data is to be read. The type must support
  * the AsyncReadStream concept.
@@ -561,6 +595,16 @@ std::size_t read_until(SyncReadStream& s,
  * }
  * ...
  * boost::asio::async_read_until(s, b, '\n', handler); @endcode
+ * After the @c async_read_until operation completes successfully, the buffer
+ * @c b contains the delimiter:
+ * @code { 'a', 'b', ..., 'c', '\n', 'd', 'e', ... } @endcode
+ * The call to @c std::getline then extracts the data up to and including the
+ * delimiter, so that the string @c line contains:
+ * @code { 'a', 'b', ..., 'c', '\n' } @endcode
+ * The remaining data is left in the buffer @c b as follows:
+ * @code { 'd', 'e', ... } @endcode
+ * This data may be the start of a new line, to be extracted by a subsequent
+ * @c async_read_until operation.
  */
 template <typename AsyncReadStream, typename Allocator, typename ReadHandler>
 void async_read_until(AsyncReadStream& s,
@@ -580,8 +624,12 @@ void async_read_until(AsyncReadStream& s,
  * @li An error occurred.
  *
  * This operation is implemented in terms of zero or more calls to the stream's
- * async_read_some function. If the streambuf's get area already contains the
- * delimiter, the asynchronous operation completes immediately.
+ * async_read_some function, and is known as a <em>composed operation</em>. If
+ * the streambuf's get area already contains the delimiter, this asynchronous
+ * operation completes immediately. The program must ensure that the stream
+ * performs no other read operations (such as async_read, async_read_until, the
+ * stream's async_read_some function, or any other composed operations that
+ * perform reads) until this operation completes.
  *
  * @param s The stream from which the data is to be read. The type must support
  * the AsyncReadStream concept.
@@ -630,6 +678,16 @@ void async_read_until(AsyncReadStream& s,
  * }
  * ...
  * boost::asio::async_read_until(s, b, "\r\n", handler); @endcode
+ * After the @c async_read_until operation completes successfully, the buffer
+ * @c b contains the delimiter:
+ * @code { 'a', 'b', ..., 'c', '\r', '\n', 'd', 'e', ... } @endcode
+ * The call to @c std::getline then extracts the data up to and including the
+ * delimiter, so that the string @c line contains:
+ * @code { 'a', 'b', ..., 'c', '\r', '\n' } @endcode
+ * The remaining data is left in the buffer @c b as follows:
+ * @code { 'd', 'e', ... } @endcode
+ * This data may be the start of a new line, to be extracted by a subsequent
+ * @c async_read_until operation.
  */
 template <typename AsyncReadStream, typename Allocator, typename ReadHandler>
 void async_read_until(AsyncReadStream& s,
@@ -650,8 +708,13 @@ void async_read_until(AsyncReadStream& s,
  * @li An error occurred.
  *
  * This operation is implemented in terms of zero or more calls to the stream's
- * async_read_some function. If the streambuf's get area already contains data
- * that matches the regular expression, the function returns immediately.
+ * async_read_some function, and is known as a <em>composed operation</em>. If
+ * the streambuf's get area already contains data that matches the regular
+ * expression, this asynchronous operation completes immediately. The program
+ * must ensure that the stream performs no other read operations (such as
+ * async_read, async_read_until, the stream's async_read_some function, or any
+ * other composed operations that perform reads) until this operation
+ * completes.
  *
  * @param s The stream from which the data is to be read. The type must support
  * the AsyncReadStream concept.
@@ -702,6 +765,16 @@ void async_read_until(AsyncReadStream& s,
  * }
  * ...
  * boost::asio::async_read_until(s, b, boost::regex("\r\n"), handler); @endcode
+ * After the @c async_read_until operation completes successfully, the buffer
+ * @c b contains the data which matched the regular expression:
+ * @code { 'a', 'b', ..., 'c', '\r', '\n', 'd', 'e', ... } @endcode
+ * The call to @c std::getline then extracts the data up to and including the
+ * match, so that the string @c line contains:
+ * @code { 'a', 'b', ..., 'c', '\r', '\n' } @endcode
+ * The remaining data is left in the buffer @c b as follows:
+ * @code { 'd', 'e', ... } @endcode
+ * This data may be the start of a new line, to be extracted by a subsequent
+ * @c async_read_until operation.
  */
 template <typename AsyncReadStream, typename Allocator, typename ReadHandler>
 void async_read_until(AsyncReadStream& s,
@@ -723,8 +796,12 @@ void async_read_until(AsyncReadStream& s,
  * @li An error occurred.
  *
  * This operation is implemented in terms of zero or more calls to the stream's
- * async_read_some function. If the match condition function object already
- * indicates a match, the operation completes immediately.
+ * async_read_some function, and is known as a <em>composed operation</em>. If
+ * the match condition function object already indicates a match, this
+ * asynchronous operation completes immediately. The program must ensure that
+ * the stream performs no other read operations (such as async_read,
+ * async_read_until, the stream's async_read_some function, or any other
+ * composed operations that perform reads) until this operation completes.
  *
  * @param s The stream from which the data is to be read. The type must support
  * the AsyncReadStream concept.
