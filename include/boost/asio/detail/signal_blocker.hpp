@@ -17,10 +17,9 @@
 
 #include <boost/asio/detail/config.hpp>
 
-#if !defined(BOOST_HAS_THREADS) || defined(BOOST_ASIO_DISABLE_THREADS)
+#if !defined(BOOST_HAS_THREADS) || defined(BOOST_ASIO_DISABLE_THREADS) \
+  || defined(BOOST_WINDOWS) || defined(__CYGWIN__) || defined(__SYMBIAN32__)
 # include <boost/asio/detail/null_signal_blocker.hpp>
-#elif defined(BOOST_WINDOWS) || defined(__CYGWIN__)
-# include <boost/asio/detail/win_signal_blocker.hpp>
 #elif defined(BOOST_HAS_PTHREADS)
 # include <boost/asio/detail/posix_signal_blocker.hpp>
 #else
@@ -31,10 +30,9 @@ namespace boost {
 namespace asio {
 namespace detail {
 
-#if !defined(BOOST_HAS_THREADS) || defined(BOOST_ASIO_DISABLE_THREADS)
+#if !defined(BOOST_HAS_THREADS) || defined(BOOST_ASIO_DISABLE_THREADS) \
+  || defined(BOOST_WINDOWS) || defined(__CYGWIN__) || defined(__SYMBIAN32__)
 typedef null_signal_blocker signal_blocker;
-#elif defined(BOOST_WINDOWS) || defined(__CYGWIN__)
-typedef win_signal_blocker signal_blocker;
 #elif defined(BOOST_HAS_PTHREADS)
 typedef posix_signal_blocker signal_blocker;
 #endif

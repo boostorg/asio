@@ -17,7 +17,9 @@
 
 #include <boost/asio/detail/config.hpp>
 
-#if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
+#if defined(BOOST_WINDOWS) \
+  || defined(__CYGWIN__) \
+  || defined(__SYMBIAN32__)
 
 #include <boost/asio/detail/socket_types.hpp>
 
@@ -71,6 +73,8 @@ private:
 # include <boost/asio/detail/impl/socket_select_interrupter.ipp>
 #endif // defined(BOOST_ASIO_HEADER_ONLY)
 
-#endif // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
+#endif // defined(BOOST_WINDOWS)
+       // || defined(__CYGWIN__)
+       // || defined(__SYMBIAN32__)
 
 #endif // BOOST_ASIO_DETAIL_SOCKET_SELECT_INTERRUPTER_HPP

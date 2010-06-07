@@ -17,7 +17,11 @@
 
 #include <boost/asio/detail/config.hpp>
 
-#if !defined(BOOST_HAS_THREADS) || defined(BOOST_ASIO_DISABLE_THREADS)
+#if !defined(BOOST_HAS_THREADS) \
+  || defined(BOOST_ASIO_DISABLE_THREADS) \
+  || defined(BOOST_WINDOWS) \
+  || defined(__CYGWIN__) \
+  || defined(__SYMBIAN32__)
 
 #include <boost/asio/detail/noncopyable.hpp>
 
@@ -58,6 +62,10 @@ public:
 
 #include <boost/asio/detail/pop_options.hpp>
 
-#endif // !defined(BOOST_HAS_THREADS) || defined(BOOST_ASIO_DISABLE_THREADS)
+#endif // !defined(BOOST_HAS_THREADS)
+       // || defined(BOOST_ASIO_DISABLE_THREADS)
+       // || defined(BOOST_WINDOWS)
+       // || defined(__CYGWIN__)
+       // || defined(__SYMBIAN32__)
 
 #endif // BOOST_ASIO_DETAIL_NULL_SIGNAL_BLOCKER_HPP

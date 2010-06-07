@@ -45,8 +45,14 @@ int close(int d, state_type& state, boost::system::error_code& ec)
   {
     if (state & internal_non_blocking)
     {
+#if defined(__SYMBIAN32__)
+      int flags = ::fcntl(d, F_GETFL, 0);
+      if (flags >= 0)
+        ::fcntl(d, F_SETFL, flags & ~O_NONBLOCK);
+#else // defined(__SYMBIAN32__)
       ioctl_arg_type arg = 0;
       ::ioctl(d, FIONBIO, &arg);
+#endif // defined(__SYMBIAN32__)
       state &= ~internal_non_blocking;
     }
 
@@ -69,8 +75,17 @@ bool set_internal_non_blocking(int d,
   }
 
   errno = 0;
+#if defined(__SYMBIAN32__)
+  int result = error_wrapper(::fcntl(d, F_GETFL, 0), ec);
+  if (result >= 0)
+  {
+    errno = 0;
+    result = error_wrapper(::fcntl(d, F_SETFL, result | O_NONBLOCK), ec);
+  }
+#else // defined(__SYMBIAN32__)
   ioctl_arg_type arg = 1;
   int result = error_wrapper(::ioctl(d, FIONBIO, &arg), ec);
+#endif // defined(__SYMBIAN32__)
 
   if (result >= 0)
   {

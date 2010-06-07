@@ -288,8 +288,14 @@ int close(socket_type s, state_type& state,
 #else // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
     if (state & non_blocking)
     {
+#if defined(__SYMBIAN32__)
+      int flags = ::fcntl(s, F_GETFL, 0);
+      if (flags >= 0)
+        ::fcntl(s, F_SETFL, flags & ~O_NONBLOCK);
+#else // defined(__SYMBIAN32__)
       ioctl_arg_type arg = 0;
       ::ioctl(s, FIONBIO, &arg);
+#endif // defined(__SYMBIAN32__)
       state &= ~non_blocking;
     }
 #endif // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
@@ -327,12 +333,20 @@ bool set_internal_non_blocking(socket_type s,
   }
 
   clear_last_error();
-  ioctl_arg_type arg = 1;
 #if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
+  ioctl_arg_type arg = 1;
   int result = error_wrapper(::ioctlsocket(s, FIONBIO, &arg), ec);
-#else // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
+#elif defined(__SYMBIAN32__)
+  int result = error_wrapper(::fcntl(s, F_GETFL, 0), ec);
+  if (result >= 0)
+  {
+    clear_last_error();
+    result = error_wrapper(::fcntl(s, F_SETFL, result | O_NONBLOCK), ec);
+  }
+#else
+  ioctl_arg_type arg = 1;
   int result = error_wrapper(::ioctl(s, FIONBIO, &arg), ec);
-#endif // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
+#endif
 
   if (result >= 0)
   {
@@ -1492,8 +1506,10 @@ int poll_read(socket_type s, boost::system::error_code& ec)
     return socket_error_retval;
   }
 
-#if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
-  FD_SET fds;
+#if defined(BOOST_WINDOWS) \
+  || defined(__CYGWIN__) \
+  || defined(__SYMBIAN32__)
+  fd_set fds;
   FD_ZERO(&fds);
   FD_SET(s, &fds);
   clear_last_error();
@@ -1501,7 +1517,9 @@ int poll_read(socket_type s, boost::system::error_code& ec)
   if (result >= 0)
     ec = boost::system::error_code();
   return result;
-#else // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
+#else // defined(BOOST_WINDOWS)
+      // || defined(__CYGWIN__)
+      // || defined(__SYMBIAN32__)
   pollfd fds;
   fds.fd = s;
   fds.events = POLLIN;
@@ -1511,7 +1529,9 @@ int poll_read(socket_type s, boost::system::error_code& ec)
   if (result >= 0)
     ec = boost::system::error_code();
   return result;
-#endif // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
+#endif // defined(BOOST_WINDOWS)
+       // || defined(__CYGWIN__)
+       // || defined(__SYMBIAN32__)
 }
 
 int poll_write(socket_type s, boost::system::error_code& ec)
@@ -1522,8 +1542,10 @@ int poll_write(socket_type s, boost::system::error_code& ec)
     return socket_error_retval;
   }
 
-#if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
-  FD_SET fds;
+#if defined(BOOST_WINDOWS) \
+  || defined(__CYGWIN__) \
+  || defined(__SYMBIAN32__)
+  fd_set fds;
   FD_ZERO(&fds);
   FD_SET(s, &fds);
   clear_last_error();
@@ -1531,7 +1553,9 @@ int poll_write(socket_type s, boost::system::error_code& ec)
   if (result >= 0)
     ec = boost::system::error_code();
   return result;
-#else // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
+#else // defined(BOOST_WINDOWS)
+      // || defined(__CYGWIN__)
+      // || defined(__SYMBIAN32__)
   pollfd fds;
   fds.fd = s;
   fds.events = POLLOUT;
@@ -1541,7 +1565,9 @@ int poll_write(socket_type s, boost::system::error_code& ec)
   if (result >= 0)
     ec = boost::system::error_code();
   return result;
-#endif // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
+#endif // defined(BOOST_WINDOWS)
+       // || defined(__CYGWIN__)
+       // || defined(__SYMBIAN32__)
 }
 
 int poll_connect(socket_type s, boost::system::error_code& ec)
@@ -1552,11 +1578,13 @@ int poll_connect(socket_type s, boost::system::error_code& ec)
     return socket_error_retval;
   }
 
-#if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
-  FD_SET write_fds;
+#if defined(BOOST_WINDOWS) \
+  || defined(__CYGWIN__) \
+  || defined(__SYMBIAN32__)
+  fd_set write_fds;
   FD_ZERO(&write_fds);
   FD_SET(s, &write_fds);
-  FD_SET except_fds;
+  fd_set except_fds;
   FD_ZERO(&except_fds);
   FD_SET(s, &except_fds);
   clear_last_error();
@@ -1564,7 +1592,9 @@ int poll_connect(socket_type s, boost::system::error_code& ec)
   if (result >= 0)
     ec = boost::system::error_code();
   return result;
-#else // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
+#else // defined(BOOST_WINDOWS)
+      // || defined(__CYGWIN__)
+      // || defined(__SYMBIAN32__)
   pollfd fds;
   fds.fd = s;
   fds.events = POLLOUT;
@@ -1574,7 +1604,9 @@ int poll_connect(socket_type s, boost::system::error_code& ec)
   if (result >= 0)
     ec = boost::system::error_code();
   return result;
-#endif // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
+#endif // defined(BOOST_WINDOWS)
+       // || defined(__CYGWIN__)
+       // || defined(__SYMBIAN32__)
 }
 
 const char* inet_ntop(int af, const void* src, char* dest, size_t length,
