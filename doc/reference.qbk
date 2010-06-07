@@ -424,7 +424,7 @@ This function is used to asynchronously read a certain number of bytes of data f
 * The supplied buffers are full. That is, the bytes transferred is equal to the sum of the buffer sizes.
 
 
-* The completion_condition function object returns 0.
+* The completion\_condition function object returns 0.
 
 
 [heading Parameters]
@@ -574,7 +574,7 @@ Start an asynchronous operation to read a certain amount of data from a stream.
 This function is used to asynchronously read a certain number of bytes of data from a stream. The function call always returns immediately. The asynchronous operation will continue until one of the following conditions is true:
 
 
-* The completion_condition function object returns 0.
+* The completion\_condition function object returns 0.
 
 This operation is implemented in terms of zero or more calls to the stream's async\_read\_some function, and is known as a [*composed operation]. The program must ensure that the stream performs no other read operations (such as async\_read, the stream's async\_read\_some function, or any other composed operations that perform reads) until this operation completes.
 
@@ -795,7 +795,7 @@ This function is used to asynchronously read a certain number of bytes of data f
 * The supplied buffers are full. That is, the bytes transferred is equal to the sum of the buffer sizes.
 
 
-* The completion_condition function object returns 0.
+* The completion\_condition function object returns 0.
 
 
 [heading Parameters]
@@ -951,7 +951,7 @@ Start an asynchronous operation to read a certain amount of data at the specifie
 This function is used to asynchronously read a certain number of bytes of data from a random access device at the specified offset. The function call always returns immediately. The asynchronous operation will continue until one of the following conditions is true:
 
 
-* The completion_condition function object returns 0.
+* The completion\_condition function object returns 0.
 
 This operation is implemented in terms of zero or more calls to the device's async\_read\_some\_at function.
 
@@ -1666,7 +1666,7 @@ This function is used to asynchronously write a certain number of bytes of data 
 * All of the data in the supplied buffers has been written. That is, the bytes transferred is equal to the sum of the buffer sizes.
 
 
-* The completion_condition function object returns 0.
+* The completion\_condition function object returns 0.
 
 This operation is implemented in terms of zero or more calls to the stream's async\_write\_some function, and is known as a [*composed operation]. The program must ensure that the stream performs no other write operations (such as async\_write, the stream's async\_write\_some function, or any other composed operations that perform writes) until this operation completes.
 
@@ -1746,7 +1746,7 @@ Start an asynchronous operation to write all of the supplied data to a stream.
 This function is used to asynchronously write a certain number of bytes of data to a stream. The function call always returns immediately. The asynchronous operation will continue until one of the following conditions is true:
 
 
-* All of the data in the supplied basic_streambuf has been written.
+* All of the data in the supplied [link boost_asio.reference.basic_streambuf `basic_streambuf`] has been written.
 
 
 * An error occurred.
@@ -1806,10 +1806,10 @@ Start an asynchronous operation to write a certain amount of data to a stream.
 This function is used to asynchronously write a certain number of bytes of data to a stream. The function call always returns immediately. The asynchronous operation will continue until one of the following conditions is true:
 
 
-* All of the data in the supplied basic_streambuf has been written.
+* All of the data in the supplied [link boost_asio.reference.basic_streambuf `basic_streambuf`] has been written.
 
 
-* The completion_condition function object returns 0.
+* The completion\_condition function object returns 0.
 
 This operation is implemented in terms of zero or more calls to the stream's async\_write\_some function, and is known as a [*composed operation]. The program must ensure that the stream performs no other write operations (such as async\_write, the stream's async\_write\_some function, or any other composed operations that perform writes) until this operation completes.
 
@@ -2015,7 +2015,7 @@ This function is used to asynchronously write a certain number of bytes of data 
 * All of the data in the supplied buffers has been written. That is, the bytes transferred is equal to the sum of the buffer sizes.
 
 
-* The completion_condition function object returns 0.
+* The completion\_condition function object returns 0.
 
 This operation is implemented in terms of zero or more calls to the device's async\_write\_some\_at function.
 
@@ -2098,7 +2098,7 @@ Start an asynchronous operation to write all of the supplied data at the specifi
 This function is used to asynchronously write a certain number of bytes of data to a random access device at a specified offset. The function call always returns immediately. The asynchronous operation will continue until one of the following conditions is true:
 
 
-* All of the data in the supplied basic_streambuf has been written.
+* All of the data in the supplied [link boost_asio.reference.basic_streambuf `basic_streambuf`] has been written.
 
 
 * An error occurred.
@@ -2161,10 +2161,10 @@ Start an asynchronous operation to write a certain amount of data at the specifi
 This function is used to asynchronously write a certain number of bytes of data to a random access device at a specified offset. The function call always returns immediately. The asynchronous operation will continue until one of the following conditions is true:
 
 
-* All of the data in the supplied basic_streambuf has been written.
+* All of the data in the supplied [link boost_asio.reference.basic_streambuf `basic_streambuf`] has been written.
 
 
-* The completion_condition function object returns 0.
+* The completion\_condition function object returns 0.
 
 This operation is implemented in terms of zero or more calls to the device's async\_write\_some\_at function.
 
@@ -3901,10 +3901,10 @@ Calls to `cancel()` will always fail with `boost::asio::error::operation_not_sup
 For portable cancellation, consider using one of the following alternatives:
 
 
-* Disable asio's I/O completion port backend by defining BOOST_ASIO_DISABLE_IOCP.
+* Disable asio's I/O completion port backend by defining BOOST\_ASIO\_DISABLE\_IOCP.
 
 
-* Use the close() function to simultaneously cancel the outstanding operations and close the socket.
+* Use the `close()` function to simultaneously cancel the outstanding operations and close the socket.
 
 When running on Windows Vista, Windows Server 2008, and later, the CancelIoEx function is always used. This function does not have the problems described above. 
 
@@ -3952,10 +3952,10 @@ Calls to `cancel()` will always fail with `boost::asio::error::operation_not_sup
 For portable cancellation, consider using one of the following alternatives:
 
 
-* Disable asio's I/O completion port backend by defining BOOST_ASIO_DISABLE_IOCP.
+* Disable asio's I/O completion port backend by defining BOOST\_ASIO\_DISABLE\_IOCP.
 
 
-* Use the close() function to simultaneously cancel the outstanding operations and close the socket.
+* Use the `close()` function to simultaneously cancel the outstanding operations and close the socket.
 
 When running on Windows Vista, Windows Server 2008, and later, the CancelIoEx function is always used. This function does not have the problems described above. 
 
@@ -7430,10 +7430,10 @@ Changing the expiry time of a timer while there are pending asynchronous waits c
 
 
 
-* The boost::asio::basic_deadline_timer::expires_from_now() function cancels any pending asynchronous waits, and returns the number of asynchronous waits that were cancelled. If it returns 0 then you were too late and the wait handler has already been executed, or will soon be executed. If it returns 1 then the wait handler was successfully cancelled.
+* The `boost::asio::basic_deadline_timer::expires_from_now()` function cancels any pending asynchronous waits, and returns the number of asynchronous waits that were cancelled. If it returns 0 then you were too late and the wait handler has already been executed, or will soon be executed. If it returns 1 then the wait handler was successfully cancelled.
 
 
-* If a wait handler is cancelled, the boost::system::error_code passed to it contains the value boost::asio::error::operation_aborted. 
+* If a wait handler is cancelled, the boost::system::error\_code passed to it contains the value `boost::asio::error::operation_aborted`. 
 
 
 
@@ -7464,7 +7464,7 @@ For each call to `async_wait()`, the supplied handler will be called exactly onc
 * The timer has expired.
 
 
-* The timer was cancelled, in which case the handler is passed the error code boost::asio::error::operation_aborted.
+* The timer was cancelled, in which case the handler is passed the error code `boost::asio::error::operation_aborted`.
 
 
 [heading Parameters]
@@ -10211,10 +10211,10 @@ Calls to `cancel()` will always fail with `boost::asio::error::operation_not_sup
 For portable cancellation, consider using one of the following alternatives:
 
 
-* Disable asio's I/O completion port backend by defining BOOST_ASIO_DISABLE_IOCP.
+* Disable asio's I/O completion port backend by defining BOOST\_ASIO\_DISABLE\_IOCP.
 
 
-* Use the close() function to simultaneously cancel the outstanding operations and close the socket.
+* Use the `close()` function to simultaneously cancel the outstanding operations and close the socket.
 
 When running on Windows Vista, Windows Server 2008, and later, the CancelIoEx function is always used. This function does not have the problems described above. 
 
@@ -10262,10 +10262,10 @@ Calls to `cancel()` will always fail with `boost::asio::error::operation_not_sup
 For portable cancellation, consider using one of the following alternatives:
 
 
-* Disable asio's I/O completion port backend by defining BOOST_ASIO_DISABLE_IOCP.
+* Disable asio's I/O completion port backend by defining BOOST\_ASIO\_DISABLE\_IOCP.
 
 
-* Use the close() function to simultaneously cancel the outstanding operations and close the socket.
+* Use the `close()` function to simultaneously cancel the outstanding operations and close the socket.
 
 When running on Windows Vista, Windows Server 2008, and later, the CancelIoEx function is always used. This function does not have the problems described above. 
 
@@ -16320,10 +16320,10 @@ Calls to `cancel()` will always fail with `boost::asio::error::operation_not_sup
 For portable cancellation, consider using one of the following alternatives:
 
 
-* Disable asio's I/O completion port backend by defining BOOST_ASIO_DISABLE_IOCP.
+* Disable asio's I/O completion port backend by defining BOOST\_ASIO\_DISABLE\_IOCP.
 
 
-* Use the close() function to simultaneously cancel the outstanding operations and close the socket.
+* Use the `close()` function to simultaneously cancel the outstanding operations and close the socket.
 
 When running on Windows Vista, Windows Server 2008, and later, the CancelIoEx function is always used. This function does not have the problems described above. 
 
@@ -16368,10 +16368,10 @@ Calls to `cancel()` will always fail with `boost::asio::error::operation_not_sup
 For portable cancellation, consider using one of the following alternatives:
 
 
-* Disable asio's I/O completion port backend by defining BOOST_ASIO_DISABLE_IOCP.
+* Disable asio's I/O completion port backend by defining BOOST\_ASIO\_DISABLE\_IOCP.
 
 
-* Use the close() function to simultaneously cancel the outstanding operations and close the socket.
+* Use the `close()` function to simultaneously cancel the outstanding operations and close the socket.
 
 When running on Windows Vista, Windows Server 2008, and later, the CancelIoEx function is always used. This function does not have the problems described above. 
 
@@ -22849,10 +22849,10 @@ Calls to `cancel()` will always fail with `boost::asio::error::operation_not_sup
 For portable cancellation, consider using one of the following alternatives:
 
 
-* Disable asio's I/O completion port backend by defining BOOST_ASIO_DISABLE_IOCP.
+* Disable asio's I/O completion port backend by defining BOOST\_ASIO\_DISABLE\_IOCP.
 
 
-* Use the close() function to simultaneously cancel the outstanding operations and close the socket.
+* Use the `close()` function to simultaneously cancel the outstanding operations and close the socket.
 
 When running on Windows Vista, Windows Server 2008, and later, the CancelIoEx function is always used. This function does not have the problems described above. 
 
@@ -22900,10 +22900,10 @@ Calls to `cancel()` will always fail with `boost::asio::error::operation_not_sup
 For portable cancellation, consider using one of the following alternatives:
 
 
-* Disable asio's I/O completion port backend by defining BOOST_ASIO_DISABLE_IOCP.
+* Disable asio's I/O completion port backend by defining BOOST\_ASIO\_DISABLE\_IOCP.
 
 
-* Use the close() function to simultaneously cancel the outstanding operations and close the socket.
+* Use the `close()` function to simultaneously cancel the outstanding operations and close the socket.
 
 When running on Windows Vista, Windows Server 2008, and later, the CancelIoEx function is always used. This function does not have the problems described above. 
 
@@ -27034,10 +27034,10 @@ Calls to `cancel()` will always fail with `boost::asio::error::operation_not_sup
 For portable cancellation, consider using one of the following alternatives:
 
 
-* Disable asio's I/O completion port backend by defining BOOST_ASIO_DISABLE_IOCP.
+* Disable asio's I/O completion port backend by defining BOOST\_ASIO\_DISABLE\_IOCP.
 
 
-* Use the close() function to simultaneously cancel the outstanding operations and close the socket.
+* Use the `close()` function to simultaneously cancel the outstanding operations and close the socket.
 
 When running on Windows Vista, Windows Server 2008, and later, the CancelIoEx function is always used. This function does not have the problems described above. 
 
@@ -27085,10 +27085,10 @@ Calls to `cancel()` will always fail with `boost::asio::error::operation_not_sup
 For portable cancellation, consider using one of the following alternatives:
 
 
-* Disable asio's I/O completion port backend by defining BOOST_ASIO_DISABLE_IOCP.
+* Disable asio's I/O completion port backend by defining BOOST\_ASIO\_DISABLE\_IOCP.
 
 
-* Use the close() function to simultaneously cancel the outstanding operations and close the socket.
+* Use the `close()` function to simultaneously cancel the outstanding operations and close the socket.
 
 When running on Windows Vista, Windows Server 2008, and later, the CancelIoEx function is always used. This function does not have the problems described above. 
 
@@ -35911,7 +35911,7 @@ Disable sends or receives on the socket.
 Destroy all user-defined handler objects owned by the service. 
 
 
-  void shutdown_service();
+  virtual void shutdown_service();
 
 
 
@@ -36129,10 +36129,10 @@ Changing the expiry time of a timer while there are pending asynchronous waits c
 
 
 
-* The boost::asio::basic_deadline_timer::expires_from_now() function cancels any pending asynchronous waits, and returns the number of asynchronous waits that were cancelled. If it returns 0 then you were too late and the wait handler has already been executed, or will soon be executed. If it returns 1 then the wait handler was successfully cancelled.
+* The `boost::asio::basic_deadline_timer::expires_from_now()` function cancels any pending asynchronous waits, and returns the number of asynchronous waits that were cancelled. If it returns 0 then you were too late and the wait handler has already been executed, or will soon be executed. If it returns 1 then the wait handler was successfully cancelled.
 
 
-* If a wait handler is cancelled, the boost::system::error_code passed to it contains the value boost::asio::error::operation_aborted. 
+* If a wait handler is cancelled, the boost::system::error\_code passed to it contains the value `boost::asio::error::operation_aborted`. 
 
 
 
@@ -36558,7 +36558,7 @@ The implementation type of the deadline timer.
 Destroy all user-defined handler objects owned by the service. 
 
 
-  void shutdown_service();
+  virtual void shutdown_service();
 
 
 
@@ -37483,13 +37483,13 @@ Provides core I/O functionality.
 The [link boost_asio.reference.io_service `io_service`] class provides the core I/O functionality for users of the asynchronous I/O objects, including:
 
 
-* boost::asio::ip::tcp::socket 
+* `boost::asio::ip::tcp::socket` 
 
-* boost::asio::ip::tcp::acceptor 
+* `boost::asio::ip::tcp::acceptor` 
 
-* boost::asio::ip::udp::socket 
+* `boost::asio::ip::udp::socket` 
 
-* boost::asio::deadline_timer.
+* `boost::asio::deadline_timer`.
 
 The [link boost_asio.reference.io_service `io_service`] class also includes facilities intended for developers of custom asynchronous services.
 
@@ -37688,7 +37688,7 @@ The [link boost_asio.reference.io_service `io_service`] guarantees that the hand
 This function throws an exception only if:
 
 
-* the handler's asio_handler_allocate function; or
+* the handler's `asio_handler_allocate` function; or
 
 
 * the handler's copy constructor
@@ -38000,7 +38000,7 @@ The [link boost_asio.reference.io_service `io_service`] guarantees that the hand
 This function throws an exception only if:
 
 
-* the handler's asio_handler_allocate function; or
+* the handler's `asio_handler_allocate` function; or
 
 
 * the handler's copy constructor
@@ -38342,13 +38342,13 @@ Destructor.
 On destruction, the [link boost_asio.reference.io_service `io_service`] performs the following sequence of operations:
 
 
-* For each service object svc in the io_service set, in reverse order of the beginning of service object lifetime, performs svc->shutdown_service().
+* For each service object `svc` in the [link boost_asio.reference.io_service `io_service`] set, in reverse order of the beginning of service object lifetime, performs `svc->shutdown_service()`.
 
 
-* Uninvoked handler objects that were scheduled for deferred invocation on the io_service, or any associated strand, are destroyed.
+* Uninvoked handler objects that were scheduled for deferred invocation on the [link boost_asio.reference.io_service `io_service`], or any associated strand, are destroyed.
 
 
-* For each service object svc in the io_service set, in reverse order of the beginning of service object lifetime, performs delete static_cast<io_service::service*>(svc).
+* For each service object `svc` in the [link boost_asio.reference.io_service `io_service`] set, in reverse order of the beginning of service object lifetime, performs `delete static_cast<io_service::service*>(svc)`.
 
 
 [heading Remarks]
@@ -38356,10 +38356,10 @@ On destruction, the [link boost_asio.reference.io_service `io_service`] performs
 The destruction sequence described above permits programs to simplify their resource management by using `shared_ptr<>`. Where an object's lifetime is tied to the lifetime of a connection (or some other sequence of asynchronous operations), a `shared_ptr` to the object would be bound into the handlers for all asynchronous operations associated with it. This works as follows:
 
 
-* When a single connection ends, all associated asynchronous operations complete. The corresponding handler objects are destroyed, and all shared_ptr references to the objects are destroyed.
+* When a single connection ends, all associated asynchronous operations complete. The corresponding handler objects are destroyed, and all `shared_ptr` references to the objects are destroyed.
 
 
-* To shut down the whole program, the io_service function stop() is called to terminate any run() calls as soon as possible. The io_service destructor defined above destroys all handlers, causing all shared_ptr references to all connection objects to be destroyed. 
+* To shut down the whole program, the [link boost_asio.reference.io_service `io_service`] function `stop()` is called to terminate any `run()` calls as soon as possible. The [link boost_asio.reference.io_service `io_service`] destructor defined above destroys all handlers, causing all `shared_ptr` references to all connection objects to be destroyed. 
 
 
 
@@ -38592,33 +38592,33 @@ The [link boost_asio.reference.io_service__strand `io_service::strand`] class pr
 Given:
 
 
-* a strand object s 
+* a strand object `s` 
 
 
-* an object a meeting completion handler requirements
+* an object `a` meeting completion handler requirements
 
 
-* an object a1 which is an arbitrary copy of a made by the implementation
+* an object `a1` which is an arbitrary copy of `a` made by the implementation
 
 
-* an object b meeting completion handler requirements
+* an object `b` meeting completion handler requirements
 
 
-* an object b1 which is an arbitrary copy of b made by the implementation
+* an object `b1` which is an arbitrary copy of `b` made by the implementation
 
 if any of the following conditions are true:
 
 
-* s.post(a) happens-before s.post(b) 
+* `s.post(a)` happens-before `s.post(b)` 
 
 
-* s.post(a) happens-before s.dispatch(b), where the latter is performed outside the strand
+* `s.post(a)` happens-before `s.dispatch(b)`, where the latter is performed outside the strand
 
 
-* s.dispatch(a) happens-before s.post(b), where the former is performed outside the strand
+* `s.dispatch(a)` happens-before `s.post(b)`, where the former is performed outside the strand
 
 
-* s.dispatch(a) happens-before s.dispatch(b), where both are performed outside the strand
+* `s.dispatch(a)` happens-before `s.dispatch(b)`, where both are performed outside the strand
 
 then `asio_handler_invoke(a1, &a1)` happens-before `asio_handler_invoke(b1, &b1)`.
 
@@ -39106,8 +39106,23 @@ Implements version-independent IP addresses.
   ]
   
   [
+    [[link boost_asio.reference.ip__address.operator_lt__eq_ [*operator<=]]]
+    [Compare addresses for ordering. ]
+  ]
+  
+  [
     [[link boost_asio.reference.ip__address.operator_eq__eq_ [*operator==]]]
     [Compare two addresses for equality. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.ip__address.operator_gt_ [*operator>]]]
+    [Compare addresses for ordering. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.ip__address.operator_gt__eq_ [*operator>=]]]
+    [Compare addresses for ordering. ]
   ]
   
 ]
@@ -39434,6 +39449,28 @@ The output stream.
 [endsect]
 
 
+
+[section:operator_lt__eq_ ip::address::operator<=]
+
+[indexterm2 operator<=..ip::address] 
+Compare addresses for ordering. 
+
+
+  friend bool operator<=(
+      const address & a1,
+      const address & a2);
+
+
+[heading Requirements]
+
+[*Header: ][^boost/asio/ip/address.hpp]
+
+[*Convenience header: ][^boost/asio.hpp]
+
+
+[endsect]
+
+
 [section:operator_eq_ ip::address::operator=]
 
 [indexterm2 operator=..ip::address] 
@@ -39515,6 +39552,50 @@ Compare two addresses for equality.
 
 
   friend bool operator==(
+      const address & a1,
+      const address & a2);
+
+
+[heading Requirements]
+
+[*Header: ][^boost/asio/ip/address.hpp]
+
+[*Convenience header: ][^boost/asio.hpp]
+
+
+[endsect]
+
+
+
+[section:operator_gt_ ip::address::operator>]
+
+[indexterm2 operator>..ip::address] 
+Compare addresses for ordering. 
+
+
+  friend bool operator>(
+      const address & a1,
+      const address & a2);
+
+
+[heading Requirements]
+
+[*Header: ][^boost/asio/ip/address.hpp]
+
+[*Convenience header: ][^boost/asio.hpp]
+
+
+[endsect]
+
+
+
+[section:operator_gt__eq_ ip::address::operator>=]
+
+[indexterm2 operator>=..ip::address] 
+Compare addresses for ordering. 
+
+
+  friend bool operator>=(
       const address & a1,
       const address & a2);
 
@@ -41424,8 +41505,23 @@ Describes an endpoint for a version-independent IP socket.
   ]
   
   [
+    [[link boost_asio.reference.ip__basic_endpoint.operator_lt__eq_ [*operator<=]]]
+    [Compare endpoints for ordering. ]
+  ]
+  
+  [
     [[link boost_asio.reference.ip__basic_endpoint.operator_eq__eq_ [*operator==]]]
     [Compare two endpoints for equality. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.ip__basic_endpoint.operator_gt_ [*operator>]]]
+    [Compare endpoints for ordering. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.ip__basic_endpoint.operator_gt__eq_ [*operator>=]]]
+    [Compare endpoints for ordering. ]
   ]
   
 ]
@@ -41781,6 +41877,28 @@ The output stream.
 
 
 
+[section:operator_lt__eq_ ip::basic_endpoint::operator<=]
+
+[indexterm2 operator<=..ip::basic_endpoint] 
+Compare endpoints for ordering. 
+
+
+  friend bool operator<=(
+      const basic_endpoint< InternetProtocol > & e1,
+      const basic_endpoint< InternetProtocol > & e2);
+
+
+[heading Requirements]
+
+[*Header: ][^boost/asio/ip/basic_endpoint.hpp]
+
+[*Convenience header: ][^boost/asio.hpp]
+
+
+[endsect]
+
+
+
 [section:operator_eq_ ip::basic_endpoint::operator=]
 
 [indexterm2 operator=..ip::basic_endpoint] 
@@ -41803,6 +41921,50 @@ Compare two endpoints for equality.
 
 
   friend bool operator==(
+      const basic_endpoint< InternetProtocol > & e1,
+      const basic_endpoint< InternetProtocol > & e2);
+
+
+[heading Requirements]
+
+[*Header: ][^boost/asio/ip/basic_endpoint.hpp]
+
+[*Convenience header: ][^boost/asio.hpp]
+
+
+[endsect]
+
+
+
+[section:operator_gt_ ip::basic_endpoint::operator>]
+
+[indexterm2 operator>..ip::basic_endpoint] 
+Compare endpoints for ordering. 
+
+
+  friend bool operator>(
+      const basic_endpoint< InternetProtocol > & e1,
+      const basic_endpoint< InternetProtocol > & e2);
+
+
+[heading Requirements]
+
+[*Header: ][^boost/asio/ip/basic_endpoint.hpp]
+
+[*Convenience header: ][^boost/asio.hpp]
+
+
+[endsect]
+
+
+
+[section:operator_gt__eq_ ip::basic_endpoint::operator>=]
+
+[indexterm2 operator>=..ip::basic_endpoint] 
+Compare endpoints for ordering. 
+
+
+  friend bool operator>=(
       const basic_endpoint< InternetProtocol > & e1,
       const basic_endpoint< InternetProtocol > & e2);
 
@@ -44160,8 +44322,23 @@ The type of a ICMP endpoint.
   ]
   
   [
+    [[link boost_asio.reference.ip__basic_endpoint.operator_lt__eq_ [*operator<=]]]
+    [Compare endpoints for ordering. ]
+  ]
+  
+  [
     [[link boost_asio.reference.ip__basic_endpoint.operator_eq__eq_ [*operator==]]]
     [Compare two endpoints for equality. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.ip__basic_endpoint.operator_gt_ [*operator>]]]
+    [Compare endpoints for ordering. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.ip__basic_endpoint.operator_gt__eq_ [*operator>=]]]
+    [Compare endpoints for ordering. ]
   ]
   
 ]
@@ -46137,7 +46314,7 @@ Construct a new resolver service for the specified [link boost_asio.reference.io
 Destroy all user-defined handler objects owned by the service. 
 
 
-  void shutdown_service();
+  virtual void shutdown_service();
 
 
 
@@ -46718,8 +46895,23 @@ The type of a TCP endpoint.
   ]
   
   [
+    [[link boost_asio.reference.ip__basic_endpoint.operator_lt__eq_ [*operator<=]]]
+    [Compare endpoints for ordering. ]
+  ]
+  
+  [
     [[link boost_asio.reference.ip__basic_endpoint.operator_eq__eq_ [*operator==]]]
     [Compare two endpoints for equality. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.ip__basic_endpoint.operator_gt_ [*operator>]]]
+    [Compare endpoints for ordering. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.ip__basic_endpoint.operator_gt__eq_ [*operator>=]]]
+    [Compare endpoints for ordering. ]
   ]
   
 ]
@@ -47936,8 +48128,23 @@ The type of a UDP endpoint.
   ]
   
   [
+    [[link boost_asio.reference.ip__basic_endpoint.operator_lt__eq_ [*operator<=]]]
+    [Compare endpoints for ordering. ]
+  ]
+  
+  [
     [[link boost_asio.reference.ip__basic_endpoint.operator_eq__eq_ [*operator==]]]
     [Compare two endpoints for equality. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.ip__basic_endpoint.operator_gt_ [*operator>]]]
+    [Compare endpoints for ordering. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.ip__basic_endpoint.operator_gt__eq_ [*operator>=]]]
+    [Compare endpoints for ordering. ]
   ]
   
 ]
@@ -49165,8 +49372,23 @@ Describes an endpoint for a UNIX socket.
   ]
   
   [
+    [[link boost_asio.reference.local__basic_endpoint.operator_lt__eq_ [*operator<=]]]
+    [Compare endpoints for ordering. ]
+  ]
+  
+  [
     [[link boost_asio.reference.local__basic_endpoint.operator_eq__eq_ [*operator==]]]
     [Compare two endpoints for equality. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.local__basic_endpoint.operator_gt_ [*operator>]]]
+    [Compare endpoints for ordering. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.local__basic_endpoint.operator_gt__eq_ [*operator>=]]]
+    [Compare endpoints for ordering. ]
   ]
   
 ]
@@ -49449,6 +49671,28 @@ The output stream.
 
 
 
+[section:operator_lt__eq_ local::basic_endpoint::operator<=]
+
+[indexterm2 operator<=..local::basic_endpoint] 
+Compare endpoints for ordering. 
+
+
+  friend bool operator<=(
+      const basic_endpoint< Protocol > & e1,
+      const basic_endpoint< Protocol > & e2);
+
+
+[heading Requirements]
+
+[*Header: ][^boost/asio/local/basic_endpoint.hpp]
+
+[*Convenience header: ][^boost/asio.hpp]
+
+
+[endsect]
+
+
+
 [section:operator_eq_ local::basic_endpoint::operator=]
 
 [indexterm2 operator=..local::basic_endpoint] 
@@ -49471,6 +49715,50 @@ Compare two endpoints for equality.
 
 
   friend bool operator==(
+      const basic_endpoint< Protocol > & e1,
+      const basic_endpoint< Protocol > & e2);
+
+
+[heading Requirements]
+
+[*Header: ][^boost/asio/local/basic_endpoint.hpp]
+
+[*Convenience header: ][^boost/asio.hpp]
+
+
+[endsect]
+
+
+
+[section:operator_gt_ local::basic_endpoint::operator>]
+
+[indexterm2 operator>..local::basic_endpoint] 
+Compare endpoints for ordering. 
+
+
+  friend bool operator>(
+      const basic_endpoint< Protocol > & e1,
+      const basic_endpoint< Protocol > & e2);
+
+
+[heading Requirements]
+
+[*Header: ][^boost/asio/local/basic_endpoint.hpp]
+
+[*Convenience header: ][^boost/asio.hpp]
+
+
+[endsect]
+
+
+
+[section:operator_gt__eq_ local::basic_endpoint::operator>=]
+
+[indexterm2 operator>=..local::basic_endpoint] 
+Compare endpoints for ordering. 
+
+
+  friend bool operator>=(
       const basic_endpoint< Protocol > & e1,
       const basic_endpoint< Protocol > & e2);
 
@@ -49858,8 +50146,23 @@ The type of a UNIX domain endpoint.
   ]
   
   [
+    [[link boost_asio.reference.local__basic_endpoint.operator_lt__eq_ [*operator<=]]]
+    [Compare endpoints for ordering. ]
+  ]
+  
+  [
     [[link boost_asio.reference.local__basic_endpoint.operator_eq__eq_ [*operator==]]]
     [Compare two endpoints for equality. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.local__basic_endpoint.operator_gt_ [*operator>]]]
+    [Compare endpoints for ordering. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.local__basic_endpoint.operator_gt__eq_ [*operator>=]]]
+    [Compare endpoints for ordering. ]
   ]
   
 ]
@@ -50837,8 +51140,23 @@ The type of a UNIX domain endpoint.
   ]
   
   [
+    [[link boost_asio.reference.local__basic_endpoint.operator_lt__eq_ [*operator<=]]]
+    [Compare endpoints for ordering. ]
+  ]
+  
+  [
     [[link boost_asio.reference.local__basic_endpoint.operator_eq__eq_ [*operator==]]]
     [Compare two endpoints for equality. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.local__basic_endpoint.operator_gt_ [*operator>]]]
+    [Compare endpoints for ordering. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.local__basic_endpoint.operator_gt__eq_ [*operator>=]]]
+    [Compare endpoints for ordering. ]
   ]
   
 ]
@@ -55429,7 +55747,7 @@ Read some data from the stream.
 Destroy all user-defined descriptorr objects owned by the service. 
 
 
-  void shutdown_service();
+  virtual void shutdown_service();
 
 
 
@@ -56333,7 +56651,7 @@ Disable sends or receives on the socket.
 Destroy all user-defined handler objects owned by the service. 
 
 
-  void shutdown_service();
+  virtual void shutdown_service();
 
 
 
@@ -56516,7 +56834,7 @@ This function is used to read a certain number of bytes of data from a stream. T
 * The supplied buffers are full. That is, the bytes transferred is equal to the sum of the buffer sizes.
 
 
-* The completion_condition function object returns 0.
+* The completion\_condition function object returns 0.
 
 This operation is implemented in terms of zero or more calls to the stream's read\_some function.
 
@@ -56600,7 +56918,7 @@ This function is used to read a certain number of bytes of data from a stream. T
 * The supplied buffers are full. That is, the bytes transferred is equal to the sum of the buffer sizes.
 
 
-* The completion_condition function object returns 0.
+* The completion\_condition function object returns 0.
 
 This operation is implemented in terms of zero or more calls to the stream's read\_some function.
 
@@ -56728,7 +57046,7 @@ Attempt to read a certain amount of data from a stream before returning.
 This function is used to read a certain number of bytes of data from a stream. The call will block until one of the following conditions is true:
 
 
-* The completion_condition function object returns 0.
+* The completion\_condition function object returns 0.
 
 This operation is implemented in terms of zero or more calls to the stream's read\_some function.
 
@@ -56798,7 +57116,7 @@ Attempt to read a certain amount of data from a stream before returning.
 This function is used to read a certain number of bytes of data from a stream. The call will block until one of the following conditions is true:
 
 
-* The completion_condition function object returns 0.
+* The completion\_condition function object returns 0.
 
 This operation is implemented in terms of zero or more calls to the stream's read\_some function.
 
@@ -57024,7 +57342,7 @@ This function is used to read a certain number of bytes of data from a random ac
 * The supplied buffers are full. That is, the bytes transferred is equal to the sum of the buffer sizes.
 
 
-* The completion_condition function object returns 0.
+* The completion\_condition function object returns 0.
 
 This operation is implemented in terms of zero or more calls to the device's read\_some\_at function.
 
@@ -57111,7 +57429,7 @@ This function is used to read a certain number of bytes of data from a random ac
 * The supplied buffers are full. That is, the bytes transferred is equal to the sum of the buffer sizes.
 
 
-* The completion_condition function object returns 0.
+* The completion\_condition function object returns 0.
 
 This operation is implemented in terms of zero or more calls to the device's read\_some\_at function.
 
@@ -57245,7 +57563,7 @@ Attempt to read a certain amount of data at the specified offset before returnin
 This function is used to read a certain number of bytes of data from a random access device at the specified offset. The call will block until one of the following conditions is true:
 
 
-* The completion_condition function object returns 0.
+* The completion\_condition function object returns 0.
 
 This operation is implemented in terms of zero or more calls to the device's read\_some\_at function.
 
@@ -57318,7 +57636,7 @@ Attempt to read a certain amount of data at the specified offset before returnin
 This function is used to read a certain number of bytes of data from a random access device at the specified offset. The call will block until one of the following conditions is true:
 
 
-* The completion_condition function object returns 0.
+* The completion\_condition function object returns 0.
 
 This operation is implemented in terms of zero or more calls to the device's read\_some\_at function.
 
@@ -59527,7 +59845,7 @@ Set a serial port option.
 Destroy all user-defined handler objects owned by the service. 
 
 
-  void shutdown_service();
+  virtual void shutdown_service();
 
 
 
@@ -60180,7 +60498,7 @@ Set a socket option.
 Destroy all user-defined handler objects owned by the service. 
 
 
-  void shutdown_service();
+  virtual void shutdown_service();
 
 
 
@@ -63730,7 +64048,7 @@ Set peer verification mode.
 Destroy all user-defined handler objects owned by the service. 
 
 
-  void shutdown_service();
+  virtual void shutdown_service();
 
 
 
@@ -65605,7 +65923,7 @@ Shut down SSL on the stream.
 Destroy all user-defined handler objects owned by the service. 
 
 
-  void shutdown_service();
+  virtual void shutdown_service();
 
 
 
@@ -65710,33 +66028,33 @@ The [link boost_asio.reference.io_service__strand `io_service::strand`] class pr
 Given:
 
 
-* a strand object s 
+* a strand object `s` 
 
 
-* an object a meeting completion handler requirements
+* an object `a` meeting completion handler requirements
 
 
-* an object a1 which is an arbitrary copy of a made by the implementation
+* an object `a1` which is an arbitrary copy of `a` made by the implementation
 
 
-* an object b meeting completion handler requirements
+* an object `b` meeting completion handler requirements
 
 
-* an object b1 which is an arbitrary copy of b made by the implementation
+* an object `b1` which is an arbitrary copy of `b` made by the implementation
 
 if any of the following conditions are true:
 
 
-* s.post(a) happens-before s.post(b) 
+* `s.post(a)` happens-before `s.post(b)` 
 
 
-* s.post(a) happens-before s.dispatch(b), where the latter is performed outside the strand
+* `s.post(a)` happens-before `s.dispatch(b)`, where the latter is performed outside the strand
 
 
-* s.dispatch(a) happens-before s.post(b), where the former is performed outside the strand
+* `s.dispatch(a)` happens-before `s.post(b)`, where the former is performed outside the strand
 
 
-* s.dispatch(a) happens-before s.dispatch(b), where both are performed outside the strand
+* `s.dispatch(a)` happens-before `s.dispatch(b)`, where both are performed outside the strand
 
 then `asio_handler_invoke(a1, &a1)` happens-before `asio_handler_invoke(b1, &b1)`.
 
@@ -66512,7 +66830,7 @@ Disable sends or receives on the socket.
 Destroy all user-defined handler objects owned by the service. 
 
 
-  void shutdown_service();
+  virtual void shutdown_service();
 
 
 
@@ -71192,7 +71510,7 @@ Read some data from the specified offset.
 Destroy all user-defined handler objects owned by the service. 
 
 
-  void shutdown_service();
+  virtual void shutdown_service();
 
 
 
@@ -71773,7 +72091,7 @@ Read some data from the stream.
 Destroy all user-defined handler objects owned by the service. 
 
 
-  void shutdown_service();
+  virtual void shutdown_service();
 
 
 
@@ -71990,7 +72308,7 @@ This function is used to write a certain number of bytes of data to a stream. Th
 * All of the data in the supplied buffers has been written. That is, the bytes transferred is equal to the sum of the buffer sizes.
 
 
-* The completion_condition function object returns 0.
+* The completion\_condition function object returns 0.
 
 This operation is implemented in terms of zero or more calls to the stream's write\_some function.
 
@@ -72074,7 +72392,7 @@ This function is used to write a certain number of bytes of data to a stream. Th
 * All of the data in the supplied buffers has been written. That is, the bytes transferred is equal to the sum of the buffer sizes.
 
 
-* The completion_condition function object returns 0.
+* The completion\_condition function object returns 0.
 
 This operation is implemented in terms of zero or more calls to the stream's write\_some function.
 
@@ -72133,7 +72451,7 @@ Write all of the supplied data to a stream before returning.
 This function is used to write a certain number of bytes of data to a stream. The call will block until one of the following conditions is true:
 
 
-* All of the data in the supplied basic_streambuf has been written.
+* All of the data in the supplied [link boost_asio.reference.basic_streambuf `basic_streambuf`] has been written.
 
 
 * An error occurred.
@@ -72205,10 +72523,10 @@ Write a certain amount of data to a stream before returning.
 This function is used to write a certain number of bytes of data to a stream. The call will block until one of the following conditions is true:
 
 
-* All of the data in the supplied basic_streambuf has been written.
+* All of the data in the supplied [link boost_asio.reference.basic_streambuf `basic_streambuf`] has been written.
 
 
-* The completion_condition function object returns 0.
+* The completion\_condition function object returns 0.
 
 This operation is implemented in terms of zero or more calls to the stream's write\_some function.
 
@@ -72278,10 +72596,10 @@ Write a certain amount of data to a stream before returning.
 This function is used to write a certain number of bytes of data to a stream. The call will block until one of the following conditions is true:
 
 
-* All of the data in the supplied basic_streambuf has been written.
+* All of the data in the supplied [link boost_asio.reference.basic_streambuf `basic_streambuf`] has been written.
 
 
-* The completion_condition function object returns 0.
+* The completion\_condition function object returns 0.
 
 This operation is implemented in terms of zero or more calls to the stream's write\_some function.
 
@@ -72507,7 +72825,7 @@ This function is used to write a certain number of bytes of data to a random acc
 * All of the data in the supplied buffers has been written. That is, the bytes transferred is equal to the sum of the buffer sizes.
 
 
-* The completion_condition function object returns 0.
+* The completion\_condition function object returns 0.
 
 This operation is implemented in terms of zero or more calls to the device's write\_some\_at function.
 
@@ -72594,7 +72912,7 @@ This function is used to write a certain number of bytes of data to a random acc
 * All of the data in the supplied buffers has been written. That is, the bytes transferred is equal to the sum of the buffer sizes.
 
 
-* The completion_condition function object returns 0.
+* The completion\_condition function object returns 0.
 
 This operation is implemented in terms of zero or more calls to the device's write\_some\_at function.
 
@@ -72656,7 +72974,7 @@ Write all of the supplied data at the specified offset before returning.
 This function is used to write a certain number of bytes of data to a random access device at a specified offset. The call will block until one of the following conditions is true:
 
 
-* All of the data in the supplied basic_streambuf has been written.
+* All of the data in the supplied [link boost_asio.reference.basic_streambuf `basic_streambuf`] has been written.
 
 
 * An error occurred.
@@ -72731,10 +73049,10 @@ Write a certain amount of data at a specified offset before returning.
 This function is used to write a certain number of bytes of data to a random access device at a specified offset. The call will block until one of the following conditions is true:
 
 
-* All of the data in the supplied basic_streambuf has been written.
+* All of the data in the supplied [link boost_asio.reference.basic_streambuf `basic_streambuf`] has been written.
 
 
-* The completion_condition function object returns 0.
+* The completion\_condition function object returns 0.
 
 This operation is implemented in terms of zero or more calls to the device's write\_some\_at function.
 
@@ -72807,10 +73125,10 @@ Write a certain amount of data at a specified offset before returning.
 This function is used to write a certain number of bytes of data to a random access device at a specified offset. The call will block until one of the following conditions is true:
 
 
-* All of the data in the supplied basic_streambuf has been written.
+* All of the data in the supplied [link boost_asio.reference.basic_streambuf `basic_streambuf`] has been written.
 
 
-* The completion_condition function object returns 0.
+* The completion\_condition function object returns 0.
 
 This operation is implemented in terms of zero or more calls to the device's write\_some\_at function.
 

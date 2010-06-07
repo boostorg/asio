@@ -1,6 +1,6 @@
 //
-// context_base.hpp
-// ~~~~~~~~~~~~~~~~
+// ssl/context_base.hpp
+// ~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2005-2010 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
@@ -15,14 +15,11 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include <boost/asio/detail/push_options.hpp>
-
-#include <boost/asio/detail/push_options.hpp>
-#include <boost/config.hpp>
+#include <boost/asio/detail/config.hpp>
 #include <boost/detail/workaround.hpp>
-#include <boost/asio/detail/pop_options.hpp>
-
 #include <boost/asio/ssl/detail/openssl_types.hpp>
+
+#include <boost/asio/detail/push_options.hpp>
 
 namespace boost {
 namespace asio {

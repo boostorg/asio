@@ -15,15 +15,10 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include <boost/asio/detail/push_options.hpp>
-
-#include <boost/asio/detail/push_options.hpp>
-#include <boost/config.hpp>
-#include <boost/asio/detail/pop_options.hpp>
+#include <boost/asio/detail/config.hpp>
 
 #if !defined(BOOST_NO_IOSTREAM)
 
-#include <boost/asio/detail/push_options.hpp>
 #include <streambuf>
 #include <boost/array.hpp>
 #include <boost/preprocessor/arithmetic/inc.hpp>
@@ -31,12 +26,10 @@
 #include <boost/preprocessor/repetition/enum_params.hpp>
 #include <boost/preprocessor/repetition/repeat_from_to.hpp>
 #include <boost/utility/base_from_member.hpp>
-#include <boost/asio/detail/pop_options.hpp>
-
 #include <boost/asio/basic_socket.hpp>
+#include <boost/asio/detail/throw_error.hpp>
 #include <boost/asio/io_service.hpp>
 #include <boost/asio/stream_socket_service.hpp>
-#include <boost/asio/detail/throw_error.hpp>
 
 #if !defined(BOOST_ASIO_SOCKET_STREAMBUF_MAX_ARITY)
 #define BOOST_ASIO_SOCKET_STREAMBUF_MAX_ARITY 5
@@ -73,6 +66,8 @@
     return !ec ? this : 0; \
   } \
   /**/
+
+#include <boost/asio/detail/push_options.hpp>
 
 namespace boost {
 namespace asio {
@@ -288,10 +283,10 @@ private:
 } // namespace asio
 } // namespace boost
 
+#include <boost/asio/detail/pop_options.hpp>
+
 #undef BOOST_ASIO_PRIVATE_CONNECT_DEF
 
 #endif // !defined(BOOST_NO_IOSTREAM)
-
-#include <boost/asio/detail/pop_options.hpp>
 
 #endif // BOOST_ASIO_BASIC_SOCKET_STREAMBUF_HPP

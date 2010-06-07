@@ -1,6 +1,6 @@
 //
-// socket_holder.hpp
-// ~~~~~~~~~~~~~~~~~
+// detail/socket_holder.hpp
+// ~~~~~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2010 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
@@ -15,10 +15,11 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include <boost/asio/detail/push_options.hpp>
-
+#include <boost/asio/detail/config.hpp>
 #include <boost/asio/detail/noncopyable.hpp>
 #include <boost/asio/detail/socket_ops.hpp>
+
+#include <boost/asio/detail/push_options.hpp>
 
 namespace boost {
 namespace asio {
@@ -47,7 +48,8 @@ public:
     if (socket_ != invalid_socket)
     {
       boost::system::error_code ec;
-      socket_ops::close(socket_, ec);
+      socket_ops::state_type state = 0;
+      socket_ops::close(socket_, state, true, ec);
     }
   }
 
@@ -63,7 +65,8 @@ public:
     if (socket_ != invalid_socket)
     {
       boost::system::error_code ec;
-      socket_ops::close(socket_, ec);
+      socket_ops::state_type state = 0;
+      socket_ops::close(socket_, state, true, ec);
       socket_ = invalid_socket;
     }
   }

@@ -1,6 +1,6 @@
 //
-// timer_queue_fwd.hpp
-// ~~~~~~~~~~~~~~~~~~~
+// detail/timer_queue_fwd.hpp
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2010 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
@@ -15,8 +15,6 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include <boost/asio/detail/push_options.hpp>
-
 namespace boost {
 namespace asio {
 namespace detail {
@@ -27,7 +25,5 @@ class timer_queue;
 } // namespace detail
 } // namespace asio
 } // namespace boost
-
-#include <boost/asio/detail/pop_options.hpp>
 
 #endif // BOOST_ASIO_DETAIL_TIMER_QUEUE_FWD_HPP

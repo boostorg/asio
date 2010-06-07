@@ -18,6 +18,6 @@
 // BOOST_ASIO_VERSION % 100 is the sub-minor version
 // BOOST_ASIO_VERSION / 100 % 1000 is the minor version
 // BOOST_ASIO_VERSION / 100000 is the major version
-#define BOOST_ASIO_VERSION 100403 // 1.4.3
+#define BOOST_ASIO_VERSION 100405 // 1.4.5
 
 #endif // BOOST_ASIO_VERSION_HPP

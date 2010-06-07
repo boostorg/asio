@@ -1,6 +1,6 @@
 //
-// stream_handle_service.hpp
-// ~~~~~~~~~~~~~~~~~~~~~~~~~
+// windows/stream_handle_service.hpp
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2010 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
@@ -15,26 +15,17 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include <boost/asio/detail/push_options.hpp>
-
-#include <boost/asio/detail/push_options.hpp>
-#include <cstddef>
-#include <boost/config.hpp>
-#include <boost/asio/detail/pop_options.hpp>
-
-#include <boost/asio/error.hpp>
-#include <boost/asio/io_service.hpp>
-#include <boost/asio/detail/service_base.hpp>
-#include <boost/asio/detail/win_iocp_handle_service.hpp>
-
-#if !defined(BOOST_ASIO_DISABLE_WINDOWS_STREAM_HANDLE)
-# if defined(BOOST_ASIO_HAS_IOCP)
-#  define BOOST_ASIO_HAS_WINDOWS_STREAM_HANDLE 1
-# endif // defined(BOOST_ASIO_HAS_IOCP)
-#endif // !defined(BOOST_ASIO_DISABLE_WINDOWS_STREAM_HANDLE)
+#include <boost/asio/detail/config.hpp>
 
 #if defined(BOOST_ASIO_HAS_WINDOWS_STREAM_HANDLE) \
   || defined(GENERATING_DOCUMENTATION)
+
+#include <cstddef>
+#include <boost/asio/detail/win_iocp_handle_service.hpp>
+#include <boost/asio/error.hpp>
+#include <boost/asio/io_service.hpp>
+
+#include <boost/asio/detail/push_options.hpp>
 
 namespace boost {
 namespace asio {
@@ -172,9 +163,9 @@ private:
 } // namespace asio
 } // namespace boost
 
+#include <boost/asio/detail/pop_options.hpp>
+
 #endif // defined(BOOST_ASIO_HAS_WINDOWS_STREAM_HANDLE)
        //   || defined(GENERATING_DOCUMENTATION)
-
-#include <boost/asio/detail/pop_options.hpp>
 
 #endif // BOOST_ASIO_WINDOWS_STREAM_HANDLE_SERVICE_HPP

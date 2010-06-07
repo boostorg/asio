@@ -1,6 +1,6 @@
 //
-// timer_queue_set.hpp
-// ~~~~~~~~~~~~~~~~~~~
+// detail/timer_queue_set.hpp
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2010 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
@@ -15,9 +15,10 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include <boost/asio/detail/push_options.hpp>
-
+#include <boost/asio/detail/config.hpp>
 #include <boost/asio/detail/timer_queue_base.hpp>
+
+#include <boost/asio/detail/push_options.hpp>
 
 namespace boost {
 namespace asio {
@@ -27,82 +28,28 @@ class timer_queue_set
 {
 public:
   // Constructor.
-  timer_queue_set()
-    : first_(0)
-  {
-  }
+  BOOST_ASIO_DECL timer_queue_set();
 
   // Add a timer queue to the set.
-  void insert(timer_queue_base* q)
-  {
-    q->next_ = first_;
-    first_ = q;
-  }
+  BOOST_ASIO_DECL void insert(timer_queue_base* q);
 
   // Remove a timer queue from the set.
-  void erase(timer_queue_base* q)
-  {
-    if (first_)
-    {
-      if (q == first_)
-      {
-        first_ = q->next_;
-        q->next_ = 0;
-        return;
-      }
-
-      for (timer_queue_base* p = first_; p->next_; p = p->next_)
-      {
-        if (p->next_ == q)
-        {
-          p->next_ = q->next_;
-          q->next_ = 0;
-          return;
-        }
-      }
-    }
-  }
+  BOOST_ASIO_DECL void erase(timer_queue_base* q);
 
   // Determine whether all queues are empty.
-  bool all_empty() const
-  {
-    for (timer_queue_base* p = first_; p; p = p->next_)
-      if (!p->empty())
-        return false;
-    return true;
-  }
+  BOOST_ASIO_DECL bool all_empty() const;
 
   // Get the wait duration in milliseconds.
-  long wait_duration_msec(long max_duration) const
-  {
-    long min_duration = max_duration;
-    for (timer_queue_base* p = first_; p; p = p->next_)
-      min_duration = p->wait_duration_msec(min_duration);
-    return min_duration;
-  }
+  BOOST_ASIO_DECL long wait_duration_msec(long max_duration) const;
 
   // Get the wait duration in microseconds.
-  long wait_duration_usec(long max_duration) const
-  {
-    long min_duration = max_duration;
-    for (timer_queue_base* p = first_; p; p = p->next_)
-      min_duration = p->wait_duration_usec(min_duration);
-    return min_duration;
-  }
+  BOOST_ASIO_DECL long wait_duration_usec(long max_duration) const;
 
   // Dequeue all ready timers.
-  void get_ready_timers(op_queue<operation>& ops)
-  {
-    for (timer_queue_base* p = first_; p; p = p->next_)
-      p->get_ready_timers(ops);
-  }
+  BOOST_ASIO_DECL void get_ready_timers(op_queue<operation>& ops);
 
   // Dequeue all timers.
-  void get_all_timers(op_queue<operation>& ops)
-  {
-    for (timer_queue_base* p = first_; p; p = p->next_)
-      p->get_all_timers(ops);
-  }
+  BOOST_ASIO_DECL void get_all_timers(op_queue<operation>& ops);
 
 private:
   timer_queue_base* first_;
@@ -113,5 +60,9 @@ private:
 } // namespace boost
 
 #include <boost/asio/detail/pop_options.hpp>
+
+#if defined(BOOST_ASIO_HEADER_ONLY)
+# include <boost/asio/detail/impl/timer_queue_set.ipp>
+#endif // defined(BOOST_ASIO_HEADER_ONLY)
 
 #endif // BOOST_ASIO_DETAIL_TIMER_QUEUE_SET_HPP

@@ -1,6 +1,6 @@
 //
-// basic_descriptor.hpp
-// ~~~~~~~~~~~~~~~~~~~~
+// posix/basic_descriptor.hpp
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2010 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
@@ -15,16 +15,17 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include <boost/asio/detail/push_options.hpp>
+#include <boost/asio/detail/config.hpp>
 
-#include <boost/asio/detail/push_options.hpp>
-#include <boost/config.hpp>
-#include <boost/asio/detail/pop_options.hpp>
+#if defined(BOOST_ASIO_HAS_POSIX_STREAM_DESCRIPTOR) \
+  || defined(GENERATING_DOCUMENTATION)
 
 #include <boost/asio/basic_io_object.hpp>
+#include <boost/asio/detail/throw_error.hpp>
 #include <boost/asio/error.hpp>
 #include <boost/asio/posix/descriptor_base.hpp>
-#include <boost/asio/detail/throw_error.hpp>
+
+#include <boost/asio/detail/push_options.hpp>
 
 namespace boost {
 namespace asio {
@@ -292,5 +293,8 @@ protected:
 } // namespace boost
 
 #include <boost/asio/detail/pop_options.hpp>
+
+#endif // defined(BOOST_ASIO_HAS_POSIX_STREAM_DESCRIPTOR)
+       //   || defined(GENERATING_DOCUMENTATION)
 
 #endif // BOOST_ASIO_POSIX_BASIC_DESCRIPTOR_HPP

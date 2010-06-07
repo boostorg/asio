@@ -54,9 +54,9 @@ void test()
     ip::tcp::no_delay no_delay2;
     sock.get_option(no_delay2);
     no_delay1 = true;
-    static_cast<bool>(no_delay1);
-    static_cast<bool>(!no_delay1);
-    static_cast<bool>(no_delay1.value());
+    (void)static_cast<bool>(no_delay1);
+    (void)static_cast<bool>(!no_delay1);
+    (void)static_cast<bool>(no_delay1.value());
   }
   catch (std::exception&)
   {
@@ -551,6 +551,68 @@ void test()
 
 //------------------------------------------------------------------------------
 
+// ip_tcp_resolver_compile test
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// The following test checks that all public member functions on the class
+// ip::tcp::resolver compile and link correctly. Runtime failures are ignored.
+
+namespace ip_tcp_resolver_compile {
+
+void resolve_handler(const boost::system::error_code&,
+    boost::asio::ip::tcp::resolver::iterator)
+{
+}
+
+void test()
+{
+  using namespace boost::asio;
+  namespace ip = boost::asio::ip;
+
+  try
+  {
+    io_service ios;
+    boost::system::error_code ec;
+    ip::tcp::resolver::query q(ip::tcp::v4(), "localhost", "0");
+    ip::tcp::endpoint e(ip::address_v4::loopback(), 0);
+
+    // basic_resolver constructors.
+
+    ip::tcp::resolver resolver(ios);
+
+    // basic_io_object functions.
+
+    io_service& ios_ref = resolver.io_service();
+    (void)ios_ref;
+
+    // basic_resolver functions.
+
+    resolver.cancel();
+
+    ip::tcp::resolver::iterator iter1 = resolver.resolve(q);
+    (void)iter1;
+
+    ip::tcp::resolver::iterator iter2 = resolver.resolve(q, ec);
+    (void)iter2;
+
+    ip::tcp::resolver::iterator iter3 = resolver.resolve(e);
+    (void)iter3;
+
+    ip::tcp::resolver::iterator iter4 = resolver.resolve(e, ec);
+    (void)iter4;
+
+    resolver.async_resolve(q, resolve_handler);
+
+    resolver.async_resolve(e, resolve_handler);
+  }
+  catch (std::exception&)
+  {
+  }
+}
+
+} // namespace ip_tcp_resolver_compile
+
+//------------------------------------------------------------------------------
+
 test_suite* init_unit_test_suite(int, char*[])
 {
   test_suite* test = BOOST_TEST_SUITE("ip/tcp");
@@ -559,5 +621,6 @@ test_suite* init_unit_test_suite(int, char*[])
   test->add(BOOST_TEST_CASE(&ip_tcp_socket_compile::test));
   test->add(BOOST_TEST_CASE(&ip_tcp_socket_runtime::test));
   test->add(BOOST_TEST_CASE(&ip_tcp_acceptor_runtime::test));
+  test->add(BOOST_TEST_CASE(&ip_tcp_resolver_compile::test));
   return test;
 }

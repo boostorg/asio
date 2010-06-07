@@ -1,6 +1,6 @@
 //
-// select_interrupter.hpp
-// ~~~~~~~~~~~~~~~~~~~~~~
+// detail/select_interrupter.hpp
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2010 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
@@ -15,16 +15,13 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include <boost/asio/detail/push_options.hpp>
-
-#include <boost/asio/detail/push_options.hpp>
-#include <boost/config.hpp>
-#include <boost/asio/detail/pop_options.hpp>
+#include <boost/asio/detail/config.hpp>
 
 #if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
 # include <boost/asio/detail/socket_select_interrupter.hpp>
-#else
+#elif defined(BOOST_ASIO_HAS_EVENTFD)
 # include <boost/asio/detail/eventfd_select_interrupter.hpp>
+#else
 # include <boost/asio/detail/pipe_select_interrupter.hpp>
 #endif
 
@@ -43,7 +40,5 @@ typedef pipe_select_interrupter select_interrupter;
 } // namespace detail
 } // namespace asio
 } // namespace boost
-
-#include <boost/asio/detail/pop_options.hpp>
 
 #endif // BOOST_ASIO_DETAIL_SELECT_INTERRUPTER_HPP

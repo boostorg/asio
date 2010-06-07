@@ -1,6 +1,6 @@
 //
-// openssl_operation.hpp
-// ~~~~~~~~~~~~~~~~~~~~~
+// ssl/detail/openssl_operation.hpp
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2005 Voipster / Indrek dot Juhani at voipster dot com
 //
@@ -15,19 +15,19 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include <boost/asio/detail/push_options.hpp>
-
-#include <boost/asio/detail/push_options.hpp>
+#include <boost/asio/detail/config.hpp>
 #include <boost/function.hpp>
 #include <boost/assert.hpp>
 #include <boost/bind.hpp>
-#include <boost/asio/detail/pop_options.hpp>
-
 #include <boost/asio/buffer.hpp>
-#include <boost/asio/placeholders.hpp>
-#include <boost/asio/write.hpp>
 #include <boost/asio/detail/socket_ops.hpp>
+#include <boost/asio/placeholders.hpp>
 #include <boost/asio/ssl/detail/openssl_types.hpp>
+#include <boost/asio/strand.hpp>
+#include <boost/system/system_error.hpp>
+#include <boost/asio/write.hpp>
+
+#include <boost/asio/detail/push_options.hpp>
 
 namespace boost {
 namespace asio {
