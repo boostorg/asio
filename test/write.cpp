@@ -20,6 +20,7 @@
 #include <boost/bind.hpp>
 #include <boost/noncopyable.hpp>
 #include <cstring>
+#include <vector>
 #include <boost/asio/io_service.hpp>
 #include <boost/asio/placeholders.hpp>
 #include "unit_test.hpp"
@@ -137,6 +138,16 @@ static const char write_data[]
   = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 static char mutable_write_data[]
   = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+
+void test_2_arg_zero_buffers_write()
+{
+  boost::asio::io_service ios;
+  test_stream s(ios);
+  std::vector<boost::asio::const_buffer> buffers;
+
+  size_t bytes_transferred = boost::asio::write(s, buffers);
+  BOOST_CHECK(bytes_transferred == 0);
+}
 
 void test_2_arg_const_buffers_1_write()
 {
@@ -1930,6 +1941,7 @@ void test_4_arg_multi_buffers_async_write()
 test_suite* init_unit_test_suite(int, char*[])
 {
   test_suite* test = BOOST_TEST_SUITE("write");
+  test->add(BOOST_TEST_CASE(&test_2_arg_zero_buffers_write));
   test->add(BOOST_TEST_CASE(&test_2_arg_const_buffers_1_write));
   test->add(BOOST_TEST_CASE(&test_2_arg_mutable_buffers_1_write));
   test->add(BOOST_TEST_CASE(&test_2_arg_multi_buffers_write));
