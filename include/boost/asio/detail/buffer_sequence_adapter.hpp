@@ -1,6 +1,6 @@
 //
-// buffer_sequence_adapter.hpp
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// detail/buffer_sequence_adapter.hpp
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2010 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
@@ -15,9 +15,11 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include <boost/asio/detail/push_options.hpp>
-
+#include <boost/asio/detail/config.hpp>
 #include <boost/asio/buffer.hpp>
+#include <boost/asio/detail/socket_types.hpp>
+
+#include <boost/asio/detail/push_options.hpp>
 
 namespace boost {
 namespace asio {
@@ -33,14 +35,14 @@ protected:
       const boost::asio::mutable_buffer& buffer)
   {
     buf.buf = boost::asio::buffer_cast<char*>(buffer);
-    buf.len = boost::asio::buffer_size(buffer);
+    buf.len = static_cast<ULONG>(boost::asio::buffer_size(buffer));
   }
 
   static void init_native_buffer(WSABUF& buf,
       const boost::asio::const_buffer& buffer)
   {
     buf.buf = const_cast<char*>(boost::asio::buffer_cast<const char*>(buffer));
-    buf.len = boost::asio::buffer_size(buffer);
+    buf.len = static_cast<ULONG>(boost::asio::buffer_size(buffer));
   }
 #else // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
   typedef iovec native_buffer_type;

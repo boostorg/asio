@@ -1,6 +1,6 @@
 //
-// stream_service.hpp
-// ~~~~~~~~~~~~~~~~~~
+// ssl/detail/stream_service.hpp
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2005 Voipster / Indrek dot Juhani at voipster dot com
 // Copyright (c) 2005-2010 Christopher M. Kohlhoff (chris at kohlhoff dot com)
@@ -16,9 +16,7 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include <boost/asio/detail/push_options.hpp>
-
-#include <boost/asio/detail/push_options.hpp>
+#include <boost/asio/detail/config.hpp>
 #include <cstddef>
 #include <climits>
 #include <memory>
@@ -26,17 +24,17 @@
 #include <boost/noncopyable.hpp>
 #include <boost/function.hpp>
 #include <boost/bind.hpp>
-#include <boost/asio/detail/pop_options.hpp>
-
+#include <boost/asio/detail/buffer_sequence_adapter.hpp>
 #include <boost/asio/error.hpp>
 #include <boost/asio/io_service.hpp>
-#include <boost/asio/strand.hpp>
-#include <boost/asio/detail/buffer_sequence_adapter.hpp>
-#include <boost/asio/detail/service_base.hpp>
 #include <boost/asio/ssl/basic_context.hpp>
 #include <boost/asio/ssl/stream_base.hpp>
 #include <boost/asio/ssl/detail/openssl_operation.hpp>
 #include <boost/asio/ssl/detail/openssl_types.hpp>
+#include <boost/asio/strand.hpp>
+#include <boost/system/system_error.hpp>
+
+#include <boost/asio/detail/push_options.hpp>
 
 namespace boost {
 namespace asio {
@@ -93,7 +91,7 @@ private:
       : base_handler<Stream>(io_service)
       , handler_(handler)
     {
-      set_func(boost::bind(
+      this->set_func(boost::bind(
         &io_handler<Stream, Handler>::handler_impl, 
         this, boost::arg<1>(), boost::arg<2>() ));
     }
@@ -117,7 +115,7 @@ private:
       : base_handler<Stream>(io_service)
       , handler_(handler)
     {
-      set_func(boost::bind(
+      this->set_func(boost::bind(
         &handshake_handler<Stream, Handler>::handler_impl, 
         this, boost::arg<1>(), boost::arg<2>() ));
     }
@@ -142,7 +140,7 @@ private:
       : base_handler<Stream>(io_service),
         handler_(handler)
     { 
-      set_func(boost::bind(
+      this->set_func(boost::bind(
         &shutdown_handler<Stream, Handler>::handler_impl, 
         this, boost::arg<1>(), boost::arg<2>() ));
     }

@@ -1,6 +1,6 @@
 //
-// reactor_fwd.hpp
-// ~~~~~~~~~~~~~~~
+// detail/reactor_fwd.hpp
+// ~~~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2010 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
@@ -15,20 +15,26 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include <boost/asio/detail/push_options.hpp>
+#include <boost/asio/detail/config.hpp>
 
-#include <boost/asio/detail/dev_poll_reactor_fwd.hpp>
-#include <boost/asio/detail/epoll_reactor_fwd.hpp>
-#include <boost/asio/detail/kqueue_reactor_fwd.hpp>
-#include <boost/asio/detail/select_reactor_fwd.hpp>
-#include <boost/asio/detail/win_iocp_io_service_fwd.hpp>
+#if defined(BOOST_ASIO_HAS_IOCP)
+# include <boost/asio/detail/select_reactor_fwd.hpp>
+#elif defined(BOOST_ASIO_HAS_EPOLL)
+# include <boost/asio/detail/epoll_reactor_fwd.hpp>
+#elif defined(BOOST_ASIO_HAS_KQUEUE)
+# include <boost/asio/detail/kqueue_reactor_fwd.hpp>
+#elif defined(BOOST_ASIO_HAS_DEV_POLL)
+# include <boost/asio/detail/dev_poll_reactor_fwd.hpp>
+#else
+# include <boost/asio/detail/select_reactor_fwd.hpp>
+#endif
 
 namespace boost {
 namespace asio {
 namespace detail {
 
 #if defined(BOOST_ASIO_HAS_IOCP)
-typedef select_reactor<true> reactor;
+typedef select_reactor reactor;
 #elif defined(BOOST_ASIO_HAS_EPOLL)
 typedef epoll_reactor reactor;
 #elif defined(BOOST_ASIO_HAS_KQUEUE)
@@ -36,13 +42,11 @@ typedef kqueue_reactor reactor;
 #elif defined(BOOST_ASIO_HAS_DEV_POLL)
 typedef dev_poll_reactor reactor;
 #else
-typedef select_reactor<false> reactor;
+typedef select_reactor reactor;
 #endif
 
 } // namespace detail
 } // namespace asio
 } // namespace boost
-
-#include <boost/asio/detail/pop_options.hpp>
 
 #endif // BOOST_ASIO_DETAIL_REACTOR_FWD_HPP

@@ -15,12 +15,11 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include <boost/asio/detail/push_options.hpp>
-
-#include <boost/asio/detail/push_options.hpp>
+#include <boost/asio/detail/config.hpp>
 #include <boost/bind/arg.hpp>
 #include <boost/detail/workaround.hpp>
-#include <boost/asio/detail/pop_options.hpp>
+
+#include <boost/asio/detail/push_options.hpp>
 
 namespace boost {
 namespace asio {

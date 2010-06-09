@@ -1,6 +1,6 @@
 //
-// timer_queue.hpp
-// ~~~~~~~~~~~~~~~
+// detail/timer_queue.hpp
+// ~~~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2010 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
@@ -15,21 +15,24 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include <boost/asio/detail/push_options.hpp>
-
-#include <boost/asio/detail/push_options.hpp>
+#include <boost/asio/detail/config.hpp>
 #include <cstddef>
 #include <memory>
 #include <vector>
 #include <boost/config.hpp>
 #include <boost/limits.hpp>
-#include <boost/asio/detail/pop_options.hpp>
-
-#include <boost/asio/error.hpp>
 #include <boost/asio/detail/hash_map.hpp>
 #include <boost/asio/detail/op_queue.hpp>
 #include <boost/asio/detail/timer_op.hpp>
 #include <boost/asio/detail/timer_queue_base.hpp>
+#include <boost/asio/error.hpp>
+#include <boost/asio/time_traits.hpp>
+
+#include <boost/asio/detail/push_options.hpp>
+#include <boost/date_time/posix_time/posix_time_types.hpp>
+#include <boost/asio/detail/pop_options.hpp>
+
+#include <boost/asio/detail/push_options.hpp>
 
 namespace boost {
 namespace asio {
@@ -98,8 +101,10 @@ public:
 
     if (duration > boost::posix_time::milliseconds(max_duration))
       duration = boost::posix_time::milliseconds(max_duration);
-    else if (duration < boost::posix_time::milliseconds(0))
+    else if (duration <= boost::posix_time::milliseconds(0))
       duration = boost::posix_time::milliseconds(0);
+    else if (duration < boost::posix_time::milliseconds(1))
+      duration = boost::posix_time::milliseconds(1);
 
     return duration.total_milliseconds();
   }
@@ -115,8 +120,10 @@ public:
 
     if (duration > boost::posix_time::microseconds(max_duration))
       duration = boost::posix_time::microseconds(max_duration);
-    else if (duration < boost::posix_time::microseconds(0))
+    else if (duration <= boost::posix_time::microseconds(0))
       duration = boost::posix_time::microseconds(0);
+    else if (duration < boost::posix_time::microseconds(1))
+      duration = boost::posix_time::microseconds(1);
 
     return duration.total_microseconds();
   }
@@ -268,6 +275,59 @@ private:
   // The heap of timers, with the earliest timer at the front.
   std::vector<timer*> heap_;
 };
+
+#if !defined(BOOST_ASIO_HEADER_ONLY)
+
+struct forwarding_posix_time_traits : time_traits<boost::posix_time::ptime> {};
+
+// Template specialisation for the commonly used instantation.
+template <>
+class timer_queue<time_traits<boost::posix_time::ptime> >
+  : public timer_queue_base
+{
+public:
+  // The time type.
+  typedef boost::posix_time::ptime time_type;
+
+  // The duration type.
+  typedef boost::posix_time::time_duration duration_type;
+
+  // Constructor.
+  BOOST_ASIO_DECL timer_queue();
+
+  // Destructor.
+  BOOST_ASIO_DECL virtual ~timer_queue();
+
+  // Add a new timer to the queue. Returns true if this is the timer that is
+  // earliest in the queue, in which case the reactor's event demultiplexing
+  // function call may need to be interrupted and restarted.
+  BOOST_ASIO_DECL bool enqueue_timer(const time_type& time,
+      timer_op* op, void* token);
+
+  // Whether there are no timers in the queue.
+  BOOST_ASIO_DECL virtual bool empty() const;
+
+  // Get the time for the timer that is earliest in the queue.
+  BOOST_ASIO_DECL virtual long wait_duration_msec(long max_duration) const;
+
+  // Get the time for the timer that is earliest in the queue.
+  BOOST_ASIO_DECL virtual long wait_duration_usec(long max_duration) const;
+
+  // Dequeue all timers not later than the current time.
+  BOOST_ASIO_DECL virtual void get_ready_timers(op_queue<operation>& ops);
+
+  // Dequeue all timers.
+  BOOST_ASIO_DECL virtual void get_all_timers(op_queue<operation>& ops);
+
+  // Cancel and dequeue the timers with the given token.
+  BOOST_ASIO_DECL std::size_t cancel_timer(
+      void* timer_token, op_queue<operation>& ops);
+
+private:
+  timer_queue<forwarding_posix_time_traits> impl_;
+};
+
+#endif // !defined(BOOST_ASIO_HEADER_ONLY)
 
 } // namespace detail
 } // namespace asio

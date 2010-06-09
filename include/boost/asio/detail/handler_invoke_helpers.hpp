@@ -1,6 +1,6 @@
 //
-// handler_invoke_helpers.hpp
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~
+// detail/handler_invoke_helpers.hpp
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2010 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
@@ -15,14 +15,12 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include <boost/asio/detail/push_options.hpp>
-
-#include <boost/asio/detail/push_options.hpp>
+#include <boost/asio/detail/config.hpp>
 #include <boost/detail/workaround.hpp>
 #include <boost/utility/addressof.hpp>
-#include <boost/asio/detail/pop_options.hpp>
-
 #include <boost/asio/handler_invoke_hook.hpp>
+
+#include <boost/asio/detail/push_options.hpp>
 
 // Calls to asio_handler_invoke must be made from a namespace that does not
 // contain overloads of this function. The boost_asio_handler_invoke_helpers

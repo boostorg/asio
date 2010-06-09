@@ -22,6 +22,7 @@
 #include <boost/asio/io_service.hpp>
 #include <boost/asio/ip/tcp.hpp>
 #include <boost/asio/placeholders.hpp>
+#include <boost/system/system_error.hpp>
 #include "unit_test.hpp"
 
 typedef boost::asio::buffered_read_stream<

@@ -1,6 +1,6 @@
 //
-// task_io_service_operation.hpp
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// detail/task_io_service_operation.hpp
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2010 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
@@ -15,10 +15,11 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include <boost/asio/detail/push_options.hpp>
-
+#include <boost/system/error_code.hpp>
 #include <boost/asio/detail/op_queue.hpp>
 #include <boost/asio/detail/task_io_service_fwd.hpp>
+
+#include <boost/asio/detail/push_options.hpp>
 
 namespace boost {
 namespace asio {
@@ -26,11 +27,10 @@ namespace detail {
 
 // Base class for all operations. A function pointer is used instead of virtual
 // functions to avoid the associated overhead.
-template <typename Task>
 class task_io_service_operation
 {
 public:
-  void complete(task_io_service<Task>& owner)
+  void complete(task_io_service& owner)
   {
     func_(&owner, this, boost::system::error_code(), 0);
   }
@@ -41,8 +41,9 @@ public:
   }
 
 protected:
-  typedef void (*func_type)(task_io_service<Task>*,
-      task_io_service_operation*, boost::system::error_code, std::size_t);
+  typedef void (*func_type)(task_io_service*,
+      task_io_service_operation*,
+      boost::system::error_code, std::size_t);
 
   task_io_service_operation(func_type func)
     : next_(0),
@@ -65,7 +66,6 @@ private:
 } // namespace asio
 } // namespace boost
 
-#include <boost/system/error_code.hpp>
 #include <boost/asio/detail/pop_options.hpp>
 
 #endif // BOOST_ASIO_DETAIL_TASK_IO_SERVICE_OPERATION_HPP

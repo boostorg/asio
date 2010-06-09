@@ -15,23 +15,20 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include <boost/asio/detail/push_options.hpp>
-
-#include <boost/asio/detail/push_options.hpp>
+#include <boost/asio/detail/config.hpp>
 #include <cstddef>
 #include <cstring>
-#include <boost/config.hpp>
 #include <boost/type_traits/remove_reference.hpp>
-#include <boost/asio/detail/pop_options.hpp>
-
 #include <boost/asio/buffered_read_stream_fwd.hpp>
 #include <boost/asio/buffer.hpp>
-#include <boost/asio/error.hpp>
-#include <boost/asio/io_service.hpp>
 #include <boost/asio/detail/bind_handler.hpp>
 #include <boost/asio/detail/buffer_resize_guard.hpp>
 #include <boost/asio/detail/buffered_stream_storage.hpp>
 #include <boost/asio/detail/noncopyable.hpp>
+#include <boost/asio/error.hpp>
+#include <boost/asio/io_service.hpp>
+
+#include <boost/asio/detail/push_options.hpp>
 
 namespace boost {
 namespace asio {

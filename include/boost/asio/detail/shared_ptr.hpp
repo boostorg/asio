@@ -1,6 +1,6 @@
 //
-// service_id.hpp
-// ~~~~~~~~~~~~~~
+// detail/shared_ptr.hpp
+// ~~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2010 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
@@ -8,32 +8,33 @@
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
-#ifndef BOOST_ASIO_DETAIL_SERVICE_ID_HPP
-#define BOOST_ASIO_DETAIL_SERVICE_ID_HPP
+#ifndef BOOST_ASIO_DETAIL_SHARED_PTR_HPP
+#define BOOST_ASIO_DETAIL_SHARED_PTR_HPP
 
 #if defined(_MSC_VER) && (_MSC_VER >= 1200)
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include <boost/asio/detail/push_options.hpp>
+#include <boost/asio/detail/config.hpp>
 
-#include <boost/asio/io_service.hpp>
+#if defined(_MSC_VER) && (_MSC_VER >= 1600)
+# include <memory>
+#else
+# include <boost/shared_ptr.hpp>
+#endif
 
 namespace boost {
 namespace asio {
 namespace detail {
 
-// Special derived service id type to keep classes header-file only.
-template <typename Type>
-class service_id
-  : public boost::asio::io_service::id
-{
-};
+#if defined(_MSC_VER) && (_MSC_VER >= 1600)
+using std::shared_ptr;
+#else
+using boost::shared_ptr;
+#endif
 
 } // namespace detail
 } // namespace asio
 } // namespace boost
 
-#include <boost/asio/detail/pop_options.hpp>
-
-#endif // BOOST_ASIO_DETAIL_SERVICE_ID_HPP
+#endif // BOOST_ASIO_DETAIL_SHARED_PTR_HPP

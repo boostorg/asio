@@ -1,6 +1,6 @@
 //
-// resolver_service.hpp
-// ~~~~~~~~~~~~~~~~~~~~
+// ip/resolver_service.hpp
+// ~~~~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2010 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
@@ -15,14 +15,14 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include <boost/asio/detail/push_options.hpp>
-
-#include <boost/asio/error.hpp>
+#include <boost/asio/detail/config.hpp>
+#include <boost/system/error_code.hpp>
+#include <boost/asio/detail/resolver_service.hpp>
 #include <boost/asio/io_service.hpp>
 #include <boost/asio/ip/basic_resolver_iterator.hpp>
 #include <boost/asio/ip/basic_resolver_query.hpp>
-#include <boost/asio/detail/resolver_service.hpp>
-#include <boost/asio/detail/service_base.hpp>
+
+#include <boost/asio/detail/push_options.hpp>
 
 namespace boost {
 namespace asio {
@@ -73,13 +73,14 @@ public:
   explicit resolver_service(boost::asio::io_service& io_service)
     : boost::asio::detail::service_base<
         resolver_service<InternetProtocol> >(io_service),
-      service_impl_(boost::asio::use_service<service_impl_type>(io_service))
+      service_impl_(io_service)
   {
   }
 
   /// Destroy all user-defined handler objects owned by the service.
   void shutdown_service()
   {
+    service_impl_.shutdown_service();
   }
 
   /// Construct a new resolver implementation.
@@ -131,8 +132,8 @@ public:
   }
 
 private:
-  // The service that provides the platform-specific implementation.
-  service_impl_type& service_impl_;
+  // The platform-specific implementation.
+  service_impl_type service_impl_;
 };
 
 } // namespace ip

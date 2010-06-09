@@ -15,26 +15,21 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include <boost/asio/detail/push_options.hpp>
-
-#include <boost/asio/detail/push_options.hpp>
-#include <boost/config.hpp>
-#include <boost/asio/detail/pop_options.hpp>
+#include <boost/asio/detail/config.hpp>
 
 #if !defined(BOOST_NO_IOSTREAM)
 
-#include <boost/asio/detail/push_options.hpp>
 #include <cstddef>
-#include <boost/regex.hpp>
 #include <boost/type_traits/is_function.hpp>
 #include <boost/type_traits/remove_pointer.hpp>
 #include <boost/utility/enable_if.hpp>
 #include <boost/detail/workaround.hpp>
 #include <string>
-#include <boost/asio/detail/pop_options.hpp>
-
 #include <boost/asio/basic_streambuf.hpp>
+#include <boost/asio/detail/regex_fwd.hpp>
 #include <boost/asio/error.hpp>
+
+#include <boost/asio/detail/push_options.hpp>
 
 namespace boost {
 namespace asio {
@@ -916,10 +911,10 @@ void async_read_until(AsyncReadStream& s,
 } // namespace asio
 } // namespace boost
 
-#include <boost/asio/impl/read_until.ipp>
+#include <boost/asio/detail/pop_options.hpp>
+
+#include <boost/asio/impl/read_until.hpp>
 
 #endif // !defined(BOOST_NO_IOSTREAM)
-
-#include <boost/asio/detail/pop_options.hpp>
 
 #endif // BOOST_ASIO_READ_UNTIL_HPP

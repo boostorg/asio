@@ -1,6 +1,6 @@
 //
-// tcp.hpp
-// ~~~~~~~
+// ip/tcp.hpp
+// ~~~~~~~~~~
 //
 // Copyright (c) 2003-2010 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
@@ -15,17 +15,18 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include <boost/asio/detail/push_options.hpp>
-
+#include <boost/asio/detail/config.hpp>
 #include <boost/asio/basic_socket_acceptor.hpp>
 #include <boost/asio/basic_socket_iostream.hpp>
 #include <boost/asio/basic_stream_socket.hpp>
+#include <boost/asio/detail/socket_option.hpp>
+#include <boost/asio/detail/socket_types.hpp>
 #include <boost/asio/ip/basic_endpoint.hpp>
 #include <boost/asio/ip/basic_resolver.hpp>
 #include <boost/asio/ip/basic_resolver_iterator.hpp>
 #include <boost/asio/ip/basic_resolver_query.hpp>
-#include <boost/asio/detail/socket_option.hpp>
-#include <boost/asio/detail/socket_types.hpp>
+
+#include <boost/asio/detail/push_options.hpp>
 
 namespace boost {
 namespace asio {

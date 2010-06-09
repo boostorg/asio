@@ -1,6 +1,6 @@
 //
-// consuming_buffers.hpp
-// ~~~~~~~~~~~~~~~~~~~~~
+// detail/consuming_buffers.hpp
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2010 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
@@ -15,17 +15,13 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include <boost/asio/detail/push_options.hpp>
-
-#include <boost/asio/detail/push_options.hpp>
-#include <algorithm>
+#include <boost/asio/detail/config.hpp>
 #include <cstddef>
-#include <boost/config.hpp>
 #include <boost/iterator.hpp>
 #include <boost/limits.hpp>
-#include <boost/asio/detail/pop_options.hpp>
-
 #include <boost/asio/buffer.hpp>
+
+#include <boost/asio/detail/push_options.hpp>
 
 namespace boost {
 namespace asio {
@@ -157,12 +153,14 @@ public:
   consuming_buffers(const Buffers& buffers)
     : buffers_(buffers),
       at_end_(buffers_.begin() == buffers_.end()),
-      first_(*buffers_.begin()),
       begin_remainder_(buffers_.begin()),
       max_size_((std::numeric_limits<std::size_t>::max)())
   {
     if (!at_end_)
+    {
+      first_ = *buffers_.begin();
       ++begin_remainder_;
+    }
   }
 
   // Copy constructor.

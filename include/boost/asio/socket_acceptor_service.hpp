@@ -15,18 +15,18 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include <boost/asio/detail/push_options.hpp>
-
+#include <boost/asio/detail/config.hpp>
 #include <boost/asio/basic_socket.hpp>
 #include <boost/asio/error.hpp>
 #include <boost/asio/io_service.hpp>
-#include <boost/asio/detail/service_base.hpp>
 
 #if defined(BOOST_ASIO_HAS_IOCP)
 # include <boost/asio/detail/win_iocp_socket_service.hpp>
 #else
 # include <boost/asio/detail/reactive_socket_service.hpp>
 #endif
+
+#include <boost/asio/detail/push_options.hpp>
 
 namespace boost {
 namespace asio {

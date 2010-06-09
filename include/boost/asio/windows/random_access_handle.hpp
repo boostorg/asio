@@ -1,6 +1,6 @@
 //
-// random_access_handle.hpp
-// ~~~~~~~~~~~~~~~~~~~~~~~~
+// windows/random_access_handle.hpp
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2010 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
@@ -15,12 +15,12 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include <boost/asio/detail/push_options.hpp>
-
-#include <boost/asio/windows/basic_random_access_handle.hpp>
+#include <boost/asio/detail/config.hpp>
 
 #if defined(BOOST_ASIO_HAS_WINDOWS_RANDOM_ACCESS_HANDLE) \
   || defined(GENERATING_DOCUMENTATION)
+
+#include <boost/asio/windows/basic_random_access_handle.hpp>
 
 namespace boost {
 namespace asio {
@@ -35,7 +35,5 @@ typedef basic_random_access_handle<> random_access_handle;
 
 #endif // defined(BOOST_ASIO_HAS_WINDOWS_RANDOM_ACCESS_HANDLE)
        //   || defined(GENERATING_DOCUMENTATION)
-
-#include <boost/asio/detail/pop_options.hpp>
 
 #endif // BOOST_ASIO_WINDOWS_RANDOM_ACCESS_HANDLE_HPP

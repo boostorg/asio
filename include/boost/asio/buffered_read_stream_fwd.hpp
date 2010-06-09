@@ -15,8 +15,6 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include <boost/asio/detail/push_options.hpp>
-
 namespace boost {
 namespace asio {
 
@@ -25,7 +23,5 @@ class buffered_read_stream;
 
 } // namespace asio
 } // namespace boost
-
-#include <boost/asio/detail/pop_options.hpp>
 
 #endif // BOOST_ASIO_BUFFERED_READ_STREAM_FWD_HPP

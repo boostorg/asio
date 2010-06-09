@@ -1,6 +1,6 @@
 //
-// base_from_completion_cond.hpp
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// detail/base_from_completion_cond.hpp
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2010 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
@@ -15,9 +15,10 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include <boost/asio/detail/push_options.hpp>
-
+#include <boost/asio/detail/config.hpp>
 #include <boost/asio/completion_condition.hpp>
+
+#include <boost/asio/detail/push_options.hpp>
 
 namespace boost {
 namespace asio {
@@ -32,7 +33,8 @@ protected:
   {
   }
 
-  std::size_t check(const boost::system::error_code& ec,
+  std::size_t check_for_completion(
+      const boost::system::error_code& ec,
       std::size_t total_transferred)
   {
     return detail::adapt_completion_condition_result(
@@ -51,7 +53,8 @@ protected:
   {
   }
 
-  static std::size_t check(const boost::system::error_code& ec,
+  static std::size_t check_for_completion(
+      const boost::system::error_code& ec,
       std::size_t total_transferred)
   {
     return transfer_all_t()(ec, total_transferred);

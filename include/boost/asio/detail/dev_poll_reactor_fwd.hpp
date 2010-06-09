@@ -1,6 +1,6 @@
 //
-// dev_poll_reactor_fwd.hpp
-// ~~~~~~~~~~~~~~~~~~~~~~~~
+// detail/dev_poll_reactor_fwd.hpp
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2010 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
@@ -15,13 +15,9 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include <boost/asio/detail/push_options.hpp>
+#include <boost/asio/detail/config.hpp>
 
-#if !defined(BOOST_ASIO_DISABLE_DEV_POLL)
-#if defined(__sun) // This service is only supported on Solaris.
-
-// Define this to indicate that /dev/poll is supported on the target platform.
-#define BOOST_ASIO_HAS_DEV_POLL 1
+#if defined(BOOST_ASIO_HAS_DEV_POLL)
 
 namespace boost {
 namespace asio {
@@ -33,9 +29,6 @@ class dev_poll_reactor;
 } // namespace asio
 } // namespace boost
 
-#endif // defined(__sun)
-#endif // !defined(BOOST_ASIO_DISABLE_DEV_POLL)
-
-#include <boost/asio/detail/pop_options.hpp>
+#endif // defined(BOOST_ASIO_HAS_DEV_POLL)
 
 #endif // BOOST_ASIO_DETAIL_DEV_POLL_REACTOR_FWD_HPP

@@ -1,6 +1,6 @@
 //
-// write.ipp
-// ~~~~~~~~~
+// impl/write.hpp
+// ~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2010 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
@@ -8,14 +8,12 @@
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
-#ifndef BOOST_ASIO_WRITE_IPP
-#define BOOST_ASIO_WRITE_IPP
+#ifndef BOOST_ASIO_IMPL_WRITE_HPP
+#define BOOST_ASIO_IMPL_WRITE_HPP
 
 #if defined(_MSC_VER) && (_MSC_VER >= 1200)
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
-
-#include <boost/asio/detail/push_options.hpp>
 
 #include <boost/asio/buffer.hpp>
 #include <boost/asio/completion_condition.hpp>
@@ -25,6 +23,8 @@
 #include <boost/asio/detail/handler_alloc_helpers.hpp>
 #include <boost/asio/detail/handler_invoke_helpers.hpp>
 #include <boost/asio/detail/throw_error.hpp>
+
+#include <boost/asio/detail/push_options.hpp>
 
 namespace boost {
 namespace asio {
@@ -123,25 +123,24 @@ namespace detail
         stream_(stream),
         buffers_(buffers),
         total_transferred_(0),
-        handler_(handler),
-        start_(true)
+        handler_(handler)
     {
     }
 
     void operator()(const boost::system::error_code& ec,
-        std::size_t bytes_transferred)
+        std::size_t bytes_transferred, int start = 0)
     {
-      switch (start_)
+      switch (start)
       {
-        case true: start_ = false;
-        buffers_.prepare(this->check(ec, total_transferred_));
+        case 1:
+        buffers_.prepare(this->check_for_completion(ec, total_transferred_));
         for (;;)
         {
           stream_.async_write_some(buffers_, *this);
           return; default:
           total_transferred_ += bytes_transferred;
           buffers_.consume(bytes_transferred);
-          buffers_.prepare(this->check(ec, total_transferred_));
+          buffers_.prepare(this->check_for_completion(ec, total_transferred_));
           if ((!ec && bytes_transferred == 0)
               || buffers_.begin() == buffers_.end())
             break;
@@ -157,7 +156,6 @@ namespace detail
       const_buffer, ConstBufferSequence> buffers_;
     std::size_t total_transferred_;
     WriteHandler handler_;
-    bool start_;
   };
 
   template <typename AsyncWriteStream,
@@ -176,19 +174,18 @@ namespace detail
         stream_(stream),
         buffer_(buffers),
         total_transferred_(0),
-        handler_(handler),
-        start_(true)
+        handler_(handler)
     {
     }
 
     void operator()(const boost::system::error_code& ec,
-        std::size_t bytes_transferred)
+        std::size_t bytes_transferred, int start = 0)
     {
       std::size_t n = 0;
-      switch (start_)
+      switch (start)
       {
-        case true: start_ = false;
-        n = this->check(ec, total_transferred_);
+        case 1:
+        n = this->check_for_completion(ec, total_transferred_);
         for (;;)
         {
           stream_.async_write_some(boost::asio::buffer(
@@ -196,7 +193,7 @@ namespace detail
           return; default:
           total_transferred_ += bytes_transferred;
           if ((!ec && bytes_transferred == 0)
-              || (n = this->check(ec, total_transferred_)) == 0
+              || (n = this->check_for_completion(ec, total_transferred_)) == 0
               || total_transferred_ == boost::asio::buffer_size(buffer_))
             break;
         }
@@ -210,7 +207,6 @@ namespace detail
     boost::asio::mutable_buffer buffer_;
     std::size_t total_transferred_;
     WriteHandler handler_;
-    bool start_;
   };
 
   template <typename AsyncWriteStream,
@@ -229,19 +225,18 @@ namespace detail
         stream_(stream),
         buffer_(buffers),
         total_transferred_(0),
-        handler_(handler),
-        start_(true)
+        handler_(handler)
     {
     }
 
     void operator()(const boost::system::error_code& ec,
-        std::size_t bytes_transferred)
+        std::size_t bytes_transferred, int start = 0)
     {
       std::size_t n = 0;
-      switch (start_)
+      switch (start)
       {
-        case true: start_ = false;
-        n = this->check(ec, total_transferred_);
+        case 1:
+        n = this->check_for_completion(ec, total_transferred_);
         for (;;)
         {
           stream_.async_write_some(boost::asio::buffer(
@@ -249,7 +244,7 @@ namespace detail
           return; default:
           total_transferred_ += bytes_transferred;
           if ((!ec && bytes_transferred == 0)
-              || (n = this->check(ec, total_transferred_)) == 0
+              || (n = this->check_for_completion(ec, total_transferred_)) == 0
               || total_transferred_ == boost::asio::buffer_size(buffer_))
             break;
         }
@@ -263,7 +258,6 @@ namespace detail
     boost::asio::const_buffer buffer_;
     std::size_t total_transferred_;
     WriteHandler handler_;
-    bool start_;
   };
 
   template <typename AsyncWriteStream, typename ConstBufferSequence,
@@ -306,7 +300,7 @@ inline void async_write(AsyncWriteStream& s, const ConstBufferSequence& buffers,
   detail::write_op<AsyncWriteStream, ConstBufferSequence,
     CompletionCondition, WriteHandler>(
       s, buffers, completion_condition, handler)(
-        boost::system::error_code(), 0);
+        boost::system::error_code(), 0, 1);
 }
 
 template <typename AsyncWriteStream, typename ConstBufferSequence,
@@ -401,4 +395,4 @@ inline void async_write(AsyncWriteStream& s,
 
 #include <boost/asio/detail/pop_options.hpp>
 
-#endif // BOOST_ASIO_WRITE_IPP
+#endif // BOOST_ASIO_IMPL_WRITE_HPP

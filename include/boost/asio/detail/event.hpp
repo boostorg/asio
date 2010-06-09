@@ -1,6 +1,6 @@
 //
-// event.hpp
-// ~~~~~~~~~
+// detail/event.hpp
+// ~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2010 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
@@ -15,11 +15,7 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include <boost/asio/detail/push_options.hpp>
-
-#include <boost/asio/detail/push_options.hpp>
-#include <boost/config.hpp>
-#include <boost/asio/detail/pop_options.hpp>
+#include <boost/asio/detail/config.hpp>
 
 #if !defined(BOOST_HAS_THREADS) || defined(BOOST_ASIO_DISABLE_THREADS)
 # include <boost/asio/detail/null_event.hpp>
@@ -46,7 +42,5 @@ typedef posix_event event;
 } // namespace detail
 } // namespace asio
 } // namespace boost
-
-#include <boost/asio/detail/pop_options.hpp>
 
 #endif // BOOST_ASIO_DETAIL_EVENT_HPP

@@ -1,6 +1,6 @@
 //
-// reactor_op_queue.hpp
-// ~~~~~~~~~~~~~~~~~~~~
+// detail/reactor_op_queue.hpp
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2010 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
@@ -15,13 +15,14 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include <boost/asio/detail/push_options.hpp>
-
-#include <boost/asio/error.hpp>
+#include <boost/asio/detail/config.hpp>
 #include <boost/asio/detail/hash_map.hpp>
 #include <boost/asio/detail/noncopyable.hpp>
 #include <boost/asio/detail/op_queue.hpp>
 #include <boost/asio/detail/reactor_op.hpp>
+#include <boost/asio/error.hpp>
+
+#include <boost/asio/detail/push_options.hpp>
 
 namespace boost {
 namespace asio {
