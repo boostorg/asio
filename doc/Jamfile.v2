@@ -15,13 +15,6 @@ xml standalone_doc
     asio.qbk
   ;
 
-install css
-  :
-    /boost//doc/html/boostbook.css
-  :
-    <location>html
-  ;
-
 install images
   :
     overview/proactor.png
@@ -47,8 +40,6 @@ boostbook standalone
     standalone_doc
   :
     <xsl:param>boost.root=../../../..
-    <xsl:param>boost.libraries=../../../../libs/libraries.htm
-    <xsl:param>navig.graphics.path="../../../../doc/html/images/"
     <xsl:param>chapter.autolabel=0
     <xsl:param>chunk.section.depth=8
     <xsl:param>chunk.first.sections=1
@@ -91,7 +82,7 @@ alias asio_examples : asio_ex_$(example-names) ;
 
 explicit asio_examples ;
 
-path-constant images_location : ../../../doc/html ;
+path-constant images_location : ../../../doc/src ;
 
 boostbook asio
   :
