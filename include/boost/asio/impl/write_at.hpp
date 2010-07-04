@@ -157,7 +157,7 @@ namespace detail
             break;
         }
 
-        handler_(ec, total_transferred_);
+        handler_(ec, static_cast<const std::size_t>(total_transferred_));
       }
     }
 
@@ -211,7 +211,7 @@ namespace detail
             break;
         }
 
-        handler_(ec, total_transferred_);
+        handler_(ec, static_cast<const std::size_t>(total_transferred_));
       }
     }
 
@@ -264,7 +264,7 @@ namespace detail
             break;
         }
 
-        handler_(ec, total_transferred_);
+        handler_(ec, static_cast<const std::size_t>(total_transferred_));
       }
     }
 
@@ -347,7 +347,7 @@ namespace detail
     }
 
     void operator()(const boost::system::error_code& ec,
-        std::size_t bytes_transferred)
+        const std::size_t bytes_transferred)
     {
       streambuf_.consume(bytes_transferred);
       handler_(ec, bytes_transferred);
