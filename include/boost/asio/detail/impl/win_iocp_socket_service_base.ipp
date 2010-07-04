@@ -190,6 +190,16 @@ boost::system::error_code win_iocp_socket_service_base::cancel(
   }
 #endif // defined(BOOST_ASIO_ENABLE_CANCELIO)
 
+  // Cancel any operations started via the reactor.
+  if (!ec)
+  {
+    reactor* r = static_cast<reactor*>(
+          interlocked_compare_exchange_pointer(
+            reinterpret_cast<void**>(&reactor_), 0, 0));
+    if (r)
+      r->cancel_ops(impl.socket_, impl.reactor_data_);
+  }
+
   return ec;
 }
 
