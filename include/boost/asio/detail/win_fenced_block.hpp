@@ -34,7 +34,10 @@ public:
   // Constructor.
   win_fenced_block()
   {
-#if defined(BOOST_MSVC) && (BOOST_MSVC < 1400)
+#if defined(__BORLANDC__)
+    LONG barrier = 0;
+    ::InterlockedExchange(&barrier, 1);
+#elif defined(BOOST_MSVC) && ((BOOST_MSVC < 1400) || !defined(MemoryBarrier))
 # if defined(_M_IX86)
 #  pragma warning(push)
 #  pragma warning(disable:4793)
@@ -42,15 +45,18 @@ public:
     __asm { xchg barrier, eax }
 #  pragma warning(pop)
 # endif // defined(_M_IX86)
-#else // defined(BOOST_MSVC) && (BOOST_MSVC < 1400)
+#else
     MemoryBarrier();
-#endif // defined(BOOST_MSVC) && (BOOST_MSVC < 1400)
+#endif
   }
 
   // Destructor.
   ~win_fenced_block()
   {
-#if defined(BOOST_MSVC) && (BOOST_MSVC < 1400)
+#if defined(__BORLANDC__)
+    LONG barrier = 0;
+    ::InterlockedExchange(&barrier, 1);
+#elif defined(BOOST_MSVC) && ((BOOST_MSVC < 1400) || !defined(MemoryBarrier))
 # if defined(_M_IX86)
 #  pragma warning(push)
 #  pragma warning(disable:4793)
@@ -58,18 +64,10 @@ public:
     __asm { xchg barrier, eax }
 #  pragma warning(pop)
 # endif // defined(_M_IX86)
-#else // defined(BOOST_MSVC) && (BOOST_MSVC < 1400)
+#else
     MemoryBarrier();
-#endif // defined(BOOST_MSVC) && (BOOST_MSVC < 1400)
+#endif
   }
-
-#if defined(__BORLANDC__)
-  static void MemoryBarrier()
-  {
-    LONG barrier = 0;
-    ::InterlockedExchange(&barrier, 1);
-  }
-#endif // defined(__BORLANDC__)
 };
 
 } // namespace detail
