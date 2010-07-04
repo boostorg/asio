@@ -32,22 +32,22 @@ template asio_timeouts_example
     $(SOCKET_LIBS)
   ;
 
-exe accept_timeout
+exe async_tcp_client
   : <template>asio_timeouts_example
-    accept_timeout.cpp
+    async_tcp_client.cpp
   ;
 
-exe connect_timeout
+exe blocking_tcp_client
   : <template>asio_timeouts_example
-    connect_timeout.cpp
+    blocking_tcp_client.cpp
   ;
 
-exe datagram_receive_timeout
+exe blocking_udp_client
   : <template>asio_timeouts_example
-    datagram_receive_timeout.cpp
+    blocking_udp_client.cpp
   ;
 
-exe stream_receive_timeout
+exe server
   : <template>asio_timeouts_example
-    stream_receive_timeout.cpp
+    server.cpp
   ;
