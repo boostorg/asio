@@ -243,10 +243,10 @@ operations.
 A collection of examples showing how to cancel long running asynchronous
 operations after a period of time.
 
-* [@boost_asio/example/timeouts/accept_timeout.cpp]
-* [@boost_asio/example/timeouts/connect_timeout.cpp]
-* [@boost_asio/example/timeouts/datagram_receive_timeout.cpp]
-* [@boost_asio/example/timeouts/stream_receive_timeout.cpp]
+* [@boost_asio/example/timeouts/async_tcp_client.cpp]
+* [@boost_asio/example/timeouts/blocking_tcp_client.cpp]
+* [@boost_asio/example/timeouts/blocking_udp_client.cpp]
+* [@boost_asio/example/timeouts/server.cpp]
 
 
 [heading Timers]
