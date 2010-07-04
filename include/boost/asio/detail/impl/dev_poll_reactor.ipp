@@ -82,7 +82,10 @@ void dev_poll_reactor::start_op(int op_type, socket_type descriptor,
   boost::asio::detail::mutex::scoped_lock lock(mutex_);
 
   if (shutdown_)
+  {
+    post_immediate_completion(op);
     return;
+  }
 
   if (allow_speculative)
   {

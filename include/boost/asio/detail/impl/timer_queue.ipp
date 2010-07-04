@@ -36,9 +36,9 @@ timer_queue<time_traits<boost::posix_time::ptime> >::~timer_queue()
 }
 
 bool timer_queue<time_traits<boost::posix_time::ptime> >::enqueue_timer(
-    const time_type& time, timer_op* op, void* token)
+    const time_type& time, per_timer_data& timer, timer_op* op)
 {
-  return impl_.enqueue_timer(time, op, token);
+  return impl_.enqueue_timer(time, timer, op);
 }
 
 bool timer_queue<time_traits<boost::posix_time::ptime> >::empty() const
@@ -71,9 +71,9 @@ void timer_queue<time_traits<boost::posix_time::ptime> >::get_all_timers(
 }
 
 std::size_t timer_queue<time_traits<boost::posix_time::ptime> >::cancel_timer(
-    void* timer_token, op_queue<operation>& ops)
+    per_timer_data& timer, op_queue<operation>& ops)
 {
-  return impl_.cancel_timer(timer_token, ops);
+  return impl_.cancel_timer(timer, ops);
 }
 
 } // namespace detail

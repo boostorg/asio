@@ -24,9 +24,9 @@
 #include <sys/types.h>
 #include <sys/event.h>
 #include <sys/time.h>
-#include <boost/asio/detail/hash_map.hpp>
 #include <boost/asio/detail/kqueue_reactor_fwd.hpp>
 #include <boost/asio/detail/mutex.hpp>
+#include <boost/asio/detail/object_pool.hpp>
 #include <boost/asio/detail/op_queue.hpp>
 #include <boost/asio/detail/reactor_op.hpp>
 #include <boost/asio/detail/select_interrupter.hpp>
@@ -59,13 +59,13 @@ public:
   // Per-descriptor queues.
   struct descriptor_state
   {
-    descriptor_state() {}
-    descriptor_state(const descriptor_state&) {}
-    void operator=(const descriptor_state&) {}
-
+    friend class kqueue_reactor;
+    friend class object_pool_access;
     mutex mutex_;
     op_queue<reactor_op> op_queue_[max_ops];
     bool shutdown_;
+    descriptor_state* next_;
+    descriptor_state* prev_;
   };
 
   // Per-descriptor data.
@@ -123,12 +123,14 @@ public:
   // specified absolute time.
   template <typename Time_Traits>
   void schedule_timer(timer_queue<Time_Traits>& queue,
-      const typename Time_Traits::time_type& time, timer_op* op, void* token);
+      const typename Time_Traits::time_type& time,
+      typename timer_queue<Time_Traits>::per_timer_data& timer, timer_op* op);
 
   // Cancel the timer operations associated with the given token. Returns the
   // number of operations that have been posted or dispatched.
   template <typename Time_Traits>
-  std::size_t cancel_timer(timer_queue<Time_Traits>& queue, void* token);
+  std::size_t cancel_timer(timer_queue<Time_Traits>& queue,
+      typename timer_queue<Time_Traits>::per_timer_data& timer);
 
   // Run the kqueue loop.
   BOOST_ASIO_DECL void run(bool block, op_queue<operation>& ops);
@@ -171,15 +173,8 @@ private:
   // Mutex to protect access to the registered descriptors.
   mutex registered_descriptors_mutex_;
 
-  // Keep track of all registered descriptors. This code relies on the fact that
-  // the hash_map implementation pools deleted nodes, meaning that we can assume
-  // our descriptor_state pointer remains valid even after the entry is removed.
-  // Technically this is not true for C++98, as that standard says that spliced
-  // elements in a list are invalidated. However, C++0x fixes this shortcoming
-  // so we'll just assume that C++98 std::list implementations will do the right
-  // thing anyway.
-  typedef detail::hash_map<socket_type, descriptor_state> descriptor_map;
-  descriptor_map registered_descriptors_;
+  // Keep track of all registered descriptors.
+  object_pool<descriptor_state> registered_descriptors_;
 };
 
 } // namespace detail
