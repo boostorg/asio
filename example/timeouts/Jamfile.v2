@@ -37,7 +37,7 @@ project
     <os>HPUX:<library>ipv6
   ;
 
-exe accept_timeout : accept_timeout.cpp ;
-exe connect_timeout : connect_timeout.cpp ;
-exe datagram_receive_timeout : datagram_receive_timeout.cpp ;
-exe stream_receive_timeout : stream_receive_timeout.cpp ;
+exe async_tcp_client : async_tcp_client.cpp ;
+exe blocking_tcp_client : blocking_tcp_client.cpp ;
+exe blocking_udp_client : blocking_udp_client.cpp ;
+exe server : server.cpp ;

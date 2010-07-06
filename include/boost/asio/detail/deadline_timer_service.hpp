@@ -56,6 +56,7 @@ public:
   {
     time_type expiry;
     bool might_have_pending_waits;
+    typename timer_queue<Time_Traits>::per_timer_data timer_data;
   };
 
   // Constructor.
@@ -99,7 +100,7 @@ public:
       ec = boost::system::error_code();
       return 0;
     }
-    std::size_t count = scheduler_.cancel_timer(timer_queue_, &impl);
+    std::size_t count = scheduler_.cancel_timer(timer_queue_, impl.timer_data);
     impl.might_have_pending_waits = false;
     ec = boost::system::error_code();
     return count;
@@ -166,7 +167,7 @@ public:
 
     impl.might_have_pending_waits = true;
 
-    scheduler_.schedule_timer(timer_queue_, impl.expiry, p.p, &impl);
+    scheduler_.schedule_timer(timer_queue_, impl.expiry, impl.timer_data, p.p);
     p.v = p.p = 0;
   }
 
