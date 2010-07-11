@@ -17,23 +17,25 @@
 
 #include <boost/asio/detail/config.hpp>
 
-#if !defined(BOOST_HAS_THREADS) || defined(BOOST_ASIO_DISABLE_THREADS)
+#if !defined(BOOST_HAS_THREADS) \
+  || defined(BOOST_ASIO_DISABLE_THREADS) \
+  || defined(BOOST_ASIO_DISABLE_FENCED_BLOCK)
 # include <boost/asio/detail/null_fenced_block.hpp>
 #elif defined(__MACH__) && defined(__APPLE__)
 # include <boost/asio/detail/macos_fenced_block.hpp>
 #elif defined(__sun)
 # include <boost/asio/detail/solaris_fenced_block.hpp>
+#elif defined(__GNUC__) && defined(__arm__)
+# include <boost/asio/detail/gcc_arm_fenced_block.hpp>
+#elif defined(__GNUC__) && (defined(__hppa) || defined(__hppa__))
+# include <boost/asio/detail/gcc_hppa_fenced_block.hpp>
 #elif defined(__GNUC__) \
   && ((__GNUC__ == 4 && __GNUC_MINOR__ >= 1) || (__GNUC__ > 4)) \
   && !defined(__INTEL_COMPILER) && !defined(__ICL) \
-  && !defined(__ICC) && !defined(__ECC) && !defined(__PATHSCALE__) \
-  && (!defined(__arm__) || (defined(__arm__) && \
-        (__GNUC__ == 4 && __GNUC_MINOR__ >= 4) || (__GNUC__ > 4)))
-# include <boost/asio/detail/gcc_fenced_block.hpp>
+  && !defined(__ICC) && !defined(__ECC) && !defined(__PATHSCALE__)
+# include <boost/asio/detail/gcc_sync_fenced_block.hpp>
 #elif defined(__GNUC__) && (defined(__i386__) || defined(__x86_64__))
 # include <boost/asio/detail/gcc_x86_fenced_block.hpp>
-#elif defined(__GNUC__) && defined(__arm__)
-# include <boost/asio/detail/gcc_arm_fenced_block.hpp>
 #elif defined(BOOST_WINDOWS) && !defined(UNDER_CE)
 # include <boost/asio/detail/win_fenced_block.hpp>
 #else
@@ -44,23 +46,25 @@ namespace boost {
 namespace asio {
 namespace detail {
 
-#if !defined(BOOST_HAS_THREADS) || defined(BOOST_ASIO_DISABLE_THREADS)
+#if !defined(BOOST_HAS_THREADS) \
+  || defined(BOOST_ASIO_DISABLE_THREADS) \
+  || defined(BOOST_ASIO_DISABLE_FENCED_BLOCK)
 typedef null_fenced_block fenced_block;
 #elif defined(__MACH__) && defined(__APPLE__)
 typedef macos_fenced_block fenced_block;
 #elif defined(__sun)
 typedef solaris_fenced_block fenced_block;
+#elif defined(__GNUC__) && defined(__arm__)
+typedef gcc_arm_fenced_block fenced_block;
+#elif defined(__GNUC__) && (defined(__hppa) || defined(__hppa__))
+typedef gcc_hppa_fenced_block fenced_block;
 #elif defined(__GNUC__) \
   && ((__GNUC__ == 4 && __GNUC_MINOR__ >= 1) || (__GNUC__ > 4)) \
   && !defined(__INTEL_COMPILER) && !defined(__ICL) \
-  && !defined(__ICC) && !defined(__ECC) && !defined(__PATHSCALE__) \
-  && (!defined(__arm__) || (defined(__arm__) && \
-        (__GNUC__ == 4 && __GNUC_MINOR__ >= 4) || (__GNUC__ > 4)))
-typedef gcc_fenced_block fenced_block;
+  && !defined(__ICC) && !defined(__ECC) && !defined(__PATHSCALE__)
+typedef gcc_sync_fenced_block fenced_block;
 #elif defined(__GNUC__) && (defined(__i386__) || defined(__x86_64__))
 typedef gcc_x86_fenced_block fenced_block;
-#elif defined(__GNUC__) && defined(__arm__)
-typedef gcc_arm_fenced_block fenced_block;
 #elif defined(BOOST_WINDOWS) && !defined(UNDER_CE)
 typedef win_fenced_block fenced_block;
 #else
