@@ -7,6 +7,23 @@
 
 [section:history Revision History]
 
+[heading Asio 1.4.6 / Boost 1.44]
+
+* Reduced compile times. (Note that some programs may need to add additional
+  `#include`s, e.g. if the program uses `boost::array` but does not explicitly
+  include `<boost/array.hpp>`.)
+* Reduced the size of generated code.
+* Improved multiprocessor scalability on Windows by using a dedicated hidden
+  thread to wait for timers.
+* Improved performance of `asio::streambuf` with `async_read()` and 
+  `async_read_until()`. These read operations now use the existing capacity of
+  the `streambuf` when reading, rather than limiting the read to 512 bytes.
+* Added optional separate compilation. To enable, add
+  `#include <boost/asio/impl/src.cpp>` to one source file in a program, then
+  build the program with `BOOST_ASIO_SEPARATE_COMPILATION` defined in the
+  project/compiler settings. Alternatively, `BOOST_ASIO_DYN_LINK` may be defined
+  to build a separately-compiled Asio as part of a shared library.
+
 [heading Asio 1.4.5 / Boost 1.43]
 
 * Improved performance.
