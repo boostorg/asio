@@ -13,6 +13,7 @@
   `#include`s, e.g. if the program uses `boost::array` but does not explicitly
   include `<boost/array.hpp>`.)
 * Reduced the size of generated code.
+* Refactored `deadline_timer` implementation to improve performance.
 * Improved multiprocessor scalability on Windows by using a dedicated hidden
   thread to wait for timers.
 * Improved performance of `asio::streambuf` with `async_read()` and 
@@ -21,8 +22,23 @@
 * Added optional separate compilation. To enable, add
   `#include <boost/asio/impl/src.cpp>` to one source file in a program, then
   build the program with `BOOST_ASIO_SEPARATE_COMPILATION` defined in the
-  project/compiler settings. Alternatively, `BOOST_ASIO_DYN_LINK` may be defined
-  to build a separately-compiled Asio as part of a shared library.
+  project\/compiler settings. Alternatively, `BOOST_ASIO_DYN_LINK` may be
+  defined to build a separately-compiled Asio as part of a shared library.
+* Added new macro `BOOST_ASIO_DISABLE_FENCED_BLOCK` to permit the disabling of
+  memory fences around completion handlers, even if thread support is enabled.
+* Reworked timeout examples to better illustrate typical use cases.
+* Ensured that handler arguments are passed as `const` types.
+* Fixed incorrect parameter order in `null_buffers` variant of `async_send_to`
+  ([@https://svn.boost.org/trac/boost/ticket/4170 #4170]).
+* Ensured `unsigned char` is used with `isdigit` in `getaddrinfo` emulation
+  ([@https://svn.boost.org/trac/boost/ticket/4201 #4201]).
+* Fixed handling of very small but non-zero timeouts
+  ([@https://svn.boost.org/trac/boost/ticket/4205 #4205]).
+* Fixed crash that occurred when an empty buffer sequence was passed to a
+  composed read or write operation.
+* Added missing `operator+` overload in `buffers_iterator`
+  ([@https://svn.boost.org/trac/boost/ticket/4382 #4382]).
+* Implemented cancellation of `null_buffers` operations on Windows.
 
 [heading Asio 1.4.5 / Boost 1.43]
 
