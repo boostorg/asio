@@ -82,7 +82,7 @@ alias asio_examples : asio_ex_$(example-names) ;
 
 explicit asio_examples ;
 
-path-constant images_location : ../../../doc/src ;
+path-constant images_location : ../../../doc/html ;
 
 boostbook asio
   :
