@@ -2669,6 +2669,7 @@ boost::system::error_code getaddrinfo(const char* host,
     addrinfo_type** result, boost::system::error_code& ec)
 {
   host = (host && *host) ? host : 0;
+  service = (service && *service) ? service : 0;
   clear_last_error();
 #if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
 # if defined(_WIN32_WINNT) && (_WIN32_WINNT >= 0x0501) || defined(UNDER_CE)
