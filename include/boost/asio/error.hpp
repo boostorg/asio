@@ -19,7 +19,7 @@
 #include <boost/cerrno.hpp>
 #include <boost/system/error_code.hpp>
 #if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
-# include <WinError.h>
+# include <winerror.h>
 #else
 # include <cerrno>
 # include <netdb.h>
