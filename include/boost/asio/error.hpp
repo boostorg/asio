@@ -19,7 +19,7 @@
 #include <boost/cerrno.hpp>
 #include <boost/system/error_code.hpp>
 #if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
-# include <WinError.h>
+# include <winerror.h>
 #else
 # include <cerrno>
 # include <netdb.h>
@@ -217,7 +217,11 @@ enum ssl_errors
 
 inline const boost::system::error_category& get_system_category()
 {
+#if (BOOST_VERSION < 104400)
   return boost::system::get_system_category();
+#else
+  return boost::system::system_category();
+#endif
 }
 
 #if !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)

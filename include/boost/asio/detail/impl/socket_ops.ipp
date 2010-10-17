@@ -312,14 +312,14 @@ int close(socket_type s, state_type& state,
 
     clear_last_error();
 #if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
-    int result = error_wrapper(::closesocket(s), ec);
+    result = error_wrapper(::closesocket(s), ec);
 #else // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
-    int result = error_wrapper(::close(s), ec);
+    result = error_wrapper(::close(s), ec);
 #endif // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
-    if (result == 0)
-      ec = boost::system::error_code();
   }
 
+  if (result == 0)
+    ec = boost::system::error_code();
   return result;
 }
 
@@ -1483,7 +1483,7 @@ int select(int nfds, fd_set* readfds, fd_set* writefds,
     timeout->tv_usec = 1000;
 #endif // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
 
-#if defined(__hpux) && defined(__HP_aCC)
+#if defined(__hpux) && defined(__SELECT)
   timespec ts;
   ts.tv_sec = timeout ? timeout->tv_sec : 0;
   ts.tv_nsec = timeout ? timeout->tv_usec * 1000 : 0;

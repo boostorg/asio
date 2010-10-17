@@ -16,6 +16,7 @@
 // Test that header file is self-contained.
 #include <boost/asio/deadline_timer.hpp>
 
+#include <boost/thread.hpp>
 #include <boost/bind.hpp>
 #include <boost/asio/io_service.hpp>
 #include <boost/asio/placeholders.hpp>
@@ -260,11 +261,37 @@ void deadline_timer_custom_allocation_test()
   BOOST_CHECK(allocation_count == 0);
 }
 
+void deadline_timer_thread_test()
+{
+  boost::asio::io_service ios;
+  boost::asio::io_service::work w(ios);
+  boost::asio::deadline_timer t1(ios);
+  boost::asio::deadline_timer t2(ios);
+  int count = 0;
+
+  boost::thread th(boost::bind(&boost::asio::io_service::run, &ios));
+
+  t2.expires_from_now(boost::posix_time::seconds(2));
+  t2.wait();
+
+  t1.expires_from_now(boost::posix_time::seconds(2));
+  t1.async_wait(boost::bind(increment, &count));
+
+  t2.expires_from_now(boost::posix_time::seconds(4));
+  t2.wait();
+
+  ios.stop();
+  th.join();
+
+  BOOST_CHECK(count == 1);
+}
+
 test_suite* init_unit_test_suite(int, char*[])
 {
   test_suite* test = BOOST_TEST_SUITE("deadline_timer");
   test->add(BOOST_TEST_CASE(&deadline_timer_test));
   test->add(BOOST_TEST_CASE(&deadline_timer_cancel_test));
   test->add(BOOST_TEST_CASE(&deadline_timer_custom_allocation_test));
+  test->add(BOOST_TEST_CASE(&deadline_timer_thread_test));
   return test;
 }

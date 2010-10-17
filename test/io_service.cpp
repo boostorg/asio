@@ -234,9 +234,80 @@ void io_service_test()
   BOOST_CHECK(exception_count == 2);
 }
 
+class test_service : public boost::asio::io_service::service
+{
+public:
+  static boost::asio::io_service::id id;
+  test_service(boost::asio::io_service& s)
+    : boost::asio::io_service::service(s) {}
+private:
+  virtual void shutdown_service() {}
+};
+
+boost::asio::io_service::id test_service::id;
+
+void io_service_service_test()
+{
+  boost::asio::io_service ios1;
+  boost::asio::io_service ios2;
+  boost::asio::io_service ios3;
+
+  // Implicit service registration.
+
+  boost::asio::use_service<test_service>(ios1);
+
+  BOOST_CHECK(boost::asio::has_service<test_service>(ios1));
+
+  test_service* svc1 = new test_service(ios1);
+  try
+  {
+    boost::asio::add_service(ios1, svc1);
+    BOOST_ERROR("add_service did not throw");
+  }
+  catch (boost::asio::service_already_exists&)
+  {
+  }
+  delete svc1;
+
+  // Explicit service registration.
+
+  test_service* svc2 = new test_service(ios2);
+  boost::asio::add_service(ios2, svc2);
+
+  BOOST_CHECK(boost::asio::has_service<test_service>(ios2));
+  BOOST_CHECK(&boost::asio::use_service<test_service>(ios2) == svc2);
+
+  test_service* svc3 = new test_service(ios2);
+  try
+  {
+    boost::asio::add_service(ios2, svc3);
+    BOOST_ERROR("add_service did not throw");
+  }
+  catch (boost::asio::service_already_exists&)
+  {
+  }
+  delete svc3;
+
+  // Explicit registration with invalid owner.
+
+  test_service* svc4 = new test_service(ios2);
+  try
+  {
+    boost::asio::add_service(ios3, svc4);
+    BOOST_ERROR("add_service did not throw");
+  }
+  catch (boost::asio::invalid_service_owner&)
+  {
+  }
+  delete svc4;
+
+  BOOST_CHECK(!boost::asio::has_service<test_service>(ios3));
+}
+
 test_suite* init_unit_test_suite(int, char*[])
 {
   test_suite* test = BOOST_TEST_SUITE("io_service");
   test->add(BOOST_TEST_CASE(&io_service_test));
+  test->add(BOOST_TEST_CASE(&io_service_service_test));
   return test;
 }
