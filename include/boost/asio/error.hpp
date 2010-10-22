@@ -217,11 +217,7 @@ enum ssl_errors
 
 inline const boost::system::error_category& get_system_category()
 {
-#if (BOOST_VERSION < 104400)
-  return boost::system::get_system_category();
-#else
   return boost::system::system_category();
-#endif
 }
 
 #if !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
