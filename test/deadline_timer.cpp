@@ -261,6 +261,11 @@ void deadline_timer_custom_allocation_test()
   BOOST_CHECK(allocation_count == 0);
 }
 
+void io_service_run(boost::asio::io_service* ios)
+{
+  ios->run();
+}
+
 void deadline_timer_thread_test()
 {
   boost::asio::io_service ios;
@@ -269,7 +274,7 @@ void deadline_timer_thread_test()
   boost::asio::deadline_timer t2(ios);
   int count = 0;
 
-  boost::thread th(boost::bind(&boost::asio::io_service::run, &ios));
+  boost::thread th(boost::bind(io_service_run, &ios));
 
   t2.expires_from_now(boost::posix_time::seconds(2));
   t2.wait();
