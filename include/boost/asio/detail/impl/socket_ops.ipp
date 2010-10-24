@@ -1414,7 +1414,7 @@ int getsockname(socket_type s, socket_addr_type* addr,
   return result;
 }
 
-int ioctl(socket_type s, state_type& state, long cmd,
+int ioctl(socket_type s, state_type& state, int cmd,
     ioctl_arg_type* arg, boost::system::error_code& ec)
 {
   if (s == invalid_socket)
@@ -1426,9 +1426,13 @@ int ioctl(socket_type s, state_type& state, long cmd,
   clear_last_error();
 #if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
   int result = error_wrapper(::ioctlsocket(s, cmd, arg), ec);
-#else // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
+#elif defined(__MACH__) && defined(__APPLE__) \
+  || defined(__NetBSD__) || defined(__FreeBSD__) || defined(__OpenBSD__)
+  int result = error_wrapper(::ioctl(s,
+        static_cast<unsigned int>(cmd), arg), ec);
+#else
   int result = error_wrapper(::ioctl(s, cmd, arg), ec);
-#endif // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
+#endif
   if (result >= 0)
   {
     ec = boost::system::error_code();
@@ -1438,7 +1442,7 @@ int ioctl(socket_type s, state_type& state, long cmd,
     // the correct state. This ensures that the underlying socket is put into
     // the state that has been requested by the user. If the ioctl syscall was
     // successful then we need to update the flags to match.
-    if (cmd == static_cast<long>(FIONBIO))
+    if (cmd == static_cast<int>(FIONBIO))
     {
       if (*arg)
       {
