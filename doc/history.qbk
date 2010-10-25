@@ -7,6 +7,49 @@
 
 [section:history Revision History]
 
+[heading Asio 1.4.7 / Boost 1.45]
+
+* Fixed a problem on kqueue-based platforms where a `deadline_timer` may
+  never fire if the `io_service` is running in a background thread
+  ([@https://svn.boost.org/trac/boost/ticket/4568 #4568]).
+* Fixed a const-correctness issue that prevented valid uses of
+  `has_service<>` from compiling
+  ([@https://svn.boost.org/trac/boost/ticket/4638 #4638]).
+* Fixed MinGW cross-compilation
+  ([@https://svn.boost.org/trac/boost/ticket/4491 #4491]).
+* Removed dependency on deprecated Boost.System functions
+  ([@https://svn.boost.org/trac/boost/ticket/4672 #4672]).
+* Ensured `close()`\/`closesocket()` failures are correctly propagated
+  ([@https://svn.boost.org/trac/boost/ticket/4573 #4573]).
+* Added a check for errors returned by `InitializeCriticalSectionAndSpinCount`
+  ([@https://svn.boost.org/trac/boost/ticket/4574 #4574]).
+* Added support for hardware flow control on QNX
+  ([@https://svn.boost.org/trac/boost/ticket/4625 #4625]).
+* Always use `pselect()` on HP-UX, if it is available
+  ([@https://svn.boost.org/trac/boost/ticket/4578 #4578]).
+* Ensured handler arguments are passed as lvalues
+  ([@https://svn.boost.org/trac/boost/ticket/4744 #4744]).
+* Fixed Windows build when thread support is disabled
+  ([@https://svn.boost.org/trac/boost/ticket/4680 #4680]).
+* Fixed a Windows-specific problem where `deadline_timer` objects with expiry
+  times set more than 5 minutes in the future may never expire
+  ([@https://svn.boost.org/trac/boost/ticket/4745 #4745]).
+* Changed `getaddrinfo()` wrapper to pass NULL for `servname` rather than an
+  empty string, as per POSIX
+  ([@https://svn.boost.org/trac/boost/ticket/4690 #4690]).
+* Fixed read operations so that they do not accept buffer sequences of type
+  `const_buffers_1` ([@https://svn.boost.org/trac/boost/ticket/4746 #4746]).
+* Redefined `Protocol` and `id` to avoid clashing with Objective-C++ keywords
+  ([@https://svn.boost.org/trac/boost/ticket/4191 #4191]).
+* Fixed a `vector` reallocation performance issue that can occur when there are
+  many active `deadline_timer` objects
+  ([@https://svn.boost.org/trac/boost/ticket/4780 #4780]).
+* Fixed the kqueue backend so that it compiles on NetBSD
+  ([@https://svn.boost.org/trac/boost/ticket/4662 #4662]).
+* Deprecated the separate compilation header `<boost/asio/impl/src.cpp>` in
+  favour of `<boost/asio/impl/src.hpp>`
+  ([@https://svn.boost.org/trac/boost/ticket/4560 #4560]).
+
 [heading Asio 1.4.6 / Boost 1.44]
 
 * Reduced compile times. (Note that some programs may need to add additional
