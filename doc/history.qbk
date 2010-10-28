@@ -34,8 +34,8 @@
 * Fixed a Windows-specific problem where `deadline_timer` objects with expiry
   times set more than 5 minutes in the future may never expire
   ([@https://svn.boost.org/trac/boost/ticket/4745 #4745]).
-* Changed `getaddrinfo()` wrapper to pass NULL for `servname` rather than an
-  empty string, as per POSIX
+* Fixed the `resolver` backend on BSD platforms so that an empty service name
+  resolves to port number `0`, as per the documentation
   ([@https://svn.boost.org/trac/boost/ticket/4690 #4690]).
 * Fixed read operations so that they do not accept buffer sequences of type
   `const_buffers_1` ([@https://svn.boost.org/trac/boost/ticket/4746 #4746]).
@@ -46,6 +46,8 @@
   ([@https://svn.boost.org/trac/boost/ticket/4780 #4780]).
 * Fixed the kqueue backend so that it compiles on NetBSD
   ([@https://svn.boost.org/trac/boost/ticket/4662 #4662]).
+* Fixed the socket `io_control()` implementation on 64-bit Mac OS X and BSD
+  platforms ([@https://svn.boost.org/trac/boost/ticket/4782 #4782]).
 * Deprecated the separate compilation header `<boost/asio/impl/src.cpp>` in
   favour of `<boost/asio/impl/src.hpp>`
   ([@https://svn.boost.org/trac/boost/ticket/4560 #4560]).
