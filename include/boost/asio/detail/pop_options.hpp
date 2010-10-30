@@ -31,9 +31,12 @@
 #  pragma pack (pop)
 # endif
 
-# if defined(__OBJC__)
-#  pragma pop_macro("Protocol")
-#  pragma pop_macro("id")
+# if defined(__OBJC__) && !defined(__APPLE_CC__)
+#  if defined(BOOST_ASIO_OBJC_WORKAROUND)
+#   undef Protocol
+#   undef id
+#   undef BOOST_ASIO_OBJC_WORKAROUND
+#  endif
 # endif
 
 #elif defined(__KCC)
