@@ -32,8 +32,13 @@
 # endif
 
 # if defined(__OBJC__)
-#  pragma pop_macro("Protocol")
-#  pragma pop_macro("id")
+#  if !defined(__APPLE_CC__) || (__APPLE_CC__ <= 1)
+#   if defined(BOOST_ASIO_OBJC_WORKAROUND)
+#    undef Protocol
+#    undef id
+#    undef BOOST_ASIO_OBJC_WORKAROUND
+#   endif
+#  endif
 # endif
 
 #elif defined(__KCC)
