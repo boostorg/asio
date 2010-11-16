@@ -48,6 +48,9 @@
   ([@https://svn.boost.org/trac/boost/ticket/4662 #4662]).
 * Fixed the socket `io_control()` implementation on 64-bit Mac OS X and BSD
   platforms ([@https://svn.boost.org/trac/boost/ticket/4782 #4782]).
+* Fixed a Windows-specific problem where failures from `accept()` are
+  incorrectly treated as successes
+  ([@https://svn.boost.org/trac/boost/ticket/4859 #4859]).
 * Deprecated the separate compilation header `<boost/asio/impl/src.cpp>` in
   favour of `<boost/asio/impl/src.hpp>`
   ([@https://svn.boost.org/trac/boost/ticket/4560 #4560]).
