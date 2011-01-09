@@ -19,6 +19,7 @@
 
 #if !defined(BOOST_NO_IOSTREAM)
 
+#include <iostream>
 #include <boost/preprocessor/arithmetic/inc.hpp>
 #include <boost/preprocessor/repetition/enum_binary_params.hpp>
 #include <boost/preprocessor/repetition/enum_params.hpp>
