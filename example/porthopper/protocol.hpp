@@ -14,7 +14,7 @@
 #include <boost/array.hpp>
 #include <boost/asio.hpp>
 #include <cstring>
-#include <iomanip>
+#include <boost/detail/iomanip.hpp>
 #include <string>
 #include <strstream>
 
@@ -55,7 +55,7 @@ public:
   {
     std::istrstream is(data_, encoded_port_size);
     unsigned short port = 0;
-    is >> std::setw(encoded_port_size) >> std::hex >> port;
+    is >> boost::detail::setw(encoded_port_size) >> std::hex >> port;
     return port;
   }
 
@@ -64,7 +64,7 @@ public:
   {
     std::istrstream is(data_ + encoded_port_size, encoded_port_size);
     unsigned short port = 0;
-    is >> std::setw(encoded_port_size) >> std::hex >> port;
+    is >> boost::detail::setw(encoded_port_size) >> std::hex >> port;
     return port;
   }
 
@@ -81,8 +81,8 @@ private:
   control_request(unsigned short old_port, unsigned short new_port)
   {
     std::ostrstream os(data_, control_request_size);
-    os << std::setw(encoded_port_size) << std::hex << old_port;
-    os << std::setw(encoded_port_size) << std::hex << new_port;
+    os << boost::detail::setw(encoded_port_size) << std::hex << old_port;
+    os << boost::detail::setw(encoded_port_size) << std::hex << new_port;
   }
 
   // The length in bytes of a control_request and its components.
@@ -112,9 +112,9 @@ public:
   frame(unsigned long number, const std::string& payload)
   {
     std::ostrstream os(data_, frame_size);
-    os << std::setw(encoded_number_size) << std::hex << number;
-    os << std::setw(payload_size)
-      << std::setfill(' ') << payload.substr(0, payload_size);
+    os << boost::detail::setw(encoded_number_size) << std::hex << number;
+    os << boost::detail::setw(payload_size)
+      << boost::detail::setfill(' ') << payload.substr(0, payload_size);
   }
 
   // Get the frame number.
@@ -122,7 +122,7 @@ public:
   {
     std::istrstream is(data_, encoded_number_size);
     unsigned long number = 0;
-    is >> std::setw(encoded_number_size) >> std::hex >> number;
+    is >> boost::detail::setw(encoded_number_size) >> std::hex >> number;
     return number;
   }
 
