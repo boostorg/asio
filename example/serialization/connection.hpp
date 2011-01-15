@@ -17,7 +17,7 @@
 #include <boost/bind.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/tuple/tuple.hpp>
-#include <boost/detail/iomanip.hpp>
+#include <iomanip>
 #include <string>
 #include <sstream>
 #include <vector>
@@ -59,7 +59,7 @@ public:
 
     // Format the header.
     std::ostringstream header_stream;
-    header_stream << boost::detail::setw(header_length)
+    header_stream << std::setw(header_length)
       << std::hex << outbound_data_.size();
     if (!header_stream || header_stream.str().size() != header_length)
     {

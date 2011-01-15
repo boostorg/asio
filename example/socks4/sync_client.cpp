@@ -9,7 +9,7 @@
 //
 
 #include <iostream>
-#include <boost/detail/iomanip.hpp>
+#include <iomanip>
 #include <ostream>
 #include <string>
 #include <boost/asio.hpp>
