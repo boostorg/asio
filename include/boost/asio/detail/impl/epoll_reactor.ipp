@@ -357,7 +357,7 @@ void epoll_reactor::update_timeout()
     return;
   }
 #endif // defined(BOOST_ASIO_HAS_TIMERFD)
-  interrupter_.interrupt();
+  interrupt();
 }
 
 int epoll_reactor::get_timeout()
