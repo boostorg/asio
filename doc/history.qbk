@@ -7,6 +7,15 @@
 
 [section:history Revision History]
 
+[heading Asio 1.4.8 / Boost 1.46]
+
+* Fixed an integer overflow problem that occurs when `ip::address_v4::netmask()`
+  is used on 64-bit platforms.
+* Fixed a problem on older Linux kernels (where epoll is used without timerfd
+  support) that prevents timely delivery of deadline_timer handlers, after the
+  program has been running for some time
+  ([@https://svn.boost.org/trac/boost/ticket/5045 #5045]).
+
 [heading Asio 1.4.7 / Boost 1.45]
 
 * Fixed a problem on kqueue-based platforms where a `deadline_timer` may
