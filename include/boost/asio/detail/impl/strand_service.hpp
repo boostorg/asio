@@ -98,6 +98,8 @@ void strand_service::dispatch(strand_service::implementation_type& impl,
     return;
   }
 
+  BOOST_ASIO_HANDLER_CREATION((p.p, "strand", impl, "dispatch"));
+
   // Immediate invocation is not allowed, so enqueue for later.
   impl->queue_.push(p.p);
   impl->mutex_.unlock();
@@ -120,6 +122,8 @@ void strand_service::post(strand_service::implementation_type& impl,
     boost_asio_handler_alloc_helpers::allocate(
       sizeof(op), handler), 0 };
   p.p = new (p.v) op(handler);
+
+  BOOST_ASIO_HANDLER_CREATION((p.p, "strand", impl, "post"));
 
   // Add the handler to the queue.
   impl->mutex_.lock();

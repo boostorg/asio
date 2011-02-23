@@ -101,6 +101,8 @@ public:
       return 0;
     }
 
+    BOOST_ASIO_HANDLER_OPERATION(("deadline_timer", &impl, "cancel"));
+
     std::size_t count = scheduler_.cancel_timer(timer_queue_, impl.timer_data);
     impl.might_have_pending_waits = false;
     ec = boost::system::error_code();
@@ -116,6 +118,8 @@ public:
       ec = boost::system::error_code();
       return 0;
     }
+
+    BOOST_ASIO_HANDLER_OPERATION(("deadline_timer", &impl, "cancel_one"));
 
     std::size_t count = scheduler_.cancel_timer(
         timer_queue_, impl.timer_data, 1);
@@ -184,6 +188,8 @@ public:
     p.p = new (p.v) op(handler);
 
     impl.might_have_pending_waits = true;
+
+    BOOST_ASIO_HANDLER_CREATION((p.p, "deadline_timer", &impl, "async_wait"));
 
     scheduler_.schedule_timer(timer_queue_, impl.expiry, impl.timer_data, p.p);
     p.v = p.p = 0;

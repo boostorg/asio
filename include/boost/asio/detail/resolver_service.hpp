@@ -77,6 +77,8 @@ public:
         sizeof(op), handler), 0 };
     p.p = new (p.v) op(impl, query, io_service_impl_, handler);
 
+    BOOST_ASIO_HANDLER_CREATION((p.p, "resolver", &impl, "async_resolve"));
+
     start_resolve_op(p.p);
     p.v = p.p = 0;
   }
@@ -106,6 +108,8 @@ public:
       boost_asio_handler_alloc_helpers::allocate(
         sizeof(op), handler), 0 };
     p.p = new (p.v) op(impl, endpoint, io_service_impl_, handler);
+
+    BOOST_ASIO_HANDLER_CREATION((p.p, "resolver", &impl, "async_resolve"));
 
     start_resolve_op(p.p);
     p.v = p.p = 0;

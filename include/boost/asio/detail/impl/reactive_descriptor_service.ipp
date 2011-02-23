@@ -51,6 +51,8 @@ void reactive_descriptor_service::destroy(
 {
   if (is_open(impl))
   {
+    BOOST_ASIO_HANDLER_OPERATION(("descriptor", &impl, "close"));
+
     reactor_.deregister_descriptor(impl.descriptor_, impl.reactor_data_,
         (impl.state_ & descriptor_ops::possible_dup) == 0);
   }
@@ -89,6 +91,8 @@ boost::system::error_code reactive_descriptor_service::close(
 {
   if (is_open(impl))
   {
+    BOOST_ASIO_HANDLER_OPERATION(("descriptor", &impl, "close"));
+
     reactor_.deregister_descriptor(impl.descriptor_, impl.reactor_data_,
         (impl.state_ & descriptor_ops::possible_dup) == 0);
   }
@@ -107,6 +111,8 @@ reactive_descriptor_service::release(
 
   if (is_open(impl))
   {
+    BOOST_ASIO_HANDLER_OPERATION(("descriptor", &impl, "release"));
+
     reactor_.deregister_descriptor(impl.descriptor_, impl.reactor_data_, false);
     construct(impl);
   }
@@ -123,6 +129,8 @@ boost::system::error_code reactive_descriptor_service::cancel(
     ec = boost::asio::error::bad_descriptor;
     return ec;
   }
+
+  BOOST_ASIO_HANDLER_OPERATION(("descriptor", &impl, "cancel"));
 
   reactor_.cancel_ops(impl.descriptor_, impl.reactor_data_);
   ec = boost::system::error_code();

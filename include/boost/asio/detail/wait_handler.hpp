@@ -46,6 +46,8 @@ public:
     wait_handler* h(static_cast<wait_handler*>(base));
     ptr p = { boost::addressof(h->handler_), h, h };
 
+    BOOST_ASIO_HANDLER_COMPLETION((h));
+
     // Make a copy of the handler so that the memory can be deallocated before
     // the upcall is made. Even if we're not about to make an upcall, a
     // sub-object of the handler may be the true owner of the memory associated
@@ -61,7 +63,9 @@ public:
     if (owner)
     {
       boost::asio::detail::fenced_block b;
+      BOOST_ASIO_HANDLER_INVOCATION_BEGIN((handler.arg1_));
       boost_asio_handler_invoke_helpers::invoke(handler, handler.handler_);
+      BOOST_ASIO_HANDLER_INVOCATION_END;
     }
   }
 

@@ -47,6 +47,9 @@ private:
   /// The io_service used to perform asynchronous operations.
   boost::asio::io_service io_service_;
 
+  /// The signal_set is used to register for process termination notifications.
+  boost::asio::signal_set signals_;
+
   /// Acceptor used to listen for incoming connections.
   boost::asio::ip::tcp::acceptor acceptor_;
 

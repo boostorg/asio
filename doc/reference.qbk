@@ -43,6 +43,8 @@
 [include requirements/Service.qbk]
 [include requirements/SettableSerialPortOption.qbk]
 [include requirements/SettableSocketOption.qbk]
+[include requirements/SignalHandler.qbk]
+[include requirements/SignalSetService.qbk]
 [include requirements/SocketAcceptorService.qbk]
 [include requirements/SocketService.qbk]
 [include requirements/StreamDescriptorService.qbk]
@@ -21752,6 +21754,904 @@ The write\_some operation may not transmit all of the data to the peer. Consider
 
 
 [endsect]
+
+
+[endsect]
+
+[section:basic_signal_set basic_signal_set]
+
+
+Provides signal functionality. 
+
+
+  template<
+      typename ``[link boost_asio.reference.SignalSetService SignalSetService]`` = signal_set_service>
+  class basic_signal_set :
+    public basic_io_object< SignalSetService >
+
+
+[heading Types]
+[table
+  [[Name][Description]]
+
+  [
+
+    [[link boost_asio.reference.basic_signal_set.implementation_type [*implementation_type]]]
+    [The underlying implementation type of I/O object. ]
+  
+  ]
+
+  [
+
+    [[link boost_asio.reference.basic_signal_set.service_type [*service_type]]]
+    [The type of the service that will be used to provide I/O operations. ]
+  
+  ]
+
+]
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link boost_asio.reference.basic_signal_set.add [*add]]]
+    [Add a signal to a signal_set. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.basic_signal_set.async_wait [*async_wait]]]
+    [Start an asynchronous operation to wait for a signal to be delivered. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.basic_signal_set.basic_signal_set [*basic_signal_set]]]
+    [Construct a signal set without adding any signals. 
+
+     Construct a signal set and add one signal. 
+
+     Construct a signal set and add two signals. 
+
+     Construct a signal set and add three signals. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.basic_signal_set.cancel [*cancel]]]
+    [Cancel all operations associated with the signal set. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.basic_signal_set.clear [*clear]]]
+    [Remove all signals from a signal_set. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.basic_signal_set.get_io_service [*get_io_service]]]
+    [Get the io_service associated with the object. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.basic_signal_set.remove [*remove]]]
+    [Remove a signal from a signal_set. ]
+  ]
+  
+]
+
+[heading Protected Data Members]
+[table
+  [[Name][Description]]
+
+  [
+    [[link boost_asio.reference.basic_signal_set.implementation [*implementation]]]
+    [The underlying implementation of the I/O object. ]
+  ]
+
+  [
+    [[link boost_asio.reference.basic_signal_set.service [*service]]]
+    [The service associated with the I/O object. ]
+  ]
+
+]
+
+The [link boost_asio.reference.basic_signal_set `basic_signal_set`] class template provides the ability to perform an asynchronous wait for one or more signals to occur.
+
+Most applications will use the `boost::asio::signal_set` typedef.
+
+
+[heading Thread Safety]
+  
+[*Distinct] [*objects:] Safe.
+
+[*Shared] [*objects:] Unsafe.
+
+
+[heading Example]
+  
+Performing an asynchronous wait: 
+
+   void handler(
+       const boost::system::error_code& error,
+       int signal_number)
+   {
+     if (!error)
+     {
+       // A signal occurred.
+     }
+   }
+
+   ...
+
+   // Construct a signal set registered for process termination.
+   boost::asio::signal_set signals(io_service, SIGINT, SIGTERM);
+
+   // Start an asynchronous wait for one of the signals to occur.
+   signals.async_wait(handler);
+
+
+
+
+
+[heading Queueing of signal notifications]
+  
+
+
+If a signal is registered with a signal\_set, and the signal occurs when there are no waiting handlers, then the signal notification is queued. The next async\_wait operation on that signal\_set will dequeue the notification. If multiple notifications are queued, subsequent async\_wait operations dequeue them one at a time. Signal notifications are dequeued in order of ascending signal number.
+
+If a signal number is removed from a signal\_set (using the `remove` or `erase` member functions) then any queued notifications for that signal are discarded.
+
+
+[heading Multiple registration of signals]
+  
+
+
+The same signal number may be registered with different signal\_set objects. When the signal occurs, one handler is called for each signal\_set object.
+
+Note that multiple registration only works for signals that are registered using Asio. The application must not also register a signal handler using functions such as `signal()` or `sigaction()`.
+
+
+[heading Signal masking on POSIX platforms]
+  
+
+
+POSIX allows signals to be blocked using functions such as `sigprocmask()` and `pthread_sigmask()`. For signals to be delivered, programs must ensure that any signals registered using signal\_set objects are unblocked in at least one thread. 
+
+[heading Requirements]
+
+[*Header: ][^boost/asio/basic_signal_set.hpp]
+
+[*Convenience header: ][^boost/asio.hpp]
+
+[section:add basic_signal_set::add]
+
+[indexterm2 add..basic_signal_set] 
+Add a signal to a signal\_set. 
+
+
+  void ``[link boost_asio.reference.basic_signal_set.add.overload1 add]``(
+      int signal_number);
+  ``  [''''&raquo;''' [link boost_asio.reference.basic_signal_set.add.overload1 more...]]``
+
+  boost::system::error_code ``[link boost_asio.reference.basic_signal_set.add.overload2 add]``(
+      int signal_number,
+      boost::system::error_code & ec);
+  ``  [''''&raquo;''' [link boost_asio.reference.basic_signal_set.add.overload2 more...]]``
+
+
+[section:overload1 basic_signal_set::add (1 of 2 overloads)]
+
+
+Add a signal to a signal\_set. 
+
+
+  void add(
+      int signal_number);
+
+
+This function adds the specified signal to the set. It has no effect if the signal is already in the set.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[signal_number][The signal to be added to the set.]]
+
+]
+
+
+[heading Exceptions]
+    
+
+[variablelist
+  
+[[boost::system::system_error][Thrown on failure. ]]
+
+]
+
+
+
+
+[endsect]
+
+
+
+[section:overload2 basic_signal_set::add (2 of 2 overloads)]
+
+
+Add a signal to a signal\_set. 
+
+
+  boost::system::error_code add(
+      int signal_number,
+      boost::system::error_code & ec);
+
+
+This function adds the specified signal to the set. It has no effect if the signal is already in the set.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[signal_number][The signal to be added to the set.]]
+
+[[ec][Set to indicate what error occurred, if any. ]]
+
+]
+
+
+
+
+[endsect]
+
+
+[endsect]
+
+
+[section:async_wait basic_signal_set::async_wait]
+
+[indexterm2 async_wait..basic_signal_set] 
+Start an asynchronous operation to wait for a signal to be delivered. 
+
+
+  template<
+      typename ``[link boost_asio.reference.SignalHandler SignalHandler]``>
+  void async_wait(
+      SignalHandler handler);
+
+
+This function may be used to initiate an asynchronous wait against the signal set. It always returns immediately.
+
+For each call to `async_wait()`, the supplied handler will be called exactly once. The handler will be called when:
+
+
+* One of the registered signals in the signal set occurs; or
+
+
+* The signal set was cancelled, in which case the handler is passed the error code `boost::asio::error::operation_aborted`.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[handler][The handler to be called when the signal occurs. Copies will be made of the handler as required. The function signature of the handler must be: 
+``
+   void handler(
+     const boost::system::error_code& error, // Result of operation.
+     int signal_number // Indicates which signal occurred.
+   ); 
+``
+Regardless of whether the asynchronous operation completes immediately or not, the handler will not be invoked from within this function. Invocation of the handler will be performed in a manner equivalent to using `boost::asio::io_service::post()`. ]]
+
+]
+
+
+
+
+[endsect]
+
+
+[section:basic_signal_set basic_signal_set::basic_signal_set]
+
+[indexterm2 basic_signal_set..basic_signal_set] 
+Construct a signal set without adding any signals. 
+
+
+  explicit ``[link boost_asio.reference.basic_signal_set.basic_signal_set.overload1 basic_signal_set]``(
+      boost::asio::io_service & io_service);
+  ``  [''''&raquo;''' [link boost_asio.reference.basic_signal_set.basic_signal_set.overload1 more...]]``
+
+
+Construct a signal set and add one signal. 
+
+
+  ``[link boost_asio.reference.basic_signal_set.basic_signal_set.overload2 basic_signal_set]``(
+      boost::asio::io_service & io_service,
+      int signal_number_1);
+  ``  [''''&raquo;''' [link boost_asio.reference.basic_signal_set.basic_signal_set.overload2 more...]]``
+
+
+Construct a signal set and add two signals. 
+
+
+  ``[link boost_asio.reference.basic_signal_set.basic_signal_set.overload3 basic_signal_set]``(
+      boost::asio::io_service & io_service,
+      int signal_number_1,
+      int signal_number_2);
+  ``  [''''&raquo;''' [link boost_asio.reference.basic_signal_set.basic_signal_set.overload3 more...]]``
+
+
+Construct a signal set and add three signals. 
+
+
+  ``[link boost_asio.reference.basic_signal_set.basic_signal_set.overload4 basic_signal_set]``(
+      boost::asio::io_service & io_service,
+      int signal_number_1,
+      int signal_number_2,
+      int signal_number_3);
+  ``  [''''&raquo;''' [link boost_asio.reference.basic_signal_set.basic_signal_set.overload4 more...]]``
+
+
+[section:overload1 basic_signal_set::basic_signal_set (1 of 4 overloads)]
+
+
+Construct a signal set without adding any signals. 
+
+
+  basic_signal_set(
+      boost::asio::io_service & io_service);
+
+
+This constructor creates a signal set without registering for any signals.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[io_service][The [link boost_asio.reference.io_service `io_service`] object that the signal set will use to dispatch handlers for any asynchronous operations performed on the set. ]]
+
+]
+
+
+
+
+[endsect]
+
+
+
+[section:overload2 basic_signal_set::basic_signal_set (2 of 4 overloads)]
+
+
+Construct a signal set and add one signal. 
+
+
+  basic_signal_set(
+      boost::asio::io_service & io_service,
+      int signal_number_1);
+
+
+This constructor creates a signal set and registers for one signal.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[io_service][The [link boost_asio.reference.io_service `io_service`] object that the signal set will use to dispatch handlers for any asynchronous operations performed on the set.]]
+
+[[signal_number_1][The signal number to be added.]]
+
+]
+
+
+[heading Remarks]
+      
+This constructor is equivalent to performing: 
+
+   boost::asio::signal_set signals(io_service);
+   signals.add(signal_number_1); 
+
+
+
+
+
+
+
+[endsect]
+
+
+
+[section:overload3 basic_signal_set::basic_signal_set (3 of 4 overloads)]
+
+
+Construct a signal set and add two signals. 
+
+
+  basic_signal_set(
+      boost::asio::io_service & io_service,
+      int signal_number_1,
+      int signal_number_2);
+
+
+This constructor creates a signal set and registers for two signals.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[io_service][The [link boost_asio.reference.io_service `io_service`] object that the signal set will use to dispatch handlers for any asynchronous operations performed on the set.]]
+
+[[signal_number_1][The first signal number to be added.]]
+
+[[signal_number_2][The second signal number to be added.]]
+
+]
+
+
+[heading Remarks]
+      
+This constructor is equivalent to performing: 
+
+   boost::asio::signal_set signals(io_service);
+   signals.add(signal_number_1);
+   signals.add(signal_number_2); 
+
+
+
+
+
+
+
+[endsect]
+
+
+
+[section:overload4 basic_signal_set::basic_signal_set (4 of 4 overloads)]
+
+
+Construct a signal set and add three signals. 
+
+
+  basic_signal_set(
+      boost::asio::io_service & io_service,
+      int signal_number_1,
+      int signal_number_2,
+      int signal_number_3);
+
+
+This constructor creates a signal set and registers for three signals.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[io_service][The [link boost_asio.reference.io_service `io_service`] object that the signal set will use to dispatch handlers for any asynchronous operations performed on the set.]]
+
+[[signal_number_1][The first signal number to be added.]]
+
+[[signal_number_2][The second signal number to be added.]]
+
+[[signal_number_3][The third signal number to be added.]]
+
+]
+
+
+[heading Remarks]
+      
+This constructor is equivalent to performing: 
+
+   boost::asio::signal_set signals(io_service);
+   signals.add(signal_number_1);
+   signals.add(signal_number_2);
+   signals.add(signal_number_3); 
+
+
+
+
+
+
+
+[endsect]
+
+
+[endsect]
+
+[section:cancel basic_signal_set::cancel]
+
+[indexterm2 cancel..basic_signal_set] 
+Cancel all operations associated with the signal set. 
+
+
+  void ``[link boost_asio.reference.basic_signal_set.cancel.overload1 cancel]``();
+  ``  [''''&raquo;''' [link boost_asio.reference.basic_signal_set.cancel.overload1 more...]]``
+
+  boost::system::error_code ``[link boost_asio.reference.basic_signal_set.cancel.overload2 cancel]``(
+      boost::system::error_code & ec);
+  ``  [''''&raquo;''' [link boost_asio.reference.basic_signal_set.cancel.overload2 more...]]``
+
+
+[section:overload1 basic_signal_set::cancel (1 of 2 overloads)]
+
+
+Cancel all operations associated with the signal set. 
+
+
+  void cancel();
+
+
+This function forces the completion of any pending asynchronous wait operations against the signal set. The handler for each cancelled operation will be invoked with the `boost::asio::error::operation_aborted` error code.
+
+Cancellation does not alter the set of registered signals.
+
+
+[heading Exceptions]
+    
+
+[variablelist
+  
+[[boost::system::system_error][Thrown on failure.]]
+
+]
+
+
+[heading Remarks]
+      
+If a registered signal occurred before `cancel()` is called, then the handlers for asynchronous wait operations will:
+
+
+* have already been invoked; or
+
+
+* have been queued for invocation in the near future.
+
+These handlers can no longer be cancelled, and therefore are passed an error code that indicates the successful completion of the wait operation. 
+
+
+[endsect]
+
+
+
+[section:overload2 basic_signal_set::cancel (2 of 2 overloads)]
+
+
+Cancel all operations associated with the signal set. 
+
+
+  boost::system::error_code cancel(
+      boost::system::error_code & ec);
+
+
+This function forces the completion of any pending asynchronous wait operations against the signal set. The handler for each cancelled operation will be invoked with the `boost::asio::error::operation_aborted` error code.
+
+Cancellation does not alter the set of registered signals.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[ec][Set to indicate what error occurred, if any.]]
+
+]
+
+
+[heading Remarks]
+      
+If a registered signal occurred before `cancel()` is called, then the handlers for asynchronous wait operations will:
+
+
+* have already been invoked; or
+
+
+* have been queued for invocation in the near future.
+
+These handlers can no longer be cancelled, and therefore are passed an error code that indicates the successful completion of the wait operation. 
+
+
+[endsect]
+
+
+[endsect]
+
+[section:clear basic_signal_set::clear]
+
+[indexterm2 clear..basic_signal_set] 
+Remove all signals from a signal\_set. 
+
+
+  void ``[link boost_asio.reference.basic_signal_set.clear.overload1 clear]``();
+  ``  [''''&raquo;''' [link boost_asio.reference.basic_signal_set.clear.overload1 more...]]``
+
+  boost::system::error_code ``[link boost_asio.reference.basic_signal_set.clear.overload2 clear]``(
+      boost::system::error_code & ec);
+  ``  [''''&raquo;''' [link boost_asio.reference.basic_signal_set.clear.overload2 more...]]``
+
+
+[section:overload1 basic_signal_set::clear (1 of 2 overloads)]
+
+
+Remove all signals from a signal\_set. 
+
+
+  void clear();
+
+
+This function removes all signals from the set. It has no effect if the set is already empty.
+
+
+[heading Exceptions]
+    
+
+[variablelist
+  
+[[boost::system::system_error][Thrown on failure.]]
+
+]
+
+
+[heading Remarks]
+      
+Removes all queued notifications. 
+
+
+
+
+[endsect]
+
+
+
+[section:overload2 basic_signal_set::clear (2 of 2 overloads)]
+
+
+Remove all signals from a signal\_set. 
+
+
+  boost::system::error_code clear(
+      boost::system::error_code & ec);
+
+
+This function removes all signals from the set. It has no effect if the set is already empty.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[ec][Set to indicate what error occurred, if any.]]
+
+]
+
+
+[heading Remarks]
+      
+Removes all queued notifications. 
+
+
+
+
+[endsect]
+
+
+[endsect]
+
+
+[section:get_io_service basic_signal_set::get_io_service]
+
+
+['Inherited from basic_io_object.]
+
+[indexterm2 get_io_service..basic_signal_set] 
+Get the [link boost_asio.reference.io_service `io_service`] associated with the object. 
+
+
+  boost::asio::io_service & get_io_service();
+
+
+This function may be used to obtain the [link boost_asio.reference.io_service `io_service`] object that the I/O object uses to dispatch handlers for asynchronous operations.
+
+
+[heading Return Value]
+      
+A reference to the [link boost_asio.reference.io_service `io_service`] object that the I/O object will use to dispatch handlers. Ownership is not transferred to the caller. 
+
+
+
+
+[endsect]
+
+
+
+[section:implementation basic_signal_set::implementation]
+
+
+['Inherited from basic_io_object.]
+
+[indexterm2 implementation..basic_signal_set] 
+The underlying implementation of the I/O object. 
+
+
+  implementation_type implementation;
+
+
+
+[endsect]
+
+
+
+[section:implementation_type basic_signal_set::implementation_type]
+
+
+['Inherited from basic_io_object.]
+
+[indexterm2 implementation_type..basic_signal_set] 
+The underlying implementation type of I/O object. 
+
+
+  typedef service_type::implementation_type implementation_type;
+
+
+
+[heading Requirements]
+
+[*Header: ][^boost/asio/basic_signal_set.hpp]
+
+[*Convenience header: ][^boost/asio.hpp]
+
+
+[endsect]
+
+
+[section:remove basic_signal_set::remove]
+
+[indexterm2 remove..basic_signal_set] 
+Remove a signal from a signal\_set. 
+
+
+  void ``[link boost_asio.reference.basic_signal_set.remove.overload1 remove]``(
+      int signal_number);
+  ``  [''''&raquo;''' [link boost_asio.reference.basic_signal_set.remove.overload1 more...]]``
+
+  boost::system::error_code ``[link boost_asio.reference.basic_signal_set.remove.overload2 remove]``(
+      int signal_number,
+      boost::system::error_code & ec);
+  ``  [''''&raquo;''' [link boost_asio.reference.basic_signal_set.remove.overload2 more...]]``
+
+
+[section:overload1 basic_signal_set::remove (1 of 2 overloads)]
+
+
+Remove a signal from a signal\_set. 
+
+
+  void remove(
+      int signal_number);
+
+
+This function removes the specified signal from the set. It has no effect if the signal is not in the set.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[signal_number][The signal to be removed from the set.]]
+
+]
+
+
+[heading Exceptions]
+    
+
+[variablelist
+  
+[[boost::system::system_error][Thrown on failure.]]
+
+]
+
+
+[heading Remarks]
+      
+Removes any notifications that have been queued for the specified signal number. 
+
+
+
+
+[endsect]
+
+
+
+[section:overload2 basic_signal_set::remove (2 of 2 overloads)]
+
+
+Remove a signal from a signal\_set. 
+
+
+  boost::system::error_code remove(
+      int signal_number,
+      boost::system::error_code & ec);
+
+
+This function removes the specified signal from the set. It has no effect if the signal is not in the set.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[signal_number][The signal to be removed from the set.]]
+
+[[ec][Set to indicate what error occurred, if any.]]
+
+]
+
+
+[heading Remarks]
+      
+Removes any notifications that have been queued for the specified signal number. 
+
+
+
+
+[endsect]
+
+
+[endsect]
+
+
+[section:service basic_signal_set::service]
+
+
+['Inherited from basic_io_object.]
+
+[indexterm2 service..basic_signal_set] 
+The service associated with the I/O object. 
+
+
+  service_type & service;
+
+
+
+[endsect]
+
+
+
+[section:service_type basic_signal_set::service_type]
+
+
+['Inherited from basic_io_object.]
+
+[indexterm2 service_type..basic_signal_set] 
+The type of the service that will be used to provide I/O operations. 
+
+
+  typedef SignalSetService service_type;
+
+
+
+[heading Requirements]
+
+[*Header: ][^boost/asio/basic_signal_set.hpp]
+
+[*Convenience header: ][^boost/asio.hpp]
+
+
+[endsect]
+
 
 
 [endsect]
@@ -45112,6 +46012,47 @@ A random access iterator over the bytes in a buffer sequence.
   class buffers_iterator
 
 
+[heading Types]
+[table
+  [[Name][Description]]
+
+  [
+
+    [[link boost_asio.reference.buffers_iterator.difference_type [*difference_type]]]
+    [The type used for the distance between two iterators. ]
+  
+  ]
+
+  [
+
+    [[link boost_asio.reference.buffers_iterator.iterator_category [*iterator_category]]]
+    [The iterator category. ]
+  
+  ]
+
+  [
+
+    [[link boost_asio.reference.buffers_iterator.pointer [*pointer]]]
+    [The type of the result of applying operator->() to the iterator. ]
+  
+  ]
+
+  [
+
+    [[link boost_asio.reference.buffers_iterator.reference [*reference]]]
+    [The type of the result of applying operator*() to the iterator. ]
+  
+  ]
+
+  [
+
+    [[link boost_asio.reference.buffers_iterator.value_type [*value_type]]]
+    [The type of the value pointed to by the iterator. ]
+  
+  ]
+
+]
+
 [heading Member Functions]
 [table
   [[Name][Description]]
@@ -45254,6 +46195,27 @@ Default constructor. Creates an iterator in an undefined state.
 
 
 
+[section:difference_type buffers_iterator::difference_type]
+
+[indexterm2 difference_type..buffers_iterator] 
+The type used for the distance between two iterators. 
+
+
+  typedef std::ptrdiff_t difference_type;
+
+
+
+[heading Requirements]
+
+[*Header: ][^boost/asio/buffers_iterator.hpp]
+
+[*Convenience header: ][^boost/asio.hpp]
+
+
+[endsect]
+
+
+
 [section:end buffers_iterator::end]
 
 [indexterm2 end..buffers_iterator] 
@@ -45269,13 +46231,34 @@ Construct an iterator representing the end of the buffers' data.
 
 
 
+[section:iterator_category buffers_iterator::iterator_category]
+
+[indexterm2 iterator_category..buffers_iterator] 
+The iterator category. 
+
+
+  typedef std::random_access_iterator_tag iterator_category;
+
+
+
+[heading Requirements]
+
+[*Header: ][^boost/asio/buffers_iterator.hpp]
+
+[*Convenience header: ][^boost/asio.hpp]
+
+
+[endsect]
+
+
+
 [section:operator__star_ buffers_iterator::operator *]
 
 [indexterm2 operator *..buffers_iterator] 
 Dereference an iterator. 
 
 
-  byte_type & operator *() const;
+  reference operator *() const;
 
 
 
@@ -45561,7 +46544,7 @@ Subtraction operator.
 Dereference an iterator. 
 
 
-  byte_type * operator->() const;
+  pointer operator->() const;
 
 
 
@@ -45685,9 +46668,76 @@ Compare two iterators.
 Access an individual element. 
 
 
-  byte_type & operator[](
+  reference operator[](
       std::ptrdiff_t difference) const;
 
+
+
+[endsect]
+
+
+
+[section:pointer buffers_iterator::pointer]
+
+[indexterm2 pointer..buffers_iterator] 
+The type of the result of applying `operator->()` to the iterator. 
+
+
+  typedef const_or_non_const_ByteType * pointer;
+
+
+
+If the buffer sequence stores buffer objects that are convertible to [link boost_asio.reference.mutable_buffer `mutable_buffer`], this is a pointer to a non-const ByteType. Otherwise, a pointer to a const ByteType. 
+
+[heading Requirements]
+
+[*Header: ][^boost/asio/buffers_iterator.hpp]
+
+[*Convenience header: ][^boost/asio.hpp]
+
+
+[endsect]
+
+
+
+[section:reference buffers_iterator::reference]
+
+[indexterm2 reference..buffers_iterator] 
+The type of the result of applying `operator*()` to the iterator. 
+
+
+  typedef const_or_non_const_ByteType & reference;
+
+
+
+If the buffer sequence stores buffer objects that are convertible to [link boost_asio.reference.mutable_buffer `mutable_buffer`], this is a reference to a non-const ByteType. Otherwise, a reference to a const ByteType. 
+
+[heading Requirements]
+
+[*Header: ][^boost/asio/buffers_iterator.hpp]
+
+[*Convenience header: ][^boost/asio.hpp]
+
+
+[endsect]
+
+
+
+[section:value_type buffers_iterator::value_type]
+
+[indexterm2 value_type..buffers_iterator] 
+The type of the value pointed to by the iterator. 
+
+
+  typedef ByteType value_type;
+
+
+
+[heading Requirements]
+
+[*Header: ][^boost/asio/buffers_iterator.hpp]
+
+[*Convenience header: ][^boost/asio.hpp]
 
 
 [endsect]
@@ -54571,6 +55621,47 @@ The iterator type.
   typedef basic_resolver_iterator< InternetProtocol > iterator;
 
 
+[heading Types]
+[table
+  [[Name][Description]]
+
+  [
+
+    [[link boost_asio.reference.ip__basic_resolver_iterator.difference_type [*difference_type]]]
+    [The type used for the distance between two iterators. ]
+  
+  ]
+
+  [
+
+    [[link boost_asio.reference.ip__basic_resolver_iterator.iterator_category [*iterator_category]]]
+    [The iterator category. ]
+  
+  ]
+
+  [
+
+    [[link boost_asio.reference.ip__basic_resolver_iterator.pointer [*pointer]]]
+    [The type of the result of applying operator->() to the iterator. ]
+  
+  ]
+
+  [
+
+    [[link boost_asio.reference.ip__basic_resolver_iterator.reference [*reference]]]
+    [The type of the result of applying operator*() to the iterator. ]
+  
+  ]
+
+  [
+
+    [[link boost_asio.reference.ip__basic_resolver_iterator.value_type [*value_type]]]
+    [The type of the value pointed to by the iterator. ]
+  
+  ]
+
+]
+
 [heading Member Functions]
 [table
   [[Name][Description]]
@@ -55298,6 +56389,47 @@ An iterator over the entries produced by a resolver.
   class basic_resolver_iterator
 
 
+[heading Types]
+[table
+  [[Name][Description]]
+
+  [
+
+    [[link boost_asio.reference.ip__basic_resolver_iterator.difference_type [*difference_type]]]
+    [The type used for the distance between two iterators. ]
+  
+  ]
+
+  [
+
+    [[link boost_asio.reference.ip__basic_resolver_iterator.iterator_category [*iterator_category]]]
+    [The iterator category. ]
+  
+  ]
+
+  [
+
+    [[link boost_asio.reference.ip__basic_resolver_iterator.pointer [*pointer]]]
+    [The type of the result of applying operator->() to the iterator. ]
+  
+  ]
+
+  [
+
+    [[link boost_asio.reference.ip__basic_resolver_iterator.reference [*reference]]]
+    [The type of the result of applying operator*() to the iterator. ]
+  
+  ]
+
+  [
+
+    [[link boost_asio.reference.ip__basic_resolver_iterator.value_type [*value_type]]]
+    [The type of the value pointed to by the iterator. ]
+  
+  ]
+
+]
+
 [heading Member Functions]
 [table
   [[Name][Description]]
@@ -55446,6 +56578,48 @@ Create an iterator from an endpoint, host name and service name.
 [endsect]
 
 
+[section:difference_type ip::basic_resolver_iterator::difference_type]
+
+[indexterm2 difference_type..ip::basic_resolver_iterator] 
+The type used for the distance between two iterators. 
+
+
+  typedef std::ptrdiff_t difference_type;
+
+
+
+[heading Requirements]
+
+[*Header: ][^boost/asio/ip/basic_resolver_iterator.hpp]
+
+[*Convenience header: ][^boost/asio.hpp]
+
+
+[endsect]
+
+
+
+[section:iterator_category ip::basic_resolver_iterator::iterator_category]
+
+[indexterm2 iterator_category..ip::basic_resolver_iterator] 
+The iterator category. 
+
+
+  typedef std::forward_iterator_tag iterator_category;
+
+
+
+[heading Requirements]
+
+[*Header: ][^boost/asio/ip/basic_resolver_iterator.hpp]
+
+[*Convenience header: ][^boost/asio.hpp]
+
+
+[endsect]
+
+
+
 [section:operator__star_ ip::basic_resolver_iterator::operator *]
 
 [indexterm2 operator *..ip::basic_resolver_iterator] 
@@ -55553,6 +56727,197 @@ Test two iterators for equality.
   friend bool operator==(
       const basic_resolver_iterator & a,
       const basic_resolver_iterator & b);
+
+
+[heading Requirements]
+
+[*Header: ][^boost/asio/ip/basic_resolver_iterator.hpp]
+
+[*Convenience header: ][^boost/asio.hpp]
+
+
+[endsect]
+
+
+
+[section:pointer ip::basic_resolver_iterator::pointer]
+
+[indexterm2 pointer..ip::basic_resolver_iterator] 
+The type of the result of applying `operator->()` to the iterator. 
+
+
+  typedef const basic_resolver_entry< InternetProtocol > * pointer;
+
+
+
+[heading Requirements]
+
+[*Header: ][^boost/asio/ip/basic_resolver_iterator.hpp]
+
+[*Convenience header: ][^boost/asio.hpp]
+
+
+[endsect]
+
+
+
+[section:reference ip::basic_resolver_iterator::reference]
+
+[indexterm2 reference..ip::basic_resolver_iterator] 
+The type of the result of applying `operator*()` to the iterator. 
+
+
+  typedef const basic_resolver_entry< InternetProtocol > & reference;
+
+
+[heading Types]
+[table
+  [[Name][Description]]
+
+  [
+
+    [[link boost_asio.reference.ip__basic_resolver_entry.endpoint_type [*endpoint_type]]]
+    [The endpoint type associated with the endpoint entry. ]
+  
+  ]
+
+  [
+
+    [[link boost_asio.reference.ip__basic_resolver_entry.protocol_type [*protocol_type]]]
+    [The protocol type associated with the endpoint entry. ]
+  
+  ]
+
+]
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link boost_asio.reference.ip__basic_resolver_entry.basic_resolver_entry [*basic_resolver_entry]]]
+    [Default constructor. 
+
+     Construct with specified endpoint, host name and service name. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.ip__basic_resolver_entry.endpoint [*endpoint]]]
+    [Get the endpoint associated with the entry. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.ip__basic_resolver_entry.host_name [*host_name]]]
+    [Get the host name associated with the entry. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.ip__basic_resolver_entry.operator_endpoint_type [*operator endpoint_type]]]
+    [Convert to the endpoint associated with the entry. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.ip__basic_resolver_entry.service_name [*service_name]]]
+    [Get the service name associated with the entry. ]
+  ]
+  
+]
+
+The [link boost_asio.reference.ip__basic_resolver_entry `ip::basic_resolver_entry`] class template describes an entry as returned by a resolver.
+
+
+[heading Thread Safety]
+  
+[*Distinct] [*objects:] Safe.
+
+[*Shared] [*objects:] Unsafe. 
+
+
+
+
+[heading Requirements]
+
+[*Header: ][^boost/asio/ip/basic_resolver_iterator.hpp]
+
+[*Convenience header: ][^boost/asio.hpp]
+
+
+[endsect]
+
+
+
+[section:value_type ip::basic_resolver_iterator::value_type]
+
+[indexterm2 value_type..ip::basic_resolver_iterator] 
+The type of the value pointed to by the iterator. 
+
+
+  typedef basic_resolver_entry< InternetProtocol > value_type;
+
+
+[heading Types]
+[table
+  [[Name][Description]]
+
+  [
+
+    [[link boost_asio.reference.ip__basic_resolver_entry.endpoint_type [*endpoint_type]]]
+    [The endpoint type associated with the endpoint entry. ]
+  
+  ]
+
+  [
+
+    [[link boost_asio.reference.ip__basic_resolver_entry.protocol_type [*protocol_type]]]
+    [The protocol type associated with the endpoint entry. ]
+  
+  ]
+
+]
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link boost_asio.reference.ip__basic_resolver_entry.basic_resolver_entry [*basic_resolver_entry]]]
+    [Default constructor. 
+
+     Construct with specified endpoint, host name and service name. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.ip__basic_resolver_entry.endpoint [*endpoint]]]
+    [Get the endpoint associated with the entry. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.ip__basic_resolver_entry.host_name [*host_name]]]
+    [Get the host name associated with the entry. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.ip__basic_resolver_entry.operator_endpoint_type [*operator endpoint_type]]]
+    [Convert to the endpoint associated with the entry. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.ip__basic_resolver_entry.service_name [*service_name]]]
+    [Get the service name associated with the entry. ]
+  ]
+  
+]
+
+The [link boost_asio.reference.ip__basic_resolver_entry `ip::basic_resolver_entry`] class template describes an entry as returned by a resolver.
+
+
+[heading Thread Safety]
+  
+[*Distinct] [*objects:] Safe.
+
+[*Shared] [*objects:] Unsafe. 
+
+
 
 
 [heading Requirements]
@@ -57829,6 +59194,47 @@ The iterator type.
 
   typedef basic_resolver_iterator< InternetProtocol > iterator_type;
 
+
+[heading Types]
+[table
+  [[Name][Description]]
+
+  [
+
+    [[link boost_asio.reference.ip__basic_resolver_iterator.difference_type [*difference_type]]]
+    [The type used for the distance between two iterators. ]
+  
+  ]
+
+  [
+
+    [[link boost_asio.reference.ip__basic_resolver_iterator.iterator_category [*iterator_category]]]
+    [The iterator category. ]
+  
+  ]
+
+  [
+
+    [[link boost_asio.reference.ip__basic_resolver_iterator.pointer [*pointer]]]
+    [The type of the result of applying operator->() to the iterator. ]
+  
+  ]
+
+  [
+
+    [[link boost_asio.reference.ip__basic_resolver_iterator.reference [*reference]]]
+    [The type of the result of applying operator*() to the iterator. ]
+  
+  ]
+
+  [
+
+    [[link boost_asio.reference.ip__basic_resolver_iterator.value_type [*value_type]]]
+    [The type of the value pointed to by the iterator. ]
+  
+  ]
+
+]
 
 [heading Member Functions]
 [table
@@ -63959,10 +65365,30 @@ An argument placeholder, for use with boost::bind(), that corresponds to the err
 [section:placeholders__iterator placeholders::iterator]
 
 [indexterm1 placeholders::iterator] 
-An argument placeholder, for use with boost::bind(), that corresponds to the iterator argument of a handler for asynchronous functions such as boost::asio::basic\_resolver::resolve. 
+An argument placeholder, for use with boost::bind(), that corresponds to the iterator argument of a handler for asynchronous functions such as boost::asio::basic\_resolver::async\_resolve. 
 
 
   unspecified iterator;
+
+
+[heading Requirements]
+
+[*Header: ][^boost/asio/placeholders.hpp]
+
+[*Convenience header: ][^boost/asio.hpp]
+
+
+[endsect]
+
+
+
+[section:placeholders__signal_number placeholders::signal_number]
+
+[indexterm1 placeholders::signal_number] 
+An argument placeholder, for use with boost::bind(), that corresponds to the signal\_number argument of a handler for asynchronous functions such as `boost::asio::signal_set::async_wait`. 
+
+
+  unspecified signal_number;
 
 
 [heading Requirements]
@@ -73752,6 +75178,464 @@ Exception thrown when trying to add a duplicate service to an [link boost_asio.r
 [indexterm2 service_already_exists..service_already_exists] 
 
   service_already_exists();
+
+
+
+[endsect]
+
+
+
+[endsect]
+
+
+[section:signal_set signal_set]
+
+[indexterm1 signal_set] 
+Typedef for the typical usage of a signal set. 
+
+
+  typedef basic_signal_set signal_set;
+
+
+[heading Types]
+[table
+  [[Name][Description]]
+
+  [
+
+    [[link boost_asio.reference.basic_signal_set.implementation_type [*implementation_type]]]
+    [The underlying implementation type of I/O object. ]
+  
+  ]
+
+  [
+
+    [[link boost_asio.reference.basic_signal_set.service_type [*service_type]]]
+    [The type of the service that will be used to provide I/O operations. ]
+  
+  ]
+
+]
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link boost_asio.reference.basic_signal_set.add [*add]]]
+    [Add a signal to a signal_set. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.basic_signal_set.async_wait [*async_wait]]]
+    [Start an asynchronous operation to wait for a signal to be delivered. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.basic_signal_set.basic_signal_set [*basic_signal_set]]]
+    [Construct a signal set without adding any signals. 
+
+     Construct a signal set and add one signal. 
+
+     Construct a signal set and add two signals. 
+
+     Construct a signal set and add three signals. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.basic_signal_set.cancel [*cancel]]]
+    [Cancel all operations associated with the signal set. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.basic_signal_set.clear [*clear]]]
+    [Remove all signals from a signal_set. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.basic_signal_set.get_io_service [*get_io_service]]]
+    [Get the io_service associated with the object. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.basic_signal_set.remove [*remove]]]
+    [Remove a signal from a signal_set. ]
+  ]
+  
+]
+
+[heading Protected Data Members]
+[table
+  [[Name][Description]]
+
+  [
+    [[link boost_asio.reference.basic_signal_set.implementation [*implementation]]]
+    [The underlying implementation of the I/O object. ]
+  ]
+
+  [
+    [[link boost_asio.reference.basic_signal_set.service [*service]]]
+    [The service associated with the I/O object. ]
+  ]
+
+]
+
+The [link boost_asio.reference.basic_signal_set `basic_signal_set`] class template provides the ability to perform an asynchronous wait for one or more signals to occur.
+
+Most applications will use the `boost::asio::signal_set` typedef.
+
+
+[heading Thread Safety]
+  
+[*Distinct] [*objects:] Safe.
+
+[*Shared] [*objects:] Unsafe.
+
+
+[heading Example]
+  
+Performing an asynchronous wait: 
+
+   void handler(
+       const boost::system::error_code& error,
+       int signal_number)
+   {
+     if (!error)
+     {
+       // A signal occurred.
+     }
+   }
+
+   ...
+
+   // Construct a signal set registered for process termination.
+   boost::asio::signal_set signals(io_service, SIGINT, SIGTERM);
+
+   // Start an asynchronous wait for one of the signals to occur.
+   signals.async_wait(handler);
+
+
+
+
+
+[heading Queueing of signal notifications]
+  
+
+
+If a signal is registered with a signal\_set, and the signal occurs when there are no waiting handlers, then the signal notification is queued. The next async\_wait operation on that signal\_set will dequeue the notification. If multiple notifications are queued, subsequent async\_wait operations dequeue them one at a time. Signal notifications are dequeued in order of ascending signal number.
+
+If a signal number is removed from a signal\_set (using the `remove` or `erase` member functions) then any queued notifications for that signal are discarded.
+
+
+[heading Multiple registration of signals]
+  
+
+
+The same signal number may be registered with different signal\_set objects. When the signal occurs, one handler is called for each signal\_set object.
+
+Note that multiple registration only works for signals that are registered using Asio. The application must not also register a signal handler using functions such as `signal()` or `sigaction()`.
+
+
+[heading Signal masking on POSIX platforms]
+  
+
+
+POSIX allows signals to be blocked using functions such as `sigprocmask()` and `pthread_sigmask()`. For signals to be delivered, programs must ensure that any signals registered using signal\_set objects are unblocked in at least one thread. 
+
+
+[heading Requirements]
+
+[*Header: ][^boost/asio/signal_set.hpp]
+
+[*Convenience header: ][^boost/asio.hpp]
+
+
+[endsect]
+
+
+[section:signal_set_service signal_set_service]
+
+
+Default service implementation for a signal set. 
+
+
+  class signal_set_service :
+    public io_service::service
+
+
+[heading Types]
+[table
+  [[Name][Description]]
+
+  [
+
+    [[link boost_asio.reference.signal_set_service.implementation_type [*implementation_type]]]
+    [The type of a signal set implementation. ]
+  
+  ]
+
+]
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link boost_asio.reference.signal_set_service.add [*add]]]
+    [Add a signal to a signal_set. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.signal_set_service.async_wait [*async_wait]]]
+    []
+  ]
+  
+  [
+    [[link boost_asio.reference.signal_set_service.cancel [*cancel]]]
+    [Cancel all operations associated with the signal set. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.signal_set_service.clear [*clear]]]
+    [Remove all signals from a signal_set. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.signal_set_service.construct [*construct]]]
+    [Construct a new signal set implementation. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.signal_set_service.destroy [*destroy]]]
+    [Destroy a signal set implementation. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.signal_set_service.get_io_service [*get_io_service]]]
+    [Get the io_service object that owns the service. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.signal_set_service.remove [*remove]]]
+    [Remove a signal to a signal_set. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.signal_set_service.shutdown_service [*shutdown_service]]]
+    [Destroy all user-defined handler objects owned by the service. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.signal_set_service.signal_set_service [*signal_set_service]]]
+    [Construct a new signal set service for the specified io_service. ]
+  ]
+  
+]
+
+[heading Data Members]
+[table
+  [[Name][Description]]
+
+  [
+    [[link boost_asio.reference.signal_set_service.id [*id]]]
+    [The unique service identifier. ]
+  ]
+
+]
+
+[heading Requirements]
+
+[*Header: ][^boost/asio/signal_set_service.hpp]
+
+[*Convenience header: ][^boost/asio.hpp]
+
+
+[section:add signal_set_service::add]
+
+[indexterm2 add..signal_set_service] 
+Add a signal to a signal\_set. 
+
+
+  boost::system::error_code add(
+      implementation_type & impl,
+      int signal_number,
+      boost::system::error_code & ec);
+
+
+
+[endsect]
+
+
+
+[section:async_wait signal_set_service::async_wait]
+
+[indexterm2 async_wait..signal_set_service] 
+
+  template<
+      typename ``[link boost_asio.reference.SignalHandler SignalHandler]``>
+  void async_wait(
+      implementation_type & impl,
+      SignalHandler handler);
+
+
+
+[endsect]
+
+
+
+[section:cancel signal_set_service::cancel]
+
+[indexterm2 cancel..signal_set_service] 
+Cancel all operations associated with the signal set. 
+
+
+  boost::system::error_code cancel(
+      implementation_type & impl,
+      boost::system::error_code & ec);
+
+
+
+[endsect]
+
+
+
+[section:clear signal_set_service::clear]
+
+[indexterm2 clear..signal_set_service] 
+Remove all signals from a signal\_set. 
+
+
+  boost::system::error_code clear(
+      implementation_type & impl,
+      boost::system::error_code & ec);
+
+
+
+[endsect]
+
+
+
+[section:construct signal_set_service::construct]
+
+[indexterm2 construct..signal_set_service] 
+Construct a new signal set implementation. 
+
+
+  void construct(
+      implementation_type & impl);
+
+
+
+[endsect]
+
+
+
+[section:destroy signal_set_service::destroy]
+
+[indexterm2 destroy..signal_set_service] 
+Destroy a signal set implementation. 
+
+
+  void destroy(
+      implementation_type & impl);
+
+
+
+[endsect]
+
+
+
+[section:get_io_service signal_set_service::get_io_service]
+
+
+['Inherited from io_service.]
+
+[indexterm2 get_io_service..signal_set_service] 
+Get the [link boost_asio.reference.io_service `io_service`] object that owns the service. 
+
+
+  boost::asio::io_service & get_io_service();
+
+
+
+[endsect]
+
+
+
+[section:id signal_set_service::id]
+
+[indexterm2 id..signal_set_service] 
+The unique service identifier. 
+
+
+  static boost::asio::io_service::id id;
+
+
+
+[endsect]
+
+
+
+[section:implementation_type signal_set_service::implementation_type]
+
+[indexterm2 implementation_type..signal_set_service] 
+The type of a signal set implementation. 
+
+
+  typedef implementation_defined implementation_type;
+
+
+
+[heading Requirements]
+
+[*Header: ][^boost/asio/signal_set_service.hpp]
+
+[*Convenience header: ][^boost/asio.hpp]
+
+
+[endsect]
+
+
+
+[section:remove signal_set_service::remove]
+
+[indexterm2 remove..signal_set_service] 
+Remove a signal to a signal\_set. 
+
+
+  boost::system::error_code remove(
+      implementation_type & impl,
+      int signal_number,
+      boost::system::error_code & ec);
+
+
+
+[endsect]
+
+
+
+[section:shutdown_service signal_set_service::shutdown_service]
+
+[indexterm2 shutdown_service..signal_set_service] 
+Destroy all user-defined handler objects owned by the service. 
+
+
+  virtual void shutdown_service();
+
+
+
+[endsect]
+
+
+
+[section:signal_set_service signal_set_service::signal_set_service]
+
+[indexterm2 signal_set_service..signal_set_service] 
+Construct a new signal set service for the specified [link boost_asio.reference.io_service `io_service`]. 
+
+
+  signal_set_service(
+      boost::asio::io_service & io_service);
 
 
 

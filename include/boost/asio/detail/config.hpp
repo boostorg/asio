@@ -74,11 +74,6 @@
 #   endif // defined(__GXX_EXPERIMENTAL_CXX0X__)
 #  endif // ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 5)) || (__GNUC__ > 4)
 # endif // defined(__GNUC__)
-# if defined(BOOST_MSVC)
-#  if (_MSC_VER >= 1600)
-#   define BOOST_ASIO_HAS_STD_SYSTEM_ERROR
-#  endif // (_MSC_VER >= 1600)
-# endif // defined(BOOST_MSVC)
 #endif // !defined(BOOST_ASIO_DISABLE_STD_SYSTEM_ERROR)
 
 // Windows: target OS version.
@@ -236,5 +231,12 @@
 #  define BOOST_ASIO_HAS_LOCAL_SOCKETS 1
 # endif // !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
 #endif // !defined(BOOST_ASIO_DISABLE_LOCAL_SOCKETS)
+
+// Can use sigaction() instead of signal().
+#if !defined(BOOST_ASIO_DISABLE_SIGACTION)
+# if !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
+#  define BOOST_ASIO_HAS_SIGACTION 1
+# endif // !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
+#endif // !defined(BOOST_ASIO_DISABLE_SIGACTION)
 
 #endif // BOOST_ASIO_DETAIL_CONFIG_HPP

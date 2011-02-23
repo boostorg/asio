@@ -53,6 +53,8 @@ public:
     reactive_null_buffers_op* o(static_cast<reactive_null_buffers_op*>(base));
     ptr p = { boost::addressof(o->handler_), o, o };
 
+    BOOST_ASIO_HANDLER_COMPLETION((o));
+
     // Make a copy of the handler so that the memory can be deallocated before
     // the upcall is made. Even if we're not about to make an upcall, a
     // sub-object of the handler may be the true owner of the memory associated
@@ -68,7 +70,9 @@ public:
     if (owner)
     {
       boost::asio::detail::fenced_block b;
+      BOOST_ASIO_HANDLER_INVOCATION_BEGIN((handler.arg1_, handler.arg2_));
       boost_asio_handler_invoke_helpers::invoke(handler, handler.handler_);
+      BOOST_ASIO_HANDLER_INVOCATION_END;
     }
   }
 

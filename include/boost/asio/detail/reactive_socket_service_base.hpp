@@ -198,6 +198,8 @@ public:
         sizeof(op), handler), 0 };
     p.p = new (p.v) op(impl.socket_, buffers, flags, handler);
 
+    BOOST_ASIO_HANDLER_CREATION((p.p, "socket", &impl, "async_send"));
+
     start_op(impl, reactor::write_op, p.p, true,
         ((impl.state_ & socket_ops::stream_oriented)
           && buffer_sequence_adapter<boost::asio::const_buffer,
@@ -216,6 +218,9 @@ public:
       boost_asio_handler_alloc_helpers::allocate(
         sizeof(op), handler), 0 };
     p.p = new (p.v) op(handler);
+
+    BOOST_ASIO_HANDLER_CREATION((p.p, "socket",
+          &impl, "async_send(null_buffers)"));
 
     start_op(impl, reactor::write_op, p.p, false, false);
     p.v = p.p = 0;
@@ -258,6 +263,8 @@ public:
         sizeof(op), handler), 0 };
     p.p = new (p.v) op(impl.socket_, impl.state_, buffers, flags, handler);
 
+    BOOST_ASIO_HANDLER_CREATION((p.p, "socket", &impl, "async_receive"));
+
     start_op(impl,
         (flags & socket_base::message_out_of_band)
           ? reactor::except_op : reactor::read_op,
@@ -279,6 +286,9 @@ public:
       boost_asio_handler_alloc_helpers::allocate(
         sizeof(op), handler), 0 };
     p.p = new (p.v) op(handler);
+
+    BOOST_ASIO_HANDLER_CREATION((p.p, "socket",
+          &impl, "async_receive(null_buffers)"));
 
     start_op(impl,
         (flags & socket_base::message_out_of_band)
@@ -331,6 +341,9 @@ public:
         sizeof(op), handler), 0 };
     p.p = new (p.v) op(impl.socket_, buffers, in_flags, out_flags, handler);
 
+    BOOST_ASIO_HANDLER_CREATION((p.p, "socket",
+          &impl, "async_receive_with_flags"));
+
     start_op(impl,
         (in_flags & socket_base::message_out_of_band)
           ? reactor::except_op : reactor::read_op,
@@ -350,6 +363,9 @@ public:
       boost_asio_handler_alloc_helpers::allocate(
         sizeof(op), handler), 0 };
     p.p = new (p.v) op(handler);
+
+    BOOST_ASIO_HANDLER_CREATION((p.p, "socket", &impl,
+          "async_receive_with_flags(null_buffers)"));
 
     // Clear out_flags, since we cannot give it any other sensible value when
     // performing a null_buffers operation.

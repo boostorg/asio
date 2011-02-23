@@ -136,7 +136,19 @@ public:
   void async_write_some(implementation_type& impl,
       const ConstBufferSequence& buffers, Handler& handler)
   {
-    async_write_some_at(impl, 0, buffers, handler);
+    // Allocate and construct an operation to wrap the handler.
+    typedef win_iocp_handle_write_op<ConstBufferSequence, Handler> op;
+    typename op::ptr p = { boost::addressof(handler),
+      boost_asio_handler_alloc_helpers::allocate(
+        sizeof(op), handler), 0 };
+    p.p = new (p.v) op(buffers, handler);
+
+    BOOST_ASIO_HANDLER_CREATION((p.p, "handle", &impl, "async_write_some"));
+
+    start_write_op(impl, 0,
+        buffer_sequence_adapter<boost::asio::const_buffer,
+          ConstBufferSequence>::first(buffers), p.p);
+    p.v = p.p = 0;
   }
 
   // Start an asynchronous write at a specified offset. The data being written
@@ -151,6 +163,8 @@ public:
       boost_asio_handler_alloc_helpers::allocate(
         sizeof(op), handler), 0 };
     p.p = new (p.v) op(buffers, handler);
+
+    BOOST_ASIO_HANDLER_CREATION((p.p, "handle", &impl, "async_write_some_at"));
 
     start_write_op(impl, offset,
         buffer_sequence_adapter<boost::asio::const_buffer,
@@ -184,7 +198,19 @@ public:
   void async_read_some(implementation_type& impl,
       const MutableBufferSequence& buffers, Handler& handler)
   {
-    async_read_some_at(impl, 0, buffers, handler);
+    // Allocate and construct an operation to wrap the handler.
+    typedef win_iocp_handle_read_op<MutableBufferSequence, Handler> op;
+    typename op::ptr p = { boost::addressof(handler),
+      boost_asio_handler_alloc_helpers::allocate(
+        sizeof(op), handler), 0 };
+    p.p = new (p.v) op(buffers, handler);
+
+    BOOST_ASIO_HANDLER_CREATION((p.p, "handle", &impl, "async_read_some"));
+
+    start_read_op(impl, 0,
+        buffer_sequence_adapter<boost::asio::mutable_buffer,
+          MutableBufferSequence>::first(buffers), p.p);
+    p.v = p.p = 0;
   }
 
   // Start an asynchronous read at a specified offset. The buffer for the data
@@ -200,6 +226,8 @@ public:
       boost_asio_handler_alloc_helpers::allocate(
         sizeof(op), handler), 0 };
     p.p = new (p.v) op(buffers, handler);
+
+    BOOST_ASIO_HANDLER_CREATION((p.p, "handle", &impl, "async_read_some_at"));
 
     start_read_op(impl, offset,
         buffer_sequence_adapter<boost::asio::mutable_buffer,

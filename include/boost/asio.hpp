@@ -23,6 +23,7 @@
 #include <boost/asio/basic_raw_socket.hpp>
 #include <boost/asio/basic_seq_packet_socket.hpp>
 #include <boost/asio/basic_serial_port.hpp>
+#include <boost/asio/basic_signal_set.hpp>
 #include <boost/asio/basic_socket_acceptor.hpp>
 #include <boost/asio/basic_socket_iostream.hpp>
 #include <boost/asio/basic_socket_streambuf.hpp>
@@ -82,6 +83,8 @@
 #include <boost/asio/serial_port.hpp>
 #include <boost/asio/serial_port_base.hpp>
 #include <boost/asio/serial_port_service.hpp>
+#include <boost/asio/signal_set.hpp>
+#include <boost/asio/signal_set_service.hpp>
 #include <boost/asio/socket_acceptor_service.hpp>
 #include <boost/asio/socket_base.hpp>
 #include <boost/asio/strand.hpp>
