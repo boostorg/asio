@@ -139,6 +139,9 @@ program, then build the program with `BOOST_ASIO_SEPARATE_COMPILATION` defined
 in the project\/compiler settings. Alternatively, `BOOST_ASIO_DYN_LINK` may be
 defined to build a separately-compiled Boost.Asio as part of a shared library.
 
+If using Boost.Asio's SSL support, you will also need to add `#include
+<boost/asio/ssl/impl/src.hpp>`.
+
 [heading Macros]
 
 The macros listed in the table below may be used to control the behaviour of

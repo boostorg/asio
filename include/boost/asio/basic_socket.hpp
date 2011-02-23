@@ -17,6 +17,7 @@
 
 #include <boost/asio/detail/config.hpp>
 #include <boost/asio/basic_io_object.hpp>
+#include <boost/asio/detail/handler_type_requirements.hpp>
 #include <boost/asio/detail/throw_error.hpp>
 #include <boost/asio/error.hpp>
 #include <boost/asio/socket_base.hpp>
@@ -41,8 +42,12 @@ class basic_socket
     public socket_base
 {
 public:
+  /// (Deprecated: Use native_handle_type.) The native representation of a
+  /// socket.
+  typedef typename SocketService::native_handle_type native_type;
+
   /// The native representation of a socket.
-  typedef typename SocketService::native_type native_type;
+  typedef typename SocketService::native_handle_type native_handle_type;
 
   /// The protocol type.
   typedef Protocol protocol_type;
@@ -125,7 +130,7 @@ public:
    * @throws boost::system::system_error Thrown on failure.
    */
   basic_socket(boost::asio::io_service& io_service,
-      const protocol_type& protocol, const native_type& native_socket)
+      const protocol_type& protocol, const native_handle_type& native_socket)
     : basic_io_object<SocketService>(io_service)
   {
     boost::system::error_code ec;
@@ -217,7 +222,8 @@ public:
    *
    * @throws boost::system::system_error Thrown on failure.
    */
-  void assign(const protocol_type& protocol, const native_type& native_socket)
+  void assign(const protocol_type& protocol,
+      const native_handle_type& native_socket)
   {
     boost::system::error_code ec;
     this->service.assign(this->implementation, protocol, native_socket, ec);
@@ -235,7 +241,7 @@ public:
    * @param ec Set to indicate what error occurred, if any.
    */
   boost::system::error_code assign(const protocol_type& protocol,
-      const native_type& native_socket, boost::system::error_code& ec)
+      const native_handle_type& native_socket, boost::system::error_code& ec)
   {
     return this->service.assign(this->implementation,
         protocol, native_socket, ec);
@@ -293,7 +299,7 @@ public:
     return this->service.close(this->implementation, ec);
   }
 
-  /// Get the native socket representation.
+  /// (Deprecated: Use native_handle().) Get the native socket representation.
   /**
    * This function may be used to obtain the underlying representation of the
    * socket. This is intended to allow access to native socket functionality
@@ -301,7 +307,18 @@ public:
    */
   native_type native()
   {
-    return this->service.native(this->implementation);
+    return this->service.native_handle(this->implementation);
+  }
+
+  /// Get the native socket representation.
+  /**
+   * This function may be used to obtain the underlying representation of the
+   * socket. This is intended to allow access to native socket functionality
+   * that is not otherwise provided.
+   */
+  native_handle_type native_handle()
+  {
+    return this->service.native_handle(this->implementation);
   }
 
   /// Cancel all asynchronous operations associated with the socket.
@@ -640,6 +657,10 @@ public:
   template <typename ConnectHandler>
   void async_connect(const endpoint_type& peer_endpoint, ConnectHandler handler)
   {
+    // If you get an error on the following line it means that your handler does
+    // not meet the documented type requirements for a ConnectHandler.
+    BOOST_ASIO_CONNECT_HANDLER_CHECK(ConnectHandler, handler) type_check;
+
     if (!is_open())
     {
       boost::system::error_code ec;
@@ -652,7 +673,8 @@ public:
       }
     }
 
-    this->service.async_connect(this->implementation, peer_endpoint, handler);
+    this->service.async_connect(this->implementation, peer_endpoint,
+        BOOST_ASIO_MOVE_CAST(ConnectHandler)(handler));
   }
 
   /// Set an option on the socket.
@@ -895,6 +917,333 @@ public:
       boost::system::error_code& ec)
   {
     return this->service.io_control(this->implementation, command, ec);
+  }
+
+  /// Gets the non-blocking mode of the socket.
+  /**
+   * @returns @c true if the socket's synchronous operations will fail with
+   * boost::asio::error::would_block if they are unable to perform the requested
+   * operation immediately. If @c false, synchronous operations will block
+   * until complete.
+   *
+   * @note The non-blocking mode has no effect on the behaviour of asynchronous
+   * operations. Asynchronous operations will never fail with the error
+   * boost::asio::error::would_block.
+   */
+  bool non_blocking() const
+  {
+    return this->service.non_blocking(this->implementation);
+  }
+
+  /// Sets the non-blocking mode of the socket.
+  /**
+   * @param mode If @c true, the socket's synchronous operations will fail with
+   * boost::asio::error::would_block if they are unable to perform the requested
+   * operation immediately. If @c false, synchronous operations will block
+   * until complete.
+   *
+   * @throws boost::system::system_error Thrown on failure.
+   *
+   * @note The non-blocking mode has no effect on the behaviour of asynchronous
+   * operations. Asynchronous operations will never fail with the error
+   * boost::asio::error::would_block.
+   */
+  void non_blocking(bool mode)
+  {
+    boost::system::error_code ec;
+    this->service.non_blocking(this->implementation, mode, ec);
+    boost::asio::detail::throw_error(ec);
+  }
+
+  /// Sets the non-blocking mode of the socket.
+  /**
+   * @param mode If @c true, the socket's synchronous operations will fail with
+   * boost::asio::error::would_block if they are unable to perform the requested
+   * operation immediately. If @c false, synchronous operations will block
+   * until complete.
+   *
+   * @param ec Set to indicate what error occurred, if any.
+   *
+   * @note The non-blocking mode has no effect on the behaviour of asynchronous
+   * operations. Asynchronous operations will never fail with the error
+   * boost::asio::error::would_block.
+   */
+  boost::system::error_code non_blocking(
+      bool mode, boost::system::error_code& ec)
+  {
+    return this->service.non_blocking(this->implementation, mode, ec);
+  }
+
+  /// Gets the non-blocking mode of the native socket implementation.
+  /**
+   * This function is used to retrieve the non-blocking mode of the underlying
+   * native socket. This mode has no effect on the behaviour of the socket
+   * object's synchronous operations.
+   *
+   * @returns @c true if the underlying socket is in non-blocking mode and
+   * direct system calls may fail with boost::asio::error::would_block (or the
+   * equivalent system error).
+   *
+   * @note The current non-blocking mode is cached by the socket object.
+   * Consequently, the return value may be incorrect if the non-blocking mode
+   * was set directly on the native socket.
+   *
+   * @par Example
+   * This function is intended to allow the encapsulation of arbitrary
+   * non-blocking system calls as asynchronous operations, in a way that is
+   * transparent to the user of the socket object. The following example
+   * illustrates how Linux's @c sendfile system call might be encapsulated:
+   * @code template <typename Handler>
+   * struct sendfile_op
+   * {
+   *   tcp::socket& sock_;
+   *   int fd_;
+   *   Handler handler_;
+   *   off_t offset_;
+   *   std::size_t total_bytes_transferred_;
+   *
+   *   // Function call operator meeting WriteHandler requirements.
+   *   // Used as the handler for the async_write_some operation.
+   *   void operator()(boost::system::error_code ec, std::size_t)
+   *   {
+   *     // Put the underlying socket into non-blocking mode.
+   *     if (!ec)
+   *       if (!sock_.native_non_blocking())
+   *         sock_.native_non_blocking(true, ec);
+   *
+   *     if (!ec)
+   *     {
+   *       for (;;)
+   *       {
+   *         // Try the system call.
+   *         errno = 0;
+   *         int n = ::sendfile(sock_.native_handle(), fd_, &offset_, 65536);
+   *         ec = boost::system::error_code(n < 0 ? errno : 0,
+   *             boost::asio::error::get_system_category());
+   *         total_bytes_transferred_ += ec ? 0 : n;
+   *
+   *         // Retry operation immediately if interrupted by signal.
+   *         if (ec == boost::asio::error::interrupted)
+   *           continue;
+   *
+   *         // Check if we need to run the operation again.
+   *         if (ec == boost::asio::error::would_block
+   *             || ec == boost::asio::error::try_again)
+   *         {
+   *           // We have to wait for the socket to become ready again.
+   *           sock_.async_write_some(boost::asio::null_buffers(), *this);
+   *           return;
+   *         }
+   *
+   *         if (ec || n == 0)
+   *         {
+   *           // An error occurred, or we have reached the end of the file.
+   *           // Either way we must exit the loop so we can call the handler.
+   *           break;
+   *         }
+   *
+   *         // Loop around to try calling sendfile again.
+   *       }
+   *     }
+   *
+   *     // Pass result back to user's handler.
+   *     handler_(ec, total_bytes_transferred_);
+   *   }
+   * };
+   *
+   * template <typename Handler>
+   * void async_sendfile(tcp::socket& sock, int fd, Handler h)
+   * {
+   *   sendfile_op<Handler> op = { sock, fd, h, 0, 0 };
+   *   sock.async_write_some(boost::asio::null_buffers(), op);
+   * } @endcode
+   */
+  bool native_non_blocking() const
+  {
+    return this->service.native_non_blocking(this->implementation);
+  }
+
+  /// Sets the non-blocking mode of the native socket implementation.
+  /**
+   * This function is used to modify the non-blocking mode of the underlying
+   * native socket. It has no effect on the behaviour of the socket object's
+   * synchronous operations.
+   *
+   * @param mode If @c true, the underlying socket is put into non-blocking
+   * mode and direct system calls may fail with boost::asio::error::would_block
+   * (or the equivalent system error).
+   *
+   * @throws boost::system::system_error Thrown on failure. If the @c mode is
+   * @c false, but the current value of @c non_blocking() is @c true, this
+   * function fails with boost::asio::error::invalid_argument, as the
+   * combination does not make sense.
+   *
+   * @par Example
+   * This function is intended to allow the encapsulation of arbitrary
+   * non-blocking system calls as asynchronous operations, in a way that is
+   * transparent to the user of the socket object. The following example
+   * illustrates how Linux's @c sendfile system call might be encapsulated:
+   * @code template <typename Handler>
+   * struct sendfile_op
+   * {
+   *   tcp::socket& sock_;
+   *   int fd_;
+   *   Handler handler_;
+   *   off_t offset_;
+   *   std::size_t total_bytes_transferred_;
+   *
+   *   // Function call operator meeting WriteHandler requirements.
+   *   // Used as the handler for the async_write_some operation.
+   *   void operator()(boost::system::error_code ec, std::size_t)
+   *   {
+   *     // Put the underlying socket into non-blocking mode.
+   *     if (!ec)
+   *       if (!sock_.native_non_blocking())
+   *         sock_.native_non_blocking(true, ec);
+   *
+   *     if (!ec)
+   *     {
+   *       for (;;)
+   *       {
+   *         // Try the system call.
+   *         errno = 0;
+   *         int n = ::sendfile(sock_.native_handle(), fd_, &offset_, 65536);
+   *         ec = boost::system::error_code(n < 0 ? errno : 0,
+   *             boost::asio::error::get_system_category());
+   *         total_bytes_transferred_ += ec ? 0 : n;
+   *
+   *         // Retry operation immediately if interrupted by signal.
+   *         if (ec == boost::asio::error::interrupted)
+   *           continue;
+   *
+   *         // Check if we need to run the operation again.
+   *         if (ec == boost::asio::error::would_block
+   *             || ec == boost::asio::error::try_again)
+   *         {
+   *           // We have to wait for the socket to become ready again.
+   *           sock_.async_write_some(boost::asio::null_buffers(), *this);
+   *           return;
+   *         }
+   *
+   *         if (ec || n == 0)
+   *         {
+   *           // An error occurred, or we have reached the end of the file.
+   *           // Either way we must exit the loop so we can call the handler.
+   *           break;
+   *         }
+   *
+   *         // Loop around to try calling sendfile again.
+   *       }
+   *     }
+   *
+   *     // Pass result back to user's handler.
+   *     handler_(ec, total_bytes_transferred_);
+   *   }
+   * };
+   *
+   * template <typename Handler>
+   * void async_sendfile(tcp::socket& sock, int fd, Handler h)
+   * {
+   *   sendfile_op<Handler> op = { sock, fd, h, 0, 0 };
+   *   sock.async_write_some(boost::asio::null_buffers(), op);
+   * } @endcode
+   */
+  void native_non_blocking(bool mode)
+  {
+    boost::system::error_code ec;
+    this->service.native_non_blocking(this->implementation, mode, ec);
+    boost::asio::detail::throw_error(ec);
+  }
+
+  /// Sets the non-blocking mode of the native socket implementation.
+  /**
+   * This function is used to modify the non-blocking mode of the underlying
+   * native socket. It has no effect on the behaviour of the socket object's
+   * synchronous operations.
+   *
+   * @param mode If @c true, the underlying socket is put into non-blocking
+   * mode and direct system calls may fail with boost::asio::error::would_block
+   * (or the equivalent system error).
+   *
+   * @param ec Set to indicate what error occurred, if any. If the @c mode is
+   * @c false, but the current value of @c non_blocking() is @c true, this
+   * function fails with boost::asio::error::invalid_argument, as the
+   * combination does not make sense.
+   *
+   * @par Example
+   * This function is intended to allow the encapsulation of arbitrary
+   * non-blocking system calls as asynchronous operations, in a way that is
+   * transparent to the user of the socket object. The following example
+   * illustrates how Linux's @c sendfile system call might be encapsulated:
+   * @code template <typename Handler>
+   * struct sendfile_op
+   * {
+   *   tcp::socket& sock_;
+   *   int fd_;
+   *   Handler handler_;
+   *   off_t offset_;
+   *   std::size_t total_bytes_transferred_;
+   *
+   *   // Function call operator meeting WriteHandler requirements.
+   *   // Used as the handler for the async_write_some operation.
+   *   void operator()(boost::system::error_code ec, std::size_t)
+   *   {
+   *     // Put the underlying socket into non-blocking mode.
+   *     if (!ec)
+   *       if (!sock_.native_non_blocking())
+   *         sock_.native_non_blocking(true, ec);
+   *
+   *     if (!ec)
+   *     {
+   *       for (;;)
+   *       {
+   *         // Try the system call.
+   *         errno = 0;
+   *         int n = ::sendfile(sock_.native_handle(), fd_, &offset_, 65536);
+   *         ec = boost::system::error_code(n < 0 ? errno : 0,
+   *             boost::asio::error::get_system_category());
+   *         total_bytes_transferred_ += ec ? 0 : n;
+   *
+   *         // Retry operation immediately if interrupted by signal.
+   *         if (ec == boost::asio::error::interrupted)
+   *           continue;
+   *
+   *         // Check if we need to run the operation again.
+   *         if (ec == boost::asio::error::would_block
+   *             || ec == boost::asio::error::try_again)
+   *         {
+   *           // We have to wait for the socket to become ready again.
+   *           sock_.async_write_some(boost::asio::null_buffers(), *this);
+   *           return;
+   *         }
+   *
+   *         if (ec || n == 0)
+   *         {
+   *           // An error occurred, or we have reached the end of the file.
+   *           // Either way we must exit the loop so we can call the handler.
+   *           break;
+   *         }
+   *
+   *         // Loop around to try calling sendfile again.
+   *       }
+   *     }
+   *
+   *     // Pass result back to user's handler.
+   *     handler_(ec, total_bytes_transferred_);
+   *   }
+   * };
+   *
+   * template <typename Handler>
+   * void async_sendfile(tcp::socket& sock, int fd, Handler h)
+   * {
+   *   sendfile_op<Handler> op = { sock, fd, h, 0, 0 };
+   *   sock.async_write_some(boost::asio::null_buffers(), op);
+   * } @endcode
+   */
+  boost::system::error_code native_non_blocking(
+      bool mode, boost::system::error_code& ec)
+  {
+    return this->service.native_non_blocking(this->implementation, mode, ec);
   }
 
   /// Get the local endpoint of the socket.

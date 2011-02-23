@@ -17,6 +17,7 @@
 
 #include <boost/asio/detail/config.hpp>
 #include <boost/asio/basic_io_object.hpp>
+#include <boost/asio/detail/handler_type_requirements.hpp>
 #include <boost/asio/detail/throw_error.hpp>
 #include <boost/asio/error.hpp>
 #include <boost/asio/ip/basic_resolver_iterator.hpp>
@@ -154,7 +155,13 @@ public:
   template <typename ResolveHandler>
   void async_resolve(const query& q, ResolveHandler handler)
   {
-    return this->service.async_resolve(this->implementation, q, handler);
+    // If you get an error on the following line it means that your handler does
+    // not meet the documented type requirements for a ResolveHandler.
+    BOOST_ASIO_RESOLVE_HANDLER_CHECK(
+        ResolveHandler, handler, iterator) type_check;
+
+    return this->service.async_resolve(this->implementation, q,
+        BOOST_ASIO_MOVE_CAST(ResolveHandler)(handler));
   }
 
   /// Perform reverse resolution of an endpoint to a list of entries.
@@ -238,7 +245,13 @@ public:
   template <typename ResolveHandler>
   void async_resolve(const endpoint_type& e, ResolveHandler handler)
   {
-    return this->service.async_resolve(this->implementation, e, handler);
+    // If you get an error on the following line it means that your handler does
+    // not meet the documented type requirements for a ResolveHandler.
+    BOOST_ASIO_RESOLVE_HANDLER_CHECK(
+        ResolveHandler, handler, iterator) type_check;
+
+    return this->service.async_resolve(this->implementation, e,
+        BOOST_ASIO_MOVE_CAST(ResolveHandler)(handler));
   }
 };
 

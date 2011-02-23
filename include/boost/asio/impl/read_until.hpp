@@ -25,6 +25,7 @@
 #include <boost/asio/detail/bind_handler.hpp>
 #include <boost/asio/detail/handler_alloc_helpers.hpp>
 #include <boost/asio/detail/handler_invoke_helpers.hpp>
+#include <boost/asio/detail/handler_type_requirements.hpp>
 #include <boost/asio/detail/throw_error.hpp>
 
 #include <boost/asio/detail/push_options.hpp>
@@ -56,11 +57,11 @@ std::size_t read_until(SyncReadStream& s,
     typedef boost::asio::buffers_iterator<const_buffers_type> iterator;
     const_buffers_type buffers = b.data();
     iterator begin = iterator::begin(buffers);
-    iterator start = begin + search_position;
+    iterator start_pos = begin + search_position;
     iterator end = iterator::end(buffers);
 
     // Look for a match.
-    iterator iter = std::find(start, end, delim);
+    iterator iter = std::find(start_pos, end, delim);
     if (iter != end)
     {
       // Found a match. We're done.
@@ -147,12 +148,12 @@ std::size_t read_until(SyncReadStream& s,
     typedef boost::asio::buffers_iterator<const_buffers_type> iterator;
     const_buffers_type buffers = b.data();
     iterator begin = iterator::begin(buffers);
-    iterator start = begin + search_position;
+    iterator start_pos = begin + search_position;
     iterator end = iterator::end(buffers);
 
     // Look for a match.
     std::pair<iterator, bool> result = detail::partial_search(
-        start, end, delim.begin(), delim.end());
+        start_pos, end, delim.begin(), delim.end());
     if (result.first != end)
     {
       if (result.second)
@@ -212,14 +213,14 @@ std::size_t read_until(SyncReadStream& s,
     typedef boost::asio::buffers_iterator<const_buffers_type> iterator;
     const_buffers_type buffers = b.data();
     iterator begin = iterator::begin(buffers);
-    iterator start = begin + search_position;
+    iterator start_pos = begin + search_position;
     iterator end = iterator::end(buffers);
 
     // Look for a match.
     boost::match_results<iterator,
       typename std::vector<boost::sub_match<iterator> >::allocator_type>
         match_results;
-    if (regex_search(start, end, match_results, expr,
+    if (regex_search(start_pos, end, match_results, expr,
           boost::match_default | boost::match_partial))
     {
       if (match_results[0].matched)
@@ -270,11 +271,11 @@ std::size_t read_until(SyncReadStream& s,
     typedef boost::asio::buffers_iterator<const_buffers_type> iterator;
     const_buffers_type buffers = b.data();
     iterator begin = iterator::begin(buffers);
-    iterator start = begin + search_position;
+    iterator start_pos = begin + search_position;
     iterator end = iterator::end(buffers);
 
     // Look for a match.
-    std::pair<iterator, bool> result = match_condition(start, end);
+    std::pair<iterator, bool> result = match_condition(start_pos, end);
     if (result.second)
     {
       // Full match. We're done.
@@ -326,12 +327,12 @@ namespace detail
   public:
     read_until_delim_op(AsyncReadStream& stream,
         boost::asio::basic_streambuf<Allocator>& streambuf,
-        char delim, ReadHandler handler)
+        char delim, ReadHandler& handler)
       : stream_(stream),
         streambuf_(streambuf),
         delim_(delim),
         search_position_(0),
-        handler_(handler)
+        handler_(BOOST_ASIO_MOVE_CAST(ReadHandler)(handler))
     {
     }
 
@@ -352,11 +353,11 @@ namespace detail
             typedef boost::asio::buffers_iterator<const_buffers_type> iterator;
             const_buffers_type buffers = streambuf_.data();
             iterator begin = iterator::begin(buffers);
-            iterator start = begin + search_position_;
+            iterator start_pos = begin + search_position_;
             iterator end = iterator::end(buffers);
 
             // Look for a match.
-            iterator iter = std::find(start, end, delim_);
+            iterator iter = std::find(start_pos, end, delim_);
             if (iter != end)
             {
               // Found a match. We're done.
@@ -445,6 +446,10 @@ template <typename AsyncReadStream, typename Allocator, typename ReadHandler>
 void async_read_until(AsyncReadStream& s,
     boost::asio::basic_streambuf<Allocator>& b, char delim, ReadHandler handler)
 {
+  // If you get an error on the following line it means that your handler does
+  // not meet the documented type requirements for a ReadHandler.
+  BOOST_ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
+
   detail::read_until_delim_op<
     AsyncReadStream, Allocator, ReadHandler>(
       s, b, delim, handler)(
@@ -459,12 +464,12 @@ namespace detail
   public:
     read_until_delim_string_op(AsyncReadStream& stream,
         boost::asio::basic_streambuf<Allocator>& streambuf,
-        const std::string& delim, ReadHandler handler)
+        const std::string& delim, ReadHandler& handler)
       : stream_(stream),
         streambuf_(streambuf),
         delim_(delim),
         search_position_(0),
-        handler_(handler)
+        handler_(BOOST_ASIO_MOVE_CAST(ReadHandler)(handler))
     {
     }
 
@@ -485,12 +490,12 @@ namespace detail
             typedef boost::asio::buffers_iterator<const_buffers_type> iterator;
             const_buffers_type buffers = streambuf_.data();
             iterator begin = iterator::begin(buffers);
-            iterator start = begin + search_position_;
+            iterator start_pos = begin + search_position_;
             iterator end = iterator::end(buffers);
 
             // Look for a match.
             std::pair<iterator, bool> result = detail::partial_search(
-                start, end, delim_.begin(), delim_.end());
+                start_pos, end, delim_.begin(), delim_.end());
             if (result.first != end && result.second)
             {
               // Full match. We're done.
@@ -590,6 +595,10 @@ void async_read_until(AsyncReadStream& s,
     boost::asio::basic_streambuf<Allocator>& b, const std::string& delim,
     ReadHandler handler)
 {
+  // If you get an error on the following line it means that your handler does
+  // not meet the documented type requirements for a ReadHandler.
+  BOOST_ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
+
   detail::read_until_delim_string_op<
     AsyncReadStream, Allocator, ReadHandler>(
       s, b, delim, handler)(
@@ -605,12 +614,12 @@ namespace detail
   public:
     read_until_expr_op(AsyncReadStream& stream,
         boost::asio::basic_streambuf<Allocator>& streambuf,
-        const boost::regex& expr, ReadHandler handler)
+        const boost::regex& expr, ReadHandler& handler)
       : stream_(stream),
         streambuf_(streambuf),
         expr_(expr),
         search_position_(0),
-        handler_(handler)
+        handler_(BOOST_ASIO_MOVE_CAST(ReadHandler)(handler))
     {
     }
 
@@ -631,14 +640,14 @@ namespace detail
             typedef boost::asio::buffers_iterator<const_buffers_type> iterator;
             const_buffers_type buffers = streambuf_.data();
             iterator begin = iterator::begin(buffers);
-            iterator start = begin + search_position_;
+            iterator start_pos = begin + search_position_;
             iterator end = iterator::end(buffers);
 
             // Look for a match.
             boost::match_results<iterator,
               typename std::vector<boost::sub_match<iterator> >::allocator_type>
                 match_results;
-            bool match = regex_search(start, end, match_results, expr_,
+            bool match = regex_search(start_pos, end, match_results, expr_,
                 boost::match_default | boost::match_partial);
             if (match && match_results[0].matched)
             {
@@ -741,6 +750,10 @@ void async_read_until(AsyncReadStream& s,
     boost::asio::basic_streambuf<Allocator>& b, const boost::regex& expr,
     ReadHandler handler)
 {
+  // If you get an error on the following line it means that your handler does
+  // not meet the documented type requirements for a ReadHandler.
+  BOOST_ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
+
   detail::read_until_expr_op<AsyncReadStream,
     Allocator, boost::regex, ReadHandler>(
       s, b, expr, handler)(
@@ -756,12 +769,12 @@ namespace detail
   public:
     read_until_match_op(AsyncReadStream& stream,
         boost::asio::basic_streambuf<Allocator>& streambuf,
-        MatchCondition match_condition, ReadHandler handler)
+        MatchCondition match_condition, ReadHandler& handler)
       : stream_(stream),
         streambuf_(streambuf),
         match_condition_(match_condition),
         search_position_(0),
-        handler_(handler)
+        handler_(BOOST_ASIO_MOVE_CAST(ReadHandler)(handler))
     {
     }
 
@@ -782,11 +795,11 @@ namespace detail
             typedef boost::asio::buffers_iterator<const_buffers_type> iterator;
             const_buffers_type buffers = streambuf_.data();
             iterator begin = iterator::begin(buffers);
-            iterator start = begin + search_position_;
+            iterator start_pos = begin + search_position_;
             iterator end = iterator::end(buffers);
 
             // Look for a match.
-            std::pair<iterator, bool> result = match_condition_(start, end);
+            std::pair<iterator, bool> result = match_condition_(start_pos, end);
             if (result.second)
             {
               // Full match. We're done.
@@ -890,6 +903,10 @@ void async_read_until(AsyncReadStream& s,
     MatchCondition match_condition, ReadHandler handler,
     typename boost::enable_if<is_match_condition<MatchCondition> >::type*)
 {
+  // If you get an error on the following line it means that your handler does
+  // not meet the documented type requirements for a ReadHandler.
+  BOOST_ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
+
   detail::read_until_match_op<
     AsyncReadStream, Allocator, MatchCondition, ReadHandler>(
       s, b, match_condition, handler)(

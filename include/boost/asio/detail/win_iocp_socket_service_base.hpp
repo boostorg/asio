@@ -40,6 +40,7 @@
 #include <boost/asio/detail/win_iocp_null_buffers_op.hpp>
 #include <boost/asio/detail/win_iocp_socket_send_op.hpp>
 #include <boost/asio/detail/win_iocp_socket_recv_op.hpp>
+#include <boost/asio/detail/win_iocp_socket_recvmsg_op.hpp>
 
 #include <boost/asio/detail/push_options.hpp>
 
@@ -142,7 +143,35 @@ public:
     return ec;
   }
 
-  /// Disable sends or receives on the socket.
+  // Gets the non-blocking mode of the socket.
+  bool non_blocking(const base_implementation_type& impl) const
+  {
+    return (impl.state_ & socket_ops::user_set_non_blocking) != 0;
+  }
+
+  // Sets the non-blocking mode of the socket.
+  boost::system::error_code non_blocking(base_implementation_type& impl,
+      bool mode, boost::system::error_code& ec)
+  {
+    socket_ops::set_user_non_blocking(impl.socket_, impl.state_, mode, ec);
+    return ec;
+  }
+
+  // Gets the non-blocking mode of the native socket implementation.
+  bool native_non_blocking(const base_implementation_type& impl) const
+  {
+    return (impl.state_ & socket_ops::internal_non_blocking) != 0;
+  }
+
+  // Sets the non-blocking mode of the native socket implementation.
+  boost::system::error_code native_non_blocking(base_implementation_type& impl,
+      bool mode, boost::system::error_code& ec)
+  {
+    socket_ops::set_internal_non_blocking(impl.socket_, impl.state_, mode, ec);
+    return ec;
+  }
+
+  // Disable sends or receives on the socket.
   boost::system::error_code shutdown(base_implementation_type& impl,
       socket_base::shutdown_type what, boost::system::error_code& ec)
   {
@@ -178,7 +207,7 @@ public:
   template <typename ConstBufferSequence, typename Handler>
   void async_send(base_implementation_type& impl,
       const ConstBufferSequence& buffers,
-      socket_base::message_flags flags, Handler handler)
+      socket_base::message_flags flags, Handler& handler)
   {
     // Allocate and construct an operation to wrap the handler.
     typedef win_iocp_socket_send_op<ConstBufferSequence, Handler> op;
@@ -199,7 +228,7 @@ public:
   // Start an asynchronous wait until data can be sent without blocking.
   template <typename Handler>
   void async_send(base_implementation_type& impl, const null_buffers&,
-      socket_base::message_flags, Handler handler)
+      socket_base::message_flags, Handler& handler)
   {
     // Allocate and construct an operation to wrap the handler.
     typedef win_iocp_null_buffers_op<Handler> op;
@@ -240,7 +269,7 @@ public:
   template <typename MutableBufferSequence, typename Handler>
   void async_receive(base_implementation_type& impl,
       const MutableBufferSequence& buffers,
-      socket_base::message_flags flags, Handler handler)
+      socket_base::message_flags flags, Handler& handler)
   {
     // Allocate and construct an operation to wrap the handler.
     typedef win_iocp_socket_recv_op<MutableBufferSequence, Handler> op;
@@ -261,7 +290,7 @@ public:
   // Wait until data can be received without blocking.
   template <typename Handler>
   void async_receive(base_implementation_type& impl, const null_buffers&,
-      socket_base::message_flags flags, Handler handler)
+      socket_base::message_flags flags, Handler& handler)
   {
     // Allocate and construct an operation to wrap the handler.
     typedef win_iocp_null_buffers_op<Handler> op;
@@ -271,6 +300,77 @@ public:
     p.p = new (p.v) op(impl.cancel_token_, handler);
 
     start_null_buffers_receive_op(impl, flags, p.p);
+    p.v = p.p = 0;
+  }
+
+  // Receive some data with associated flags. Returns the number of bytes
+  // received.
+  template <typename MutableBufferSequence>
+  size_t receive_with_flags(base_implementation_type& impl,
+      const MutableBufferSequence& buffers,
+      socket_base::message_flags in_flags,
+      socket_base::message_flags& out_flags, boost::system::error_code& ec)
+  {
+    buffer_sequence_adapter<boost::asio::mutable_buffer,
+        MutableBufferSequence> bufs(buffers);
+
+    return socket_ops::sync_recvmsg(impl.socket_, impl.state_,
+        bufs.buffers(), bufs.count(), in_flags, out_flags, ec);
+  }
+
+  // Wait until data can be received without blocking.
+  size_t receive_with_flags(base_implementation_type& impl,
+      const null_buffers&, socket_base::message_flags,
+      socket_base::message_flags& out_flags, boost::system::error_code& ec)
+  {
+    // Wait for socket to become ready.
+    socket_ops::poll_read(impl.socket_, ec);
+
+    // Clear out_flags, since we cannot give it any other sensible value when
+    // performing a null_buffers operation.
+    out_flags = 0;
+
+    return 0;
+  }
+
+  // Start an asynchronous receive. The buffer for the data being received
+  // must be valid for the lifetime of the asynchronous operation.
+  template <typename MutableBufferSequence, typename Handler>
+  void async_receive_with_flags(base_implementation_type& impl,
+      const MutableBufferSequence& buffers, socket_base::message_flags in_flags,
+      socket_base::message_flags& out_flags, Handler& handler)
+  {
+    // Allocate and construct an operation to wrap the handler.
+    typedef win_iocp_socket_recvmsg_op<MutableBufferSequence, Handler> op;
+    typename op::ptr p = { boost::addressof(handler),
+      boost_asio_handler_alloc_helpers::allocate(
+        sizeof(op), handler), 0 };
+    p.p = new (p.v) op(impl.cancel_token_, buffers, out_flags, handler);
+
+    buffer_sequence_adapter<boost::asio::mutable_buffer,
+        MutableBufferSequence> bufs(buffers);
+
+    start_receive_op(impl, bufs.buffers(), bufs.count(), in_flags, false, p.p);
+    p.v = p.p = 0;
+  }
+
+  // Wait until data can be received without blocking.
+  template <typename Handler>
+  void async_receive_with_flags(base_implementation_type& impl,
+      const null_buffers&, socket_base::message_flags in_flags,
+      socket_base::message_flags& out_flags, Handler& handler)
+  {
+    // Allocate and construct an operation to wrap the handler.
+    typedef win_iocp_null_buffers_op<Handler> op;
+    typename op::ptr p = { boost::addressof(handler),
+      boost_asio_handler_alloc_helpers::allocate(
+        sizeof(op), handler), 0 };
+    p.p = new (p.v) op(impl.cancel_token_, handler);
+
+    // Reset out_flags since it can be given no sensible value at this time.
+    out_flags = 0;
+
+    start_null_buffers_receive_op(impl, in_flags, p.p);
     p.v = p.p = 0;
   }
 

@@ -42,11 +42,11 @@ public:
   BOOST_ASIO_DEFINE_HANDLER_PTR(win_iocp_null_buffers_op);
 
   win_iocp_null_buffers_op(socket_ops::weak_cancel_token_type cancel_token,
-      Handler handler)
+      Handler& handler)
     : reactor_op(&win_iocp_null_buffers_op::do_perform,
         &win_iocp_null_buffers_op::do_complete),
       cancel_token_(cancel_token),
-      handler_(handler)
+      handler_(BOOST_ASIO_MOVE_CAST(Handler)(handler))
   {
   }
 

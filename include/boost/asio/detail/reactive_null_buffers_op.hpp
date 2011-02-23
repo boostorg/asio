@@ -34,10 +34,10 @@ class reactive_null_buffers_op : public reactor_op
 public:
   BOOST_ASIO_DEFINE_HANDLER_PTR(reactive_null_buffers_op);
 
-  reactive_null_buffers_op(Handler handler)
+  reactive_null_buffers_op(Handler& handler)
     : reactor_op(&reactive_null_buffers_op::do_perform,
         &reactive_null_buffers_op::do_complete),
-      handler_(handler)
+      handler_(BOOST_ASIO_MOVE_CAST(Handler)(handler))
   {
   }
 

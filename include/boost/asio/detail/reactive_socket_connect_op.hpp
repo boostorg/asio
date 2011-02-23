@@ -56,10 +56,10 @@ class reactive_socket_connect_op : public reactive_socket_connect_op_base
 public:
   BOOST_ASIO_DEFINE_HANDLER_PTR(reactive_socket_connect_op);
 
-  reactive_socket_connect_op(socket_type socket, Handler handler)
+  reactive_socket_connect_op(socket_type socket, Handler& handler)
     : reactive_socket_connect_op_base(socket,
         &reactive_socket_connect_op::do_complete),
-      handler_(handler)
+      handler_(BOOST_ASIO_MOVE_CAST(Handler)(handler))
   {
   }
 

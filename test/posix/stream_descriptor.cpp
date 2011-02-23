@@ -59,7 +59,7 @@ void test()
 
     // basic_io_object functions.
 
-    io_service& ios_ref = descriptor1.io_service();
+    io_service& ios_ref = descriptor1.get_io_service();
     (void)ios_ref;
 
     // basic_descriptor functions.
@@ -86,11 +86,29 @@ void test()
       = descriptor1.native();
     (void)native_descriptor3;
 
+    posix::stream_descriptor::native_handle_type native_descriptor4
+      = descriptor1.native_handle();
+    (void)native_descriptor4;
+
+    posix::stream_descriptor::native_handle_type native_descriptor5
+      = descriptor1.release();
+    (void)native_descriptor5;
+
     descriptor1.cancel();
     descriptor1.cancel(ec);
 
     descriptor1.io_control(io_control_command);
     descriptor1.io_control(io_control_command, ec);
+
+    bool non_blocking1 = descriptor1.non_blocking();
+    (void)non_blocking1;
+    descriptor1.non_blocking(true);
+    descriptor1.non_blocking(false, ec);
+
+    bool non_blocking2 = descriptor1.native_non_blocking();
+    (void)non_blocking2;
+    descriptor1.native_non_blocking(true);
+    descriptor1.native_non_blocking(false, ec);
 
     // basic_stream_descriptor functions.
 

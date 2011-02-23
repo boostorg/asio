@@ -23,6 +23,7 @@
 #include <boost/asio/detail/socket_ops.hpp>
 #include <boost/asio/placeholders.hpp>
 #include <boost/asio/ssl/detail/openssl_types.hpp>
+#include <boost/asio/ssl/error.hpp>
 #include <boost/asio/strand.hpp>
 #include <boost/system/system_error.hpp>
 #include <boost/asio/write.hpp>

@@ -50,7 +50,10 @@ void reactive_descriptor_service::destroy(
     reactive_descriptor_service::implementation_type& impl)
 {
   if (is_open(impl))
-    reactor_.close_descriptor(impl.descriptor_, impl.reactor_data_);
+  {
+    reactor_.deregister_descriptor(impl.descriptor_, impl.reactor_data_,
+        (impl.state_ & descriptor_ops::possible_dup) == 0);
+  }
 
   boost::system::error_code ignored_ec;
   descriptor_ops::close(impl.descriptor_, impl.state_, ignored_ec);
@@ -58,7 +61,7 @@ void reactive_descriptor_service::destroy(
 
 boost::system::error_code reactive_descriptor_service::assign(
     reactive_descriptor_service::implementation_type& impl,
-    const native_type& native_descriptor, boost::system::error_code& ec)
+    const native_handle_type& native_descriptor, boost::system::error_code& ec)
 {
   if (is_open(impl))
   {
@@ -75,7 +78,7 @@ boost::system::error_code reactive_descriptor_service::assign(
   }
 
   impl.descriptor_ = native_descriptor;
-  impl.state_ = 0;
+  impl.state_ = descriptor_ops::possible_dup;
   ec = boost::system::error_code();
   return ec;
 }
@@ -85,12 +88,30 @@ boost::system::error_code reactive_descriptor_service::close(
     boost::system::error_code& ec)
 {
   if (is_open(impl))
-    reactor_.close_descriptor(impl.descriptor_, impl.reactor_data_);
+  {
+    reactor_.deregister_descriptor(impl.descriptor_, impl.reactor_data_,
+        (impl.state_ & descriptor_ops::possible_dup) == 0);
+  }
 
   if (descriptor_ops::close(impl.descriptor_, impl.state_, ec) == 0)
     construct(impl);
 
   return ec;
+}
+
+reactive_descriptor_service::native_handle_type
+reactive_descriptor_service::release(
+    reactive_descriptor_service::implementation_type& impl)
+{
+  native_handle_type descriptor = impl.descriptor_;
+
+  if (is_open(impl))
+  {
+    reactor_.deregister_descriptor(impl.descriptor_, impl.reactor_data_, false);
+    construct(impl);
+  }
+
+  return descriptor;
 }
 
 boost::system::error_code reactive_descriptor_service::cancel(
@@ -110,16 +131,16 @@ boost::system::error_code reactive_descriptor_service::cancel(
 
 void reactive_descriptor_service::start_op(
     reactive_descriptor_service::implementation_type& impl,
-    int op_type, reactor_op* op, bool non_blocking, bool noop)
+    int op_type, reactor_op* op, bool is_non_blocking, bool noop)
 {
   if (!noop)
   {
     if ((impl.state_ & descriptor_ops::non_blocking) ||
         descriptor_ops::set_internal_non_blocking(
-          impl.descriptor_, impl.state_, op->ec_))
+          impl.descriptor_, impl.state_, true, op->ec_))
     {
       reactor_.start_op(op_type, impl.descriptor_,
-          impl.reactor_data_, op, non_blocking);
+          impl.reactor_data_, op, is_non_blocking);
       return;
     }
   }

@@ -98,6 +98,12 @@ public:
   BOOST_ASIO_DECL static address_v4 from_string(
       const std::string& str, boost::system::error_code& ec);
 
+  /// Determine whether the address is a loopback address.
+  BOOST_ASIO_DECL bool is_loopback() const;
+
+  /// Determine whether the address is unspecified.
+  BOOST_ASIO_DECL bool is_unspecified() const;
+
   /// Determine whether the address is a class A address.
   BOOST_ASIO_DECL bool is_class_a() const;
 
@@ -149,19 +155,19 @@ public:
   /// Obtain an address object that represents any address.
   static address_v4 any()
   {
-    return address_v4(static_cast<unsigned long>(INADDR_ANY));
+    return address_v4();
   }
 
   /// Obtain an address object that represents the loopback address.
   static address_v4 loopback()
   {
-    return address_v4(static_cast<unsigned long>(INADDR_LOOPBACK));
+    return address_v4(0x7F000001);
   }
 
   /// Obtain an address object that represents the broadcast address.
   static address_v4 broadcast()
   {
-    return address_v4(static_cast<unsigned long>(INADDR_BROADCAST));
+    return address_v4(0xFFFFFFFF);
   }
 
   /// Obtain an address object that represents the broadcast address that

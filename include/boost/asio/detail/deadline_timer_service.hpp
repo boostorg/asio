@@ -100,8 +100,27 @@ public:
       ec = boost::system::error_code();
       return 0;
     }
+
     std::size_t count = scheduler_.cancel_timer(timer_queue_, impl.timer_data);
     impl.might_have_pending_waits = false;
+    ec = boost::system::error_code();
+    return count;
+  }
+
+  // Cancels one asynchronous wait operation associated with the timer.
+  std::size_t cancel_one(implementation_type& impl,
+      boost::system::error_code& ec)
+  {
+    if (!impl.might_have_pending_waits)
+    {
+      ec = boost::system::error_code();
+      return 0;
+    }
+
+    std::size_t count = scheduler_.cancel_timer(
+        timer_queue_, impl.timer_data, 1);
+    if (count == 0)
+      impl.might_have_pending_waits = false;
     ec = boost::system::error_code();
     return count;
   }
@@ -140,23 +159,22 @@ public:
   void wait(implementation_type& impl, boost::system::error_code& ec)
   {
     time_type now = Time_Traits::now();
-    while (Time_Traits::less_than(now, impl.expiry))
+    ec = boost::system::error_code();
+    while (Time_Traits::less_than(now, impl.expiry) && !ec)
     {
       boost::posix_time::time_duration timeout =
         Time_Traits::to_posix_duration(Time_Traits::subtract(impl.expiry, now));
       ::timeval tv;
       tv.tv_sec = timeout.total_seconds();
       tv.tv_usec = timeout.total_microseconds() % 1000000;
-      boost::system::error_code ec;
       socket_ops::select(0, 0, 0, 0, &tv, ec);
       now = Time_Traits::now();
     }
-    ec = boost::system::error_code();
   }
 
   // Start an asynchronous wait on the timer.
   template <typename Handler>
-  void async_wait(implementation_type& impl, Handler handler)
+  void async_wait(implementation_type& impl, Handler& handler)
   {
     // Allocate and construct an operation to wrap the handler.
     typedef wait_handler<Handler> op;

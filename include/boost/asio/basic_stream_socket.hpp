@@ -18,6 +18,7 @@
 #include <boost/asio/detail/config.hpp>
 #include <cstddef>
 #include <boost/asio/basic_socket.hpp>
+#include <boost/asio/detail/handler_type_requirements.hpp>
 #include <boost/asio/detail/throw_error.hpp>
 #include <boost/asio/error.hpp>
 #include <boost/asio/stream_socket_service.hpp>
@@ -45,8 +46,12 @@ class basic_stream_socket
   : public basic_socket<Protocol, StreamSocketService>
 {
 public:
+  /// (Deprecated: Use native_handle_type.) The native representation of a
+  /// socket.
+  typedef typename StreamSocketService::native_handle_type native_type;
+
   /// The native representation of a socket.
-  typedef typename StreamSocketService::native_type native_type;
+  typedef typename StreamSocketService::native_handle_type native_handle_type;
 
   /// The protocol type.
   typedef Protocol protocol_type;
@@ -122,7 +127,7 @@ public:
    * @throws boost::system::system_error Thrown on failure.
    */
   basic_stream_socket(boost::asio::io_service& io_service,
-      const protocol_type& protocol, const native_type& native_socket)
+      const protocol_type& protocol, const native_handle_type& native_socket)
     : basic_socket<Protocol, StreamSocketService>(
         io_service, protocol, native_socket)
   {
@@ -264,7 +269,12 @@ public:
   template <typename ConstBufferSequence, typename WriteHandler>
   void async_send(const ConstBufferSequence& buffers, WriteHandler handler)
   {
-    this->service.async_send(this->implementation, buffers, 0, handler);
+    // If you get an error on the following line it means that your handler does
+    // not meet the documented type requirements for a WriteHandler.
+    BOOST_ASIO_WRITE_HANDLER_CHECK(WriteHandler, handler) type_check;
+
+    this->service.async_send(this->implementation, buffers, 0,
+        BOOST_ASIO_MOVE_CAST(WriteHandler)(handler));
   }
 
   /// Start an asynchronous send.
@@ -308,7 +318,12 @@ public:
   void async_send(const ConstBufferSequence& buffers,
       socket_base::message_flags flags, WriteHandler handler)
   {
-    this->service.async_send(this->implementation, buffers, flags, handler);
+    // If you get an error on the following line it means that your handler does
+    // not meet the documented type requirements for a WriteHandler.
+    BOOST_ASIO_WRITE_HANDLER_CHECK(WriteHandler, handler) type_check;
+
+    this->service.async_send(this->implementation, buffers, flags,
+        BOOST_ASIO_MOVE_CAST(WriteHandler)(handler));
   }
 
   /// Receive some data on the socket.
@@ -454,7 +469,12 @@ public:
   template <typename MutableBufferSequence, typename ReadHandler>
   void async_receive(const MutableBufferSequence& buffers, ReadHandler handler)
   {
-    this->service.async_receive(this->implementation, buffers, 0, handler);
+    // If you get an error on the following line it means that your handler does
+    // not meet the documented type requirements for a ReadHandler.
+    BOOST_ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
+
+    this->service.async_receive(this->implementation, buffers, 0,
+        BOOST_ASIO_MOVE_CAST(ReadHandler)(handler));
   }
 
   /// Start an asynchronous receive.
@@ -500,7 +520,12 @@ public:
   void async_receive(const MutableBufferSequence& buffers,
       socket_base::message_flags flags, ReadHandler handler)
   {
-    this->service.async_receive(this->implementation, buffers, flags, handler);
+    // If you get an error on the following line it means that your handler does
+    // not meet the documented type requirements for a ReadHandler.
+    BOOST_ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
+
+    this->service.async_receive(this->implementation, buffers, flags,
+        BOOST_ASIO_MOVE_CAST(ReadHandler)(handler));
   }
 
   /// Write some data to the socket.
@@ -601,7 +626,12 @@ public:
   void async_write_some(const ConstBufferSequence& buffers,
       WriteHandler handler)
   {
-    this->service.async_send(this->implementation, buffers, 0, handler);
+    // If you get an error on the following line it means that your handler does
+    // not meet the documented type requirements for a WriteHandler.
+    BOOST_ASIO_WRITE_HANDLER_CHECK(WriteHandler, handler) type_check;
+
+    this->service.async_send(this->implementation, buffers, 0,
+        BOOST_ASIO_MOVE_CAST(WriteHandler)(handler));
   }
 
   /// Read some data from the socket.
@@ -705,7 +735,12 @@ public:
   void async_read_some(const MutableBufferSequence& buffers,
       ReadHandler handler)
   {
-    this->service.async_receive(this->implementation, buffers, 0, handler);
+    // If you get an error on the following line it means that your handler does
+    // not meet the documented type requirements for a ReadHandler.
+    BOOST_ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
+
+    this->service.async_receive(this->implementation, buffers, 0,
+        BOOST_ASIO_MOVE_CAST(ReadHandler)(handler));
   }
 };
 

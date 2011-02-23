@@ -14,12 +14,12 @@ additional requirements listed below.
 In the table below, `X` denotes a socket acceptor service class for protocol
 [link boost_asio.reference.Protocol `Protocol`], `a` denotes a value of type
 `X`, `b` denotes a value of type `X::implementation_type`, `p` denotes a value
-of type `Protocol`, `n` denotes a value of type `X::native_type`, `e` denotes a
-value of type `Protocol::endpoint`, `ec` denotes a value of type `error_code`,
-`s` denotes a value meeting [link boost_asio.reference.SettableSocketOption
-`SettableSocketOption`] requirements, `g` denotes a value meeting [link
-boost_asio.reference.GettableSocketOption `GettableSocketOption`]
-requirements, `i` denotes a value meeting [link
+of type `Protocol`, `n` denotes a value of type `X::native_handle_type`, `e`
+denotes a value of type `Protocol::endpoint`, `ec` denotes a value of type
+`error_code`, `s` denotes a value meeting [link
+boost_asio.reference.SettableSocketOption `SettableSocketOption`] requirements, `g`
+denotes a value meeting [link boost_asio.reference.GettableSocketOption
+`GettableSocketOption`] requirements, `i` denotes a value meeting [link
 boost_asio.reference.IoControlCommand `IoControlCommand`] requirements, `k`
 denotes a value of type `basic_socket<Protocol, SocketService>` where
 `SocketService` is a type meeting [link boost_asio.reference.SocketService
@@ -30,7 +30,7 @@ and `v` denote identifiers.
 [table SocketAcceptorService requirements
   [[expression] [return type] [assertion/note\npre/post-condition]]
   [
-    [`X::native_type`]
+    [`X::native_handle_type`]
     []
     [
       The implementation-defined native representation of a socket acceptor.
@@ -108,9 +108,9 @@ and `v` denote identifiers.
   ]
   [
     [``
-      a.native(b);
+      a.native_handle(b);
     ``]
-    [`X::native_type`]
+    [`X::native_handle_type`]
     [
     ]
   ]
@@ -222,7 +222,7 @@ and `v` denote identifiers.
     [
       pre: `a.is_open(b) && !k.is_open()`.\n
       Initiates an asynchronous accept operation that is performed via the
-      `io_service` object `a.io_service()` and behaves according to [link
+      `io_service` object `a.get_io_service()` and behaves according to [link
       boost_asio.reference.asynchronous_operations asynchronous operation]
       requirements.\n\n
       The program must ensure the objects `k` and `e` are valid until the
@@ -237,7 +237,7 @@ and `v` denote identifiers.
     [
       pre: `a.is_open(b) && !k.is_open()`.\n
       Initiates an asynchronous accept operation that is performed via the
-      `io_service` object `a.io_service()` and behaves according to [link
+      `io_service` object `a.get_io_service()` and behaves according to [link
       boost_asio.reference.asynchronous_operations asynchronous operation]
       requirements.\n\n
       The program must ensure the object `k` is valid until the handler for the

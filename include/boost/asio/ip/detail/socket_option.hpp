@@ -385,31 +385,18 @@ class multicast_request
 public:
   // Default constructor.
   multicast_request()
+    : ipv4_value_(), // Zero-initialisation gives the "any" address.
+      ipv6_value_() // Zero-initialisation gives the "any" address.
   {
-    ipv4_value_.imr_multiaddr.s_addr =
-      boost::asio::detail::socket_ops::host_to_network_long(
-          boost::asio::ip::address_v4::any().to_ulong());
-    ipv4_value_.imr_interface.s_addr =
-      boost::asio::detail::socket_ops::host_to_network_long(
-          boost::asio::ip::address_v4::any().to_ulong());
-
-    boost::asio::detail::in6_addr_type tmp_addr = IN6ADDR_ANY_INIT;
-    ipv6_value_.ipv6mr_multiaddr = tmp_addr;
-    ipv6_value_.ipv6mr_interface = 0;
   }
 
   // Construct with multicast address only.
   explicit multicast_request(const boost::asio::ip::address& multicast_address)
+    : ipv4_value_(), // Zero-initialisation gives the "any" address.
+      ipv6_value_() // Zero-initialisation gives the "any" address.
   {
     if (multicast_address.is_v6())
     {
-      ipv4_value_.imr_multiaddr.s_addr =
-        boost::asio::detail::socket_ops::host_to_network_long(
-            boost::asio::ip::address_v4::any().to_ulong());
-      ipv4_value_.imr_interface.s_addr =
-        boost::asio::detail::socket_ops::host_to_network_long(
-            boost::asio::ip::address_v4::any().to_ulong());
-
       using namespace std; // For memcpy.
       boost::asio::ip::address_v6 ipv6_address = multicast_address.to_v6();
       boost::asio::ip::address_v6::bytes_type bytes = ipv6_address.to_bytes();
@@ -424,10 +411,6 @@ public:
       ipv4_value_.imr_interface.s_addr =
         boost::asio::detail::socket_ops::host_to_network_long(
             boost::asio::ip::address_v4::any().to_ulong());
-
-      boost::asio::detail::in6_addr_type tmp_addr = IN6ADDR_ANY_INIT;
-      ipv6_value_.ipv6mr_multiaddr = tmp_addr;
-      ipv6_value_.ipv6mr_interface = 0;
     }
   }
 
@@ -436,6 +419,7 @@ public:
       const boost::asio::ip::address_v4& multicast_address,
       const boost::asio::ip::address_v4& network_interface
         = boost::asio::ip::address_v4::any())
+    : ipv6_value_() // Zero-initialisation gives the "any" address.
   {
     ipv4_value_.imr_multiaddr.s_addr =
       boost::asio::detail::socket_ops::host_to_network_long(
@@ -443,24 +427,14 @@ public:
     ipv4_value_.imr_interface.s_addr =
       boost::asio::detail::socket_ops::host_to_network_long(
           network_interface.to_ulong());
-
-    boost::asio::detail::in6_addr_type tmp_addr = IN6ADDR_ANY_INIT;
-    ipv6_value_.ipv6mr_multiaddr = tmp_addr;
-    ipv6_value_.ipv6mr_interface = 0;
   }
 
   // Construct with multicast address and IPv6 network interface index.
   explicit multicast_request(
       const boost::asio::ip::address_v6& multicast_address,
       unsigned long network_interface = 0)
+    : ipv4_value_() // Zero-initialisation gives the "any" address.
   {
-    ipv4_value_.imr_multiaddr.s_addr =
-      boost::asio::detail::socket_ops::host_to_network_long(
-          boost::asio::ip::address_v4::any().to_ulong());
-    ipv4_value_.imr_interface.s_addr =
-      boost::asio::detail::socket_ops::host_to_network_long(
-          boost::asio::ip::address_v4::any().to_ulong());
-
     using namespace std; // For memcpy.
     boost::asio::ip::address_v6::bytes_type bytes =
       multicast_address.to_bytes();

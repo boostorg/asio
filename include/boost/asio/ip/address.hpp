@@ -108,6 +108,15 @@ public:
   BOOST_ASIO_DECL static address from_string(
       const std::string& str, boost::system::error_code& ec);
 
+  /// Determine whether the address is a loopback address.
+  BOOST_ASIO_DECL bool is_loopback() const;
+
+  /// Determine whether the address is unspecified.
+  BOOST_ASIO_DECL bool is_unspecified() const;
+
+  /// Determine whether the address is a multicast address.
+  BOOST_ASIO_DECL bool is_multicast() const;
+
   /// Compare two addresses for equality.
   BOOST_ASIO_DECL friend bool operator==(const address& a1, const address& a2);
 

@@ -54,12 +54,12 @@ void test()
 
     serial_port port1(ios);
     serial_port port2(ios, "null");
-    serial_port::native_type native_port1 = port1.native();
+    serial_port::native_handle_type native_port1 = port1.native_handle();
     serial_port port3(ios, native_port1);
 
     // basic_io_object functions.
 
-    io_service& ios_ref = port1.io_service();
+    io_service& ios_ref = port1.get_io_service();
     (void)ios_ref;
 
     // basic_serial_port functions.
@@ -74,9 +74,9 @@ void test()
     port1.open("null");
     port1.open("null", ec);
 
-    serial_port::native_type native_port2 = port1.native();
+    serial_port::native_handle_type native_port2 = port1.native_handle();
     port1.assign(native_port2);
-    serial_port::native_type native_port3 = port1.native();
+    serial_port::native_handle_type native_port3 = port1.native_handle();
     port1.assign(native_port3, ec);
 
     bool is_open = port1.is_open();
@@ -87,6 +87,9 @@ void test()
 
     serial_port::native_type native_port4 = port1.native();
     (void)native_port4;
+
+    serial_port::native_handle_type native_port5 = port1.native_handle();
+    (void)native_port5;
 
     port1.cancel();
     port1.cancel(ec);

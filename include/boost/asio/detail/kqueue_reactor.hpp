@@ -20,6 +20,7 @@
 
 #if defined(BOOST_ASIO_HAS_KQUEUE)
 
+#include <boost/limits.hpp>
 #include <cstddef>
 #include <sys/types.h>
 #include <sys/event.h>
@@ -108,8 +109,8 @@ public:
 
   // Cancel any operations that are running against the descriptor and remove
   // its registration from the reactor.
-  BOOST_ASIO_DECL void close_descriptor(socket_type descriptor,
-      per_descriptor_data& descriptor_data);
+  BOOST_ASIO_DECL void deregister_descriptor(socket_type descriptor,
+      per_descriptor_data& descriptor_data, bool closing);
 
   // Add a new timer queue to the reactor.
   template <typename Time_Traits>
@@ -130,7 +131,8 @@ public:
   // number of operations that have been posted or dispatched.
   template <typename Time_Traits>
   std::size_t cancel_timer(timer_queue<Time_Traits>& queue,
-      typename timer_queue<Time_Traits>::per_timer_data& timer);
+      typename timer_queue<Time_Traits>::per_timer_data& timer,
+      std::size_t max_cancelled = (std::numeric_limits<std::size_t>::max)());
 
   // Run the kqueue loop.
   BOOST_ASIO_DECL void run(bool block, op_queue<operation>& ops);

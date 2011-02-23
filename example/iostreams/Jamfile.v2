@@ -39,3 +39,4 @@ project
 
 exe daytime_client : daytime_client.cpp ;
 exe daytime_server : daytime_server.cpp ;
+exe http_client : http_client.cpp ;

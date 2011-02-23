@@ -19,6 +19,7 @@
 
 #if defined(BOOST_ASIO_HAS_IOCP)
 
+#include <boost/limits.hpp>
 #include <boost/scoped_ptr.hpp>
 #include <boost/asio/io_service.hpp>
 #include <boost/asio/detail/mutex.hpp>
@@ -76,6 +77,12 @@ public:
   // Stop the event processing loop.
   BOOST_ASIO_DECL void stop();
 
+  // Determine whether the io_service is stopped.
+  bool stopped() const
+  {
+    return ::InterlockedExchangeAdd(&stopped_, 0) != 0;
+  }
+
   // Reset in preparation for a subsequent run invocation.
   void reset()
   {
@@ -97,11 +104,11 @@ public:
 
   // Request invocation of the given handler.
   template <typename Handler>
-  void dispatch(Handler handler);
+  void dispatch(Handler& handler);
 
   // Request invocation of the given handler and return immediately.
   template <typename Handler>
-  void post(Handler handler);
+  void post(Handler& handler);
 
   // Request invocation of the given operation and return immediately. Assumes
   // that work_started() has not yet been called for the operation.
@@ -156,7 +163,8 @@ public:
   // handlers that have been posted or dispatched.
   template <typename Time_Traits>
   std::size_t cancel_timer(timer_queue<Time_Traits>& queue,
-      typename timer_queue<Time_Traits>::per_timer_data& timer);
+      typename timer_queue<Time_Traits>::per_timer_data& timer,
+      std::size_t max_cancelled = (std::numeric_limits<std::size_t>::max)());
 
 private:
 #if defined(WINVER) && (WINVER < 0x0500)
@@ -199,7 +207,7 @@ private:
   long outstanding_work_;
 
   // Flag to indicate whether the event loop has been stopped.
-  long stopped_;
+  mutable long stopped_;
 
   // Flag to indicate whether the service has been shut down.
   long shutdown_;

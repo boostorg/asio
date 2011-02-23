@@ -19,6 +19,7 @@
 
 #if defined(BOOST_ASIO_HAS_DEV_POLL)
 
+#include <boost/limits.hpp>
 #include <cstddef>
 #include <vector>
 #include <sys/devpoll.h>
@@ -46,7 +47,7 @@ class dev_poll_reactor
   : public boost::asio::detail::service_base<dev_poll_reactor>
 {
 public:
-  enum { read_op = 0, write_op = 1,
+  enum op_types { read_op = 0, write_op = 1,
     connect_op = 1, except_op = 2, max_ops = 3 };
 
   // Per-descriptor data.
@@ -88,8 +89,8 @@ public:
 
   // Cancel any operations that are running against the descriptor and remove
   // its registration from the reactor.
-  BOOST_ASIO_DECL void close_descriptor(
-      socket_type descriptor, per_descriptor_data&);
+  BOOST_ASIO_DECL void deregister_descriptor(socket_type descriptor,
+      per_descriptor_data&, bool closing);
 
   // Add a new timer queue to the reactor.
   template <typename Time_Traits>
@@ -110,7 +111,8 @@ public:
   // number of operations that have been posted or dispatched.
   template <typename Time_Traits>
   std::size_t cancel_timer(timer_queue<Time_Traits>& queue,
-      typename timer_queue<Time_Traits>::per_timer_data& timer);
+      typename timer_queue<Time_Traits>::per_timer_data& timer,
+      std::size_t max_cancelled = (std::numeric_limits<std::size_t>::max)());
 
   // Run /dev/poll once until interrupted or events are ready to be dispatched.
   BOOST_ASIO_DECL void run(bool block, op_queue<operation>& ops);

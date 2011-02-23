@@ -67,6 +67,9 @@ public:
   // Interrupt the event processing loop.
   BOOST_ASIO_DECL void stop();
 
+  // Determine whether the io_service is stopped.
+  BOOST_ASIO_DECL bool stopped() const;
+
   // Reset in preparation for a subsequent run invocation.
   BOOST_ASIO_DECL void reset();
 
@@ -85,11 +88,11 @@ public:
 
   // Request invocation of the given handler.
   template <typename Handler>
-  void dispatch(Handler handler);
+  void dispatch(Handler& handler);
 
   // Request invocation of the given handler and return immediately.
   template <typename Handler>
-  void post(Handler handler);
+  void post(Handler& handler);
 
   // Request invocation of the given operation and return immediately. Assumes
   // that work_started() has not yet been called for the operation.
@@ -132,7 +135,7 @@ private:
   struct work_finished_on_block_exit;
 
   // Mutex to protect access to internal data.
-  mutex mutex_;
+  mutable mutex mutex_;
 
   // The task to be run by this service.
   reactor* task_;

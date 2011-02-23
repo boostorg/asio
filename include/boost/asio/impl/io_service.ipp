@@ -108,6 +108,11 @@ void io_service::stop()
   impl_.stop();
 }
 
+bool io_service::stopped() const
+{
+  return impl_.stopped();
+}
+
 void io_service::reset()
 {
   impl_.reset();

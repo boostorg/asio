@@ -47,7 +47,7 @@ public:
   // Construct an win_iocp_overlapped_ptr to contain the specified handler.
   template <typename Handler>
   explicit win_iocp_overlapped_ptr(
-      boost::asio::io_service& io_service, Handler handler)
+      boost::asio::io_service& io_service, Handler& handler)
     : ptr_(0),
       iocp_service_(0)
   {
@@ -75,7 +75,7 @@ public:
   // Reset to contain the specified handler, freeing any current OVERLAPPED
   // object.
   template <typename Handler>
-  void reset(boost::asio::io_service& io_service, Handler handler)
+  void reset(boost::asio::io_service& io_service, Handler& handler)
   {
     typedef win_iocp_overlapped_op<Handler> op;
     typename op::ptr p = { boost::addressof(handler),

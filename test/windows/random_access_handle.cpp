@@ -59,7 +59,7 @@ void test()
 
     // basic_io_object functions.
 
-    io_service& ios_ref = handle1.io_service();
+    io_service& ios_ref = handle1.get_io_service();
     (void)ios_ref;
 
     // basic_handle functions.
@@ -84,6 +84,10 @@ void test()
 
     win::random_access_handle::native_type native_handle3 = handle1.native();
     (void)native_handle3;
+
+    win::random_access_handle::native_handle_type native_handle4
+      = handle1.native_handle();
+    (void)native_handle4;
 
     handle1.cancel();
     handle1.cancel(ec);

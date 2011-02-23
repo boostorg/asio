@@ -34,8 +34,8 @@ protocol with a fixed length message header and variable length message body.
 * [@boost_asio/example/chat/chat_server.cpp]
 
 The following POSIX-specific chat client demonstrates how to use the
-[link boost_asio.reference.posix__stream_descriptor posix::stream_descriptor]
-class to perform console input and output.
+[link boost_asio.reference.posix__stream_descriptor posix::stream_descriptor] class to
+perform console input and output.
 
 * [@boost_asio/example/chat/posix_chat_client.cpp]
 
@@ -182,6 +182,7 @@ ip::tcp::iostream].
 
 * [@boost_asio/example/iostreams/daytime_client.cpp]
 * [@boost_asio/example/iostreams/daytime_server.cpp]
+* [@boost_asio/example/iostreams/http_client.cpp]
 
 
 [heading Multicast]
@@ -231,8 +232,7 @@ a proxy.
 [heading SSL]
 
 Example client and server programs showing the use of the [link
-boost_asio.reference.ssl__stream ssl::stream<>] template with asynchronous
-operations.
+boost_asio.reference.ssl__stream ssl::stream<>] template with asynchronous operations.
 
 * [@boost_asio/example/ssl/client.cpp]
 * [@boost_asio/example/ssl/server.cpp]

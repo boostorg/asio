@@ -22,6 +22,7 @@
       && !defined(BOOST_ASIO_HAS_EPOLL) \
       && !defined(BOOST_ASIO_HAS_KQUEUE))
 
+#include <boost/limits.hpp>
 #include <cstddef>
 #include <boost/asio/detail/mutex.hpp>
 #include <boost/asio/detail/op_queue.hpp>
@@ -51,10 +52,10 @@ class select_reactor
 {
 public:
 #if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
-  enum { read_op = 0, write_op = 1, except_op = 2,
+  enum op_types { read_op = 0, write_op = 1, except_op = 2,
     max_select_ops = 3, connect_op = 3, max_ops = 4 };
 #else // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
-  enum { read_op = 0, write_op = 1, except_op = 2,
+  enum op_types { read_op = 0, write_op = 1, except_op = 2,
     max_select_ops = 3, connect_op = 1, max_ops = 3 };
 #endif // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
 
@@ -97,8 +98,8 @@ public:
 
   // Cancel any operations that are running against the descriptor and remove
   // its registration from the reactor.
-  BOOST_ASIO_DECL void close_descriptor(socket_type descriptor,
-      per_descriptor_data&);
+  BOOST_ASIO_DECL void deregister_descriptor(socket_type descriptor,
+      per_descriptor_data&, bool closing);
 
   // Add a new timer queue to the reactor.
   template <typename Time_Traits>
@@ -119,7 +120,8 @@ public:
   // number of operations that have been posted or dispatched.
   template <typename Time_Traits>
   std::size_t cancel_timer(timer_queue<Time_Traits>& queue,
-      typename timer_queue<Time_Traits>::per_timer_data& timer);
+      typename timer_queue<Time_Traits>::per_timer_data& timer,
+      std::size_t max_cancelled = (std::numeric_limits<std::size_t>::max)());
 
   // Run select once until interrupted or events are ready to be dispatched.
   BOOST_ASIO_DECL void run(bool block, op_queue<operation>& ops);

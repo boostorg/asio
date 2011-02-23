@@ -21,6 +21,7 @@
   || defined(GENERATING_DOCUMENTATION)
 
 #include <cstddef>
+#include <boost/asio/detail/handler_type_requirements.hpp>
 #include <boost/asio/detail/throw_error.hpp>
 #include <boost/asio/error.hpp>
 #include <boost/asio/windows/basic_handle.hpp>
@@ -46,8 +47,13 @@ class basic_random_access_handle
   : public basic_handle<RandomAccessHandleService>
 {
 public:
+  /// (Deprecated: Use native_handle_type.) The native representation of a
+  /// handle.
+  typedef typename RandomAccessHandleService::native_handle_type native_type;
+
   /// The native representation of a handle.
-  typedef typename RandomAccessHandleService::native_type native_type;
+  typedef typename RandomAccessHandleService::native_handle_type
+    native_handle_type;
 
   /// Construct a basic_random_access_handle without opening it.
   /**
@@ -72,13 +78,13 @@ public:
    * use to dispatch handlers for any asynchronous operations performed on the
    * handle.
    *
-   * @param native_handle The new underlying handle implementation.
+   * @param handle The new underlying handle implementation.
    *
    * @throws boost::system::system_error Thrown on failure.
    */
   basic_random_access_handle(boost::asio::io_service& io_service,
-      const native_type& native_handle)
-    : basic_handle<RandomAccessHandleService>(io_service, native_handle)
+      const native_handle_type& handle)
+    : basic_handle<RandomAccessHandleService>(io_service, handle)
   {
   }
 
@@ -189,8 +195,12 @@ public:
   void async_write_some_at(boost::uint64_t offset,
       const ConstBufferSequence& buffers, WriteHandler handler)
   {
-    this->service.async_write_some_at(
-        this->implementation, offset, buffers, handler);
+    // If you get an error on the following line it means that your handler does
+    // not meet the documented type requirements for a WriteHandler.
+    BOOST_ASIO_WRITE_HANDLER_CHECK(WriteHandler, handler) type_check;
+
+    this->service.async_write_some_at(this->implementation,
+        offset, buffers, BOOST_ASIO_MOVE_CAST(WriteHandler)(handler));
   }
 
   /// Read some data from the handle at the specified offset.
@@ -303,8 +313,12 @@ public:
   void async_read_some_at(boost::uint64_t offset,
       const MutableBufferSequence& buffers, ReadHandler handler)
   {
-    this->service.async_read_some_at(
-        this->implementation, offset, buffers, handler);
+    // If you get an error on the following line it means that your handler does
+    // not meet the documented type requirements for a ReadHandler.
+    BOOST_ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
+
+    this->service.async_read_some_at(this->implementation,
+        offset, buffers, BOOST_ASIO_MOVE_CAST(ReadHandler)(handler));
   }
 };
 

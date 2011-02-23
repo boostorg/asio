@@ -41,7 +41,7 @@ class win_iocp_handle_service
 {
 public:
   // The native type of a stream handle.
-  typedef HANDLE native_type;
+  typedef HANDLE native_handle_type;
 
   // The implementation type of the stream handle.
   class implementation_type
@@ -61,7 +61,7 @@ public:
     friend class win_iocp_handle_service;
 
     // The native stream handle representation.
-    native_type handle_;
+    native_handle_type handle_;
 
     // The ID of the thread from which it is safe to cancel asynchronous
     // operations. 0 means no asynchronous operations have been started yet.
@@ -87,7 +87,7 @@ public:
 
   // Assign a native handle to a handle implementation.
   BOOST_ASIO_DECL boost::system::error_code assign(implementation_type& impl,
-      const native_type& native_handle, boost::system::error_code& ec);
+      const native_handle_type& handle, boost::system::error_code& ec);
 
   // Determine whether the handle is open.
   bool is_open(const implementation_type& impl) const
@@ -100,7 +100,7 @@ public:
       boost::system::error_code& ec);
 
   // Get the native handle representation.
-  native_type native(const implementation_type& impl) const
+  native_handle_type native_handle(const implementation_type& impl) const
   {
     return impl.handle_;
   }
@@ -134,7 +134,7 @@ public:
   // lifetime of the asynchronous operation.
   template <typename ConstBufferSequence, typename Handler>
   void async_write_some(implementation_type& impl,
-      const ConstBufferSequence& buffers, Handler handler)
+      const ConstBufferSequence& buffers, Handler& handler)
   {
     async_write_some_at(impl, 0, buffers, handler);
   }
@@ -143,7 +143,7 @@ public:
   // must be valid for the lifetime of the asynchronous operation.
   template <typename ConstBufferSequence, typename Handler>
   void async_write_some_at(implementation_type& impl, boost::uint64_t offset,
-      const ConstBufferSequence& buffers, Handler handler)
+      const ConstBufferSequence& buffers, Handler& handler)
   {
     // Allocate and construct an operation to wrap the handler.
     typedef win_iocp_handle_write_op<ConstBufferSequence, Handler> op;
@@ -182,7 +182,7 @@ public:
   // valid for the lifetime of the asynchronous operation.
   template <typename MutableBufferSequence, typename Handler>
   void async_read_some(implementation_type& impl,
-      const MutableBufferSequence& buffers, Handler handler)
+      const MutableBufferSequence& buffers, Handler& handler)
   {
     async_read_some_at(impl, 0, buffers, handler);
   }
@@ -192,7 +192,7 @@ public:
   // operation.
   template <typename MutableBufferSequence, typename Handler>
   void async_read_some_at(implementation_type& impl, boost::uint64_t offset,
-      const MutableBufferSequence& buffers, Handler handler)
+      const MutableBufferSequence& buffers, Handler& handler)
   {
     // Allocate and construct an operation to wrap the handler.
     typedef win_iocp_handle_read_op<MutableBufferSequence, Handler> op;

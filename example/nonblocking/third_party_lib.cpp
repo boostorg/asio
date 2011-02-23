@@ -96,8 +96,7 @@ public:
   void start()
   {
     // Put the socket into non-blocking mode.
-    tcp::socket::non_blocking_io non_blocking_io(true);
-    socket_.io_control(non_blocking_io);
+    socket_.non_blocking(true);
 
     start_operations();
   }
@@ -196,7 +195,7 @@ private:
   void start_accept()
   {
     connection::pointer new_connection =
-      connection::create(acceptor_.io_service());
+      connection::create(acceptor_.get_io_service());
 
     acceptor_.async_accept(new_connection->socket(),
         boost::bind(&server::handle_accept, this, new_connection,

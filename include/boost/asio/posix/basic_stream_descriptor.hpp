@@ -21,6 +21,7 @@
   || defined(GENERATING_DOCUMENTATION)
 
 #include <cstddef>
+#include <boost/asio/detail/handler_type_requirements.hpp>
 #include <boost/asio/detail/throw_error.hpp>
 #include <boost/asio/error.hpp>
 #include <boost/asio/posix/basic_descriptor.hpp>
@@ -49,8 +50,13 @@ class basic_stream_descriptor
   : public basic_descriptor<StreamDescriptorService>
 {
 public:
+  /// (Deprecated: Use native_handle_type.) The native representation of a
+  /// descriptor.
+  typedef typename StreamDescriptorService::native_handle_type native_type;
+
   /// The native representation of a descriptor.
-  typedef typename StreamDescriptorService::native_type native_type;
+  typedef typename StreamDescriptorService::native_handle_type
+    native_handle_type;
 
   /// Construct a basic_stream_descriptor without opening it.
   /**
@@ -81,7 +87,7 @@ public:
    * @throws boost::system::system_error Thrown on failure.
    */
   basic_stream_descriptor(boost::asio::io_service& io_service,
-      const native_type& native_descriptor)
+      const native_handle_type& native_descriptor)
     : basic_descriptor<StreamDescriptorService>(io_service, native_descriptor)
   {
   }
@@ -184,7 +190,12 @@ public:
   void async_write_some(const ConstBufferSequence& buffers,
       WriteHandler handler)
   {
-    this->service.async_write_some(this->implementation, buffers, handler);
+    // If you get an error on the following line it means that your handler does
+    // not meet the documented type requirements for a WriteHandler.
+    BOOST_ASIO_WRITE_HANDLER_CHECK(WriteHandler, handler) type_check;
+
+    this->service.async_write_some(this->implementation, buffers,
+        BOOST_ASIO_MOVE_CAST(WriteHandler)(handler));
   }
 
   /// Read some data from the descriptor.
@@ -288,7 +299,12 @@ public:
   void async_read_some(const MutableBufferSequence& buffers,
       ReadHandler handler)
   {
-    this->service.async_read_some(this->implementation, buffers, handler);
+    // If you get an error on the following line it means that your handler does
+    // not meet the documented type requirements for a ReadHandler.
+    BOOST_ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
+
+    this->service.async_read_some(this->implementation, buffers,
+        BOOST_ASIO_MOVE_CAST(ReadHandler)(handler));
   }
 };
 

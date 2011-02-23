@@ -46,6 +46,41 @@
 # define BOOST_ASIO_DECL
 #endif // !defined(BOOST_ASIO_DECL)
 
+// Support move construction on compilers known to allow it.
+#if defined(__GNUC__)
+# if ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 5)) || (__GNUC__ > 4)
+#  if defined(__GXX_EXPERIMENTAL_CXX0X__)
+#   define BOOST_ASIO_MOVE_CAST(type) static_cast<type&&>
+#  endif // defined(__GXX_EXPERIMENTAL_CXX0X__)
+# endif // ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 5)) || (__GNUC__ > 4)
+#endif // defined(__GNUC__)
+#if defined(BOOST_MSVC)
+# if (_MSC_VER >= 1600)
+#  define BOOST_ASIO_MOVE_CAST(type) static_cast<type&&>
+# endif // (_MSC_VER >= 1600)
+#endif // defined(BOOST_MSVC)
+
+// If BOOST_ASIO_MOVE_CAST isn't defined yet use a C++03 compatible version.
+#if !defined(BOOST_ASIO_MOVE_CAST)
+# define BOOST_ASIO_MOVE_CAST(type) static_cast<const type&>
+#endif // !defined_BOOST_ASIO_MOVE_CAST
+
+// Standard library support for system errors.
+#if !defined(BOOST_ASIO_DISABLE_STD_SYSTEM_ERROR)
+# if defined(__GNUC__)
+#  if ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 5)) || (__GNUC__ > 4)
+#   if defined(__GXX_EXPERIMENTAL_CXX0X__)
+#    define BOOST_ASIO_HAS_STD_SYSTEM_ERROR
+#   endif // defined(__GXX_EXPERIMENTAL_CXX0X__)
+#  endif // ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 5)) || (__GNUC__ > 4)
+# endif // defined(__GNUC__)
+# if defined(BOOST_MSVC)
+#  if (_MSC_VER >= 1600)
+#   define BOOST_ASIO_HAS_STD_SYSTEM_ERROR
+#  endif // (_MSC_VER >= 1600)
+# endif // defined(BOOST_MSVC)
+#endif // !defined(BOOST_ASIO_DISABLE_STD_SYSTEM_ERROR)
+
 // Windows: target OS version.
 #if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
 # if !defined(_WIN32_WINNT) && !defined(_WIN32_WINDOWS)

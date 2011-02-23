@@ -57,11 +57,18 @@ public:
   typedef service_impl_type::implementation_type implementation_type;
 #endif
 
-  /// The native descriptor type.
+  /// (Deprecated: Use native_handle_type.) The native descriptor type.
 #if defined(GENERATING_DOCUMENTATION)
   typedef implementation_defined native_type;
 #else
-  typedef service_impl_type::native_type native_type;
+  typedef service_impl_type::native_handle_type native_type;
+#endif
+
+  /// The native descriptor type.
+#if defined(GENERATING_DOCUMENTATION)
+  typedef implementation_defined native_handle_type;
+#else
+  typedef service_impl_type::native_handle_type native_handle_type;
 #endif
 
   /// Construct a new stream descriptor service for the specified io_service.
@@ -71,7 +78,7 @@ public:
   {
   }
 
-  /// Destroy all user-defined descriptorr objects owned by the service.
+  /// Destroy all user-defined handler objects owned by the service.
   void shutdown_service()
   {
     service_impl_.shutdown_service();
@@ -91,7 +98,8 @@ public:
 
   /// Assign an existing native descriptor to a stream descriptor.
   boost::system::error_code assign(implementation_type& impl,
-      const native_type& native_descriptor, boost::system::error_code& ec)
+      const native_handle_type& native_descriptor,
+      boost::system::error_code& ec)
   {
     return service_impl_.assign(impl, native_descriptor, ec);
   }
@@ -109,10 +117,23 @@ public:
     return service_impl_.close(impl, ec);
   }
 
-  /// Get the native descriptor implementation.
+  /// (Deprecated: Use native_handle().) Get the native descriptor
+  /// implementation.
   native_type native(implementation_type& impl)
   {
-    return service_impl_.native(impl);
+    return service_impl_.native_handle(impl);
+  }
+
+  /// Get the native descriptor implementation.
+  native_handle_type native_handle(implementation_type& impl)
+  {
+    return service_impl_.native_handle(impl);
+  }
+
+  /// Release ownership of the native descriptor implementation.
+  native_handle_type release(implementation_type& impl)
+  {
+    return service_impl_.release(impl);
   }
 
   /// Cancel all asynchronous operations associated with the descriptor.
@@ -130,6 +151,32 @@ public:
     return service_impl_.io_control(impl, command, ec);
   }
 
+  /// Gets the non-blocking mode of the descriptor.
+  bool non_blocking(const implementation_type& impl) const
+  {
+    return service_impl_.non_blocking(impl);
+  }
+
+  /// Sets the non-blocking mode of the descriptor.
+  boost::system::error_code non_blocking(implementation_type& impl,
+      bool mode, boost::system::error_code& ec)
+  {
+    return service_impl_.non_blocking(impl, mode, ec);
+  }
+
+  /// Gets the non-blocking mode of the native descriptor implementation.
+  bool native_non_blocking(const implementation_type& impl) const
+  {
+    return service_impl_.native_non_blocking(impl);
+  }
+
+  /// Sets the non-blocking mode of the native descriptor implementation.
+  boost::system::error_code native_non_blocking(implementation_type& impl,
+      bool mode, boost::system::error_code& ec)
+  {
+    return service_impl_.native_non_blocking(impl, mode, ec);
+  }
+
   /// Write the given data to the stream.
   template <typename ConstBufferSequence>
   std::size_t write_some(implementation_type& impl,
@@ -141,9 +188,9 @@ public:
   /// Start an asynchronous write.
   template <typename ConstBufferSequence, typename WriteHandler>
   void async_write_some(implementation_type& impl,
-      const ConstBufferSequence& buffers, WriteHandler descriptorr)
+      const ConstBufferSequence& buffers, WriteHandler handler)
   {
-    service_impl_.async_write_some(impl, buffers, descriptorr);
+    service_impl_.async_write_some(impl, buffers, handler);
   }
 
   /// Read some data from the stream.
@@ -157,9 +204,9 @@ public:
   /// Start an asynchronous read.
   template <typename MutableBufferSequence, typename ReadHandler>
   void async_read_some(implementation_type& impl,
-      const MutableBufferSequence& buffers, ReadHandler descriptorr)
+      const MutableBufferSequence& buffers, ReadHandler handler)
   {
-    service_impl_.async_read_some(impl, buffers, descriptorr);
+    service_impl_.async_read_some(impl, buffers, handler);
   }
 
 private:

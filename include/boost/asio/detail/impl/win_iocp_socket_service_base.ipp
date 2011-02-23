@@ -99,7 +99,7 @@ boost::system::error_code win_iocp_socket_service_base::close(
           interlocked_compare_exchange_pointer(
             reinterpret_cast<void**>(&reactor_), 0, 0));
     if (r)
-      r->close_descriptor(impl.socket_, impl.reactor_data_);
+      r->deregister_descriptor(impl.socket_, impl.reactor_data_, true);
   }
 
   if (socket_ops::close(impl.socket_, impl.state_, false, ec) == 0)
@@ -474,7 +474,7 @@ void win_iocp_socket_service_base::start_connect_op(
 
   if ((impl.state_ & socket_ops::non_blocking) != 0
       || socket_ops::set_internal_non_blocking(
-        impl.socket_, impl.state_, op->ec_))
+        impl.socket_, impl.state_, true, op->ec_))
   {
     if (socket_ops::connect(impl.socket_, addr, addrlen, op->ec_) != 0)
     {
@@ -504,7 +504,7 @@ void win_iocp_socket_service_base::close_for_destruction(
           interlocked_compare_exchange_pointer(
             reinterpret_cast<void**>(&reactor_), 0, 0));
     if (r)
-      r->close_descriptor(impl.socket_, impl.reactor_data_);
+      r->deregister_descriptor(impl.socket_, impl.reactor_data_, true);
   }
 
   boost::system::error_code ignored_ec;

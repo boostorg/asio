@@ -27,6 +27,7 @@
 #include <boost/asio/detail/buffer_sequence_adapter.hpp>
 #include <boost/asio/detail/reactive_null_buffers_op.hpp>
 #include <boost/asio/detail/reactive_socket_recv_op.hpp>
+#include <boost/asio/detail/reactive_socket_recvmsg_op.hpp>
 #include <boost/asio/detail/reactive_socket_send_op.hpp>
 #include <boost/asio/detail/reactor.hpp>
 #include <boost/asio/detail/reactor_op.hpp>
@@ -44,7 +45,7 @@ class reactive_socket_service_base
 {
 public:
   // The native type of a socket.
-  typedef socket_type native_type;
+  typedef socket_type native_handle_type;
 
   // The implementation type of the socket.
   struct base_implementation_type
@@ -83,7 +84,7 @@ public:
       base_implementation_type& impl, boost::system::error_code& ec);
 
   // Get the native socket representation.
-  native_type native(base_implementation_type& impl)
+  native_handle_type native_handle(base_implementation_type& impl)
   {
     return impl.socket_;
   }
@@ -124,7 +125,35 @@ public:
     return ec;
   }
 
-  /// Disable sends or receives on the socket.
+  // Gets the non-blocking mode of the socket.
+  bool non_blocking(const base_implementation_type& impl) const
+  {
+    return (impl.state_ & socket_ops::user_set_non_blocking) != 0;
+  }
+
+  // Sets the non-blocking mode of the socket.
+  boost::system::error_code non_blocking(base_implementation_type& impl,
+      bool mode, boost::system::error_code& ec)
+  {
+    socket_ops::set_user_non_blocking(impl.socket_, impl.state_, mode, ec);
+    return ec;
+  }
+
+  // Gets the non-blocking mode of the native socket implementation.
+  bool native_non_blocking(const base_implementation_type& impl) const
+  {
+    return (impl.state_ & socket_ops::internal_non_blocking) != 0;
+  }
+
+  // Sets the non-blocking mode of the native socket implementation.
+  boost::system::error_code native_non_blocking(base_implementation_type& impl,
+      bool mode, boost::system::error_code& ec)
+  {
+    socket_ops::set_internal_non_blocking(impl.socket_, impl.state_, mode, ec);
+    return ec;
+  }
+
+  // Disable sends or receives on the socket.
   boost::system::error_code shutdown(base_implementation_type& impl,
       socket_base::shutdown_type what, boost::system::error_code& ec)
   {
@@ -160,7 +189,7 @@ public:
   template <typename ConstBufferSequence, typename Handler>
   void async_send(base_implementation_type& impl,
       const ConstBufferSequence& buffers,
-      socket_base::message_flags flags, Handler handler)
+      socket_base::message_flags flags, Handler& handler)
   {
     // Allocate and construct an operation to wrap the handler.
     typedef reactive_socket_send_op<ConstBufferSequence, Handler> op;
@@ -179,7 +208,7 @@ public:
   // Start an asynchronous wait until data can be sent without blocking.
   template <typename Handler>
   void async_send(base_implementation_type& impl, const null_buffers&,
-      socket_base::message_flags, Handler handler)
+      socket_base::message_flags, Handler& handler)
   {
     // Allocate and construct an operation to wrap the handler.
     typedef reactive_null_buffers_op<Handler> op;
@@ -220,7 +249,7 @@ public:
   template <typename MutableBufferSequence, typename Handler>
   void async_receive(base_implementation_type& impl,
       const MutableBufferSequence& buffers,
-      socket_base::message_flags flags, Handler handler)
+      socket_base::message_flags flags, Handler& handler)
   {
     // Allocate and construct an operation to wrap the handler.
     typedef reactive_socket_recv_op<MutableBufferSequence, Handler> op;
@@ -242,7 +271,7 @@ public:
   // Wait until data can be received without blocking.
   template <typename Handler>
   void async_receive(base_implementation_type& impl, const null_buffers&,
-      socket_base::message_flags flags, Handler handler)
+      socket_base::message_flags flags, Handler& handler)
   {
     // Allocate and construct an operation to wrap the handler.
     typedef reactive_null_buffers_op<Handler> op;
@@ -258,6 +287,81 @@ public:
     p.v = p.p = 0;
   }
 
+  // Receive some data with associated flags. Returns the number of bytes
+  // received.
+  template <typename MutableBufferSequence>
+  size_t receive_with_flags(base_implementation_type& impl,
+      const MutableBufferSequence& buffers,
+      socket_base::message_flags in_flags,
+      socket_base::message_flags& out_flags, boost::system::error_code& ec)
+  {
+    buffer_sequence_adapter<boost::asio::mutable_buffer,
+        MutableBufferSequence> bufs(buffers);
+
+    return socket_ops::sync_recvmsg(impl.socket_, impl.state_,
+        bufs.buffers(), bufs.count(), in_flags, out_flags, ec);
+  }
+
+  // Wait until data can be received without blocking.
+  size_t receive_with_flags(base_implementation_type& impl,
+      const null_buffers&, socket_base::message_flags,
+      socket_base::message_flags& out_flags, boost::system::error_code& ec)
+  {
+    // Wait for socket to become ready.
+    socket_ops::poll_read(impl.socket_, ec);
+
+    // Clear out_flags, since we cannot give it any other sensible value when
+    // performing a null_buffers operation.
+    out_flags = 0;
+
+    return 0;
+  }
+
+  // Start an asynchronous receive. The buffer for the data being received
+  // must be valid for the lifetime of the asynchronous operation.
+  template <typename MutableBufferSequence, typename Handler>
+  void async_receive_with_flags(base_implementation_type& impl,
+      const MutableBufferSequence& buffers, socket_base::message_flags in_flags,
+      socket_base::message_flags& out_flags, Handler& handler)
+  {
+    // Allocate and construct an operation to wrap the handler.
+    typedef reactive_socket_recvmsg_op<MutableBufferSequence, Handler> op;
+    typename op::ptr p = { boost::addressof(handler),
+      boost_asio_handler_alloc_helpers::allocate(
+        sizeof(op), handler), 0 };
+    p.p = new (p.v) op(impl.socket_, buffers, in_flags, out_flags, handler);
+
+    start_op(impl,
+        (in_flags & socket_base::message_out_of_band)
+          ? reactor::except_op : reactor::read_op,
+        p.p, (in_flags & socket_base::message_out_of_band) == 0, false);
+    p.v = p.p = 0;
+  }
+
+  // Wait until data can be received without blocking.
+  template <typename Handler>
+  void async_receive_with_flags(base_implementation_type& impl,
+      const null_buffers&, socket_base::message_flags in_flags,
+      socket_base::message_flags& out_flags, Handler& handler)
+  {
+    // Allocate and construct an operation to wrap the handler.
+    typedef reactive_null_buffers_op<Handler> op;
+    typename op::ptr p = { boost::addressof(handler),
+      boost_asio_handler_alloc_helpers::allocate(
+        sizeof(op), handler), 0 };
+    p.p = new (p.v) op(handler);
+
+    // Clear out_flags, since we cannot give it any other sensible value when
+    // performing a null_buffers operation.
+    out_flags = 0;
+
+    start_op(impl,
+        (in_flags & socket_base::message_out_of_band)
+          ? reactor::except_op : reactor::read_op,
+        p.p, false, false);
+    p.v = p.p = 0;
+  }
+
 protected:
   // Open a new socket implementation.
   BOOST_ASIO_DECL boost::system::error_code do_open(
@@ -267,11 +371,11 @@ protected:
   // Assign a native socket to a socket implementation.
   BOOST_ASIO_DECL boost::system::error_code do_assign(
       base_implementation_type& impl, int type,
-      const native_type& native_socket, boost::system::error_code& ec);
+      const native_handle_type& native_socket, boost::system::error_code& ec);
 
   // Start the asynchronous read or write operation.
   BOOST_ASIO_DECL void start_op(base_implementation_type& impl, int op_type,
-      reactor_op* op, bool non_blocking, bool noop);
+      reactor_op* op, bool is_non_blocking, bool noop);
 
   // Start the asynchronous accept operation.
   BOOST_ASIO_DECL void start_accept_op(base_implementation_type& impl,

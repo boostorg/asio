@@ -56,7 +56,7 @@ public:
   typedef typename Protocol::endpoint endpoint_type;
 
   // The native type of a socket.
-  typedef socket_type native_type;
+  typedef socket_type native_handle_type;
 
   // The implementation type of the socket.
   struct implementation_type :
@@ -90,7 +90,7 @@ public:
 
   // Assign a native socket to a socket implementation.
   boost::system::error_code assign(implementation_type& impl,
-      const protocol_type& protocol, const native_type& native_socket,
+      const protocol_type& protocol, const native_handle_type& native_socket,
       boost::system::error_code& ec)
   {
     if (!do_assign(impl, protocol.type(), native_socket, ec))
@@ -99,7 +99,7 @@ public:
   }
 
   // Get the native socket representation.
-  native_type native(implementation_type& impl)
+  native_handle_type native_handle(implementation_type& impl)
   {
     return impl.socket_;
   }
@@ -194,7 +194,7 @@ public:
   void async_send_to(implementation_type& impl,
       const ConstBufferSequence& buffers,
       const endpoint_type& destination, socket_base::message_flags flags,
-      Handler handler)
+      Handler& handler)
   {
     // Allocate and construct an operation to wrap the handler.
     typedef reactive_socket_sendto_op<ConstBufferSequence,
@@ -211,7 +211,7 @@ public:
   // Start an asynchronous wait until data can be sent without blocking.
   template <typename Handler>
   void async_send_to(implementation_type& impl, const null_buffers&,
-      const endpoint_type&, socket_base::message_flags, Handler handler)
+      const endpoint_type&, socket_base::message_flags, Handler& handler)
   {
     // Allocate and construct an operation to wrap the handler.
     typedef reactive_null_buffers_op<Handler> op;
@@ -266,7 +266,7 @@ public:
   template <typename MutableBufferSequence, typename Handler>
   void async_receive_from(implementation_type& impl,
       const MutableBufferSequence& buffers, endpoint_type& sender_endpoint,
-      socket_base::message_flags flags, Handler handler)
+      socket_base::message_flags flags, Handler& handler)
   {
     // Allocate and construct an operation to wrap the handler.
     typedef reactive_socket_recvfrom_op<MutableBufferSequence,
@@ -274,8 +274,8 @@ public:
     typename op::ptr p = { boost::addressof(handler),
       boost_asio_handler_alloc_helpers::allocate(
         sizeof(op), handler), 0 };
-    int protocol_type = impl.protocol_.type();
-    p.p = new (p.v) op(impl.socket_, protocol_type,
+    int protocol = impl.protocol_.type();
+    p.p = new (p.v) op(impl.socket_, protocol,
         buffers, sender_endpoint, flags, handler);
 
     start_op(impl,
@@ -289,7 +289,7 @@ public:
   template <typename Handler>
   void async_receive_from(implementation_type& impl,
       const null_buffers&, endpoint_type& sender_endpoint,
-      socket_base::message_flags flags, Handler handler)
+      socket_base::message_flags flags, Handler& handler)
   {
     // Allocate and construct an operation to wrap the handler.
     typedef reactive_null_buffers_op<Handler> op;
@@ -341,7 +341,7 @@ public:
   // must be valid until the accept's handler is invoked.
   template <typename Socket, typename Handler>
   void async_accept(implementation_type& impl, Socket& peer,
-      endpoint_type* peer_endpoint, Handler handler)
+      endpoint_type* peer_endpoint, Handler& handler)
   {
     // Allocate and construct an operation to wrap the handler.
     typedef reactive_socket_accept_op<Socket, Protocol, Handler> op;
@@ -367,7 +367,7 @@ public:
   // Start an asynchronous connect.
   template <typename Handler>
   void async_connect(implementation_type& impl,
-      const endpoint_type& peer_endpoint, Handler handler)
+      const endpoint_type& peer_endpoint, Handler& handler)
   {
     // Allocate and construct an operation to wrap the handler.
     typedef reactive_socket_connect_op<Handler> op;

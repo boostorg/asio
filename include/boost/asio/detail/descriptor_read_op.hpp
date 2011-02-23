@@ -68,10 +68,10 @@ public:
   BOOST_ASIO_DEFINE_HANDLER_PTR(descriptor_read_op);
 
   descriptor_read_op(int descriptor,
-      const MutableBufferSequence& buffers, Handler handler)
+      const MutableBufferSequence& buffers, Handler& handler)
     : descriptor_read_op_base<MutableBufferSequence>(
         descriptor, buffers, &descriptor_read_op::do_complete),
-      handler_(handler)
+      handler_(BOOST_ASIO_MOVE_CAST(Handler)(handler))
   {
   }
 

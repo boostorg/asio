@@ -43,13 +43,13 @@ operation.
 4. The [*operating system] returns the result of the operation to the
 [*io_service].
 
-5. The [*io_service] translates any error resulting from the operation into a
-`boost::system::error_code`. An `error_code` may be compared with specific
-values, or tested as a boolean (where a `false` result means that no error
-occurred). The result is then forwarded back up to the [*I/O object].
+5. The [*io_service] translates any error resulting from the operation into an
+object of type `boost::system::error_code`. An `error_code` may be compared with
+specific values, or tested as a boolean (where a `false` result means that no
+error occurred). The result is then forwarded back up to the [*I/O object].
 
-6. The [*I/O object] throws an exception of type `boost::system::system_error`
-if the operation failed. If the code to initiate the operation had instead been
+6. The [*I/O object] throws an exception of type `boost::system::system_error` if the
+operation failed. If the code to initiate the operation had instead been
 written as:
 
   boost::system::error_code ec;

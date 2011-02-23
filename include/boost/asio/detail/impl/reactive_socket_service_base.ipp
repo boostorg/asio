@@ -50,7 +50,8 @@ void reactive_socket_service_base::destroy(
 {
   if (impl.socket_ != invalid_socket)
   {
-    reactor_.close_descriptor(impl.socket_, impl.reactor_data_);
+    reactor_.deregister_descriptor(impl.socket_, impl.reactor_data_,
+        (impl.state_ & socket_ops::possible_dup) == 0);
 
     boost::system::error_code ignored_ec;
     socket_ops::close(impl.socket_, impl.state_, true, ignored_ec);
@@ -62,7 +63,10 @@ boost::system::error_code reactive_socket_service_base::close(
     boost::system::error_code& ec)
 {
   if (is_open(impl))
-    reactor_.close_descriptor(impl.socket_, impl.reactor_data_);
+  {
+    reactor_.deregister_descriptor(impl.socket_, impl.reactor_data_,
+        (impl.state_ & socket_ops::possible_dup) == 0);
+  }
 
   if (socket_ops::close(impl.socket_, impl.state_, true, ec) == 0)
     construct(impl);
@@ -119,7 +123,7 @@ boost::system::error_code reactive_socket_service_base::do_open(
 
 boost::system::error_code reactive_socket_service_base::do_assign(
     reactive_socket_service_base::base_implementation_type& impl, int type,
-    const reactive_socket_service_base::native_type& native_socket,
+    const reactive_socket_service_base::native_handle_type& native_socket,
     boost::system::error_code& ec)
 {
   if (is_open(impl))
@@ -143,22 +147,23 @@ boost::system::error_code reactive_socket_service_base::do_assign(
   case SOCK_DGRAM: impl.state_ = socket_ops::datagram_oriented; break;
   default: impl.state_ = 0; break;
   }
+  impl.state_ |= socket_ops::possible_dup;
   ec = boost::system::error_code();
   return ec;
 }
 
 void reactive_socket_service_base::start_op(
     reactive_socket_service_base::base_implementation_type& impl,
-    int op_type, reactor_op* op, bool non_blocking, bool noop)
+    int op_type, reactor_op* op, bool is_non_blocking, bool noop)
 {
   if (!noop)
   {
     if ((impl.state_ & socket_ops::non_blocking)
         || socket_ops::set_internal_non_blocking(
-          impl.socket_, impl.state_, op->ec_))
+          impl.socket_, impl.state_, true, op->ec_))
     {
       reactor_.start_op(op_type, impl.socket_,
-          impl.reactor_data_, op, non_blocking);
+          impl.reactor_data_, op, is_non_blocking);
       return;
     }
   }
@@ -185,7 +190,7 @@ void reactive_socket_service_base::start_connect_op(
 {
   if ((impl.state_ & socket_ops::non_blocking)
       || socket_ops::set_internal_non_blocking(
-        impl.socket_, impl.state_, op->ec_))
+        impl.socket_, impl.state_, true, op->ec_))
   {
     if (socket_ops::connect(impl.socket_, addr, addrlen, op->ec_) != 0)
     {

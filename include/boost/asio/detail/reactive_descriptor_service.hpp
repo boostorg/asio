@@ -42,7 +42,7 @@ class reactive_descriptor_service
 {
 public:
   // The native type of a descriptor.
-  typedef int native_type;
+  typedef int native_handle_type;
 
   // The implementation type of the descriptor.
   class implementation_type
@@ -85,7 +85,8 @@ public:
 
   // Assign a native descriptor to a descriptor implementation.
   BOOST_ASIO_DECL boost::system::error_code assign(implementation_type& impl,
-      const native_type& native_descriptor, boost::system::error_code& ec);
+      const native_handle_type& native_descriptor,
+      boost::system::error_code& ec);
 
   // Determine whether the descriptor is open.
   bool is_open(const implementation_type& impl) const
@@ -98,10 +99,13 @@ public:
       boost::system::error_code& ec);
 
   // Get the native descriptor representation.
-  native_type native(const implementation_type& impl) const
+  native_handle_type native_handle(const implementation_type& impl) const
   {
     return impl.descriptor_;
   }
+
+  // Release ownership of the native descriptor representation.
+  BOOST_ASIO_DECL native_handle_type release(implementation_type& impl);
 
   // Cancel all operations associated with the descriptor.
   BOOST_ASIO_DECL boost::system::error_code cancel(implementation_type& impl,
@@ -114,6 +118,36 @@ public:
   {
     descriptor_ops::ioctl(impl.descriptor_, impl.state_,
         command.name(), static_cast<ioctl_arg_type*>(command.data()), ec);
+    return ec;
+  }
+
+  // Gets the non-blocking mode of the descriptor.
+  bool non_blocking(const implementation_type& impl) const
+  {
+    return (impl.state_ & descriptor_ops::user_set_non_blocking) != 0;
+  }
+
+  // Sets the non-blocking mode of the descriptor.
+  boost::system::error_code non_blocking(implementation_type& impl,
+      bool mode, boost::system::error_code& ec)
+  {
+    descriptor_ops::set_user_non_blocking(
+        impl.descriptor_, impl.state_, mode, ec);
+    return ec;
+  }
+
+  // Gets the non-blocking mode of the native descriptor implementation.
+  bool native_non_blocking(const implementation_type& impl) const
+  {
+    return (impl.state_ & descriptor_ops::internal_non_blocking) != 0;
+  }
+
+  // Sets the non-blocking mode of the native descriptor implementation.
+  boost::system::error_code native_non_blocking(implementation_type& impl,
+      bool mode, boost::system::error_code& ec)
+  {
+    descriptor_ops::set_internal_non_blocking(
+        impl.descriptor_, impl.state_, mode, ec);
     return ec;
   }
 
@@ -143,7 +177,7 @@ public:
   // lifetime of the asynchronous operation.
   template <typename ConstBufferSequence, typename Handler>
   void async_write_some(implementation_type& impl,
-      const ConstBufferSequence& buffers, Handler handler)
+      const ConstBufferSequence& buffers, Handler& handler)
   {
     // Allocate and construct an operation to wrap the handler.
     typedef descriptor_write_op<ConstBufferSequence, Handler> op;
@@ -161,7 +195,7 @@ public:
   // Start an asynchronous wait until data can be written without blocking.
   template <typename Handler>
   void async_write_some(implementation_type& impl,
-      const null_buffers&, Handler handler)
+      const null_buffers&, Handler& handler)
   {
     // Allocate and construct an operation to wrap the handler.
     typedef reactive_null_buffers_op<Handler> op;
@@ -200,7 +234,7 @@ public:
   // valid for the lifetime of the asynchronous operation.
   template <typename MutableBufferSequence, typename Handler>
   void async_read_some(implementation_type& impl,
-      const MutableBufferSequence& buffers, Handler handler)
+      const MutableBufferSequence& buffers, Handler& handler)
   {
     // Allocate and construct an operation to wrap the handler.
     typedef descriptor_read_op<MutableBufferSequence, Handler> op;
@@ -218,7 +252,7 @@ public:
   // Wait until data can be read without blocking.
   template <typename Handler>
   void async_read_some(implementation_type& impl,
-      const null_buffers&, Handler handler)
+      const null_buffers&, Handler& handler)
   {
     // Allocate and construct an operation to wrap the handler.
     typedef reactive_null_buffers_op<Handler> op;
@@ -234,7 +268,7 @@ public:
 private:
   // Start the asynchronous operation.
   BOOST_ASIO_DECL void start_op(implementation_type& impl, int op_type,
-      reactor_op* op, bool non_blocking, bool noop);
+      reactor_op* op, bool is_non_blocking, bool noop);
 
   // The selector that performs event demultiplexing for the service.
   reactor& reactor_;

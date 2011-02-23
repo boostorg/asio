@@ -22,6 +22,7 @@
 #include <boost/asio/detail/consuming_buffers.hpp>
 #include <boost/asio/detail/handler_alloc_helpers.hpp>
 #include <boost/asio/detail/handler_invoke_helpers.hpp>
+#include <boost/asio/detail/handler_type_requirements.hpp>
 #include <boost/asio/detail/throw_error.hpp>
 
 #include <boost/asio/detail/push_options.hpp>
@@ -64,6 +65,14 @@ inline std::size_t write_at(SyncRandomAccessWriteDevice& d,
   return bytes_transferred;
 }
 
+template <typename SyncRandomAccessWriteDevice, typename ConstBufferSequence>
+inline std::size_t write_at(SyncRandomAccessWriteDevice& d,
+    boost::uint64_t offset, const ConstBufferSequence& buffers,
+    boost::system::error_code& ec)
+{
+  return write_at(d, offset, buffers, transfer_all(), ec);
+}
+
 template <typename SyncRandomAccessWriteDevice, typename ConstBufferSequence,
     typename CompletionCondition>
 inline std::size_t write_at(SyncRandomAccessWriteDevice& d,
@@ -101,6 +110,14 @@ inline std::size_t write_at(SyncRandomAccessWriteDevice& d,
   return bytes_transferred;
 }
 
+template <typename SyncRandomAccessWriteDevice, typename Allocator>
+inline std::size_t write_at(SyncRandomAccessWriteDevice& d,
+    boost::uint64_t offset, boost::asio::basic_streambuf<Allocator>& b,
+    boost::system::error_code& ec)
+{
+  return write_at(d, offset, b, transfer_all(), ec);
+}
+
 template <typename SyncRandomAccessWriteDevice, typename Allocator,
     typename CompletionCondition>
 inline std::size_t write_at(SyncRandomAccessWriteDevice& d,
@@ -126,14 +143,14 @@ namespace detail
   public:
     write_at_op(AsyncRandomAccessWriteDevice& device,
         boost::uint64_t offset, const ConstBufferSequence& buffers,
-        CompletionCondition completion_condition, WriteHandler handler)
+        CompletionCondition completion_condition, WriteHandler& handler)
       : detail::base_from_completion_cond<
           CompletionCondition>(completion_condition),
         device_(device),
         offset_(offset),
         buffers_(buffers),
         total_transferred_(0),
-        handler_(handler)
+        handler_(BOOST_ASIO_MOVE_CAST(WriteHandler)(handler))
     {
     }
 
@@ -180,14 +197,14 @@ namespace detail
     write_at_op(AsyncRandomAccessWriteDevice& device,
         boost::uint64_t offset, const boost::asio::mutable_buffers_1& buffers,
         CompletionCondition completion_condition,
-        WriteHandler handler)
+        WriteHandler& handler)
       : detail::base_from_completion_cond<
           CompletionCondition>(completion_condition),
         device_(device),
         offset_(offset),
         buffer_(buffers),
         total_transferred_(0),
-        handler_(handler)
+        handler_(BOOST_ASIO_MOVE_CAST(WriteHandler)(handler))
     {
     }
 
@@ -233,14 +250,14 @@ namespace detail
     write_at_op(AsyncRandomAccessWriteDevice& device,
         boost::uint64_t offset, const boost::asio::const_buffers_1& buffers,
         CompletionCondition completion_condition,
-        WriteHandler handler)
+        WriteHandler& handler)
       : detail::base_from_completion_cond<
           CompletionCondition>(completion_condition),
         device_(device),
         offset_(offset),
         buffer_(buffers),
         total_transferred_(0),
-        handler_(handler)
+        handler_(BOOST_ASIO_MOVE_CAST(WriteHandler)(handler))
     {
     }
 
@@ -314,6 +331,10 @@ inline void async_write_at(AsyncRandomAccessWriteDevice& d,
     boost::uint64_t offset, const ConstBufferSequence& buffers,
     CompletionCondition completion_condition, WriteHandler handler)
 {
+  // If you get an error on the following line it means that your handler does
+  // not meet the documented type requirements for a WriteHandler.
+  BOOST_ASIO_WRITE_HANDLER_CHECK(WriteHandler, handler) type_check;
+
   detail::write_at_op<AsyncRandomAccessWriteDevice,
     ConstBufferSequence, CompletionCondition, WriteHandler>(
       d, offset, buffers, completion_condition, handler)(
@@ -326,7 +347,14 @@ inline void async_write_at(AsyncRandomAccessWriteDevice& d,
     boost::uint64_t offset, const ConstBufferSequence& buffers,
     WriteHandler handler)
 {
-  async_write_at(d, offset, buffers, transfer_all(), handler);
+  // If you get an error on the following line it means that your handler does
+  // not meet the documented type requirements for a WriteHandler.
+  BOOST_ASIO_WRITE_HANDLER_CHECK(WriteHandler, handler) type_check;
+
+  detail::write_at_op<AsyncRandomAccessWriteDevice,
+    ConstBufferSequence, detail::transfer_all_t, WriteHandler>(
+      d, offset, buffers, transfer_all(), handler)(
+        boost::system::error_code(), 0, 1);
 }
 
 #if !defined(BOOST_NO_IOSTREAM)
@@ -340,9 +368,9 @@ namespace detail
   public:
     write_at_streambuf_op(
         boost::asio::basic_streambuf<Allocator>& streambuf,
-        WriteHandler handler)
+        WriteHandler& handler)
       : streambuf_(streambuf),
-        handler_(handler)
+        handler_(BOOST_ASIO_MOVE_CAST(WriteHandler)(handler))
     {
     }
 
@@ -395,6 +423,10 @@ inline void async_write_at(AsyncRandomAccessWriteDevice& d,
     boost::uint64_t offset, boost::asio::basic_streambuf<Allocator>& b,
     CompletionCondition completion_condition, WriteHandler handler)
 {
+  // If you get an error on the following line it means that your handler does
+  // not meet the documented type requirements for a WriteHandler.
+  BOOST_ASIO_WRITE_HANDLER_CHECK(WriteHandler, handler) type_check;
+
   async_write_at(d, offset, b.data(), completion_condition,
       detail::write_at_streambuf_op<
         AsyncRandomAccessWriteDevice, Allocator, WriteHandler>(b, handler));
@@ -406,7 +438,13 @@ inline void async_write_at(AsyncRandomAccessWriteDevice& d,
     boost::uint64_t offset, boost::asio::basic_streambuf<Allocator>& b,
     WriteHandler handler)
 {
-  async_write_at(d, offset, b, transfer_all(), handler);
+  // If you get an error on the following line it means that your handler does
+  // not meet the documented type requirements for a WriteHandler.
+  BOOST_ASIO_WRITE_HANDLER_CHECK(WriteHandler, handler) type_check;
+
+  async_write_at(d, offset, b.data(), transfer_all(),
+      detail::write_at_streambuf_op<
+        AsyncRandomAccessWriteDevice, Allocator, WriteHandler>(b, handler));
 }
 
 #endif // !defined(BOOST_NO_IOSTREAM)

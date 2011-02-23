@@ -61,16 +61,16 @@ public:
   typedef typename Protocol::endpoint endpoint_type;
 
   // The native type of a socket.
-  class native_type
+  class native_handle_type
   {
   public:
-    native_type(socket_type s)
+    native_handle_type(socket_type s)
       : socket_(s),
         have_remote_endpoint_(false)
     {
     }
 
-    native_type(socket_type s, const endpoint_type& ep)
+    native_handle_type(socket_type s, const endpoint_type& ep)
       : socket_(s),
         have_remote_endpoint_(true),
         remote_endpoint_(ep)
@@ -149,7 +149,7 @@ public:
 
   // Assign a native socket to a socket implementation.
   boost::system::error_code assign(implementation_type& impl,
-      const protocol_type& protocol, const native_type& native_socket,
+      const protocol_type& protocol, const native_handle_type& native_socket,
       boost::system::error_code& ec)
   {
     if (!do_assign(impl, protocol.type(), native_socket, ec))
@@ -162,11 +162,11 @@ public:
   }
 
   // Get the native socket representation.
-  native_type native(implementation_type& impl)
+  native_handle_type native_handle(implementation_type& impl)
   {
     if (impl.have_remote_endpoint_)
-      return native_type(impl.socket_, impl.remote_endpoint_);
-    return native_type(impl.socket_);
+      return native_handle_type(impl.socket_, impl.remote_endpoint_);
+    return native_handle_type(impl.socket_);
   }
 
   // Bind the socket to the specified local endpoint.
@@ -258,7 +258,7 @@ public:
   template <typename ConstBufferSequence, typename Handler>
   void async_send_to(implementation_type& impl,
       const ConstBufferSequence& buffers, const endpoint_type& destination,
-      socket_base::message_flags flags, Handler handler)
+      socket_base::message_flags flags, Handler& handler)
   {
     // Allocate and construct an operation to wrap the handler.
     typedef win_iocp_socket_send_op<ConstBufferSequence, Handler> op;
@@ -279,7 +279,7 @@ public:
   // Start an asynchronous wait until data can be sent without blocking.
   template <typename Handler>
   void async_send_to(implementation_type& impl, const null_buffers&,
-      const endpoint_type&, socket_base::message_flags, Handler handler)
+      const endpoint_type&, socket_base::message_flags, Handler& handler)
   {
     // Allocate and construct an operation to wrap the handler.
     typedef win_iocp_null_buffers_op<Handler> op;
@@ -334,7 +334,7 @@ public:
   template <typename MutableBufferSequence, typename Handler>
   void async_receive_from(implementation_type& impl,
       const MutableBufferSequence& buffers, endpoint_type& sender_endp,
-      socket_base::message_flags flags, Handler handler)
+      socket_base::message_flags flags, Handler& handler)
   {
     // Allocate and construct an operation to wrap the handler.
     typedef win_iocp_socket_recvfrom_op<
@@ -356,7 +356,7 @@ public:
   template <typename Handler>
   void async_receive_from(implementation_type& impl,
       const null_buffers&, endpoint_type& sender_endpoint,
-      socket_base::message_flags flags, Handler handler)
+      socket_base::message_flags flags, Handler& handler)
   {
     // Allocate and construct an operation to wrap the handler.
     typedef win_iocp_null_buffers_op<Handler> op;
@@ -405,7 +405,7 @@ public:
   // must be valid until the accept's handler is invoked.
   template <typename Socket, typename Handler>
   void async_accept(implementation_type& impl, Socket& peer,
-      endpoint_type* peer_endpoint, Handler handler)
+      endpoint_type* peer_endpoint, Handler& handler)
   {
     // Allocate and construct an operation to wrap the handler.
     typedef win_iocp_socket_accept_op<Socket, protocol_type, Handler> op;
@@ -436,7 +436,7 @@ public:
   // Start an asynchronous connect.
   template <typename Handler>
   void async_connect(implementation_type& impl,
-      const endpoint_type& peer_endpoint, Handler handler)
+      const endpoint_type& peer_endpoint, Handler& handler)
   {
     // Allocate and construct an operation to wrap the handler.
     typedef reactive_socket_connect_op<Handler> op;

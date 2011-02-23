@@ -68,11 +68,18 @@ public:
   typedef typename service_impl_type::implementation_type implementation_type;
 #endif
 
-  /// The native acceptor type.
+  /// (Deprecated: Use native_handle_type.) The native acceptor type.
 #if defined(GENERATING_DOCUMENTATION)
   typedef implementation_defined native_type;
 #else
-  typedef typename service_impl_type::native_type native_type;
+  typedef typename service_impl_type::native_handle_type native_type;
+#endif
+
+  /// The native acceptor type.
+#if defined(GENERATING_DOCUMENTATION)
+  typedef implementation_defined native_handle_type;
+#else
+  typedef typename service_impl_type::native_handle_type native_handle_type;
 #endif
 
   /// Construct a new socket acceptor service for the specified io_service.
@@ -110,7 +117,7 @@ public:
 
   /// Assign an existing native acceptor to a socket acceptor.
   boost::system::error_code assign(implementation_type& impl,
-      const protocol_type& protocol, const native_type& native_acceptor,
+      const protocol_type& protocol, const native_handle_type& native_acceptor,
       boost::system::error_code& ec)
   {
     return service_impl_.assign(impl, protocol, native_acceptor, ec);
@@ -151,10 +158,16 @@ public:
     return service_impl_.close(impl, ec);
   }
 
-  /// Get the native acceptor implementation.
+  /// (Deprecated: Use native_handle().) Get the native acceptor implementation.
   native_type native(implementation_type& impl)
   {
-    return service_impl_.native(impl);
+    return service_impl_.native_handle(impl);
+  }
+
+  /// Get the native acceptor implementation.
+  native_handle_type native_handle(implementation_type& impl)
+  {
+    return service_impl_.native_handle(impl);
   }
 
   /// Set a socket option.
@@ -179,6 +192,32 @@ public:
       IoControlCommand& command, boost::system::error_code& ec)
   {
     return service_impl_.io_control(impl, command, ec);
+  }
+
+  /// Gets the non-blocking mode of the acceptor.
+  bool non_blocking(const implementation_type& impl) const
+  {
+    return service_impl_.non_blocking(impl);
+  }
+
+  /// Sets the non-blocking mode of the acceptor.
+  boost::system::error_code non_blocking(implementation_type& impl,
+      bool mode, boost::system::error_code& ec)
+  {
+    return service_impl_.non_blocking(impl, mode, ec);
+  }
+
+  /// Gets the non-blocking mode of the native acceptor implementation.
+  bool native_non_blocking(const implementation_type& impl) const
+  {
+    return service_impl_.native_non_blocking(impl);
+  }
+
+  /// Sets the non-blocking mode of the native acceptor implementation.
+  boost::system::error_code native_non_blocking(implementation_type& impl,
+      bool mode, boost::system::error_code& ec)
+  {
+    return service_impl_.native_non_blocking(impl, mode, ec);
   }
 
   /// Get the local endpoint.

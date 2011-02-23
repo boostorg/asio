@@ -129,8 +129,8 @@ void dev_poll_reactor::cancel_ops(socket_type descriptor,
   cancel_ops_unlocked(descriptor, boost::asio::error::operation_aborted);
 }
 
-void dev_poll_reactor::close_descriptor(socket_type descriptor,
-    dev_poll_reactor::per_descriptor_data&)
+void dev_poll_reactor::deregister_descriptor(socket_type descriptor,
+    dev_poll_reactor::per_descriptor_data&, bool)
 {
   boost::asio::detail::mutex::scoped_lock lock(mutex_);
 

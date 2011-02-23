@@ -171,7 +171,7 @@ void test()
 
     // basic_io_object functions.
 
-    io_service& ios_ref = socket1.io_service();
+    io_service& ios_ref = socket1.get_io_service();
     (void)ios_ref;
 
     // basic_socket functions.
@@ -202,6 +202,10 @@ void test()
 
     ip::tcp::socket::native_type native_socket4 = socket1.native();
     (void)native_socket4;
+
+    ip::tcp::socket::native_handle_type native_socket5
+      = socket1.native_handle();
+    (void)native_socket5;
 
     socket1.cancel();
     socket1.cancel(ec);
@@ -237,6 +241,16 @@ void test()
 
     socket1.io_control(io_control_command);
     socket1.io_control(io_control_command, ec);
+
+    bool non_blocking1 = socket1.non_blocking();
+    (void)non_blocking1;
+    socket1.non_blocking(true);
+    socket1.non_blocking(false, ec);
+
+    bool non_blocking2 = socket1.native_non_blocking();
+    (void)non_blocking2;
+    socket1.native_non_blocking(true);
+    socket1.native_non_blocking(false, ec);
 
     ip::tcp::endpoint endpoint1 = socket1.local_endpoint();
     ip::tcp::endpoint endpoint2 = socket1.local_endpoint(ec);
@@ -515,6 +529,9 @@ void test()
   ip::tcp::endpoint client_endpoint;
   acceptor.accept(server_side_socket, client_endpoint);
 
+  ip::tcp::acceptor::non_blocking_io command(false);
+  acceptor.io_control(command);
+
   ip::tcp::endpoint client_side_local_endpoint
     = client_side_socket.local_endpoint();
   BOOST_CHECK(client_side_local_endpoint.port() == client_endpoint.port());
@@ -581,7 +598,7 @@ void test()
 
     // basic_io_object functions.
 
-    io_service& ios_ref = resolver.io_service();
+    io_service& ios_ref = resolver.get_io_service();
     (void)ios_ref;
 
     // basic_resolver functions.

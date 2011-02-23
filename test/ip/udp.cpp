@@ -71,7 +71,7 @@ void test()
 
     // basic_io_object functions.
 
-    io_service& ios_ref = socket1.io_service();
+    io_service& ios_ref = socket1.get_io_service();
     (void)ios_ref;
 
     // basic_socket functions.
@@ -102,6 +102,10 @@ void test()
 
     ip::udp::socket::native_type native_socket4 = socket1.native();
     (void)native_socket4;
+
+    ip::udp::socket::native_handle_type native_socket5
+      = socket1.native_handle();
+    (void)native_socket5;
 
     socket1.cancel();
     socket1.cancel(ec);
@@ -137,6 +141,16 @@ void test()
 
     socket1.io_control(io_control_command);
     socket1.io_control(io_control_command, ec);
+
+    bool non_blocking1 = socket1.non_blocking();
+    (void)non_blocking1;
+    socket1.non_blocking(true);
+    socket1.non_blocking(false, ec);
+
+    bool non_blocking2 = socket1.native_non_blocking();
+    (void)non_blocking2;
+    socket1.native_non_blocking(true);
+    socket1.native_non_blocking(false, ec);
 
     ip::udp::endpoint endpoint1 = socket1.local_endpoint();
     ip::udp::endpoint endpoint2 = socket1.local_endpoint(ec);
@@ -364,7 +378,7 @@ void test()
 
     // basic_io_object functions.
 
-    io_service& ios_ref = resolver.io_service();
+    io_service& ios_ref = resolver.get_io_service();
     (void)ios_ref;
 
     // basic_resolver functions.

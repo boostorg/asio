@@ -22,6 +22,7 @@
 #include <boost/asio/detail/consuming_buffers.hpp>
 #include <boost/asio/detail/handler_alloc_helpers.hpp>
 #include <boost/asio/detail/handler_invoke_helpers.hpp>
+#include <boost/asio/detail/handler_type_requirements.hpp>
 #include <boost/asio/detail/throw_error.hpp>
 
 #include <boost/asio/detail/push_options.hpp>
@@ -60,6 +61,13 @@ inline std::size_t write(SyncWriteStream& s, const ConstBufferSequence& buffers)
   return bytes_transferred;
 }
 
+template <typename SyncWriteStream, typename ConstBufferSequence>
+inline std::size_t write(SyncWriteStream& s, const ConstBufferSequence& buffers,
+    boost::system::error_code& ec)
+{
+  return write(s, buffers, transfer_all(), ec);
+}
+
 template <typename SyncWriteStream, typename ConstBufferSequence,
     typename CompletionCondition>
 inline std::size_t write(SyncWriteStream& s, const ConstBufferSequence& buffers,
@@ -94,6 +102,14 @@ inline std::size_t write(SyncWriteStream& s,
   return bytes_transferred;
 }
 
+template <typename SyncWriteStream, typename Allocator>
+inline std::size_t write(SyncWriteStream& s,
+    boost::asio::basic_streambuf<Allocator>& b,
+    boost::system::error_code& ec)
+{
+  return write(s, b, transfer_all(), ec);
+}
+
 template <typename SyncWriteStream, typename Allocator,
     typename CompletionCondition>
 inline std::size_t write(SyncWriteStream& s,
@@ -117,13 +133,13 @@ namespace detail
   {
   public:
     write_op(AsyncWriteStream& stream, const ConstBufferSequence& buffers,
-        CompletionCondition completion_condition, WriteHandler handler)
+        CompletionCondition completion_condition, WriteHandler& handler)
       : detail::base_from_completion_cond<
           CompletionCondition>(completion_condition),
         stream_(stream),
         buffers_(buffers),
         total_transferred_(0),
-        handler_(handler)
+        handler_(BOOST_ASIO_MOVE_CAST(WriteHandler)(handler))
     {
     }
 
@@ -168,13 +184,13 @@ namespace detail
     write_op(AsyncWriteStream& stream,
         const boost::asio::mutable_buffers_1& buffers,
         CompletionCondition completion_condition,
-        WriteHandler handler)
+        WriteHandler& handler)
       : detail::base_from_completion_cond<
           CompletionCondition>(completion_condition),
         stream_(stream),
         buffer_(buffers),
         total_transferred_(0),
-        handler_(handler)
+        handler_(BOOST_ASIO_MOVE_CAST(WriteHandler)(handler))
     {
     }
 
@@ -219,13 +235,13 @@ namespace detail
     write_op(AsyncWriteStream& stream,
         const boost::asio::const_buffers_1& buffers,
         CompletionCondition completion_condition,
-        WriteHandler handler)
+        WriteHandler& handler)
       : detail::base_from_completion_cond<
           CompletionCondition>(completion_condition),
         stream_(stream),
         buffer_(buffers),
         total_transferred_(0),
-        handler_(handler)
+        handler_(BOOST_ASIO_MOVE_CAST(WriteHandler)(handler))
     {
     }
 
@@ -297,6 +313,10 @@ template <typename AsyncWriteStream, typename ConstBufferSequence,
 inline void async_write(AsyncWriteStream& s, const ConstBufferSequence& buffers,
     CompletionCondition completion_condition, WriteHandler handler)
 {
+  // If you get an error on the following line it means that your handler does
+  // not meet the documented type requirements for a WriteHandler.
+  BOOST_ASIO_WRITE_HANDLER_CHECK(WriteHandler, handler) type_check;
+
   detail::write_op<AsyncWriteStream, ConstBufferSequence,
     CompletionCondition, WriteHandler>(
       s, buffers, completion_condition, handler)(
@@ -308,7 +328,14 @@ template <typename AsyncWriteStream, typename ConstBufferSequence,
 inline void async_write(AsyncWriteStream& s, const ConstBufferSequence& buffers,
     WriteHandler handler)
 {
-  async_write(s, buffers, transfer_all(), handler);
+  // If you get an error on the following line it means that your handler does
+  // not meet the documented type requirements for a WriteHandler.
+  BOOST_ASIO_WRITE_HANDLER_CHECK(WriteHandler, handler) type_check;
+
+  detail::write_op<AsyncWriteStream, ConstBufferSequence,
+    detail::transfer_all_t, WriteHandler>(
+      s, buffers, transfer_all(), handler)(
+        boost::system::error_code(), 0, 1);
 }
 
 #if !defined(BOOST_NO_IOSTREAM)
@@ -321,9 +348,9 @@ namespace detail
   {
   public:
     write_streambuf_handler(boost::asio::basic_streambuf<Allocator>& streambuf,
-        WriteHandler handler)
+        WriteHandler& handler)
       : streambuf_(streambuf),
-        handler_(handler)
+        handler_(BOOST_ASIO_MOVE_CAST(WriteHandler)(handler))
     {
     }
 
@@ -376,6 +403,10 @@ inline void async_write(AsyncWriteStream& s,
     boost::asio::basic_streambuf<Allocator>& b,
     CompletionCondition completion_condition, WriteHandler handler)
 {
+  // If you get an error on the following line it means that your handler does
+  // not meet the documented type requirements for a WriteHandler.
+  BOOST_ASIO_WRITE_HANDLER_CHECK(WriteHandler, handler) type_check;
+
   async_write(s, b.data(), completion_condition,
       detail::write_streambuf_handler<
         AsyncWriteStream, Allocator, WriteHandler>(b, handler));
@@ -385,7 +416,13 @@ template <typename AsyncWriteStream, typename Allocator, typename WriteHandler>
 inline void async_write(AsyncWriteStream& s,
     boost::asio::basic_streambuf<Allocator>& b, WriteHandler handler)
 {
-  async_write(s, b, transfer_all(), handler);
+  // If you get an error on the following line it means that your handler does
+  // not meet the documented type requirements for a WriteHandler.
+  BOOST_ASIO_WRITE_HANDLER_CHECK(WriteHandler, handler) type_check;
+
+  async_write(s, b.data(), transfer_all(),
+      detail::write_streambuf_handler<
+        AsyncWriteStream, Allocator, WriteHandler>(b, handler));
 }
 
 #endif // !defined(BOOST_NO_IOSTREAM)
