@@ -45,7 +45,7 @@ Iterator connect(basic_socket<Protocol, SocketService>& s, Iterator begin)
 {
   boost::system::error_code ec;
   Iterator result = connect(s, begin, ec);
-  boost::asio::detail::throw_error(ec);
+  boost::asio::detail::throw_error(ec, "connect");
   return result;
 }
 
@@ -62,7 +62,7 @@ Iterator connect(basic_socket<Protocol, SocketService>& s,
 {
   boost::system::error_code ec;
   Iterator result = connect(s, begin, end, ec);
-  boost::asio::detail::throw_error(ec);
+  boost::asio::detail::throw_error(ec, "connect");
   return result;
 }
 
@@ -80,7 +80,7 @@ Iterator connect(basic_socket<Protocol, SocketService>& s,
 {
   boost::system::error_code ec;
   Iterator result = connect(s, begin, connect_condition, ec);
-  boost::asio::detail::throw_error(ec);
+  boost::asio::detail::throw_error(ec, "connect");
   return result;
 }
 
@@ -100,7 +100,7 @@ Iterator connect(basic_socket<Protocol, SocketService>& s,
 {
   boost::system::error_code ec;
   Iterator result = connect(s, begin, end, connect_condition, ec);
-  boost::asio::detail::throw_error(ec);
+  boost::asio::detail::throw_error(ec, "connect");
   return result;
 }
 

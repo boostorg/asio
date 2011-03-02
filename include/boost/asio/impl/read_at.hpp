@@ -63,7 +63,7 @@ inline std::size_t read_at(SyncRandomAccessReadDevice& d,
   boost::system::error_code ec;
   std::size_t bytes_transferred = read_at(
       d, offset, buffers, transfer_all(), ec);
-  boost::asio::detail::throw_error(ec);
+  boost::asio::detail::throw_error(ec, "read_at");
   return bytes_transferred;
 }
 
@@ -84,7 +84,7 @@ inline std::size_t read_at(SyncRandomAccessReadDevice& d,
   boost::system::error_code ec;
   std::size_t bytes_transferred = read_at(
       d, offset, buffers, completion_condition, ec);
-  boost::asio::detail::throw_error(ec);
+  boost::asio::detail::throw_error(ec, "read_at");
   return bytes_transferred;
 }
 
@@ -121,7 +121,7 @@ inline std::size_t read_at(SyncRandomAccessReadDevice& d,
   boost::system::error_code ec;
   std::size_t bytes_transferred = read_at(
       d, offset, b, transfer_all(), ec);
-  boost::asio::detail::throw_error(ec);
+  boost::asio::detail::throw_error(ec, "read_at");
   return bytes_transferred;
 }
 
@@ -142,7 +142,7 @@ inline std::size_t read_at(SyncRandomAccessReadDevice& d,
   boost::system::error_code ec;
   std::size_t bytes_transferred = read_at(
       d, offset, b, completion_condition, ec);
-  boost::asio::detail::throw_error(ec);
+  boost::asio::detail::throw_error(ec, "read_at");
   return bytes_transferred;
 }
 

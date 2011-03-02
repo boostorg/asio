@@ -53,6 +53,20 @@ and asynchronous operations.
 * [@boost_asio/example/echo/blocking_udp_echo_server.cpp]
 
 
+[heading Fork]
+
+These POSIX-specific examples show how to use Boost.Asio in conjunction with the
+`fork()` system call. The first example illustrates the steps required to start
+a daemon process:
+
+* [@boost_asio/example/fork/daemon.cpp]
+
+The second example demonstrates how it is possible to fork a process from
+within a completion handler.
+
+* [@boost_asio/example/fork/process_per_connection.cpp]
+
+
 [heading HTTP Client]
 
 Example programs implementing simple HTTP 1.0 clients. These examples show how

@@ -62,11 +62,6 @@ public:
   {
   }
 
-  /// Destroy all user-defined handler objects owned by the service.
-  void shutdown_service()
-  {
-  }
-
   /// Return a null context implementation.
   impl_type null() const
   {
@@ -161,6 +156,11 @@ public:
   }
 
 private:
+  // Destroy all user-defined handler objects owned by the service.
+  void shutdown_service()
+  {
+  }
+
   // The service that provides the platform-specific implementation.
   service_impl_type& service_impl_;
 };

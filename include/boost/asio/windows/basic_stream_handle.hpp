@@ -121,7 +121,7 @@ public:
   {
     boost::system::error_code ec;
     std::size_t s = this->service.write_some(this->implementation, buffers, ec);
-    boost::asio::detail::throw_error(ec);
+    boost::asio::detail::throw_error(ec, "write_some");
     return s;
   }
 
@@ -228,7 +228,7 @@ public:
   {
     boost::system::error_code ec;
     std::size_t s = this->service.read_some(this->implementation, buffers, ec);
-    boost::asio::detail::throw_error(ec);
+    boost::asio::detail::throw_error(ec, "read_some");
     return s;
   }
 

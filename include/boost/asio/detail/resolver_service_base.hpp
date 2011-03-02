@@ -48,6 +48,9 @@ public:
   // Destroy all user-defined handler objects owned by the service.
   BOOST_ASIO_DECL void shutdown_service();
 
+  // Perform any fork-related housekeeping.
+  BOOST_ASIO_DECL void fork_service(boost::asio::io_service::fork_event event);
+
   // Construct a new resolver implementation.
   BOOST_ASIO_DECL void construct(implementation_type& impl);
 

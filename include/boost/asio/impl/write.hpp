@@ -57,7 +57,7 @@ inline std::size_t write(SyncWriteStream& s, const ConstBufferSequence& buffers)
 {
   boost::system::error_code ec;
   std::size_t bytes_transferred = write(s, buffers, transfer_all(), ec);
-  boost::asio::detail::throw_error(ec);
+  boost::asio::detail::throw_error(ec, "write");
   return bytes_transferred;
 }
 
@@ -75,7 +75,7 @@ inline std::size_t write(SyncWriteStream& s, const ConstBufferSequence& buffers,
 {
   boost::system::error_code ec;
   std::size_t bytes_transferred = write(s, buffers, completion_condition, ec);
-  boost::asio::detail::throw_error(ec);
+  boost::asio::detail::throw_error(ec, "write");
   return bytes_transferred;
 }
 
@@ -98,7 +98,7 @@ inline std::size_t write(SyncWriteStream& s,
 {
   boost::system::error_code ec;
   std::size_t bytes_transferred = write(s, b, transfer_all(), ec);
-  boost::asio::detail::throw_error(ec);
+  boost::asio::detail::throw_error(ec, "write");
   return bytes_transferred;
 }
 
@@ -118,7 +118,7 @@ inline std::size_t write(SyncWriteStream& s,
 {
   boost::system::error_code ec;
   std::size_t bytes_transferred = write(s, b, completion_condition, ec);
-  boost::asio::detail::throw_error(ec);
+  boost::asio::detail::throw_error(ec, "write");
   return bytes_transferred;
 }
 

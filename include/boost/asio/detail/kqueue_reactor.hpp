@@ -63,6 +63,7 @@ public:
     friend class kqueue_reactor;
     friend class object_pool_access;
     mutex mutex_;
+    int descriptor_;
     op_queue<reactor_op> op_queue_[max_ops];
     bool shutdown_;
     descriptor_state* next_;
@@ -80,6 +81,10 @@ public:
 
   // Destroy all user-defined handler objects owned by the service.
   BOOST_ASIO_DECL void shutdown_service();
+
+  // Recreate internal descriptors following a fork.
+  BOOST_ASIO_DECL void fork_service(
+      boost::asio::io_service::fork_event event);
 
   // Initialise the task.
   BOOST_ASIO_DECL void init_task();
@@ -117,6 +122,10 @@ public:
   // its registration from the reactor.
   BOOST_ASIO_DECL void deregister_descriptor(socket_type descriptor,
       per_descriptor_data& descriptor_data, bool closing);
+
+  // Remote the descriptor's registration from the reactor.
+  BOOST_ASIO_DECL void deregister_internal_descriptor(
+      socket_type descriptor, per_descriptor_data& descriptor_data);
 
   // Add a new timer queue to the reactor.
   template <typename Time_Traits>

@@ -100,7 +100,7 @@ public:
   {
     boost::system::error_code ec;
     iterator i = this->service.resolve(this->implementation, q, ec);
-    boost::asio::detail::throw_error(ec);
+    boost::asio::detail::throw_error(ec, "resolve");
     return i;
   }
 
@@ -186,7 +186,7 @@ public:
   {
     boost::system::error_code ec;
     iterator i = this->service.resolve(this->implementation, e, ec);
-    boost::asio::detail::throw_error(ec);
+    boost::asio::detail::throw_error(ec, "resolve");
     return i;
   }
 

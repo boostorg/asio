@@ -125,7 +125,7 @@ public:
   {
     boost::system::error_code ec;
     this->service.add(this->implementation, signal_number_1, ec);
-    boost::asio::detail::throw_error(ec);
+    boost::asio::detail::throw_error(ec, "add");
   }
 
   /// Construct a signal set and add two signals.
@@ -150,9 +150,9 @@ public:
   {
     boost::system::error_code ec;
     this->service.add(this->implementation, signal_number_1, ec);
-    boost::asio::detail::throw_error(ec);
+    boost::asio::detail::throw_error(ec, "add");
     this->service.add(this->implementation, signal_number_2, ec);
-    boost::asio::detail::throw_error(ec);
+    boost::asio::detail::throw_error(ec, "add");
   }
 
   /// Construct a signal set and add three signals.
@@ -180,11 +180,11 @@ public:
   {
     boost::system::error_code ec;
     this->service.add(this->implementation, signal_number_1, ec);
-    boost::asio::detail::throw_error(ec);
+    boost::asio::detail::throw_error(ec, "add");
     this->service.add(this->implementation, signal_number_2, ec);
-    boost::asio::detail::throw_error(ec);
+    boost::asio::detail::throw_error(ec, "add");
     this->service.add(this->implementation, signal_number_3, ec);
-    boost::asio::detail::throw_error(ec);
+    boost::asio::detail::throw_error(ec, "add");
   }
 
   /// Add a signal to a signal_set.
@@ -200,7 +200,7 @@ public:
   {
     boost::system::error_code ec;
     this->service.add(this->implementation, signal_number, ec);
-    boost::asio::detail::throw_error(ec);
+    boost::asio::detail::throw_error(ec, "add");
   }
 
   /// Add a signal to a signal_set.
@@ -234,7 +234,7 @@ public:
   {
     boost::system::error_code ec;
     this->service.remove(this->implementation, signal_number, ec);
-    boost::asio::detail::throw_error(ec);
+    boost::asio::detail::throw_error(ec, "remove");
   }
 
   /// Remove a signal from a signal_set.
@@ -268,7 +268,7 @@ public:
   {
     boost::system::error_code ec;
     this->service.clear(this->implementation, ec);
-    boost::asio::detail::throw_error(ec);
+    boost::asio::detail::throw_error(ec, "clear");
   }
 
   /// Remove all signals from a signal_set.
@@ -310,7 +310,7 @@ public:
   {
     boost::system::error_code ec;
     this->service.cancel(this->implementation, ec);
-    boost::asio::detail::throw_error(ec);
+    boost::asio::detail::throw_error(ec, "cancel");
   }
 
   /// Cancel all operations associated with the signal set.

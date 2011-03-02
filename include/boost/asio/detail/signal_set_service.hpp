@@ -17,6 +17,7 @@
 
 #include <boost/asio/detail/config.hpp>
 
+#include <csignal>
 #include <cstddef>
 #include <boost/asio/error.hpp>
 #include <boost/asio/io_service.hpp>
@@ -117,6 +118,9 @@ public:
   // Destroy all user-defined handler objects owned by the service.
   BOOST_ASIO_DECL void shutdown_service();
 
+  // Perform fork-related housekeeping.
+  BOOST_ASIO_DECL void fork_service(boost::asio::io_service::fork_event event);
+
   // Construct a new signal_set implementation.
   BOOST_ASIO_DECL void construct(implementation_type& impl);
 
@@ -165,6 +169,12 @@ private:
 
   // Helper function to remove a service from the global signal state.
   BOOST_ASIO_DECL static void remove_service(signal_set_service* service);
+
+  // Helper function to create the pipe descriptors.
+  BOOST_ASIO_DECL static void open_descriptors();
+
+  // Helper function to close the pipe descriptors.
+  BOOST_ASIO_DECL static void close_descriptors();
 
   // Helper function to start a wait operation.
   BOOST_ASIO_DECL void start_wait_op(implementation_type& impl, signal_op* op);

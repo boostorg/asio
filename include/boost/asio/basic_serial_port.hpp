@@ -88,7 +88,7 @@ public:
   {
     boost::system::error_code ec;
     this->service.open(this->implementation, device, ec);
-    boost::asio::detail::throw_error(ec);
+    boost::asio::detail::throw_error(ec, "open");
   }
 
   /// Construct and open a basic_serial_port.
@@ -108,7 +108,7 @@ public:
   {
     boost::system::error_code ec;
     this->service.open(this->implementation, device, ec);
-    boost::asio::detail::throw_error(ec);
+    boost::asio::detail::throw_error(ec, "open");
   }
 
   /// Construct a basic_serial_port on an existing native serial port.
@@ -129,7 +129,7 @@ public:
   {
     boost::system::error_code ec;
     this->service.assign(this->implementation, native_serial_port, ec);
-    boost::asio::detail::throw_error(ec);
+    boost::asio::detail::throw_error(ec, "assign");
   }
 
   /// Get a reference to the lowest layer.
@@ -172,7 +172,7 @@ public:
   {
     boost::system::error_code ec;
     this->service.open(this->implementation, device, ec);
-    boost::asio::detail::throw_error(ec);
+    boost::asio::detail::throw_error(ec, "open");
   }
 
   /// Open the serial port using the specified device name.
@@ -202,7 +202,7 @@ public:
   {
     boost::system::error_code ec;
     this->service.assign(this->implementation, native_serial_port, ec);
-    boost::asio::detail::throw_error(ec);
+    boost::asio::detail::throw_error(ec, "assign");
   }
 
   /// Assign an existing native serial port to the serial port.
@@ -237,7 +237,7 @@ public:
   {
     boost::system::error_code ec;
     this->service.close(this->implementation, ec);
-    boost::asio::detail::throw_error(ec);
+    boost::asio::detail::throw_error(ec, "close");
   }
 
   /// Close the serial port.
@@ -288,7 +288,7 @@ public:
   {
     boost::system::error_code ec;
     this->service.cancel(this->implementation, ec);
-    boost::asio::detail::throw_error(ec);
+    boost::asio::detail::throw_error(ec, "cancel");
   }
 
   /// Cancel all asynchronous operations associated with the serial port.
@@ -315,7 +315,7 @@ public:
   {
     boost::system::error_code ec;
     this->service.send_break(this->implementation, ec);
-    boost::asio::detail::throw_error(ec);
+    boost::asio::detail::throw_error(ec, "send_break");
   }
 
   /// Send a break sequence to the serial port.
@@ -350,7 +350,7 @@ public:
   {
     boost::system::error_code ec;
     this->service.set_option(this->implementation, option, ec);
-    boost::asio::detail::throw_error(ec);
+    boost::asio::detail::throw_error(ec, "set_option");
   }
 
   /// Set an option on the serial port.
@@ -396,7 +396,7 @@ public:
   {
     boost::system::error_code ec;
     this->service.get_option(this->implementation, option, ec);
-    boost::asio::detail::throw_error(ec);
+    boost::asio::detail::throw_error(ec, "get_option");
   }
 
   /// Get an option from the serial port.
@@ -454,7 +454,7 @@ public:
   {
     boost::system::error_code ec;
     std::size_t s = this->service.write_some(this->implementation, buffers, ec);
-    boost::asio::detail::throw_error(ec);
+    boost::asio::detail::throw_error(ec, "write_some");
     return s;
   }
 
@@ -561,7 +561,7 @@ public:
   {
     boost::system::error_code ec;
     std::size_t s = this->service.read_some(this->implementation, buffers, ec);
-    boost::asio::detail::throw_error(ec);
+    boost::asio::detail::throw_error(ec, "read_some");
     return s;
   }
 

@@ -13,7 +13,7 @@
 #include <boost/bind.hpp>
 #include <boost/smart_ptr.hpp>
 #include <boost/asio.hpp>
-#include <boost/thread.hpp>
+#include <boost/thread/thread.hpp>
 
 using boost::asio::ip::tcp;
 

@@ -88,7 +88,7 @@ public:
   {
     boost::system::error_code ec;
     this->service.assign(this->implementation, native_descriptor, ec);
-    boost::asio::detail::throw_error(ec);
+    boost::asio::detail::throw_error(ec, "assign");
   }
 
   /// Get a reference to the lowest layer.
@@ -131,7 +131,7 @@ public:
   {
     boost::system::error_code ec;
     this->service.assign(this->implementation, native_descriptor, ec);
-    boost::asio::detail::throw_error(ec);
+    boost::asio::detail::throw_error(ec, "assign");
   }
 
   /// Assign an existing native descriptor to the descriptor.
@@ -160,13 +160,14 @@ public:
    * write operations will be cancelled immediately, and will complete with the
    * boost::asio::error::operation_aborted error.
    *
-   * @throws boost::system::system_error Thrown on failure.
+   * @throws boost::system::system_error Thrown on failure. Note that, even if
+   * the function indicates an error, the underlying descriptor is closed.
    */
   void close()
   {
     boost::system::error_code ec;
     this->service.close(this->implementation, ec);
-    boost::asio::detail::throw_error(ec);
+    boost::asio::detail::throw_error(ec, "close");
   }
 
   /// Close the descriptor.
@@ -175,7 +176,8 @@ public:
    * write operations will be cancelled immediately, and will complete with the
    * boost::asio::error::operation_aborted error.
    *
-   * @param ec Set to indicate what error occurred, if any.
+   * @param ec Set to indicate what error occurred, if any. Note that, even if
+   * the function indicates an error, the underlying descriptor is closed.
    */
   boost::system::error_code close(boost::system::error_code& ec)
   {
@@ -232,7 +234,7 @@ public:
   {
     boost::system::error_code ec;
     this->service.cancel(this->implementation, ec);
-    boost::asio::detail::throw_error(ec);
+    boost::asio::detail::throw_error(ec, "cancel");
   }
 
   /// Cancel all asynchronous operations associated with the descriptor.
@@ -275,7 +277,7 @@ public:
   {
     boost::system::error_code ec;
     this->service.io_control(this->implementation, command, ec);
-    boost::asio::detail::throw_error(ec);
+    boost::asio::detail::throw_error(ec, "io_control");
   }
 
   /// Perform an IO control command on the descriptor.
@@ -345,7 +347,7 @@ public:
   {
     boost::system::error_code ec;
     this->service.non_blocking(this->implementation, mode, ec);
-    boost::asio::detail::throw_error(ec);
+    boost::asio::detail::throw_error(ec, "non_blocking");
   }
 
   /// Sets the non-blocking mode of the descriptor.
@@ -405,7 +407,7 @@ public:
   {
     boost::system::error_code ec;
     this->service.native_non_blocking(this->implementation, mode, ec);
-    boost::asio::detail::throw_error(ec);
+    boost::asio::detail::throw_error(ec, "native_non_blocking");
   }
 
   /// Sets the non-blocking mode of the native descriptor implementation.

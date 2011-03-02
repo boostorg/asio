@@ -16,7 +16,7 @@
 // Test that header file is self-contained.
 #include <boost/asio/deadline_timer.hpp>
 
-#include <boost/thread.hpp>
+#include <boost/thread/thread.hpp>
 #include <boost/bind.hpp>
 #include <boost/asio/io_service.hpp>
 #include <boost/asio/placeholders.hpp>

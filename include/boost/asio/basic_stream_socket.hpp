@@ -164,7 +164,7 @@ public:
     boost::system::error_code ec;
     std::size_t s = this->service.send(
         this->implementation, buffers, 0, ec);
-    boost::asio::detail::throw_error(ec);
+    boost::asio::detail::throw_error(ec, "send");
     return s;
   }
 
@@ -202,7 +202,7 @@ public:
     boost::system::error_code ec;
     std::size_t s = this->service.send(
         this->implementation, buffers, flags, ec);
-    boost::asio::detail::throw_error(ec);
+    boost::asio::detail::throw_error(ec, "send");
     return s;
   }
 
@@ -359,7 +359,7 @@ public:
   {
     boost::system::error_code ec;
     std::size_t s = this->service.receive(this->implementation, buffers, 0, ec);
-    boost::asio::detail::throw_error(ec);
+    boost::asio::detail::throw_error(ec, "receive");
     return s;
   }
 
@@ -400,7 +400,7 @@ public:
     boost::system::error_code ec;
     std::size_t s = this->service.receive(
         this->implementation, buffers, flags, ec);
-    boost::asio::detail::throw_error(ec);
+    boost::asio::detail::throw_error(ec, "receive");
     return s;
   }
 
@@ -560,7 +560,7 @@ public:
   {
     boost::system::error_code ec;
     std::size_t s = this->service.send(this->implementation, buffers, 0, ec);
-    boost::asio::detail::throw_error(ec);
+    boost::asio::detail::throw_error(ec, "write_some");
     return s;
   }
 
@@ -667,7 +667,7 @@ public:
   {
     boost::system::error_code ec;
     std::size_t s = this->service.receive(this->implementation, buffers, 0, ec);
-    boost::asio::detail::throw_error(ec);
+    boost::asio::detail::throw_error(ec, "read_some");
     return s;
   }
 

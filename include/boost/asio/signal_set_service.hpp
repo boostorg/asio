@@ -54,12 +54,6 @@ public:
   {
   }
 
-  /// Destroy all user-defined handler objects owned by the service.
-  void shutdown_service()
-  {
-    service_impl_.shutdown_service();
-  }
-
   /// Construct a new signal set implementation.
   void construct(implementation_type& impl)
   {
@@ -108,6 +102,18 @@ public:
   }
 
 private:
+  // Destroy all user-defined handler objects owned by the service.
+  void shutdown_service()
+  {
+    service_impl_.shutdown_service();
+  }
+
+  // Perform any fork-related housekeeping.
+  void fork_service(boost::asio::io_service::fork_event event)
+  {
+    service_impl_.fork_service(event);
+  }
+
   // The platform-specific implementation.
   detail::signal_set_service service_impl_;
 };

@@ -162,7 +162,7 @@ public:
   {
     boost::system::error_code ec;
     this->service.expires_at(this->implementation, expiry_time, ec);
-    boost::asio::detail::throw_error(ec);
+    boost::asio::detail::throw_error(ec, "expires_at");
   }
 
   /// Constructor to set a particular expiry time relative to now.
@@ -181,7 +181,7 @@ public:
   {
     boost::system::error_code ec;
     this->service.expires_from_now(this->implementation, expiry_time, ec);
-    boost::asio::detail::throw_error(ec);
+    boost::asio::detail::throw_error(ec, "expires_from_now");
   }
 
   /// Cancel any asynchronous operations that are waiting on the timer.
@@ -210,7 +210,7 @@ public:
   {
     boost::system::error_code ec;
     std::size_t s = this->service.cancel(this->implementation, ec);
-    boost::asio::detail::throw_error(ec);
+    boost::asio::detail::throw_error(ec, "cancel");
     return s;
   }
 
@@ -269,7 +269,7 @@ public:
   {
     boost::system::error_code ec;
     std::size_t s = this->service.cancel_one(this->implementation, ec);
-    boost::asio::detail::throw_error(ec);
+    boost::asio::detail::throw_error(ec, "cancel_one");
     return s;
   }
 
@@ -339,7 +339,7 @@ public:
     boost::system::error_code ec;
     std::size_t s = this->service.expires_at(
         this->implementation, expiry_time, ec);
-    boost::asio::detail::throw_error(ec);
+    boost::asio::detail::throw_error(ec, "expires_at");
     return s;
   }
 
@@ -408,7 +408,7 @@ public:
     boost::system::error_code ec;
     std::size_t s = this->service.expires_from_now(
         this->implementation, expiry_time, ec);
-    boost::asio::detail::throw_error(ec);
+    boost::asio::detail::throw_error(ec, "expires_from_now");
     return s;
   }
 
@@ -452,7 +452,7 @@ public:
   {
     boost::system::error_code ec;
     this->service.wait(this->implementation, ec);
-    boost::asio::detail::throw_error(ec);
+    boost::asio::detail::throw_error(ec, "wait");
   }
 
   /// Perform a blocking wait on the timer.

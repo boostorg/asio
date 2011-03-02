@@ -87,7 +87,7 @@ public:
   {
     boost::system::error_code ec;
     this->service.open(this->implementation, protocol, ec);
-    boost::asio::detail::throw_error(ec);
+    boost::asio::detail::throw_error(ec, "open");
   }
 
   /// Construct a basic_socket, opening it and binding it to the given local
@@ -111,9 +111,9 @@ public:
   {
     boost::system::error_code ec;
     this->service.open(this->implementation, endpoint.protocol(), ec);
-    boost::asio::detail::throw_error(ec);
+    boost::asio::detail::throw_error(ec, "open");
     this->service.bind(this->implementation, endpoint, ec);
-    boost::asio::detail::throw_error(ec);
+    boost::asio::detail::throw_error(ec, "bind");
   }
 
   /// Construct a basic_socket on an existing native socket.
@@ -135,7 +135,7 @@ public:
   {
     boost::system::error_code ec;
     this->service.assign(this->implementation, protocol, native_socket, ec);
-    boost::asio::detail::throw_error(ec);
+    boost::asio::detail::throw_error(ec, "assign");
   }
 
   /// Get a reference to the lowest layer.
@@ -184,7 +184,7 @@ public:
   {
     boost::system::error_code ec;
     this->service.open(this->implementation, protocol, ec);
-    boost::asio::detail::throw_error(ec);
+    boost::asio::detail::throw_error(ec, "open");
   }
 
   /// Open the socket using the specified protocol.
@@ -227,7 +227,7 @@ public:
   {
     boost::system::error_code ec;
     this->service.assign(this->implementation, protocol, native_socket, ec);
-    boost::asio::detail::throw_error(ec);
+    boost::asio::detail::throw_error(ec, "assign");
   }
 
   /// Assign an existing native socket to the socket.
@@ -259,7 +259,8 @@ public:
    * or connect operations will be cancelled immediately, and will complete
    * with the boost::asio::error::operation_aborted error.
    *
-   * @throws boost::system::system_error Thrown on failure.
+   * @throws boost::system::system_error Thrown on failure. Note that, even if
+   * the function indicates an error, the underlying descriptor is closed.
    *
    * @note For portable behaviour with respect to graceful closure of a
    * connected socket, call shutdown() before closing the socket.
@@ -268,7 +269,7 @@ public:
   {
     boost::system::error_code ec;
     this->service.close(this->implementation, ec);
-    boost::asio::detail::throw_error(ec);
+    boost::asio::detail::throw_error(ec, "close");
   }
 
   /// Close the socket.
@@ -277,7 +278,8 @@ public:
    * or connect operations will be cancelled immediately, and will complete
    * with the boost::asio::error::operation_aborted error.
    *
-   * @param ec Set to indicate what error occurred, if any.
+   * @param ec Set to indicate what error occurred, if any. Note that, even if
+   * the function indicates an error, the underlying descriptor is closed.
    *
    * @par Example
    * @code
@@ -366,7 +368,7 @@ public:
   {
     boost::system::error_code ec;
     this->service.cancel(this->implementation, ec);
-    boost::asio::detail::throw_error(ec);
+    boost::asio::detail::throw_error(ec, "cancel");
   }
 
   /// Cancel all asynchronous operations associated with the socket.
@@ -429,7 +431,7 @@ public:
   {
     boost::system::error_code ec;
     bool b = this->service.at_mark(this->implementation, ec);
-    boost::asio::detail::throw_error(ec);
+    boost::asio::detail::throw_error(ec, "at_mark");
     return b;
   }
 
@@ -462,7 +464,7 @@ public:
   {
     boost::system::error_code ec;
     std::size_t s = this->service.available(this->implementation, ec);
-    boost::asio::detail::throw_error(ec);
+    boost::asio::detail::throw_error(ec, "available");
     return s;
   }
 
@@ -503,7 +505,7 @@ public:
   {
     boost::system::error_code ec;
     this->service.bind(this->implementation, endpoint, ec);
-    boost::asio::detail::throw_error(ec);
+    boost::asio::detail::throw_error(ec, "bind");
   }
 
   /// Bind the socket to the given local endpoint.
@@ -564,10 +566,10 @@ public:
     if (!is_open())
     {
       this->service.open(this->implementation, peer_endpoint.protocol(), ec);
-      boost::asio::detail::throw_error(ec);
+      boost::asio::detail::throw_error(ec, "connect");
     }
     this->service.connect(this->implementation, peer_endpoint, ec);
-    boost::asio::detail::throw_error(ec);
+    boost::asio::detail::throw_error(ec, "connect");
   }
 
   /// Connect the socket to the specified endpoint.
@@ -716,7 +718,7 @@ public:
   {
     boost::system::error_code ec;
     this->service.set_option(this->implementation, option, ec);
-    boost::asio::detail::throw_error(ec);
+    boost::asio::detail::throw_error(ec, "set_option");
   }
 
   /// Set an option on the socket.
@@ -805,7 +807,7 @@ public:
   {
     boost::system::error_code ec;
     this->service.get_option(this->implementation, option, ec);
-    boost::asio::detail::throw_error(ec);
+    boost::asio::detail::throw_error(ec, "get_option");
   }
 
   /// Get an option from the socket.
@@ -882,7 +884,7 @@ public:
   {
     boost::system::error_code ec;
     this->service.io_control(this->implementation, command, ec);
-    boost::asio::detail::throw_error(ec);
+    boost::asio::detail::throw_error(ec, "io_control");
   }
 
   /// Perform an IO control command on the socket.
@@ -952,7 +954,7 @@ public:
   {
     boost::system::error_code ec;
     this->service.non_blocking(this->implementation, mode, ec);
-    boost::asio::detail::throw_error(ec);
+    boost::asio::detail::throw_error(ec, "non_blocking");
   }
 
   /// Sets the non-blocking mode of the socket.
@@ -1152,7 +1154,7 @@ public:
   {
     boost::system::error_code ec;
     this->service.native_non_blocking(this->implementation, mode, ec);
-    boost::asio::detail::throw_error(ec);
+    boost::asio::detail::throw_error(ec, "native_non_blocking");
   }
 
   /// Sets the non-blocking mode of the native socket implementation.
@@ -1265,7 +1267,7 @@ public:
   {
     boost::system::error_code ec;
     endpoint_type ep = this->service.local_endpoint(this->implementation, ec);
-    boost::asio::detail::throw_error(ec);
+    boost::asio::detail::throw_error(ec, "local_endpoint");
     return ep;
   }
 
@@ -1314,7 +1316,7 @@ public:
   {
     boost::system::error_code ec;
     endpoint_type ep = this->service.remote_endpoint(this->implementation, ec);
-    boost::asio::detail::throw_error(ec);
+    boost::asio::detail::throw_error(ec, "remote_endpoint");
     return ep;
   }
 
@@ -1365,7 +1367,7 @@ public:
   {
     boost::system::error_code ec;
     this->service.shutdown(this->implementation, what, ec);
-    boost::asio::detail::throw_error(ec);
+    boost::asio::detail::throw_error(ec, "shutdown");
   }
 
   /// Disable sends or receives on the socket.

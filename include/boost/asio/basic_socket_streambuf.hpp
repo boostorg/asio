@@ -223,7 +223,7 @@ public:
 
     boost::system::error_code ec;
     timer_service_->expires_at(timer_implementation_, expiry_time, ec);
-    boost::asio::detail::throw_error(ec);
+    boost::asio::detail::throw_error(ec, "expires_at");
 
     start_timer();
   }
@@ -252,7 +252,7 @@ public:
 
     boost::system::error_code ec;
     timer_service_->expires_from_now(timer_implementation_, expiry_time, ec);
-    boost::asio::detail::throw_error(ec);
+    boost::asio::detail::throw_error(ec, "expires_from_now");
 
     start_timer();
   }
