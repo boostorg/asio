@@ -57,6 +57,17 @@ void test()
     int native_descriptor1 = -1;
     posix::stream_descriptor descriptor2(ios, native_descriptor1);
 
+#if defined(BOOST_ASIO_HAS_MOVE)
+    posix::stream_descriptor descriptor3(std::move(descriptor3));
+#endif // defined(BOOST_ASIO_HAS_MOVE)
+
+    // basic_stream_descriptor operators.
+
+#if defined(BOOST_ASIO_HAS_MOVE)
+    descriptor1 = posix::stream_descriptor(ios);
+    descriptor1 = std::move(descriptor2);
+#endif // defined(BOOST_ASIO_HAS_MOVE)
+
     // basic_io_object functions.
 
     io_service& ios_ref = descriptor1.get_io_service();
@@ -68,9 +79,9 @@ void test()
       = descriptor1.lowest_layer();
     (void)lowest_layer;
 
-    const posix::stream_descriptor& descriptor3 = descriptor1;
+    const posix::stream_descriptor& descriptor4 = descriptor1;
     const posix::stream_descriptor::lowest_layer_type& lowest_layer2
-      = descriptor3.lowest_layer();
+      = descriptor4.lowest_layer();
     (void)lowest_layer2;
 
     int native_descriptor2 = -1;

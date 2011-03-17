@@ -132,6 +132,41 @@ public:
   {
   }
 
+#if defined(BOOST_ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
+  /// Move-construct a basic_raw_socket from another.
+  /**
+   * This constructor moves a raw socket from one object to another.
+   *
+   * @param other The other basic_raw_socket object from which the move
+   * will occur.
+   *
+   * @note Following the move, the moved-from object is in the same state as if
+   * constructed using the @c basic_raw_socket(io_service&) constructor.
+   */
+  basic_raw_socket(basic_raw_socket&& other)
+    : basic_socket<Protocol, RawSocketService>(
+        BOOST_ASIO_MOVE_CAST(basic_raw_socket)(other))
+  {
+  }
+
+  /// Move-assign a basic_raw_socket from another.
+  /**
+   * This assignment operator moves a raw socket from one object to another.
+   *
+   * @param other The other basic_raw_socket object from which the move
+   * will occur.
+   *
+   * @note Following the move, the moved-from object is in the same state as if
+   * constructed using the @c basic_raw_socket(io_service&) constructor.
+   */
+  basic_raw_socket& operator=(basic_raw_socket&& other)
+  {
+    basic_socket<Protocol, RawSocketService>::operator=(
+        BOOST_ASIO_MOVE_CAST(basic_raw_socket)(other));
+    return *this;
+  }
+#endif // defined(BOOST_ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
+
   /// Send some data on a connected socket.
   /**
    * This function is used to send data on the raw socket. The function call
@@ -157,7 +192,8 @@ public:
   std::size_t send(const ConstBufferSequence& buffers)
   {
     boost::system::error_code ec;
-    std::size_t s = this->service.send(this->implementation, buffers, 0, ec);
+    std::size_t s = this->get_service().send(
+        this->get_implementation(), buffers, 0, ec);
     boost::asio::detail::throw_error(ec, "send");
     return s;
   }
@@ -183,8 +219,8 @@ public:
       socket_base::message_flags flags)
   {
     boost::system::error_code ec;
-    std::size_t s = this->service.send(
-        this->implementation, buffers, flags, ec);
+    std::size_t s = this->get_service().send(
+        this->get_implementation(), buffers, flags, ec);
     boost::asio::detail::throw_error(ec, "send");
     return s;
   }
@@ -209,7 +245,8 @@ public:
   std::size_t send(const ConstBufferSequence& buffers,
       socket_base::message_flags flags, boost::system::error_code& ec)
   {
-    return this->service.send(this->implementation, buffers, flags, ec);
+    return this->get_service().send(
+        this->get_implementation(), buffers, flags, ec);
   }
 
   /// Start an asynchronous send on a connected socket.
@@ -254,8 +291,8 @@ public:
     // not meet the documented type requirements for a WriteHandler.
     BOOST_ASIO_WRITE_HANDLER_CHECK(WriteHandler, handler) type_check;
 
-    this->service.async_send(this->implementation, buffers, 0,
-        BOOST_ASIO_MOVE_CAST(WriteHandler)(handler));
+    this->get_service().async_send(this->get_implementation(),
+        buffers, 0, BOOST_ASIO_MOVE_CAST(WriteHandler)(handler));
   }
 
   /// Start an asynchronous send on a connected socket.
@@ -294,8 +331,8 @@ public:
     // not meet the documented type requirements for a WriteHandler.
     BOOST_ASIO_WRITE_HANDLER_CHECK(WriteHandler, handler) type_check;
 
-    this->service.async_send(this->implementation, buffers, flags,
-        BOOST_ASIO_MOVE_CAST(WriteHandler)(handler));
+    this->get_service().async_send(this->get_implementation(),
+        buffers, flags, BOOST_ASIO_MOVE_CAST(WriteHandler)(handler));
   }
 
   /// Send raw data to the specified endpoint.
@@ -328,8 +365,8 @@ public:
       const endpoint_type& destination)
   {
     boost::system::error_code ec;
-    std::size_t s = this->service.send_to(
-        this->implementation, buffers, destination, 0, ec);
+    std::size_t s = this->get_service().send_to(
+        this->get_implementation(), buffers, destination, 0, ec);
     boost::asio::detail::throw_error(ec, "send_to");
     return s;
   }
@@ -355,8 +392,8 @@ public:
       const endpoint_type& destination, socket_base::message_flags flags)
   {
     boost::system::error_code ec;
-    std::size_t s = this->service.send_to(
-        this->implementation, buffers, destination, flags, ec);
+    std::size_t s = this->get_service().send_to(
+        this->get_implementation(), buffers, destination, flags, ec);
     boost::asio::detail::throw_error(ec, "send_to");
     return s;
   }
@@ -382,7 +419,7 @@ public:
       const endpoint_type& destination, socket_base::message_flags flags,
       boost::system::error_code& ec)
   {
-    return this->service.send_to(this->implementation,
+    return this->get_service().send_to(this->get_implementation(),
         buffers, destination, flags, ec);
   }
 
@@ -431,8 +468,8 @@ public:
     // not meet the documented type requirements for a WriteHandler.
     BOOST_ASIO_WRITE_HANDLER_CHECK(WriteHandler, handler) type_check;
 
-    this->service.async_send_to(this->implementation, buffers, destination, 0,
-        BOOST_ASIO_MOVE_CAST(WriteHandler)(handler));
+    this->get_service().async_send_to(this->get_implementation(), buffers,
+        destination, 0, BOOST_ASIO_MOVE_CAST(WriteHandler)(handler));
   }
 
   /// Start an asynchronous send.
@@ -471,8 +508,8 @@ public:
     // not meet the documented type requirements for a WriteHandler.
     BOOST_ASIO_WRITE_HANDLER_CHECK(WriteHandler, handler) type_check;
 
-    this->service.async_send_to(this->implementation, buffers, destination,
-        flags, BOOST_ASIO_MOVE_CAST(WriteHandler)(handler));
+    this->get_service().async_send_to(this->get_implementation(), buffers,
+        destination, flags, BOOST_ASIO_MOVE_CAST(WriteHandler)(handler));
   }
 
   /// Receive some data on a connected socket.
@@ -503,8 +540,8 @@ public:
   std::size_t receive(const MutableBufferSequence& buffers)
   {
     boost::system::error_code ec;
-    std::size_t s = this->service.receive(
-        this->implementation, buffers, 0, ec);
+    std::size_t s = this->get_service().receive(
+        this->get_implementation(), buffers, 0, ec);
     boost::asio::detail::throw_error(ec, "receive");
     return s;
   }
@@ -532,8 +569,8 @@ public:
       socket_base::message_flags flags)
   {
     boost::system::error_code ec;
-    std::size_t s = this->service.receive(
-        this->implementation, buffers, flags, ec);
+    std::size_t s = this->get_service().receive(
+        this->get_implementation(), buffers, flags, ec);
     boost::asio::detail::throw_error(ec, "receive");
     return s;
   }
@@ -560,7 +597,8 @@ public:
   std::size_t receive(const MutableBufferSequence& buffers,
       socket_base::message_flags flags, boost::system::error_code& ec)
   {
-    return this->service.receive(this->implementation, buffers, flags, ec);
+    return this->get_service().receive(
+        this->get_implementation(), buffers, flags, ec);
   }
 
   /// Start an asynchronous receive on a connected socket.
@@ -606,8 +644,8 @@ public:
     // not meet the documented type requirements for a ReadHandler.
     BOOST_ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
 
-    this->service.async_receive(this->implementation, buffers, 0,
-        BOOST_ASIO_MOVE_CAST(ReadHandler)(handler));
+    this->get_service().async_receive(this->get_implementation(),
+        buffers, 0, BOOST_ASIO_MOVE_CAST(ReadHandler)(handler));
   }
 
   /// Start an asynchronous receive on a connected socket.
@@ -646,8 +684,8 @@ public:
     // not meet the documented type requirements for a ReadHandler.
     BOOST_ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
 
-    this->service.async_receive(this->implementation, buffers, flags,
-        BOOST_ASIO_MOVE_CAST(ReadHandler)(handler));
+    this->get_service().async_receive(this->get_implementation(),
+        buffers, flags, BOOST_ASIO_MOVE_CAST(ReadHandler)(handler));
   }
 
   /// Receive raw data with the endpoint of the sender.
@@ -681,8 +719,8 @@ public:
       endpoint_type& sender_endpoint)
   {
     boost::system::error_code ec;
-    std::size_t s = this->service.receive_from(
-        this->implementation, buffers, sender_endpoint, 0, ec);
+    std::size_t s = this->get_service().receive_from(
+        this->get_implementation(), buffers, sender_endpoint, 0, ec);
     boost::asio::detail::throw_error(ec, "receive_from");
     return s;
   }
@@ -708,8 +746,8 @@ public:
       endpoint_type& sender_endpoint, socket_base::message_flags flags)
   {
     boost::system::error_code ec;
-    std::size_t s = this->service.receive_from(
-        this->implementation, buffers, sender_endpoint, flags, ec);
+    std::size_t s = this->get_service().receive_from(
+        this->get_implementation(), buffers, sender_endpoint, flags, ec);
     boost::asio::detail::throw_error(ec, "receive_from");
     return s;
   }
@@ -735,8 +773,8 @@ public:
       endpoint_type& sender_endpoint, socket_base::message_flags flags,
       boost::system::error_code& ec)
   {
-    return this->service.receive_from(this->implementation, buffers,
-        sender_endpoint, flags, ec);
+    return this->get_service().receive_from(this->get_implementation(),
+        buffers, sender_endpoint, flags, ec);
   }
 
   /// Start an asynchronous receive.
@@ -783,7 +821,7 @@ public:
     // not meet the documented type requirements for a ReadHandler.
     BOOST_ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
 
-    this->service.async_receive_from(this->implementation, buffers,
+    this->get_service().async_receive_from(this->get_implementation(), buffers,
         sender_endpoint, 0, BOOST_ASIO_MOVE_CAST(ReadHandler)(handler));
   }
 
@@ -825,7 +863,7 @@ public:
     // not meet the documented type requirements for a ReadHandler.
     BOOST_ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
 
-    this->service.async_receive_from(this->implementation, buffers,
+    this->get_service().async_receive_from(this->get_implementation(), buffers,
         sender_endpoint, flags, BOOST_ASIO_MOVE_CAST(ReadHandler)(handler));
   }
 };

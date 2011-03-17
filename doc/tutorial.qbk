@@ -634,7 +634,7 @@ If you find yourself running into these limitations, an alternative approach is 
 
   ``''''''``#include <iostream>
   ``''''''``#include <boost/asio.hpp>
-  ``''''''``#include <boost/thread.hpp>
+  ``''''''``#include <boost/thread/thread.hpp>
   ``''''''``#include <boost/bind.hpp>
   ``''''''``#include <boost/date_time/posix_time/posix_time.hpp>
 
@@ -759,7 +759,7 @@ Previous: [link boost_asio.tutorial.tuttimer4 Timer.4 - Using a member function 
 
   ``''''''``#include <iostream>
   ``''''''``#include <boost/asio.hpp>
-  ``''''''``#include <boost/thread.hpp>
+  ``''''''``#include <boost/thread/thread.hpp>
   ``''''''``#include <boost/bind.hpp>
   ``''''''``#include <boost/date_time/posix_time/posix_time.hpp>
 

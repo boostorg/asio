@@ -90,6 +90,23 @@ public:
     service_impl_.construct(impl);
   }
 
+#if defined(BOOST_ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
+  /// Move-construct a new serial port implementation.
+  void move_construct(implementation_type& impl,
+      implementation_type& other_impl)
+  {
+    service_impl_.move_construct(impl, other_impl);
+  }
+
+  /// Move-assign from another serial port implementation.
+  void move_assign(implementation_type& impl,
+      serial_port_service& other_service,
+      implementation_type& other_impl)
+  {
+    service_impl_.move_assign(impl, other_service.service_impl_, other_impl);
+  }
+#endif // defined(BOOST_ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
+
   /// Destroy a serial port implementation.
   void destroy(implementation_type& impl)
   {

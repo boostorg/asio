@@ -46,19 +46,23 @@
 # define BOOST_ASIO_DECL
 #endif // !defined(BOOST_ASIO_DECL)
 
-// Support move construction on compilers known to allow it.
-#if defined(__GNUC__)
-# if ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 5)) || (__GNUC__ > 4)
-#  if defined(__GXX_EXPERIMENTAL_CXX0X__)
+// Support move construction and assignment on compilers known to allow it.
+#if !defined(BOOST_ASIO_DISABLE_MOVE)
+# if defined(__GNUC__)
+#  if ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 5)) || (__GNUC__ > 4)
+#   if defined(__GXX_EXPERIMENTAL_CXX0X__)
+#    define BOOST_ASIO_HAS_MOVE
+#    define BOOST_ASIO_MOVE_CAST(type) static_cast<type&&>
+#   endif // defined(__GXX_EXPERIMENTAL_CXX0X__)
+#  endif // ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 5)) || (__GNUC__ > 4)
+# endif // defined(__GNUC__)
+# if defined(BOOST_MSVC)
+#  if (_MSC_VER >= 1600)
+#   define BOOST_ASIO_HAS_MOVE
 #   define BOOST_ASIO_MOVE_CAST(type) static_cast<type&&>
-#  endif // defined(__GXX_EXPERIMENTAL_CXX0X__)
-# endif // ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 5)) || (__GNUC__ > 4)
-#endif // defined(__GNUC__)
-#if defined(BOOST_MSVC)
-# if (_MSC_VER >= 1600)
-#  define BOOST_ASIO_MOVE_CAST(type) static_cast<type&&>
-# endif // (_MSC_VER >= 1600)
-#endif // defined(BOOST_MSVC)
+#  endif // (_MSC_VER >= 1600)
+# endif // defined(BOOST_MSVC)
+#endif // !defined(BOOST_ASIO_DISABLE_MOVE)
 
 // If BOOST_ASIO_MOVE_CAST isn't defined yet use a C++03 compatible version.
 #if !defined(BOOST_ASIO_MOVE_CAST)
