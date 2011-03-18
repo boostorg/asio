@@ -55,6 +55,7 @@
 [include requirements/GettableSocketOption.qbk]
 [include requirements/Handler.qbk]
 [include requirements/HandleService.qbk]
+[include requirements/HandshakeHandler.qbk]
 [include requirements/InternetProtocol.qbk]
 [include requirements/IoControlCommand.qbk]
 [include requirements/IoObjectService.qbk]
@@ -70,6 +71,7 @@
 [include requirements/Service.qbk]
 [include requirements/SettableSerialPortOption.qbk]
 [include requirements/SettableSocketOption.qbk]
+[include requirements/ShutdownHandler.qbk]
 [include requirements/SignalHandler.qbk]
 [include requirements/SignalSetService.qbk]
 [include requirements/SocketAcceptorService.qbk]
@@ -1300,9 +1302,6 @@
         <xsl:when test="declname = 'Function'">
           <xsl:value-of select="declname"/>
         </xsl:when>
-        <xsl:when test="declname = 'HandshakeHandler'">
-          <xsl:value-of select="declname"/>
-        </xsl:when>
         <xsl:when test="declname = 'Iterator'">
           <xsl:value-of select="declname"/>
         </xsl:when>
@@ -1319,9 +1318,6 @@
           <xsl:value-of select="declname"/>
         </xsl:when>
         <xsl:when test="declname = 'PointerToPodType'">
-          <xsl:value-of select="declname"/>
-        </xsl:when>
-        <xsl:when test="declname = 'ShutdownHandler'">
           <xsl:value-of select="declname"/>
         </xsl:when>
         <xsl:when test="declname = 'SocketService1' or declname = 'SocketService2'">

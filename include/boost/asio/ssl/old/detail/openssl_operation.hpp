@@ -1,6 +1,6 @@
 //
-// ssl/detail/openssl_operation.hpp
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// ssl/old/detail/openssl_operation.hpp
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2005 Voipster / Indrek dot Juhani at voipster dot com
 //
@@ -8,8 +8,8 @@
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
-#ifndef BOOST_ASIO_SSL_DETAIL_OPENSSL_OPERATION_HPP
-#define BOOST_ASIO_SSL_DETAIL_OPENSSL_OPERATION_HPP
+#ifndef BOOST_ASIO_SSL_OLD_DETAIL_OPENSSL_OPERATION_HPP
+#define BOOST_ASIO_SSL_OLD_DETAIL_OPENSSL_OPERATION_HPP
 
 #if defined(_MSC_VER) && (_MSC_VER >= 1200)
 # pragma once
@@ -33,6 +33,7 @@
 namespace boost {
 namespace asio {
 namespace ssl {
+namespace old {
 namespace detail {
 
 typedef boost::function<int (::SSL*)> ssl_primitive_func; 
@@ -515,10 +516,11 @@ private:
 }; // class openssl_operation
 
 } // namespace detail
+} // namespace old
 } // namespace ssl
 } // namespace asio
 } // namespace boost
 
 #include <boost/asio/detail/pop_options.hpp>
 
-#endif // BOOST_ASIO_SSL_DETAIL_OPENSSL_OPERATION_HPP
+#endif // BOOST_ASIO_SSL_OLD_DETAIL_OPENSSL_OPERATION_HPP

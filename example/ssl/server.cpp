@@ -19,7 +19,8 @@ typedef boost::asio::ssl::stream<boost::asio::ip::tcp::socket> ssl_socket;
 class session
 {
 public:
-  session(boost::asio::io_service& io_service, boost::asio::ssl::context& context)
+  session(boost::asio::io_service& io_service,
+      boost::asio::ssl::context& context)
     : socket_(io_service, context)
   {
   }
@@ -95,7 +96,7 @@ public:
     : io_service_(io_service),
       acceptor_(io_service,
           boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), port)),
-      context_(io_service, boost::asio::ssl::context::sslv23)
+      context_(boost::asio::ssl::context::sslv23)
   {
     context_.set_options(
         boost::asio::ssl::context::default_workarounds

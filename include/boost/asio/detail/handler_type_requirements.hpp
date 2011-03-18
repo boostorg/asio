@@ -265,6 +265,42 @@ struct handler_type_requirements
           boost::asio::detail::lvref<const int>()), \
         char(0))>
 
+#define BOOST_ASIO_HANDSHAKE_HANDLER_CHECK( \
+    handler_type, handler) \
+  \
+  BOOST_ASIO_HANDLER_TYPE_REQUIREMENTS_ASSERT( \
+      sizeof(boost::asio::detail::one_arg_handler_test( \
+          static_cast<handler_type*>(0), \
+          static_cast<const boost::system::error_code*>(0))) == 1, \
+      "HandshakeHandler type requirements not met") \
+  \
+  typedef boost::asio::detail::handler_type_requirements< \
+      sizeof( \
+        handler_type( \
+          static_cast<const handler_type&>(handler))) + \
+      sizeof( \
+        handler( \
+          boost::asio::detail::lvref<const boost::system::error_code>()), \
+        char(0))>
+
+#define BOOST_ASIO_SHUTDOWN_HANDLER_CHECK( \
+    handler_type, handler) \
+  \
+  BOOST_ASIO_HANDLER_TYPE_REQUIREMENTS_ASSERT( \
+      sizeof(boost::asio::detail::one_arg_handler_test( \
+          static_cast<handler_type*>(0), \
+          static_cast<const boost::system::error_code*>(0))) == 1, \
+      "ShutdownHandler type requirements not met") \
+  \
+  typedef boost::asio::detail::handler_type_requirements< \
+      sizeof( \
+        handler_type( \
+          static_cast<const handler_type&>(handler))) + \
+      sizeof( \
+        handler( \
+          boost::asio::detail::lvref<const boost::system::error_code>()), \
+        char(0))>
+
 #else // !defined(BOOST_ASIO_ENABLE_HANDLER_TYPE_REQUIREMENTS)
 
 #define BOOST_ASIO_COMPLETION_HANDLER_CHECK( \
@@ -300,6 +336,14 @@ struct handler_type_requirements
   typedef int
 
 #define BOOST_ASIO_SIGNAL_HANDLER_CHECK( \
+    handler_type, handler) \
+  typedef int
+
+#define BOOST_ASIO_HANDSHAKE_HANDLER_CHECK( \
+    handler_type, handler) \
+  typedef int
+
+#define BOOST_ASIO_SHUTDOWN_HANDLER_CHECK( \
     handler_type, handler) \
   typedef int
 

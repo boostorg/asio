@@ -19,6 +19,9 @@
 # error Do not compile Asio library source with BOOST_ASIO_HEADER_ONLY defined
 #endif
 
+#include <boost/asio/ssl/impl/context.ipp>
 #include <boost/asio/ssl/impl/error.ipp>
+#include <boost/asio/ssl/detail/impl/engine.ipp>
+#include <boost/asio/ssl/detail/impl/openssl_init.ipp>
 
 #endif // BOOST_ASIO_IMPL_SRC_HPP

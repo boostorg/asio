@@ -308,13 +308,12 @@
           </simplelist>
           <bridgehead renderas="sect3">Class Templates</bridgehead>
           <simplelist type="vert" columns="1">
-            <member><link linkend="boost_asio.reference.ssl__basic_context">ssl::basic_context</link></member>
             <member><link linkend="boost_asio.reference.ssl__stream">ssl::stream</link></member>
           </simplelist>
-          <bridgehead renderas="sect3">Services</bridgehead>
+          <bridgehead renderas="sect3">Type Requirements</bridgehead>
           <simplelist type="vert" columns="1">
-            <member><link linkend="boost_asio.reference.ssl__context_service">ssl::context_service</link></member>
-            <member><link linkend="boost_asio.reference.ssl__stream_service">ssl::stream_service</link></member>
+            <member><link linkend="boost_asio.reference.HandshakeHandler">HandshakeHandler</link></member>
+            <member><link linkend="boost_asio.reference.ShutdownHandler">ShutdownHandler</link></member>
           </simplelist>
         </entry>
         <entry valign="top">
