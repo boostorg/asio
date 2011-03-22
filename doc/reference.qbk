@@ -8670,7 +8670,7 @@ The [link boost_asio.reference.basic_deadline_timer `basic_deadline_timer`] clas
 
 A deadline timer is always in one of two states: "expired" or "not expired". If the `wait()` or `async_wait()` function is called on an expired timer, the wait operation will complete immediately.
 
-Most applications will use the `boost::asio::deadline_timer` typedef.
+Most applications will use the [link boost_asio.reference.deadline_timer `deadline_timer`] typedef.
 
 
 [heading Thread Safety]
@@ -23068,7 +23068,7 @@ Provides signal functionality.
 
 The [link boost_asio.reference.basic_signal_set `basic_signal_set`] class template provides the ability to perform an asynchronous wait for one or more signals to occur.
 
-Most applications will use the `boost::asio::signal_set` typedef.
+Most applications will use the [link boost_asio.reference.signal_set `signal_set`] typedef.
 
 
 [heading Thread Safety]
@@ -43050,50 +43050,95 @@ The `boost::asio::buffer` function is used to create a buffer object to represen
 
   template<
       typename PodType,
-      typename Allocator>
+      std::size_t N>
   mutable_buffers_1 ``[link boost_asio.reference.buffer.overload17 buffer]``(
-      std::vector< PodType, Allocator > & data);
+      std::array< PodType, N > & data);
   ``  [''''&raquo;''' [link boost_asio.reference.buffer.overload17 more...]]``
 
   template<
       typename PodType,
-      typename Allocator>
+      std::size_t N>
   mutable_buffers_1 ``[link boost_asio.reference.buffer.overload18 buffer]``(
-      std::vector< PodType, Allocator > & data,
+      std::array< PodType, N > & data,
       std::size_t max_size_in_bytes);
   ``  [''''&raquo;''' [link boost_asio.reference.buffer.overload18 more...]]``
 
   template<
       typename PodType,
-      typename Allocator>
+      std::size_t N>
   const_buffers_1 ``[link boost_asio.reference.buffer.overload19 buffer]``(
-      const std::vector< PodType, Allocator > & data);
+      std::array< const PodType, N > & data);
   ``  [''''&raquo;''' [link boost_asio.reference.buffer.overload19 more...]]``
 
   template<
       typename PodType,
-      typename Allocator>
+      std::size_t N>
   const_buffers_1 ``[link boost_asio.reference.buffer.overload20 buffer]``(
-      const std::vector< PodType, Allocator > & data,
+      std::array< const PodType, N > & data,
       std::size_t max_size_in_bytes);
   ``  [''''&raquo;''' [link boost_asio.reference.buffer.overload20 more...]]``
 
   template<
-      typename Elem,
-      typename Traits,
-      typename Allocator>
+      typename PodType,
+      std::size_t N>
   const_buffers_1 ``[link boost_asio.reference.buffer.overload21 buffer]``(
-      const std::basic_string< Elem, Traits, Allocator > & data);
+      const std::array< PodType, N > & data);
   ``  [''''&raquo;''' [link boost_asio.reference.buffer.overload21 more...]]``
+
+  template<
+      typename PodType,
+      std::size_t N>
+  const_buffers_1 ``[link boost_asio.reference.buffer.overload22 buffer]``(
+      const std::array< PodType, N > & data,
+      std::size_t max_size_in_bytes);
+  ``  [''''&raquo;''' [link boost_asio.reference.buffer.overload22 more...]]``
+
+  template<
+      typename PodType,
+      typename Allocator>
+  mutable_buffers_1 ``[link boost_asio.reference.buffer.overload23 buffer]``(
+      std::vector< PodType, Allocator > & data);
+  ``  [''''&raquo;''' [link boost_asio.reference.buffer.overload23 more...]]``
+
+  template<
+      typename PodType,
+      typename Allocator>
+  mutable_buffers_1 ``[link boost_asio.reference.buffer.overload24 buffer]``(
+      std::vector< PodType, Allocator > & data,
+      std::size_t max_size_in_bytes);
+  ``  [''''&raquo;''' [link boost_asio.reference.buffer.overload24 more...]]``
+
+  template<
+      typename PodType,
+      typename Allocator>
+  const_buffers_1 ``[link boost_asio.reference.buffer.overload25 buffer]``(
+      const std::vector< PodType, Allocator > & data);
+  ``  [''''&raquo;''' [link boost_asio.reference.buffer.overload25 more...]]``
+
+  template<
+      typename PodType,
+      typename Allocator>
+  const_buffers_1 ``[link boost_asio.reference.buffer.overload26 buffer]``(
+      const std::vector< PodType, Allocator > & data,
+      std::size_t max_size_in_bytes);
+  ``  [''''&raquo;''' [link boost_asio.reference.buffer.overload26 more...]]``
 
   template<
       typename Elem,
       typename Traits,
       typename Allocator>
-  const_buffers_1 ``[link boost_asio.reference.buffer.overload22 buffer]``(
+  const_buffers_1 ``[link boost_asio.reference.buffer.overload27 buffer]``(
+      const std::basic_string< Elem, Traits, Allocator > & data);
+  ``  [''''&raquo;''' [link boost_asio.reference.buffer.overload27 more...]]``
+
+  template<
+      typename Elem,
+      typename Traits,
+      typename Allocator>
+  const_buffers_1 ``[link boost_asio.reference.buffer.overload28 buffer]``(
       const std::basic_string< Elem, Traits, Allocator > & data,
       std::size_t max_size_in_bytes);
-  ``  [''''&raquo;''' [link boost_asio.reference.buffer.overload22 more...]]``
+  ``  [''''&raquo;''' [link boost_asio.reference.buffer.overload28 more...]]``
 
 A buffer object represents a contiguous region of memory as a 2-tuple consisting of a pointer and size in bytes. A tuple of the form `{void*, size_t}` specifies a mutable (modifiable) region of memory. Similarly, a tuple of the form `{const void*, size_t}` specifies a const (non-modifiable) region of memory. These two forms correspond to the classes [link boost_asio.reference.mutable_buffer `mutable_buffer`] and [link boost_asio.reference.const_buffer `const_buffer`], respectively. To mirror C++'s conversion rules, a [link boost_asio.reference.mutable_buffer `mutable_buffer`] is implicitly convertible to a [link boost_asio.reference.const_buffer `const_buffer`], and the opposite conversion is not permitted.
 
@@ -43253,7 +43298,7 @@ To read or write using multiple buffers (i.e. scatter-gather I/O), multiple buff
 [*Convenience header: ][^boost/asio.hpp]
 
 
-[section:overload1 buffer (1 of 22 overloads)]
+[section:overload1 buffer (1 of 28 overloads)]
 
 
 Create a new modifiable buffer from an existing buffer. 
@@ -43275,7 +43320,7 @@ Create a new modifiable buffer from an existing buffer.
 
 
 
-[section:overload2 buffer (2 of 22 overloads)]
+[section:overload2 buffer (2 of 28 overloads)]
 
 
 Create a new modifiable buffer from an existing buffer. 
@@ -43305,7 +43350,7 @@ A [link boost_asio.reference.mutable_buffers_1 `mutable_buffers_1`] value equiva
 
 
 
-[section:overload3 buffer (3 of 22 overloads)]
+[section:overload3 buffer (3 of 28 overloads)]
 
 
 Create a new non-modifiable buffer from an existing buffer. 
@@ -43327,7 +43372,7 @@ Create a new non-modifiable buffer from an existing buffer.
 
 
 
-[section:overload4 buffer (4 of 22 overloads)]
+[section:overload4 buffer (4 of 28 overloads)]
 
 
 Create a new non-modifiable buffer from an existing buffer. 
@@ -43357,7 +43402,7 @@ A [link boost_asio.reference.const_buffers_1 `const_buffers_1`] value equivalent
 
 
 
-[section:overload5 buffer (5 of 22 overloads)]
+[section:overload5 buffer (5 of 28 overloads)]
 
 
 Create a new modifiable buffer that represents the given memory range. 
@@ -43380,7 +43425,7 @@ Create a new modifiable buffer that represents the given memory range.
 
 
 
-[section:overload6 buffer (6 of 22 overloads)]
+[section:overload6 buffer (6 of 28 overloads)]
 
 
 Create a new non-modifiable buffer that represents the given memory range. 
@@ -43403,7 +43448,7 @@ Create a new non-modifiable buffer that represents the given memory range.
 
 
 
-[section:overload7 buffer (7 of 22 overloads)]
+[section:overload7 buffer (7 of 28 overloads)]
 
 
 Create a new modifiable buffer that represents the given POD array. 
@@ -43435,7 +43480,7 @@ A [link boost_asio.reference.mutable_buffers_1 `mutable_buffers_1`] value equiva
 
 
 
-[section:overload8 buffer (8 of 22 overloads)]
+[section:overload8 buffer (8 of 28 overloads)]
 
 
 Create a new modifiable buffer that represents the given POD array. 
@@ -43468,7 +43513,7 @@ A [link boost_asio.reference.mutable_buffers_1 `mutable_buffers_1`] value equiva
 
 
 
-[section:overload9 buffer (9 of 22 overloads)]
+[section:overload9 buffer (9 of 28 overloads)]
 
 
 Create a new non-modifiable buffer that represents the given POD array. 
@@ -43500,7 +43545,7 @@ A [link boost_asio.reference.const_buffers_1 `const_buffers_1`] value equivalent
 
 
 
-[section:overload10 buffer (10 of 22 overloads)]
+[section:overload10 buffer (10 of 28 overloads)]
 
 
 Create a new non-modifiable buffer that represents the given POD array. 
@@ -43533,7 +43578,7 @@ A [link boost_asio.reference.const_buffers_1 `const_buffers_1`] value equivalent
 
 
 
-[section:overload11 buffer (11 of 22 overloads)]
+[section:overload11 buffer (11 of 28 overloads)]
 
 
 Create a new modifiable buffer that represents the given POD array. 
@@ -43565,7 +43610,7 @@ A [link boost_asio.reference.mutable_buffers_1 `mutable_buffers_1`] value equiva
 
 
 
-[section:overload12 buffer (12 of 22 overloads)]
+[section:overload12 buffer (12 of 28 overloads)]
 
 
 Create a new modifiable buffer that represents the given POD array. 
@@ -43598,7 +43643,7 @@ A [link boost_asio.reference.mutable_buffers_1 `mutable_buffers_1`] value equiva
 
 
 
-[section:overload13 buffer (13 of 22 overloads)]
+[section:overload13 buffer (13 of 28 overloads)]
 
 
 Create a new non-modifiable buffer that represents the given POD array. 
@@ -43630,7 +43675,7 @@ A [link boost_asio.reference.const_buffers_1 `const_buffers_1`] value equivalent
 
 
 
-[section:overload14 buffer (14 of 22 overloads)]
+[section:overload14 buffer (14 of 28 overloads)]
 
 
 Create a new non-modifiable buffer that represents the given POD array. 
@@ -43663,7 +43708,7 @@ A [link boost_asio.reference.const_buffers_1 `const_buffers_1`] value equivalent
 
 
 
-[section:overload15 buffer (15 of 22 overloads)]
+[section:overload15 buffer (15 of 28 overloads)]
 
 
 Create a new non-modifiable buffer that represents the given POD array. 
@@ -43695,7 +43740,7 @@ A [link boost_asio.reference.const_buffers_1 `const_buffers_1`] value equivalent
 
 
 
-[section:overload16 buffer (16 of 22 overloads)]
+[section:overload16 buffer (16 of 28 overloads)]
 
 
 Create a new non-modifiable buffer that represents the given POD array. 
@@ -43728,7 +43773,202 @@ A [link boost_asio.reference.const_buffers_1 `const_buffers_1`] value equivalent
 
 
 
-[section:overload17 buffer (17 of 22 overloads)]
+[section:overload17 buffer (17 of 28 overloads)]
+
+
+Create a new modifiable buffer that represents the given POD array. 
+
+
+  template<
+      typename PodType,
+      std::size_t N>
+  mutable_buffers_1 buffer(
+      std::array< PodType, N > & data);
+
+
+
+[heading Return Value]
+      
+A [link boost_asio.reference.mutable_buffers_1 `mutable_buffers_1`] value equivalent to: 
+
+   mutable_buffers_1(
+       data.data(),
+       data.size() * sizeof(PodType)); 
+
+
+
+
+
+
+
+[endsect]
+
+
+
+[section:overload18 buffer (18 of 28 overloads)]
+
+
+Create a new modifiable buffer that represents the given POD array. 
+
+
+  template<
+      typename PodType,
+      std::size_t N>
+  mutable_buffers_1 buffer(
+      std::array< PodType, N > & data,
+      std::size_t max_size_in_bytes);
+
+
+
+[heading Return Value]
+      
+A [link boost_asio.reference.mutable_buffers_1 `mutable_buffers_1`] value equivalent to: 
+
+   mutable_buffers_1(
+       data.data(),
+       min(data.size() * sizeof(PodType), max_size_in_bytes)); 
+
+
+
+
+
+
+
+[endsect]
+
+
+
+[section:overload19 buffer (19 of 28 overloads)]
+
+
+Create a new non-modifiable buffer that represents the given POD array. 
+
+
+  template<
+      typename PodType,
+      std::size_t N>
+  const_buffers_1 buffer(
+      std::array< const PodType, N > & data);
+
+
+
+[heading Return Value]
+      
+A [link boost_asio.reference.const_buffers_1 `const_buffers_1`] value equivalent to: 
+
+   const_buffers_1(
+       data.data(),
+       data.size() * sizeof(PodType)); 
+
+
+
+
+
+
+
+[endsect]
+
+
+
+[section:overload20 buffer (20 of 28 overloads)]
+
+
+Create a new non-modifiable buffer that represents the given POD array. 
+
+
+  template<
+      typename PodType,
+      std::size_t N>
+  const_buffers_1 buffer(
+      std::array< const PodType, N > & data,
+      std::size_t max_size_in_bytes);
+
+
+
+[heading Return Value]
+      
+A [link boost_asio.reference.const_buffers_1 `const_buffers_1`] value equivalent to: 
+
+   const_buffers_1(
+       data.data(),
+       min(data.size() * sizeof(PodType), max_size_in_bytes)); 
+
+
+
+
+
+
+
+[endsect]
+
+
+
+[section:overload21 buffer (21 of 28 overloads)]
+
+
+Create a new non-modifiable buffer that represents the given POD array. 
+
+
+  template<
+      typename PodType,
+      std::size_t N>
+  const_buffers_1 buffer(
+      const std::array< PodType, N > & data);
+
+
+
+[heading Return Value]
+      
+A [link boost_asio.reference.const_buffers_1 `const_buffers_1`] value equivalent to: 
+
+   const_buffers_1(
+       data.data(),
+       data.size() * sizeof(PodType)); 
+
+
+
+
+
+
+
+[endsect]
+
+
+
+[section:overload22 buffer (22 of 28 overloads)]
+
+
+Create a new non-modifiable buffer that represents the given POD array. 
+
+
+  template<
+      typename PodType,
+      std::size_t N>
+  const_buffers_1 buffer(
+      const std::array< PodType, N > & data,
+      std::size_t max_size_in_bytes);
+
+
+
+[heading Return Value]
+      
+A [link boost_asio.reference.const_buffers_1 `const_buffers_1`] value equivalent to: 
+
+   const_buffers_1(
+       data.data(),
+       min(data.size() * sizeof(PodType), max_size_in_bytes)); 
+
+
+
+
+
+
+
+[endsect]
+
+
+
+[section:overload23 buffer (23 of 28 overloads)]
 
 
 Create a new modifiable buffer that represents the given POD vector. 
@@ -43765,7 +44005,7 @@ The buffer is invalidated by any vector operation that would also invalidate ite
 
 
 
-[section:overload18 buffer (18 of 22 overloads)]
+[section:overload24 buffer (24 of 28 overloads)]
 
 
 Create a new modifiable buffer that represents the given POD vector. 
@@ -43803,7 +44043,7 @@ The buffer is invalidated by any vector operation that would also invalidate ite
 
 
 
-[section:overload19 buffer (19 of 22 overloads)]
+[section:overload25 buffer (25 of 28 overloads)]
 
 
 Create a new non-modifiable buffer that represents the given POD vector. 
@@ -43840,7 +44080,7 @@ The buffer is invalidated by any vector operation that would also invalidate ite
 
 
 
-[section:overload20 buffer (20 of 22 overloads)]
+[section:overload26 buffer (26 of 28 overloads)]
 
 
 Create a new non-modifiable buffer that represents the given POD vector. 
@@ -43878,7 +44118,7 @@ The buffer is invalidated by any vector operation that would also invalidate ite
 
 
 
-[section:overload21 buffer (21 of 22 overloads)]
+[section:overload27 buffer (27 of 28 overloads)]
 
 
 Create a new non-modifiable buffer that represents the given string. 
@@ -43909,7 +44149,7 @@ The buffer is invalidated by any non-const operation called on the given string 
 
 
 
-[section:overload22 buffer (22 of 22 overloads)]
+[section:overload28 buffer (28 of 28 overloads)]
 
 
 Create a new non-modifiable buffer that represents the given string. 
@@ -51254,7 +51494,7 @@ The [link boost_asio.reference.basic_deadline_timer `basic_deadline_timer`] clas
 
 A deadline timer is always in one of two states: "expired" or "not expired". If the `wait()` or `async_wait()` function is called on an expired timer, the wait operation will complete immediately.
 
-Most applications will use the `boost::asio::deadline_timer` typedef.
+Most applications will use the [link boost_asio.reference.deadline_timer `deadline_timer`] typedef.
 
 
 [heading Thread Safety]
@@ -52694,7 +52934,7 @@ The [link boost_asio.reference.io_service `io_service`] class provides the core 
 
 * `boost::asio::ip::udp::socket` 
 
-* `boost::asio::deadline_timer`.
+* [link boost_asio.reference.deadline_timer `deadline_timer`].
 
 The [link boost_asio.reference.io_service `io_service`] class also includes facilities intended for developers of custom asynchronous services.
 
@@ -55345,7 +55585,14 @@ Obtain an address object that represents the broadcast address that corresponds 
 The type used to represent an address as an array of bytes. 
 
 
-  typedef boost::array< unsigned char, 4 > bytes_type;
+  typedef array< unsigned char, 4 > bytes_type;
+
+
+
+
+[heading Remarks]
+      
+This type is defined in terms of the C++0x template `std::array` when it is available. Otherwise, it uses `boost:array`. 
 
 
 
@@ -56127,7 +56374,14 @@ Obtain an address object that represents any address.
 The type used to represent an address as an array of bytes. 
 
 
-  typedef boost::array< unsigned char, 16 > bytes_type;
+  typedef array< unsigned char, 16 > bytes_type;
+
+
+
+
+[heading Remarks]
+      
+This type is defined in terms of the C++0x template `std::array` when it is available. Otherwise, it uses `boost:array`. 
 
 
 
@@ -78401,7 +78655,7 @@ Typedef for the typical usage of a signal set.
 
 The [link boost_asio.reference.basic_signal_set `basic_signal_set`] class template provides the ability to perform an asynchronous wait for one or more signals to occur.
 
-Most applications will use the `boost::asio::signal_set` typedef.
+Most applications will use the [link boost_asio.reference.signal_set `signal_set`] typedef.
 
 
 [heading Thread Safety]
@@ -80502,6 +80756,13 @@ Protected destructor to prevent deletion through this type.
 
   [
 
+    [[link boost_asio.reference.ssl__context.impl_type [*impl_type]]]
+    [(Deprecated: Use native_handle_type.) The native type of the SSL context. ]
+  
+  ]
+
+  [
+
     [[link boost_asio.reference.ssl__context.method [*method]]]
     [Different methods supported by a context. ]
   
@@ -80528,13 +80789,6 @@ Protected destructor to prevent deletion through this type.
   
   ]
 
-  [
-
-    [[link boost_asio.reference.ssl__context.verify_mode [*verify_mode]]]
-    [Bitmask type for peer verification. ]
-  
-  ]
-
 ]
 
 [heading Member Functions]
@@ -80556,6 +80810,11 @@ Protected destructor to prevent deletion through this type.
   ]
   
   [
+    [[link boost_asio.reference.ssl__context.impl [*impl]]]
+    [(Deprecated: Use native_handle().) Get the underlying implementation in the native type. ]
+  ]
+  
+  [
     [[link boost_asio.reference.ssl__context.load_verify_file [*load_verify_file]]]
     [Load a certification authority file for performing verification. ]
   ]
@@ -80571,6 +80830,11 @@ Protected destructor to prevent deletion through this type.
   ]
   
   [
+    [[link boost_asio.reference.ssl__context.set_default_verify_paths [*set_default_verify_paths]]]
+    [Configures the context to use the default directories for finding certification authority certificates. ]
+  ]
+  
+  [
     [[link boost_asio.reference.ssl__context.set_options [*set_options]]]
     [Set options on the context. ]
   ]
@@ -80578,6 +80842,11 @@ Protected destructor to prevent deletion through this type.
   [
     [[link boost_asio.reference.ssl__context.set_password_callback [*set_password_callback]]]
     [Set the password callback. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.ssl__context.set_verify_callback [*set_verify_callback]]]
+    [Set the callback used to verify peer certificates. ]
   ]
   
   [
@@ -80646,26 +80915,6 @@ Protected destructor to prevent deletion through this type.
     [Always create a new key when using tmp_dh parameters. ]
   ]
 
-  [
-    [[link boost_asio.reference.ssl__context.verify_client_once [*verify_client_once]]]
-    [Do not request client certificate on renegotiation. Ignored unless verify_peer is set. ]
-  ]
-
-  [
-    [[link boost_asio.reference.ssl__context.verify_fail_if_no_peer_cert [*verify_fail_if_no_peer_cert]]]
-    [Fail verification if the peer has no certificate. Ignored unless verify_peer is set. ]
-  ]
-
-  [
-    [[link boost_asio.reference.ssl__context.verify_none [*verify_none]]]
-    [No verification. ]
-  ]
-
-  [
-    [[link boost_asio.reference.ssl__context.verify_peer [*verify_peer]]]
-    [Verify the peer. ]
-  ]
-
 ]
 
 [heading Requirements]
@@ -80718,9 +80967,14 @@ This function is used to specify the name of a directory containing certificatio
 
 [variablelist
   
-[[boost::system::system_error][Thrown on failure. ]]
+[[boost::system::system_error][Thrown on failure.]]
 
 ]
+
+
+[heading Remarks]
+      
+Calls `SSL_CTX_load_verify_locations`. 
 
 
 
@@ -80750,9 +81004,14 @@ This function is used to specify the name of a directory containing certificatio
   
 [[path][The name of a directory containing the certificates.]]
 
-[[ec][Set to indicate what error occurred, if any. ]]
+[[ec][Set to indicate what error occurred, if any.]]
 
 ]
+
+
+[heading Remarks]
+      
+Calls `SSL_CTX_load_verify_locations`. 
 
 
 
@@ -80907,6 +81166,43 @@ File format types.
 [endsect]
 
 
+
+[section:impl ssl::context::impl]
+
+[indexterm2 impl..ssl::context] 
+(Deprecated: Use `native_handle()`.) Get the underlying implementation in the native type. 
+
+
+  impl_type impl();
+
+
+This function may be used to obtain the underlying implementation of the context. This is intended to allow access to context functionality that is not otherwise provided. 
+
+
+[endsect]
+
+
+
+[section:impl_type ssl::context::impl_type]
+
+[indexterm2 impl_type..ssl::context] 
+(Deprecated: Use native\_handle\_type.) The native type of the SSL context. 
+
+
+  typedef SSL_CTX * impl_type;
+
+
+
+[heading Requirements]
+
+[*Header: ][^boost/asio/ssl/context.hpp]
+
+[*Convenience header: ][^boost/asio/ssl.hpp]
+
+
+[endsect]
+
+
 [section:load_verify_file ssl::context::load_verify_file]
 
 [indexterm2 load_verify_file..ssl::context] 
@@ -80951,9 +81247,14 @@ This function is used to load one or more trusted certification authorities from
 
 [variablelist
   
-[[boost::system::system_error][Thrown on failure. ]]
+[[boost::system::system_error][Thrown on failure.]]
 
 ]
+
+
+[heading Remarks]
+      
+Calls `SSL_CTX_load_verify_locations`. 
 
 
 
@@ -80983,9 +81284,14 @@ This function is used to load the certificates for one or more trusted certifica
   
 [[filename][The name of a file containing certification authority certificates in PEM format.]]
 
-[[ec][Set to indicate what error occurred, if any. ]]
+[[ec][Set to indicate what error occurred, if any.]]
 
 ]
+
+
+[heading Remarks]
+      
+Calls `SSL_CTX_load_verify_locations`. 
 
 
 
@@ -81258,6 +81564,88 @@ Purpose of PEM password.
 [endsect]
 
 
+[section:set_default_verify_paths ssl::context::set_default_verify_paths]
+
+[indexterm2 set_default_verify_paths..ssl::context] 
+Configures the context to use the default directories for finding certification authority certificates. 
+
+
+  void ``[link boost_asio.reference.ssl__context.set_default_verify_paths.overload1 set_default_verify_paths]``();
+  ``  [''''&raquo;''' [link boost_asio.reference.ssl__context.set_default_verify_paths.overload1 more...]]``
+
+  boost::system::error_code ``[link boost_asio.reference.ssl__context.set_default_verify_paths.overload2 set_default_verify_paths]``(
+      boost::system::error_code & ec);
+  ``  [''''&raquo;''' [link boost_asio.reference.ssl__context.set_default_verify_paths.overload2 more...]]``
+
+
+[section:overload1 ssl::context::set_default_verify_paths (1 of 2 overloads)]
+
+
+Configures the context to use the default directories for finding certification authority certificates. 
+
+
+  void set_default_verify_paths();
+
+
+This function specifies that the context should use the default, system-dependent directories for locating certification authority certificates.
+
+
+[heading Exceptions]
+    
+
+[variablelist
+  
+[[boost::system::system_error][Thrown on failure.]]
+
+]
+
+
+[heading Remarks]
+      
+Calls `SSL_CTX_set_default_verify_paths`. 
+
+
+
+
+[endsect]
+
+
+
+[section:overload2 ssl::context::set_default_verify_paths (2 of 2 overloads)]
+
+
+Configures the context to use the default directories for finding certification authority certificates. 
+
+
+  boost::system::error_code set_default_verify_paths(
+      boost::system::error_code & ec);
+
+
+This function specifies that the context should use the default, system-dependent directories for locating certification authority certificates.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[ec][Set to indicate what error occurred, if any.]]
+
+]
+
+
+[heading Remarks]
+      
+Calls `SSL_CTX_set_default_verify_paths`. 
+
+
+
+
+[endsect]
+
+
+[endsect]
+
 [section:set_options ssl::context::set_options]
 
 [indexterm2 set_options..ssl::context] 
@@ -81302,9 +81690,14 @@ This function may be used to configure the SSL options used by the context.
 
 [variablelist
   
-[[boost::system::system_error][Thrown on failure. ]]
+[[boost::system::system_error][Thrown on failure.]]
 
 ]
+
+
+[heading Remarks]
+      
+Calls `SSL_CTX_set_options`. 
 
 
 
@@ -81334,9 +81727,14 @@ This function may be used to configure the SSL options used by the context.
   
 [[o][A bitmask of options. The available option values are defined in the [link boost_asio.reference.ssl__context_base `ssl::context_base`] class. The options are bitwise-ored with any existing value for the options.]]
 
-[[ec][Set to indicate what error occurred, if any. ]]
+[[ec][Set to indicate what error occurred, if any.]]
 
 ]
+
+
+[heading Remarks]
+      
+Calls `SSL_CTX_set_options`. 
 
 
 
@@ -81403,9 +81801,14 @@ The return value of the callback is a string containing the password.]]
 
 [variablelist
   
-[[boost::system::system_error][Thrown on failure. ]]
+[[boost::system::system_error][Thrown on failure.]]
 
 ]
+
+
+[heading Remarks]
+      
+Calls `SSL_CTX_set_default_passwd_cb`. 
 
 
 
@@ -81444,9 +81847,134 @@ This function is used to specify a callback function to obtain password informat
 ``
 The return value of the callback is a string containing the password.]]
 
-[[ec][Set to indicate what error occurred, if any. ]]
+[[ec][Set to indicate what error occurred, if any.]]
 
 ]
+
+
+[heading Remarks]
+      
+Calls `SSL_CTX_set_default_passwd_cb`. 
+
+
+
+
+[endsect]
+
+
+[endsect]
+
+[section:set_verify_callback ssl::context::set_verify_callback]
+
+[indexterm2 set_verify_callback..ssl::context] 
+Set the callback used to verify peer certificates. 
+
+
+  template<
+      typename VerifyCallback>
+  void ``[link boost_asio.reference.ssl__context.set_verify_callback.overload1 set_verify_callback]``(
+      VerifyCallback callback);
+  ``  [''''&raquo;''' [link boost_asio.reference.ssl__context.set_verify_callback.overload1 more...]]``
+
+  template<
+      typename VerifyCallback>
+  boost::system::error_code ``[link boost_asio.reference.ssl__context.set_verify_callback.overload2 set_verify_callback]``(
+      VerifyCallback callback,
+      boost::system::error_code & ec);
+  ``  [''''&raquo;''' [link boost_asio.reference.ssl__context.set_verify_callback.overload2 more...]]``
+
+
+[section:overload1 ssl::context::set_verify_callback (1 of 2 overloads)]
+
+
+Set the callback used to verify peer certificates. 
+
+
+  template<
+      typename VerifyCallback>
+  void set_verify_callback(
+      VerifyCallback callback);
+
+
+This function is used to specify a callback function that will be called by the implementation when it needs to verify a peer certificate.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[callback][The function object to be used for verifying a certificate. The function signature of the handler must be: 
+``
+   bool verify_callback(
+     bool preverified, // True if the certificate passed pre-verification.
+     verify_context& ctx // The peer certificate and other context.
+   ); 
+``
+The return value of the callback is true if the certificate has passed verification, false otherwise.]]
+
+]
+
+
+[heading Exceptions]
+    
+
+[variablelist
+  
+[[boost::system::system_error][Thrown on failure.]]
+
+]
+
+
+[heading Remarks]
+      
+Calls `SSL_CTX_set_verify`. 
+
+
+
+
+[endsect]
+
+
+
+[section:overload2 ssl::context::set_verify_callback (2 of 2 overloads)]
+
+
+Set the callback used to verify peer certificates. 
+
+
+  template<
+      typename VerifyCallback>
+  boost::system::error_code set_verify_callback(
+      VerifyCallback callback,
+      boost::system::error_code & ec);
+
+
+This function is used to specify a callback function that will be called by the implementation when it needs to verify a peer certificate.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[callback][The function object to be used for verifying a certificate. The function signature of the handler must be: 
+``
+   bool verify_callback(
+     bool preverified, // True if the certificate passed pre-verification.
+     verify_context& ctx // The peer certificate and other context.
+   ); 
+``
+The return value of the callback is true if the certificate has passed verification, false otherwise.]]
+
+[[ec][Set to indicate what error occurred, if any.]]
+
+]
+
+
+[heading Remarks]
+      
+Calls `SSL_CTX_set_verify`. 
 
 
 
@@ -81490,7 +82018,7 @@ This function may be used to configure the peer verification mode used by the co
 
 [variablelist
   
-[[v][A bitmask of peer verification modes. The available verify\_mode values are defined in the [link boost_asio.reference.ssl__context_base `ssl::context_base`] class.]]
+[[v][A bitmask of peer verification modes. See [link boost_asio.reference.ssl__verify_mode `ssl::verify_mode`]  for available values.]]
 
 ]
 
@@ -81500,9 +82028,14 @@ This function may be used to configure the peer verification mode used by the co
 
 [variablelist
   
-[[boost::system::system_error][Thrown on failure. ]]
+[[boost::system::system_error][Thrown on failure.]]
 
 ]
+
+
+[heading Remarks]
+      
+Calls `SSL_CTX_set_verify`. 
 
 
 
@@ -81530,11 +82063,16 @@ This function may be used to configure the peer verification mode used by the co
 
 [variablelist
   
-[[v][A bitmask of peer verification modes. The available verify\_mode values are defined in the [link boost_asio.reference.ssl__context_base `ssl::context_base`] class.]]
+[[v][A bitmask of peer verification modes. See [link boost_asio.reference.ssl__verify_mode `ssl::verify_mode`]  for available values.]]
 
-[[ec][Set to indicate what error occurred, if any. ]]
+[[ec][Set to indicate what error occurred, if any.]]
 
 ]
+
+
+[heading Remarks]
+      
+Calls `SSL_CTX_set_verify`. 
 
 
 
@@ -81602,9 +82140,14 @@ This function is used to load a certificate chain into the context from a file.
 
 [variablelist
   
-[[boost::system::system_error][Thrown on failure. ]]
+[[boost::system::system_error][Thrown on failure.]]
 
 ]
+
+
+[heading Remarks]
+      
+Calls `SSL_CTX_use_certificate_chain_file`. 
 
 
 
@@ -81634,9 +82177,14 @@ This function is used to load a certificate chain into the context from a file.
   
 [[filename][The name of the file containing the certificate. The file must use the PEM format.]]
 
-[[ec][Set to indicate what error occurred, if any. ]]
+[[ec][Set to indicate what error occurred, if any.]]
 
 ]
+
+
+[heading Remarks]
+      
+Calls `SSL_CTX_use_certificate_chain_file`. 
 
 
 
@@ -81695,9 +82243,14 @@ This function is used to load a certificate into the context from a file.
 
 [variablelist
   
-[[boost::system::system_error][Thrown on failure. ]]
+[[boost::system::system_error][Thrown on failure.]]
 
 ]
+
+
+[heading Remarks]
+      
+Calls `SSL_CTX_use_certificate_file`. 
 
 
 
@@ -81730,9 +82283,14 @@ This function is used to load a certificate into the context from a file.
 
 [[format][The file format (ASN.1 or PEM).]]
 
-[[ec][Set to indicate what error occurred, if any. ]]
+[[ec][Set to indicate what error occurred, if any.]]
 
 ]
+
+
+[heading Remarks]
+      
+Calls `SSL_CTX_use_certificate_file`. 
 
 
 
@@ -81791,9 +82349,14 @@ This function is used to load a private key into the context from a file.
 
 [variablelist
   
-[[boost::system::system_error][Thrown on failure. ]]
+[[boost::system::system_error][Thrown on failure.]]
 
 ]
+
+
+[heading Remarks]
+      
+Calls `SSL_CTX_use_PrivateKey_file`. 
 
 
 
@@ -81826,9 +82389,14 @@ This function is used to load a private key into the context from a file.
 
 [[format][The file format (ASN.1 or PEM).]]
 
-[[ec][Set to indicate what error occurred, if any. ]]
+[[ec][Set to indicate what error occurred, if any.]]
 
 ]
+
+
+[heading Remarks]
+      
+Calls `SSL_CTX_use_PrivateKey_file`. 
 
 
 
@@ -81887,9 +82455,14 @@ This function is used to load an RSA private key into the context from a file.
 
 [variablelist
   
-[[boost::system::system_error][Thrown on failure. ]]
+[[boost::system::system_error][Thrown on failure.]]
 
 ]
+
+
+[heading Remarks]
+      
+Calls `SSL_CTX_use_RSAPrivateKey_file`. 
 
 
 
@@ -81922,9 +82495,14 @@ This function is used to load an RSA private key into the context from a file.
 
 [[format][The file format (ASN.1 or PEM).]]
 
-[[ec][Set to indicate what error occurred, if any. ]]
+[[ec][Set to indicate what error occurred, if any.]]
 
 ]
+
+
+[heading Remarks]
+      
+Calls `SSL_CTX_use_RSAPrivateKey_file`. 
 
 
 
@@ -81978,9 +82556,14 @@ This function is used to load Diffie-Hellman parameters into the context from a 
 
 [variablelist
   
-[[boost::system::system_error][Thrown on failure. ]]
+[[boost::system::system_error][Thrown on failure.]]
 
 ]
+
+
+[heading Remarks]
+      
+Calls `SSL_CTX_set_tmp_dh`. 
 
 
 
@@ -82010,94 +82593,22 @@ This function is used to load Diffie-Hellman parameters into the context from a 
   
 [[filename][The name of the file containing the Diffie-Hellman parameters. The file must use the PEM format.]]
 
-[[ec][Set to indicate what error occurred, if any. ]]
+[[ec][Set to indicate what error occurred, if any.]]
 
 ]
 
 
+[heading Remarks]
+      
+Calls `SSL_CTX_set_tmp_dh`. 
 
-
-[endsect]
-
-
-[endsect]
-
-
-[section:verify_client_once ssl::context::verify_client_once]
-
-[indexterm2 verify_client_once..ssl::context] 
-Do not request client certificate on renegotiation. Ignored unless verify\_peer is set. 
-
-
-  static const int verify_client_once = implementation_defined;
 
 
 
 [endsect]
 
 
-
-[section:verify_fail_if_no_peer_cert ssl::context::verify_fail_if_no_peer_cert]
-
-[indexterm2 verify_fail_if_no_peer_cert..ssl::context] 
-Fail verification if the peer has no certificate. Ignored unless verify\_peer is set. 
-
-
-  static const int verify_fail_if_no_peer_cert = implementation_defined;
-
-
-
 [endsect]
-
-
-
-[section:verify_mode ssl::context::verify_mode]
-
-[indexterm2 verify_mode..ssl::context] 
-Bitmask type for peer verification. 
-
-
-  typedef int verify_mode;
-
-
-
-[heading Requirements]
-
-[*Header: ][^boost/asio/ssl/context.hpp]
-
-[*Convenience header: ][^boost/asio/ssl.hpp]
-
-
-[endsect]
-
-
-
-[section:verify_none ssl::context::verify_none]
-
-[indexterm2 verify_none..ssl::context] 
-No verification. 
-
-
-  static const int verify_none = implementation_defined;
-
-
-
-[endsect]
-
-
-
-[section:verify_peer ssl::context::verify_peer]
-
-[indexterm2 verify_peer..ssl::context] 
-Verify the peer. 
-
-
-  static const int verify_peer = implementation_defined;
-
-
-
-[endsect]
-
 
 
 [section:_context ssl::context::~context]
@@ -82157,13 +82668,6 @@ The [link boost_asio.reference.ssl__context_base `ssl::context_base`] class is u
   
   ]
 
-  [
-
-    [[link boost_asio.reference.ssl__context_base.verify_mode [*verify_mode]]]
-    [Bitmask type for peer verification. ]
-  
-  ]
-
 ]
 
 [heading Protected Member Functions]
@@ -82204,26 +82708,6 @@ The [link boost_asio.reference.ssl__context_base `ssl::context_base`] class is u
   [
     [[link boost_asio.reference.ssl__context_base.single_dh_use [*single_dh_use]]]
     [Always create a new key when using tmp_dh parameters. ]
-  ]
-
-  [
-    [[link boost_asio.reference.ssl__context_base.verify_client_once [*verify_client_once]]]
-    [Do not request client certificate on renegotiation. Ignored unless verify_peer is set. ]
-  ]
-
-  [
-    [[link boost_asio.reference.ssl__context_base.verify_fail_if_no_peer_cert [*verify_fail_if_no_peer_cert]]]
-    [Fail verification if the peer has no certificate. Ignored unless verify_peer is set. ]
-  ]
-
-  [
-    [[link boost_asio.reference.ssl__context_base.verify_none [*verify_none]]]
-    [No verification. ]
-  ]
-
-  [
-    [[link boost_asio.reference.ssl__context_base.verify_peer [*verify_peer]]]
-    [Verify the peer. ]
   ]
 
 ]
@@ -82482,27 +82966,13 @@ Always create a new key when using tmp\_dh parameters.
 
 
 
-[section:verify_client_once ssl::context_base::verify_client_once]
+[section:_context_base ssl::context_base::~context_base]
 
-[indexterm2 verify_client_once..ssl::context_base] 
-Do not request client certificate on renegotiation. Ignored unless verify\_peer is set. 
-
-
-  static const int verify_client_once = implementation_defined;
+[indexterm2 ~context_base..ssl::context_base] 
+Protected destructor to prevent deletion through this type. 
 
 
-
-[endsect]
-
-
-
-[section:verify_fail_if_no_peer_cert ssl::context_base::verify_fail_if_no_peer_cert]
-
-[indexterm2 verify_fail_if_no_peer_cert..ssl::context_base] 
-Fail verification if the peer has no certificate. Ignored unless verify\_peer is set. 
-
-
-  static const int verify_fail_if_no_peer_cert = implementation_defined;
+  ~context_base();
 
 
 
@@ -82510,19 +82980,115 @@ Fail verification if the peer has no certificate. Ignored unless verify\_peer is
 
 
 
-[section:verify_mode ssl::context_base::verify_mode]
+[endsect]
 
-[indexterm2 verify_mode..ssl::context_base] 
-Bitmask type for peer verification. 
+[section:ssl__rfc2818_verification ssl::rfc2818_verification]
 
 
-  typedef int verify_mode;
+Verifies a certificate against a hostname according to the rules described in RFC 2818. 
+
+
+  class rfc2818_verification
+
+
+[heading Types]
+[table
+  [[Name][Description]]
+
+  [
+
+    [[link boost_asio.reference.ssl__rfc2818_verification.result_type [*result_type]]]
+    [The type of the function object's result. ]
+  
+  ]
+
+]
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link boost_asio.reference.ssl__rfc2818_verification.operator_lp__rp_ [*operator()]]]
+    [Perform certificate verification. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.ssl__rfc2818_verification.rfc2818_verification [*rfc2818_verification]]]
+    [Constructor. ]
+  ]
+  
+]
+
+
+[heading Example]
+  
+The following example shows how to synchronously open a secure connection to a given host name: 
+
+   using boost::asio::ip::tcp;
+   namespace ssl = boost::asio::ssl;
+   typedef ssl::stream<tcp::socket> ssl_socket;
+
+   // Create a context that uses the default paths for finding CA certificates.
+   ssl::context ctx(ssl::context::sslv23);
+   ctx.set_default_verify_paths();
+
+   // Open a socket and connect it to the remote host.
+   boost::asio::io_service io_service;
+   ssl_socket sock(io_service, ctx);
+   tcp::resolver resolver(io_service);
+   tcp::resolver::query query("host.name", "https");
+   boost::asio::connect(sock.lowest_layer(), resolver.resolve(query));
+   sock.lowest_layer().set_option(tcp::no_delay(true));
+
+   // Perform SSL handshake and verify the remote host's certificate.
+   sock.set_verify_mode(ssl::verify_peer);
+   sock.set_verify_callback(ssl::rfc2818_verification("host.name"));
+   sock.handshake(ssl_socket::client);
+
+   // ... read and write as normal ...
+
+
+
 
 
 
 [heading Requirements]
 
-[*Header: ][^boost/asio/ssl/context_base.hpp]
+[*Header: ][^boost/asio/ssl/rfc2818_verification.hpp]
+
+[*Convenience header: ][^boost/asio/ssl.hpp]
+
+
+[section:operator_lp__rp_ ssl::rfc2818_verification::operator()]
+
+[indexterm2 operator()..ssl::rfc2818_verification] 
+Perform certificate verification. 
+
+
+  bool operator()(
+      bool preverified,
+      verify_context & ctx) const;
+
+
+
+[endsect]
+
+
+
+[section:result_type ssl::rfc2818_verification::result_type]
+
+[indexterm2 result_type..ssl::rfc2818_verification] 
+The type of the function object's result. 
+
+
+  typedef bool result_type;
+
+
+
+[heading Requirements]
+
+[*Header: ][^boost/asio/ssl/rfc2818_verification.hpp]
 
 [*Convenience header: ][^boost/asio/ssl.hpp]
 
@@ -82531,41 +83097,14 @@ Bitmask type for peer verification.
 
 
 
-[section:verify_none ssl::context_base::verify_none]
+[section:rfc2818_verification ssl::rfc2818_verification::rfc2818_verification]
 
-[indexterm2 verify_none..ssl::context_base] 
-No verification. 
-
-
-  static const int verify_none = implementation_defined;
+[indexterm2 rfc2818_verification..ssl::rfc2818_verification] 
+Constructor. 
 
 
-
-[endsect]
-
-
-
-[section:verify_peer ssl::context_base::verify_peer]
-
-[indexterm2 verify_peer..ssl::context_base] 
-Verify the peer. 
-
-
-  static const int verify_peer = implementation_defined;
-
-
-
-[endsect]
-
-
-
-[section:_context_base ssl::context_base::~context_base]
-
-[indexterm2 ~context_base..ssl::context_base] 
-Protected destructor to prevent deletion through this type. 
-
-
-  ~context_base();
+  rfc2818_verification(
+      const std::string & host);
 
 
 
@@ -82594,8 +83133,22 @@ Provides stream-oriented functionality using SSL.
 
   [
 
+    [[link boost_asio.reference.ssl__stream__impl_struct [*impl_struct]]]
+    [Structure for use with deprecated impl_type. ]
+  
+  ]
+
+  [
+
     [[link boost_asio.reference.ssl__stream.handshake_type [*handshake_type]]]
     [Different handshake types. ]
+  
+  ]
+
+  [
+
+    [[link boost_asio.reference.ssl__stream.impl_type [*impl_type]]]
+    [(Deprecated: Use native_handle_type.) The underlying implementation type. ]
   
   ]
 
@@ -82657,6 +83210,11 @@ Provides stream-oriented functionality using SSL.
   ]
   
   [
+    [[link boost_asio.reference.ssl__stream.impl [*impl]]]
+    [(Deprecated: Use native_handle().) Get the underlying implementation in the native type. ]
+  ]
+  
+  [
     [[link boost_asio.reference.ssl__stream.lowest_layer [*lowest_layer]]]
     [Get a reference to the lowest layer. ]
   ]
@@ -82674,6 +83232,16 @@ Provides stream-oriented functionality using SSL.
   [
     [[link boost_asio.reference.ssl__stream.read_some [*read_some]]]
     [Read some data from the stream. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.ssl__stream.set_verify_callback [*set_verify_callback]]]
+    [Set the callback used to verify peer certificates. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.ssl__stream.set_verify_mode [*set_verify_mode]]]
+    [Set the peer verification mode. ]
   ]
   
   [
@@ -83042,6 +83610,43 @@ Different handshake types.
 [endsect]
 
 
+
+[section:impl ssl::stream::impl]
+
+[indexterm2 impl..ssl::stream] 
+(Deprecated: Use `native_handle()`.) Get the underlying implementation in the native type. 
+
+
+  impl_type impl();
+
+
+This function may be used to obtain the underlying implementation of the context. This is intended to allow access to stream functionality that is not otherwise provided. 
+
+
+[endsect]
+
+
+
+[section:impl_type ssl::stream::impl_type]
+
+[indexterm2 impl_type..ssl::stream] 
+(Deprecated: Use native\_handle\_type.) The underlying implementation type. 
+
+
+  typedef impl_struct * impl_type;
+
+
+
+[heading Requirements]
+
+[*Header: ][^boost/asio/ssl/stream.hpp]
+
+[*Convenience header: ][^boost/asio/ssl.hpp]
+
+
+[endsect]
+
+
 [section:lowest_layer ssl::stream::lowest_layer]
 
 [indexterm2 lowest_layer..ssl::stream] 
@@ -83133,7 +83738,29 @@ Get the underlying implementation in the native type.
   native_handle_type native_handle();
 
 
-This function may be used to obtain the underlying implementation of the context. This is intended to allow access to context functionality that is not otherwise provided. 
+This function may be used to obtain the underlying implementation of the context. This is intended to allow access to context functionality that is not otherwise provided.
+
+
+[heading Example]
+  
+The `native_handle()` function returns a pointer of type `SSL*` that is suitable for passing to functions such as `SSL_get_verify_result` and `SSL_get_peer_certificate:` 
+
+   boost::asio::ssl::stream<asio:ip::tcp::socket> sock(io_service, ctx);
+
+   // ... establish connection and perform handshake ...
+
+   if (X509* cert = SSL_get_peer_certificate(sock.native_handle()))
+   {
+     if (SSL_get_verify_result(sock.native_handle()) == X509_V_OK)
+     {
+       // ...
+     }
+   }
+
+
+
+
+
 
 
 [endsect]
@@ -83348,6 +83975,224 @@ The number of bytes read. Returns 0 if an error occurred.
 [heading Remarks]
       
 The read\_some operation may not read all of the requested number of bytes. Consider using the [link boost_asio.reference.read `read`]  function if you need to ensure that the requested amount of data is read before the blocking operation completes. 
+
+
+
+
+[endsect]
+
+
+[endsect]
+
+[section:set_verify_callback ssl::stream::set_verify_callback]
+
+[indexterm2 set_verify_callback..ssl::stream] 
+Set the callback used to verify peer certificates. 
+
+
+  template<
+      typename VerifyCallback>
+  void ``[link boost_asio.reference.ssl__stream.set_verify_callback.overload1 set_verify_callback]``(
+      VerifyCallback callback);
+  ``  [''''&raquo;''' [link boost_asio.reference.ssl__stream.set_verify_callback.overload1 more...]]``
+
+  template<
+      typename VerifyCallback>
+  boost::system::error_code ``[link boost_asio.reference.ssl__stream.set_verify_callback.overload2 set_verify_callback]``(
+      VerifyCallback callback,
+      boost::system::error_code & ec);
+  ``  [''''&raquo;''' [link boost_asio.reference.ssl__stream.set_verify_callback.overload2 more...]]``
+
+
+[section:overload1 ssl::stream::set_verify_callback (1 of 2 overloads)]
+
+
+Set the callback used to verify peer certificates. 
+
+
+  template<
+      typename VerifyCallback>
+  void set_verify_callback(
+      VerifyCallback callback);
+
+
+This function is used to specify a callback function that will be called by the implementation when it needs to verify a peer certificate.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[callback][The function object to be used for verifying a certificate. The function signature of the handler must be: 
+``
+   bool verify_callback(
+     bool preverified, // True if the certificate passed pre-verification.
+     verify_context& ctx // The peer certificate and other context.
+   ); 
+``
+The return value of the callback is true if the certificate has passed verification, false otherwise.]]
+
+]
+
+
+[heading Exceptions]
+    
+
+[variablelist
+  
+[[boost::system::system_error][Thrown on failure.]]
+
+]
+
+
+[heading Remarks]
+      
+Calls `SSL_set_verify`. 
+
+
+
+
+[endsect]
+
+
+
+[section:overload2 ssl::stream::set_verify_callback (2 of 2 overloads)]
+
+
+Set the callback used to verify peer certificates. 
+
+
+  template<
+      typename VerifyCallback>
+  boost::system::error_code set_verify_callback(
+      VerifyCallback callback,
+      boost::system::error_code & ec);
+
+
+This function is used to specify a callback function that will be called by the implementation when it needs to verify a peer certificate.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[callback][The function object to be used for verifying a certificate. The function signature of the handler must be: 
+``
+   bool verify_callback(
+     bool preverified, // True if the certificate passed pre-verification.
+     verify_context& ctx // The peer certificate and other context.
+   ); 
+``
+The return value of the callback is true if the certificate has passed verification, false otherwise.]]
+
+[[ec][Set to indicate what error occurred, if any.]]
+
+]
+
+
+[heading Remarks]
+      
+Calls `SSL_set_verify`. 
+
+
+
+
+[endsect]
+
+
+[endsect]
+
+[section:set_verify_mode ssl::stream::set_verify_mode]
+
+[indexterm2 set_verify_mode..ssl::stream] 
+Set the peer verification mode. 
+
+
+  void ``[link boost_asio.reference.ssl__stream.set_verify_mode.overload1 set_verify_mode]``(
+      verify_mode v);
+  ``  [''''&raquo;''' [link boost_asio.reference.ssl__stream.set_verify_mode.overload1 more...]]``
+
+  boost::system::error_code ``[link boost_asio.reference.ssl__stream.set_verify_mode.overload2 set_verify_mode]``(
+      verify_mode v,
+      boost::system::error_code & ec);
+  ``  [''''&raquo;''' [link boost_asio.reference.ssl__stream.set_verify_mode.overload2 more...]]``
+
+
+[section:overload1 ssl::stream::set_verify_mode (1 of 2 overloads)]
+
+
+Set the peer verification mode. 
+
+
+  void set_verify_mode(
+      verify_mode v);
+
+
+This function may be used to configure the peer verification mode used by the stream. The new mode will override the mode inherited from the context.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[v][A bitmask of peer verification modes. See [link boost_asio.reference.ssl__verify_mode `ssl::verify_mode`]  for available values.]]
+
+]
+
+
+[heading Exceptions]
+    
+
+[variablelist
+  
+[[boost::system::system_error][Thrown on failure.]]
+
+]
+
+
+[heading Remarks]
+      
+Calls `SSL_set_verify`. 
+
+
+
+
+[endsect]
+
+
+
+[section:overload2 ssl::stream::set_verify_mode (2 of 2 overloads)]
+
+
+Set the peer verification mode. 
+
+
+  boost::system::error_code set_verify_mode(
+      verify_mode v,
+      boost::system::error_code & ec);
+
+
+This function may be used to configure the peer verification mode used by the stream. The new mode will override the mode inherited from the context.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[v][A bitmask of peer verification modes. See [link boost_asio.reference.ssl__verify_mode `ssl::verify_mode`]  for available values.]]
+
+[[ec][Set to indicate what error occurred, if any.]]
+
+]
+
+
+[heading Remarks]
+      
+Calls `SSL_set_verify`. 
 
 
 
@@ -83596,6 +84441,47 @@ Destructor.
 
 [endsect]
 
+[section:ssl__stream__impl_struct ssl::stream::impl_struct]
+
+
+Structure for use with deprecated impl\_type. 
+
+
+  struct impl_struct
+
+
+[heading Data Members]
+[table
+  [[Name][Description]]
+
+  [
+    [[link boost_asio.reference.ssl__stream__impl_struct.ssl [*ssl]]]
+    []
+  ]
+
+]
+
+[heading Requirements]
+
+[*Header: ][^boost/asio/ssl/stream.hpp]
+
+[*Convenience header: ][^boost/asio/ssl.hpp]
+
+
+[section:ssl ssl::stream::impl_struct::ssl]
+
+[indexterm2 ssl..ssl::stream::impl_struct] 
+
+  SSL * ssl;
+
+
+
+[endsect]
+
+
+
+[endsect]
+
 [section:ssl__stream_base ssl::stream_base]
 
 
@@ -83683,6 +84569,225 @@ Protected destructor to prevent deletion through this type.
 
 
 [endsect]
+
+
+[section:ssl__verify_client_once ssl::verify_client_once]
+
+[indexterm1 ssl::verify_client_once] 
+Do not request client certificate on renegotiation. Ignored unless [link boost_asio.reference.ssl__verify_peer `ssl::verify_peer`]  is set. 
+
+
+  const int verify_client_once = implementation_defined;
+
+
+[heading Requirements]
+
+[*Header: ][^boost/asio/ssl/verify_mode.hpp]
+
+[*Convenience header: ][^boost/asio/ssl.hpp]
+
+
+[endsect]
+
+
+[section:ssl__verify_context ssl::verify_context]
+
+
+A simple wrapper around the X509\_STORE\_CTX type, used during verification of a peer certificate. 
+
+
+  class verify_context :
+    noncopyable
+
+
+[heading Types]
+[table
+  [[Name][Description]]
+
+  [
+
+    [[link boost_asio.reference.ssl__verify_context.native_handle_type [*native_handle_type]]]
+    [The native handle type of the verification context. ]
+  
+  ]
+
+]
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link boost_asio.reference.ssl__verify_context.native_handle [*native_handle]]]
+    [Get the underlying implementation in the native type. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.ssl__verify_context.verify_context [*verify_context]]]
+    [Constructor. ]
+  ]
+  
+]
+
+
+[heading Remarks]
+      
+The [link boost_asio.reference.ssl__verify_context `ssl::verify_context`] does not own the underlying X509\_STORE\_CTX object. 
+
+
+
+[heading Requirements]
+
+[*Header: ][^boost/asio/ssl/verify_context.hpp]
+
+[*Convenience header: ][^boost/asio/ssl.hpp]
+
+
+[section:native_handle ssl::verify_context::native_handle]
+
+[indexterm2 native_handle..ssl::verify_context] 
+Get the underlying implementation in the native type. 
+
+
+  native_handle_type native_handle();
+
+
+This function may be used to obtain the underlying implementation of the context. This is intended to allow access to context functionality that is not otherwise provided. 
+
+
+[endsect]
+
+
+
+[section:native_handle_type ssl::verify_context::native_handle_type]
+
+[indexterm2 native_handle_type..ssl::verify_context] 
+The native handle type of the verification context. 
+
+
+  typedef X509_STORE_CTX * native_handle_type;
+
+
+
+[heading Requirements]
+
+[*Header: ][^boost/asio/ssl/verify_context.hpp]
+
+[*Convenience header: ][^boost/asio/ssl.hpp]
+
+
+[endsect]
+
+
+
+[section:verify_context ssl::verify_context::verify_context]
+
+[indexterm2 verify_context..ssl::verify_context] 
+Constructor. 
+
+
+  verify_context(
+      native_handle_type handle);
+
+
+
+[endsect]
+
+
+
+[endsect]
+
+
+[section:ssl__verify_fail_if_no_peer_cert ssl::verify_fail_if_no_peer_cert]
+
+[indexterm1 ssl::verify_fail_if_no_peer_cert] 
+Fail verification if the peer has no certificate. Ignored unless [link boost_asio.reference.ssl__verify_peer `ssl::verify_peer`]  is set. 
+
+
+  const int verify_fail_if_no_peer_cert = implementation_defined;
+
+
+[heading Requirements]
+
+[*Header: ][^boost/asio/ssl/verify_mode.hpp]
+
+[*Convenience header: ][^boost/asio/ssl.hpp]
+
+
+[endsect]
+
+
+
+[section:ssl__verify_mode ssl::verify_mode]
+
+[indexterm1 ssl::verify_mode] 
+Bitmask type for peer verification. 
+
+
+  typedef int verify_mode;
+
+
+
+Possible values are: 
+* [link boost_asio.reference.ssl__verify_none `ssl::verify_none`]  
+
+* [link boost_asio.reference.ssl__verify_peer `ssl::verify_peer`]  
+
+* [link boost_asio.reference.ssl__verify_fail_if_no_peer_cert `ssl::verify_fail_if_no_peer_cert`]  
+
+* [link boost_asio.reference.ssl__verify_client_once `ssl::verify_client_once`]  
+
+
+
+[heading Requirements]
+
+[*Header: ][^boost/asio/ssl/verify_mode.hpp]
+
+[*Convenience header: ][^boost/asio/ssl.hpp]
+
+
+[endsect]
+
+
+
+[section:ssl__verify_none ssl::verify_none]
+
+[indexterm1 ssl::verify_none] 
+No verification. 
+
+
+  const int verify_none = implementation_defined;
+
+
+[heading Requirements]
+
+[*Header: ][^boost/asio/ssl/verify_mode.hpp]
+
+[*Convenience header: ][^boost/asio/ssl.hpp]
+
+
+[endsect]
+
+
+
+[section:ssl__verify_peer ssl::verify_peer]
+
+[indexterm1 ssl::verify_peer] 
+Verify the peer. 
+
+
+  const int verify_peer = implementation_defined;
+
+
+[heading Requirements]
+
+[*Header: ][^boost/asio/ssl/verify_mode.hpp]
+
+[*Convenience header: ][^boost/asio/ssl.hpp]
+
+
+[endsect]
+
 
 
 [section:strand strand]

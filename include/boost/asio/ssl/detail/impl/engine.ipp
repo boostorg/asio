@@ -19,6 +19,7 @@
 
 #if !defined(BOOST_ASIO_ENABLE_OLD_SSL)
 # include <boost/asio/ssl/detail/engine.hpp>
+# include <boost/asio/ssl/verify_context.hpp>
 #endif // !defined(BOOST_ASIO_ENABLE_OLD_SSL)
 
 #include <boost/asio/detail/push_options.hpp>
@@ -44,6 +45,12 @@ engine::engine(SSL_CTX* context)
 
 engine::~engine()
 {
+  if (SSL_get_app_data(ssl_))
+  {
+    delete static_cast<verify_callback_base*>(SSL_get_app_data(ssl_));
+    SSL_set_app_data(ssl_, 0);
+  }
+
   ::BIO_free(ext_bio_);
   ::SSL_free(ssl_);
 }
@@ -51,6 +58,53 @@ engine::~engine()
 SSL* engine::native_handle()
 {
   return ssl_;
+}
+
+boost::system::error_code engine::set_verify_mode(
+    verify_mode v, boost::system::error_code& ec)
+{
+  ::SSL_set_verify(ssl_, v, ::SSL_get_verify_callback(ssl_));
+
+  ec = boost::system::error_code();
+  return ec;
+}
+
+boost::system::error_code engine::set_verify_callback(
+    verify_callback_base* callback, boost::system::error_code& ec)
+{
+  if (SSL_get_app_data(ssl_))
+    delete static_cast<verify_callback_base*>(SSL_get_app_data(ssl_));
+
+  SSL_set_app_data(ssl_, callback);
+
+  ::SSL_set_verify(ssl_, ::SSL_get_verify_mode(ssl_),
+      &engine::verify_callback_function);
+
+  ec = boost::system::error_code();
+  return ec;
+}
+
+int engine::verify_callback_function(int preverified, X509_STORE_CTX* ctx)
+{
+  if (ctx)
+  {
+    if (SSL* ssl = static_cast<SSL*>(
+          ::X509_STORE_CTX_get_ex_data(
+            ctx, ::SSL_get_ex_data_X509_STORE_CTX_idx())))
+    {
+      if (SSL_get_app_data(ssl))
+      {
+        verify_callback_base* callback =
+          static_cast<verify_callback_base*>(
+              SSL_get_app_data(ssl));
+
+        verify_context verify_ctx(ctx);
+        return callback->call(preverified != 0, verify_ctx) ? 1 : 0;
+      }
+    }
+  }
+
+  return 0;
 }
 
 engine::want engine::handshake(
@@ -193,7 +247,7 @@ engine::want engine::perform(int (engine::* op)(void*, std::size_t),
 
 int engine::do_accept(void*, std::size_t)
 {
-  boost::asio::detail::static_mutex lock(accept_mutex());
+  boost::asio::detail::static_mutex::scoped_lock lock(accept_mutex());
   return ::SSL_accept(ssl_);
 }
 

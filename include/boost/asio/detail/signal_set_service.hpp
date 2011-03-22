@@ -117,7 +117,8 @@ public:
   BOOST_ASIO_DECL void shutdown_service();
 
   // Perform fork-related housekeeping.
-  BOOST_ASIO_DECL void fork_service(boost::asio::io_service::fork_event event);
+  BOOST_ASIO_DECL void fork_service(
+      boost::asio::io_service::fork_event fork_ev);
 
   // Construct a new signal_set implementation.
   BOOST_ASIO_DECL void construct(implementation_type& impl);

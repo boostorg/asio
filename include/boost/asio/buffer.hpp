@@ -977,7 +977,7 @@ inline const_buffers_1 buffer(const boost::array<PodType, N>& data,
         ? data.size() * sizeof(PodType) : max_size_in_bytes));
 }
 
-#if defined(BOOST_ASIO_HAS_STD_ARRAY)
+#if defined(BOOST_ASIO_HAS_STD_ARRAY) || defined(GENERATING_DOCUMENTATION)
 
 /// Create a new modifiable buffer that represents the given POD array.
 /**
@@ -1072,7 +1072,7 @@ inline const_buffers_1 buffer(const std::array<PodType, N>& data,
         ? data.size() * sizeof(PodType) : max_size_in_bytes));
 }
 
-#endif // defined(BOOST_ASIO_HAS_STD_ARRAY)
+#endif // defined(BOOST_ASIO_HAS_STD_ARRAY) || defined(GENERATING_DOCUMENTATION)
 
 /// Create a new modifiable buffer that represents the given POD vector.
 /**

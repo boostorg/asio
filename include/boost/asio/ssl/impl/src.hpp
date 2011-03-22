@@ -23,5 +23,6 @@
 #include <boost/asio/ssl/impl/error.ipp>
 #include <boost/asio/ssl/detail/impl/engine.ipp>
 #include <boost/asio/ssl/detail/impl/openssl_init.ipp>
+#include <boost/asio/ssl/impl/rfc2818_verification.ipp>
 
 #endif // BOOST_ASIO_IMPL_SRC_HPP

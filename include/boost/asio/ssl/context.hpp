@@ -27,7 +27,11 @@
 # include <boost/asio/ssl/detail/openssl_types.hpp>
 # include <boost/asio/ssl/detail/openssl_init.hpp>
 # include <boost/asio/ssl/detail/password_callback.hpp>
+# include <boost/asio/ssl/detail/verify_callback.hpp>
+# include <boost/asio/ssl/verify_mode.hpp>
 #endif // defined(BOOST_ASIO_ENABLE_OLD_SSL)
+
+#include <boost/asio/detail/push_options.hpp>
 
 namespace boost {
 namespace asio {
@@ -47,6 +51,9 @@ class context
 public:
   /// The native handle type of the SSL context.
   typedef SSL_CTX* native_handle_type;
+
+  /// (Deprecated: Use native_handle_type.) The native type of the SSL context.
+  typedef SSL_CTX* impl_type;
 
   /// Constructor.
   BOOST_ASIO_DECL explicit context(method m);
@@ -93,6 +100,15 @@ public:
    */
   BOOST_ASIO_DECL native_handle_type native_handle();
 
+  /// (Deprecated: Use native_handle().) Get the underlying implementation in
+  /// the native type.
+  /**
+   * This function may be used to obtain the underlying implementation of the
+   * context. This is intended to allow access to context functionality that is
+   * not otherwise provided.
+   */
+  BOOST_ASIO_DECL impl_type impl();
+
   /// Set options on the context.
   /**
    * This function may be used to configure the SSL options used by the context.
@@ -102,6 +118,8 @@ public:
    * value for the options.
    *
    * @throws boost::system::system_error Thrown on failure.
+   *
+   * @note Calls @c SSL_CTX_set_options.
    */
   BOOST_ASIO_DECL void set_options(options o);
 
@@ -114,6 +132,8 @@ public:
    * value for the options.
    *
    * @param ec Set to indicate what error occurred, if any.
+   *
+   * @note Calls @c SSL_CTX_set_options.
    */
   BOOST_ASIO_DECL boost::system::error_code set_options(options o,
       boost::system::error_code& ec);
@@ -123,10 +143,12 @@ public:
    * This function may be used to configure the peer verification mode used by
    * the context.
    *
-   * @param v A bitmask of peer verification modes. The available verify_mode
-   * values are defined in the context_base class.
+   * @param v A bitmask of peer verification modes. See @ref verify_mode for
+   * available values.
    *
    * @throws boost::system::system_error Thrown on failure.
+   *
+   * @note Calls @c SSL_CTX_set_verify.
    */
   BOOST_ASIO_DECL void set_verify_mode(verify_mode v);
 
@@ -135,13 +157,58 @@ public:
    * This function may be used to configure the peer verification mode used by
    * the context.
    *
-   * @param v A bitmask of peer verification modes. The available verify_mode
-   * values are defined in the context_base class.
+   * @param v A bitmask of peer verification modes. See @ref verify_mode for
+   * available values.
    *
    * @param ec Set to indicate what error occurred, if any.
+   *
+   * @note Calls @c SSL_CTX_set_verify.
    */
   BOOST_ASIO_DECL boost::system::error_code set_verify_mode(
       verify_mode v, boost::system::error_code& ec);
+
+  /// Set the callback used to verify peer certificates.
+  /**
+   * This function is used to specify a callback function that will be called
+   * by the implementation when it needs to verify a peer certificate.
+   *
+   * @param callback The function object to be used for verifying a certificate.
+   * The function signature of the handler must be:
+   * @code bool verify_callback(
+   *   bool preverified, // True if the certificate passed pre-verification.
+   *   verify_context& ctx // The peer certificate and other context.
+   * ); @endcode
+   * The return value of the callback is true if the certificate has passed
+   * verification, false otherwise.
+   *
+   * @throws boost::system::system_error Thrown on failure.
+   *
+   * @note Calls @c SSL_CTX_set_verify.
+   */
+  template <typename VerifyCallback>
+  void set_verify_callback(VerifyCallback callback);
+
+  /// Set the callback used to verify peer certificates.
+  /**
+   * This function is used to specify a callback function that will be called
+   * by the implementation when it needs to verify a peer certificate.
+   *
+   * @param callback The function object to be used for verifying a certificate.
+   * The function signature of the handler must be:
+   * @code bool verify_callback(
+   *   bool preverified, // True if the certificate passed pre-verification.
+   *   verify_context& ctx // The peer certificate and other context.
+   * ); @endcode
+   * The return value of the callback is true if the certificate has passed
+   * verification, false otherwise.
+   *
+   * @param ec Set to indicate what error occurred, if any.
+   *
+   * @note Calls @c SSL_CTX_set_verify.
+   */
+  template <typename VerifyCallback>
+  boost::system::error_code set_verify_callback(VerifyCallback callback,
+      boost::system::error_code& ec);
 
   /// Load a certification authority file for performing verification.
   /**
@@ -152,6 +219,8 @@ public:
    * certificates in PEM format.
    *
    * @throws boost::system::system_error Thrown on failure.
+   *
+   * @note Calls @c SSL_CTX_load_verify_locations.
    */
   BOOST_ASIO_DECL void load_verify_file(const std::string& filename);
 
@@ -164,9 +233,38 @@ public:
    * certificates in PEM format.
    *
    * @param ec Set to indicate what error occurred, if any.
+   *
+   * @note Calls @c SSL_CTX_load_verify_locations.
    */
   BOOST_ASIO_DECL boost::system::error_code load_verify_file(
       const std::string& filename, boost::system::error_code& ec);
+
+  /// Configures the context to use the default directories for finding
+  /// certification authority certificates.
+  /**
+   * This function specifies that the context should use the default,
+   * system-dependent directories for locating certification authority
+   * certificates.
+   *
+   * @throws boost::system::system_error Thrown on failure.
+   *
+   * @note Calls @c SSL_CTX_set_default_verify_paths.
+   */
+  BOOST_ASIO_DECL void set_default_verify_paths();
+
+  /// Configures the context to use the default directories for finding
+  /// certification authority certificates.
+  /**
+   * This function specifies that the context should use the default,
+   * system-dependent directories for locating certification authority
+   * certificates.
+   *
+   * @param ec Set to indicate what error occurred, if any.
+   *
+   * @note Calls @c SSL_CTX_set_default_verify_paths.
+   */
+  BOOST_ASIO_DECL boost::system::error_code set_default_verify_paths(
+      boost::system::error_code& ec);
 
   /// Add a directory containing certificate authority files to be used for
   /// performing verification.
@@ -179,6 +277,8 @@ public:
    * @param path The name of a directory containing the certificates.
    *
    * @throws boost::system::system_error Thrown on failure.
+   *
+   * @note Calls @c SSL_CTX_load_verify_locations.
    */
   BOOST_ASIO_DECL void add_verify_path(const std::string& path);
 
@@ -193,6 +293,8 @@ public:
    * @param path The name of a directory containing the certificates.
    *
    * @param ec Set to indicate what error occurred, if any.
+   *
+   * @note Calls @c SSL_CTX_load_verify_locations.
    */
   BOOST_ASIO_DECL boost::system::error_code add_verify_path(
       const std::string& path, boost::system::error_code& ec);
@@ -206,6 +308,8 @@ public:
    * @param format The file format (ASN.1 or PEM).
    *
    * @throws boost::system::system_error Thrown on failure.
+   *
+   * @note Calls @c SSL_CTX_use_certificate_file.
    */
   BOOST_ASIO_DECL void use_certificate_file(
       const std::string& filename, file_format format);
@@ -219,6 +323,8 @@ public:
    * @param format The file format (ASN.1 or PEM).
    *
    * @param ec Set to indicate what error occurred, if any.
+   *
+   * @note Calls @c SSL_CTX_use_certificate_file.
    */
   BOOST_ASIO_DECL boost::system::error_code use_certificate_file(
       const std::string& filename, file_format format,
@@ -233,6 +339,8 @@ public:
    * must use the PEM format.
    *
    * @throws boost::system::system_error Thrown on failure.
+   *
+   * @note Calls @c SSL_CTX_use_certificate_chain_file.
    */
   BOOST_ASIO_DECL void use_certificate_chain_file(const std::string& filename);
 
@@ -245,6 +353,8 @@ public:
    * must use the PEM format.
    *
    * @param ec Set to indicate what error occurred, if any.
+   *
+   * @note Calls @c SSL_CTX_use_certificate_chain_file.
    */
   BOOST_ASIO_DECL boost::system::error_code use_certificate_chain_file(
       const std::string& filename, boost::system::error_code& ec);
@@ -258,6 +368,8 @@ public:
    * @param format The file format (ASN.1 or PEM).
    *
    * @throws boost::system::system_error Thrown on failure.
+   *
+   * @note Calls @c SSL_CTX_use_PrivateKey_file.
    */
   BOOST_ASIO_DECL void use_private_key_file(
       const std::string& filename, file_format format);
@@ -271,6 +383,8 @@ public:
    * @param format The file format (ASN.1 or PEM).
    *
    * @param ec Set to indicate what error occurred, if any.
+   *
+   * @note Calls @c SSL_CTX_use_PrivateKey_file.
    */
   BOOST_ASIO_DECL boost::system::error_code use_private_key_file(
       const std::string& filename, file_format format,
@@ -286,6 +400,8 @@ public:
    * @param format The file format (ASN.1 or PEM).
    *
    * @throws boost::system::system_error Thrown on failure.
+   *
+   * @note Calls @c SSL_CTX_use_RSAPrivateKey_file.
    */
   BOOST_ASIO_DECL void use_rsa_private_key_file(
       const std::string& filename, file_format format);
@@ -300,6 +416,8 @@ public:
    * @param format The file format (ASN.1 or PEM).
    *
    * @param ec Set to indicate what error occurred, if any.
+   *
+   * @note Calls @c SSL_CTX_use_RSAPrivateKey_file.
    */
   BOOST_ASIO_DECL boost::system::error_code use_rsa_private_key_file(
       const std::string& filename, file_format format,
@@ -314,6 +432,8 @@ public:
    * parameters. The file must use the PEM format.
    *
    * @throws boost::system::system_error Thrown on failure.
+   *
+   * @note Calls @c SSL_CTX_set_tmp_dh.
    */
   BOOST_ASIO_DECL void use_tmp_dh_file(const std::string& filename);
 
@@ -326,6 +446,8 @@ public:
    * parameters. The file must use the PEM format.
    *
    * @param ec Set to indicate what error occurred, if any.
+   *
+   * @note Calls @c SSL_CTX_set_tmp_dh.
    */
   BOOST_ASIO_DECL boost::system::error_code use_tmp_dh_file(
       const std::string& filename, boost::system::error_code& ec);
@@ -344,6 +466,8 @@ public:
    * The return value of the callback is a string containing the password.
    *
    * @throws boost::system::system_error Thrown on failure.
+   *
+   * @note Calls @c SSL_CTX_set_default_passwd_cb.
    */
   template <typename PasswordCallback>
   void set_password_callback(PasswordCallback callback);
@@ -362,12 +486,22 @@ public:
    * The return value of the callback is a string containing the password.
    *
    * @param ec Set to indicate what error occurred, if any.
+   *
+   * @note Calls @c SSL_CTX_set_default_passwd_cb.
    */
   template <typename PasswordCallback>
   boost::system::error_code set_password_callback(PasswordCallback callback,
       boost::system::error_code& ec);
 
 private:
+  // Helper function used to set a peer certificate verification callback.
+  BOOST_ASIO_DECL boost::system::error_code do_set_verify_callback(
+      detail::verify_callback_base* callback, boost::system::error_code& ec);
+
+  // Callback used when the SSL implementation wants to verify a certificate.
+  BOOST_ASIO_DECL static int verify_callback_function(
+      int preverified, X509_STORE_CTX* ctx);
+
   // Helper function used to set a password callback.
   BOOST_ASIO_DECL boost::system::error_code do_set_password_callback(
       detail::password_callback_base* callback, boost::system::error_code& ec);

@@ -87,9 +87,9 @@ private:
   short events_;
 };
 
-void dev_poll_reactor::fork_service(boost::asio::io_service::fork_event event)
+void dev_poll_reactor::fork_service(boost::asio::io_service::fork_event fork_ev)
 {
-  if (event == boost::asio::io_service::fork_child)
+  if (fork_ev == boost::asio::io_service::fork_child)
   {
     detail::mutex::scoped_lock lock(mutex_);
 

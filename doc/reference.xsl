@@ -251,6 +251,18 @@
          select="concat(substring-before($name, ']'), '_rb_', substring-after($name, ']'))"/>
       </xsl:call-template>
     </xsl:when>
+    <xsl:when test="contains($name, '(')">
+      <xsl:call-template name="make-id">
+        <xsl:with-param name="name"
+         select="concat(substring-before($name, '('), '_lp_', substring-after($name, '('))"/>
+      </xsl:call-template>
+    </xsl:when>
+    <xsl:when test="contains($name, ')')">
+      <xsl:call-template name="make-id">
+        <xsl:with-param name="name"
+         select="concat(substring-before($name, ')'), '_rp_', substring-after($name, ')'))"/>
+      </xsl:call-template>
+    </xsl:when>
     <xsl:when test="contains($name, '+')">
       <xsl:call-template name="make-id">
         <xsl:with-param name="name"
@@ -639,16 +651,66 @@
 
 
 <xsl:template match="ref[@kindref='member']" mode="markup">
-  <xsl:text>`</xsl:text>
-  <xsl:value-of select="."/>
-  <xsl:text>`</xsl:text>
+  <xsl:variable name="dox-ref-id" select="@refid"/>
+  <xsl:variable name="memberdefs" select="/doxygen//compounddef/sectiondef/memberdef[@id=$dox-ref-id]"/>
+  <xsl:choose>
+    <xsl:when test="contains(@refid, 'namespaceboost_1_1asio') and count($memberdefs) &gt; 0">
+      <xsl:variable name="dox-compound-name" select="($memberdefs)[1]/../../compoundname"/>
+      <xsl:variable name="dox-name" select="($memberdefs)[1]/name"/>
+      <xsl:variable name="ref-name">
+        <xsl:call-template name="strip-asio-ns">
+          <xsl:with-param name="name" select="concat($dox-compound-name,'::',$dox-name)"/>
+        </xsl:call-template>
+      </xsl:variable>
+      <xsl:variable name="ref-id">
+        <xsl:call-template name="make-id">
+          <xsl:with-param name="name" select="$ref-name"/>
+        </xsl:call-template>
+      </xsl:variable>
+      <xsl:text>[link boost_asio.reference.</xsl:text>
+      <xsl:value-of select="$ref-id"/>
+      <xsl:text> `</xsl:text>
+      <xsl:value-of name="text" select="$ref-name"/>
+      <xsl:text>`]</xsl:text>
+    </xsl:when>
+    <xsl:otherwise>
+      <xsl:text>`</xsl:text>
+      <xsl:value-of select="."/>
+      <xsl:text>`</xsl:text>
+    </xsl:otherwise>
+  </xsl:choose>
 </xsl:template>
 
 
 <xsl:template match="ref[@kindref='member']" mode="markup-nested">
-  <xsl:text>`</xsl:text>
-  <xsl:value-of select="."/>
-  <xsl:text>`</xsl:text>
+  <xsl:variable name="dox-ref-id" select="@refid"/>
+  <xsl:variable name="memberdefs" select="/doxygen//compounddef/sectiondef/memberdef[@id=$dox-ref-id]"/>
+  <xsl:choose>
+    <xsl:when test="contains(@refid, 'namespaceboost_1_1asio') and count($memberdefs) &gt; 0">
+      <xsl:variable name="dox-compound-name" select="($memberdefs)[1]/../../compoundname"/>
+      <xsl:variable name="dox-name" select="($memberdefs)[1]/name"/>
+      <xsl:variable name="ref-name">
+        <xsl:call-template name="strip-asio-ns">
+          <xsl:with-param name="name" select="concat($dox-compound-name,'::',$dox-name)"/>
+        </xsl:call-template>
+      </xsl:variable>
+      <xsl:variable name="ref-id">
+        <xsl:call-template name="make-id">
+          <xsl:with-param name="name" select="$ref-name"/>
+        </xsl:call-template>
+      </xsl:variable>
+      <xsl:text>[link boost_asio.reference.</xsl:text>
+      <xsl:value-of select="$ref-id"/>
+      <xsl:text> `</xsl:text>
+      <xsl:value-of name="text" select="$ref-name"/>
+      <xsl:text>`]</xsl:text>
+    </xsl:when>
+    <xsl:otherwise>
+      <xsl:text>`</xsl:text>
+      <xsl:value-of select="."/>
+      <xsl:text>`</xsl:text>
+    </xsl:otherwise>
+  </xsl:choose>
 </xsl:template>
 
 
@@ -1342,6 +1404,9 @@
           <xsl:value-of select="declname"/>
         </xsl:when>
         <xsl:when test="declname = 'Traits'">
+          <xsl:value-of select="declname"/>
+        </xsl:when>
+        <xsl:when test="declname = 'VerifyCallback'">
           <xsl:value-of select="declname"/>
         </xsl:when>
         <xsl:when test="count(declname) = 0">

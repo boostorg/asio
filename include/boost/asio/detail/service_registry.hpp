@@ -59,7 +59,7 @@ public:
   BOOST_ASIO_DECL ~service_registry();
 
   // Notify all services of a fork event.
-  BOOST_ASIO_DECL void notify_fork(boost::asio::io_service::fork_event event);
+  BOOST_ASIO_DECL void notify_fork(boost::asio::io_service::fork_event fork_ev);
 
   // Get the service object corresponding to the specified service type. Will
   // create a new service object automatically if no such object already

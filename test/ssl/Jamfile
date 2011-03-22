@@ -41,6 +41,7 @@ run basic_context.cpp <template>unit_test ;
 run context_base.cpp <template>unit_test ;
 run context_service.cpp <template>unit_test ;
 run context.cpp <template>unit_test ;
+run rfc2818_verification.cpp <template>unit_test ;
 run stream_base.cpp <template>unit_test ;
 run stream_service.cpp <template>unit_test ;
 run stream.cpp <template>unit_test ;

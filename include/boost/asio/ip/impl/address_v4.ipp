@@ -42,7 +42,7 @@ address_v4::address_v4(const address_v4::bytes_type& bytes)
 #endif // UCHAR_MAX > 0xFF
 
   using namespace std; // For memcpy.
-  memcpy(&addr_.s_addr, bytes.elems, 4);
+  memcpy(&addr_.s_addr, bytes.data(), 4);
 }
 
 address_v4::address_v4(unsigned long addr)
@@ -62,7 +62,11 @@ address_v4::bytes_type address_v4::to_bytes() const
 {
   using namespace std; // For memcpy.
   bytes_type bytes;
+#if defined(BOOST_ASIO_HAS_STD_ARRAY)
+  memcpy(bytes.data(), &addr_.s_addr, 4);
+#else // defined(BOOST_ASIO_HAS_STD_ARRAY)
   memcpy(bytes.elems, &addr_.s_addr, 4);
+#endif // defined(BOOST_ASIO_HAS_STD_ARRAY)
   return bytes;
 }
 

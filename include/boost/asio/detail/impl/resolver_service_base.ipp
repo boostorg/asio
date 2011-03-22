@@ -53,10 +53,10 @@ resolver_service_base::~resolver_service_base()
 void resolver_service_base::shutdown_service()
 {
   work_.reset();
-  if (work_io_service_)
+  if (work_io_service_.get())
   {
     work_io_service_->stop();
-    if (work_thread_)
+    if (work_thread_.get())
     {
       work_thread_->join();
       work_thread_.reset();
@@ -66,11 +66,11 @@ void resolver_service_base::shutdown_service()
 }
 
 void resolver_service_base::fork_service(
-    boost::asio::io_service::fork_event event)
+    boost::asio::io_service::fork_event fork_ev)
 {
-  if (work_thread_)
+  if (work_thread_.get())
   {
-    if (event == boost::asio::io_service::fork_prepare)
+    if (fork_ev == boost::asio::io_service::fork_prepare)
     {
       work_io_service_->stop();
       work_thread_->join();
@@ -116,7 +116,7 @@ void resolver_service_base::start_resolve_op(operation* op)
 void resolver_service_base::start_work_thread()
 {
   boost::asio::detail::mutex::scoped_lock lock(mutex_);
-  if (!work_thread_)
+  if (!work_thread_.get())
   {
     work_thread_.reset(new boost::asio::detail::thread(
           work_io_service_runner(*work_io_service_)));

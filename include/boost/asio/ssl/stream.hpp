@@ -77,6 +77,15 @@ public:
   /// The native handle type of the SSL stream.
   typedef SSL* native_handle_type;
 
+  /// Structure for use with deprecated impl_type.
+  struct impl_struct
+  {
+    SSL* ssl;
+  };
+
+  /// (Deprecated: Use native_handle_type.) The underlying implementation type.
+  typedef impl_struct* impl_type;
+
   /// The type of the next layer.
   typedef typename boost::remove_reference<Stream>::type next_layer_type;
 
@@ -97,6 +106,7 @@ public:
     : next_layer_(arg),
       core_(ctx.native_handle(), next_layer_.lowest_layer().get_io_service())
   {
+    backwards_compatible_impl_.ssl = core_.engine_.native_handle();
   }
 
   /// Destructor.
@@ -122,10 +132,40 @@ public:
    * This function may be used to obtain the underlying implementation of the
    * context. This is intended to allow access to context functionality that is
    * not otherwise provided.
+   *
+   * @par Example
+   * The native_handle() function returns a pointer of type @c SSL* that is
+   * suitable for passing to functions such as @c SSL_get_verify_result and
+   * @c SSL_get_peer_certificate:
+   * @code
+   * boost::asio::ssl::stream<asio:ip::tcp::socket> sock(io_service, ctx);
+   *
+   * // ... establish connection and perform handshake ...
+   *
+   * if (X509* cert = SSL_get_peer_certificate(sock.native_handle()))
+   * {
+   *   if (SSL_get_verify_result(sock.native_handle()) == X509_V_OK)
+   *   {
+   *     // ...
+   *   }
+   * }
+   * @endcode
    */
   native_handle_type native_handle()
   {
     return core_.engine_.native_handle();
+  }
+
+  /// (Deprecated: Use native_handle().) Get the underlying implementation in
+  /// the native type.
+  /**
+   * This function may be used to obtain the underlying implementation of the
+   * context. This is intended to allow access to stream functionality that is
+   * not otherwise provided.
+   */
+  impl_type impl()
+  {
+    return &backwards_compatible_impl_;
   }
 
   /// Get a reference to the next layer.
@@ -178,6 +218,95 @@ public:
   const lowest_layer_type& lowest_layer() const
   {
     return next_layer_.lowest_layer();
+  }
+
+  /// Set the peer verification mode.
+  /**
+   * This function may be used to configure the peer verification mode used by
+   * the stream. The new mode will override the mode inherited from the context.
+   *
+   * @param v A bitmask of peer verification modes. See @ref verify_mode for
+   * available values.
+   *
+   * @throws boost::system::system_error Thrown on failure.
+   *
+   * @note Calls @c SSL_set_verify.
+   */
+  void set_verify_mode(verify_mode v)
+  {
+    boost::system::error_code ec;
+    set_verify_mode(v, ec);
+    boost::asio::detail::throw_error(ec, "set_verify_mode");
+  }
+
+  /// Set the peer verification mode.
+  /**
+   * This function may be used to configure the peer verification mode used by
+   * the stream. The new mode will override the mode inherited from the context.
+   *
+   * @param v A bitmask of peer verification modes. See @ref verify_mode for
+   * available values.
+   *
+   * @param ec Set to indicate what error occurred, if any.
+   *
+   * @note Calls @c SSL_set_verify.
+   */
+  boost::system::error_code set_verify_mode(
+      verify_mode v, boost::system::error_code& ec)
+  {
+    return core_.engine_.set_verify_mode(v, ec);
+  }
+
+  /// Set the callback used to verify peer certificates.
+  /**
+   * This function is used to specify a callback function that will be called
+   * by the implementation when it needs to verify a peer certificate.
+   *
+   * @param callback The function object to be used for verifying a certificate.
+   * The function signature of the handler must be:
+   * @code bool verify_callback(
+   *   bool preverified, // True if the certificate passed pre-verification.
+   *   verify_context& ctx // The peer certificate and other context.
+   * ); @endcode
+   * The return value of the callback is true if the certificate has passed
+   * verification, false otherwise.
+   *
+   * @throws boost::system::system_error Thrown on failure.
+   *
+   * @note Calls @c SSL_set_verify.
+   */
+  template <typename VerifyCallback>
+  void set_verify_callback(VerifyCallback callback)
+  {
+    boost::system::error_code ec;
+    this->set_verify_callback(callback, ec);
+    boost::asio::detail::throw_error(ec, "set_verify_callback");
+  }
+
+  /// Set the callback used to verify peer certificates.
+  /**
+   * This function is used to specify a callback function that will be called
+   * by the implementation when it needs to verify a peer certificate.
+   *
+   * @param callback The function object to be used for verifying a certificate.
+   * The function signature of the handler must be:
+   * @code bool verify_callback(
+   *   bool preverified, // True if the certificate passed pre-verification.
+   *   verify_context& ctx // The peer certificate and other context.
+   * ); @endcode
+   * The return value of the callback is true if the certificate has passed
+   * verification, false otherwise.
+   *
+   * @param ec Set to indicate what error occurred, if any.
+   *
+   * @note Calls @c SSL_set_verify.
+   */
+  template <typename VerifyCallback>
+  boost::system::error_code set_verify_callback(VerifyCallback callback,
+      boost::system::error_code& ec)
+  {
+    return core_.engine_.set_verify_callback(
+        new detail::verify_callback<VerifyCallback>(callback), ec);
   }
 
   /// Perform SSL handshaking.
@@ -459,6 +588,7 @@ public:
 private:
   Stream next_layer_;
   detail::stream_core core_;
+  impl_struct backwards_compatible_impl_;
 };
 
 #endif // defined(BOOST_ASIO_ENABLE_OLD_SSL)

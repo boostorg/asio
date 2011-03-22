@@ -20,10 +20,10 @@
 #if defined(BOOST_ASIO_HAS_IOCP)
 
 #include <boost/limits.hpp>
-#include <boost/scoped_ptr.hpp>
 #include <boost/asio/io_service.hpp>
 #include <boost/asio/detail/mutex.hpp>
 #include <boost/asio/detail/op_queue.hpp>
+#include <boost/asio/detail/scoped_ptr.hpp>
 #include <boost/asio/detail/socket_types.hpp>
 #include <boost/asio/detail/timer_op.hpp>
 #include <boost/asio/detail/timer_queue_base.hpp>
@@ -241,7 +241,7 @@ private:
   friend struct timer_thread_function;
 
   // Background thread used for processing timeouts.
-  boost::scoped_ptr<thread> timer_thread_;
+  scoped_ptr<thread> timer_thread_;
 
   // A waitable timer object used for waiting for timeouts.
   auto_handle waitable_timer_;

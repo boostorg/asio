@@ -70,7 +70,7 @@ void strand_service::construct(strand_service::implementation_type& impl)
 
   boost::asio::detail::mutex::scoped_lock lock(mutex_);
 
-  if (!implementations_[index])
+  if (!implementations_[index].get())
     implementations_[index].reset(new strand_impl);
   impl = implementations_[index].get();
 }

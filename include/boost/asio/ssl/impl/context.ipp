@@ -125,11 +125,25 @@ context::~context()
       handle_->default_passwd_callback_userdata = 0;
     }
 
+    if (SSL_CTX_get_app_data(handle_))
+    {
+      detail::verify_callback_base* callback =
+        static_cast<detail::verify_callback_base*>(
+            SSL_CTX_get_app_data(handle_));
+      delete callback;
+      SSL_CTX_set_app_data(handle_, 0);
+    }
+
     ::SSL_CTX_free(handle_);
   }
 }
 
 context::native_handle_type context::native_handle()
+{
+  return handle_;
+}
+
+context::impl_type context::impl()
 {
   return handle_;
 }
@@ -150,7 +164,7 @@ boost::system::error_code context::set_options(
   return ec;
 }
 
-void context::set_verify_mode(context::verify_mode v)
+void context::set_verify_mode(verify_mode v)
 {
   boost::system::error_code ec;
   set_verify_mode(v, ec);
@@ -158,9 +172,9 @@ void context::set_verify_mode(context::verify_mode v)
 }
 
 boost::system::error_code context::set_verify_mode(
-    context::verify_mode v, boost::system::error_code& ec)
+    verify_mode v, boost::system::error_code& ec)
 {
-  ::SSL_CTX_set_verify(handle_, v, 0);
+  ::SSL_CTX_set_verify(handle_, v, ::SSL_CTX_get_verify_callback(handle_));
 
   ec = boost::system::error_code();
   return ec;
@@ -177,6 +191,27 @@ boost::system::error_code context::load_verify_file(
     const std::string& filename, boost::system::error_code& ec)
 {
   if (::SSL_CTX_load_verify_locations(handle_, filename.c_str(), 0) != 1)
+  {
+    ec = boost::system::error_code(::ERR_get_error(),
+        boost::asio::error::get_ssl_category());
+    return ec;
+  }
+
+  ec = boost::system::error_code();
+  return ec;
+}
+
+void context::set_default_verify_paths()
+{
+  boost::system::error_code ec;
+  set_default_verify_paths(ec);
+  boost::asio::detail::throw_error(ec, "set_default_verify_paths");
+}
+
+boost::system::error_code context::set_default_verify_paths(
+    boost::system::error_code& ec)
+{
+  if (::SSL_CTX_set_default_verify_paths(handle_) != 1)
   {
     ec = boost::system::error_code(::ERR_get_error(),
         boost::asio::error::get_ssl_category());
@@ -386,6 +421,51 @@ boost::system::error_code context::use_tmp_dh_file(
   return ec;
 }
 
+boost::system::error_code context::do_set_verify_callback(
+    detail::verify_callback_base* callback, boost::system::error_code& ec)
+{
+  if (SSL_CTX_get_app_data(handle_))
+  {
+    delete static_cast<detail::verify_callback_base*>(
+        SSL_CTX_get_app_data(handle_));
+  }
+
+  SSL_CTX_set_app_data(handle_, callback);
+
+  ::SSL_CTX_set_verify(handle_,
+      ::SSL_CTX_get_verify_mode(handle_),
+      &context::verify_callback_function);
+
+  ec = boost::system::error_code();
+  return ec;
+}
+
+int context::verify_callback_function(int preverified, X509_STORE_CTX* ctx)
+{
+  if (ctx)
+  {
+    if (SSL* ssl = static_cast<SSL*>(
+          ::X509_STORE_CTX_get_ex_data(
+            ctx, ::SSL_get_ex_data_X509_STORE_CTX_idx())))
+    {
+      if (SSL_CTX* handle = ::SSL_get_SSL_CTX(ssl))
+      {
+        if (SSL_CTX_get_app_data(handle))
+        {
+          detail::verify_callback_base* callback =
+            static_cast<detail::verify_callback_base*>(
+                SSL_CTX_get_app_data(handle));
+
+          verify_context verify_ctx(ctx);
+          return callback->call(preverified != 0, verify_ctx) ? 1 : 0;
+        }
+      }
+    }
+  }
+
+  return 0;
+}
+
 boost::system::error_code context::do_set_password_callback(
     detail::password_callback_base* callback, boost::system::error_code& ec)
 {
@@ -414,8 +494,13 @@ int context::password_callback_function(
     std::string passwd = callback->call(static_cast<std::size_t>(size),
         purpose ? context_base::for_writing : context_base::for_reading);
 
+#if BOOST_WORKAROUND(BOOST_MSVC, >= 1400) && !defined(UNDER_CE)
+    strcpy_s(buf, size, passwd.c_str());
+#else
     *buf = '\0';
     strncat(buf, passwd.c_str(), size);
+#endif
+
     return strlen(buf);
   }
 

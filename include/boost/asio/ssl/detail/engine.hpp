@@ -21,7 +21,9 @@
 # include <boost/asio/buffer.hpp>
 # include <boost/asio/detail/static_mutex.hpp>
 # include <boost/asio/ssl/detail/openssl_types.hpp>
+# include <boost/asio/ssl/detail/verify_callback.hpp>
 # include <boost/asio/ssl/stream_base.hpp>
+# include <boost/asio/ssl/verify_mode.hpp>
 #endif // !defined(BOOST_ASIO_ENABLE_OLD_SSL)
 
 #include <boost/asio/detail/push_options.hpp>
@@ -67,6 +69,14 @@ public:
   // Get the underlying implementation in the native type.
   BOOST_ASIO_DECL SSL* native_handle();
 
+  // Set the peer verification mode.
+  BOOST_ASIO_DECL boost::system::error_code set_verify_mode(
+      verify_mode v, boost::system::error_code& ec);
+
+  // Set a peer certificate verification callback.
+  BOOST_ASIO_DECL boost::system::error_code set_verify_callback(
+      verify_callback_base* callback, boost::system::error_code& ec);
+
   // Perform an SSL handshake using either SSL_connect (client-side) or
   // SSL_accept (server-side).
   BOOST_ASIO_DECL want handshake(
@@ -101,6 +111,10 @@ private:
   // Disallow copying and assignment.
   engine(const engine&);
   engine& operator=(const engine&);
+
+  // Callback used when the SSL implementation wants to verify a certificate.
+  BOOST_ASIO_DECL static int verify_callback_function(
+      int preverified, X509_STORE_CTX* ctx);
 
   // The SSL_accept function may not be thread safe. This mutex is used to
   // protect all calls to the SSL_accept function.

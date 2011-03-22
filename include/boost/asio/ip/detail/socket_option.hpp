@@ -18,6 +18,7 @@
 #include <boost/asio/detail/config.hpp>
 #include <cstddef>
 #include <cstring>
+#include <stdexcept>
 #include <boost/throw_exception.hpp>
 #include <boost/asio/detail/socket_ops.hpp>
 #include <boost/asio/detail/socket_types.hpp>
@@ -400,7 +401,7 @@ public:
       using namespace std; // For memcpy.
       boost::asio::ip::address_v6 ipv6_address = multicast_address.to_v6();
       boost::asio::ip::address_v6::bytes_type bytes = ipv6_address.to_bytes();
-      memcpy(ipv6_value_.ipv6mr_multiaddr.s6_addr, bytes.elems, 16);
+      memcpy(ipv6_value_.ipv6mr_multiaddr.s6_addr, bytes.data(), 16);
       ipv6_value_.ipv6mr_interface = 0;
     }
     else
@@ -438,7 +439,7 @@ public:
     using namespace std; // For memcpy.
     boost::asio::ip::address_v6::bytes_type bytes =
       multicast_address.to_bytes();
-    memcpy(ipv6_value_.ipv6mr_multiaddr.s6_addr, bytes.elems, 16);
+    memcpy(ipv6_value_.ipv6mr_multiaddr.s6_addr, bytes.data(), 16);
     ipv6_value_.ipv6mr_interface = network_interface;
   }
 

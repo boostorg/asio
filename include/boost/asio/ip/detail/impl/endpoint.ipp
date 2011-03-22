@@ -91,7 +91,7 @@ endpoint::endpoint(const boost::asio::ip::address& addr,
     data_.v6.sin6_flowinfo = 0;
     boost::asio::ip::address_v6 v6_addr = addr.to_v6();
     boost::asio::ip::address_v6::bytes_type bytes = v6_addr.to_bytes();
-    memcpy(data_.v6.sin6_addr.s6_addr, bytes.elems, 16);
+    memcpy(data_.v6.sin6_addr.s6_addr, bytes.data(), 16);
     data_.v6.sin6_scope_id = v6_addr.scope_id();
   }
 }
@@ -145,7 +145,11 @@ boost::asio::ip::address endpoint::address() const
   else
   {
     boost::asio::ip::address_v6::bytes_type bytes;
+#if defined(BOOST_ASIO_HAS_STD_ARRAY)
+    memcpy(bytes.data(), data_.v6.sin6_addr.s6_addr, 16);
+#else // defined(BOOST_ASIO_HAS_STD_ARRAY)
     memcpy(bytes.elems, data_.v6.sin6_addr.s6_addr, 16);
+#endif // defined(BOOST_ASIO_HAS_STD_ARRAY)
     return boost::asio::ip::address_v6(bytes, data_.v6.sin6_scope_id);
   }
 }

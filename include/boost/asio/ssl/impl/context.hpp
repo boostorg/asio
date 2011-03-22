@@ -30,6 +30,22 @@ namespace ssl {
 
 #if !defined(BOOST_ASIO_ENABLE_OLD_SSL)
 
+template <typename VerifyCallback>
+void context::set_verify_callback(VerifyCallback callback)
+{
+  boost::system::error_code ec;
+  this->set_verify_callback(callback, ec);
+  boost::asio::detail::throw_error(ec, "set_verify_callback");
+}
+
+template <typename VerifyCallback>
+boost::system::error_code context::set_verify_callback(
+    VerifyCallback callback, boost::system::error_code& ec)
+{
+  return do_set_verify_callback(
+      new detail::verify_callback<VerifyCallback>(callback), ec);
+}
+
 template <typename PasswordCallback>
 void context::set_password_callback(PasswordCallback callback)
 {
