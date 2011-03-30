@@ -62,9 +62,12 @@ void asio_signal_handler(int signal_number)
 #if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
   signal_set_service::deliver_signal(signal_number);
 #else // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
+  int saved_errno = errno;
   signal_state* state = get_signal_state();
-  (void)::write(state->write_descriptor_,
+  int result = ::write(state->write_descriptor_,
       &signal_number, sizeof(signal_number));
+  (void)result;
+  errno = saved_errno;
 #endif // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
 
 #if !defined(BOOST_ASIO_HAS_SIGACTION)
@@ -144,6 +147,8 @@ void signal_set_service::shutdown_service()
       reg = reg->next_in_table_;
     }
   }
+
+  io_service_.abandon_operations(ops);
 }
 
 void signal_set_service::fork_service(

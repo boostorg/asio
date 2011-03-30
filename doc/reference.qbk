@@ -84728,7 +84728,9 @@ Bitmask type for peer verification.
 
 
 
-Possible values are: 
+Possible values are:
+
+
 * [link boost_asio.reference.ssl__verify_none `ssl::verify_none`]  
 
 * [link boost_asio.reference.ssl__verify_peer `ssl::verify_peer`]  
@@ -86293,7 +86295,7 @@ Return a completion condition function object that indicates that a read or writ
 
 
   unspecified transfer_exactly(
-      std::size_t minimum);
+      std::size_t size);
 
 
 This function is used to create an object, of unspecified type, that meets CompletionCondition requirements.
