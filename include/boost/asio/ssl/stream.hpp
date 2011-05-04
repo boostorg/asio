@@ -360,13 +360,14 @@ public:
    */
   template <typename HandshakeHandler>
   void async_handshake(handshake_type type,
-      HandshakeHandler handler)
+      BOOST_ASIO_MOVE_ARG(HandshakeHandler) handler)
   {
     // If you get an error on the following line it means that your handler does
     // not meet the documented type requirements for a HandshakeHandler.
     BOOST_ASIO_HANDSHAKE_HANDLER_CHECK(HandshakeHandler, handler) type_check;
 
-    detail::async_io(next_layer_, core_, detail::handshake_op(type), handler);
+    detail::async_io(next_layer_, core_, detail::handshake_op(type),
+        BOOST_ASIO_MOVE_CAST(HandshakeHandler)(handler));
   }
 
   /// Shut down SSL on the stream.
@@ -409,13 +410,14 @@ public:
    * ); @endcode
    */
   template <typename ShutdownHandler>
-  void async_shutdown(ShutdownHandler handler)
+  void async_shutdown(BOOST_ASIO_MOVE_ARG(ShutdownHandler) handler)
   {
     // If you get an error on the following line it means that your handler does
     // not meet the documented type requirements for a ShutdownHandler.
     BOOST_ASIO_SHUTDOWN_HANDLER_CHECK(ShutdownHandler, handler) type_check;
 
-    detail::async_io(next_layer_, core_, detail::shutdown_op(), handler);
+    detail::async_io(next_layer_, core_, detail::shutdown_op(),
+        BOOST_ASIO_MOVE_CAST(ShutdownHandler)(handler));
   }
 
   /// Write some data to the stream.
@@ -491,14 +493,15 @@ public:
    */
   template <typename ConstBufferSequence, typename WriteHandler>
   void async_write_some(const ConstBufferSequence& buffers,
-      WriteHandler handler)
+      BOOST_ASIO_MOVE_ARG(WriteHandler) handler)
   {
     // If you get an error on the following line it means that your handler does
     // not meet the documented type requirements for a WriteHandler.
     BOOST_ASIO_WRITE_HANDLER_CHECK(WriteHandler, handler) type_check;
 
     detail::async_io(next_layer_, core_,
-        detail::write_op<ConstBufferSequence>(buffers), handler);
+        detail::write_op<ConstBufferSequence>(buffers),
+        BOOST_ASIO_MOVE_CAST(WriteHandler)(handler));
   }
 
   /// Read some data from the stream.
@@ -575,14 +578,15 @@ public:
    */
   template <typename MutableBufferSequence, typename ReadHandler>
   void async_read_some(const MutableBufferSequence& buffers,
-      ReadHandler handler)
+      BOOST_ASIO_MOVE_ARG(ReadHandler) handler)
   {
     // If you get an error on the following line it means that your handler does
     // not meet the documented type requirements for a ReadHandler.
     BOOST_ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
 
     detail::async_io(next_layer_, core_,
-        detail::read_op<MutableBufferSequence>(buffers), handler);
+        detail::read_op<MutableBufferSequence>(buffers),
+        BOOST_ASIO_MOVE_CAST(ReadHandler)(handler));
   }
 
 private:

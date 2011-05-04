@@ -698,7 +698,8 @@ public:
    * @endcode
    */
   template <typename ConnectHandler>
-  void async_connect(const endpoint_type& peer_endpoint, ConnectHandler handler)
+  void async_connect(const endpoint_type& peer_endpoint,
+      BOOST_ASIO_MOVE_ARG(ConnectHandler) handler)
   {
     // If you get an error on the following line it means that your handler does
     // not meet the documented type requirements for a ConnectHandler.
@@ -711,7 +712,8 @@ public:
       if (this->get_service().open(this->get_implementation(), protocol, ec))
       {
         this->get_io_service().post(
-            boost::asio::detail::bind_handler(handler, ec));
+            boost::asio::detail::bind_handler(
+              BOOST_ASIO_MOVE_CAST(ConnectHandler)(handler), ec));
         return;
       }
     }

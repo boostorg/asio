@@ -52,20 +52,34 @@
 #  if ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 5)) || (__GNUC__ > 4)
 #   if defined(__GXX_EXPERIMENTAL_CXX0X__)
 #    define BOOST_ASIO_HAS_MOVE
+#    define BOOST_ASIO_MOVE_ARG(type) type&&
 #    define BOOST_ASIO_MOVE_CAST(type) static_cast<type&&>
 #   endif // defined(__GXX_EXPERIMENTAL_CXX0X__)
 #  endif // ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 5)) || (__GNUC__ > 4)
 # endif // defined(__GNUC__)
-# if defined(BOOST_MSVC)
-#  if (_MSC_VER >= 1600)
-#   define BOOST_ASIO_HAS_MOVE
-#   define BOOST_ASIO_MOVE_CAST(type) static_cast<type&&>
-#  endif // (_MSC_VER >= 1600)
-# endif // defined(BOOST_MSVC)
 #endif // !defined(BOOST_ASIO_DISABLE_MOVE)
 
 // If BOOST_ASIO_MOVE_CAST isn't defined yet use a C++03 compatible version.
+// Note that older g++ and MSVC versions don't like it when you pass a
+// non-member function through a const reference, so for most compilers we'll
+// play it safe and stick with the old approach of passing the handler by
+// value.
 #if !defined(BOOST_ASIO_MOVE_CAST)
+# if defined(__GNUC__)
+#  if ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 1)) || (__GNUC__ > 4)
+#   define BOOST_ASIO_MOVE_ARG(type) const type&
+#  else // ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 1)) || (__GNUC__ > 4)
+#   define BOOST_ASIO_MOVE_ARG(type) type
+#  endif // ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 1)) || (__GNUC__ > 4)
+# elif defined(BOOST_MSVC)
+#  if (_MSC_VER >= 1400)
+#   define BOOST_ASIO_MOVE_ARG(type) const type&
+#  else // (_MSC_VER >= 1400)
+#   define BOOST_ASIO_MOVE_ARG(type) type
+#  endif // (_MSC_VER >= 1400)
+# else
+#  define BOOST_ASIO_MOVE_ARG(type) type
+# endif
 # define BOOST_ASIO_MOVE_CAST(type) static_cast<const type&>
 #endif // !defined_BOOST_ASIO_MOVE_CAST
 

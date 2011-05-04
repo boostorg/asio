@@ -216,7 +216,7 @@ public:
   template <typename ConstBufferSequence, typename Handler>
   void async_send(base_implementation_type& impl,
       const ConstBufferSequence& buffers,
-      socket_base::message_flags flags, Handler& handler)
+      socket_base::message_flags flags, Handler handler)
   {
     // Allocate and construct an operation to wrap the handler.
     typedef win_iocp_socket_send_op<ConstBufferSequence, Handler> op;
@@ -239,7 +239,7 @@ public:
   // Start an asynchronous wait until data can be sent without blocking.
   template <typename Handler>
   void async_send(base_implementation_type& impl, const null_buffers&,
-      socket_base::message_flags, Handler& handler)
+      socket_base::message_flags, Handler handler)
   {
     // Allocate and construct an operation to wrap the handler.
     typedef win_iocp_null_buffers_op<Handler> op;
@@ -283,7 +283,7 @@ public:
   template <typename MutableBufferSequence, typename Handler>
   void async_receive(base_implementation_type& impl,
       const MutableBufferSequence& buffers,
-      socket_base::message_flags flags, Handler& handler)
+      socket_base::message_flags flags, Handler handler)
   {
     // Allocate and construct an operation to wrap the handler.
     typedef win_iocp_socket_recv_op<MutableBufferSequence, Handler> op;
@@ -306,7 +306,7 @@ public:
   // Wait until data can be received without blocking.
   template <typename Handler>
   void async_receive(base_implementation_type& impl, const null_buffers&,
-      socket_base::message_flags flags, Handler& handler)
+      socket_base::message_flags flags, Handler handler)
   {
     // Allocate and construct an operation to wrap the handler.
     typedef win_iocp_null_buffers_op<Handler> op;
@@ -357,7 +357,7 @@ public:
   template <typename MutableBufferSequence, typename Handler>
   void async_receive_with_flags(base_implementation_type& impl,
       const MutableBufferSequence& buffers, socket_base::message_flags in_flags,
-      socket_base::message_flags& out_flags, Handler& handler)
+      socket_base::message_flags& out_flags, Handler handler)
   {
     // Allocate and construct an operation to wrap the handler.
     typedef win_iocp_socket_recvmsg_op<MutableBufferSequence, Handler> op;
@@ -380,7 +380,7 @@ public:
   template <typename Handler>
   void async_receive_with_flags(base_implementation_type& impl,
       const null_buffers&, socket_base::message_flags in_flags,
-      socket_base::message_flags& out_flags, Handler& handler)
+      socket_base::message_flags& out_flags, Handler handler)
   {
     // Allocate and construct an operation to wrap the handler.
     typedef win_iocp_null_buffers_op<Handler> op;

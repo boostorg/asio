@@ -415,7 +415,7 @@ std::size_t read(SyncReadStream& s, basic_streambuf<Allocator>& b,
 template <typename AsyncReadStream, typename MutableBufferSequence,
     typename ReadHandler>
 void async_read(AsyncReadStream& s, const MutableBufferSequence& buffers,
-    ReadHandler handler);
+    BOOST_ASIO_MOVE_ARG(ReadHandler) handler);
 
 /// Start an asynchronous operation to read a certain amount of data from a
 /// stream.
@@ -483,7 +483,8 @@ void async_read(AsyncReadStream& s, const MutableBufferSequence& buffers,
 template <typename AsyncReadStream, typename MutableBufferSequence,
     typename CompletionCondition, typename ReadHandler>
 void async_read(AsyncReadStream& s, const MutableBufferSequence& buffers,
-    CompletionCondition completion_condition, ReadHandler handler);
+    CompletionCondition completion_condition,
+    BOOST_ASIO_MOVE_ARG(ReadHandler) handler);
 
 #if !defined(BOOST_NO_IOSTREAM)
 
@@ -535,7 +536,7 @@ void async_read(AsyncReadStream& s, const MutableBufferSequence& buffers,
  */
 template <typename AsyncReadStream, typename Allocator, typename ReadHandler>
 void async_read(AsyncReadStream& s, basic_streambuf<Allocator>& b,
-    ReadHandler handler);
+    BOOST_ASIO_MOVE_ARG(ReadHandler) handler);
 
 /// Start an asynchronous operation to read a certain amount of data from a
 /// stream.
@@ -594,7 +595,8 @@ void async_read(AsyncReadStream& s, basic_streambuf<Allocator>& b,
 template <typename AsyncReadStream, typename Allocator,
     typename CompletionCondition, typename ReadHandler>
 void async_read(AsyncReadStream& s, basic_streambuf<Allocator>& b,
-    CompletionCondition completion_condition, ReadHandler handler);
+    CompletionCondition completion_condition,
+    BOOST_ASIO_MOVE_ARG(ReadHandler) handler);
 
 #endif // !defined(BOOST_NO_IOSTREAM)
 

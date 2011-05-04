@@ -143,6 +143,26 @@ namespace detail
     {
     }
 
+#if defined(BOOST_ASIO_HAS_MOVE)
+    write_op(const write_op& other)
+      : detail::base_from_completion_cond<CompletionCondition>(other),
+        stream_(other.stream_),
+        buffers_(other.buffers_),
+        total_transferred_(other.total_transferred_),
+        handler_(other.handler_)
+    {
+    }
+
+    write_op(write_op&& other)
+      : detail::base_from_completion_cond<CompletionCondition>(other),
+        stream_(other.stream_),
+        buffers_(other.buffers_),
+        total_transferred_(other.total_transferred_),
+        handler_(BOOST_ASIO_MOVE_CAST(WriteHandler)(other.handler_))
+    {
+    }
+#endif // defined(BOOST_ASIO_HAS_MOVE)
+
     void operator()(const boost::system::error_code& ec,
         std::size_t bytes_transferred, int start = 0)
     {
@@ -152,7 +172,8 @@ namespace detail
         buffers_.prepare(this->check_for_completion(ec, total_transferred_));
         for (;;)
         {
-          stream_.async_write_some(buffers_, *this);
+          stream_.async_write_some(buffers_,
+              BOOST_ASIO_MOVE_CAST(write_op)(*this));
           return; default:
           total_transferred_ += bytes_transferred;
           buffers_.consume(bytes_transferred);
@@ -194,6 +215,26 @@ namespace detail
     {
     }
 
+#if defined(BOOST_ASIO_HAS_MOVE)
+    write_op(const write_op& other)
+      : detail::base_from_completion_cond<CompletionCondition>(other),
+        stream_(other.stream_),
+        buffer_(other.buffer_),
+        total_transferred_(other.total_transferred_),
+        handler_(other.handler_)
+    {
+    }
+
+    write_op(write_op&& other)
+      : detail::base_from_completion_cond<CompletionCondition>(other),
+        stream_(other.stream_),
+        buffer_(other.buffer_),
+        total_transferred_(other.total_transferred_),
+        handler_(BOOST_ASIO_MOVE_CAST(WriteHandler)(other.handler_))
+    {
+    }
+#endif // defined(BOOST_ASIO_HAS_MOVE)
+
     void operator()(const boost::system::error_code& ec,
         std::size_t bytes_transferred, int start = 0)
     {
@@ -204,8 +245,9 @@ namespace detail
         n = this->check_for_completion(ec, total_transferred_);
         for (;;)
         {
-          stream_.async_write_some(boost::asio::buffer(
-                buffer_ + total_transferred_, n), *this);
+          stream_.async_write_some(
+              boost::asio::buffer(buffer_ + total_transferred_, n),
+              BOOST_ASIO_MOVE_CAST(write_op)(*this));
           return; default:
           total_transferred_ += bytes_transferred;
           if ((!ec && bytes_transferred == 0)
@@ -245,6 +287,26 @@ namespace detail
     {
     }
 
+#if defined(BOOST_ASIO_HAS_MOVE)
+    write_op(const write_op& other)
+      : detail::base_from_completion_cond<CompletionCondition>(other),
+        stream_(other.stream_),
+        buffer_(other.buffer_),
+        total_transferred_(other.total_transferred_),
+        handler_(other.handler_)
+    {
+    }
+
+    write_op(write_op&& other)
+      : detail::base_from_completion_cond<CompletionCondition>(other),
+        stream_(other.stream_),
+        buffer_(other.buffer_),
+        total_transferred_(other.total_transferred_),
+        handler_(BOOST_ASIO_MOVE_CAST(WriteHandler)(other.handler_))
+    {
+    }
+#endif // defined(BOOST_ASIO_HAS_MOVE)
+
     void operator()(const boost::system::error_code& ec,
         std::size_t bytes_transferred, int start = 0)
     {
@@ -255,8 +317,9 @@ namespace detail
         n = this->check_for_completion(ec, total_transferred_);
         for (;;)
         {
-          stream_.async_write_some(boost::asio::buffer(
-                buffer_ + total_transferred_, n), *this);
+          stream_.async_write_some(
+              boost::asio::buffer(buffer_ + total_transferred_, n),
+              BOOST_ASIO_MOVE_CAST(write_op)(*this));
           return; default:
           total_transferred_ += bytes_transferred;
           if ((!ec && bytes_transferred == 0)
@@ -299,6 +362,17 @@ namespace detail
   template <typename Function, typename AsyncWriteStream,
       typename ConstBufferSequence, typename CompletionCondition,
       typename WriteHandler>
+  inline void asio_handler_invoke(Function& function,
+      write_op<AsyncWriteStream, ConstBufferSequence,
+        CompletionCondition, WriteHandler>* this_handler)
+  {
+    boost_asio_handler_invoke_helpers::invoke(
+        function, this_handler->handler_);
+  }
+
+  template <typename Function, typename AsyncWriteStream,
+      typename ConstBufferSequence, typename CompletionCondition,
+      typename WriteHandler>
   inline void asio_handler_invoke(const Function& function,
       write_op<AsyncWriteStream, ConstBufferSequence,
         CompletionCondition, WriteHandler>* this_handler)
@@ -306,44 +380,54 @@ namespace detail
     boost_asio_handler_invoke_helpers::invoke(
         function, this_handler->handler_);
   }
+
+  template <typename AsyncWriteStream, typename ConstBufferSequence,
+      typename CompletionCondition, typename WriteHandler>
+  inline write_op<AsyncWriteStream, ConstBufferSequence,
+      CompletionCondition, WriteHandler>
+  make_write_op(AsyncWriteStream& s, const ConstBufferSequence& buffers,
+      CompletionCondition completion_condition, WriteHandler handler)
+  {
+    return write_op<AsyncWriteStream, ConstBufferSequence, CompletionCondition,
+      WriteHandler>(s, buffers, completion_condition, handler);
+  }
 } // namespace detail
 
 template <typename AsyncWriteStream, typename ConstBufferSequence,
   typename CompletionCondition, typename WriteHandler>
 inline void async_write(AsyncWriteStream& s, const ConstBufferSequence& buffers,
-    CompletionCondition completion_condition, WriteHandler handler)
+    CompletionCondition completion_condition,
+    BOOST_ASIO_MOVE_ARG(WriteHandler) handler)
 {
   // If you get an error on the following line it means that your handler does
   // not meet the documented type requirements for a WriteHandler.
   BOOST_ASIO_WRITE_HANDLER_CHECK(WriteHandler, handler) type_check;
 
-  detail::write_op<AsyncWriteStream, ConstBufferSequence,
-    CompletionCondition, WriteHandler>(
-      s, buffers, completion_condition, handler)(
+  detail::make_write_op(
+    s, buffers, completion_condition,
+      BOOST_ASIO_MOVE_CAST(WriteHandler)(handler))(
         boost::system::error_code(), 0, 1);
 }
 
 template <typename AsyncWriteStream, typename ConstBufferSequence,
     typename WriteHandler>
 inline void async_write(AsyncWriteStream& s, const ConstBufferSequence& buffers,
-    WriteHandler handler)
+    BOOST_ASIO_MOVE_ARG(WriteHandler) handler)
 {
   // If you get an error on the following line it means that your handler does
   // not meet the documented type requirements for a WriteHandler.
   BOOST_ASIO_WRITE_HANDLER_CHECK(WriteHandler, handler) type_check;
 
-  detail::write_op<AsyncWriteStream, ConstBufferSequence,
-    detail::transfer_all_t, WriteHandler>(
-      s, buffers, transfer_all(), handler)(
-        boost::system::error_code(), 0, 1);
+  detail::make_write_op(
+    s, buffers, transfer_all(), BOOST_ASIO_MOVE_CAST(WriteHandler)(handler))(
+      boost::system::error_code(), 0, 1);
 }
 
 #if !defined(BOOST_NO_IOSTREAM)
 
 namespace detail
 {
-  template <typename AsyncWriteStream, typename Allocator,
-      typename WriteHandler>
+  template <typename Allocator, typename WriteHandler>
   class write_streambuf_handler
   {
   public:
@@ -353,6 +437,20 @@ namespace detail
         handler_(BOOST_ASIO_MOVE_CAST(WriteHandler)(handler))
     {
     }
+
+#if defined(BOOST_ASIO_HAS_MOVE)
+    write_streambuf_handler(const write_streambuf_handler& other)
+      : streambuf_(other.streambuf_),
+        handler_(other.handler_)
+    {
+    }
+
+    write_streambuf_handler(write_streambuf_handler&& other)
+      : streambuf_(other.streambuf_),
+        handler_(BOOST_ASIO_MOVE_CAST(WriteHandler)(other.handler_))
+    {
+    }
+#endif // defined(BOOST_ASIO_HAS_MOVE)
 
     void operator()(const boost::system::error_code& ec,
         const std::size_t bytes_transferred)
@@ -366,34 +464,44 @@ namespace detail
     WriteHandler handler_;
   };
 
-  template <typename AsyncWriteStream, typename Allocator,
-      typename WriteHandler>
+  template <typename Allocator, typename WriteHandler>
   inline void* asio_handler_allocate(std::size_t size,
-      write_streambuf_handler<AsyncWriteStream,
-        Allocator, WriteHandler>* this_handler)
+      write_streambuf_handler<Allocator, WriteHandler>* this_handler)
   {
     return boost_asio_handler_alloc_helpers::allocate(
         size, this_handler->handler_);
   }
 
-  template <typename AsyncWriteStream, typename Allocator,
-      typename WriteHandler>
+  template <typename Allocator, typename WriteHandler>
   inline void asio_handler_deallocate(void* pointer, std::size_t size,
-      write_streambuf_handler<AsyncWriteStream,
-        Allocator, WriteHandler>* this_handler)
+      write_streambuf_handler<Allocator, WriteHandler>* this_handler)
   {
     boost_asio_handler_alloc_helpers::deallocate(
         pointer, size, this_handler->handler_);
   }
 
-  template <typename Function, typename AsyncWriteStream, typename Allocator,
-      typename WriteHandler>
-  inline void asio_handler_invoke(const Function& function,
-      write_streambuf_handler<AsyncWriteStream,
-        Allocator, WriteHandler>* this_handler)
+  template <typename Function, typename Allocator, typename WriteHandler>
+  inline void asio_handler_invoke(Function& function,
+      write_streambuf_handler<Allocator, WriteHandler>* this_handler)
   {
     boost_asio_handler_invoke_helpers::invoke(
         function, this_handler->handler_);
+  }
+
+  template <typename Function, typename Allocator, typename WriteHandler>
+  inline void asio_handler_invoke(const Function& function,
+      write_streambuf_handler<Allocator, WriteHandler>* this_handler)
+  {
+    boost_asio_handler_invoke_helpers::invoke(
+        function, this_handler->handler_);
+  }
+
+  template <typename Allocator, typename WriteHandler>
+  inline write_streambuf_handler<Allocator, WriteHandler>
+  make_write_streambuf_handler(
+      boost::asio::basic_streambuf<Allocator>& b, WriteHandler handler)
+  {
+    return write_streambuf_handler<Allocator, WriteHandler>(b, handler);
   }
 } // namespace detail
 
@@ -401,28 +509,30 @@ template <typename AsyncWriteStream, typename Allocator,
     typename CompletionCondition, typename WriteHandler>
 inline void async_write(AsyncWriteStream& s,
     boost::asio::basic_streambuf<Allocator>& b,
-    CompletionCondition completion_condition, WriteHandler handler)
+    CompletionCondition completion_condition,
+    BOOST_ASIO_MOVE_ARG(WriteHandler) handler)
 {
   // If you get an error on the following line it means that your handler does
   // not meet the documented type requirements for a WriteHandler.
   BOOST_ASIO_WRITE_HANDLER_CHECK(WriteHandler, handler) type_check;
 
   async_write(s, b.data(), completion_condition,
-      detail::write_streambuf_handler<
-        AsyncWriteStream, Allocator, WriteHandler>(b, handler));
+      detail::make_write_streambuf_handler(
+        b, BOOST_ASIO_MOVE_CAST(WriteHandler)(handler)));
 }
 
 template <typename AsyncWriteStream, typename Allocator, typename WriteHandler>
 inline void async_write(AsyncWriteStream& s,
-    boost::asio::basic_streambuf<Allocator>& b, WriteHandler handler)
+    boost::asio::basic_streambuf<Allocator>& b,
+    BOOST_ASIO_MOVE_ARG(WriteHandler) handler)
 {
   // If you get an error on the following line it means that your handler does
   // not meet the documented type requirements for a WriteHandler.
   BOOST_ASIO_WRITE_HANDLER_CHECK(WriteHandler, handler) type_check;
 
   async_write(s, b.data(), transfer_all(),
-      detail::write_streambuf_handler<
-        AsyncWriteStream, Allocator, WriteHandler>(b, handler));
+      detail::make_write_streambuf_handler(
+        b, BOOST_ASIO_MOVE_CAST(WriteHandler)(handler)));
 }
 
 #endif // !defined(BOOST_NO_IOSTREAM)

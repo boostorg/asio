@@ -336,6 +336,26 @@ namespace detail
     {
     }
 
+#if defined(BOOST_ASIO_HAS_MOVE)
+    read_until_delim_op(const read_until_delim_op& other)
+      : stream_(other.stream_),
+        streambuf_(other.streambuf_),
+        delim_(other.delim_),
+        search_position_(other.search_position_),
+        handler_(other.handler_)
+    {
+    }
+
+    read_until_delim_op(read_until_delim_op&& other)
+      : stream_(other.stream_),
+        streambuf_(other.streambuf_),
+        delim_(other.delim_),
+        search_position_(other.search_position_),
+        handler_(BOOST_ASIO_MOVE_CAST(ReadHandler)(other.handler_))
+    {
+    }
+#endif // defined(BOOST_ASIO_HAS_MOVE)
+
     void operator()(const boost::system::error_code& ec,
         std::size_t bytes_transferred, int start = 0)
     {
@@ -386,7 +406,8 @@ namespace detail
             break;
 
           // Start a new asynchronous read operation to obtain more data.
-          stream_.async_read_some(streambuf_.prepare(bytes_to_read), *this);
+          stream_.async_read_some(streambuf_.prepare(bytes_to_read),
+              BOOST_ASIO_MOVE_CAST(read_until_delim_op)(*this));
           return; default:
           streambuf_.commit(bytes_transferred);
           if (ec || bytes_transferred == 0)
@@ -433,6 +454,16 @@ namespace detail
 
   template <typename Function, typename AsyncReadStream, typename Allocator,
       typename ReadHandler>
+  inline void asio_handler_invoke(Function& function,
+      read_until_delim_op<AsyncReadStream,
+        Allocator, ReadHandler>* this_handler)
+  {
+    boost_asio_handler_invoke_helpers::invoke(
+        function, this_handler->handler_);
+  }
+
+  template <typename Function, typename AsyncReadStream, typename Allocator,
+      typename ReadHandler>
   inline void asio_handler_invoke(const Function& function,
       read_until_delim_op<AsyncReadStream,
         Allocator, ReadHandler>* this_handler)
@@ -440,20 +471,30 @@ namespace detail
     boost_asio_handler_invoke_helpers::invoke(
         function, this_handler->handler_);
   }
+
+  template <typename AsyncReadStream, typename Allocator, typename ReadHandler>
+  inline read_until_delim_op<AsyncReadStream, Allocator, ReadHandler>
+  make_read_until_delim_op(AsyncReadStream& s,
+      boost::asio::basic_streambuf<Allocator>& b,
+      char delim, ReadHandler handler)
+  {
+    return read_until_delim_op<AsyncReadStream, Allocator, ReadHandler>(
+        s, b, delim, handler);
+  }
 } // namespace detail
 
 template <typename AsyncReadStream, typename Allocator, typename ReadHandler>
 void async_read_until(AsyncReadStream& s,
-    boost::asio::basic_streambuf<Allocator>& b, char delim, ReadHandler handler)
+    boost::asio::basic_streambuf<Allocator>& b, char delim,
+    BOOST_ASIO_MOVE_ARG(ReadHandler) handler)
 {
   // If you get an error on the following line it means that your handler does
   // not meet the documented type requirements for a ReadHandler.
   BOOST_ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
 
-  detail::read_until_delim_op<
-    AsyncReadStream, Allocator, ReadHandler>(
-      s, b, delim, handler)(
-        boost::system::error_code(), 0, 1);
+  detail::make_read_until_delim_op(
+    s, b, delim, BOOST_ASIO_MOVE_CAST(ReadHandler)(handler))(
+      boost::system::error_code(), 0, 1);
 }
 
 namespace detail
@@ -472,6 +513,26 @@ namespace detail
         handler_(BOOST_ASIO_MOVE_CAST(ReadHandler)(handler))
     {
     }
+
+#if defined(BOOST_ASIO_HAS_MOVE)
+    read_until_delim_string_op(const read_until_delim_string_op& other)
+      : stream_(other.stream_),
+        streambuf_(other.streambuf_),
+        delim_(other.delim_),
+        search_position_(other.search_position_),
+        handler_(other.handler_)
+    {
+    }
+
+    read_until_delim_string_op(read_until_delim_string_op&& other)
+      : stream_(other.stream_),
+        streambuf_(other.streambuf_),
+        delim_(BOOST_ASIO_MOVE_CAST(std::string)(other.delim_)),
+        search_position_(other.search_position_),
+        handler_(BOOST_ASIO_MOVE_CAST(ReadHandler)(other.handler_))
+    {
+    }
+#endif // defined(BOOST_ASIO_HAS_MOVE)
 
     void operator()(const boost::system::error_code& ec,
         std::size_t bytes_transferred, int start = 0)
@@ -534,7 +595,8 @@ namespace detail
             break;
 
           // Start a new asynchronous read operation to obtain more data.
-          stream_.async_read_some(streambuf_.prepare(bytes_to_read), *this);
+          stream_.async_read_some(streambuf_.prepare(bytes_to_read),
+              BOOST_ASIO_MOVE_CAST(read_until_delim_string_op)(*this));
           return; default:
           streambuf_.commit(bytes_transferred);
           if (ec || bytes_transferred == 0)
@@ -581,6 +643,16 @@ namespace detail
 
   template <typename Function, typename AsyncReadStream,
       typename Allocator, typename ReadHandler>
+  inline void asio_handler_invoke(Function& function,
+      read_until_delim_string_op<AsyncReadStream,
+        Allocator, ReadHandler>* this_handler)
+  {
+    boost_asio_handler_invoke_helpers::invoke(
+        function, this_handler->handler_);
+  }
+
+  template <typename Function, typename AsyncReadStream,
+      typename Allocator, typename ReadHandler>
   inline void asio_handler_invoke(const Function& function,
       read_until_delim_string_op<AsyncReadStream,
         Allocator, ReadHandler>* this_handler)
@@ -588,21 +660,30 @@ namespace detail
     boost_asio_handler_invoke_helpers::invoke(
         function, this_handler->handler_);
   }
+
+  template <typename AsyncReadStream, typename Allocator, typename ReadHandler>
+  inline read_until_delim_string_op<AsyncReadStream, Allocator, ReadHandler>
+  make_read_until_delim_string_op(AsyncReadStream& s,
+      boost::asio::basic_streambuf<Allocator>& b,
+      const std::string& delim, ReadHandler handler)
+  {
+    return read_until_delim_string_op<AsyncReadStream, Allocator, ReadHandler>(
+        s, b, delim, handler);
+  }
 } // namespace detail
 
 template <typename AsyncReadStream, typename Allocator, typename ReadHandler>
 void async_read_until(AsyncReadStream& s,
     boost::asio::basic_streambuf<Allocator>& b, const std::string& delim,
-    ReadHandler handler)
+    BOOST_ASIO_MOVE_ARG(ReadHandler) handler)
 {
   // If you get an error on the following line it means that your handler does
   // not meet the documented type requirements for a ReadHandler.
   BOOST_ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
 
-  detail::read_until_delim_string_op<
-    AsyncReadStream, Allocator, ReadHandler>(
-      s, b, delim, handler)(
-        boost::system::error_code(), 0, 1);
+  detail::make_read_until_delim_string_op(
+    s, b, delim, BOOST_ASIO_MOVE_CAST(ReadHandler)(handler))(
+      boost::system::error_code(), 0, 1);
 }
 
 namespace detail
@@ -622,6 +703,26 @@ namespace detail
         handler_(BOOST_ASIO_MOVE_CAST(ReadHandler)(handler))
     {
     }
+
+#if defined(BOOST_ASIO_HAS_MOVE)
+    read_until_expr_op(const read_until_expr_op& other)
+      : stream_(other.stream_),
+        streambuf_(other.streambuf_),
+        expr_(other.expr_),
+        search_position_(other.search_position_),
+        handler_(other.handler_)
+    {
+    }
+
+    read_until_expr_op(read_until_expr_op&& other)
+      : stream_(other.stream_),
+        streambuf_(other.streambuf_),
+        expr_(other.expr_),
+        search_position_(other.search_position_),
+        handler_(BOOST_ASIO_MOVE_CAST(ReadHandler)(other.handler_))
+    {
+    }
+#endif // defined(BOOST_ASIO_HAS_MOVE)
 
     void operator()(const boost::system::error_code& ec,
         std::size_t bytes_transferred, int start = 0)
@@ -687,7 +788,8 @@ namespace detail
             break;
 
           // Start a new asynchronous read operation to obtain more data.
-          stream_.async_read_some(streambuf_.prepare(bytes_to_read), *this);
+          stream_.async_read_some(streambuf_.prepare(bytes_to_read),
+              BOOST_ASIO_MOVE_CAST(read_until_expr_op)(*this));
           return; default:
           streambuf_.commit(bytes_transferred);
           if (ec || bytes_transferred == 0)
@@ -736,6 +838,16 @@ namespace detail
 
   template <typename Function, typename AsyncReadStream, typename Allocator,
       typename RegEx, typename ReadHandler>
+  inline void asio_handler_invoke(Function& function,
+      read_until_expr_op<AsyncReadStream,
+        Allocator, RegEx, ReadHandler>* this_handler)
+  {
+    boost_asio_handler_invoke_helpers::invoke(
+        function, this_handler->handler_);
+  }
+
+  template <typename Function, typename AsyncReadStream, typename Allocator,
+      typename RegEx, typename ReadHandler>
   inline void asio_handler_invoke(const Function& function,
       read_until_expr_op<AsyncReadStream,
         Allocator, RegEx, ReadHandler>* this_handler)
@@ -743,21 +855,31 @@ namespace detail
     boost_asio_handler_invoke_helpers::invoke(
         function, this_handler->handler_);
   }
+
+  template <typename AsyncReadStream, typename Allocator,
+      typename RegEx, typename ReadHandler>
+  inline read_until_expr_op<AsyncReadStream, Allocator, RegEx, ReadHandler>
+  make_read_until_expr_op(AsyncReadStream& s,
+      boost::asio::basic_streambuf<Allocator>& b,
+      const boost::regex& expr, ReadHandler handler)
+  {
+    return read_until_expr_op<AsyncReadStream, Allocator, RegEx, ReadHandler>(
+        s, b, expr, handler);
+  }
 } // namespace detail
 
 template <typename AsyncReadStream, typename Allocator, typename ReadHandler>
 void async_read_until(AsyncReadStream& s,
     boost::asio::basic_streambuf<Allocator>& b, const boost::regex& expr,
-    ReadHandler handler)
+    BOOST_ASIO_MOVE_ARG(ReadHandler) handler)
 {
   // If you get an error on the following line it means that your handler does
   // not meet the documented type requirements for a ReadHandler.
   BOOST_ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
 
-  detail::read_until_expr_op<AsyncReadStream,
-    Allocator, boost::regex, ReadHandler>(
-      s, b, expr, handler)(
-        boost::system::error_code(), 0, 1);
+  detail::make_read_until_expr_op(
+    s, b, expr, BOOST_ASIO_MOVE_CAST(ReadHandler)(handler))(
+      boost::system::error_code(), 0, 1);
 }
 
 namespace detail
@@ -777,6 +899,26 @@ namespace detail
         handler_(BOOST_ASIO_MOVE_CAST(ReadHandler)(handler))
     {
     }
+
+#if defined(BOOST_ASIO_HAS_MOVE)
+    read_until_match_op(const read_until_match_op& other)
+      : stream_(other.stream_),
+        streambuf_(other.streambuf_),
+        match_condition_(other.match_condition_),
+        search_position_(other.search_position_),
+        handler_(other.handler_)
+    {
+    }
+
+    read_until_match_op(read_until_match_op&& other)
+      : stream_(other.stream_),
+        streambuf_(other.streambuf_),
+        match_condition_(other.match_condition_),
+        search_position_(other.search_position_),
+        handler_(BOOST_ASIO_MOVE_CAST(ReadHandler)(other.handler_))
+    {
+    }
+#endif // defined(BOOST_ASIO_HAS_MOVE)
 
     void operator()(const boost::system::error_code& ec,
         std::size_t bytes_transferred, int start = 0)
@@ -838,7 +980,8 @@ namespace detail
             break;
 
           // Start a new asynchronous read operation to obtain more data.
-          stream_.async_read_some(streambuf_.prepare(bytes_to_read), *this);
+          stream_.async_read_some(streambuf_.prepare(bytes_to_read),
+              BOOST_ASIO_MOVE_CAST(read_until_match_op)(*this));
           return; default:
           streambuf_.commit(bytes_transferred);
           if (ec || bytes_transferred == 0)
@@ -887,6 +1030,16 @@ namespace detail
 
   template <typename Function, typename AsyncReadStream, typename Allocator,
       typename MatchCondition, typename ReadHandler>
+  inline void asio_handler_invoke(Function& function,
+      read_until_match_op<AsyncReadStream,
+        Allocator, MatchCondition, ReadHandler>* this_handler)
+  {
+    boost_asio_handler_invoke_helpers::invoke(
+        function, this_handler->handler_);
+  }
+
+  template <typename Function, typename AsyncReadStream, typename Allocator,
+      typename MatchCondition, typename ReadHandler>
   inline void asio_handler_invoke(const Function& function,
       read_until_match_op<AsyncReadStream,
         Allocator, MatchCondition, ReadHandler>* this_handler)
@@ -894,23 +1047,35 @@ namespace detail
     boost_asio_handler_invoke_helpers::invoke(
         function, this_handler->handler_);
   }
+
+  template <typename AsyncReadStream, typename Allocator,
+      typename MatchCondition, typename ReadHandler>
+  inline read_until_match_op<AsyncReadStream, Allocator,
+      MatchCondition, ReadHandler>
+  make_read_until_match_op(AsyncReadStream& s,
+      boost::asio::basic_streambuf<Allocator>& b,
+      MatchCondition match_condition, ReadHandler handler)
+  {
+    return read_until_match_op<AsyncReadStream,
+      Allocator, MatchCondition, ReadHandler>(
+        s, b, match_condition, handler);
+  }
 } // namespace detail
 
 template <typename AsyncReadStream, typename Allocator,
     typename MatchCondition, typename ReadHandler>
 void async_read_until(AsyncReadStream& s,
     boost::asio::basic_streambuf<Allocator>& b,
-    MatchCondition match_condition, ReadHandler handler,
+    MatchCondition match_condition, BOOST_ASIO_MOVE_ARG(ReadHandler) handler,
     typename boost::enable_if<is_match_condition<MatchCondition> >::type*)
 {
   // If you get an error on the following line it means that your handler does
   // not meet the documented type requirements for a ReadHandler.
   BOOST_ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
 
-  detail::read_until_match_op<
-    AsyncReadStream, Allocator, MatchCondition, ReadHandler>(
-      s, b, match_condition, handler)(
-        boost::system::error_code(), 0, 1);
+  detail::make_read_until_match_op(
+    s, b, match_condition, BOOST_ASIO_MOVE_CAST(ReadHandler)(handler))(
+      boost::system::error_code(), 0, 1);
 }
 
 } // namespace asio

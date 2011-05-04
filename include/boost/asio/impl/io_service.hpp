@@ -70,23 +70,24 @@ namespace boost {
 namespace asio {
 
 template <typename CompletionHandler>
-inline void io_service::dispatch(CompletionHandler handler)
+inline void io_service::dispatch(
+    BOOST_ASIO_MOVE_ARG(CompletionHandler) handler)
 {
   // If you get an error on the following line it means that your handler does
   // not meet the documented type requirements for a CompletionHandler.
   BOOST_ASIO_COMPLETION_HANDLER_CHECK(CompletionHandler, handler) type_check;
 
-  impl_.dispatch(handler);
+  impl_.dispatch(BOOST_ASIO_MOVE_CAST(CompletionHandler)(handler));
 }
 
 template <typename CompletionHandler>
-inline void io_service::post(CompletionHandler handler)
+inline void io_service::post(BOOST_ASIO_MOVE_ARG(CompletionHandler) handler)
 {
   // If you get an error on the following line it means that your handler does
   // not meet the documented type requirements for a CompletionHandler.
   BOOST_ASIO_COMPLETION_HANDLER_CHECK(CompletionHandler, handler) type_check;
 
-  impl_.post(handler);
+  impl_.post(BOOST_ASIO_MOVE_CAST(CompletionHandler)(handler));
 }
 
 template <typename Handler>

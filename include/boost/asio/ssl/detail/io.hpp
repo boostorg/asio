@@ -101,6 +101,30 @@ public:
   {
   }
 
+#if defined(BOOST_ASIO_HAS_MOVE)
+  io_op(const io_op& other)
+    : next_layer_(other.next_layer_),
+      core_(other.core_),
+      op_(other.op_),
+      want_(other.want_),
+      ec_(other.ec_),
+      bytes_transferred_(other.bytes_transferred_),
+      handler_(other.handler_)
+  {
+  }
+
+  io_op(io_op&& other)
+    : next_layer_(other.next_layer_),
+      core_(other.core_),
+      op_(other.op_),
+      want_(other.want_),
+      ec_(other.ec_),
+      bytes_transferred_(other.bytes_transferred_),
+      handler_(BOOST_ASIO_MOVE_CAST(Handler)(other.handler_))
+  {
+  }
+#endif // defined(BOOST_ASIO_HAS_MOVE)
+
   void operator()(boost::system::error_code ec,
       std::size_t bytes_transferred = ~std::size_t(0), int start = 0)
   {
@@ -132,12 +156,13 @@ public:
 
             // Start reading some data from the underlying transport.
             next_layer_.async_read_some(
-                boost::asio::buffer(core_.input_buffer_), *this);
+                boost::asio::buffer(core_.input_buffer_),
+                BOOST_ASIO_MOVE_CAST(io_op)(*this));
           }
           else
           {
             // Wait until the current read operation completes.
-            core_.pending_read_.async_wait(*this);
+            core_.pending_read_.async_wait(BOOST_ASIO_MOVE_CAST(io_op)(*this));
           }
 
           // Yield control until asynchronous operation completes. Control
@@ -158,12 +183,13 @@ public:
 
             // Start writing all the data to the underlying transport.
             boost::asio::async_write(next_layer_,
-                core_.engine_.get_output(core_.output_buffer_), *this);
+                core_.engine_.get_output(core_.output_buffer_),
+                BOOST_ASIO_MOVE_CAST(io_op)(*this));
           }
           else
           {
             // Wait until the current write operation completes.
-            core_.pending_write_.async_wait(*this);
+            core_.pending_write_.async_wait(BOOST_ASIO_MOVE_CAST(io_op)(*this));
           }
 
           // Yield control until asynchronous operation completes. Control
@@ -180,7 +206,8 @@ public:
           if (start)
           {
             next_layer_.async_read_some(
-                boost::asio::buffer(core_.input_buffer_, 0), *this);
+                boost::asio::buffer(core_.input_buffer_, 0),
+                BOOST_ASIO_MOVE_CAST(io_op)(*this));
 
             // Yield control until asynchronous operation completes. Control
             // resumes at the "default:" label below.
@@ -272,6 +299,15 @@ inline void asio_handler_deallocate(void* pointer, std::size_t size,
 
 template <typename Function, typename Stream,
     typename Operation, typename Handler>
+inline void asio_handler_invoke(Function& function,
+    io_op<Stream, Operation, Handler>* this_handler)
+{
+  boost_asio_handler_invoke_helpers::invoke(
+      function, this_handler->handler_);
+}
+
+template <typename Function, typename Stream,
+    typename Operation, typename Handler>
 inline void asio_handler_invoke(const Function& function,
     io_op<Stream, Operation, Handler>* this_handler)
 {
@@ -281,7 +317,7 @@ inline void asio_handler_invoke(const Function& function,
 
 template <typename Stream, typename Operation, typename Handler>
 inline void async_io(Stream& next_layer, stream_core& core,
-    const Operation& op, Handler& handler)
+    const Operation& op, Handler handler)
 {
   io_op<Stream, Operation, Handler>(
     next_layer, core, op, handler)(

@@ -33,9 +33,9 @@ class wait_handler : public timer_op
 public:
   BOOST_ASIO_DEFINE_HANDLER_PTR(wait_handler);
 
-  wait_handler(Handler h)
+  wait_handler(Handler& h)
     : timer_op(&wait_handler::do_complete),
-      handler_(h)
+      handler_(BOOST_ASIO_MOVE_CAST(Handler)(h))
   {
   }
 

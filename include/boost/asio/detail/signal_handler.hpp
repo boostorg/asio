@@ -33,9 +33,9 @@ class signal_handler : public signal_op
 public:
   BOOST_ASIO_DEFINE_HANDLER_PTR(signal_handler);
 
-  signal_handler(Handler h)
+  signal_handler(Handler& h)
     : signal_op(&signal_handler::do_complete),
-      handler_(h)
+      handler_(BOOST_ASIO_MOVE_CAST(Handler)(h))
   {
   }
 

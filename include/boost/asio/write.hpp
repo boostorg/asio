@@ -414,7 +414,7 @@ std::size_t write(SyncWriteStream& s, basic_streambuf<Allocator>& b,
 template <typename AsyncWriteStream, typename ConstBufferSequence,
     typename WriteHandler>
 void async_write(AsyncWriteStream& s, const ConstBufferSequence& buffers,
-    WriteHandler handler);
+    BOOST_ASIO_MOVE_ARG(WriteHandler) handler);
 
 /// Start an asynchronous operation to write a certain amount of data to a
 /// stream.
@@ -486,7 +486,8 @@ void async_write(AsyncWriteStream& s, const ConstBufferSequence& buffers,
 template <typename AsyncWriteStream, typename ConstBufferSequence,
     typename CompletionCondition, typename WriteHandler>
 void async_write(AsyncWriteStream& s, const ConstBufferSequence& buffers,
-    CompletionCondition completion_condition, WriteHandler handler);
+    CompletionCondition completion_condition,
+    BOOST_ASIO_MOVE_ARG(WriteHandler) handler);
 
 #if !defined(BOOST_NO_IOSTREAM)
 
@@ -533,7 +534,7 @@ void async_write(AsyncWriteStream& s, const ConstBufferSequence& buffers,
  */
 template <typename AsyncWriteStream, typename Allocator, typename WriteHandler>
 void async_write(AsyncWriteStream& s, basic_streambuf<Allocator>& b,
-    WriteHandler handler);
+    BOOST_ASIO_MOVE_ARG(WriteHandler) handler);
 
 /// Start an asynchronous operation to write a certain amount of data to a
 /// stream.
@@ -593,7 +594,8 @@ void async_write(AsyncWriteStream& s, basic_streambuf<Allocator>& b,
 template <typename AsyncWriteStream, typename Allocator,
     typename CompletionCondition, typename WriteHandler>
 void async_write(AsyncWriteStream& s, basic_streambuf<Allocator>& b,
-    CompletionCondition completion_condition, WriteHandler handler);
+    CompletionCondition completion_condition,
+    BOOST_ASIO_MOVE_ARG(WriteHandler) handler);
 
 #endif // !defined(BOOST_NO_IOSTREAM)
 

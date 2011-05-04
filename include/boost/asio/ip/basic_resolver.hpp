@@ -153,7 +153,8 @@ public:
    * the handler.
    */
   template <typename ResolveHandler>
-  void async_resolve(const query& q, ResolveHandler handler)
+  void async_resolve(const query& q,
+      BOOST_ASIO_MOVE_ARG(ResolveHandler) handler)
   {
     // If you get an error on the following line it means that your handler does
     // not meet the documented type requirements for a ResolveHandler.
@@ -243,7 +244,8 @@ public:
    * the handler.
    */
   template <typename ResolveHandler>
-  void async_resolve(const endpoint_type& e, ResolveHandler handler)
+  void async_resolve(const endpoint_type& e,
+      BOOST_ASIO_MOVE_ARG(ResolveHandler) handler)
   {
     // If you get an error on the following line it means that your handler does
     // not meet the documented type requirements for a ResolveHandler.

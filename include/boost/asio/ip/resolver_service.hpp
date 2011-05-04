@@ -103,11 +103,12 @@ public:
   }
 
   /// Asynchronously resolve a query to a list of entries.
-  template <typename Handler>
+  template <typename ResolveHandler>
   void async_resolve(implementation_type& impl, const query_type& query,
-      Handler handler)
+      BOOST_ASIO_MOVE_ARG(ResolveHandler) handler)
   {
-    service_impl_.async_resolve(impl, query, handler);
+    service_impl_.async_resolve(impl, query,
+        BOOST_ASIO_MOVE_CAST(ResolveHandler)(handler));
   }
 
   /// Resolve an endpoint to a list of entries.
@@ -120,9 +121,10 @@ public:
   /// Asynchronously resolve an endpoint to a list of entries.
   template <typename ResolveHandler>
   void async_resolve(implementation_type& impl, const endpoint_type& endpoint,
-      ResolveHandler handler)
+      BOOST_ASIO_MOVE_ARG(ResolveHandler) handler)
   {
-    return service_impl_.async_resolve(impl, endpoint, handler);
+    return service_impl_.async_resolve(impl, endpoint,
+        BOOST_ASIO_MOVE_CAST(ResolveHandler)(handler));
   }
 
 private:
