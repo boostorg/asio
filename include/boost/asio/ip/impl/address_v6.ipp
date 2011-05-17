@@ -62,12 +62,29 @@ address_v6::address_v6(const address_v6& other)
 {
 }
 
+#if defined(BOOST_ASIO_HAS_MOVE)
+address_v6::address_v6(address_v6&& other)
+  : addr_(other.addr_),
+    scope_id_(other.scope_id_)
+{
+}
+#endif // defined(BOOST_ASIO_HAS_MOVE)
+
 address_v6& address_v6::operator=(const address_v6& other)
 {
   addr_ = other.addr_;
   scope_id_ = other.scope_id_;
   return *this;
 }
+
+#if defined(BOOST_ASIO_HAS_MOVE)
+address_v6& address_v6::operator=(address_v6&& other)
+{
+  addr_ = other.addr_;
+  scope_id_ = other.scope_id_;
+  return *this;
+}
+#endif // defined(BOOST_ASIO_HAS_MOVE)
 
 address_v6::bytes_type address_v6::to_bytes() const
 {

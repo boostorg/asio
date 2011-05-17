@@ -57,6 +57,15 @@ address::address(const address& other)
 {
 }
 
+#if defined(BOOST_ASIO_HAS_MOVE)
+address::address(address&& other)
+  : type_(other.type_),
+    ipv4_address_(other.ipv4_address_),
+    ipv6_address_(other.ipv6_address_)
+{
+}
+#endif // defined(BOOST_ASIO_HAS_MOVE)
+
 address& address::operator=(const address& other)
 {
   type_ = other.type_;
@@ -64,6 +73,16 @@ address& address::operator=(const address& other)
   ipv6_address_ = other.ipv6_address_;
   return *this;
 }
+
+#if defined(BOOST_ASIO_HAS_MOVE)
+address& address::operator=(address&& other)
+{
+  type_ = other.type_;
+  ipv4_address_ = other.ipv4_address_;
+  ipv6_address_ = other.ipv6_address_;
+  return *this;
+}
+#endif // defined(BOOST_ASIO_HAS_MOVE)
 
 address& address::operator=(const boost::asio::ip::address_v4& ipv4_address)
 {

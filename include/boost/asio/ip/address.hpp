@@ -55,8 +55,18 @@ public:
   /// Copy constructor.
   BOOST_ASIO_DECL address(const address& other);
 
+#if defined(BOOST_ASIO_HAS_MOVE)
+  /// Move constructor.
+  BOOST_ASIO_DECL address(address&& other);
+#endif // defined(BOOST_ASIO_HAS_MOVE)
+
   /// Assign from another address.
   BOOST_ASIO_DECL address& operator=(const address& other);
+
+#if defined(BOOST_ASIO_HAS_MOVE)
+  /// Move-assign from another address.
+  BOOST_ASIO_DECL address& operator=(address&& other);
+#endif // defined(BOOST_ASIO_HAS_MOVE)
 
   /// Assign from an IPv4 address.
   BOOST_ASIO_DECL address& operator=(

@@ -66,8 +66,18 @@ public:
   /// Copy constructor.
   BOOST_ASIO_DECL address_v6(const address_v6& other);
 
+#if defined(BOOST_ASIO_HAS_MOVE)
+  /// Move constructor.
+  BOOST_ASIO_DECL address_v6(address_v6&& other);
+#endif // defined(BOOST_ASIO_HAS_MOVE)
+
   /// Assign from another address.
   BOOST_ASIO_DECL address_v6& operator=(const address_v6& other);
+
+#if defined(BOOST_ASIO_HAS_MOVE)
+  /// Move-assign from another address.
+  BOOST_ASIO_DECL address_v6& operator=(address_v6&& other);
+#endif // defined(BOOST_ASIO_HAS_MOVE)
 
   /// The scope ID of the address.
   /**

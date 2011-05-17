@@ -311,4 +311,11 @@
 # endif // !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
 #endif // !defined(BOOST_ASIO_DISABLE_SIGACTION)
 
+// Can use signal().
+#if !defined(BOOST_ASIO_DISABLE_SIGNAL)
+# if !defined(UNDER_CE)
+#  define BOOST_ASIO_HAS_SIGNAL 1
+# endif // !defined(UNDER_CE)
+#endif // !defined(BOOST_ASIO_DISABLE_SIGNAL)
+
 #endif // BOOST_ASIO_DETAIL_CONFIG_HPP
