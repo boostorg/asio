@@ -54036,6 +54036,22 @@ Base class for all [link boost_asio.reference.io_service `io_service`] services.
   
 ]
 
+[heading Private Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link boost_asio.reference.io_service__service.fork_service [*fork_service]]]
+    [Handle notification of a fork-related event to perform any necessary housekeeping. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.io_service__service.shutdown_service [*shutdown_service]]]
+    [Destroy all user-defined handler objects owned by the service. ]
+  ]
+  
+]
+
 [heading Requirements]
 
 [*Header: ][^boost/asio/io_service.hpp]
@@ -54091,6 +54107,37 @@ Destructor.
 
 
   virtual ~service();
+
+
+
+[endsect]
+
+
+
+[section:fork_service io_service::service::fork_service]
+
+[indexterm2 fork_service..io_service::service] 
+Handle notification of a fork-related event to perform any necessary housekeeping. 
+
+
+  virtual void fork_service(
+      boost::asio::io_service::fork_event event);
+
+
+This function is not a pure virtual so that services only have to implement it if necessary. The default implementation does nothing. 
+
+
+[endsect]
+
+
+
+[section:shutdown_service io_service::service::shutdown_service]
+
+[indexterm2 shutdown_service..io_service::service] 
+Destroy all user-defined handler objects owned by the service. 
+
+
+  void shutdown_service();
 
 
 
