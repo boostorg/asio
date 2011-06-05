@@ -52,17 +52,23 @@
 #  if ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 5)) || (__GNUC__ > 4)
 #   if defined(__GXX_EXPERIMENTAL_CXX0X__)
 #    define BOOST_ASIO_HAS_MOVE
-#    define BOOST_ASIO_MOVE_ARG(type) type&&
-#    define BOOST_ASIO_MOVE_CAST(type) static_cast<type&&>
 #   endif // defined(__GXX_EXPERIMENTAL_CXX0X__)
 #  endif // ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 5)) || (__GNUC__ > 4)
 # endif // defined(__GNUC__)
 #endif // !defined(BOOST_ASIO_DISABLE_MOVE)
 
-// If BOOST_ASIO_MOVE_CAST isn't defined yet use a C++03 compatible version.
-// Note that older g++ and MSVC versions don't like it when you pass a
-// non-member function through a const reference, so for most compilers we'll
-// play it safe and stick with the old approach of passing the handler by
+// If BOOST_ASIO_MOVE_CAST isn't defined, and move support is available, define
+// BOOST_ASIO_MOVE_ARG and BOOST_ASIO_MOVE_CAST to take advantage of rvalue
+// references and perfect forwarding.
+#if defined(BOOST_ASIO_HAS_MOVE) && !defined(BOOST_ASIO_MOVE_CAST)
+# define BOOST_ASIO_MOVE_ARG(type) type&&
+# define BOOST_ASIO_MOVE_CAST(type) static_cast<type&&>
+#endif // defined(BOOST_ASIO_HAS_MOVE) && !defined(BOOST_ASIO_MOVE_CAST)
+
+// If BOOST_ASIO_MOVE_CAST still isn't defined, default to a C++03-compatible
+// implementation. Note that older g++ and MSVC versions don't like it when you
+// pass a non-member function through a const reference, so for most compilers
+// we'll play it safe and stick with the old approach of passing the handler by
 // value.
 #if !defined(BOOST_ASIO_MOVE_CAST)
 # if defined(__GNUC__)

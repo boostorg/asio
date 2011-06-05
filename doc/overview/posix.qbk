@@ -11,6 +11,8 @@
 
 [link boost_asio.overview.posix.stream_descriptor Stream-Oriented File Descriptors]
 
+[link boost_asio.overview.posix.fork Fork]
+
 [section:local UNIX Domain Sockets]
 
 Boost.Asio provides basic support UNIX domain sockets (also known as local sockets).
@@ -100,6 +102,43 @@ boost_asio.reference.async_read_until async_read_until()] free functions.
 POSIX stream descriptors are only available at compile time if supported by the
 target operating system. A program may test for the macro
 `BOOST_ASIO_HAS_POSIX_STREAM_DESCRIPTOR` to determine whether they are supported.
+
+[endsect]
+
+[section:fork Fork]
+
+Boost.Asio supports programs that utilise the `fork()` system call. Provided the
+program calls `io_service.notify_fork()` at the appropriate times, Boost.Asio will
+recreate any internal file descriptors (such as the "self-pipe trick"
+descriptor used for waking up a reactor). The notification is usually performed
+as follows:
+
+  io_service_.notify_fork(boost::asio::io_service::fork_prepare);
+  if (fork() == 0)
+  {
+    io_service_.notify_fork(boost::asio::io_service::fork_child);
+    ...
+  }
+  else
+  {
+    io_service_.notify_fork(boost::asio::io_service::fork_parent);
+    ...
+  }
+
+User-defined services can also be made fork-aware by overriding the
+`io_service::service::fork_service()` virtual function.
+
+Note that any file descriptors accessible via Boost.Asio's public API (e.g. the
+descriptors underlying `basic_socket<>`, `posix::stream_descriptor`, etc.) are
+not altered during a fork. It is the program's responsibility to manage these
+as required.
+
+[heading See Also]
+
+[link boost_asio.reference.io_service.notify_fork io_service::notify_fork()],
+[link boost_asio.reference.io_service.fork_event io_service::fork_event],
+[link boost_asio.reference.io_service__service.fork_service io_service::service::fork_service()],
+[link boost_asio.examples.fork Fork examples].
 
 [endsect]
 
