@@ -34,10 +34,10 @@ public:
   /// Run the server's io_service loop.
   void run();
 
-  /// Stop the server.
-  void stop();
-
 private:
+  /// Initiate an asynchronous accept operation.
+  void start_accept();
+
   /// Handle completion of an asynchronous accept operation.
   void handle_accept(const boost::system::error_code& e);
 
@@ -46,6 +46,9 @@ private:
 
   /// The io_service used to perform asynchronous operations.
   boost::asio::io_service io_service_;
+
+  /// The signal_set is used to register for process termination notifications.
+  boost::asio::signal_set signals_;
 
   /// Acceptor used to listen for incoming connections.
   boost::asio::ip::tcp::acceptor acceptor_;

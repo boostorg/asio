@@ -43,6 +43,7 @@
 [include requirements/AsyncReadStream.qbk]
 [include requirements/AsyncWriteStream.qbk]
 [include requirements/CompletionHandler.qbk]
+[include requirements/ComposedConnectHandler.qbk]
 [include requirements/ConnectHandler.qbk]
 [include requirements/ConstBufferSequence.qbk]
 [include requirements/ConvertibleToConstBuffer.qbk]
@@ -54,6 +55,7 @@
 [include requirements/GettableSocketOption.qbk]
 [include requirements/Handler.qbk]
 [include requirements/HandleService.qbk]
+[include requirements/HandshakeHandler.qbk]
 [include requirements/InternetProtocol.qbk]
 [include requirements/IoControlCommand.qbk]
 [include requirements/IoObjectService.qbk]
@@ -64,10 +66,14 @@
 [include requirements/ReadHandler.qbk]
 [include requirements/ResolveHandler.qbk]
 [include requirements/ResolverService.qbk]
+[include requirements/SeqPacketSocketService.qbk]
 [include requirements/SerialPortService.qbk]
 [include requirements/Service.qbk]
 [include requirements/SettableSerialPortOption.qbk]
 [include requirements/SettableSocketOption.qbk]
+[include requirements/ShutdownHandler.qbk]
+[include requirements/SignalHandler.qbk]
+[include requirements/SignalSetService.qbk]
 [include requirements/SocketAcceptorService.qbk]
 [include requirements/SocketService.qbk]
 [include requirements/StreamDescriptorService.qbk]
@@ -243,6 +249,18 @@
       <xsl:call-template name="make-id">
         <xsl:with-param name="name"
          select="concat(substring-before($name, ']'), '_rb_', substring-after($name, ']'))"/>
+      </xsl:call-template>
+    </xsl:when>
+    <xsl:when test="contains($name, '(')">
+      <xsl:call-template name="make-id">
+        <xsl:with-param name="name"
+         select="concat(substring-before($name, '('), '_lp_', substring-after($name, '('))"/>
+      </xsl:call-template>
+    </xsl:when>
+    <xsl:when test="contains($name, ')')">
+      <xsl:call-template name="make-id">
+        <xsl:with-param name="name"
+         select="concat(substring-before($name, ')'), '_rp_', substring-after($name, ')'))"/>
       </xsl:call-template>
     </xsl:when>
     <xsl:when test="contains($name, '+')">
@@ -633,16 +651,66 @@
 
 
 <xsl:template match="ref[@kindref='member']" mode="markup">
-  <xsl:text>`</xsl:text>
-  <xsl:value-of select="."/>
-  <xsl:text>`</xsl:text>
+  <xsl:variable name="dox-ref-id" select="@refid"/>
+  <xsl:variable name="memberdefs" select="/doxygen//compounddef/sectiondef/memberdef[@id=$dox-ref-id]"/>
+  <xsl:choose>
+    <xsl:when test="contains(@refid, 'namespaceboost_1_1asio') and count($memberdefs) &gt; 0">
+      <xsl:variable name="dox-compound-name" select="($memberdefs)[1]/../../compoundname"/>
+      <xsl:variable name="dox-name" select="($memberdefs)[1]/name"/>
+      <xsl:variable name="ref-name">
+        <xsl:call-template name="strip-asio-ns">
+          <xsl:with-param name="name" select="concat($dox-compound-name,'::',$dox-name)"/>
+        </xsl:call-template>
+      </xsl:variable>
+      <xsl:variable name="ref-id">
+        <xsl:call-template name="make-id">
+          <xsl:with-param name="name" select="$ref-name"/>
+        </xsl:call-template>
+      </xsl:variable>
+      <xsl:text>[link boost_asio.reference.</xsl:text>
+      <xsl:value-of select="$ref-id"/>
+      <xsl:text> `</xsl:text>
+      <xsl:value-of name="text" select="$ref-name"/>
+      <xsl:text>`]</xsl:text>
+    </xsl:when>
+    <xsl:otherwise>
+      <xsl:text>`</xsl:text>
+      <xsl:value-of select="."/>
+      <xsl:text>`</xsl:text>
+    </xsl:otherwise>
+  </xsl:choose>
 </xsl:template>
 
 
 <xsl:template match="ref[@kindref='member']" mode="markup-nested">
-  <xsl:text>`</xsl:text>
-  <xsl:value-of select="."/>
-  <xsl:text>`</xsl:text>
+  <xsl:variable name="dox-ref-id" select="@refid"/>
+  <xsl:variable name="memberdefs" select="/doxygen//compounddef/sectiondef/memberdef[@id=$dox-ref-id]"/>
+  <xsl:choose>
+    <xsl:when test="contains(@refid, 'namespaceboost_1_1asio') and count($memberdefs) &gt; 0">
+      <xsl:variable name="dox-compound-name" select="($memberdefs)[1]/../../compoundname"/>
+      <xsl:variable name="dox-name" select="($memberdefs)[1]/name"/>
+      <xsl:variable name="ref-name">
+        <xsl:call-template name="strip-asio-ns">
+          <xsl:with-param name="name" select="concat($dox-compound-name,'::',$dox-name)"/>
+        </xsl:call-template>
+      </xsl:variable>
+      <xsl:variable name="ref-id">
+        <xsl:call-template name="make-id">
+          <xsl:with-param name="name" select="$ref-name"/>
+        </xsl:call-template>
+      </xsl:variable>
+      <xsl:text>[link boost_asio.reference.</xsl:text>
+      <xsl:value-of select="$ref-id"/>
+      <xsl:text> `</xsl:text>
+      <xsl:value-of name="text" select="$ref-name"/>
+      <xsl:text>`]</xsl:text>
+    </xsl:when>
+    <xsl:otherwise>
+      <xsl:text>`</xsl:text>
+      <xsl:value-of select="."/>
+      <xsl:text>`</xsl:text>
+    </xsl:otherwise>
+  </xsl:choose>
 </xsl:template>
 
 
@@ -876,6 +944,56 @@
 ]
 </xsl:if>
 
+<xsl:if test="$class-name = 'io_service::service'">
+<xsl:if test="count(sectiondef[@kind='private-func']) > 0">
+[heading Private Member Functions]
+[table
+  [[Name][Description]]
+<xsl:for-each select="sectiondef[@kind='private-func']/memberdef" mode="class-table">
+  <xsl:sort select="name"/>
+  <xsl:variable name="name">
+    <xsl:value-of select="name"/>
+  </xsl:variable>
+  <xsl:variable name="id">
+    <xsl:call-template name="make-id">
+      <xsl:with-param name="name" select="$name"/>
+    </xsl:call-template>
+  </xsl:variable>
+  <xsl:variable name="doxygen-id">
+    <xsl:value-of select="@id"/>
+  </xsl:variable>
+  <xsl:variable name="overload-count">
+    <xsl:value-of select="count(../memberdef[name = $name])"/>
+  </xsl:variable>
+  <xsl:variable name="overload-position">
+    <xsl:for-each select="../memberdef[name = $name]">
+      <xsl:if test="@id = $doxygen-id">
+        <xsl:value-of select="position()"/>
+      </xsl:if>
+    </xsl:for-each>
+  </xsl:variable>
+  <xsl:if test="$overload-position = 1">
+  [
+    [[link boost_asio.reference.<xsl:value-of select="$class-id"/>.<xsl:value-of select="$id"/>
+      <xsl:text> </xsl:text>[*<xsl:value-of select="$name"/><xsl:text>]]]
+    [</xsl:text><xsl:value-of select="briefdescription"/>
+  </xsl:if>
+  <xsl:if test="not($overload-position = 1) and not(briefdescription = preceding-sibling::*/briefdescription)">
+    <xsl:value-of select="$newline"/>
+    <xsl:value-of select="$newline"/>
+    <xsl:text>     </xsl:text>
+    <xsl:value-of select="briefdescription"/>
+  </xsl:if>
+  <xsl:if test="$overload-position = $overload-count">
+  <xsl:text>]
+  ]
+  </xsl:text>
+  </xsl:if>
+</xsl:for-each>
+]
+</xsl:if>
+</xsl:if>
+
 <xsl:if test="count(sectiondef[@kind='public-attrib' or @kind='public-static-attrib']) > 0">
 [heading Data Members]
 [table
@@ -1015,6 +1133,14 @@
   <xsl:with-param name="class-id" select="$class-id"/>
   <xsl:with-param name="class-file" select="$class-file"/>
 </xsl:apply-templates>
+<xsl:if test="$class-name = 'io_service::service'">
+  <xsl:apply-templates select="sectiondef[@kind='private-func']/memberdef[not(type = 'friend class') and not(contains(name, '_helper'))]" mode="class-detail">
+    <xsl:sort select="name"/>
+    <xsl:with-param name="class-name" select="$class-name"/>
+    <xsl:with-param name="class-id" select="$class-id"/>
+    <xsl:with-param name="class-file" select="$class-file"/>
+  </xsl:apply-templates>
+</xsl:if>
 </xsl:template>
 
 
@@ -1281,6 +1407,9 @@
         <xsl:when test="declname = 'CompletionCondition'">
           <xsl:value-of select="declname"/>
         </xsl:when>
+        <xsl:when test="declname = 'ConnectCondition'">
+          <xsl:value-of select="declname"/>
+        </xsl:when>
         <xsl:when test="declname = 'Context_Service'">
           <xsl:value-of select="declname"/>
         </xsl:when>
@@ -1293,7 +1422,7 @@
         <xsl:when test="declname = 'Function'">
           <xsl:value-of select="declname"/>
         </xsl:when>
-        <xsl:when test="declname = 'HandshakeHandler'">
+        <xsl:when test="declname = 'Iterator'">
           <xsl:value-of select="declname"/>
         </xsl:when>
         <xsl:when test="declname = 'MatchCondition'">
@@ -1309,9 +1438,6 @@
           <xsl:value-of select="declname"/>
         </xsl:when>
         <xsl:when test="declname = 'PointerToPodType'">
-          <xsl:value-of select="declname"/>
-        </xsl:when>
-        <xsl:when test="declname = 'ShutdownHandler'">
           <xsl:value-of select="declname"/>
         </xsl:when>
         <xsl:when test="declname = 'SocketService1' or declname = 'SocketService2'">
@@ -1336,6 +1462,9 @@
           <xsl:value-of select="declname"/>
         </xsl:when>
         <xsl:when test="declname = 'Traits'">
+          <xsl:value-of select="declname"/>
+        </xsl:when>
+        <xsl:when test="declname = 'VerifyCallback'">
           <xsl:value-of select="declname"/>
         </xsl:when>
         <xsl:when test="count(declname) = 0">

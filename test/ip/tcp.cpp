@@ -26,7 +26,9 @@
 #include <boost/asio/read.hpp>
 #include <boost/asio/write.hpp>
 #include "../unit_test.hpp"
+#include "../archetypes/gettable_socket_option.hpp"
 #include "../archetypes/io_control_command.hpp"
+#include "../archetypes/settable_socket_option.hpp"
 
 //------------------------------------------------------------------------------
 
@@ -155,7 +157,12 @@ void test()
     char mutable_char_buffer[128] = "";
     const char const_char_buffer[128] = "";
     socket_base::message_flags in_flags = 0;
-    socket_base::keep_alive socket_option;
+    archetypes::settable_socket_option<void> settable_socket_option1;
+    archetypes::settable_socket_option<int> settable_socket_option2;
+    archetypes::settable_socket_option<double> settable_socket_option3;
+    archetypes::gettable_socket_option<void> gettable_socket_option1;
+    archetypes::gettable_socket_option<int> gettable_socket_option2;
+    archetypes::gettable_socket_option<double> gettable_socket_option3;
     archetypes::io_control_command io_control_command;
     boost::system::error_code ec;
 
@@ -169,9 +176,20 @@ void test()
     int native_socket1 = ::socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
     ip::tcp::socket socket6(ios, ip::tcp::v4(), native_socket1);
 
+#if defined(BOOST_ASIO_HAS_MOVE)
+    ip::tcp::socket socket7(std::move(socket6));
+#endif // defined(BOOST_ASIO_HAS_MOVE)
+
+    // basic_stream_socket operators.
+
+#if defined(BOOST_ASIO_HAS_MOVE)
+    socket1 = ip::tcp::socket(ios);
+    socket1 = std::move(socket2);
+#endif // defined(BOOST_ASIO_HAS_MOVE)
+
     // basic_io_object functions.
 
-    io_service& ios_ref = socket1.io_service();
+    io_service& ios_ref = socket1.get_io_service();
     (void)ios_ref;
 
     // basic_socket functions.
@@ -179,9 +197,9 @@ void test()
     ip::tcp::socket::lowest_layer_type& lowest_layer = socket1.lowest_layer();
     (void)lowest_layer;
 
-    const ip::tcp::socket& socket7 = socket1;
+    const ip::tcp::socket& socket8 = socket1;
     const ip::tcp::socket::lowest_layer_type& lowest_layer2
-      = socket7.lowest_layer();
+      = socket8.lowest_layer();
     (void)lowest_layer2;
 
     socket1.open(ip::tcp::v4());
@@ -202,6 +220,10 @@ void test()
 
     ip::tcp::socket::native_type native_socket4 = socket1.native();
     (void)native_socket4;
+
+    ip::tcp::socket::native_handle_type native_socket5
+      = socket1.native_handle();
+    (void)native_socket5;
 
     socket1.cancel();
     socket1.cancel(ec);
@@ -226,17 +248,37 @@ void test()
     socket1.connect(ip::tcp::endpoint(ip::tcp::v4(), 0), ec);
     socket1.connect(ip::tcp::endpoint(ip::tcp::v6(), 0), ec);
 
-    socket1.async_connect(ip::tcp::endpoint(ip::tcp::v4(), 0), connect_handler);
-    socket1.async_connect(ip::tcp::endpoint(ip::tcp::v6(), 0), connect_handler);
+    socket1.async_connect(ip::tcp::endpoint(ip::tcp::v4(), 0),
+        &connect_handler);
+    socket1.async_connect(ip::tcp::endpoint(ip::tcp::v6(), 0),
+        &connect_handler);
 
-    socket1.set_option(socket_option);
-    socket1.set_option(socket_option, ec);
+    socket1.set_option(settable_socket_option1);
+    socket1.set_option(settable_socket_option1, ec);
+    socket1.set_option(settable_socket_option2);
+    socket1.set_option(settable_socket_option2, ec);
+    socket1.set_option(settable_socket_option3);
+    socket1.set_option(settable_socket_option3, ec);
 
-    socket1.get_option(socket_option);
-    socket1.get_option(socket_option, ec);
+    socket1.get_option(gettable_socket_option1);
+    socket1.get_option(gettable_socket_option1, ec);
+    socket1.get_option(gettable_socket_option2);
+    socket1.get_option(gettable_socket_option2, ec);
+    socket1.get_option(gettable_socket_option3);
+    socket1.get_option(gettable_socket_option3, ec);
 
     socket1.io_control(io_control_command);
     socket1.io_control(io_control_command, ec);
+
+    bool non_blocking1 = socket1.non_blocking();
+    (void)non_blocking1;
+    socket1.non_blocking(true);
+    socket1.non_blocking(false, ec);
+
+    bool non_blocking2 = socket1.native_non_blocking();
+    (void)non_blocking2;
+    socket1.native_non_blocking(true);
+    socket1.native_non_blocking(false, ec);
 
     ip::tcp::endpoint endpoint1 = socket1.local_endpoint();
     ip::tcp::endpoint endpoint2 = socket1.local_endpoint(ec);
@@ -259,12 +301,12 @@ void test()
     socket1.send(buffer(const_char_buffer), in_flags, ec);
     socket1.send(null_buffers(), in_flags, ec);
 
-    socket1.async_send(buffer(mutable_char_buffer), send_handler);
-    socket1.async_send(buffer(const_char_buffer), send_handler);
-    socket1.async_send(null_buffers(), send_handler);
-    socket1.async_send(buffer(mutable_char_buffer), in_flags, send_handler);
-    socket1.async_send(buffer(const_char_buffer), in_flags, send_handler);
-    socket1.async_send(null_buffers(), in_flags, send_handler);
+    socket1.async_send(buffer(mutable_char_buffer), &send_handler);
+    socket1.async_send(buffer(const_char_buffer), &send_handler);
+    socket1.async_send(null_buffers(), &send_handler);
+    socket1.async_send(buffer(mutable_char_buffer), in_flags, &send_handler);
+    socket1.async_send(buffer(const_char_buffer), in_flags, &send_handler);
+    socket1.async_send(null_buffers(), in_flags, &send_handler);
 
     socket1.receive(buffer(mutable_char_buffer));
     socket1.receive(null_buffers());
@@ -273,11 +315,11 @@ void test()
     socket1.receive(buffer(mutable_char_buffer), in_flags, ec);
     socket1.receive(null_buffers(), in_flags, ec);
 
-    socket1.async_receive(buffer(mutable_char_buffer), receive_handler);
-    socket1.async_receive(null_buffers(), receive_handler);
+    socket1.async_receive(buffer(mutable_char_buffer), &receive_handler);
+    socket1.async_receive(null_buffers(), &receive_handler);
     socket1.async_receive(buffer(mutable_char_buffer), in_flags,
-        receive_handler);
-    socket1.async_receive(null_buffers(), in_flags, receive_handler);
+        &receive_handler);
+    socket1.async_receive(null_buffers(), in_flags, &receive_handler);
 
     socket1.write_some(buffer(mutable_char_buffer));
     socket1.write_some(buffer(const_char_buffer));
@@ -286,16 +328,16 @@ void test()
     socket1.write_some(buffer(const_char_buffer), ec);
     socket1.write_some(null_buffers(), ec);
 
-    socket1.async_write_some(buffer(mutable_char_buffer), write_some_handler);
-    socket1.async_write_some(buffer(const_char_buffer), write_some_handler);
-    socket1.async_write_some(null_buffers(), write_some_handler);
+    socket1.async_write_some(buffer(mutable_char_buffer), &write_some_handler);
+    socket1.async_write_some(buffer(const_char_buffer), &write_some_handler);
+    socket1.async_write_some(null_buffers(), &write_some_handler);
 
     socket1.read_some(buffer(mutable_char_buffer));
     socket1.read_some(buffer(mutable_char_buffer), ec);
     socket1.read_some(null_buffers(), ec);
 
-    socket1.async_read_some(buffer(mutable_char_buffer), read_some_handler);
-    socket1.async_read_some(null_buffers(), read_some_handler);
+    socket1.async_read_some(buffer(mutable_char_buffer), &read_some_handler);
+    socket1.async_read_some(null_buffers(), &read_some_handler);
   }
   catch (std::exception&)
   {
@@ -474,6 +516,142 @@ void test()
 
 //------------------------------------------------------------------------------
 
+// ip_tcp_acceptor_compile test
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// The following test checks that all public member functions on the class
+// ip::tcp::acceptor compile and link correctly. Runtime failures are ignored.
+
+namespace ip_tcp_acceptor_compile {
+
+void accept_handler(const boost::system::error_code&)
+{
+}
+
+void test()
+{
+  using namespace boost::asio;
+  namespace ip = boost::asio::ip;
+
+  try
+  {
+    io_service ios;
+    ip::tcp::socket peer_socket(ios);
+    ip::tcp::endpoint peer_endpoint;
+    archetypes::settable_socket_option<void> settable_socket_option1;
+    archetypes::settable_socket_option<int> settable_socket_option2;
+    archetypes::settable_socket_option<double> settable_socket_option3;
+    archetypes::gettable_socket_option<void> gettable_socket_option1;
+    archetypes::gettable_socket_option<int> gettable_socket_option2;
+    archetypes::gettable_socket_option<double> gettable_socket_option3;
+    archetypes::io_control_command io_control_command;
+    boost::system::error_code ec;
+
+    // basic_socket_acceptor constructors.
+
+    ip::tcp::acceptor acceptor1(ios);
+    ip::tcp::acceptor acceptor2(ios, ip::tcp::v4());
+    ip::tcp::acceptor acceptor3(ios, ip::tcp::v6());
+    ip::tcp::acceptor acceptor4(ios, ip::tcp::endpoint(ip::tcp::v4(), 0));
+    ip::tcp::acceptor acceptor5(ios, ip::tcp::endpoint(ip::tcp::v6(), 0));
+    int native_acceptor1 = ::socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+    ip::tcp::acceptor acceptor6(ios, ip::tcp::v4(), native_acceptor1);
+
+#if defined(BOOST_ASIO_HAS_MOVE)
+    ip::tcp::acceptor acceptor7(std::move(acceptor6));
+#endif // defined(BOOST_ASIO_HAS_MOVE)
+
+    // basic_socket_acceptor operators.
+
+#if defined(BOOST_ASIO_HAS_MOVE)
+    acceptor1 = ip::tcp::acceptor(ios);
+    acceptor1 = std::move(acceptor2);
+#endif // defined(BOOST_ASIO_HAS_MOVE)
+
+    // basic_io_object functions.
+
+    io_service& ios_ref = acceptor1.get_io_service();
+    (void)ios_ref;
+
+    // basic_socket_acceptor functions.
+
+    acceptor1.open(ip::tcp::v4());
+    acceptor1.open(ip::tcp::v6());
+    acceptor1.open(ip::tcp::v4(), ec);
+    acceptor1.open(ip::tcp::v6(), ec);
+
+    int native_acceptor2 = ::socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+    acceptor1.assign(ip::tcp::v4(), native_acceptor2);
+    int native_acceptor3 = ::socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+    acceptor1.assign(ip::tcp::v4(), native_acceptor3, ec);
+
+    bool is_open = acceptor1.is_open();
+    (void)is_open;
+
+    acceptor1.close();
+    acceptor1.close(ec);
+
+    ip::tcp::acceptor::native_type native_acceptor4 = acceptor1.native();
+    (void)native_acceptor4;
+
+    ip::tcp::acceptor::native_handle_type native_acceptor5
+      = acceptor1.native_handle();
+    (void)native_acceptor5;
+
+    acceptor1.cancel();
+    acceptor1.cancel(ec);
+
+    acceptor1.bind(ip::tcp::endpoint(ip::tcp::v4(), 0));
+    acceptor1.bind(ip::tcp::endpoint(ip::tcp::v6(), 0));
+    acceptor1.bind(ip::tcp::endpoint(ip::tcp::v4(), 0), ec);
+    acceptor1.bind(ip::tcp::endpoint(ip::tcp::v6(), 0), ec);
+
+    acceptor1.set_option(settable_socket_option1);
+    acceptor1.set_option(settable_socket_option1, ec);
+    acceptor1.set_option(settable_socket_option2);
+    acceptor1.set_option(settable_socket_option2, ec);
+    acceptor1.set_option(settable_socket_option3);
+    acceptor1.set_option(settable_socket_option3, ec);
+
+    acceptor1.get_option(gettable_socket_option1);
+    acceptor1.get_option(gettable_socket_option1, ec);
+    acceptor1.get_option(gettable_socket_option2);
+    acceptor1.get_option(gettable_socket_option2, ec);
+    acceptor1.get_option(gettable_socket_option3);
+    acceptor1.get_option(gettable_socket_option3, ec);
+
+    acceptor1.io_control(io_control_command);
+    acceptor1.io_control(io_control_command, ec);
+
+    bool non_blocking1 = acceptor1.non_blocking();
+    (void)non_blocking1;
+    acceptor1.non_blocking(true);
+    acceptor1.non_blocking(false, ec);
+
+    bool non_blocking2 = acceptor1.native_non_blocking();
+    (void)non_blocking2;
+    acceptor1.native_non_blocking(true);
+    acceptor1.native_non_blocking(false, ec);
+
+    ip::tcp::endpoint endpoint1 = acceptor1.local_endpoint();
+    ip::tcp::endpoint endpoint2 = acceptor1.local_endpoint(ec);
+
+    acceptor1.accept(peer_socket);
+    acceptor1.accept(peer_socket, ec);
+    acceptor1.accept(peer_socket, peer_endpoint);
+    acceptor1.accept(peer_socket, peer_endpoint, ec);
+
+    acceptor1.async_accept(peer_socket, &accept_handler);
+    acceptor1.async_accept(peer_socket, peer_endpoint, &accept_handler);
+  }
+  catch (std::exception&)
+  {
+  }
+}
+
+} // namespace ip_tcp_acceptor_compile
+
+//------------------------------------------------------------------------------
+
 // ip_tcp_acceptor_runtime test
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // The following test checks the runtime operation of the ip::tcp::acceptor
@@ -515,6 +693,9 @@ void test()
   ip::tcp::endpoint client_endpoint;
   acceptor.accept(server_side_socket, client_endpoint);
 
+  ip::tcp::acceptor::non_blocking_io command(false);
+  acceptor.io_control(command);
+
   ip::tcp::endpoint client_side_local_endpoint
     = client_side_socket.local_endpoint();
   BOOST_CHECK(client_side_local_endpoint.port() == client_endpoint.port());
@@ -526,16 +707,16 @@ void test()
   client_side_socket.close();
   server_side_socket.close();
 
-  acceptor.async_accept(server_side_socket, handle_accept);
-  client_side_socket.async_connect(server_endpoint, handle_connect);
+  acceptor.async_accept(server_side_socket, &handle_accept);
+  client_side_socket.async_connect(server_endpoint, &handle_connect);
 
   ios.run();
 
   client_side_socket.close();
   server_side_socket.close();
 
-  acceptor.async_accept(server_side_socket, client_endpoint, handle_accept);
-  client_side_socket.async_connect(server_endpoint, handle_connect);
+  acceptor.async_accept(server_side_socket, client_endpoint, &handle_accept);
+  client_side_socket.async_connect(server_endpoint, &handle_connect);
 
   ios.reset();
   ios.run();
@@ -581,7 +762,7 @@ void test()
 
     // basic_io_object functions.
 
-    io_service& ios_ref = resolver.io_service();
+    io_service& ios_ref = resolver.get_io_service();
     (void)ios_ref;
 
     // basic_resolver functions.
@@ -600,9 +781,9 @@ void test()
     ip::tcp::resolver::iterator iter4 = resolver.resolve(e, ec);
     (void)iter4;
 
-    resolver.async_resolve(q, resolve_handler);
+    resolver.async_resolve(q, &resolve_handler);
 
-    resolver.async_resolve(e, resolve_handler);
+    resolver.async_resolve(e, &resolve_handler);
   }
   catch (std::exception&)
   {
@@ -620,6 +801,7 @@ test_suite* init_unit_test_suite(int, char*[])
   test->add(BOOST_TEST_CASE(&ip_tcp_runtime::test));
   test->add(BOOST_TEST_CASE(&ip_tcp_socket_compile::test));
   test->add(BOOST_TEST_CASE(&ip_tcp_socket_runtime::test));
+  test->add(BOOST_TEST_CASE(&ip_tcp_acceptor_compile::test));
   test->add(BOOST_TEST_CASE(&ip_tcp_acceptor_runtime::test));
   test->add(BOOST_TEST_CASE(&ip_tcp_resolver_compile::test));
   return test;

@@ -13,7 +13,7 @@
 #include <iostream>
 #include <boost/bind.hpp>
 #include <boost/asio.hpp>
-#include <boost/thread.hpp>
+#include <boost/thread/thread.hpp>
 #include "chat_message.hpp"
 
 using boost::asio::ip::tcp;
@@ -28,10 +28,9 @@ public:
     : io_service_(io_service),
       socket_(io_service)
   {
-    tcp::endpoint endpoint = *endpoint_iterator;
-    socket_.async_connect(endpoint,
+    boost::asio::async_connect(socket_, endpoint_iterator,
         boost::bind(&chat_client::handle_connect, this,
-          boost::asio::placeholders::error, ++endpoint_iterator));
+          boost::asio::placeholders::error));
   }
 
   void write(const chat_message& msg)
@@ -46,8 +45,7 @@ public:
 
 private:
 
-  void handle_connect(const boost::system::error_code& error,
-      tcp::resolver::iterator endpoint_iterator)
+  void handle_connect(const boost::system::error_code& error)
   {
     if (!error)
     {
@@ -55,14 +53,6 @@ private:
           boost::asio::buffer(read_msg_.data(), chat_message::header_length),
           boost::bind(&chat_client::handle_read_header, this,
             boost::asio::placeholders::error));
-    }
-    else if (endpoint_iterator != tcp::resolver::iterator())
-    {
-      socket_.close();
-      tcp::endpoint endpoint = *endpoint_iterator;
-      socket_.async_connect(endpoint,
-          boost::bind(&chat_client::handle_connect, this,
-            boost::asio::placeholders::error, ++endpoint_iterator));
     }
   }
 

@@ -12,7 +12,7 @@
 #include <string>
 #include <cctype>
 #include <boost/asio.hpp>
-#include <boost/thread.hpp>
+#include <boost/thread/thread.hpp>
 #include <boost/array.hpp>
 #include <boost/bind.hpp>
 

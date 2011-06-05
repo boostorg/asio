@@ -29,6 +29,13 @@
 
 namespace ssl_stream_compile {
 
+#if !defined(BOOST_ASIO_ENABLE_OLD_SSL)
+bool verify_callback(bool, boost::asio::ssl::verify_context&)
+{
+  return false;
+}
+#endif // !defined(BOOST_ASIO_ENABLE_OLD_SSL)
+
 void handshake_handler(const boost::system::error_code&)
 {
 }
@@ -66,10 +73,18 @@ void test()
 
     // basic_io_object functions.
 
-    io_service& ios_ref = stream1.io_service();
+    io_service& ios_ref = stream1.get_io_service();
     (void)ios_ref;
 
     // ssl::stream functions.
+
+#if !defined(BOOST_ASIO_ENABLE_OLD_SSL)
+    SSL* ssl1 = stream1.native_handle();
+    (void)ssl1;
+#endif // !defined(BOOST_ASIO_ENABLE_OLD_SSL)
+
+    SSL* ssl2 = stream1.impl()->ssl;
+    (void)ssl2;
 
     ssl::stream<ip::tcp::socket>::lowest_layer_type& lowest_layer
       = stream1.lowest_layer();
@@ -79,6 +94,14 @@ void test()
     const ssl::stream<ip::tcp::socket>::lowest_layer_type& lowest_layer2
       = stream3.lowest_layer();
     (void)lowest_layer2;
+
+#if !defined(BOOST_ASIO_ENABLE_OLD_SSL)
+    stream1.set_verify_mode(ssl::verify_none);
+    stream1.set_verify_mode(ssl::verify_none, ec);
+
+    stream1.set_verify_callback(verify_callback);
+    stream1.set_verify_callback(verify_callback, ec);
+#endif // !defined(BOOST_ASIO_ENABLE_OLD_SSL)
 
     stream1.handshake(ssl::stream_base::client);
     stream1.handshake(ssl::stream_base::server);
@@ -106,6 +129,7 @@ void test()
 
     stream1.async_read_some(buffer(mutable_char_buffer), read_some_handler);
 
+#if defined(BOOST_ASIO_ENABLE_OLD_SSL)
     stream1.peek(buffer(mutable_char_buffer));
     stream1.peek(buffer(mutable_char_buffer), ec);
 
@@ -113,6 +137,7 @@ void test()
     (void)in_avail1;
     std::size_t in_avail2 = stream1.in_avail(ec);
     (void)in_avail2;
+#endif // defined(BOOST_ASIO_ENABLE_OLD_SSL)
   }
   catch (std::exception&)
   {

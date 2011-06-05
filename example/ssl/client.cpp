@@ -19,18 +19,40 @@ enum { max_length = 1024 };
 class client
 {
 public:
-  client(boost::asio::io_service& io_service, boost::asio::ssl::context& context,
+  client(boost::asio::io_service& io_service,
+      boost::asio::ssl::context& context,
       boost::asio::ip::tcp::resolver::iterator endpoint_iterator)
     : socket_(io_service, context)
   {
-    boost::asio::ip::tcp::endpoint endpoint = *endpoint_iterator;
-    socket_.lowest_layer().async_connect(endpoint,
+    socket_.set_verify_mode(boost::asio::ssl::verify_peer);
+    socket_.set_verify_callback(
+        boost::bind(&client::verify_certificate, this, _1, _2));
+
+    boost::asio::async_connect(socket_.lowest_layer(), endpoint_iterator,
         boost::bind(&client::handle_connect, this,
-          boost::asio::placeholders::error, ++endpoint_iterator));
+          boost::asio::placeholders::error));
   }
 
-  void handle_connect(const boost::system::error_code& error,
-      boost::asio::ip::tcp::resolver::iterator endpoint_iterator)
+  bool verify_certificate(bool preverified,
+      boost::asio::ssl::verify_context& ctx)
+  {
+    // The verify callback can be used to check whether the certificate that is
+    // being presented is valid for the peer. For example, RFC 2818 describes
+    // the steps involved in doing this for HTTPS. Consult the OpenSSL
+    // documentation for more details. Note that the callback is called once
+    // for each certificate in the certificate chain, starting from the root
+    // certificate authority.
+
+    // In this example we will simply print the certificate's subject name.
+    char subject_name[256];
+    X509* cert = X509_STORE_CTX_get_current_cert(ctx.native_handle());
+    X509_NAME_oneline(X509_get_subject_name(cert), subject_name, 256);
+    std::cout << "Verifying " << subject_name << "\n";
+
+    return preverified;
+  }
+
+  void handle_connect(const boost::system::error_code& error)
   {
     if (!error)
     {
@@ -38,17 +60,9 @@ public:
           boost::bind(&client::handle_handshake, this,
             boost::asio::placeholders::error));
     }
-    else if (endpoint_iterator != boost::asio::ip::tcp::resolver::iterator())
-    {
-      socket_.lowest_layer().close();
-      boost::asio::ip::tcp::endpoint endpoint = *endpoint_iterator;
-      socket_.lowest_layer().async_connect(endpoint,
-          boost::bind(&client::handle_connect, this,
-            boost::asio::placeholders::error, ++endpoint_iterator));
-    }
     else
     {
-      std::cout << "Connect failed: " << error << "\n";
+      std::cout << "Connect failed: " << error.message() << "\n";
     }
   }
 
@@ -68,7 +82,7 @@ public:
     }
     else
     {
-      std::cout << "Handshake failed: " << error << "\n";
+      std::cout << "Handshake failed: " << error.message() << "\n";
     }
   }
 
@@ -85,7 +99,7 @@ public:
     }
     else
     {
-      std::cout << "Write failed: " << error << "\n";
+      std::cout << "Write failed: " << error.message() << "\n";
     }
   }
 
@@ -100,7 +114,7 @@ public:
     }
     else
     {
-      std::cout << "Read failed: " << error << "\n";
+      std::cout << "Read failed: " << error.message() << "\n";
     }
   }
 
@@ -126,8 +140,7 @@ int main(int argc, char* argv[])
     boost::asio::ip::tcp::resolver::query query(argv[1], argv[2]);
     boost::asio::ip::tcp::resolver::iterator iterator = resolver.resolve(query);
 
-    boost::asio::ssl::context ctx(io_service, boost::asio::ssl::context::sslv23);
-    ctx.set_verify_mode(boost::asio::ssl::context::verify_peer);
+    boost::asio::ssl::context ctx(boost::asio::ssl::context::sslv23);
     ctx.load_verify_file("ca.pem");
 
     client c(io_service, ctx, iterator);

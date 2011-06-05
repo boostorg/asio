@@ -24,12 +24,11 @@ exe http_server
   : <lib>@boost/libs/thread/build/boost_thread
     <lib>@boost/libs/system/build/boost_system
     file_handler.cpp
+    main.cpp
     mime_types.cpp
-    posix_main.cpp
     reply.cpp
     request_parser.cpp
     server.cpp
-    win_main.cpp
   : <include>$(BOOST_ROOT)
     <include>../../../../..
     <define>BOOST_ALL_NO_LIB=1

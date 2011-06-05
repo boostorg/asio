@@ -1,6 +1,6 @@
 //
-// ssl/detail/openssl_context_service.hpp
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// ssl/old/detail/openssl_context_service.hpp
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2005 Voipster / Indrek dot Juhani at voipster dot com
 // Copyright (c) 2005-2011 Christopher M. Kohlhoff (chris at kohlhoff dot com)
@@ -9,8 +9,8 @@
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
-#ifndef BOOST_ASIO_SSL_DETAIL_OPENSSL_CONTEXT_SERVICE_HPP
-#define BOOST_ASIO_SSL_DETAIL_OPENSSL_CONTEXT_SERVICE_HPP
+#ifndef BOOST_ASIO_SSL_OLD_DETAIL_OPENSSL_CONTEXT_SERVICE_HPP
+#define BOOST_ASIO_SSL_OLD_DETAIL_OPENSSL_CONTEXT_SERVICE_HPP
 
 #if defined(_MSC_VER) && (_MSC_VER >= 1200)
 # pragma once
@@ -20,6 +20,7 @@
 #include <cstring>
 #include <string>
 #include <boost/function.hpp>
+#include <boost/asio/detail/throw_error.hpp>
 #include <boost/asio/error.hpp>
 #include <boost/asio/io_service.hpp>
 #include <boost/asio/ssl/context_base.hpp>
@@ -31,6 +32,7 @@
 namespace boost {
 namespace asio {
 namespace ssl {
+namespace old {
 namespace detail {
 
 class openssl_context_service
@@ -66,6 +68,13 @@ public:
   {
     switch (m)
     {
+#if defined(OPENSSL_NO_SSL2)
+    case context_base::sslv2:
+    case context_base::sslv2_client:
+    case context_base::sslv2_server:
+      boost::asio::detail::throw_error(boost::asio::error::invalid_argument);
+      break;
+#else // defined(OPENSSL_NO_SSL2)
     case context_base::sslv2:
       impl = ::SSL_CTX_new(::SSLv2_method());
       break;
@@ -75,6 +84,7 @@ public:
     case context_base::sslv2_server:
       impl = ::SSL_CTX_new(::SSLv2_server_method());
       break;
+#endif // defined(OPENSSL_NO_SSL2)
     case context_base::sslv3:
       impl = ::SSL_CTX_new(::SSLv3_method());
       break;
@@ -364,14 +374,15 @@ public:
 
 private:
   // Ensure openssl is initialised.
-  openssl_init<> init_;
+  boost::asio::ssl::detail::openssl_init<> init_;
 };
 
 } // namespace detail
+} // namespace old
 } // namespace ssl
 } // namespace asio
 } // namespace boost
 
 #include <boost/asio/detail/pop_options.hpp>
 
-#endif // BOOST_ASIO_SSL_DETAIL_OPENSSL_CONTEXT_SERVICE_HPP
+#endif // BOOST_ASIO_SSL_OLD_DETAIL_OPENSSL_CONTEXT_SERVICE_HPP

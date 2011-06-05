@@ -21,7 +21,9 @@
 #include <boost/asio/io_service.hpp>
 #include <boost/asio/placeholders.hpp>
 #include "../unit_test.hpp"
+#include "../archetypes/gettable_socket_option.hpp"
 #include "../archetypes/io_control_command.hpp"
+#include "../archetypes/settable_socket_option.hpp"
 
 //------------------------------------------------------------------------------
 
@@ -55,7 +57,12 @@ void test()
     char mutable_char_buffer[128] = "";
     const char const_char_buffer[128] = "";
     socket_base::message_flags in_flags = 0;
-    socket_base::keep_alive socket_option;
+    archetypes::settable_socket_option<void> settable_socket_option1;
+    archetypes::settable_socket_option<int> settable_socket_option2;
+    archetypes::settable_socket_option<double> settable_socket_option3;
+    archetypes::gettable_socket_option<void> gettable_socket_option1;
+    archetypes::gettable_socket_option<int> gettable_socket_option2;
+    archetypes::gettable_socket_option<double> gettable_socket_option3;
     archetypes::io_control_command io_control_command;
     boost::system::error_code ec;
 
@@ -69,9 +76,20 @@ void test()
     int native_socket1 = ::socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
     ip::udp::socket socket6(ios, ip::udp::v4(), native_socket1);
 
+#if defined(BOOST_ASIO_HAS_MOVE)
+    ip::udp::socket socket7(std::move(socket6));
+#endif // defined(BOOST_ASIO_HAS_MOVE)
+
+    // basic_datagram_socket operators.
+
+#if defined(BOOST_ASIO_HAS_MOVE)
+    socket1 = ip::udp::socket(ios);
+    socket1 = std::move(socket2);
+#endif // defined(BOOST_ASIO_HAS_MOVE)
+
     // basic_io_object functions.
 
-    io_service& ios_ref = socket1.io_service();
+    io_service& ios_ref = socket1.get_io_service();
     (void)ios_ref;
 
     // basic_socket functions.
@@ -79,9 +97,9 @@ void test()
     ip::udp::socket::lowest_layer_type& lowest_layer = socket1.lowest_layer();
     (void)lowest_layer;
 
-    const ip::udp::socket& socket7 = socket1;
+    const ip::udp::socket& socket8 = socket1;
     const ip::udp::socket::lowest_layer_type& lowest_layer2
-      = socket7.lowest_layer();
+      = socket8.lowest_layer();
     (void)lowest_layer2;
 
     socket1.open(ip::udp::v4());
@@ -102,6 +120,10 @@ void test()
 
     ip::udp::socket::native_type native_socket4 = socket1.native();
     (void)native_socket4;
+
+    ip::udp::socket::native_handle_type native_socket5
+      = socket1.native_handle();
+    (void)native_socket5;
 
     socket1.cancel();
     socket1.cancel(ec);
@@ -126,17 +148,37 @@ void test()
     socket1.connect(ip::udp::endpoint(ip::udp::v4(), 0), ec);
     socket1.connect(ip::udp::endpoint(ip::udp::v6(), 0), ec);
 
-    socket1.async_connect(ip::udp::endpoint(ip::udp::v4(), 0), connect_handler);
-    socket1.async_connect(ip::udp::endpoint(ip::udp::v6(), 0), connect_handler);
+    socket1.async_connect(ip::udp::endpoint(ip::udp::v4(), 0),
+        &connect_handler);
+    socket1.async_connect(ip::udp::endpoint(ip::udp::v6(), 0),
+        &connect_handler);
 
-    socket1.set_option(socket_option);
-    socket1.set_option(socket_option, ec);
+    socket1.set_option(settable_socket_option1);
+    socket1.set_option(settable_socket_option1, ec);
+    socket1.set_option(settable_socket_option2);
+    socket1.set_option(settable_socket_option2, ec);
+    socket1.set_option(settable_socket_option3);
+    socket1.set_option(settable_socket_option3, ec);
 
-    socket1.get_option(socket_option);
-    socket1.get_option(socket_option, ec);
+    socket1.get_option(gettable_socket_option1);
+    socket1.get_option(gettable_socket_option1, ec);
+    socket1.get_option(gettable_socket_option2);
+    socket1.get_option(gettable_socket_option2, ec);
+    socket1.get_option(gettable_socket_option3);
+    socket1.get_option(gettable_socket_option3, ec);
 
     socket1.io_control(io_control_command);
     socket1.io_control(io_control_command, ec);
+
+    bool non_blocking1 = socket1.non_blocking();
+    (void)non_blocking1;
+    socket1.non_blocking(true);
+    socket1.non_blocking(false, ec);
+
+    bool non_blocking2 = socket1.native_non_blocking();
+    (void)non_blocking2;
+    socket1.native_non_blocking(true);
+    socket1.native_non_blocking(false, ec);
 
     ip::udp::endpoint endpoint1 = socket1.local_endpoint();
     ip::udp::endpoint endpoint2 = socket1.local_endpoint(ec);
@@ -159,12 +201,12 @@ void test()
     socket1.send(buffer(const_char_buffer), in_flags, ec);
     socket1.send(null_buffers(), in_flags, ec);
 
-    socket1.async_send(buffer(mutable_char_buffer), send_handler);
-    socket1.async_send(buffer(const_char_buffer), send_handler);
-    socket1.async_send(null_buffers(), send_handler);
-    socket1.async_send(buffer(mutable_char_buffer), in_flags, send_handler);
-    socket1.async_send(buffer(const_char_buffer), in_flags, send_handler);
-    socket1.async_send(null_buffers(), in_flags, send_handler);
+    socket1.async_send(buffer(mutable_char_buffer), &send_handler);
+    socket1.async_send(buffer(const_char_buffer), &send_handler);
+    socket1.async_send(null_buffers(), &send_handler);
+    socket1.async_send(buffer(mutable_char_buffer), in_flags, &send_handler);
+    socket1.async_send(buffer(const_char_buffer), in_flags, &send_handler);
+    socket1.async_send(null_buffers(), in_flags, &send_handler);
 
     socket1.send_to(buffer(mutable_char_buffer),
         ip::udp::endpoint(ip::udp::v4(), 0));
@@ -204,29 +246,29 @@ void test()
         ip::udp::endpoint(ip::udp::v6(), 0), in_flags, ec);
 
     socket1.async_send_to(buffer(mutable_char_buffer),
-        ip::udp::endpoint(ip::udp::v4(), 0), send_handler);
+        ip::udp::endpoint(ip::udp::v4(), 0), &send_handler);
     socket1.async_send_to(buffer(mutable_char_buffer),
-        ip::udp::endpoint(ip::udp::v6(), 0), send_handler);
+        ip::udp::endpoint(ip::udp::v6(), 0), &send_handler);
     socket1.async_send_to(buffer(const_char_buffer),
-        ip::udp::endpoint(ip::udp::v4(), 0), send_handler);
+        ip::udp::endpoint(ip::udp::v4(), 0), &send_handler);
     socket1.async_send_to(buffer(const_char_buffer),
-        ip::udp::endpoint(ip::udp::v6(), 0), send_handler);
+        ip::udp::endpoint(ip::udp::v6(), 0), &send_handler);
     socket1.async_send_to(null_buffers(),
-        ip::udp::endpoint(ip::udp::v4(), 0), send_handler);
+        ip::udp::endpoint(ip::udp::v4(), 0), &send_handler);
     socket1.async_send_to(null_buffers(),
-        ip::udp::endpoint(ip::udp::v6(), 0), send_handler);
+        ip::udp::endpoint(ip::udp::v6(), 0), &send_handler);
     socket1.async_send_to(buffer(mutable_char_buffer),
-        ip::udp::endpoint(ip::udp::v4(), 0), in_flags, send_handler);
+        ip::udp::endpoint(ip::udp::v4(), 0), in_flags, &send_handler);
     socket1.async_send_to(buffer(mutable_char_buffer),
-        ip::udp::endpoint(ip::udp::v6(), 0), in_flags, send_handler);
+        ip::udp::endpoint(ip::udp::v6(), 0), in_flags, &send_handler);
     socket1.async_send_to(buffer(const_char_buffer),
-        ip::udp::endpoint(ip::udp::v4(), 0), in_flags, send_handler);
+        ip::udp::endpoint(ip::udp::v4(), 0), in_flags, &send_handler);
     socket1.async_send_to(buffer(const_char_buffer),
-        ip::udp::endpoint(ip::udp::v6(), 0), in_flags, send_handler);
+        ip::udp::endpoint(ip::udp::v6(), 0), in_flags, &send_handler);
     socket1.async_send_to(null_buffers(),
-        ip::udp::endpoint(ip::udp::v4(), 0), in_flags, send_handler);
+        ip::udp::endpoint(ip::udp::v4(), 0), in_flags, &send_handler);
     socket1.async_send_to(null_buffers(),
-        ip::udp::endpoint(ip::udp::v6(), 0), in_flags, send_handler);
+        ip::udp::endpoint(ip::udp::v6(), 0), in_flags, &send_handler);
 
     socket1.receive(buffer(mutable_char_buffer));
     socket1.receive(null_buffers());
@@ -235,11 +277,11 @@ void test()
     socket1.receive(buffer(mutable_char_buffer), in_flags, ec);
     socket1.receive(null_buffers(), in_flags, ec);
 
-    socket1.async_receive(buffer(mutable_char_buffer), receive_handler);
-    socket1.async_receive(null_buffers(), receive_handler);
+    socket1.async_receive(buffer(mutable_char_buffer), &receive_handler);
+    socket1.async_receive(null_buffers(), &receive_handler);
     socket1.async_receive(buffer(mutable_char_buffer), in_flags,
-        receive_handler);
-    socket1.async_receive(null_buffers(), in_flags, receive_handler);
+        &receive_handler);
+    socket1.async_receive(null_buffers(), in_flags, &receive_handler);
 
     ip::udp::endpoint endpoint;
     socket1.receive_from(buffer(mutable_char_buffer), endpoint);
@@ -250,13 +292,13 @@ void test()
     socket1.receive_from(null_buffers(), endpoint, in_flags, ec);
 
     socket1.async_receive_from(buffer(mutable_char_buffer),
-        endpoint, receive_handler);
+        endpoint, &receive_handler);
     socket1.async_receive_from(null_buffers(),
-        endpoint, receive_handler);
+        endpoint, &receive_handler);
     socket1.async_receive_from(buffer(mutable_char_buffer),
-        endpoint, in_flags, receive_handler);
+        endpoint, in_flags, &receive_handler);
     socket1.async_receive_from(null_buffers(),
-        endpoint, in_flags, receive_handler);
+        endpoint, in_flags, &receive_handler);
   }
   catch (std::exception&)
   {
@@ -364,7 +406,7 @@ void test()
 
     // basic_io_object functions.
 
-    io_service& ios_ref = resolver.io_service();
+    io_service& ios_ref = resolver.get_io_service();
     (void)ios_ref;
 
     // basic_resolver functions.
@@ -383,9 +425,9 @@ void test()
     ip::udp::resolver::iterator iter4 = resolver.resolve(e, ec);
     (void)iter4;
 
-    resolver.async_resolve(q, resolve_handler);
+    resolver.async_resolve(q, &resolve_handler);
 
-    resolver.async_resolve(e, resolve_handler);
+    resolver.async_resolve(e, &resolve_handler);
   }
   catch (std::exception&)
   {

@@ -24,13 +24,12 @@ else if [ os.name ] = HPUX
 
 exe server
   : connection.cpp
+    main.cpp
     mime_types.cpp
-    posix_main.cpp
     reply.cpp
     request_handler.cpp
     request_parser.cpp
     server.cpp
-    win_main.cpp
     /boost/system//boost_system
     /boost/thread//boost_thread
   : <define>BOOST_ALL_NO_LIB=1

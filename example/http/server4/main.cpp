@@ -1,6 +1,6 @@
 //
-// win_main.cpp
-// ~~~~~~~~~~~~
+// main.cpp
+// ~~~~~~~~
 //
 // Copyright (c) 2003-2011 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
@@ -11,28 +11,9 @@
 #include <iostream>
 #include <boost/asio.hpp>
 #include <boost/bind.hpp>
-#include <boost/function.hpp>
+#include <signal.h>
 #include "server.hpp"
 #include "file_handler.hpp"
-
-#if defined(_WIN32)
-
-boost::function0<void> console_ctrl_function;
-
-BOOL WINAPI console_ctrl_handler(DWORD ctrl_type)
-{
-  switch (ctrl_type)
-  {
-  case CTRL_C_EVENT:
-  case CTRL_BREAK_EVENT:
-  case CTRL_CLOSE_EVENT:
-  case CTRL_SHUTDOWN_EVENT:
-    console_ctrl_function();
-    return TRUE;
-  default:
-    return FALSE;
-  }
-}
 
 int main(int argc, char* argv[])
 {
@@ -43,9 +24,9 @@ int main(int argc, char* argv[])
     {
       std::cerr << "Usage: http_server <address> <port> <doc_root>\n";
       std::cerr << "  For IPv4, try:\n";
-      std::cerr << "    http_server 0.0.0.0 80 .\n";
+      std::cerr << "    receiver 0.0.0.0 80 .\n";
       std::cerr << "  For IPv6, try:\n";
-      std::cerr << "    http_server 0::0 80 .\n";
+      std::cerr << "    receiver 0::0 80 .\n";
       return 1;
     }
 
@@ -55,12 +36,17 @@ int main(int argc, char* argv[])
     http::server4::server(io_service, argv[1], argv[2],
         http::server4::file_handler(argv[3]))();
 
-    // Set console control handler to allow server to be stopped.
-    console_ctrl_function = boost::bind(
-        &boost::asio::io_service::stop, &io_service);
-    SetConsoleCtrlHandler(console_ctrl_handler, TRUE);
+    // Wait for signals indicating time to shut down.
+    boost::asio::signal_set signals(io_service);
+    signals.add(SIGINT);
+    signals.add(SIGTERM);
+#if defined(SIGQUIT)
+    signals.add(SIGQUIT);
+#endif // defined(SIGQUIT)
+    signals.async_wait(boost::bind(
+          &boost::asio::io_service::stop, &io_service));
 
-    // Run the server until stopped.
+    // Run the server.
     io_service.run();
   }
   catch (std::exception& e)
@@ -70,5 +56,3 @@ int main(int argc, char* argv[])
 
   return 0;
 }
-
-#endif // defined(_WIN32)

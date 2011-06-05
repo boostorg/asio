@@ -25,7 +25,7 @@ install images
     <location>html/boost_asio
   ;
 
-local example-names = allocation buffers chat echo http/client http/server
+local example-names = allocation buffers chat echo fork http/client http/server
   http/server2 http/server3 http/server4 icmp invocation iostreams local
   multicast nonblocking porthopper serialization services socks4 ssl timeouts
   timers windows ;

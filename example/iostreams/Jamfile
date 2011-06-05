@@ -43,3 +43,15 @@ exe daytime_server
     <mingw><*><find-library>mswsock
     $(SOCKET_LIBS)
   ;
+
+exe http_client
+  : <lib>@boost/libs/system/build/boost_system
+    http_client.cpp
+  : <include>$(BOOST_ROOT)
+    <include>../../../..
+    <define>BOOST_ALL_NO_LIB=1
+    <threading>multi
+    <mingw><*><find-library>ws2_32
+    <mingw><*><find-library>mswsock
+    $(SOCKET_LIBS)
+  ;

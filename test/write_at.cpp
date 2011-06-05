@@ -83,26 +83,9 @@ public:
   template <typename Const_Buffers>
   size_t write_some_at(boost::uint64_t offset, const Const_Buffers& buffers)
   {
-    size_t total_length = 0;
-
-    typename Const_Buffers::const_iterator iter = buffers.begin();
-    typename Const_Buffers::const_iterator end = buffers.end();
-    for (; iter != end && total_length < next_write_length_; ++iter)
-    {
-      size_t length = boost::asio::buffer_size(*iter);
-      if (length > length_ - offset)
-        length = length_ - offset;
-
-      if (length > next_write_length_ - total_length)
-        length = next_write_length_ - total_length;
-
-      memcpy(data_ + offset,
-          boost::asio::buffer_cast<const void*>(*iter), length);
-      offset += length;
-      total_length += length;
-    }
-
-    return total_length;
+    return boost::asio::buffer_copy(
+        boost::asio::buffer(data_, length_) + offset,
+        buffers, next_write_length_);
   }
 
   template <typename Const_Buffers>
@@ -260,6 +243,154 @@ void test_3_arg_multi_buffers_write_at()
   bytes_transferred = boost::asio::write_at(s, 1234, buffers);
   BOOST_CHECK(bytes_transferred == sizeof(write_data));
   BOOST_CHECK(s.check_buffers(1234, buffers, sizeof(write_data)));
+}
+
+void test_4_arg_nothrow_const_buffers_1_write_at()
+{
+  boost::asio::io_service ios;
+  test_random_access_device s(ios);
+  boost::asio::const_buffers_1 buffers
+    = boost::asio::buffer(write_data, sizeof(write_data));
+
+  s.reset();
+  boost::system::error_code error;
+  size_t bytes_transferred = boost::asio::write_at(s, 0, buffers, error);
+  BOOST_CHECK(bytes_transferred == sizeof(write_data));
+  BOOST_CHECK(s.check_buffers(0, buffers, sizeof(write_data)));
+  BOOST_CHECK(!error);
+
+  s.reset();
+  bytes_transferred = boost::asio::write_at(s, 1234, buffers, error);
+  BOOST_CHECK(bytes_transferred == sizeof(write_data));
+  BOOST_CHECK(s.check_buffers(1234, buffers, sizeof(write_data)));
+  BOOST_CHECK(!error);
+
+  s.reset();
+  s.next_write_length(1);
+  bytes_transferred = boost::asio::write_at(s, 0, buffers, error);
+  BOOST_CHECK(bytes_transferred == sizeof(write_data));
+  BOOST_CHECK(s.check_buffers(0, buffers, sizeof(write_data)));
+  BOOST_CHECK(!error);
+
+  s.reset();
+  s.next_write_length(1);
+  bytes_transferred = boost::asio::write_at(s, 1234, buffers, error);
+  BOOST_CHECK(bytes_transferred == sizeof(write_data));
+  BOOST_CHECK(s.check_buffers(1234, buffers, sizeof(write_data)));
+  BOOST_CHECK(!error);
+
+  s.reset();
+  s.next_write_length(10);
+  bytes_transferred = boost::asio::write_at(s, 0, buffers, error);
+  BOOST_CHECK(bytes_transferred == sizeof(write_data));
+  BOOST_CHECK(s.check_buffers(0, buffers, sizeof(write_data)));
+  BOOST_CHECK(!error);
+
+  s.reset();
+  s.next_write_length(10);
+  bytes_transferred = boost::asio::write_at(s, 1234, buffers, error);
+  BOOST_CHECK(bytes_transferred == sizeof(write_data));
+  BOOST_CHECK(s.check_buffers(1234, buffers, sizeof(write_data)));
+  BOOST_CHECK(!error);
+}
+
+void test_4_arg_nothrow_mutable_buffers_1_write_at()
+{
+  boost::asio::io_service ios;
+  test_random_access_device s(ios);
+  boost::asio::mutable_buffers_1 buffers
+    = boost::asio::buffer(mutable_write_data, sizeof(mutable_write_data));
+
+  s.reset();
+  boost::system::error_code error;
+  size_t bytes_transferred = boost::asio::write_at(s, 0, buffers, error);
+  BOOST_CHECK(bytes_transferred == sizeof(mutable_write_data));
+  BOOST_CHECK(s.check_buffers(0, buffers, sizeof(mutable_write_data)));
+  BOOST_CHECK(!error);
+
+  s.reset();
+  bytes_transferred = boost::asio::write_at(s, 1234, buffers, error);
+  BOOST_CHECK(bytes_transferred == sizeof(mutable_write_data));
+  BOOST_CHECK(s.check_buffers(1234, buffers, sizeof(mutable_write_data)));
+  BOOST_CHECK(!error);
+
+  s.reset();
+  s.next_write_length(1);
+  bytes_transferred = boost::asio::write_at(s, 0, buffers, error);
+  BOOST_CHECK(bytes_transferred == sizeof(mutable_write_data));
+  BOOST_CHECK(s.check_buffers(0, buffers, sizeof(mutable_write_data)));
+  BOOST_CHECK(!error);
+
+  s.reset();
+  s.next_write_length(1);
+  bytes_transferred = boost::asio::write_at(s, 1234, buffers, error);
+  BOOST_CHECK(bytes_transferred == sizeof(mutable_write_data));
+  BOOST_CHECK(s.check_buffers(1234, buffers, sizeof(mutable_write_data)));
+  BOOST_CHECK(!error);
+
+  s.reset();
+  s.next_write_length(10);
+  bytes_transferred = boost::asio::write_at(s, 0, buffers, error);
+  BOOST_CHECK(bytes_transferred == sizeof(mutable_write_data));
+  BOOST_CHECK(s.check_buffers(0, buffers, sizeof(mutable_write_data)));
+  BOOST_CHECK(!error);
+
+  s.reset();
+  s.next_write_length(10);
+  bytes_transferred = boost::asio::write_at(s, 1234, buffers, error);
+  BOOST_CHECK(bytes_transferred == sizeof(mutable_write_data));
+  BOOST_CHECK(s.check_buffers(1234, buffers, sizeof(mutable_write_data)));
+  BOOST_CHECK(!error);
+}
+
+void test_4_arg_nothrow_multi_buffers_write_at()
+{
+  boost::asio::io_service ios;
+  test_random_access_device s(ios);
+  boost::array<boost::asio::const_buffer, 2> buffers = { {
+    boost::asio::buffer(write_data, 32),
+    boost::asio::buffer(write_data) + 32 } };
+
+  s.reset();
+  boost::system::error_code error;
+  size_t bytes_transferred = boost::asio::write_at(s, 0, buffers, error);
+  BOOST_CHECK(bytes_transferred == sizeof(write_data));
+  BOOST_CHECK(s.check_buffers(0, buffers, sizeof(write_data)));
+  BOOST_CHECK(!error);
+
+  s.reset();
+  bytes_transferred = boost::asio::write_at(s, 1234, buffers, error);
+  BOOST_CHECK(bytes_transferred == sizeof(write_data));
+  BOOST_CHECK(s.check_buffers(1234, buffers, sizeof(write_data)));
+  BOOST_CHECK(!error);
+
+  s.reset();
+  s.next_write_length(1);
+  bytes_transferred = boost::asio::write_at(s, 0, buffers, error);
+  BOOST_CHECK(bytes_transferred == sizeof(write_data));
+  BOOST_CHECK(s.check_buffers(0, buffers, sizeof(write_data)));
+  BOOST_CHECK(!error);
+
+  s.reset();
+  s.next_write_length(1);
+  bytes_transferred = boost::asio::write_at(s, 1234, buffers, error);
+  BOOST_CHECK(bytes_transferred == sizeof(write_data));
+  BOOST_CHECK(s.check_buffers(1234, buffers, sizeof(write_data)));
+  BOOST_CHECK(!error);
+
+  s.reset();
+  s.next_write_length(10);
+  bytes_transferred = boost::asio::write_at(s, 0, buffers, error);
+  BOOST_CHECK(bytes_transferred == sizeof(write_data));
+  BOOST_CHECK(s.check_buffers(0, buffers, sizeof(write_data)));
+  BOOST_CHECK(!error);
+
+  s.reset();
+  s.next_write_length(10);
+  bytes_transferred = boost::asio::write_at(s, 1234, buffers, error);
+  BOOST_CHECK(bytes_transferred == sizeof(write_data));
+  BOOST_CHECK(s.check_buffers(1234, buffers, sizeof(write_data)));
+  BOOST_CHECK(!error);
 }
 
 bool old_style_transfer_all(const boost::system::error_code& ec,
@@ -440,6 +571,126 @@ void test_4_arg_const_buffers_1_write_at()
       boost::asio::transfer_at_least(42));
   BOOST_CHECK(bytes_transferred == 50);
   BOOST_CHECK(s.check_buffers(1234, buffers, 50));
+
+  s.reset();
+  bytes_transferred = boost::asio::write_at(s, 0, buffers,
+      boost::asio::transfer_exactly(1));
+  BOOST_CHECK(bytes_transferred == 1);
+  BOOST_CHECK(s.check_buffers(0, buffers, 1));
+
+  s.reset();
+  bytes_transferred = boost::asio::write_at(s, 1234, buffers,
+      boost::asio::transfer_exactly(1));
+  BOOST_CHECK(bytes_transferred == 1);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 1));
+
+  s.reset();
+  s.next_write_length(1);
+  bytes_transferred = boost::asio::write_at(s, 0, buffers,
+      boost::asio::transfer_exactly(1));
+  BOOST_CHECK(bytes_transferred == 1);
+  BOOST_CHECK(s.check_buffers(0, buffers, 1));
+
+  s.reset();
+  s.next_write_length(1);
+  bytes_transferred = boost::asio::write_at(s, 1234, buffers,
+      boost::asio::transfer_exactly(1));
+  BOOST_CHECK(bytes_transferred == 1);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 1));
+
+  s.reset();
+  s.next_write_length(10);
+  bytes_transferred = boost::asio::write_at(s, 0, buffers,
+      boost::asio::transfer_exactly(1));
+  BOOST_CHECK(bytes_transferred == 1);
+  BOOST_CHECK(s.check_buffers(0, buffers, 1));
+
+  s.reset();
+  s.next_write_length(10);
+  bytes_transferred = boost::asio::write_at(s, 1234, buffers,
+      boost::asio::transfer_exactly(1));
+  BOOST_CHECK(bytes_transferred == 1);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 1));
+
+  s.reset();
+  bytes_transferred = boost::asio::write_at(s, 0, buffers,
+      boost::asio::transfer_exactly(10));
+  BOOST_CHECK(bytes_transferred == 10);
+  BOOST_CHECK(s.check_buffers(0, buffers, 10));
+
+  s.reset();
+  bytes_transferred = boost::asio::write_at(s, 1234, buffers,
+      boost::asio::transfer_exactly(10));
+  BOOST_CHECK(bytes_transferred == 10);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 10));
+
+  s.reset();
+  s.next_write_length(1);
+  bytes_transferred = boost::asio::write_at(s, 0, buffers,
+      boost::asio::transfer_exactly(10));
+  BOOST_CHECK(bytes_transferred == 10);
+  BOOST_CHECK(s.check_buffers(0, buffers, 10));
+
+  s.reset();
+  s.next_write_length(1);
+  bytes_transferred = boost::asio::write_at(s, 1234, buffers,
+      boost::asio::transfer_exactly(10));
+  BOOST_CHECK(bytes_transferred == 10);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 10));
+
+  s.reset();
+  s.next_write_length(10);
+  bytes_transferred = boost::asio::write_at(s, 0, buffers,
+      boost::asio::transfer_exactly(10));
+  BOOST_CHECK(bytes_transferred == 10);
+  BOOST_CHECK(s.check_buffers(0, buffers, 10));
+
+  s.reset();
+  s.next_write_length(10);
+  bytes_transferred = boost::asio::write_at(s, 1234, buffers,
+      boost::asio::transfer_exactly(10));
+  BOOST_CHECK(bytes_transferred == 10);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 10));
+
+  s.reset();
+  bytes_transferred = boost::asio::write_at(s, 0, buffers,
+      boost::asio::transfer_exactly(42));
+  BOOST_CHECK(bytes_transferred == 42);
+  BOOST_CHECK(s.check_buffers(0, buffers, 42));
+
+  s.reset();
+  bytes_transferred = boost::asio::write_at(s, 1234, buffers,
+      boost::asio::transfer_exactly(42));
+  BOOST_CHECK(bytes_transferred == 42);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 42));
+
+  s.reset();
+  s.next_write_length(1);
+  bytes_transferred = boost::asio::write_at(s, 0, buffers,
+      boost::asio::transfer_exactly(42));
+  BOOST_CHECK(bytes_transferred == 42);
+  BOOST_CHECK(s.check_buffers(0, buffers, 42));
+
+  s.reset();
+  s.next_write_length(1);
+  bytes_transferred = boost::asio::write_at(s, 1234, buffers,
+      boost::asio::transfer_exactly(42));
+  BOOST_CHECK(bytes_transferred == 42);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 42));
+
+  s.reset();
+  s.next_write_length(10);
+  bytes_transferred = boost::asio::write_at(s, 0, buffers,
+      boost::asio::transfer_exactly(42));
+  BOOST_CHECK(bytes_transferred == 42);
+  BOOST_CHECK(s.check_buffers(0, buffers, 42));
+
+  s.reset();
+  s.next_write_length(10);
+  bytes_transferred = boost::asio::write_at(s, 1234, buffers,
+      boost::asio::transfer_exactly(42));
+  BOOST_CHECK(bytes_transferred == 42);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 42));
 
   s.reset();
   bytes_transferred = boost::asio::write_at(s, 0, buffers,
@@ -685,6 +936,126 @@ void test_4_arg_mutable_buffers_1_write_at()
 
   s.reset();
   bytes_transferred = boost::asio::write_at(s, 0, buffers,
+      boost::asio::transfer_exactly(1));
+  BOOST_CHECK(bytes_transferred == 1);
+  BOOST_CHECK(s.check_buffers(0, buffers, 1));
+
+  s.reset();
+  bytes_transferred = boost::asio::write_at(s, 1234, buffers,
+      boost::asio::transfer_exactly(1));
+  BOOST_CHECK(bytes_transferred == 1);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 1));
+
+  s.reset();
+  s.next_write_length(1);
+  bytes_transferred = boost::asio::write_at(s, 0, buffers,
+      boost::asio::transfer_exactly(1));
+  BOOST_CHECK(bytes_transferred == 1);
+  BOOST_CHECK(s.check_buffers(0, buffers, 1));
+
+  s.reset();
+  s.next_write_length(1);
+  bytes_transferred = boost::asio::write_at(s, 1234, buffers,
+      boost::asio::transfer_exactly(1));
+  BOOST_CHECK(bytes_transferred == 1);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 1));
+
+  s.reset();
+  s.next_write_length(10);
+  bytes_transferred = boost::asio::write_at(s, 0, buffers,
+      boost::asio::transfer_exactly(1));
+  BOOST_CHECK(bytes_transferred == 1);
+  BOOST_CHECK(s.check_buffers(0, buffers, 1));
+
+  s.reset();
+  s.next_write_length(10);
+  bytes_transferred = boost::asio::write_at(s, 1234, buffers,
+      boost::asio::transfer_exactly(1));
+  BOOST_CHECK(bytes_transferred == 1);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 1));
+
+  s.reset();
+  bytes_transferred = boost::asio::write_at(s, 0, buffers,
+      boost::asio::transfer_exactly(10));
+  BOOST_CHECK(bytes_transferred == 10);
+  BOOST_CHECK(s.check_buffers(0, buffers, 10));
+
+  s.reset();
+  bytes_transferred = boost::asio::write_at(s, 1234, buffers,
+      boost::asio::transfer_exactly(10));
+  BOOST_CHECK(bytes_transferred == 10);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 10));
+
+  s.reset();
+  s.next_write_length(1);
+  bytes_transferred = boost::asio::write_at(s, 0, buffers,
+      boost::asio::transfer_exactly(10));
+  BOOST_CHECK(bytes_transferred == 10);
+  BOOST_CHECK(s.check_buffers(0, buffers, 10));
+
+  s.reset();
+  s.next_write_length(1);
+  bytes_transferred = boost::asio::write_at(s, 1234, buffers,
+      boost::asio::transfer_exactly(10));
+  BOOST_CHECK(bytes_transferred == 10);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 10));
+
+  s.reset();
+  s.next_write_length(10);
+  bytes_transferred = boost::asio::write_at(s, 0, buffers,
+      boost::asio::transfer_exactly(10));
+  BOOST_CHECK(bytes_transferred == 10);
+  BOOST_CHECK(s.check_buffers(0, buffers, 10));
+
+  s.reset();
+  s.next_write_length(10);
+  bytes_transferred = boost::asio::write_at(s, 1234, buffers,
+      boost::asio::transfer_exactly(10));
+  BOOST_CHECK(bytes_transferred == 10);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 10));
+
+  s.reset();
+  bytes_transferred = boost::asio::write_at(s, 0, buffers,
+      boost::asio::transfer_exactly(42));
+  BOOST_CHECK(bytes_transferred == 42);
+  BOOST_CHECK(s.check_buffers(0, buffers, 42));
+
+  s.reset();
+  bytes_transferred = boost::asio::write_at(s, 1234, buffers,
+      boost::asio::transfer_exactly(42));
+  BOOST_CHECK(bytes_transferred == 42);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 42));
+
+  s.reset();
+  s.next_write_length(1);
+  bytes_transferred = boost::asio::write_at(s, 0, buffers,
+      boost::asio::transfer_exactly(42));
+  BOOST_CHECK(bytes_transferred == 42);
+  BOOST_CHECK(s.check_buffers(0, buffers, 42));
+
+  s.reset();
+  s.next_write_length(1);
+  bytes_transferred = boost::asio::write_at(s, 1234, buffers,
+      boost::asio::transfer_exactly(42));
+  BOOST_CHECK(bytes_transferred == 42);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 42));
+
+  s.reset();
+  s.next_write_length(10);
+  bytes_transferred = boost::asio::write_at(s, 0, buffers,
+      boost::asio::transfer_exactly(42));
+  BOOST_CHECK(bytes_transferred == 42);
+  BOOST_CHECK(s.check_buffers(0, buffers, 42));
+
+  s.reset();
+  s.next_write_length(10);
+  bytes_transferred = boost::asio::write_at(s, 1234, buffers,
+      boost::asio::transfer_exactly(42));
+  BOOST_CHECK(bytes_transferred == 42);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 42));
+
+  s.reset();
+  bytes_transferred = boost::asio::write_at(s, 0, buffers,
       old_style_transfer_all);
   BOOST_CHECK(bytes_transferred == sizeof(mutable_write_data));
   BOOST_CHECK(s.check_buffers(0, buffers, sizeof(mutable_write_data)));
@@ -925,6 +1296,126 @@ void test_4_arg_multi_buffers_write_at()
       boost::asio::transfer_at_least(42));
   BOOST_CHECK(bytes_transferred == 50);
   BOOST_CHECK(s.check_buffers(1234, buffers, 50));
+
+  s.reset();
+  bytes_transferred = boost::asio::write_at(s, 0, buffers,
+      boost::asio::transfer_exactly(1));
+  BOOST_CHECK(bytes_transferred == 1);
+  BOOST_CHECK(s.check_buffers(0, buffers, 1));
+
+  s.reset();
+  bytes_transferred = boost::asio::write_at(s, 1234, buffers,
+      boost::asio::transfer_exactly(1));
+  BOOST_CHECK(bytes_transferred == 1);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 1));
+
+  s.reset();
+  s.next_write_length(1);
+  bytes_transferred = boost::asio::write_at(s, 0, buffers,
+      boost::asio::transfer_exactly(1));
+  BOOST_CHECK(bytes_transferred == 1);
+  BOOST_CHECK(s.check_buffers(0, buffers, 1));
+
+  s.reset();
+  s.next_write_length(1);
+  bytes_transferred = boost::asio::write_at(s, 1234, buffers,
+      boost::asio::transfer_exactly(1));
+  BOOST_CHECK(bytes_transferred == 1);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 1));
+
+  s.reset();
+  s.next_write_length(10);
+  bytes_transferred = boost::asio::write_at(s, 0, buffers,
+      boost::asio::transfer_exactly(1));
+  BOOST_CHECK(bytes_transferred == 1);
+  BOOST_CHECK(s.check_buffers(0, buffers, 1));
+
+  s.reset();
+  s.next_write_length(10);
+  bytes_transferred = boost::asio::write_at(s, 1234, buffers,
+      boost::asio::transfer_exactly(1));
+  BOOST_CHECK(bytes_transferred == 1);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 1));
+
+  s.reset();
+  bytes_transferred = boost::asio::write_at(s, 0, buffers,
+      boost::asio::transfer_exactly(10));
+  BOOST_CHECK(bytes_transferred == 10);
+  BOOST_CHECK(s.check_buffers(0, buffers, 10));
+
+  s.reset();
+  bytes_transferred = boost::asio::write_at(s, 1234, buffers,
+      boost::asio::transfer_exactly(10));
+  BOOST_CHECK(bytes_transferred == 10);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 10));
+
+  s.reset();
+  s.next_write_length(1);
+  bytes_transferred = boost::asio::write_at(s, 0, buffers,
+      boost::asio::transfer_exactly(10));
+  BOOST_CHECK(bytes_transferred == 10);
+  BOOST_CHECK(s.check_buffers(0, buffers, 10));
+
+  s.reset();
+  s.next_write_length(1);
+  bytes_transferred = boost::asio::write_at(s, 1234, buffers,
+      boost::asio::transfer_exactly(10));
+  BOOST_CHECK(bytes_transferred == 10);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 10));
+
+  s.reset();
+  s.next_write_length(10);
+  bytes_transferred = boost::asio::write_at(s, 0, buffers,
+      boost::asio::transfer_exactly(10));
+  BOOST_CHECK(bytes_transferred == 10);
+  BOOST_CHECK(s.check_buffers(0, buffers, 10));
+
+  s.reset();
+  s.next_write_length(10);
+  bytes_transferred = boost::asio::write_at(s, 1234, buffers,
+      boost::asio::transfer_exactly(10));
+  BOOST_CHECK(bytes_transferred == 10);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 10));
+
+  s.reset();
+  bytes_transferred = boost::asio::write_at(s, 0, buffers,
+      boost::asio::transfer_exactly(42));
+  BOOST_CHECK(bytes_transferred == 42);
+  BOOST_CHECK(s.check_buffers(0, buffers, 42));
+
+  s.reset();
+  bytes_transferred = boost::asio::write_at(s, 1234, buffers,
+      boost::asio::transfer_exactly(42));
+  BOOST_CHECK(bytes_transferred == 42);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 42));
+
+  s.reset();
+  s.next_write_length(1);
+  bytes_transferred = boost::asio::write_at(s, 0, buffers,
+      boost::asio::transfer_exactly(42));
+  BOOST_CHECK(bytes_transferred == 42);
+  BOOST_CHECK(s.check_buffers(0, buffers, 42));
+
+  s.reset();
+  s.next_write_length(1);
+  bytes_transferred = boost::asio::write_at(s, 1234, buffers,
+      boost::asio::transfer_exactly(42));
+  BOOST_CHECK(bytes_transferred == 42);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 42));
+
+  s.reset();
+  s.next_write_length(10);
+  bytes_transferred = boost::asio::write_at(s, 0, buffers,
+      boost::asio::transfer_exactly(42));
+  BOOST_CHECK(bytes_transferred == 42);
+  BOOST_CHECK(s.check_buffers(0, buffers, 42));
+
+  s.reset();
+  s.next_write_length(10);
+  bytes_transferred = boost::asio::write_at(s, 1234, buffers,
+      boost::asio::transfer_exactly(42));
+  BOOST_CHECK(bytes_transferred == 42);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 42));
 
   s.reset();
   bytes_transferred = boost::asio::write_at(s, 0, buffers,
@@ -1213,6 +1704,162 @@ void test_5_arg_const_buffers_1_write_at()
       boost::asio::transfer_at_least(42), error);
   BOOST_CHECK(bytes_transferred == 50);
   BOOST_CHECK(s.check_buffers(1234, buffers, 50));
+  BOOST_CHECK(!error);
+
+  s.reset();
+  error = boost::system::error_code();
+  bytes_transferred = boost::asio::write_at(s, 0, buffers,
+      boost::asio::transfer_exactly(1), error);
+  BOOST_CHECK(bytes_transferred == 1);
+  BOOST_CHECK(s.check_buffers(0, buffers, 1));
+  BOOST_CHECK(!error);
+
+  s.reset();
+  error = boost::system::error_code();
+  bytes_transferred = boost::asio::write_at(s, 1234, buffers,
+      boost::asio::transfer_exactly(1), error);
+  BOOST_CHECK(bytes_transferred == 1);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 1));
+  BOOST_CHECK(!error);
+
+  s.reset();
+  s.next_write_length(1);
+  error = boost::system::error_code();
+  bytes_transferred = boost::asio::write_at(s, 0, buffers,
+      boost::asio::transfer_exactly(1), error);
+  BOOST_CHECK(bytes_transferred == 1);
+  BOOST_CHECK(s.check_buffers(0, buffers, 1));
+  BOOST_CHECK(!error);
+
+  s.reset();
+  s.next_write_length(1);
+  error = boost::system::error_code();
+  bytes_transferred = boost::asio::write_at(s, 1234, buffers,
+      boost::asio::transfer_exactly(1), error);
+  BOOST_CHECK(bytes_transferred == 1);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 1));
+  BOOST_CHECK(!error);
+
+  s.reset();
+  s.next_write_length(10);
+  error = boost::system::error_code();
+  bytes_transferred = boost::asio::write_at(s, 0, buffers,
+      boost::asio::transfer_exactly(1), error);
+  BOOST_CHECK(bytes_transferred == 1);
+  BOOST_CHECK(s.check_buffers(0, buffers, 1));
+  BOOST_CHECK(!error);
+
+  s.reset();
+  s.next_write_length(10);
+  error = boost::system::error_code();
+  bytes_transferred = boost::asio::write_at(s, 1234, buffers,
+      boost::asio::transfer_exactly(1), error);
+  BOOST_CHECK(bytes_transferred == 1);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 1));
+  BOOST_CHECK(!error);
+
+  s.reset();
+  error = boost::system::error_code();
+  bytes_transferred = boost::asio::write_at(s, 0, buffers,
+      boost::asio::transfer_exactly(10), error);
+  BOOST_CHECK(bytes_transferred == 10);
+  BOOST_CHECK(s.check_buffers(0, buffers, 10));
+  BOOST_CHECK(!error);
+
+  s.reset();
+  error = boost::system::error_code();
+  bytes_transferred = boost::asio::write_at(s, 1234, buffers,
+      boost::asio::transfer_exactly(10), error);
+  BOOST_CHECK(bytes_transferred == 10);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 10));
+  BOOST_CHECK(!error);
+
+  s.reset();
+  s.next_write_length(1);
+  error = boost::system::error_code();
+  bytes_transferred = boost::asio::write_at(s, 0, buffers,
+      boost::asio::transfer_exactly(10), error);
+  BOOST_CHECK(bytes_transferred == 10);
+  BOOST_CHECK(s.check_buffers(0, buffers, 10));
+  BOOST_CHECK(!error);
+
+  s.reset();
+  s.next_write_length(1);
+  error = boost::system::error_code();
+  bytes_transferred = boost::asio::write_at(s, 1234, buffers,
+      boost::asio::transfer_exactly(10), error);
+  BOOST_CHECK(bytes_transferred == 10);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 10));
+  BOOST_CHECK(!error);
+
+  s.reset();
+  s.next_write_length(10);
+  error = boost::system::error_code();
+  bytes_transferred = boost::asio::write_at(s, 0, buffers,
+      boost::asio::transfer_exactly(10), error);
+  BOOST_CHECK(bytes_transferred == 10);
+  BOOST_CHECK(s.check_buffers(0, buffers, 10));
+  BOOST_CHECK(!error);
+
+  s.reset();
+  s.next_write_length(10);
+  error = boost::system::error_code();
+  bytes_transferred = boost::asio::write_at(s, 1234, buffers,
+      boost::asio::transfer_exactly(10), error);
+  BOOST_CHECK(bytes_transferred == 10);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 10));
+  BOOST_CHECK(!error);
+
+  s.reset();
+  error = boost::system::error_code();
+  bytes_transferred = boost::asio::write_at(s, 0, buffers,
+      boost::asio::transfer_exactly(42), error);
+  BOOST_CHECK(bytes_transferred == 42);
+  BOOST_CHECK(s.check_buffers(0, buffers, 42));
+  BOOST_CHECK(!error);
+
+  s.reset();
+  error = boost::system::error_code();
+  bytes_transferred = boost::asio::write_at(s, 1234, buffers,
+      boost::asio::transfer_exactly(42), error);
+  BOOST_CHECK(bytes_transferred == 42);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 42));
+  BOOST_CHECK(!error);
+
+  s.reset();
+  s.next_write_length(1);
+  error = boost::system::error_code();
+  bytes_transferred = boost::asio::write_at(s, 0, buffers,
+      boost::asio::transfer_exactly(42), error);
+  BOOST_CHECK(bytes_transferred == 42);
+  BOOST_CHECK(s.check_buffers(0, buffers, 42));
+  BOOST_CHECK(!error);
+
+  s.reset();
+  s.next_write_length(1);
+  error = boost::system::error_code();
+  bytes_transferred = boost::asio::write_at(s, 1234, buffers,
+      boost::asio::transfer_exactly(42), error);
+  BOOST_CHECK(bytes_transferred == 42);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 42));
+  BOOST_CHECK(!error);
+
+  s.reset();
+  s.next_write_length(10);
+  error = boost::system::error_code();
+  bytes_transferred = boost::asio::write_at(s, 0, buffers,
+      boost::asio::transfer_exactly(42), error);
+  BOOST_CHECK(bytes_transferred == 42);
+  BOOST_CHECK(s.check_buffers(0, buffers, 42));
+  BOOST_CHECK(!error);
+
+  s.reset();
+  s.next_write_length(10);
+  error = boost::system::error_code();
+  bytes_transferred = boost::asio::write_at(s, 1234, buffers,
+      boost::asio::transfer_exactly(42), error);
+  BOOST_CHECK(bytes_transferred == 42);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 42));
   BOOST_CHECK(!error);
 
   s.reset();
@@ -1531,6 +2178,162 @@ void test_5_arg_mutable_buffers_1_write_at()
   BOOST_CHECK(!error);
 
   s.reset();
+  error = boost::system::error_code();
+  bytes_transferred = boost::asio::write_at(s, 0, buffers,
+      boost::asio::transfer_exactly(1), error);
+  BOOST_CHECK(bytes_transferred == 1);
+  BOOST_CHECK(s.check_buffers(0, buffers, 1));
+  BOOST_CHECK(!error);
+
+  s.reset();
+  error = boost::system::error_code();
+  bytes_transferred = boost::asio::write_at(s, 1234, buffers,
+      boost::asio::transfer_exactly(1), error);
+  BOOST_CHECK(bytes_transferred == 1);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 1));
+  BOOST_CHECK(!error);
+
+  s.reset();
+  s.next_write_length(1);
+  error = boost::system::error_code();
+  bytes_transferred = boost::asio::write_at(s, 0, buffers,
+      boost::asio::transfer_exactly(1), error);
+  BOOST_CHECK(bytes_transferred == 1);
+  BOOST_CHECK(s.check_buffers(0, buffers, 1));
+  BOOST_CHECK(!error);
+
+  s.reset();
+  s.next_write_length(1);
+  error = boost::system::error_code();
+  bytes_transferred = boost::asio::write_at(s, 1234, buffers,
+      boost::asio::transfer_exactly(1), error);
+  BOOST_CHECK(bytes_transferred == 1);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 1));
+  BOOST_CHECK(!error);
+
+  s.reset();
+  s.next_write_length(10);
+  error = boost::system::error_code();
+  bytes_transferred = boost::asio::write_at(s, 0, buffers,
+      boost::asio::transfer_exactly(1), error);
+  BOOST_CHECK(bytes_transferred == 1);
+  BOOST_CHECK(s.check_buffers(0, buffers, 1));
+  BOOST_CHECK(!error);
+
+  s.reset();
+  s.next_write_length(10);
+  error = boost::system::error_code();
+  bytes_transferred = boost::asio::write_at(s, 1234, buffers,
+      boost::asio::transfer_exactly(1), error);
+  BOOST_CHECK(bytes_transferred == 1);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 1));
+  BOOST_CHECK(!error);
+
+  s.reset();
+  error = boost::system::error_code();
+  bytes_transferred = boost::asio::write_at(s, 0, buffers,
+      boost::asio::transfer_exactly(10), error);
+  BOOST_CHECK(bytes_transferred == 10);
+  BOOST_CHECK(s.check_buffers(0, buffers, 10));
+  BOOST_CHECK(!error);
+
+  s.reset();
+  error = boost::system::error_code();
+  bytes_transferred = boost::asio::write_at(s, 1234, buffers,
+      boost::asio::transfer_exactly(10), error);
+  BOOST_CHECK(bytes_transferred == 10);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 10));
+  BOOST_CHECK(!error);
+
+  s.reset();
+  s.next_write_length(1);
+  error = boost::system::error_code();
+  bytes_transferred = boost::asio::write_at(s, 0, buffers,
+      boost::asio::transfer_exactly(10), error);
+  BOOST_CHECK(bytes_transferred == 10);
+  BOOST_CHECK(s.check_buffers(0, buffers, 10));
+  BOOST_CHECK(!error);
+
+  s.reset();
+  s.next_write_length(1);
+  error = boost::system::error_code();
+  bytes_transferred = boost::asio::write_at(s, 1234, buffers,
+      boost::asio::transfer_exactly(10), error);
+  BOOST_CHECK(bytes_transferred == 10);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 10));
+  BOOST_CHECK(!error);
+
+  s.reset();
+  s.next_write_length(10);
+  error = boost::system::error_code();
+  bytes_transferred = boost::asio::write_at(s, 0, buffers,
+      boost::asio::transfer_exactly(10), error);
+  BOOST_CHECK(bytes_transferred == 10);
+  BOOST_CHECK(s.check_buffers(0, buffers, 10));
+  BOOST_CHECK(!error);
+
+  s.reset();
+  s.next_write_length(10);
+  error = boost::system::error_code();
+  bytes_transferred = boost::asio::write_at(s, 1234, buffers,
+      boost::asio::transfer_exactly(10), error);
+  BOOST_CHECK(bytes_transferred == 10);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 10));
+  BOOST_CHECK(!error);
+
+  s.reset();
+  error = boost::system::error_code();
+  bytes_transferred = boost::asio::write_at(s, 0, buffers,
+      boost::asio::transfer_exactly(42), error);
+  BOOST_CHECK(bytes_transferred == 42);
+  BOOST_CHECK(s.check_buffers(0, buffers, 42));
+  BOOST_CHECK(!error);
+
+  s.reset();
+  error = boost::system::error_code();
+  bytes_transferred = boost::asio::write_at(s, 1234, buffers,
+      boost::asio::transfer_exactly(42), error);
+  BOOST_CHECK(bytes_transferred == 42);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 42));
+  BOOST_CHECK(!error);
+
+  s.reset();
+  s.next_write_length(1);
+  error = boost::system::error_code();
+  bytes_transferred = boost::asio::write_at(s, 0, buffers,
+      boost::asio::transfer_exactly(42), error);
+  BOOST_CHECK(bytes_transferred == 42);
+  BOOST_CHECK(s.check_buffers(0, buffers, 42));
+  BOOST_CHECK(!error);
+
+  s.reset();
+  s.next_write_length(1);
+  error = boost::system::error_code();
+  bytes_transferred = boost::asio::write_at(s, 1234, buffers,
+      boost::asio::transfer_exactly(42), error);
+  BOOST_CHECK(bytes_transferred == 42);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 42));
+  BOOST_CHECK(!error);
+
+  s.reset();
+  s.next_write_length(10);
+  error = boost::system::error_code();
+  bytes_transferred = boost::asio::write_at(s, 0, buffers,
+      boost::asio::transfer_exactly(42), error);
+  BOOST_CHECK(bytes_transferred == 42);
+  BOOST_CHECK(s.check_buffers(0, buffers, 42));
+  BOOST_CHECK(!error);
+
+  s.reset();
+  s.next_write_length(10);
+  error = boost::system::error_code();
+  bytes_transferred = boost::asio::write_at(s, 1234, buffers,
+      boost::asio::transfer_exactly(42), error);
+  BOOST_CHECK(bytes_transferred == 42);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 42));
+  BOOST_CHECK(!error);
+
+  s.reset();
   bytes_transferred = boost::asio::write_at(s, 0, buffers,
       old_style_transfer_all, error);
   BOOST_CHECK(bytes_transferred == sizeof(mutable_write_data));
@@ -1844,6 +2647,162 @@ void test_5_arg_multi_buffers_write_at()
       boost::asio::transfer_at_least(42), error);
   BOOST_CHECK(bytes_transferred == 50);
   BOOST_CHECK(s.check_buffers(1234, buffers, 50));
+  BOOST_CHECK(!error);
+
+  s.reset();
+  error = boost::system::error_code();
+  bytes_transferred = boost::asio::write_at(s, 0, buffers,
+      boost::asio::transfer_exactly(1), error);
+  BOOST_CHECK(bytes_transferred == 1);
+  BOOST_CHECK(s.check_buffers(0, buffers, 1));
+  BOOST_CHECK(!error);
+
+  s.reset();
+  error = boost::system::error_code();
+  bytes_transferred = boost::asio::write_at(s, 1234, buffers,
+      boost::asio::transfer_exactly(1), error);
+  BOOST_CHECK(bytes_transferred == 1);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 1));
+  BOOST_CHECK(!error);
+
+  s.reset();
+  s.next_write_length(1);
+  error = boost::system::error_code();
+  bytes_transferred = boost::asio::write_at(s, 0, buffers,
+      boost::asio::transfer_exactly(1), error);
+  BOOST_CHECK(bytes_transferred == 1);
+  BOOST_CHECK(s.check_buffers(0, buffers, 1));
+  BOOST_CHECK(!error);
+
+  s.reset();
+  s.next_write_length(1);
+  error = boost::system::error_code();
+  bytes_transferred = boost::asio::write_at(s, 1234, buffers,
+      boost::asio::transfer_exactly(1), error);
+  BOOST_CHECK(bytes_transferred == 1);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 1));
+  BOOST_CHECK(!error);
+
+  s.reset();
+  s.next_write_length(10);
+  error = boost::system::error_code();
+  bytes_transferred = boost::asio::write_at(s, 0, buffers,
+      boost::asio::transfer_exactly(1), error);
+  BOOST_CHECK(bytes_transferred == 1);
+  BOOST_CHECK(s.check_buffers(0, buffers, 1));
+  BOOST_CHECK(!error);
+
+  s.reset();
+  s.next_write_length(10);
+  error = boost::system::error_code();
+  bytes_transferred = boost::asio::write_at(s, 1234, buffers,
+      boost::asio::transfer_exactly(1), error);
+  BOOST_CHECK(bytes_transferred == 1);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 1));
+  BOOST_CHECK(!error);
+
+  s.reset();
+  error = boost::system::error_code();
+  bytes_transferred = boost::asio::write_at(s, 0, buffers,
+      boost::asio::transfer_exactly(10), error);
+  BOOST_CHECK(bytes_transferred == 10);
+  BOOST_CHECK(s.check_buffers(0, buffers, 10));
+  BOOST_CHECK(!error);
+
+  s.reset();
+  error = boost::system::error_code();
+  bytes_transferred = boost::asio::write_at(s, 1234, buffers,
+      boost::asio::transfer_exactly(10), error);
+  BOOST_CHECK(bytes_transferred == 10);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 10));
+  BOOST_CHECK(!error);
+
+  s.reset();
+  s.next_write_length(1);
+  error = boost::system::error_code();
+  bytes_transferred = boost::asio::write_at(s, 0, buffers,
+      boost::asio::transfer_exactly(10), error);
+  BOOST_CHECK(bytes_transferred == 10);
+  BOOST_CHECK(s.check_buffers(0, buffers, 10));
+  BOOST_CHECK(!error);
+
+  s.reset();
+  s.next_write_length(1);
+  error = boost::system::error_code();
+  bytes_transferred = boost::asio::write_at(s, 1234, buffers,
+      boost::asio::transfer_exactly(10), error);
+  BOOST_CHECK(bytes_transferred == 10);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 10));
+  BOOST_CHECK(!error);
+
+  s.reset();
+  s.next_write_length(10);
+  error = boost::system::error_code();
+  bytes_transferred = boost::asio::write_at(s, 0, buffers,
+      boost::asio::transfer_exactly(10), error);
+  BOOST_CHECK(bytes_transferred == 10);
+  BOOST_CHECK(s.check_buffers(0, buffers, 10));
+  BOOST_CHECK(!error);
+
+  s.reset();
+  s.next_write_length(10);
+  error = boost::system::error_code();
+  bytes_transferred = boost::asio::write_at(s, 1234, buffers,
+      boost::asio::transfer_exactly(10), error);
+  BOOST_CHECK(bytes_transferred == 10);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 10));
+  BOOST_CHECK(!error);
+
+  s.reset();
+  error = boost::system::error_code();
+  bytes_transferred = boost::asio::write_at(s, 0, buffers,
+      boost::asio::transfer_exactly(42), error);
+  BOOST_CHECK(bytes_transferred == 42);
+  BOOST_CHECK(s.check_buffers(0, buffers, 42));
+  BOOST_CHECK(!error);
+
+  s.reset();
+  error = boost::system::error_code();
+  bytes_transferred = boost::asio::write_at(s, 1234, buffers,
+      boost::asio::transfer_exactly(42), error);
+  BOOST_CHECK(bytes_transferred == 42);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 42));
+  BOOST_CHECK(!error);
+
+  s.reset();
+  s.next_write_length(1);
+  error = boost::system::error_code();
+  bytes_transferred = boost::asio::write_at(s, 0, buffers,
+      boost::asio::transfer_exactly(42), error);
+  BOOST_CHECK(bytes_transferred == 42);
+  BOOST_CHECK(s.check_buffers(0, buffers, 42));
+  BOOST_CHECK(!error);
+
+  s.reset();
+  s.next_write_length(1);
+  error = boost::system::error_code();
+  bytes_transferred = boost::asio::write_at(s, 1234, buffers,
+      boost::asio::transfer_exactly(42), error);
+  BOOST_CHECK(bytes_transferred == 42);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 42));
+  BOOST_CHECK(!error);
+
+  s.reset();
+  s.next_write_length(10);
+  error = boost::system::error_code();
+  bytes_transferred = boost::asio::write_at(s, 0, buffers,
+      boost::asio::transfer_exactly(42), error);
+  BOOST_CHECK(bytes_transferred == 42);
+  BOOST_CHECK(s.check_buffers(0, buffers, 42));
+  BOOST_CHECK(!error);
+
+  s.reset();
+  s.next_write_length(10);
+  error = boost::system::error_code();
+  bytes_transferred = boost::asio::write_at(s, 1234, buffers,
+      boost::asio::transfer_exactly(42), error);
+  BOOST_CHECK(bytes_transferred == 42);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 42));
   BOOST_CHECK(!error);
 
   s.reset();
@@ -2581,6 +3540,252 @@ void test_5_arg_const_buffers_1_async_write_at()
 
   s.reset();
   called = false;
+  boost::asio::async_write_at(s, 0, buffers,
+      boost::asio::transfer_exactly(1),
+      boost::bind(async_write_handler,
+        boost::asio::placeholders::error,
+        boost::asio::placeholders::bytes_transferred,
+        1, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(0, buffers, 1));
+
+  s.reset();
+  called = false;
+  boost::asio::async_write_at(s, 1234, buffers,
+      boost::asio::transfer_exactly(1),
+      boost::bind(async_write_handler,
+        boost::asio::placeholders::error,
+        boost::asio::placeholders::bytes_transferred,
+        1, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 1));
+
+  s.reset();
+  s.next_write_length(1);
+  called = false;
+  boost::asio::async_write_at(s, 0, buffers,
+      boost::asio::transfer_exactly(1),
+      boost::bind(async_write_handler,
+        boost::asio::placeholders::error,
+        boost::asio::placeholders::bytes_transferred,
+        1, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(0, buffers, 1));
+
+  s.reset();
+  s.next_write_length(1);
+  called = false;
+  boost::asio::async_write_at(s, 1234, buffers,
+      boost::asio::transfer_exactly(1),
+      boost::bind(async_write_handler,
+        boost::asio::placeholders::error,
+        boost::asio::placeholders::bytes_transferred,
+        1, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 1));
+
+  s.reset();
+  s.next_write_length(10);
+  called = false;
+  boost::asio::async_write_at(s, 0, buffers,
+      boost::asio::transfer_exactly(1),
+      boost::bind(async_write_handler,
+        boost::asio::placeholders::error,
+        boost::asio::placeholders::bytes_transferred,
+        1, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(0, buffers, 1));
+
+  s.reset();
+  s.next_write_length(10);
+  called = false;
+  boost::asio::async_write_at(s, 1234, buffers,
+      boost::asio::transfer_exactly(1),
+      boost::bind(async_write_handler,
+        boost::asio::placeholders::error,
+        boost::asio::placeholders::bytes_transferred,
+        1, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 1));
+
+  s.reset();
+  called = false;
+  boost::asio::async_write_at(s, 0, buffers,
+      boost::asio::transfer_exactly(10),
+      boost::bind(async_write_handler,
+        boost::asio::placeholders::error,
+        boost::asio::placeholders::bytes_transferred,
+        10, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(0, buffers, 10));
+
+  s.reset();
+  called = false;
+  boost::asio::async_write_at(s, 1234, buffers,
+      boost::asio::transfer_exactly(10),
+      boost::bind(async_write_handler,
+        boost::asio::placeholders::error,
+        boost::asio::placeholders::bytes_transferred,
+        10, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 10));
+
+  s.reset();
+  s.next_write_length(1);
+  called = false;
+  boost::asio::async_write_at(s, 0, buffers,
+      boost::asio::transfer_exactly(10),
+      boost::bind(async_write_handler,
+        boost::asio::placeholders::error,
+        boost::asio::placeholders::bytes_transferred,
+        10, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(0, buffers, 10));
+
+  s.reset();
+  s.next_write_length(1);
+  called = false;
+  boost::asio::async_write_at(s, 1234, buffers,
+      boost::asio::transfer_exactly(10),
+      boost::bind(async_write_handler,
+        boost::asio::placeholders::error,
+        boost::asio::placeholders::bytes_transferred,
+        10, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 10));
+
+  s.reset();
+  s.next_write_length(10);
+  called = false;
+  boost::asio::async_write_at(s, 0, buffers,
+      boost::asio::transfer_exactly(10),
+      boost::bind(async_write_handler,
+        boost::asio::placeholders::error,
+        boost::asio::placeholders::bytes_transferred,
+        10, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(0, buffers, 10));
+
+  s.reset();
+  s.next_write_length(10);
+  called = false;
+  boost::asio::async_write_at(s, 1234, buffers,
+      boost::asio::transfer_exactly(10),
+      boost::bind(async_write_handler,
+        boost::asio::placeholders::error,
+        boost::asio::placeholders::bytes_transferred,
+        10, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 10));
+
+  s.reset();
+  called = false;
+  boost::asio::async_write_at(s, 0, buffers,
+      boost::asio::transfer_exactly(42),
+      boost::bind(async_write_handler,
+        boost::asio::placeholders::error,
+        boost::asio::placeholders::bytes_transferred,
+        42, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(0, buffers, 42));
+
+  s.reset();
+  called = false;
+  boost::asio::async_write_at(s, 1234, buffers,
+      boost::asio::transfer_exactly(42),
+      boost::bind(async_write_handler,
+        boost::asio::placeholders::error,
+        boost::asio::placeholders::bytes_transferred,
+        42, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 42));
+
+  s.reset();
+  s.next_write_length(1);
+  called = false;
+  boost::asio::async_write_at(s, 0, buffers,
+      boost::asio::transfer_exactly(42),
+      boost::bind(async_write_handler,
+        boost::asio::placeholders::error,
+        boost::asio::placeholders::bytes_transferred,
+        42, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(0, buffers, 42));
+
+  s.reset();
+  s.next_write_length(1);
+  called = false;
+  boost::asio::async_write_at(s, 1234, buffers,
+      boost::asio::transfer_exactly(42),
+      boost::bind(async_write_handler,
+        boost::asio::placeholders::error,
+        boost::asio::placeholders::bytes_transferred,
+        42, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 42));
+
+  s.reset();
+  s.next_write_length(10);
+  called = false;
+  boost::asio::async_write_at(s, 0, buffers,
+      boost::asio::transfer_exactly(42),
+      boost::bind(async_write_handler,
+        boost::asio::placeholders::error,
+        boost::asio::placeholders::bytes_transferred,
+        42, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(0, buffers, 42));
+
+  s.reset();
+  s.next_write_length(10);
+  called = false;
+  boost::asio::async_write_at(s, 1234, buffers,
+      boost::asio::transfer_exactly(42),
+      boost::bind(async_write_handler,
+        boost::asio::placeholders::error,
+        boost::asio::placeholders::bytes_transferred,
+        42, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 42));
+
+  s.reset();
+  called = false;
   boost::asio::async_write_at(s, 0, buffers, old_style_transfer_all,
       boost::bind(async_write_handler,
         boost::asio::placeholders::error,
@@ -3066,6 +4271,252 @@ void test_5_arg_mutable_buffers_1_async_write_at()
   ios.run();
   BOOST_CHECK(called);
   BOOST_CHECK(s.check_buffers(1234, buffers, 50));
+
+  s.reset();
+  called = false;
+  boost::asio::async_write_at(s, 0, buffers,
+      boost::asio::transfer_exactly(1),
+      boost::bind(async_write_handler,
+        boost::asio::placeholders::error,
+        boost::asio::placeholders::bytes_transferred,
+        1, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(0, buffers, 1));
+
+  s.reset();
+  called = false;
+  boost::asio::async_write_at(s, 1234, buffers,
+      boost::asio::transfer_exactly(1),
+      boost::bind(async_write_handler,
+        boost::asio::placeholders::error,
+        boost::asio::placeholders::bytes_transferred,
+        1, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 1));
+
+  s.reset();
+  s.next_write_length(1);
+  called = false;
+  boost::asio::async_write_at(s, 0, buffers,
+      boost::asio::transfer_exactly(1),
+      boost::bind(async_write_handler,
+        boost::asio::placeholders::error,
+        boost::asio::placeholders::bytes_transferred,
+        1, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(0, buffers, 1));
+
+  s.reset();
+  s.next_write_length(1);
+  called = false;
+  boost::asio::async_write_at(s, 1234, buffers,
+      boost::asio::transfer_exactly(1),
+      boost::bind(async_write_handler,
+        boost::asio::placeholders::error,
+        boost::asio::placeholders::bytes_transferred,
+        1, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 1));
+
+  s.reset();
+  s.next_write_length(10);
+  called = false;
+  boost::asio::async_write_at(s, 0, buffers,
+      boost::asio::transfer_exactly(1),
+      boost::bind(async_write_handler,
+        boost::asio::placeholders::error,
+        boost::asio::placeholders::bytes_transferred,
+        1, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(0, buffers, 1));
+
+  s.reset();
+  s.next_write_length(10);
+  called = false;
+  boost::asio::async_write_at(s, 1234, buffers,
+      boost::asio::transfer_exactly(1),
+      boost::bind(async_write_handler,
+        boost::asio::placeholders::error,
+        boost::asio::placeholders::bytes_transferred,
+        1, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 1));
+
+  s.reset();
+  called = false;
+  boost::asio::async_write_at(s, 0, buffers,
+      boost::asio::transfer_exactly(10),
+      boost::bind(async_write_handler,
+        boost::asio::placeholders::error,
+        boost::asio::placeholders::bytes_transferred,
+        10, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(0, buffers, 10));
+
+  s.reset();
+  called = false;
+  boost::asio::async_write_at(s, 1234, buffers,
+      boost::asio::transfer_exactly(10),
+      boost::bind(async_write_handler,
+        boost::asio::placeholders::error,
+        boost::asio::placeholders::bytes_transferred,
+        10, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 10));
+
+  s.reset();
+  s.next_write_length(1);
+  called = false;
+  boost::asio::async_write_at(s, 0, buffers,
+      boost::asio::transfer_exactly(10),
+      boost::bind(async_write_handler,
+        boost::asio::placeholders::error,
+        boost::asio::placeholders::bytes_transferred,
+        10, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(0, buffers, 10));
+
+  s.reset();
+  s.next_write_length(1);
+  called = false;
+  boost::asio::async_write_at(s, 1234, buffers,
+      boost::asio::transfer_exactly(10),
+      boost::bind(async_write_handler,
+        boost::asio::placeholders::error,
+        boost::asio::placeholders::bytes_transferred,
+        10, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 10));
+
+  s.reset();
+  s.next_write_length(10);
+  called = false;
+  boost::asio::async_write_at(s, 0, buffers,
+      boost::asio::transfer_exactly(10),
+      boost::bind(async_write_handler,
+        boost::asio::placeholders::error,
+        boost::asio::placeholders::bytes_transferred,
+        10, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(0, buffers, 10));
+
+  s.reset();
+  s.next_write_length(10);
+  called = false;
+  boost::asio::async_write_at(s, 1234, buffers,
+      boost::asio::transfer_exactly(10),
+      boost::bind(async_write_handler,
+        boost::asio::placeholders::error,
+        boost::asio::placeholders::bytes_transferred,
+        10, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 10));
+
+  s.reset();
+  called = false;
+  boost::asio::async_write_at(s, 0, buffers,
+      boost::asio::transfer_exactly(42),
+      boost::bind(async_write_handler,
+        boost::asio::placeholders::error,
+        boost::asio::placeholders::bytes_transferred,
+        42, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(0, buffers, 42));
+
+  s.reset();
+  called = false;
+  boost::asio::async_write_at(s, 1234, buffers,
+      boost::asio::transfer_exactly(42),
+      boost::bind(async_write_handler,
+        boost::asio::placeholders::error,
+        boost::asio::placeholders::bytes_transferred,
+        42, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 42));
+
+  s.reset();
+  s.next_write_length(1);
+  called = false;
+  boost::asio::async_write_at(s, 0, buffers,
+      boost::asio::transfer_exactly(42),
+      boost::bind(async_write_handler,
+        boost::asio::placeholders::error,
+        boost::asio::placeholders::bytes_transferred,
+        42, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(0, buffers, 42));
+
+  s.reset();
+  s.next_write_length(1);
+  called = false;
+  boost::asio::async_write_at(s, 1234, buffers,
+      boost::asio::transfer_exactly(42),
+      boost::bind(async_write_handler,
+        boost::asio::placeholders::error,
+        boost::asio::placeholders::bytes_transferred,
+        42, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 42));
+
+  s.reset();
+  s.next_write_length(10);
+  called = false;
+  boost::asio::async_write_at(s, 0, buffers,
+      boost::asio::transfer_exactly(42),
+      boost::bind(async_write_handler,
+        boost::asio::placeholders::error,
+        boost::asio::placeholders::bytes_transferred,
+        42, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(0, buffers, 42));
+
+  s.reset();
+  s.next_write_length(10);
+  called = false;
+  boost::asio::async_write_at(s, 1234, buffers,
+      boost::asio::transfer_exactly(42),
+      boost::bind(async_write_handler,
+        boost::asio::placeholders::error,
+        boost::asio::placeholders::bytes_transferred,
+        42, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 42));
 
   s.reset();
   called = false;
@@ -3558,6 +5009,252 @@ void test_5_arg_multi_buffers_async_write_at()
 
   s.reset();
   called = false;
+  boost::asio::async_write_at(s, 0, buffers,
+      boost::asio::transfer_exactly(1),
+      boost::bind(async_write_handler,
+        boost::asio::placeholders::error,
+        boost::asio::placeholders::bytes_transferred,
+        1, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(0, buffers, 1));
+
+  s.reset();
+  called = false;
+  boost::asio::async_write_at(s, 1234, buffers,
+      boost::asio::transfer_exactly(1),
+      boost::bind(async_write_handler,
+        boost::asio::placeholders::error,
+        boost::asio::placeholders::bytes_transferred,
+        1, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 1));
+
+  s.reset();
+  s.next_write_length(1);
+  called = false;
+  boost::asio::async_write_at(s, 0, buffers,
+      boost::asio::transfer_exactly(1),
+      boost::bind(async_write_handler,
+        boost::asio::placeholders::error,
+        boost::asio::placeholders::bytes_transferred,
+        1, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(0, buffers, 1));
+
+  s.reset();
+  s.next_write_length(1);
+  called = false;
+  boost::asio::async_write_at(s, 1234, buffers,
+      boost::asio::transfer_exactly(1),
+      boost::bind(async_write_handler,
+        boost::asio::placeholders::error,
+        boost::asio::placeholders::bytes_transferred,
+        1, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 1));
+
+  s.reset();
+  s.next_write_length(10);
+  called = false;
+  boost::asio::async_write_at(s, 0, buffers,
+      boost::asio::transfer_exactly(1),
+      boost::bind(async_write_handler,
+        boost::asio::placeholders::error,
+        boost::asio::placeholders::bytes_transferred,
+        1, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(0, buffers, 1));
+
+  s.reset();
+  s.next_write_length(10);
+  called = false;
+  boost::asio::async_write_at(s, 1234, buffers,
+      boost::asio::transfer_exactly(1),
+      boost::bind(async_write_handler,
+        boost::asio::placeholders::error,
+        boost::asio::placeholders::bytes_transferred,
+        1, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 1));
+
+  s.reset();
+  called = false;
+  boost::asio::async_write_at(s, 0, buffers,
+      boost::asio::transfer_exactly(10),
+      boost::bind(async_write_handler,
+        boost::asio::placeholders::error,
+        boost::asio::placeholders::bytes_transferred,
+        10, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(0, buffers, 10));
+
+  s.reset();
+  called = false;
+  boost::asio::async_write_at(s, 1234, buffers,
+      boost::asio::transfer_exactly(10),
+      boost::bind(async_write_handler,
+        boost::asio::placeholders::error,
+        boost::asio::placeholders::bytes_transferred,
+        10, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 10));
+
+  s.reset();
+  s.next_write_length(1);
+  called = false;
+  boost::asio::async_write_at(s, 0, buffers,
+      boost::asio::transfer_exactly(10),
+      boost::bind(async_write_handler,
+        boost::asio::placeholders::error,
+        boost::asio::placeholders::bytes_transferred,
+        10, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(0, buffers, 10));
+
+  s.reset();
+  s.next_write_length(1);
+  called = false;
+  boost::asio::async_write_at(s, 1234, buffers,
+      boost::asio::transfer_exactly(10),
+      boost::bind(async_write_handler,
+        boost::asio::placeholders::error,
+        boost::asio::placeholders::bytes_transferred,
+        10, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 10));
+
+  s.reset();
+  s.next_write_length(10);
+  called = false;
+  boost::asio::async_write_at(s, 0, buffers,
+      boost::asio::transfer_exactly(10),
+      boost::bind(async_write_handler,
+        boost::asio::placeholders::error,
+        boost::asio::placeholders::bytes_transferred,
+        10, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(0, buffers, 10));
+
+  s.reset();
+  s.next_write_length(10);
+  called = false;
+  boost::asio::async_write_at(s, 1234, buffers,
+      boost::asio::transfer_exactly(10),
+      boost::bind(async_write_handler,
+        boost::asio::placeholders::error,
+        boost::asio::placeholders::bytes_transferred,
+        10, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 10));
+
+  s.reset();
+  called = false;
+  boost::asio::async_write_at(s, 0, buffers,
+      boost::asio::transfer_exactly(42),
+      boost::bind(async_write_handler,
+        boost::asio::placeholders::error,
+        boost::asio::placeholders::bytes_transferred,
+        42, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(0, buffers, 42));
+
+  s.reset();
+  called = false;
+  boost::asio::async_write_at(s, 1234, buffers,
+      boost::asio::transfer_exactly(42),
+      boost::bind(async_write_handler,
+        boost::asio::placeholders::error,
+        boost::asio::placeholders::bytes_transferred,
+        42, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 42));
+
+  s.reset();
+  s.next_write_length(1);
+  called = false;
+  boost::asio::async_write_at(s, 0, buffers,
+      boost::asio::transfer_exactly(42),
+      boost::bind(async_write_handler,
+        boost::asio::placeholders::error,
+        boost::asio::placeholders::bytes_transferred,
+        42, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(0, buffers, 42));
+
+  s.reset();
+  s.next_write_length(1);
+  called = false;
+  boost::asio::async_write_at(s, 1234, buffers,
+      boost::asio::transfer_exactly(42),
+      boost::bind(async_write_handler,
+        boost::asio::placeholders::error,
+        boost::asio::placeholders::bytes_transferred,
+        42, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 42));
+
+  s.reset();
+  s.next_write_length(10);
+  called = false;
+  boost::asio::async_write_at(s, 0, buffers,
+      boost::asio::transfer_exactly(42),
+      boost::bind(async_write_handler,
+        boost::asio::placeholders::error,
+        boost::asio::placeholders::bytes_transferred,
+        42, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(0, buffers, 42));
+
+  s.reset();
+  s.next_write_length(10);
+  called = false;
+  boost::asio::async_write_at(s, 1234, buffers,
+      boost::asio::transfer_exactly(42),
+      boost::bind(async_write_handler,
+        boost::asio::placeholders::error,
+        boost::asio::placeholders::bytes_transferred,
+        42, &called));
+  ios.reset();
+  ios.run();
+  BOOST_CHECK(called);
+  BOOST_CHECK(s.check_buffers(1234, buffers, 42));
+
+  s.reset();
+  called = false;
   boost::asio::async_write_at(s, 0, buffers, old_style_transfer_all,
       boost::bind(async_write_handler,
         boost::asio::placeholders::error,
@@ -3715,6 +5412,9 @@ test_suite* init_unit_test_suite(int, char*[])
   test->add(BOOST_TEST_CASE(&test_3_arg_const_buffers_1_write_at));
   test->add(BOOST_TEST_CASE(&test_3_arg_mutable_buffers_1_write_at));
   test->add(BOOST_TEST_CASE(&test_3_arg_multi_buffers_write_at));
+  test->add(BOOST_TEST_CASE(&test_4_arg_nothrow_const_buffers_1_write_at));
+  test->add(BOOST_TEST_CASE(&test_4_arg_nothrow_mutable_buffers_1_write_at));
+  test->add(BOOST_TEST_CASE(&test_4_arg_nothrow_multi_buffers_write_at));
   test->add(BOOST_TEST_CASE(&test_4_arg_const_buffers_1_write_at));
   test->add(BOOST_TEST_CASE(&test_4_arg_mutable_buffers_1_write_at));
   test->add(BOOST_TEST_CASE(&test_4_arg_multi_buffers_write_at));

@@ -17,7 +17,7 @@
 #include <boost/asio/strand.hpp>
 
 #include <sstream>
-#include <boost/thread.hpp>
+#include <boost/thread/thread.hpp>
 #include <boost/bind.hpp>
 #include <boost/asio/deadline_timer.hpp>
 #include <boost/asio/io_service.hpp>

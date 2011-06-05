@@ -57,9 +57,20 @@ void test()
     HANDLE native_handle1 = INVALID_HANDLE_VALUE;
     win::random_access_handle handle2(ios, native_handle1);
 
+#if defined(BOOST_ASIO_HAS_MOVE)
+    win::random_access_handle handle3(std::move(handle2));
+#endif // defined(BOOST_ASIO_HAS_MOVE)
+
+    // basic_random_access_handle operators.
+
+#if defined(BOOST_ASIO_HAS_MOVE)
+    handle1 = win::random_access_handle(ios);
+    handle1 = std::move(handle2);
+#endif // defined(BOOST_ASIO_HAS_MOVE)
+
     // basic_io_object functions.
 
-    io_service& ios_ref = handle1.io_service();
+    io_service& ios_ref = handle1.get_io_service();
     (void)ios_ref;
 
     // basic_handle functions.
@@ -68,9 +79,9 @@ void test()
       = handle1.lowest_layer();
     (void)lowest_layer;
 
-    const win::random_access_handle& handle3 = handle1;
+    const win::random_access_handle& handle4 = handle1;
     const win::random_access_handle::lowest_layer_type& lowest_layer2
-      = handle3.lowest_layer();
+      = handle4.lowest_layer();
     (void)lowest_layer2;
 
     HANDLE native_handle2 = INVALID_HANDLE_VALUE;
@@ -85,6 +96,10 @@ void test()
     win::random_access_handle::native_type native_handle3 = handle1.native();
     (void)native_handle3;
 
+    win::random_access_handle::native_handle_type native_handle4
+      = handle1.native_handle();
+    (void)native_handle4;
+
     handle1.cancel();
     handle1.cancel(ec);
 
@@ -96,15 +111,15 @@ void test()
     handle1.write_some_at(offset, buffer(const_char_buffer), ec);
 
     handle1.async_write_some_at(offset,
-        buffer(mutable_char_buffer), write_some_handler);
+        buffer(mutable_char_buffer), &write_some_handler);
     handle1.async_write_some_at(offset,
-        buffer(const_char_buffer), write_some_handler);
+        buffer(const_char_buffer), &write_some_handler);
 
     handle1.read_some_at(offset, buffer(mutable_char_buffer));
     handle1.read_some_at(offset, buffer(mutable_char_buffer), ec);
 
     handle1.async_read_some_at(offset,
-        buffer(mutable_char_buffer), read_some_handler);
+        buffer(mutable_char_buffer), &read_some_handler);
   }
   catch (std::exception&)
   {

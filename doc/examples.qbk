@@ -34,8 +34,8 @@ protocol with a fixed length message header and variable length message body.
 * [@boost_asio/example/chat/chat_server.cpp]
 
 The following POSIX-specific chat client demonstrates how to use the
-[link boost_asio.reference.posix__stream_descriptor posix::stream_descriptor]
-class to perform console input and output.
+[link boost_asio.reference.posix__stream_descriptor posix::stream_descriptor] class to
+perform console input and output.
 
 * [@boost_asio/example/chat/posix_chat_client.cpp]
 
@@ -51,6 +51,20 @@ and asynchronous operations.
 * [@boost_asio/example/echo/blocking_tcp_echo_server.cpp]
 * [@boost_asio/example/echo/blocking_udp_echo_client.cpp]
 * [@boost_asio/example/echo/blocking_udp_echo_server.cpp]
+
+
+[heading Fork]
+
+These POSIX-specific examples show how to use Boost.Asio in conjunction with the
+`fork()` system call. The first example illustrates the steps required to start
+a daemon process:
+
+* [@boost_asio/example/fork/daemon.cpp]
+
+The second example demonstrates how it is possible to fork a process from
+within a completion handler.
+
+* [@boost_asio/example/fork/process_per_connection.cpp]
 
 
 [heading HTTP Client]
@@ -74,9 +88,9 @@ cancelling all outstanding asynchronous operations.
 * [@boost_asio/example/http/server/connection_manager.cpp]
 * [@boost_asio/example/http/server/connection_manager.hpp]
 * [@boost_asio/example/http/server/header.hpp]
+* [@boost_asio/example/http/server/main.cpp]
 * [@boost_asio/example/http/server/mime_types.cpp]
 * [@boost_asio/example/http/server/mime_types.hpp]
-* [@boost_asio/example/http/server/posix_main.cpp]
 * [@boost_asio/example/http/server/reply.cpp]
 * [@boost_asio/example/http/server/reply.hpp]
 * [@boost_asio/example/http/server/request.hpp]
@@ -86,7 +100,6 @@ cancelling all outstanding asynchronous operations.
 * [@boost_asio/example/http/server/request_parser.hpp]
 * [@boost_asio/example/http/server/server.cpp]
 * [@boost_asio/example/http/server/server.hpp]
-* [@boost_asio/example/http/server/win_main.cpp]
 
 
 [heading HTTP Server 2]
@@ -98,9 +111,9 @@ An HTTP server using an io_service-per-CPU design.
 * [@boost_asio/example/http/server2/header.hpp]
 * [@boost_asio/example/http/server2/io_service_pool.cpp]
 * [@boost_asio/example/http/server2/io_service_pool.hpp]
+* [@boost_asio/example/http/server2/main.cpp]
 * [@boost_asio/example/http/server2/mime_types.cpp]
 * [@boost_asio/example/http/server2/mime_types.hpp]
-* [@boost_asio/example/http/server2/posix_main.cpp]
 * [@boost_asio/example/http/server2/reply.cpp]
 * [@boost_asio/example/http/server2/reply.hpp]
 * [@boost_asio/example/http/server2/request.hpp]
@@ -110,7 +123,6 @@ An HTTP server using an io_service-per-CPU design.
 * [@boost_asio/example/http/server2/request_parser.hpp]
 * [@boost_asio/example/http/server2/server.cpp]
 * [@boost_asio/example/http/server2/server.hpp]
-* [@boost_asio/example/http/server2/win_main.cpp]
 
 
 [heading HTTP Server 3]
@@ -120,9 +132,9 @@ An HTTP server using a single io_service and a thread pool calling `io_service::
 * [@boost_asio/example/http/server3/connection.cpp]
 * [@boost_asio/example/http/server3/connection.hpp]
 * [@boost_asio/example/http/server3/header.hpp]
+* [@boost_asio/example/http/server3/main.cpp]
 * [@boost_asio/example/http/server3/mime_types.cpp]
 * [@boost_asio/example/http/server3/mime_types.hpp]
-* [@boost_asio/example/http/server3/posix_main.cpp]
 * [@boost_asio/example/http/server3/reply.cpp]
 * [@boost_asio/example/http/server3/reply.hpp]
 * [@boost_asio/example/http/server3/request.hpp]
@@ -132,7 +144,6 @@ An HTTP server using a single io_service and a thread pool calling `io_service::
 * [@boost_asio/example/http/server3/request_parser.hpp]
 * [@boost_asio/example/http/server3/server.cpp]
 * [@boost_asio/example/http/server3/server.hpp]
-* [@boost_asio/example/http/server3/win_main.cpp]
 
 
 [heading HTTP Server 4]
@@ -143,9 +154,9 @@ A single-threaded HTTP server implemented using stackless coroutines.
 * [@boost_asio/example/http/server4/file_handler.cpp]
 * [@boost_asio/example/http/server4/file_handler.hpp]
 * [@boost_asio/example/http/server4/header.hpp]
+* [@boost_asio/example/http/server4/main.cpp]
 * [@boost_asio/example/http/server4/mime_types.cpp]
 * [@boost_asio/example/http/server4/mime_types.hpp]
-* [@boost_asio/example/http/server4/posix_main.cpp]
 * [@boost_asio/example/http/server4/reply.cpp]
 * [@boost_asio/example/http/server4/reply.hpp]
 * [@boost_asio/example/http/server4/request.hpp]
@@ -154,7 +165,6 @@ A single-threaded HTTP server implemented using stackless coroutines.
 * [@boost_asio/example/http/server4/server.cpp]
 * [@boost_asio/example/http/server4/server.hpp]
 * [@boost_asio/example/http/server4/unyield.hpp]
-* [@boost_asio/example/http/server4/win_main.cpp]
 * [@boost_asio/example/http/server4/yield.hpp]
 
 
@@ -182,6 +192,7 @@ ip::tcp::iostream].
 
 * [@boost_asio/example/iostreams/daytime_client.cpp]
 * [@boost_asio/example/iostreams/daytime_server.cpp]
+* [@boost_asio/example/iostreams/http_client.cpp]
 
 
 [heading Multicast]
@@ -231,8 +242,7 @@ a proxy.
 [heading SSL]
 
 Example client and server programs showing the use of the [link
-boost_asio.reference.ssl__stream ssl::stream<>] template with asynchronous
-operations.
+boost_asio.reference.ssl__stream ssl::stream<>] template with asynchronous operations.
 
 * [@boost_asio/example/ssl/client.cpp]
 * [@boost_asio/example/ssl/server.cpp]
