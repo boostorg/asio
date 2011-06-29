@@ -56,18 +56,18 @@ boost_asio.reference.async_read_until async_read_until()] free functions.
 Boost.Asio provides various methods for configuring the way SSL certificates are
 verified:
 
-  * [link boost_asio.reference.ssl__context.set_default_verify_paths ssl::context::set_default_verify_paths()]
-  * [link boost_asio.reference.ssl__context.set_verify_mode ssl::context::set_verify_mode()]
-  * [link boost_asio.reference.ssl__context.set_verify_callback ssl::context::set_verify_callback()]
-  * [link boost_asio.reference.ssl__context.load_verify_file ssl::context::load_verify_file()]
-  * [link boost_asio.reference.ssl__stream.set_verify_mode ssl::stream::set_verify_mode()]
-  * [link boost_asio.reference.ssl__stream.set_verify_callback ssl::stream::set_verify_callback()]
+* [link boost_asio.reference.ssl__context.set_default_verify_paths ssl::context::set_default_verify_paths()]
+* [link boost_asio.reference.ssl__context.set_verify_mode ssl::context::set_verify_mode()]
+* [link boost_asio.reference.ssl__context.set_verify_callback ssl::context::set_verify_callback()]
+* [link boost_asio.reference.ssl__context.load_verify_file ssl::context::load_verify_file()]
+* [link boost_asio.reference.ssl__stream.set_verify_mode ssl::stream::set_verify_mode()]
+* [link boost_asio.reference.ssl__stream.set_verify_callback ssl::stream::set_verify_callback()]
 
 To simplify use cases where certificates are verified according to the rules in
 RFC 2818 (certificate verification for HTTPS), Boost.Asio provides a reusable
 verification callback as a function object:
 
-  * [link boost_asio.reference.ssl__rfc2818_verification ssl::rfc2818_verification]
+* [link boost_asio.reference.ssl__rfc2818_verification ssl::rfc2818_verification]
 
 The following example shows verification of a remote host's certificate
 according to the rules used by HTTPS:
