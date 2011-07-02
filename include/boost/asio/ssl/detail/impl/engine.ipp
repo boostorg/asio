@@ -126,6 +126,12 @@ engine::want engine::shutdown(boost::system::error_code& ec)
 engine::want engine::write(const boost::asio::const_buffer& data,
     boost::system::error_code& ec, std::size_t& bytes_transferred)
 {
+  if (boost::asio::buffer_size(data) == 0)
+  {
+    ec = boost::system::error_code();
+    return engine::want_nothing;
+  }
+
   return perform(&engine::do_write,
       const_cast<void*>(boost::asio::buffer_cast<const void*>(data)),
       boost::asio::buffer_size(data), ec, &bytes_transferred);
@@ -134,6 +140,12 @@ engine::want engine::write(const boost::asio::const_buffer& data,
 engine::want engine::read(const boost::asio::mutable_buffer& data,
     boost::system::error_code& ec, std::size_t& bytes_transferred)
 {
+  if (boost::asio::buffer_size(data) == 0)
+  {
+    ec = boost::system::error_code();
+    return engine::want_nothing;
+  }
+
   return perform(&engine::do_read,
       boost::asio::buffer_cast<void*>(data),
       boost::asio::buffer_size(data), ec, &bytes_transferred);
