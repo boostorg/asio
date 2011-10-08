@@ -61,7 +61,7 @@ void strand_service::dispatch(strand_service::implementation_type& impl,
   // If we are already in the strand then the handler can run immediately.
   if (call_stack<strand_impl>::contains(impl))
   {
-    boost::asio::detail::fenced_block b;
+    fenced_block b(fenced_block::full);
     boost_asio_handler_invoke_helpers::invoke(handler, handler);
     return;
   }
