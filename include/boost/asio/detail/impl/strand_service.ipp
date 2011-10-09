@@ -79,7 +79,7 @@ bool strand_service::do_dispatch(implementation_type& impl, operation* op)
 {
   // If we are running inside the io_service, and no other handler is queued
   // or running, then the handler can run immediately.
-  bool can_dispatch = call_stack<io_service_impl>::contains(&io_service_);
+  bool can_dispatch = io_service_.can_dispatch();
   impl->mutex_.lock();
   bool first = (++impl->count_ == 1);
   if (can_dispatch && first)
@@ -115,7 +115,7 @@ void strand_service::do_post(implementation_type& impl, operation* op)
 }
 
 void strand_service::do_complete(io_service_impl* owner, operation* base,
-    boost::system::error_code /*ec*/, std::size_t /*bytes_transferred*/)
+    const boost::system::error_code& ec, std::size_t /*bytes_transferred*/)
 {
   if (owner)
   {
@@ -134,7 +134,7 @@ void strand_service::do_complete(io_service_impl* owner, operation* base,
     on_do_complete_exit on_exit = { owner, impl };
     (void)on_exit;
 
-    o->complete(*owner);
+    o->complete(*owner, ec, 0);
   }
 }
 

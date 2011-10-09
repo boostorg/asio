@@ -95,7 +95,7 @@ private:
   BOOST_ASIO_DECL void do_post(implementation_type& impl, operation* op);
 
   BOOST_ASIO_DECL static void do_complete(io_service_impl* owner,
-      operation* base, boost::system::error_code ec,
+      operation* base, const boost::system::error_code& ec,
       std::size_t bytes_transferred);
 
   // The io_service implementation used to post completions.
