@@ -1021,6 +1021,9 @@ Start an asynchronous operation to read a certain amount of data from a stream.
 This function is used to asynchronously read a certain number of bytes of data from a stream. The function call always returns immediately. The asynchronous operation will continue until one of the following conditions is true:
 
 
+* The supplied buffer is full (that is, it has reached maximum size).
+
+
 * An error occurred.
 
 This operation is implemented in terms of zero or more calls to the stream's async\_read\_some function, and is known as a [*composed operation]. The program must ensure that the stream performs no other read operations (such as async\_read, the stream's async\_read\_some function, or any other composed operations that perform reads) until this operation completes.
@@ -1090,6 +1093,9 @@ Start an asynchronous operation to read a certain amount of data from a stream.
 
 
 This function is used to asynchronously read a certain number of bytes of data from a stream. The function call always returns immediately. The asynchronous operation will continue until one of the following conditions is true:
+
+
+* The supplied buffer is full (that is, it has reached maximum size).
 
 
 * The completion\_condition function object returns 0.
@@ -74432,6 +74438,9 @@ Attempt to read a certain amount of data from a stream before returning.
 This function is used to read a certain number of bytes of data from a stream. The call will block until one of the following conditions is true:
 
 
+* The supplied buffer is full (that is, it has reached maximum size).
+
+
 * An error occurred.
 
 This operation is implemented in terms of zero or more calls to the stream's read\_some function.
@@ -74500,6 +74509,9 @@ Attempt to read a certain amount of data from a stream before returning.
 This function is used to read a certain number of bytes of data from a stream. The call will block until one of the following conditions is true:
 
 
+* The supplied buffer is full (that is, it has reached maximum size).
+
+
 * An error occurred.
 
 This operation is implemented in terms of zero or more calls to the stream's read\_some function.
@@ -74559,6 +74571,9 @@ Attempt to read a certain amount of data from a stream before returning.
 
 
 This function is used to read a certain number of bytes of data from a stream. The call will block until one of the following conditions is true:
+
+
+* The supplied buffer is full (that is, it has reached maximum size).
 
 
 * The completion\_condition function object returns 0.
@@ -74629,6 +74644,9 @@ Attempt to read a certain amount of data from a stream before returning.
 
 
 This function is used to read a certain number of bytes of data from a stream. The call will block until one of the following conditions is true:
+
+
+* The supplied buffer is full (that is, it has reached maximum size).
 
 
 * The completion\_condition function object returns 0.
