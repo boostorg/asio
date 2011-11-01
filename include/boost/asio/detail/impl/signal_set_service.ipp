@@ -62,14 +62,17 @@ void asio_signal_handler(int signal_number)
 #if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
   signal_set_service::deliver_signal(signal_number);
 #else // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
+  int saved_errno = errno;
   signal_state* state = get_signal_state();
-  (void)::write(state->write_descriptor_,
+  int result = ::write(state->write_descriptor_,
       &signal_number, sizeof(signal_number));
+  (void)result;
+  errno = saved_errno;
 #endif // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
 
-#if !defined(BOOST_ASIO_HAS_SIGACTION)
-  signal(signal_number, asio_signal_handler);
-#endif // !defined(BOOST_ASIO_HAS_SIGACTION)
+#if defined(BOOST_ASIO_HAS_SIGNAL) && !defined(BOOST_ASIO_HAS_SIGACTION)
+  ::signal(signal_number, asio_signal_handler);
+#endif // defined(BOOST_ASIO_HAS_SIGNAL) && !defined(BOOST_ASIO_HAS_SIGACTION)
 }
 
 #if !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
@@ -95,7 +98,8 @@ public:
   }
 
   static void do_complete(io_service_impl* /*owner*/, operation* base,
-      boost::system::error_code /*ec*/, std::size_t /*bytes_transferred*/)
+      const boost::system::error_code& /*ec*/,
+      std::size_t /*bytes_transferred*/)
   {
     pipe_read_op* o(static_cast<pipe_read_op*>(base));
     delete o;
@@ -144,6 +148,8 @@ void signal_set_service::shutdown_service()
       reg = reg->next_in_table_;
     }
   }
+
+  io_service_.abandon_operations(ops);
 }
 
 void signal_set_service::fork_service(
@@ -226,30 +232,32 @@ boost::system::error_code signal_set_service::add(
   {
     registration* new_registration = new registration;
 
+#if defined(BOOST_ASIO_HAS_SIGNAL) || defined(BOOST_ASIO_HAS_SIGACTION)
     // Register for the signal if we're the first.
     if (state->registration_count_[signal_number] == 0)
     {
-#if defined(BOOST_ASIO_HAS_SIGACTION)
+# if defined(BOOST_ASIO_HAS_SIGACTION)
       using namespace std; // For memset.
       struct sigaction sa;
       memset(&sa, 0, sizeof(sa));
       sa.sa_handler = asio_signal_handler;
       sigfillset(&sa.sa_mask);
       if (::sigaction(signal_number, &sa, 0) == -1)
-#else // defined(BOOST_ASIO_HAS_SIGACTION)
+# else // defined(BOOST_ASIO_HAS_SIGACTION)
       if (::signal(signal_number, asio_signal_handler) == SIG_ERR)
-#endif // defined(BOOST_ASIO_HAS_SIGACTION)
+# endif // defined(BOOST_ASIO_HAS_SIGACTION)
       {
-#if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
+# if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
         ec = boost::asio::error::invalid_argument;
-#else // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
+# else // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
         ec = boost::system::error_code(errno,
             boost::asio::error::get_system_category());
-#endif // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
+# endif // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
         delete new_registration;
         return ec;
       }
     }
+#endif // defined(BOOST_ASIO_HAS_SIGNAL) || defined(BOOST_ASIO_HAS_SIGACTION)
 
     // Record the new registration in the set.
     new_registration->signal_number_ = signal_number;
@@ -295,28 +303,30 @@ boost::system::error_code signal_set_service::remove(
 
   if (reg != 0 && reg->signal_number_ == signal_number)
   {
+#if defined(BOOST_ASIO_HAS_SIGNAL) || defined(BOOST_ASIO_HAS_SIGACTION)
     // Set signal handler back to the default if we're the last.
     if (state->registration_count_[signal_number] == 1)
     {
-#if defined(BOOST_ASIO_HAS_SIGACTION)
+# if defined(BOOST_ASIO_HAS_SIGACTION)
       using namespace std; // For memset.
       struct sigaction sa;
       memset(&sa, 0, sizeof(sa));
       sa.sa_handler = SIG_DFL;
       if (::sigaction(signal_number, &sa, 0) == -1)
-#else // defined(BOOST_ASIO_HAS_SIGACTION)
+# else // defined(BOOST_ASIO_HAS_SIGACTION)
       if (::signal(signal_number, SIG_DFL) == SIG_ERR)
-#endif // defined(BOOST_ASIO_HAS_SIGACTION)
+# endif // defined(BOOST_ASIO_HAS_SIGACTION)
       {
-#if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
+# if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
         ec = boost::asio::error::invalid_argument;
-#else // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
+# else // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
         ec = boost::system::error_code(errno,
             boost::asio::error::get_system_category());
-#endif // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
+# endif // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
         return ec;
       }
     }
+#endif // defined(BOOST_ASIO_HAS_SIGNAL) || defined(BOOST_ASIO_HAS_SIGACTION)
 
     // Remove the registration from the set.
     *deletion_point = reg->next_in_set_;
@@ -347,28 +357,30 @@ boost::system::error_code signal_set_service::clear(
 
   while (registration* reg = impl.signals_)
   {
+#if defined(BOOST_ASIO_HAS_SIGNAL) || defined(BOOST_ASIO_HAS_SIGACTION)
     // Set signal handler back to the default if we're the last.
     if (state->registration_count_[reg->signal_number_] == 1)
     {
-#if defined(BOOST_ASIO_HAS_SIGACTION)
+# if defined(BOOST_ASIO_HAS_SIGACTION)
       using namespace std; // For memset.
       struct sigaction sa;
       memset(&sa, 0, sizeof(sa));
       sa.sa_handler = SIG_DFL;
       if (::sigaction(reg->signal_number_, &sa, 0) == -1)
-#else // defined(BOOST_ASIO_HAS_SIGACTION)
+# else // defined(BOOST_ASIO_HAS_SIGACTION)
       if (::signal(reg->signal_number_, SIG_DFL) == SIG_ERR)
-#endif // defined(BOOST_ASIO_HAS_SIGACTION)
+# endif // defined(BOOST_ASIO_HAS_SIGACTION)
       {
-#if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
+# if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
         ec = boost::asio::error::invalid_argument;
-#else // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
+# else // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
         ec = boost::system::error_code(errno,
             boost::asio::error::get_system_category());
-#endif // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
+# endif // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
         return ec;
       }
     }
+#endif // defined(BOOST_ASIO_HAS_SIGNAL) || defined(BOOST_ASIO_HAS_SIGACTION)
 
     // Remove the registration from the registration table.
     if (registrations_[reg->signal_number_] == reg)

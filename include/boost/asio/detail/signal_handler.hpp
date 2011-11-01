@@ -33,14 +33,15 @@ class signal_handler : public signal_op
 public:
   BOOST_ASIO_DEFINE_HANDLER_PTR(signal_handler);
 
-  signal_handler(Handler h)
+  signal_handler(Handler& h)
     : signal_op(&signal_handler::do_complete),
-      handler_(h)
+      handler_(BOOST_ASIO_MOVE_CAST(Handler)(h))
   {
   }
 
   static void do_complete(io_service_impl* owner, operation* base,
-      boost::system::error_code /*ec*/, std::size_t /*bytes_transferred*/)
+      const boost::system::error_code& /*ec*/,
+      std::size_t /*bytes_transferred*/)
   {
     // Take ownership of the handler object.
     signal_handler* h(static_cast<signal_handler*>(base));
@@ -62,7 +63,7 @@ public:
     // Make the upcall if required.
     if (owner)
     {
-      boost::asio::detail::fenced_block b;
+      fenced_block b(fenced_block::half);
       BOOST_ASIO_HANDLER_INVOCATION_BEGIN((handler.arg1_, handler.arg2_));
       boost_asio_handler_invoke_helpers::invoke(handler, handler.handler_);
       BOOST_ASIO_HANDLER_INVOCATION_END;

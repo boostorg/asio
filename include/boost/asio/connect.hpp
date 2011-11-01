@@ -517,7 +517,7 @@ Iterator connect(basic_socket<Protocol, SocketService>& s,
 template <typename Protocol, typename SocketService,
     typename Iterator, typename ComposedConnectHandler>
 void async_connect(basic_socket<Protocol, SocketService>& s,
-    Iterator begin, ComposedConnectHandler handler);
+    Iterator begin, BOOST_ASIO_MOVE_ARG(ComposedConnectHandler) handler);
 
 /// Asynchronously establishes a socket connection by trying each endpoint in a
 /// sequence.
@@ -586,7 +586,8 @@ void async_connect(basic_socket<Protocol, SocketService>& s,
 template <typename Protocol, typename SocketService,
     typename Iterator, typename ComposedConnectHandler>
 void async_connect(basic_socket<Protocol, SocketService>& s,
-    Iterator begin, Iterator end, ComposedConnectHandler handler);
+    Iterator begin, Iterator end,
+    BOOST_ASIO_MOVE_ARG(ComposedConnectHandler) handler);
 
 /// Asynchronously establishes a socket connection by trying each endpoint in a
 /// sequence.
@@ -693,7 +694,8 @@ void async_connect(basic_socket<Protocol, SocketService>& s,
 template <typename Protocol, typename SocketService, typename Iterator,
     typename ConnectCondition, typename ComposedConnectHandler>
 void async_connect(basic_socket<Protocol, SocketService>& s, Iterator begin,
-    ConnectCondition connect_condition, ComposedConnectHandler handler);
+    ConnectCondition connect_condition,
+    BOOST_ASIO_MOVE_ARG(ComposedConnectHandler) handler);
 
 /// Asynchronously establishes a socket connection by trying each endpoint in a
 /// sequence.
@@ -800,7 +802,7 @@ template <typename Protocol, typename SocketService, typename Iterator,
     typename ConnectCondition, typename ComposedConnectHandler>
 void async_connect(basic_socket<Protocol, SocketService>& s,
     Iterator begin, Iterator end, ConnectCondition connect_condition,
-    ComposedConnectHandler handler);
+    BOOST_ASIO_MOVE_ARG(ComposedConnectHandler) handler);
 
 /*@}*/
 

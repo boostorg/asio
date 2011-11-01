@@ -20,10 +20,6 @@
 #if !defined(BOOST_NO_IOSTREAM)
 
 #include <streambuf>
-#include <boost/preprocessor/arithmetic/inc.hpp>
-#include <boost/preprocessor/repetition/enum_binary_params.hpp>
-#include <boost/preprocessor/repetition/enum_params.hpp>
-#include <boost/preprocessor/repetition/repeat_from_to.hpp>
 #include <boost/utility/base_from_member.hpp>
 #include <boost/asio/basic_socket.hpp>
 #include <boost/asio/deadline_timer_service.hpp>
@@ -37,9 +33,16 @@
 #include <boost/date_time/posix_time/posix_time_types.hpp>
 #include <boost/asio/detail/pop_options.hpp>
 
-#if !defined(BOOST_ASIO_SOCKET_STREAMBUF_MAX_ARITY)
-#define BOOST_ASIO_SOCKET_STREAMBUF_MAX_ARITY 5
-#endif // !defined(BOOST_ASIO_SOCKET_STREAMBUF_MAX_ARITY)
+#if !defined(BOOST_ASIO_HAS_VARIADIC_TEMPLATES)
+
+# include <boost/preprocessor/arithmetic/inc.hpp>
+# include <boost/preprocessor/repetition/enum_binary_params.hpp>
+# include <boost/preprocessor/repetition/enum_params.hpp>
+# include <boost/preprocessor/repetition/repeat_from_to.hpp>
+
+# if !defined(BOOST_ASIO_SOCKET_STREAMBUF_MAX_ARITY)
+#  define BOOST_ASIO_SOCKET_STREAMBUF_MAX_ARITY 5
+# endif // !defined(BOOST_ASIO_SOCKET_STREAMBUF_MAX_ARITY)
 
 // A macro that should expand to:
 //   template <typename T1, ..., typename Tn>
@@ -57,7 +60,7 @@
 //   }
 // This macro should only persist within this file.
 
-#define BOOST_ASIO_PRIVATE_CONNECT_DEF( z, n, data ) \
+# define BOOST_ASIO_PRIVATE_CONNECT_DEF( z, n, data ) \
   template <BOOST_PP_ENUM_PARAMS(n, typename T)> \
   basic_socket_streambuf<Protocol, StreamSocketService, \
     Time, TimeTraits, TimerService>* connect( \
@@ -72,6 +75,8 @@
     return !ec_ ? this : 0; \
   } \
   /**/
+
+#endif // !defined(BOOST_ASIO_HAS_VARIADIC_TEMPLATES)
 
 #include <boost/asio/detail/push_options.hpp>
 
@@ -165,6 +170,19 @@ public:
   template <typename T1, ..., typename TN>
   basic_socket_streambuf<Protocol, StreamSocketService>* connect(
       T1 t1, ..., TN tn);
+#elif defined(BOOST_ASIO_HAS_VARIADIC_TEMPLATES)
+  template <typename... T>
+  basic_socket_streambuf<Protocol, StreamSocketService,
+    Time, TimeTraits, TimerService>* connect(T... x)
+  {
+    init_buffers();
+    this->basic_socket<Protocol, StreamSocketService>::close(ec_);
+    typedef typename Protocol::resolver resolver_type;
+    typedef typename resolver_type::query resolver_query;
+    resolver_query query(x...);
+    resolve_and_connect(query);
+    return !ec_ ? this : 0;
+  }
 #else
   BOOST_PP_REPEAT_FROM_TO(
       1, BOOST_PP_INC(BOOST_ASIO_SOCKET_STREAMBUF_MAX_ARITY),
@@ -280,8 +298,8 @@ protected:
       if (ec_)
         return traits_type::eof();
 
-      setg(get_buffer_.begin(), get_buffer_.begin() + putback_max,
-          get_buffer_.begin() + putback_max + bytes_transferred_);
+      setg(&get_buffer_[0], &get_buffer_[0] + putback_max,
+          &get_buffer_[0] + putback_max + bytes_transferred_);
       return traits_type::to_int_type(*gptr());
     }
     else
@@ -349,7 +367,7 @@ protected:
 
         buffer = buffer + bytes_transferred_;
       }
-      setp(put_buffer_.begin(), put_buffer_.end());
+      setp(&put_buffer_[0], &put_buffer_[0] + put_buffer_.size());
 
       // If the new character is eof then our work here is done.
       if (traits_type::eq_int_type(c, traits_type::eof()))
@@ -392,13 +410,13 @@ protected:
 private:
   void init_buffers()
   {
-    setg(get_buffer_.begin(),
-        get_buffer_.begin() + putback_max,
-        get_buffer_.begin() + putback_max);
+    setg(&get_buffer_[0],
+        &get_buffer_[0] + putback_max,
+        &get_buffer_[0] + putback_max);
     if (unbuffered_)
       setp(0, 0);
     else
-      setp(put_buffer_.begin(), put_buffer_.end());
+      setp(&put_buffer_[0], &put_buffer_[0] + put_buffer_.size());
   }
 
   template <typename ResolverQuery>
@@ -521,7 +539,9 @@ private:
 
 #include <boost/asio/detail/pop_options.hpp>
 
-#undef BOOST_ASIO_PRIVATE_CONNECT_DEF
+#if !defined(BOOST_ASIO_HAS_VARIADIC_TEMPLATES)
+# undef BOOST_ASIO_PRIVATE_CONNECT_DEF
+#endif // !defined(BOOST_ASIO_HAS_VARIADIC_TEMPLATES)
 
 #endif // !defined(BOOST_NO_IOSTREAM)
 

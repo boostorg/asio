@@ -201,9 +201,11 @@ public:
   /// Start an asynchronous connect.
   template <typename ConnectHandler>
   void async_connect(implementation_type& impl,
-      const endpoint_type& peer_endpoint, ConnectHandler handler)
+      const endpoint_type& peer_endpoint,
+      BOOST_ASIO_MOVE_ARG(ConnectHandler) handler)
   {
-    service_impl_.async_connect(impl, peer_endpoint, handler);
+    service_impl_.async_connect(impl, peer_endpoint,
+        BOOST_ASIO_MOVE_CAST(ConnectHandler)(handler));
   }
 
   /// Set a socket option.
@@ -290,9 +292,11 @@ public:
   template <typename ConstBufferSequence, typename WriteHandler>
   void async_send(implementation_type& impl,
       const ConstBufferSequence& buffers,
-      socket_base::message_flags flags, WriteHandler handler)
+      socket_base::message_flags flags,
+      BOOST_ASIO_MOVE_ARG(WriteHandler) handler)
   {
-    service_impl_.async_send(impl, buffers, flags, handler);
+    service_impl_.async_send(impl, buffers, flags,
+        BOOST_ASIO_MOVE_CAST(WriteHandler)(handler));
   }
 
   /// Receive some data from the peer.
@@ -308,9 +312,11 @@ public:
   template <typename MutableBufferSequence, typename ReadHandler>
   void async_receive(implementation_type& impl,
       const MutableBufferSequence& buffers,
-      socket_base::message_flags flags, ReadHandler handler)
+      socket_base::message_flags flags,
+      BOOST_ASIO_MOVE_ARG(ReadHandler) handler)
   {
-    service_impl_.async_receive(impl, buffers, flags, handler);
+    service_impl_.async_receive(impl, buffers, flags,
+        BOOST_ASIO_MOVE_CAST(ReadHandler)(handler));
   }
 
 private:

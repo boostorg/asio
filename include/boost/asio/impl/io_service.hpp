@@ -33,6 +33,13 @@ inline Service& use_service(io_service& ios)
   return ios.service_registry_->template use_service<Service>();
 }
 
+template <>
+inline detail::io_service_impl& use_service<detail::io_service_impl>(
+    io_service& ios)
+{
+  return ios.impl_;
+}
+
 template <typename Service>
 inline void add_service(io_service& ios, Service* svc)
 {
@@ -70,23 +77,24 @@ namespace boost {
 namespace asio {
 
 template <typename CompletionHandler>
-inline void io_service::dispatch(CompletionHandler handler)
+inline void io_service::dispatch(
+    BOOST_ASIO_MOVE_ARG(CompletionHandler) handler)
 {
   // If you get an error on the following line it means that your handler does
   // not meet the documented type requirements for a CompletionHandler.
   BOOST_ASIO_COMPLETION_HANDLER_CHECK(CompletionHandler, handler) type_check;
 
-  impl_.dispatch(handler);
+  impl_.dispatch(BOOST_ASIO_MOVE_CAST(CompletionHandler)(handler));
 }
 
 template <typename CompletionHandler>
-inline void io_service::post(CompletionHandler handler)
+inline void io_service::post(BOOST_ASIO_MOVE_ARG(CompletionHandler) handler)
 {
   // If you get an error on the following line it means that your handler does
   // not meet the documented type requirements for a CompletionHandler.
   BOOST_ASIO_COMPLETION_HANDLER_CHECK(CompletionHandler, handler) type_check;
 
-  impl_.post(handler);
+  impl_.post(BOOST_ASIO_MOVE_CAST(CompletionHandler)(handler));
 }
 
 template <typename Handler>
@@ -101,25 +109,25 @@ io_service::wrap(Handler handler)
 }
 
 inline io_service::work::work(boost::asio::io_service& io_service)
-  : io_service_(io_service)
+  : io_service_impl_(io_service.impl_)
 {
-  io_service_.impl_.work_started();
+  io_service_impl_.work_started();
 }
 
 inline io_service::work::work(const work& other)
-  : io_service_(other.io_service_)
+  : io_service_impl_(other.io_service_impl_)
 {
-  io_service_.impl_.work_started();
+  io_service_impl_.work_started();
 }
 
 inline io_service::work::~work()
 {
-  io_service_.impl_.work_finished();
+  io_service_impl_.work_finished();
 }
 
 inline boost::asio::io_service& io_service::work::get_io_service()
 {
-  return io_service_;
+  return io_service_impl_.get_io_service();
 }
 
 inline boost::asio::io_service& io_service::service::get_io_service()

@@ -950,7 +950,7 @@ public:
    */
   template <typename SocketService, typename AcceptHandler>
   void async_accept(basic_socket<protocol_type, SocketService>& peer,
-      AcceptHandler handler)
+      BOOST_ASIO_MOVE_ARG(AcceptHandler) handler)
   {
     // If you get an error on the following line it means that your handler does
     // not meet the documented type requirements for a AcceptHandler.
@@ -1058,7 +1058,7 @@ public:
    */
   template <typename SocketService, typename AcceptHandler>
   void async_accept(basic_socket<protocol_type, SocketService>& peer,
-      endpoint_type& peer_endpoint, AcceptHandler handler)
+      endpoint_type& peer_endpoint, BOOST_ASIO_MOVE_ARG(AcceptHandler) handler)
   {
     // If you get an error on the following line it means that your handler does
     // not meet the documented type requirements for a AcceptHandler.

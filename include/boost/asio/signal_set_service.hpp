@@ -96,9 +96,11 @@ public:
 
   // Start an asynchronous operation to wait for a signal to be delivered.
   template <typename SignalHandler>
-  void async_wait(implementation_type& impl, SignalHandler handler)
+  void async_wait(implementation_type& impl,
+      BOOST_ASIO_MOVE_ARG(SignalHandler) handler)
   {
-    service_impl_.async_wait(impl, handler);
+    service_impl_.async_wait(impl,
+        BOOST_ASIO_MOVE_CAST(SignalHandler)(handler));
   }
 
 private:

@@ -214,6 +214,8 @@ std::size_t read(SyncReadStream& s, const MutableBufferSequence& buffers,
  * This function is used to read a certain number of bytes of data from a
  * stream. The call will block until one of the following conditions is true:
  *
+ * @li The supplied buffer is full (that is, it has reached maximum size).
+ *
  * @li An error occurred.
  *
  * This operation is implemented in terms of zero or more calls to the stream's
@@ -240,6 +242,8 @@ std::size_t read(SyncReadStream& s, basic_streambuf<Allocator>& b);
 /**
  * This function is used to read a certain number of bytes of data from a
  * stream. The call will block until one of the following conditions is true:
+ *
+ * @li The supplied buffer is full (that is, it has reached maximum size).
  *
  * @li An error occurred.
  *
@@ -268,6 +272,8 @@ std::size_t read(SyncReadStream& s, basic_streambuf<Allocator>& b,
 /**
  * This function is used to read a certain number of bytes of data from a
  * stream. The call will block until one of the following conditions is true:
+ *
+ * @li The supplied buffer is full (that is, it has reached maximum size).
  *
  * @li The completion_condition function object returns 0.
  *
@@ -306,6 +312,8 @@ std::size_t read(SyncReadStream& s, basic_streambuf<Allocator>& b,
 /**
  * This function is used to read a certain number of bytes of data from a
  * stream. The call will block until one of the following conditions is true:
+ *
+ * @li The supplied buffer is full (that is, it has reached maximum size).
  *
  * @li The completion_condition function object returns 0.
  *
@@ -415,7 +423,7 @@ std::size_t read(SyncReadStream& s, basic_streambuf<Allocator>& b,
 template <typename AsyncReadStream, typename MutableBufferSequence,
     typename ReadHandler>
 void async_read(AsyncReadStream& s, const MutableBufferSequence& buffers,
-    ReadHandler handler);
+    BOOST_ASIO_MOVE_ARG(ReadHandler) handler);
 
 /// Start an asynchronous operation to read a certain amount of data from a
 /// stream.
@@ -483,7 +491,8 @@ void async_read(AsyncReadStream& s, const MutableBufferSequence& buffers,
 template <typename AsyncReadStream, typename MutableBufferSequence,
     typename CompletionCondition, typename ReadHandler>
 void async_read(AsyncReadStream& s, const MutableBufferSequence& buffers,
-    CompletionCondition completion_condition, ReadHandler handler);
+    CompletionCondition completion_condition,
+    BOOST_ASIO_MOVE_ARG(ReadHandler) handler);
 
 #if !defined(BOOST_NO_IOSTREAM)
 
@@ -494,6 +503,8 @@ void async_read(AsyncReadStream& s, const MutableBufferSequence& buffers,
  * data from a stream. The function call always returns immediately. The
  * asynchronous operation will continue until one of the following conditions is
  * true:
+ *
+ * @li The supplied buffer is full (that is, it has reached maximum size).
  *
  * @li An error occurred.
  *
@@ -535,7 +546,7 @@ void async_read(AsyncReadStream& s, const MutableBufferSequence& buffers,
  */
 template <typename AsyncReadStream, typename Allocator, typename ReadHandler>
 void async_read(AsyncReadStream& s, basic_streambuf<Allocator>& b,
-    ReadHandler handler);
+    BOOST_ASIO_MOVE_ARG(ReadHandler) handler);
 
 /// Start an asynchronous operation to read a certain amount of data from a
 /// stream.
@@ -544,6 +555,8 @@ void async_read(AsyncReadStream& s, basic_streambuf<Allocator>& b,
  * data from a stream. The function call always returns immediately. The
  * asynchronous operation will continue until one of the following conditions is
  * true:
+ *
+ * @li The supplied buffer is full (that is, it has reached maximum size).
  *
  * @li The completion_condition function object returns 0.
  *
@@ -594,7 +607,8 @@ void async_read(AsyncReadStream& s, basic_streambuf<Allocator>& b,
 template <typename AsyncReadStream, typename Allocator,
     typename CompletionCondition, typename ReadHandler>
 void async_read(AsyncReadStream& s, basic_streambuf<Allocator>& b,
-    CompletionCondition completion_condition, ReadHandler handler);
+    CompletionCondition completion_condition,
+    BOOST_ASIO_MOVE_ARG(ReadHandler) handler);
 
 #endif // !defined(BOOST_NO_IOSTREAM)
 

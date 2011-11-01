@@ -131,9 +131,10 @@ public:
 
   // Start an asynchronous wait on the timer.
   template <typename WaitHandler>
-  void async_wait(implementation_type& impl, WaitHandler handler)
+  void async_wait(implementation_type& impl,
+      BOOST_ASIO_MOVE_ARG(WaitHandler) handler)
   {
-    service_impl_.async_wait(impl, handler);
+    service_impl_.async_wait(impl, BOOST_ASIO_MOVE_CAST(WaitHandler)(handler));
   }
 
 private:

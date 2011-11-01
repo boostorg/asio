@@ -15,7 +15,6 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include <boost/asio/detail/call_stack.hpp>
 #include <boost/asio/detail/completion_handler.hpp>
 #include <boost/asio/detail/fenced_block.hpp>
 #include <boost/asio/detail/handler_alloc_helpers.hpp>
@@ -28,11 +27,11 @@ namespace asio {
 namespace detail {
 
 template <typename Handler>
-void task_io_service::dispatch(Handler& handler)
+void task_io_service::dispatch(Handler handler)
 {
-  if (call_stack<task_io_service>::contains(this))
+  if (thread_call_stack::contains(this))
   {
-    boost::asio::detail::fenced_block b;
+    fenced_block b(fenced_block::full);
     boost_asio_handler_invoke_helpers::invoke(handler, handler);
   }
   else
@@ -52,7 +51,7 @@ void task_io_service::dispatch(Handler& handler)
 }
 
 template <typename Handler>
-void task_io_service::post(Handler& handler)
+void task_io_service::post(Handler handler)
 {
   // Allocate and construct an operation to wrap the handler.
   typedef completion_handler<Handler> op;

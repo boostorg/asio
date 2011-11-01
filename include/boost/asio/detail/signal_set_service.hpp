@@ -17,8 +17,8 @@
 
 #include <boost/asio/detail/config.hpp>
 
-#include <csignal>
 #include <cstddef>
+#include <signal.h>
 #include <boost/asio/error.hpp>
 #include <boost/asio/io_service.hpp>
 #include <boost/asio/detail/handler_alloc_helpers.hpp>
@@ -144,7 +144,7 @@ public:
 
   // Start an asynchronous operation to wait for a signal to be delivered.
   template <typename Handler>
-  void async_wait(implementation_type& impl, Handler& handler)
+  void async_wait(implementation_type& impl, Handler handler)
   {
     // Allocate and construct an operation to wrap the handler.
     typedef signal_handler<Handler> op;

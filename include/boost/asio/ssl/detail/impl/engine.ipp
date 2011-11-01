@@ -38,6 +38,10 @@ engine::engine(SSL_CTX* context)
 
   ::SSL_set_mode(ssl_, SSL_MODE_ENABLE_PARTIAL_WRITE);
   ::SSL_set_mode(ssl_, SSL_MODE_ACCEPT_MOVING_WRITE_BUFFER);
+#if defined(SSL_MODE_RELEASE_BUFFERS)
+  ::SSL_set_mode(ssl_, SSL_MODE_RELEASE_BUFFERS);
+#endif // defined(SSL_MODE_RELEASE_BUFFERS)
+
   ::BIO* int_bio = 0;
   ::BIO_new_bio_pair(&int_bio, 0, &ext_bio_, 0);
   ::SSL_set_bio(ssl_, int_bio, int_bio);
@@ -122,6 +126,12 @@ engine::want engine::shutdown(boost::system::error_code& ec)
 engine::want engine::write(const boost::asio::const_buffer& data,
     boost::system::error_code& ec, std::size_t& bytes_transferred)
 {
+  if (boost::asio::buffer_size(data) == 0)
+  {
+    ec = boost::system::error_code();
+    return engine::want_nothing;
+  }
+
   return perform(&engine::do_write,
       const_cast<void*>(boost::asio::buffer_cast<const void*>(data)),
       boost::asio::buffer_size(data), ec, &bytes_transferred);
@@ -130,6 +140,12 @@ engine::want engine::write(const boost::asio::const_buffer& data,
 engine::want engine::read(const boost::asio::mutable_buffer& data,
     boost::system::error_code& ec, std::size_t& bytes_transferred)
 {
+  if (boost::asio::buffer_size(data) == 0)
+  {
+    ec = boost::system::error_code();
+    return engine::want_nothing;
+  }
+
   return perform(&engine::do_read,
       boost::asio::buffer_cast<void*>(data),
       boost::asio::buffer_size(data), ec, &bytes_transferred);
@@ -179,9 +195,13 @@ const boost::system::error_code& engine::map_error_code(
     return ec;
 
   // Otherwise, the peer should have negotiated a proper shutdown.
-  ec = boost::system::error_code(
-      ERR_PACK(ERR_LIB_SSL, 0, SSL_R_SHORT_READ),
-      boost::asio::error::get_ssl_category());
+  if ((::SSL_get_shutdown(ssl_) & SSL_RECEIVED_SHUTDOWN) == 0)
+  {
+    ec = boost::system::error_code(
+        ERR_PACK(ERR_LIB_SSL, 0, SSL_R_SHORT_READ),
+        boost::asio::error::get_ssl_category());
+  }
+
   return ec;
 }
 

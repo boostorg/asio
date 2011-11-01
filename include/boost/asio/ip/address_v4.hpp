@@ -73,12 +73,29 @@ public:
   {
   }
 
+#if defined(BOOST_ASIO_HAS_MOVE)
+  /// Move constructor.
+  address_v4(address_v4&& other)
+    : addr_(other.addr_)
+  {
+  }
+#endif // defined(BOOST_ASIO_HAS_MOVE)
+
   /// Assign from another address.
   address_v4& operator=(const address_v4& other)
   {
     addr_ = other.addr_;
     return *this;
   }
+
+#if defined(BOOST_ASIO_HAS_MOVE)
+  /// Move-assign from another address.
+  address_v4& operator=(address_v4&& other)
+  {
+    addr_ = other.addr_;
+    return *this;
+  }
+#endif // defined(BOOST_ASIO_HAS_MOVE)
 
   /// Get the address in bytes, in network byte order.
   BOOST_ASIO_DECL bytes_type to_bytes() const;

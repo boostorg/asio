@@ -21,6 +21,7 @@
 
 #include <boost/limits.hpp>
 #include <boost/asio/io_service.hpp>
+#include <boost/asio/detail/call_stack.hpp>
 #include <boost/asio/detail/mutex.hpp>
 #include <boost/asio/detail/op_queue.hpp>
 #include <boost/asio/detail/scoped_ptr.hpp>
@@ -45,10 +46,11 @@ class win_iocp_io_service
   : public boost::asio::detail::service_base<win_iocp_io_service>
 {
 public:
-  // Constructor.
-  BOOST_ASIO_DECL win_iocp_io_service(boost::asio::io_service& io_service);
 
-  BOOST_ASIO_DECL void init(size_t concurrency_hint);
+  // Constructor. Specifies a concurrency hint that is passed through to the
+  // underlying I/O completion port.
+  BOOST_ASIO_DECL win_iocp_io_service(boost::asio::io_service& io_service,
+      size_t concurrency_hint = 0);
 
   // Destroy all user-defined handler objects owned by the service.
   BOOST_ASIO_DECL void shutdown_service();
@@ -102,13 +104,19 @@ public:
       stop();
   }
 
+  // Return whether a handler can be dispatched immediately.
+  bool can_dispatch()
+  {
+    return call_stack<win_iocp_io_service>::contains(this) != 0;
+  }
+
   // Request invocation of the given handler.
   template <typename Handler>
-  void dispatch(Handler& handler);
+  void dispatch(Handler handler);
 
   // Request invocation of the given handler and return immediately.
   template <typename Handler>
-  void post(Handler& handler);
+  void post(Handler handler);
 
   // Request invocation of the given operation and return immediately. Assumes
   // that work_started() has not yet been called for the operation.
@@ -126,6 +134,10 @@ public:
   // that work_started() was previously called for the operations.
   BOOST_ASIO_DECL void post_deferred_completions(
       op_queue<win_iocp_operation>& ops);
+
+  // Process unfinished operations as part of a shutdown_service operation.
+  // Assumes that work_started() was previously called for the operations.
+  BOOST_ASIO_DECL void abandon_operations(op_queue<operation>& ops);
 
   // Called after starting an overlapped I/O operation that did not complete
   // immediately. The caller must have already called work_started() prior to
