@@ -7,10 +7,206 @@
 
 [section:history Revision History]
 
+[heading Asio 1.6.1 / Boost 1.48]
+
+* Implemented various performance improvements, including:
+  * Using thread-local operation queues in single-threaded use cases (i.e. when
+    `concurrency_hint` is 1) to eliminate a lock/unlock pair. 
+  * Allowing some `epoll_reactor` speculative operations to be performed
+    without holding the lock. 
+  * Improving locality of reference by performing an `epoll_reactor`'s I/O
+    operation immediately before the corresponding handler is called. This also
+    improves scalability across CPUs when multiple threads are running the
+    `io_service`. 
+  * Specialising asynchronous read and write operations for buffer sequences
+    that are arrays (`boost::array` or `std::array`) of exactly two buffers.
+* Fixed a compile error in the regex overload of `async_read_until`
+  ([@https://svn.boost.org/trac/boost/ticket/5688 #5688]).
+* Fixed a Windows-specific compile error by explicitly specifying the
+  `signal()` function from the global namespace
+  ([@https://svn.boost.org/trac/boost/ticket/5722 #5722]).
+* Changed the `deadline_timer` implementation so that it does not read the
+  clock unless the timer heap is non-empty.
+* Changed the SSL stream's buffers' sizes so that they are large enough to hold
+  a complete TLS record ([@https://svn.boost.org/trac/boost/ticket/5854 #5854]).
+* Fixed the behaviour of the synchronous `null_buffers` operations so that they
+  obey the user's non-blocking setting
+  ([@https://svn.boost.org/trac/boost/ticket/5756 #5756]).
+* Changed to set the size of the select `fd_set` at runtime when using Windows.
+* Disabled an MSVC warning due to const qualifier being applied to function type.
+* Fixed a crash due that occurs when using the Intel C++ compiler
+  ([@https://svn.boost.org/trac/boost/ticket/5763 #5763]).
+* Changed the initialisation of the OpenSSL library so that it supports all
+  available algorithms.
+* Fixed the SSL error mapping used when the session is gracefully shut down.
+* Added some latency test programs.
+* Clarified that a read operation ends when the buffer is full
+  ([@https://svn.boost.org/trac/boost/ticket/5999 #5999]).
+* Fixed an exception safety issue in `epoll_reactor` initialisation
+  ([@https://svn.boost.org/trac/boost/ticket/6006 #6006]).
+* Made the number of strand implementations configurable by defining
+  `BOOST_ASIO_STRAND_IMPLEMENTATIONS` to the desired number.
+* Added support for a new `BOOST_ASIO_ENABLE_SEQUENTIAL_STRAND_ALLOCATION` flag
+  which switches the allocation of strand implementations to use a round-robin
+  approach rather than hashing.
+* Fixed potential strand starvation issue that can occur when `strand.post()`
+  is used.
+
+[heading Asio 1.6.0 / Boost 1.47]
+
+* Added support for signal handling, using a new class called `signal_set`.
+  Programs may add one or more signals to the set, and then perform an
+  `async_wait()` operation. The specified handler will be called when one of
+  the signals occurs. The same signal number may be registered with multiple
+  `signal_set` objects, however the signal number must be used only with Asio.
+  Addresses [@https://svn.boost.org/trac/boost/ticket/2879 #2879].
+* Added handler tracking, a new debugging aid. When enabled by defining
+  `BOOST_ASIO_ENABLE_HANDLER_TRACKING`, Asio writes debugging output to the
+  standard error stream. The output records asynchronous operations and the
+  relationships between their handlers. It may be post-processed using the
+  included [^handlerviz.pl] tool to create a visual representation of the
+  handlers (requires GraphViz).
+* Added support for timeouts on socket iostreams, such as `ip::tcp::iostream`.
+  A timeout is set by calling `expires_at()` or `expires_from_now()` to
+  establish a deadline. Any socket operations which occur past the deadline
+  will put the iostream into a bad state.
+* Added a new `error()` member function to socket iostreams, for retrieving the
+  error code from the most recent system call.
+* Added a new `basic_deadline_timer::cancel_one()` function. This function lets
+  you cancel a single waiting handler on a timer. Handlers are cancelled in
+  FIFO order.
+* Added a new `transfer_exactly()` completion condition. This can be used to
+  send or receive a specified number of bytes even if the total size of the
+  buffer (or buffer sequence) is larger.
+* Added new free functions `connect()` and `async_connect()`. These operations
+  try each endpoint in a list until the socket is successfully connected, and
+  are useful for creating TCP clients that work with both IPv4 and IPv6.
+* Extended the `buffer_size()` function so that it works for buffer sequences
+  in addition to individual buffers.
+* Added a new `buffer_copy()` function that can be used to copy the raw bytes
+  between individual buffers and buffer sequences.
+* Added new non-throwing overloads of `read()`, `read_at()`, `write()` and
+  `write_at()` that do not require a completion condition.
+* Added friendlier compiler errors for when a completion handler does not meet
+  the necessary type requirements. When C++0x is available (currently supported
+  for [^g++] 4.5 or later, and MSVC 10), `static_assert` is also used to
+  generate an informative error message. This checking may be disabled by
+  defining `BOOST_ASIO_DISABLE_HANDLER_TYPE_REQUIREMENTS`.
+* Added a new, completely rewritten SSL implementation. The new implementation
+  compiles faster, shows substantially improved performance, and supports
+  custom memory allocation and handler invocation. It includes new API features
+  such as certificate verification callbacks and has improved error reporting.
+  The new implementation is source-compatible with the old for most uses.
+  However, if necessary, the old implementation may still be used by defining
+  `BOOST_ASIO_ENABLE_OLD_SSL`.
+  Addresses [@https://svn.boost.org/trac/boost/ticket/3702 #3702],
+  [@https://svn.boost.org/trac/boost/ticket/3958 #3958].
+* Changed the separate compilation support such that, to use Asio's SSL
+  capabilities, you should also include `boost/asio/ssl/impl/src.hpp` in one
+  source file in your program.
+* Changed the SSL implementation to support build environments where SSL v2 is
+  explicitly disabled ([@https://svn.boost.org/trac/boost/ticket/5453 #5453]).
+* Made the `is_loopback()`, `is_unspecified()` and `is_multicast()` functions
+  consistently available across the `ip::address`, `ip::address_v4` and
+  `ip::address_v6` classes
+  ([@https://svn.boost.org/trac/boost/ticket/3939 #3939]).
+* Added new `non_blocking()` functions for managing the non-blocking behaviour
+  of a socket or descriptor. The `io_control()` commands named `non_blocking_io`
+  are now deprecated in favour of these new functions.
+* Added new `native_non_blocking()` functions for managing the non-blocking
+  mode of the underlying socket or descriptor. These functions are intended to
+  allow the encapsulation of arbitrary non-blocking system calls as
+  asynchronous operations, in a way that is transparent to the user of the
+  socket object. The functions have no effect on the behaviour of the
+  synchronous operations of the socket or descriptor.
+* Added the `io_control()` member function for socket acceptors
+  ([@https://svn.boost.org/trac/boost/ticket/3297 #3297]).
+* Added a `release()` member function to posix descriptors. This function
+  releases ownership of the underlying native descriptor to the caller.
+  Addresses [@https://svn.boost.org/trac/boost/ticket/3900 #3900].
+* Added support for sequenced packet sockets (`SOCK_SEQPACKET`).
+* Added a new `io_service::stopped()` function that can be used to determine
+  whether the `io_service` has stopped (i.e. a `reset()` call is needed prior
+  to any further calls to `run()`, `run_one()`, `poll()` or `poll_one()`).
+* For consistency with the C++0x standard library, deprecated the `native_type`
+  typedefs in favour of `native_handle_type`, and the `native()` member
+  functions in favour of `native_handle()`.
+* Added support for C++0x move construction and assignment to sockets, serial
+  ports, POSIX descriptors and Windows handles.
+* Reduced the copying of handler function objects.
+* Added support for C++0x move construction to further reduce (and in some
+  cases eliminate) copying of handler objects.
+* Added support for the `fork()` system call. Programs that use `fork()` must
+  call `io_service.notify_fork()` at the appropriate times. Two new examples
+  have been added showing how to use this feature. Addresses
+  [@https://svn.boost.org/trac/boost/ticket/3238 #3238],
+  [@https://svn.boost.org/trac/boost/ticket/4162 #4162].
+* Cleaned up the handling of errors reported by the `close()` system call. In
+  particular, assume that most operating systems won't have `close()` fail with
+  `EWOULDBLOCK`, but if it does then set the blocking mode and restart the call.
+  If any other error occurs, assume the descriptor is closed. Addresses
+  [@https://svn.boost.org/trac/boost/ticket/3307 #3307].
+* Added new `asio::buffer()` overloads for `std::array`, when available.
+* Changed the implementation to use the C++0x standard library templates
+  `array`, `shared_ptr`, `weak_ptr` and `atomic` when they are available,
+  rather than the Boost equivalents.
+* Use C++0x variadic templates when available, rather than generating function
+  overloads using Boost.Preprocessor.
+* Changed exception reporting to include the function name in exception `what()`
+  messages.
+* Fixed insufficient initialisers warning with MinGW.
+* Changed the `shutdown_service()` member functions to be private.
+* Added archetypes for testing socket option functions.
+* Changed the Boost.Asio examples so that they don't use Boost.Thread's
+  convenience header. Use the header file that is specifically for the
+  boost::thread class instead.
+* Removed the dependency on OS-provided macros for the well-known IPv4 and IPv6
+  addresses. This should eliminate annoying "missing braces around initializer"
+  warnings ([@https://svn.boost.org/trac/boost/ticket/3741 #3741]).
+* Reduced the size of `ip::basic_endpoint<>` objects (such as
+  `ip::tcp::endpoint` and `ip::udp::endpoint`).
+* Changed the reactor backends to assume that any descriptors or sockets added
+  using `assign()` may have been `dup()`-ed, and so require explicit
+  deregistration from the reactor
+  ([@https://svn.boost.org/trac/boost/ticket/4971 #4971]).
+* Removed the deprecated member functions named `io_service()`. The
+  `get_io_service()` member functions should be used instead.
+* Removed the deprecated typedefs `resolver_query` and `resolver_iterator` from
+  the `ip::tcp`, `ip::udp` and `ip::icmp` classes.
+* Modified the `buffers_iterator<>` and `ip::basic_resolver_iterator` classes
+  so that the value_type typedefs are non-const byte types.
+* Fixed warnings reported by g++'s [^-Wshadow] compiler option
+  ([@https://svn.boost.org/trac/boost/ticket/3905 #3905]).
+* Added an explicit cast to convert the `FIONBIO` constant to int, to suppress
+  a compiler warning on some platforms
+  ([@https://svn.boost.org/trac/boost/ticket/5128 #5128]).
+* Changed most examples to treat a failure by an accept operation as non-fatal
+  ([@https://svn.boost.org/trac/boost/ticket/5124 #5124]).
+* Fixed an error in the [^tick_count_timer] example by making the duration type
+  signed. Previously, a wait on an already-passed deadline would not return for
+  a very long time ([@https://svn.boost.org/trac/boost/ticket/5418 #5418]).
+
+[heading Asio 1.4.9 / Boost 1.46.1]
+
+* `EV_ONESHOT` seems to cause problems on some versions of Mac OS X, with the
+  `io_service` destructor getting stuck inside the `close()` system call.
+  Changed the kqueue backend to use `EV_CLEAR` instead
+  ([@https://svn.boost.org/trac/boost/ticket/5021 #5021]).
+* Fixed compile failures with some versions of [^g++] due to the use of
+  anonymous enums ([@https://svn.boost.org/trac/boost/ticket/4883 #4883]).
+* Fixed a bug on kqueue-based platforms, where some system calls that
+  repeatedly fail with `EWOULDBLOCK` are not correctly re-registered with
+  kqueue.
+* Changed `asio::streambuf` to ensure that its internal pointers are updated
+  correctly after the data has been modified using `std::streambuf` member
+  functions.
+* Fixed a bug that prevented the linger socket option from working on platforms
+  other than Windows.
+
 [heading Asio 1.4.8 / Boost 1.46]
 
-* Fixed an integer overflow problem that occurs when `ip::address_v4::netmask()`
-  is used on 64-bit platforms.
+* Fixed an integer overflow problem that occurs when
+  `ip::address_v4::broadcast()` is used on 64-bit platforms.
 * Fixed a problem on older Linux kernels (where epoll is used without timerfd
   support) that prevents timely delivery of deadline_timer handlers, after the
   program has been running for some time

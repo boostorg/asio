@@ -34,10 +34,10 @@ public:
   /// Run the server's io_service loop.
   void run();
 
-  /// Stop the server.
-  void stop();
-
 private:
+  /// Initiate an asynchronous accept operation.
+  void start_accept();
+
   /// Handle completion of an asynchronous accept operation.
   void handle_accept(const boost::system::error_code& e);
 

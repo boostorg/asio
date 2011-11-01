@@ -19,6 +19,7 @@
 // Test that header file is self-contained.
 #include <boost/asio/ip/tcp.hpp>
 
+#include <boost/array.hpp>
 #include <boost/bind.hpp>
 #include <cstring>
 #include <boost/asio/io_service.hpp>
@@ -156,6 +157,12 @@ void test()
     io_service ios;
     char mutable_char_buffer[128] = "";
     const char const_char_buffer[128] = "";
+    boost::array<boost::asio::mutable_buffer, 2> mutable_buffers = {{
+        boost::asio::buffer(mutable_char_buffer, 10),
+        boost::asio::buffer(mutable_char_buffer + 10, 10) }};
+    boost::array<boost::asio::const_buffer, 2> const_buffers = {{
+        boost::asio::buffer(const_char_buffer, 10),
+        boost::asio::buffer(const_char_buffer + 10, 10) }};
     socket_base::message_flags in_flags = 0;
     archetypes::settable_socket_option<void> settable_socket_option1;
     archetypes::settable_socket_option<int> settable_socket_option2;
@@ -248,8 +255,10 @@ void test()
     socket1.connect(ip::tcp::endpoint(ip::tcp::v4(), 0), ec);
     socket1.connect(ip::tcp::endpoint(ip::tcp::v6(), 0), ec);
 
-    socket1.async_connect(ip::tcp::endpoint(ip::tcp::v4(), 0), connect_handler);
-    socket1.async_connect(ip::tcp::endpoint(ip::tcp::v6(), 0), connect_handler);
+    socket1.async_connect(ip::tcp::endpoint(ip::tcp::v4(), 0),
+        &connect_handler);
+    socket1.async_connect(ip::tcp::endpoint(ip::tcp::v6(), 0),
+        &connect_handler);
 
     socket1.set_option(settable_socket_option1);
     socket1.set_option(settable_socket_option1, ec);
@@ -291,51 +300,76 @@ void test()
 
     socket1.send(buffer(mutable_char_buffer));
     socket1.send(buffer(const_char_buffer));
+    socket1.send(mutable_buffers);
+    socket1.send(const_buffers);
     socket1.send(null_buffers());
     socket1.send(buffer(mutable_char_buffer), in_flags);
     socket1.send(buffer(const_char_buffer), in_flags);
+    socket1.send(mutable_buffers, in_flags);
+    socket1.send(const_buffers, in_flags);
     socket1.send(null_buffers(), in_flags);
     socket1.send(buffer(mutable_char_buffer), in_flags, ec);
     socket1.send(buffer(const_char_buffer), in_flags, ec);
+    socket1.send(mutable_buffers, in_flags, ec);
+    socket1.send(const_buffers, in_flags, ec);
     socket1.send(null_buffers(), in_flags, ec);
 
-    socket1.async_send(buffer(mutable_char_buffer), send_handler);
-    socket1.async_send(buffer(const_char_buffer), send_handler);
-    socket1.async_send(null_buffers(), send_handler);
-    socket1.async_send(buffer(mutable_char_buffer), in_flags, send_handler);
-    socket1.async_send(buffer(const_char_buffer), in_flags, send_handler);
-    socket1.async_send(null_buffers(), in_flags, send_handler);
+    socket1.async_send(buffer(mutable_char_buffer), &send_handler);
+    socket1.async_send(buffer(const_char_buffer), &send_handler);
+    socket1.async_send(mutable_buffers, &send_handler);
+    socket1.async_send(const_buffers, &send_handler);
+    socket1.async_send(null_buffers(), &send_handler);
+    socket1.async_send(buffer(mutable_char_buffer), in_flags, &send_handler);
+    socket1.async_send(buffer(const_char_buffer), in_flags, &send_handler);
+    socket1.async_send(mutable_buffers, in_flags, &send_handler);
+    socket1.async_send(const_buffers, in_flags, &send_handler);
+    socket1.async_send(null_buffers(), in_flags, &send_handler);
 
     socket1.receive(buffer(mutable_char_buffer));
+    socket1.receive(mutable_buffers);
     socket1.receive(null_buffers());
     socket1.receive(buffer(mutable_char_buffer), in_flags);
+    socket1.receive(mutable_buffers, in_flags);
     socket1.receive(null_buffers(), in_flags);
     socket1.receive(buffer(mutable_char_buffer), in_flags, ec);
+    socket1.receive(mutable_buffers, in_flags, ec);
     socket1.receive(null_buffers(), in_flags, ec);
 
-    socket1.async_receive(buffer(mutable_char_buffer), receive_handler);
-    socket1.async_receive(null_buffers(), receive_handler);
+    socket1.async_receive(buffer(mutable_char_buffer), &receive_handler);
+    socket1.async_receive(mutable_buffers, &receive_handler);
+    socket1.async_receive(null_buffers(), &receive_handler);
     socket1.async_receive(buffer(mutable_char_buffer), in_flags,
-        receive_handler);
-    socket1.async_receive(null_buffers(), in_flags, receive_handler);
+        &receive_handler);
+    socket1.async_receive(mutable_buffers, in_flags, &receive_handler);
+    socket1.async_receive(null_buffers(), in_flags, &receive_handler);
 
     socket1.write_some(buffer(mutable_char_buffer));
     socket1.write_some(buffer(const_char_buffer));
+    socket1.write_some(mutable_buffers);
+    socket1.write_some(const_buffers);
     socket1.write_some(null_buffers());
     socket1.write_some(buffer(mutable_char_buffer), ec);
     socket1.write_some(buffer(const_char_buffer), ec);
+    socket1.write_some(mutable_buffers, ec);
+    socket1.write_some(const_buffers, ec);
     socket1.write_some(null_buffers(), ec);
 
-    socket1.async_write_some(buffer(mutable_char_buffer), write_some_handler);
-    socket1.async_write_some(buffer(const_char_buffer), write_some_handler);
-    socket1.async_write_some(null_buffers(), write_some_handler);
+    socket1.async_write_some(buffer(mutable_char_buffer), &write_some_handler);
+    socket1.async_write_some(buffer(const_char_buffer), &write_some_handler);
+    socket1.async_write_some(mutable_buffers, &write_some_handler);
+    socket1.async_write_some(const_buffers, &write_some_handler);
+    socket1.async_write_some(null_buffers(), &write_some_handler);
 
     socket1.read_some(buffer(mutable_char_buffer));
+    socket1.read_some(mutable_buffers);
+    socket1.read_some(null_buffers());
     socket1.read_some(buffer(mutable_char_buffer), ec);
+    socket1.read_some(mutable_buffers, ec);
     socket1.read_some(null_buffers(), ec);
 
-    socket1.async_read_some(buffer(mutable_char_buffer), read_some_handler);
-    socket1.async_read_some(null_buffers(), read_some_handler);
+    socket1.async_read_some(buffer(mutable_char_buffer), &read_some_handler);
+    socket1.async_read_some(mutable_buffers, &read_some_handler);
+    socket1.async_read_some(null_buffers(), &read_some_handler);
   }
   catch (std::exception&)
   {
@@ -638,8 +672,8 @@ void test()
     acceptor1.accept(peer_socket, peer_endpoint);
     acceptor1.accept(peer_socket, peer_endpoint, ec);
 
-    acceptor1.async_accept(peer_socket, accept_handler);
-    acceptor1.async_accept(peer_socket, peer_endpoint, accept_handler);
+    acceptor1.async_accept(peer_socket, &accept_handler);
+    acceptor1.async_accept(peer_socket, peer_endpoint, &accept_handler);
   }
   catch (std::exception&)
   {
@@ -705,16 +739,16 @@ void test()
   client_side_socket.close();
   server_side_socket.close();
 
-  acceptor.async_accept(server_side_socket, handle_accept);
-  client_side_socket.async_connect(server_endpoint, handle_connect);
+  acceptor.async_accept(server_side_socket, &handle_accept);
+  client_side_socket.async_connect(server_endpoint, &handle_connect);
 
   ios.run();
 
   client_side_socket.close();
   server_side_socket.close();
 
-  acceptor.async_accept(server_side_socket, client_endpoint, handle_accept);
-  client_side_socket.async_connect(server_endpoint, handle_connect);
+  acceptor.async_accept(server_side_socket, client_endpoint, &handle_accept);
+  client_side_socket.async_connect(server_endpoint, &handle_connect);
 
   ios.reset();
   ios.run();
@@ -779,9 +813,9 @@ void test()
     ip::tcp::resolver::iterator iter4 = resolver.resolve(e, ec);
     (void)iter4;
 
-    resolver.async_resolve(q, resolve_handler);
+    resolver.async_resolve(q, &resolve_handler);
 
-    resolver.async_resolve(e, resolve_handler);
+    resolver.async_resolve(e, &resolve_handler);
   }
   catch (std::exception&)
   {

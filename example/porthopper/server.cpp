@@ -56,13 +56,13 @@ public:
       boost::asio::async_read(*socket, request->to_buffers(),
           boost::bind(&server::handle_control_request, this,
             boost::asio::placeholders::error, socket, request));
-
-      // Start waiting for a new control connection.
-      tcp_socket_ptr new_socket(new tcp::socket(acceptor_.get_io_service()));
-      acceptor_.async_accept(*new_socket,
-          boost::bind(&server::handle_accept, this,
-            boost::asio::placeholders::error, new_socket));
     }
+
+    // Start waiting for a new control connection.
+    tcp_socket_ptr new_socket(new tcp::socket(acceptor_.get_io_service()));
+    acceptor_.async_accept(*new_socket,
+        boost::bind(&server::handle_accept, this,
+          boost::asio::placeholders::error, new_socket));
   }
 
   // Handle a new control request.
