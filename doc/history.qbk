@@ -34,7 +34,7 @@
   ([@https://svn.boost.org/trac/boost/ticket/5756 #5756]).
 * Changed to set the size of the select `fd_set` at runtime when using Windows.
 * Disabled an MSVC warning due to const qualifier being applied to function type.
-* Fixed a crash due that occurs when using the Intel C++ compiler
+* Fixed a crash that occurs when using the Intel C++ compiler
   ([@https://svn.boost.org/trac/boost/ticket/5763 #5763]).
 * Changed the initialisation of the OpenSSL library so that it supports all
   available algorithms.
