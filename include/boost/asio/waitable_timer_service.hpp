@@ -1,5 +1,5 @@
 //
-// deadline_timer_service.hpp
+// waitable_timer_service.hpp
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2011 Christopher M. Kohlhoff (chris at kohlhoff dot com)
@@ -8,8 +8,8 @@
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
-#ifndef BOOST_ASIO_DEADLINE_TIMER_SERVICE_HPP
-#define BOOST_ASIO_DEADLINE_TIMER_SERVICE_HPP
+#ifndef BOOST_ASIO_WAITABLE_TIMER_SERVICE_HPP
+#define BOOST_ASIO_WAITABLE_TIMER_SERVICE_HPP
 
 #if defined(_MSC_VER) && (_MSC_VER >= 1200)
 # pragma once
@@ -17,10 +17,10 @@
 
 #include <boost/asio/detail/config.hpp>
 #include <cstddef>
+#include <boost/asio/detail/chrono_time_traits.hpp>
 #include <boost/asio/detail/deadline_timer_service.hpp>
 #include <boost/asio/io_service.hpp>
-#include <boost/asio/time_traits.hpp>
-#include <boost/asio/detail/timer_queue_ptime.hpp>
+#include <boost/asio/wait_traits.hpp>
 
 #include <boost/asio/detail/push_options.hpp>
 
@@ -28,14 +28,14 @@ namespace boost {
 namespace asio {
 
 /// Default service implementation for a timer.
-template <typename TimeType,
-    typename TimeTraits = boost::asio::time_traits<TimeType> >
-class deadline_timer_service
+template <typename Clock,
+    typename WaitTraits = boost::asio::wait_traits<Clock> >
+class waitable_timer_service
 #if defined(GENERATING_DOCUMENTATION)
   : public boost::asio::io_service::service
 #else
   : public boost::asio::detail::service_base<
-      deadline_timer_service<TimeType, TimeTraits> >
+      waitable_timer_service<Clock, WaitTraits> >
 #endif
 {
 public:
@@ -44,21 +44,25 @@ public:
   static boost::asio::io_service::id id;
 #endif
 
-  /// The time traits type.
-  typedef TimeTraits traits_type;
+  /// The clock type.
+  typedef Clock clock_type;
 
-  /// The time type.
-  typedef typename traits_type::time_type time_type;
+  /// The duration type of the clock.
+  typedef typename clock_type::duration duration;
 
-  /// The duration type.
-  typedef typename traits_type::duration_type duration_type;
+  /// The time point type of the clock.
+  typedef typename clock_type::time_point time_point;
+
+  /// The wait traits type.
+  typedef WaitTraits traits_type;
 
 private:
   // The type of the platform-specific implementation.
-  typedef detail::deadline_timer_service<traits_type> service_impl_type;
+  typedef detail::deadline_timer_service<
+    detail::chrono_time_traits<Clock, WaitTraits> > service_impl_type;
 
 public:
-  /// The implementation type of the deadline timer.
+  /// The implementation type of the waitable timer.
 #if defined(GENERATING_DOCUMENTATION)
   typedef implementation_defined implementation_type;
 #else
@@ -66,9 +70,9 @@ public:
 #endif
 
   /// Construct a new timer service for the specified io_service.
-  explicit deadline_timer_service(boost::asio::io_service& io_service)
+  explicit waitable_timer_service(boost::asio::io_service& io_service)
     : boost::asio::detail::service_base<
-        deadline_timer_service<TimeType, TimeTraits> >(io_service),
+        waitable_timer_service<Clock, WaitTraits> >(io_service),
       service_impl_(io_service)
   {
   }
@@ -99,27 +103,27 @@ public:
   }
 
   /// Get the expiry time for the timer as an absolute time.
-  time_type expires_at(const implementation_type& impl) const
+  time_point expires_at(const implementation_type& impl) const
   {
     return service_impl_.expires_at(impl);
   }
 
   /// Set the expiry time for the timer as an absolute time.
   std::size_t expires_at(implementation_type& impl,
-      const time_type& expiry_time, boost::system::error_code& ec)
+      const time_point& expiry_time, boost::system::error_code& ec)
   {
     return service_impl_.expires_at(impl, expiry_time, ec);
   }
 
   /// Get the expiry time for the timer relative to now.
-  duration_type expires_from_now(const implementation_type& impl) const
+  duration expires_from_now(const implementation_type& impl) const
   {
     return service_impl_.expires_from_now(impl);
   }
 
   /// Set the expiry time for the timer relative to now.
   std::size_t expires_from_now(implementation_type& impl,
-      const duration_type& expiry_time, boost::system::error_code& ec)
+      const duration& expiry_time, boost::system::error_code& ec)
   {
     return service_impl_.expires_from_now(impl, expiry_time, ec);
   }
@@ -154,4 +158,4 @@ private:
 
 #include <boost/asio/detail/pop_options.hpp>
 
-#endif // BOOST_ASIO_DEADLINE_TIMER_SERVICE_HPP
+#endif // BOOST_ASIO_WAITABLE_TIMER_SERVICE_HPP

@@ -29,6 +29,7 @@
 #include <boost/asio/basic_socket_streambuf.hpp>
 #include <boost/asio/basic_stream_socket.hpp>
 #include <boost/asio/basic_streambuf.hpp>
+#include <boost/asio/basic_waitable_timer.hpp>
 #include <boost/asio/buffer.hpp>
 #include <boost/asio/buffered_read_stream_fwd.hpp>
 #include <boost/asio/buffered_read_stream.hpp>
@@ -92,6 +93,8 @@
 #include <boost/asio/streambuf.hpp>
 #include <boost/asio/time_traits.hpp>
 #include <boost/asio/version.hpp>
+#include <boost/asio/wait_traits.hpp>
+#include <boost/asio/waitable_timer_service.hpp>
 #include <boost/asio/windows/basic_handle.hpp>
 #include <boost/asio/windows/basic_random_access_handle.hpp>
 #include <boost/asio/windows/basic_stream_handle.hpp>
