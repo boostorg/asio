@@ -24,10 +24,10 @@
 #include <boost/asio/detail/noncopyable.hpp>
 #include <boost/asio/detail/socket_ops.hpp>
 #include <boost/asio/detail/socket_types.hpp>
-#include <boost/asio/detail/timer_op.hpp>
 #include <boost/asio/detail/timer_queue.hpp>
 #include <boost/asio/detail/timer_scheduler.hpp>
 #include <boost/asio/detail/wait_handler.hpp>
+#include <boost/asio/detail/wait_op.hpp>
 
 #include <boost/asio/detail/push_options.hpp>
 

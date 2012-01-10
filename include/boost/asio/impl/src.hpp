@@ -53,6 +53,7 @@
 #include <boost/asio/detail/impl/win_iocp_socket_service_base.ipp>
 #include <boost/asio/detail/impl/win_event.ipp>
 #include <boost/asio/detail/impl/win_mutex.ipp>
+#include <boost/asio/detail/impl/win_object_handle_service.ipp>
 #include <boost/asio/detail/impl/win_static_mutex.ipp>
 #include <boost/asio/detail/impl/win_thread.ipp>
 #include <boost/asio/detail/impl/win_tss_ptr.ipp>

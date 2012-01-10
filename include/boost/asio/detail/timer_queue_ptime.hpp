@@ -52,7 +52,7 @@ public:
   // earliest in the queue, in which case the reactor's event demultiplexing
   // function call may need to be interrupted and restarted.
   BOOST_ASIO_DECL bool enqueue_timer(const time_type& time,
-      per_timer_data& timer, timer_op* op);
+      per_timer_data& timer, wait_op* op);
 
   // Whether there are no timers in the queue.
   BOOST_ASIO_DECL virtual bool empty() const;

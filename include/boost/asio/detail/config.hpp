@@ -311,6 +311,13 @@
 # endif // defined(BOOST_ASIO_HAS_IOCP)
 #endif // !defined(BOOST_ASIO_DISABLE_WINDOWS_RANDOM_ACCESS_HANDLE)
 
+// Windows: object handles.
+#if !defined(BOOST_ASIO_DISABLE_WINDOWS_OBJECT_HANDLE)
+# if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
+#  define BOOST_ASIO_HAS_WINDOWS_OBJECT_HANDLE 1
+# endif // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
+#endif // !defined(BOOST_ASIO_DISABLE_WINDOWS_OBJECT_HANDLE)
+
 // Windows: OVERLAPPED wrapper.
 #if !defined(BOOST_ASIO_DISABLE_WINDOWS_OVERLAPPED_PTR)
 # if defined(BOOST_ASIO_HAS_IOCP)
