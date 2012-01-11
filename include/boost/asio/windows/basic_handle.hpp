@@ -19,6 +19,7 @@
 
 #if defined(BOOST_ASIO_HAS_WINDOWS_RANDOM_ACCESS_HANDLE) \
   || defined(BOOST_ASIO_HAS_WINDOWS_STREAM_HANDLE) \
+  || defined(BOOST_ASIO_HAS_WINDOWS_OBJECT_HANDLE) \
   || defined(GENERATING_DOCUMENTATION)
 
 #include <boost/asio/basic_io_object.hpp>
@@ -276,6 +277,7 @@ protected:
 
 #endif // defined(BOOST_ASIO_HAS_WINDOWS_RANDOM_ACCESS_HANDLE)
        //   || defined(BOOST_ASIO_HAS_WINDOWS_STREAM_HANDLE)
+       //   || defined(BOOST_ASIO_HAS_WINDOWS_OBJECT_HANDLE)
        //   || defined(GENERATING_DOCUMENTATION)
 
 #endif // BOOST_ASIO_WINDOWS_BASIC_HANDLE_HPP
