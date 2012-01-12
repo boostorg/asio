@@ -148,7 +148,7 @@ size_t win_iocp_io_service::run(boost::system::error_code& ec)
 {
   if (::InterlockedExchangeAdd(&outstanding_work_, 0) == 0)
   {
-    stop();
+    InterlockedExchange(&stopped_, 1);
     ec = boost::system::error_code();
     return 0;
   }
@@ -166,7 +166,7 @@ size_t win_iocp_io_service::run_one(boost::system::error_code& ec)
 {
   if (::InterlockedExchangeAdd(&outstanding_work_, 0) == 0)
   {
-    stop();
+    InterlockedExchange(&stopped_, 1);
     ec = boost::system::error_code();
     return 0;
   }
@@ -180,7 +180,7 @@ size_t win_iocp_io_service::poll(boost::system::error_code& ec)
 {
   if (::InterlockedExchangeAdd(&outstanding_work_, 0) == 0)
   {
-    stop();
+    InterlockedExchange(&stopped_, 1);
     ec = boost::system::error_code();
     return 0;
   }
@@ -198,7 +198,7 @@ size_t win_iocp_io_service::poll_one(boost::system::error_code& ec)
 {
   if (::InterlockedExchangeAdd(&outstanding_work_, 0) == 0)
   {
-    stop();
+    InterlockedExchange(&stopped_, 1);
     ec = boost::system::error_code();
     return 0;
   }
