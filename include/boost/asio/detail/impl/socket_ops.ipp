@@ -465,6 +465,10 @@ int connect(socket_type s, const socket_addr_type* addr,
         &msghdr::msg_namelen, s, addr, addrlen), ec);
   if (result == 0)
     ec = boost::system::error_code();
+#if defined(__linux__)
+  else if (ec == boost::asio::error::try_again)
+    ec = boost::asio::error::no_buffer_space;
+#endif // defined(__linux__)
   return result;
 }
 
