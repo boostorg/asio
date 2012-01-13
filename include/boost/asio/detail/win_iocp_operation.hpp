@@ -21,6 +21,7 @@
 
 #include <boost/asio/detail/handler_tracking.hpp>
 #include <boost/asio/detail/op_queue.hpp>
+#include <boost/asio/detail/socket_types.hpp>
 #include <boost/asio/detail/win_iocp_io_service_fwd.hpp>
 #include <boost/system/error_code.hpp>
 
