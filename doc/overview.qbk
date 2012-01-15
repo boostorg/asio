@@ -1,5 +1,5 @@
 [/
- / Copyright (c) 2003-2011 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+ / Copyright (c) 2003-2012 Christopher M. Kohlhoff (chris at kohlhoff dot com)
  /
  / Distributed under the Boost Software License, Version 1.0. (See accompanying
  / file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -33,6 +33,7 @@
 * [link boost_asio.overview.windows Windows-Specific Functionality]
   * [link boost_asio.overview.windows.stream_handle Stream-Oriented HANDLEs]
   * [link boost_asio.overview.windows.random_access_handle Random-Access HANDLEs]
+  * [link boost_asio.overview.windows.object_handle Object HANDLEs]
 * [link boost_asio.overview.ssl SSL]
 * [link boost_asio.overview.cpp2011 C++ 2011 Support]
   * [link boost_asio.overview.cpp2011.move_objects Movable I/O Objects]
@@ -41,6 +42,7 @@
   * [link boost_asio.overview.cpp2011.array Array Container]
   * [link boost_asio.overview.cpp2011.atomic Atomics]
   * [link boost_asio.overview.cpp2011.shared_ptr Shared Pointers]
+  * [link boost_asio.overview.cpp2011.chrono Chrono]
 * [link boost_asio.overview.implementation Platform-Specific Implementation Notes]
 
 [include overview/rationale.qbk]

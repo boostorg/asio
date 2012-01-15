@@ -1,5 +1,5 @@
 [/
- / Copyright (c) 2003-2011 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+ / Copyright (c) 2003-2012 Christopher M. Kohlhoff (chris at kohlhoff dot com)
  /
  / Distributed under the Boost Software License, Version 1.0. (See accompanying
  / file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -19,6 +19,8 @@
 [link boost_asio.overview.cpp2011.atomic Atomics]
 
 [link boost_asio.overview.cpp2011.shared_ptr Shared Pointers]
+
+[link boost_asio.overview.cpp2011.chrono Chrono]
 
 
 [section:move_objects Movable I/O Objects]
@@ -188,6 +190,29 @@ and later, when the [^-std=c++0x] or [^-std=gnu++0x] compiler options are used,
 as well as for Microsoft Visual C++ 10. It may be disabled by defining
 `BOOST_ASIO_DISABLE_STD_SHARED_PTR`, or explicitly enabled for other compilers by
 defining `BOOST_ASIO_HAS_STD_SHARED_PTR`.
+
+[endsect]
+
+[section:chrono Chrono]
+
+Boost.Asio provides timers based on the `std::chrono` facilities via the [link
+boost_asio.reference.basic_waitable_timer basic_waitable_timer] class template.
+The typedefs [link boost_asio.reference.system_timer system_timer], [link
+boost_asio.reference.steady_timer steady_timer] and [link
+boost_asio.reference.high_resolution_timer high_resolution_timer] utilise the
+standard clocks `system_clock`, `steady_clock` and `high_resolution_clock`
+respectively.
+
+Support for the `std::chrono` facilities is automatically enabled for [^g++]
+4.6 and later, when the [^-std=c++0x] or [^-std=gnu++0x] compiler options are
+used. (Note that, for [^g++], the draft-standard `monotonic_clock` is used in
+place of `steady_clock`.) Support may be disabled by defining
+`BOOST_ASIO_DISABLE_STD_CHRONO`, or explicitly enabled for other compilers by
+defining `BOOST_ASIO_HAS_STD_CHRONO`.
+
+When standard `chrono` is unavailable, Boost.Asio will otherwise use the Boost.Chrono
+library. The [link boost_asio.reference.basic_waitable_timer basic_waitable_timer]
+class template may be used with either.
 
 [endsect]
 

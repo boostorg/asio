@@ -2,7 +2,7 @@
 // detail/impl/kqueue_reactor.ipp
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2011 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2012 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 // Copyright (c) 2005 Stefan Arentz (stefan at soze dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
@@ -28,8 +28,8 @@
 
 #if defined(__NetBSD__)
 # define BOOST_ASIO_KQUEUE_EV_SET(ev, ident, filt, flags, fflags, data, udata) \
-    EV_SET(ev, ident, filt, flags, fflags, \
-      data, reinterpret_cast<intptr_t>(udata))
+    EV_SET(ev, ident, filt, flags, fflags, data, \
+      reinterpret_cast<intptr_t>(static_cast<void*>(udata)))
 #else
 # define BOOST_ASIO_KQUEUE_EV_SET(ev, ident, filt, flags, fflags, data, udata) \
     EV_SET(ev, ident, filt, flags, fflags, data, udata)
