@@ -60,6 +60,7 @@
 [include requirements/IoControlCommand.qbk]
 [include requirements/IoObjectService.qbk]
 [include requirements/MutableBufferSequence.qbk]
+[include requirements/ObjectHandleService.qbk]
 [include requirements/Protocol.qbk]
 [include requirements/RandomAccessHandleService.qbk]
 [include requirements/RawSocketService.qbk]
@@ -85,7 +86,9 @@
 [include requirements/SyncWriteStream.qbk]
 [include requirements/TimeTraits.qbk]
 [include requirements/TimerService.qbk]
+[include requirements/WaitableTimerService.qbk]
 [include requirements/WaitHandler.qbk]
+[include requirements/WaitTraits.qbk]
 [include requirements/WriteHandler.qbk]
 
 </xsl:text>
@@ -731,6 +734,15 @@
   <xsl:choose>
     <xsl:when test="contains($file, 'boost/asio/ssl')">
       <xsl:text>[^boost/asio/ssl.hpp]</xsl:text>
+    </xsl:when>
+    <xsl:when test="contains($file, 'boost/asio/high_resolution_timer')">
+      <xsl:text>None</xsl:text>
+    </xsl:when>
+    <xsl:when test="contains($file, 'boost/asio/steady_timer')">
+      <xsl:text>None</xsl:text>
+    </xsl:when>
+    <xsl:when test="contains($file, 'boost/asio/system_timer')">
+      <xsl:text>None</xsl:text>
     </xsl:when>
     <xsl:otherwise>
       <xsl:text>[^boost/asio.hpp]</xsl:text>
@@ -1403,6 +1415,9 @@
           <xsl:value-of select="declname"/>
         </xsl:when>
         <xsl:when test="declname = 'ByteType'">
+          <xsl:value-of select="declname"/>
+        </xsl:when>
+        <xsl:when test="declname = 'Clock'">
           <xsl:value-of select="declname"/>
         </xsl:when>
         <xsl:when test="declname = 'CompletionCondition'">
