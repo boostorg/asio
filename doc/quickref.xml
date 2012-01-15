@@ -291,6 +291,7 @@
             <member><link linkend="boost_asio.reference.basic_deadline_timer">basic_deadline_timer</link></member>
             <member><link linkend="boost_asio.reference.basic_waitable_timer">basic_waitable_timer</link></member>
             <member><link linkend="boost_asio.reference.time_traits_lt__ptime__gt_">time_traits</link></member>
+            <member><link linkend="boost_asio.reference.wait_traits">wait_traits</link></member>
           </simplelist>
           <bridgehead renderas="sect3">Services</bridgehead>
           <simplelist type="vert" columns="1">
