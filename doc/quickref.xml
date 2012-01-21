@@ -2,7 +2,7 @@
 <!DOCTYPE library PUBLIC "-//Boost//DTD BoostBook XML V1.0//EN" "../../../tools/boostbook/dtd/boostbook.dtd">
 
 <!--
-  Copyright (c) 2003-2011 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+  Copyright (c) 2003-2012 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 
   Distributed under the Boost Software License, Version 1.0. (See accompanying
   file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -282,21 +282,29 @@
           <bridgehead renderas="sect3">Classes</bridgehead>
           <simplelist type="vert" columns="1">
             <member><link linkend="boost_asio.reference.deadline_timer">deadline_timer</link></member>
+            <member><link linkend="boost_asio.reference.high_resolution_timer">high_resolution_timer</link></member>
+            <member><link linkend="boost_asio.reference.steady_timer">steady_timer</link></member>
+            <member><link linkend="boost_asio.reference.system_timer">system_timer</link></member>
           </simplelist>
           <bridgehead renderas="sect3">Class Templates</bridgehead>
           <simplelist type="vert" columns="1">
             <member><link linkend="boost_asio.reference.basic_deadline_timer">basic_deadline_timer</link></member>
+            <member><link linkend="boost_asio.reference.basic_waitable_timer">basic_waitable_timer</link></member>
             <member><link linkend="boost_asio.reference.time_traits_lt__ptime__gt_">time_traits</link></member>
+            <member><link linkend="boost_asio.reference.wait_traits">wait_traits</link></member>
           </simplelist>
           <bridgehead renderas="sect3">Services</bridgehead>
           <simplelist type="vert" columns="1">
             <member><link linkend="boost_asio.reference.deadline_timer_service">deadline_timer_service</link></member>
+            <member><link linkend="boost_asio.reference.waitable_timer_service">waitable_timer_service</link></member>
           </simplelist>
           <bridgehead renderas="sect3">Type Requirements</bridgehead>
           <simplelist type="vert" columns="1">
             <member><link linkend="boost_asio.reference.TimerService">TimerService</link></member>
             <member><link linkend="boost_asio.reference.TimeTraits">TimeTraits</link></member>
+            <member><link linkend="boost_asio.reference.WaitableTimerService">WaitableTimerService</link></member>
             <member><link linkend="boost_asio.reference.WaitHandler">WaitHandler</link></member>
+            <member><link linkend="boost_asio.reference.WaitTraits">WaitTraits</link></member>
           </simplelist>
         </entry>
         <entry valign="top">
@@ -425,6 +433,7 @@
         <entry valign="top" namest="c" nameend="d">
           <bridgehead renderas="sect3">Classes</bridgehead>
           <simplelist type="vert" columns="1">
+            <member><link linkend="boost_asio.reference.windows__object_handle">windows::object_handle</link></member>
             <member><link linkend="boost_asio.reference.windows__overlapped_ptr">windows::overlapped_ptr</link></member>
             <member><link linkend="boost_asio.reference.windows__random_access_handle">windows::random_access_handle</link></member>
             <member><link linkend="boost_asio.reference.windows__stream_handle">windows::stream_handle</link></member>
@@ -432,17 +441,20 @@
           <bridgehead renderas="sect3">Class Templates</bridgehead>
           <simplelist type="vert" columns="1">
             <member><link linkend="boost_asio.reference.windows__basic_handle">windows::basic_handle</link></member>
+            <member><link linkend="boost_asio.reference.windows__basic_object_handle">windows::basic_object_handle</link></member>
             <member><link linkend="boost_asio.reference.windows__basic_random_access_handle">windows::basic_random_access_handle</link></member>
             <member><link linkend="boost_asio.reference.windows__basic_stream_handle">windows::basic_stream_handle</link></member>
           </simplelist>
           <bridgehead renderas="sect3">Services</bridgehead>
           <simplelist type="vert" columns="1">
+            <member><link linkend="boost_asio.reference.windows__object_handle_service">windows::object_handle_service</link></member>
             <member><link linkend="boost_asio.reference.windows__random_access_handle_service">windows::random_access_handle_service</link></member>
             <member><link linkend="boost_asio.reference.windows__stream_handle_service">windows::stream_handle_service</link></member>
           </simplelist>
           <bridgehead renderas="sect3">Type Requirements</bridgehead>
           <simplelist type="vert" columns="1">
             <member><link linkend="boost_asio.reference.HandleService">HandleService</link></member>
+            <member><link linkend="boost_asio.reference.ObjectHandleService">ObjectHandleService</link></member>
             <member><link linkend="boost_asio.reference.RandomAccessHandleService">RandomAccessHandleService</link></member>
             <member><link linkend="boost_asio.reference.StreamHandleService">StreamHandleService</link></member>
           </simplelist>
