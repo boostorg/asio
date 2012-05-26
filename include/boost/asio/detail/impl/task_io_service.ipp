@@ -133,7 +133,7 @@ std::size_t task_io_service::run(boost::system::error_code& ec)
   this_thread.wakeup_event = &wakeup_event;
   op_queue<operation> private_op_queue;
 #if defined(BOOST_HAS_THREADS) && !defined(BOOST_ASIO_DISABLE_THREADS)
-  this_thread.private_op_queue = one_thread_ == 1 ? &private_op_queue : 0;
+  this_thread.private_op_queue = &private_op_queue;
 #else // defined(BOOST_HAS_THREADS) && !defined(BOOST_ASIO_DISABLE_THREADS)
   this_thread.private_op_queue = 0;
 #endif // defined(BOOST_HAS_THREADS) && !defined(BOOST_ASIO_DISABLE_THREADS)
@@ -184,7 +184,7 @@ std::size_t task_io_service::poll(boost::system::error_code& ec)
   this_thread.wakeup_event = 0;
   op_queue<operation> private_op_queue;
 #if defined(BOOST_HAS_THREADS) && !defined(BOOST_ASIO_DISABLE_THREADS)
-  this_thread.private_op_queue = one_thread_ == 1 ? &private_op_queue : 0;
+  this_thread.private_op_queue = &private_op_queue;
 #else // defined(BOOST_HAS_THREADS) && !defined(BOOST_ASIO_DISABLE_THREADS)
   this_thread.private_op_queue = 0;
 #endif // defined(BOOST_HAS_THREADS) && !defined(BOOST_ASIO_DISABLE_THREADS)
@@ -309,6 +309,32 @@ void task_io_service::post_deferred_completions(
     op_queue_.push(ops);
     wake_one_thread_and_unlock(lock);
   }
+}
+
+void task_io_service::post_private_immediate_completion(
+    task_io_service::operation* op)
+{
+  work_started();
+  post_private_deferred_completion(op);
+}
+
+void task_io_service::post_private_deferred_completion(
+    task_io_service::operation* op)
+{
+#if defined(BOOST_HAS_THREADS) && !defined(BOOST_ASIO_DISABLE_THREADS)
+  if (thread_info* this_thread = thread_call_stack::contains(this))
+  {
+    if (this_thread->private_op_queue)
+    {
+      this_thread->private_op_queue->push(op);
+      return;
+    }
+  }
+#endif // defined(BOOST_HAS_THREADS) && !defined(BOOST_ASIO_DISABLE_THREADS)
+
+  mutex::scoped_lock lock(mutex_);
+  op_queue_.push(op);
+  wake_one_thread_and_unlock(lock);
 }
 
 void task_io_service::abandon_operations(
