@@ -53,7 +53,7 @@ struct task_io_service::work_cleanup
   {
     task_io_service_->work_finished();
 
-#if defined(BOOST_HAS_THREADS) && !defined(BOOST_ASIO_DISABLE_THREADS) 
+#if defined(BOOST_HAS_THREADS) && !defined(BOOST_ASIO_DISABLE_THREADS)
     if (!ops_->empty())
     {
       lock_->lock();
@@ -132,7 +132,7 @@ std::size_t task_io_service::run(boost::system::error_code& ec)
   event wakeup_event;
   this_thread.wakeup_event = &wakeup_event;
   op_queue<operation> private_op_queue;
-#if defined(BOOST_HAS_THREADS) && !defined(BOOST_ASIO_DISABLE_THREADS) 
+#if defined(BOOST_HAS_THREADS) && !defined(BOOST_ASIO_DISABLE_THREADS)
   this_thread.private_op_queue = one_thread_ == 1 ? &private_op_queue : 0;
 #else // defined(BOOST_HAS_THREADS) && !defined(BOOST_ASIO_DISABLE_THREADS)
   this_thread.private_op_queue = 0;
@@ -183,7 +183,7 @@ std::size_t task_io_service::poll(boost::system::error_code& ec)
   thread_info this_thread;
   this_thread.wakeup_event = 0;
   op_queue<operation> private_op_queue;
-#if defined(BOOST_HAS_THREADS) && !defined(BOOST_ASIO_DISABLE_THREADS) 
+#if defined(BOOST_HAS_THREADS) && !defined(BOOST_ASIO_DISABLE_THREADS)
   this_thread.private_op_queue = one_thread_ == 1 ? &private_op_queue : 0;
 #else // defined(BOOST_HAS_THREADS) && !defined(BOOST_ASIO_DISABLE_THREADS)
   this_thread.private_op_queue = 0;
@@ -193,7 +193,7 @@ std::size_t task_io_service::poll(boost::system::error_code& ec)
 
   mutex::scoped_lock lock(mutex_);
 
-#if defined(BOOST_HAS_THREADS) && !defined(BOOST_ASIO_DISABLE_THREADS) 
+#if defined(BOOST_HAS_THREADS) && !defined(BOOST_ASIO_DISABLE_THREADS)
   // We want to support nested calls to poll() and poll_one(), so any handlers
   // that are already on a thread-private queue need to be put on to the main
   // queue now.
@@ -228,7 +228,7 @@ std::size_t task_io_service::poll_one(boost::system::error_code& ec)
 
   mutex::scoped_lock lock(mutex_);
 
-#if defined(BOOST_HAS_THREADS) && !defined(BOOST_ASIO_DISABLE_THREADS) 
+#if defined(BOOST_HAS_THREADS) && !defined(BOOST_ASIO_DISABLE_THREADS)
   // We want to support nested calls to poll() and poll_one(), so any handlers
   // that are already on a thread-private queue need to be put on to the main
   // queue now.
@@ -267,7 +267,7 @@ void task_io_service::post_immediate_completion(task_io_service::operation* op)
 
 void task_io_service::post_deferred_completion(task_io_service::operation* op)
 {
-#if defined(BOOST_HAS_THREADS) && !defined(BOOST_ASIO_DISABLE_THREADS) 
+#if defined(BOOST_HAS_THREADS) && !defined(BOOST_ASIO_DISABLE_THREADS)
   if (one_thread_)
   {
     if (thread_info* this_thread = thread_call_stack::contains(this))
@@ -291,7 +291,7 @@ void task_io_service::post_deferred_completions(
 {
   if (!ops.empty())
   {
-#if defined(BOOST_HAS_THREADS) && !defined(BOOST_ASIO_DISABLE_THREADS) 
+#if defined(BOOST_HAS_THREADS) && !defined(BOOST_ASIO_DISABLE_THREADS)
     if (one_thread_)
     {
       if (thread_info* this_thread = thread_call_stack::contains(this))
