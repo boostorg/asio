@@ -56,7 +56,9 @@ public:
     ::EVP_cleanup();
     ::CRYPTO_cleanup_all_ex_data();
     ::CONF_modules_unload(1);
+#if !defined(OPENSSL_NO_ENGINE)
     ::ENGINE_cleanup();
+#endif // !defined(OPENSSL_NO_ENGINE)
   }
 
 private:
