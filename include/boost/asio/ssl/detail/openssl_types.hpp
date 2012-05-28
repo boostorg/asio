@@ -18,7 +18,9 @@
 #include <boost/asio/detail/config.hpp>
 #include <openssl/conf.h>
 #include <openssl/ssl.h>
-#include <openssl/engine.h>
+#if !defined(OPENSSL_NO_ENGINE)
+# include <openssl/engine.h>
+#endif // !defined(OPENSSL_NO_ENGINE)
 #include <openssl/err.h>
 #include <openssl/x509v3.h>
 #include <boost/asio/detail/socket_types.hpp>
