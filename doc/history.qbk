@@ -20,6 +20,9 @@
 * Improved the performance of strand rescheduling.
 * Added support for [^g++] 4.7 when compiling in C++11 mode
   ([@https://svn.boost.org/trac/boost/ticket/6620 #6620]).
+* Fixed a problem where `signal_set` handlers were not being delivered when
+  the `io_service` was constructed with a `concurrency_hint` of 1
+  ([@https://svn.boost.org/trac/boost/ticket/6657 #6657]).
 
 [heading Asio 1.8.0 / Boost 1.49]
 
