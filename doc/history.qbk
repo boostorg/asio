@@ -14,10 +14,12 @@
 * Fixed the `epoll_reactor` handling of out-of-band data, which was broken by
   an incomplete fix in the last release.
 * Changed Asio's SSL wrapper to respect OpenSSL's `OPENSSL_NO_ENGINE` feature
-  test `#define`.
+  test `#define` ([@https://svn.boost.org/trac/boost/ticket/6432 #6432]).
 * Fixed `windows::object_handle` so that it works with Windows compilers that
   support C++11 move semantics (such as [^g++]).
 * Improved the performance of strand rescheduling.
+* Added support for [^g++] 4.7 when compiling in C++11 mode
+  ([@https://svn.boost.org/trac/boost/ticket/6620 #6620]).
 
 [heading Asio 1.8.0 / Boost 1.49]
 
