@@ -18,7 +18,10 @@
 #include <boost/asio/detail/config.hpp>
 
 #if !defined(BOOST_ASIO_ENABLE_OLD_SSL)
+# include <boost/asio/detail/throw_error.hpp>
+# include <boost/asio/error.hpp>
 # include <boost/asio/ssl/detail/engine.hpp>
+# include <boost/asio/ssl/error.hpp>
 # include <boost/asio/ssl/verify_context.hpp>
 #endif // !defined(BOOST_ASIO_ENABLE_OLD_SSL)
 
@@ -34,6 +37,13 @@ namespace detail {
 engine::engine(SSL_CTX* context)
   : ssl_(::SSL_new(context))
 {
+  if (!ssl_)
+  {
+    boost::system::error_code ec(::ERR_get_error(),
+        boost::asio::error::get_ssl_category());
+    boost::asio::detail::throw_error(ec, "engine");
+  }
+
   accept_mutex().init();
 
   ::SSL_set_mode(ssl_, SSL_MODE_ENABLE_PARTIAL_WRITE);
