@@ -30,7 +30,7 @@ namespace detail {
 class ssl_category : public boost::system::error_category
 {
 public:
-  const char* name() const
+  const char* name() const BOOST_ASIO_ERROR_CATEGORY_NOEXCEPT
   {
     return "asio.ssl";
   }
