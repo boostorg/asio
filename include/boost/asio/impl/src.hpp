@@ -20,6 +20,7 @@
 #endif
 
 #include <boost/asio/impl/error.ipp>
+#include <boost/asio/impl/handler_alloc_hook.ipp>
 #include <boost/asio/impl/io_service.ipp>
 #include <boost/asio/impl/serial_port_base.ipp>
 #include <boost/asio/detail/impl/descriptor_ops.ipp>
