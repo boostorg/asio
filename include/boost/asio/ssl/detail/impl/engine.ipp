@@ -39,7 +39,8 @@ engine::engine(SSL_CTX* context)
 {
   if (!ssl_)
   {
-    boost::system::error_code ec(::ERR_get_error(),
+    boost::system::error_code ec(
+        static_cast<int>(::ERR_get_error()),
         boost::asio::error::get_ssl_category());
     boost::asio::detail::throw_error(ec, "engine");
   }
@@ -166,7 +167,7 @@ boost::asio::mutable_buffers_1 engine::get_output(
 {
   int length = ::BIO_read(ext_bio_,
       boost::asio::buffer_cast<void*>(data),
-      boost::asio::buffer_size(data));
+      static_cast<int>(boost::asio::buffer_size(data)));
 
   return boost::asio::buffer(data,
       length > 0 ? static_cast<std::size_t>(length) : 0);
@@ -177,7 +178,7 @@ boost::asio::const_buffer engine::put_input(
 {
   int length = ::BIO_write(ext_bio_,
       boost::asio::buffer_cast<const void*>(data),
-      boost::asio::buffer_size(data));
+      static_cast<int>(boost::asio::buffer_size(data)));
 
   return boost::asio::buffer(data +
       (length > 0 ? static_cast<std::size_t>(length) : 0));
@@ -228,7 +229,7 @@ engine::want engine::perform(int (engine::* op)(void*, std::size_t),
   std::size_t pending_output_before = ::BIO_ctrl_pending(ext_bio_);
   int result = (this->*op)(data, length);
   int ssl_error = ::SSL_get_error(ssl_, result);
-  int sys_error = ::ERR_get_error();
+  int sys_error = static_cast<int>(::ERR_get_error());
   std::size_t pending_output_after = ::BIO_ctrl_pending(ext_bio_);
 
   if (ssl_error == SSL_ERROR_SSL)
@@ -296,12 +297,14 @@ int engine::do_shutdown(void*, std::size_t)
 
 int engine::do_read(void* data, std::size_t length)
 {
-  return ::SSL_read(ssl_, data, length < INT_MAX ? length : INT_MAX);
+  return ::SSL_read(ssl_, data,
+      length < INT_MAX ? static_cast<int>(length) : INT_MAX);
 }
 
 int engine::do_write(void* data, std::size_t length)
 {
-  return ::SSL_write(ssl_, data, length < INT_MAX ? length : INT_MAX);
+  return ::SSL_write(ssl_, data,
+      length < INT_MAX ? static_cast<int>(length) : INT_MAX);
 }
 
 #endif // !defined(BOOST_ASIO_ENABLE_OLD_SSL)
