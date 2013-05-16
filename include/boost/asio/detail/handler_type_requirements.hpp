@@ -42,6 +42,11 @@
 #   define BOOST_ASIO_ENABLE_HANDLER_TYPE_REQUIREMENTS_ASSERT 1
 #  endif // (_MSC_VER >= 1600)
 # endif // defined(BOOST_MSVC)
+# if defined(__clang__)
+#  if __has_feature(cxx_static_assert)
+#   define BOOST_ASIO_ENABLE_HANDLER_TYPE_REQUIREMENTS_ASSERT 1
+#  endif // __has_feature(cxx_static_assert)
+# endif // defined(__clang__)
 #endif // !defined(BOOST_ASIO_DISABLE_HANDLER_TYPE_REQUIREMENTS)
 
 namespace boost {
