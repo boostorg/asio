@@ -18,6 +18,7 @@
 #include <boost/asio/detail/config.hpp>
 #include <cstddef>
 #include <boost/cstdint.hpp>
+#include <boost/asio/async_result.hpp>
 #include <boost/asio/basic_streambuf_fwd.hpp>
 #include <boost/asio/error.hpp>
 
@@ -455,7 +456,9 @@ std::size_t read_at(SyncRandomAccessReadDevice& d,
  */
 template <typename AsyncRandomAccessReadDevice, typename MutableBufferSequence,
     typename ReadHandler>
-void async_read_at(AsyncRandomAccessReadDevice& d, boost::uint64_t offset,
+BOOST_ASIO_INITFN_RESULT_TYPE(ReadHandler,
+    void (boost::system::error_code, std::size_t))
+async_read_at(AsyncRandomAccessReadDevice& d, boost::uint64_t offset,
     const MutableBufferSequence& buffers,
     BOOST_ASIO_MOVE_ARG(ReadHandler) handler);
 
@@ -526,7 +529,9 @@ void async_read_at(AsyncRandomAccessReadDevice& d, boost::uint64_t offset,
  */
 template <typename AsyncRandomAccessReadDevice, typename MutableBufferSequence,
     typename CompletionCondition, typename ReadHandler>
-void async_read_at(AsyncRandomAccessReadDevice& d,
+BOOST_ASIO_INITFN_RESULT_TYPE(ReadHandler,
+    void (boost::system::error_code, std::size_t))
+async_read_at(AsyncRandomAccessReadDevice& d,
     boost::uint64_t offset, const MutableBufferSequence& buffers,
     CompletionCondition completion_condition,
     BOOST_ASIO_MOVE_ARG(ReadHandler) handler);
@@ -580,7 +585,9 @@ void async_read_at(AsyncRandomAccessReadDevice& d,
  */
 template <typename AsyncRandomAccessReadDevice, typename Allocator,
     typename ReadHandler>
-void async_read_at(AsyncRandomAccessReadDevice& d, boost::uint64_t offset,
+BOOST_ASIO_INITFN_RESULT_TYPE(ReadHandler,
+    void (boost::system::error_code, std::size_t))
+async_read_at(AsyncRandomAccessReadDevice& d, boost::uint64_t offset,
     basic_streambuf<Allocator>& b, BOOST_ASIO_MOVE_ARG(ReadHandler) handler);
 
 /// Start an asynchronous operation to read a certain amount of data at the
@@ -638,7 +645,9 @@ void async_read_at(AsyncRandomAccessReadDevice& d, boost::uint64_t offset,
  */
 template <typename AsyncRandomAccessReadDevice, typename Allocator,
     typename CompletionCondition, typename ReadHandler>
-void async_read_at(AsyncRandomAccessReadDevice& d,
+BOOST_ASIO_INITFN_RESULT_TYPE(ReadHandler,
+    void (boost::system::error_code, std::size_t))
+async_read_at(AsyncRandomAccessReadDevice& d,
     boost::uint64_t offset, basic_streambuf<Allocator>& b,
     CompletionCondition completion_condition,
     BOOST_ASIO_MOVE_ARG(ReadHandler) handler);

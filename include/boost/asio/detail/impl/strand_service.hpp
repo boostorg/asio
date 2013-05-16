@@ -52,7 +52,7 @@ struct strand_service::on_dispatch_exit
 
 template <typename Handler>
 void strand_service::dispatch(strand_service::implementation_type& impl,
-    Handler handler)
+    Handler& handler)
 {
   // If we are already in the strand then the handler can run immediately.
   if (call_stack<strand_impl>::contains(impl))
@@ -92,7 +92,7 @@ void strand_service::dispatch(strand_service::implementation_type& impl,
 // Request the io_service to invoke the given handler and return immediately.
 template <typename Handler>
 void strand_service::post(strand_service::implementation_type& impl,
-    Handler handler)
+    Handler& handler)
 {
   // Allocate and construct an operation to wrap the handler.
   typedef completion_handler<Handler> op;

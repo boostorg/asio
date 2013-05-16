@@ -16,6 +16,7 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include <boost/asio/detail/config.hpp>
+#include <boost/asio/async_result.hpp>
 #include <boost/asio/basic_io_object.hpp>
 #include <boost/asio/detail/handler_type_requirements.hpp>
 #include <boost/asio/detail/throw_error.hpp>
@@ -698,7 +699,9 @@ public:
    * @endcode
    */
   template <typename ConnectHandler>
-  void async_connect(const endpoint_type& peer_endpoint,
+  BOOST_ASIO_INITFN_RESULT_TYPE(ConnectHandler,
+      void (boost::system::error_code))
+  async_connect(const endpoint_type& peer_endpoint,
       BOOST_ASIO_MOVE_ARG(ConnectHandler) handler)
   {
     // If you get an error on the following line it means that your handler does
@@ -711,14 +714,21 @@ public:
       const protocol_type protocol = peer_endpoint.protocol();
       if (this->get_service().open(this->get_implementation(), protocol, ec))
       {
+        detail::async_result_init<
+          ConnectHandler, void (boost::system::error_code)> init(
+            BOOST_ASIO_MOVE_CAST(ConnectHandler)(handler));
+
         this->get_io_service().post(
             boost::asio::detail::bind_handler(
-              BOOST_ASIO_MOVE_CAST(ConnectHandler)(handler), ec));
-        return;
+              BOOST_ASIO_MOVE_CAST(BOOST_ASIO_HANDLER_TYPE(
+                ConnectHandler, void (boost::system::error_code)))(
+                  init.handler), ec));
+
+        return init.result.get();
       }
     }
 
-    this->get_service().async_connect(this->get_implementation(),
+    return this->get_service().async_connect(this->get_implementation(),
         peer_endpoint, BOOST_ASIO_MOVE_CAST(ConnectHandler)(handler));
   }
 

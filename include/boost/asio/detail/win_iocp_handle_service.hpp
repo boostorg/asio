@@ -143,7 +143,7 @@ public:
   // lifetime of the asynchronous operation.
   template <typename ConstBufferSequence, typename Handler>
   void async_write_some(implementation_type& impl,
-      const ConstBufferSequence& buffers, Handler handler)
+      const ConstBufferSequence& buffers, Handler& handler)
   {
     // Allocate and construct an operation to wrap the handler.
     typedef win_iocp_handle_write_op<ConstBufferSequence, Handler> op;
@@ -164,7 +164,7 @@ public:
   // must be valid for the lifetime of the asynchronous operation.
   template <typename ConstBufferSequence, typename Handler>
   void async_write_some_at(implementation_type& impl, boost::uint64_t offset,
-      const ConstBufferSequence& buffers, Handler handler)
+      const ConstBufferSequence& buffers, Handler& handler)
   {
     // Allocate and construct an operation to wrap the handler.
     typedef win_iocp_handle_write_op<ConstBufferSequence, Handler> op;
@@ -205,7 +205,7 @@ public:
   // valid for the lifetime of the asynchronous operation.
   template <typename MutableBufferSequence, typename Handler>
   void async_read_some(implementation_type& impl,
-      const MutableBufferSequence& buffers, Handler handler)
+      const MutableBufferSequence& buffers, Handler& handler)
   {
     // Allocate and construct an operation to wrap the handler.
     typedef win_iocp_handle_read_op<MutableBufferSequence, Handler> op;
@@ -227,7 +227,7 @@ public:
   // operation.
   template <typename MutableBufferSequence, typename Handler>
   void async_read_some_at(implementation_type& impl, boost::uint64_t offset,
-      const MutableBufferSequence& buffers, Handler handler)
+      const MutableBufferSequence& buffers, Handler& handler)
   {
     // Allocate and construct an operation to wrap the handler.
     typedef win_iocp_handle_read_op<MutableBufferSequence, Handler> op;
@@ -252,20 +252,20 @@ private:
       const null_buffers& buffers, boost::system::error_code& ec);
   template <typename Handler>
   void async_write_some(implementation_type& impl,
-      const null_buffers& buffers, Handler handler);
+      const null_buffers& buffers, Handler& handler);
   template <typename Handler>
   void async_write_some_at(implementation_type& impl, boost::uint64_t offset,
-      const null_buffers& buffers, Handler handler);
+      const null_buffers& buffers, Handler& handler);
   size_t read_some(implementation_type& impl,
       const null_buffers& buffers, boost::system::error_code& ec);
   size_t read_some_at(implementation_type& impl, boost::uint64_t offset,
       const null_buffers& buffers, boost::system::error_code& ec);
   template <typename Handler>
   void async_read_some(implementation_type& impl,
-      const null_buffers& buffers, Handler handler);
+      const null_buffers& buffers, Handler& handler);
   template <typename Handler>
   void async_read_some_at(implementation_type& impl, boost::uint64_t offset,
-      const null_buffers& buffers, Handler handler);
+      const null_buffers& buffers, Handler& handler);
 
   // Helper class for waiting for synchronous operations to complete.
   class overlapped_wrapper;

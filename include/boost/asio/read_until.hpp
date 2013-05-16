@@ -25,6 +25,7 @@
 #include <boost/utility/enable_if.hpp>
 #include <boost/detail/workaround.hpp>
 #include <string>
+#include <boost/asio/async_result.hpp>
 #include <boost/asio/basic_streambuf.hpp>
 #include <boost/asio/detail/regex_fwd.hpp>
 #include <boost/asio/error.hpp>
@@ -588,7 +589,9 @@ std::size_t read_until(SyncReadStream& s,
  * @c async_read_until operation.
  */
 template <typename AsyncReadStream, typename Allocator, typename ReadHandler>
-void async_read_until(AsyncReadStream& s,
+BOOST_ASIO_INITFN_RESULT_TYPE(ReadHandler,
+    void (boost::system::error_code, std::size_t))
+async_read_until(AsyncReadStream& s,
     boost::asio::basic_streambuf<Allocator>& b,
     char delim, BOOST_ASIO_MOVE_ARG(ReadHandler) handler);
 
@@ -671,7 +674,9 @@ void async_read_until(AsyncReadStream& s,
  * @c async_read_until operation.
  */
 template <typename AsyncReadStream, typename Allocator, typename ReadHandler>
-void async_read_until(AsyncReadStream& s,
+BOOST_ASIO_INITFN_RESULT_TYPE(ReadHandler,
+    void (boost::system::error_code, std::size_t))
+async_read_until(AsyncReadStream& s,
     boost::asio::basic_streambuf<Allocator>& b, const std::string& delim,
     BOOST_ASIO_MOVE_ARG(ReadHandler) handler);
 
@@ -758,7 +763,9 @@ void async_read_until(AsyncReadStream& s,
  * @c async_read_until operation.
  */
 template <typename AsyncReadStream, typename Allocator, typename ReadHandler>
-void async_read_until(AsyncReadStream& s,
+BOOST_ASIO_INITFN_RESULT_TYPE(ReadHandler,
+    void (boost::system::error_code, std::size_t))
+async_read_until(AsyncReadStream& s,
     boost::asio::basic_streambuf<Allocator>& b, const boost::regex& expr,
     BOOST_ASIO_MOVE_ARG(ReadHandler) handler);
 
@@ -887,7 +894,9 @@ void async_read_until(AsyncReadStream& s,
  */
 template <typename AsyncReadStream, typename Allocator,
     typename MatchCondition, typename ReadHandler>
-void async_read_until(AsyncReadStream& s,
+BOOST_ASIO_INITFN_RESULT_TYPE(ReadHandler,
+    void (boost::system::error_code, std::size_t))
+async_read_until(AsyncReadStream& s,
     boost::asio::basic_streambuf<Allocator>& b,
     MatchCondition match_condition, BOOST_ASIO_MOVE_ARG(ReadHandler) handler,
     typename boost::enable_if<is_match_condition<MatchCondition> >::type* = 0);

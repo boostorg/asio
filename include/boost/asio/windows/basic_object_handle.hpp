@@ -159,9 +159,12 @@ public:
    * boost::asio::io_service::post().
    */
   template <typename WaitHandler>
-  void async_wait(WaitHandler handler)
+  BOOST_ASIO_INITFN_RESULT_TYPE(WaitHandler,
+      void (boost::system::error_code))
+  async_wait(BOOST_ASIO_MOVE_ARG(WaitHandler) handler)
   {
-    this->get_service().async_wait(this->get_implementation(), handler);
+    return this->get_service().async_wait(this->get_implementation(),
+        BOOST_ASIO_MOVE_CAST(WaitHandler)(handler));
   }
 };
 

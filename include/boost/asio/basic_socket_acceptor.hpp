@@ -949,14 +949,16 @@ public:
    * @endcode
    */
   template <typename SocketService, typename AcceptHandler>
-  void async_accept(basic_socket<protocol_type, SocketService>& peer,
+  BOOST_ASIO_INITFN_RESULT_TYPE(AcceptHandler,
+      void (boost::system::error_code))
+  async_accept(basic_socket<protocol_type, SocketService>& peer,
       BOOST_ASIO_MOVE_ARG(AcceptHandler) handler)
   {
     // If you get an error on the following line it means that your handler does
     // not meet the documented type requirements for a AcceptHandler.
     BOOST_ASIO_ACCEPT_HANDLER_CHECK(AcceptHandler, handler) type_check;
 
-    this->get_service().async_accept(this->get_implementation(),
+    return this->get_service().async_accept(this->get_implementation(),
         peer, 0, BOOST_ASIO_MOVE_CAST(AcceptHandler)(handler));
   }
 
@@ -1057,14 +1059,16 @@ public:
    * boost::asio::io_service::post().
    */
   template <typename SocketService, typename AcceptHandler>
-  void async_accept(basic_socket<protocol_type, SocketService>& peer,
+  BOOST_ASIO_INITFN_RESULT_TYPE(AcceptHandler,
+      void (boost::system::error_code))
+  async_accept(basic_socket<protocol_type, SocketService>& peer,
       endpoint_type& peer_endpoint, BOOST_ASIO_MOVE_ARG(AcceptHandler) handler)
   {
     // If you get an error on the following line it means that your handler does
     // not meet the documented type requirements for a AcceptHandler.
     BOOST_ASIO_ACCEPT_HANDLER_CHECK(AcceptHandler, handler) type_check;
 
-    this->get_service().async_accept(this->get_implementation(), peer,
+    return this->get_service().async_accept(this->get_implementation(), peer,
         &peer_endpoint, BOOST_ASIO_MOVE_CAST(AcceptHandler)(handler));
   }
 };

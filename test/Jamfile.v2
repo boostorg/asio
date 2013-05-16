@@ -123,6 +123,8 @@ test-suite "asio" :
   [ link ip/basic_resolver_query.cpp : $(USE_SELECT) : ip_basic_resolver_query_select ]
   [ run ip/host_name.cpp : : : : ip_host_name ]
   [ run ip/host_name.cpp : : : $(USE_SELECT) : ip_host_name_select ]
+  [ run ip/icmp.cpp : : : : ip_icmp ]
+  [ run ip/icmp.cpp : : : $(USE_SELECT) : ip_icmp_select ]
   [ run ip/multicast.cpp : : : : ip_multicast ]
   [ run ip/multicast.cpp : : : $(USE_SELECT) : ip_multicast_select ]
   [ link ip/resolver_query_base.cpp : : ip_resolver_query_base ]

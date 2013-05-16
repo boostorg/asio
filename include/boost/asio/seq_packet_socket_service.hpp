@@ -17,6 +17,7 @@
 
 #include <boost/asio/detail/config.hpp>
 #include <cstddef>
+#include <boost/asio/async_result.hpp>
 #include <boost/asio/error.hpp>
 #include <boost/asio/io_service.hpp>
 
@@ -202,12 +203,19 @@ public:
 
   /// Start an asynchronous connect.
   template <typename ConnectHandler>
-  void async_connect(implementation_type& impl,
+  BOOST_ASIO_INITFN_RESULT_TYPE(ConnectHandler,
+      void (boost::system::error_code))
+  async_connect(implementation_type& impl,
       const endpoint_type& peer_endpoint,
       BOOST_ASIO_MOVE_ARG(ConnectHandler) handler)
   {
-    service_impl_.async_connect(impl, peer_endpoint,
+    detail::async_result_init<
+      ConnectHandler, void (boost::system::error_code)> init(
         BOOST_ASIO_MOVE_CAST(ConnectHandler)(handler));
+
+    service_impl_.async_connect(impl, peer_endpoint, init.handler);
+
+    return init.result.get();
   }
 
   /// Set a socket option.

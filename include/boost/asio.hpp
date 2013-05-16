@@ -17,6 +17,7 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
+#include <boost/asio/async_result.hpp>
 #include <boost/asio/basic_datagram_socket.hpp>
 #include <boost/asio/basic_deadline_timer.hpp>
 #include <boost/asio/basic_io_object.hpp>
@@ -46,6 +47,7 @@
 #include <boost/asio/error.hpp>
 #include <boost/asio/handler_alloc_hook.hpp>
 #include <boost/asio/handler_invoke_hook.hpp>
+#include <boost/asio/handler_type.hpp>
 #include <boost/asio/io_service.hpp>
 #include <boost/asio/ip/address.hpp>
 #include <boost/asio/ip/address_v4.hpp>

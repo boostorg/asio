@@ -17,6 +17,7 @@
 
 #include <boost/asio/detail/config.hpp>
 #include <cstddef>
+#include <boost/asio/async_result.hpp>
 #include <boost/asio/basic_streambuf_fwd.hpp>
 #include <boost/asio/error.hpp>
 
@@ -422,7 +423,9 @@ std::size_t read(SyncReadStream& s, basic_streambuf<Allocator>& b,
  */
 template <typename AsyncReadStream, typename MutableBufferSequence,
     typename ReadHandler>
-void async_read(AsyncReadStream& s, const MutableBufferSequence& buffers,
+BOOST_ASIO_INITFN_RESULT_TYPE(ReadHandler,
+    void (boost::system::error_code, std::size_t))
+async_read(AsyncReadStream& s, const MutableBufferSequence& buffers,
     BOOST_ASIO_MOVE_ARG(ReadHandler) handler);
 
 /// Start an asynchronous operation to read a certain amount of data from a
@@ -490,7 +493,9 @@ void async_read(AsyncReadStream& s, const MutableBufferSequence& buffers,
  */
 template <typename AsyncReadStream, typename MutableBufferSequence,
     typename CompletionCondition, typename ReadHandler>
-void async_read(AsyncReadStream& s, const MutableBufferSequence& buffers,
+BOOST_ASIO_INITFN_RESULT_TYPE(ReadHandler,
+    void (boost::system::error_code, std::size_t))
+async_read(AsyncReadStream& s, const MutableBufferSequence& buffers,
     CompletionCondition completion_condition,
     BOOST_ASIO_MOVE_ARG(ReadHandler) handler);
 
@@ -545,7 +550,9 @@ void async_read(AsyncReadStream& s, const MutableBufferSequence& buffers,
  *     handler); @endcode
  */
 template <typename AsyncReadStream, typename Allocator, typename ReadHandler>
-void async_read(AsyncReadStream& s, basic_streambuf<Allocator>& b,
+BOOST_ASIO_INITFN_RESULT_TYPE(ReadHandler,
+    void (boost::system::error_code, std::size_t))
+async_read(AsyncReadStream& s, basic_streambuf<Allocator>& b,
     BOOST_ASIO_MOVE_ARG(ReadHandler) handler);
 
 /// Start an asynchronous operation to read a certain amount of data from a
@@ -606,7 +613,9 @@ void async_read(AsyncReadStream& s, basic_streambuf<Allocator>& b,
  */
 template <typename AsyncReadStream, typename Allocator,
     typename CompletionCondition, typename ReadHandler>
-void async_read(AsyncReadStream& s, basic_streambuf<Allocator>& b,
+BOOST_ASIO_INITFN_RESULT_TYPE(ReadHandler,
+    void (boost::system::error_code, std::size_t))
+async_read(AsyncReadStream& s, basic_streambuf<Allocator>& b,
     CompletionCondition completion_condition,
     BOOST_ASIO_MOVE_ARG(ReadHandler) handler);
 

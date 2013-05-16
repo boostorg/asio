@@ -537,7 +537,9 @@ namespace detail
 
 template <typename AsyncRandomAccessReadDevice, typename MutableBufferSequence,
     typename CompletionCondition, typename ReadHandler>
-inline void async_read_at(AsyncRandomAccessReadDevice& d,
+inline BOOST_ASIO_INITFN_RESULT_TYPE(ReadHandler,
+    void (boost::system::error_code, std::size_t))
+async_read_at(AsyncRandomAccessReadDevice& d,
     boost::uint64_t offset, const MutableBufferSequence& buffers,
     CompletionCondition completion_condition,
     BOOST_ASIO_MOVE_ARG(ReadHandler) handler)
@@ -546,15 +548,24 @@ inline void async_read_at(AsyncRandomAccessReadDevice& d,
   // not meet the documented type requirements for a ReadHandler.
   BOOST_ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
 
-  detail::make_read_at_op(
-    d, offset, buffers, completion_condition,
-      BOOST_ASIO_MOVE_CAST(ReadHandler)(handler))(
-        boost::system::error_code(), 0, 1);
+  detail::async_result_init<
+    ReadHandler, void (boost::system::error_code, std::size_t)> init(
+      BOOST_ASIO_MOVE_CAST(ReadHandler)(handler));
+
+  detail::read_at_op<AsyncRandomAccessReadDevice, MutableBufferSequence,
+    CompletionCondition, BOOST_ASIO_HANDLER_TYPE(ReadHandler,
+      void (boost::system::error_code, std::size_t))>(
+        d, offset, buffers, completion_condition, init.handler)(
+          boost::system::error_code(), 0, 1);
+
+  return init.result.get();
 }
 
 template <typename AsyncRandomAccessReadDevice, typename MutableBufferSequence,
     typename ReadHandler>
-inline void async_read_at(AsyncRandomAccessReadDevice& d,
+inline BOOST_ASIO_INITFN_RESULT_TYPE(ReadHandler,
+    void (boost::system::error_code, std::size_t))
+async_read_at(AsyncRandomAccessReadDevice& d,
     boost::uint64_t offset, const MutableBufferSequence& buffers,
     BOOST_ASIO_MOVE_ARG(ReadHandler) handler)
 {
@@ -562,10 +573,17 @@ inline void async_read_at(AsyncRandomAccessReadDevice& d,
   // not meet the documented type requirements for a ReadHandler.
   BOOST_ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
 
-  detail::make_read_at_op(
-    d, offset, buffers, transfer_all(),
-      BOOST_ASIO_MOVE_CAST(ReadHandler)(handler))(
-        boost::system::error_code(), 0, 1);
+  detail::async_result_init<
+    ReadHandler, void (boost::system::error_code, std::size_t)> init(
+      BOOST_ASIO_MOVE_CAST(ReadHandler)(handler));
+
+  detail::read_at_op<AsyncRandomAccessReadDevice, MutableBufferSequence,
+    detail::transfer_all_t, BOOST_ASIO_HANDLER_TYPE(ReadHandler,
+      void (boost::system::error_code, std::size_t))>(
+        d, offset, buffers, transfer_all(), init.handler)(
+          boost::system::error_code(), 0, 1);
+
+  return init.result.get();
 }
 
 #if !defined(BOOST_NO_IOSTREAM)
@@ -687,24 +705,13 @@ namespace detail
     boost_asio_handler_invoke_helpers::invoke(
         function, this_handler->handler_);
   }
-
-  template <typename AsyncRandomAccessReadDevice, typename Allocator,
-      typename CompletionCondition, typename ReadHandler>
-  inline read_at_streambuf_op<AsyncRandomAccessReadDevice,
-      Allocator, CompletionCondition, ReadHandler>
-  make_read_at_streambuf_op(AsyncRandomAccessReadDevice& d,
-      boost::uint64_t offset, boost::asio::basic_streambuf<Allocator>& b,
-      CompletionCondition completion_condition, ReadHandler handler)
-  {
-    return read_at_streambuf_op<AsyncRandomAccessReadDevice,
-      Allocator, CompletionCondition, ReadHandler>(
-        d, offset, b, completion_condition, handler);
-  }
 } // namespace detail
 
 template <typename AsyncRandomAccessReadDevice, typename Allocator,
     typename CompletionCondition, typename ReadHandler>
-inline void async_read_at(AsyncRandomAccessReadDevice& d,
+inline BOOST_ASIO_INITFN_RESULT_TYPE(ReadHandler,
+    void (boost::system::error_code, std::size_t))
+async_read_at(AsyncRandomAccessReadDevice& d,
     boost::uint64_t offset, boost::asio::basic_streambuf<Allocator>& b,
     CompletionCondition completion_condition,
     BOOST_ASIO_MOVE_ARG(ReadHandler) handler)
@@ -713,15 +720,24 @@ inline void async_read_at(AsyncRandomAccessReadDevice& d,
   // not meet the documented type requirements for a ReadHandler.
   BOOST_ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
 
-  detail::make_read_at_streambuf_op(
-    d, offset, b, completion_condition,
-      BOOST_ASIO_MOVE_CAST(ReadHandler)(handler))(
-        boost::system::error_code(), 0, 1);
+  detail::async_result_init<
+    ReadHandler, void (boost::system::error_code, std::size_t)> init(
+      BOOST_ASIO_MOVE_CAST(ReadHandler)(handler));
+
+  detail::read_at_streambuf_op<AsyncRandomAccessReadDevice, Allocator,
+    CompletionCondition, BOOST_ASIO_HANDLER_TYPE(ReadHandler,
+      void (boost::system::error_code, std::size_t))>(
+        d, offset, b, completion_condition, init.handler)(
+          boost::system::error_code(), 0, 1);
+
+  return init.result.get();
 }
 
 template <typename AsyncRandomAccessReadDevice, typename Allocator,
     typename ReadHandler>
-inline void async_read_at(AsyncRandomAccessReadDevice& d,
+inline BOOST_ASIO_INITFN_RESULT_TYPE(ReadHandler,
+    void (boost::system::error_code, std::size_t))
+async_read_at(AsyncRandomAccessReadDevice& d,
     boost::uint64_t offset, boost::asio::basic_streambuf<Allocator>& b,
     BOOST_ASIO_MOVE_ARG(ReadHandler) handler)
 {
@@ -729,10 +745,17 @@ inline void async_read_at(AsyncRandomAccessReadDevice& d,
   // not meet the documented type requirements for a ReadHandler.
   BOOST_ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
 
-  detail::make_read_at_streambuf_op(
-    d, offset, b, transfer_all(),
-      BOOST_ASIO_MOVE_CAST(ReadHandler)(handler))(
-        boost::system::error_code(), 0, 1);
+  detail::async_result_init<
+    ReadHandler, void (boost::system::error_code, std::size_t)> init(
+      BOOST_ASIO_MOVE_CAST(ReadHandler)(handler));
+
+  detail::read_at_streambuf_op<AsyncRandomAccessReadDevice, Allocator,
+    detail::transfer_all_t, BOOST_ASIO_HANDLER_TYPE(ReadHandler,
+      void (boost::system::error_code, std::size_t))>(
+        d, offset, b, transfer_all(), init.handler)(
+          boost::system::error_code(), 0, 1);
+
+  return init.result.get();
 }
 
 #endif // !defined(BOOST_NO_IOSTREAM)

@@ -17,6 +17,7 @@
 #include <boost/asio/windows/object_handle.hpp>
 
 #include <boost/asio/io_service.hpp>
+#include "../archetypes/async_result.hpp"
 #include "../unit_test.hpp"
 
 //------------------------------------------------------------------------------
@@ -42,6 +43,7 @@ void test()
   try
   {
     io_service ios;
+    archetypes::lazy_handler lazy;
     boost::system::error_code ec;
 
     // basic_object_handle constructors.
@@ -99,6 +101,8 @@ void test()
     handle1.wait(ec);
 
     handle1.async_wait(&wait_handler);
+    int i1 = handle1.async_wait(lazy);
+    (void)i1;
   }
   catch (std::exception&)
   {

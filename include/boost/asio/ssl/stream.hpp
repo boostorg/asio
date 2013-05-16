@@ -20,6 +20,7 @@
 #if defined(BOOST_ASIO_ENABLE_OLD_SSL)
 # include <boost/asio/ssl/old/stream.hpp>
 #else // defined(BOOST_ASIO_ENABLE_OLD_SSL)
+# include <boost/asio/async_result.hpp>
 # include <boost/asio/detail/buffer_sequence_adapter.hpp>
 # include <boost/asio/detail/handler_type_requirements.hpp>
 # include <boost/asio/detail/noncopyable.hpp>
@@ -359,15 +360,23 @@ public:
    * ); @endcode
    */
   template <typename HandshakeHandler>
-  void async_handshake(handshake_type type,
+  BOOST_ASIO_INITFN_RESULT_TYPE(HandshakeHandler,
+      void (boost::system::error_code))
+  async_handshake(handshake_type type,
       BOOST_ASIO_MOVE_ARG(HandshakeHandler) handler)
   {
     // If you get an error on the following line it means that your handler does
     // not meet the documented type requirements for a HandshakeHandler.
     BOOST_ASIO_HANDSHAKE_HANDLER_CHECK(HandshakeHandler, handler) type_check;
 
-    detail::async_io(next_layer_, core_, detail::handshake_op(type),
+    boost::asio::detail::async_result_init<
+      HandshakeHandler, void (boost::system::error_code)> init(
         BOOST_ASIO_MOVE_CAST(HandshakeHandler)(handler));
+
+    detail::async_io(next_layer_, core_,
+        detail::handshake_op(type), init.handler);
+
+    return init.result.get();
   }
 
   /// Shut down SSL on the stream.
@@ -410,14 +419,21 @@ public:
    * ); @endcode
    */
   template <typename ShutdownHandler>
-  void async_shutdown(BOOST_ASIO_MOVE_ARG(ShutdownHandler) handler)
+  BOOST_ASIO_INITFN_RESULT_TYPE(ShutdownHandler,
+      void (boost::system::error_code))
+  async_shutdown(BOOST_ASIO_MOVE_ARG(ShutdownHandler) handler)
   {
     // If you get an error on the following line it means that your handler does
     // not meet the documented type requirements for a ShutdownHandler.
     BOOST_ASIO_SHUTDOWN_HANDLER_CHECK(ShutdownHandler, handler) type_check;
 
-    detail::async_io(next_layer_, core_, detail::shutdown_op(),
+    boost::asio::detail::async_result_init<
+      ShutdownHandler, void (boost::system::error_code)> init(
         BOOST_ASIO_MOVE_CAST(ShutdownHandler)(handler));
+
+    detail::async_io(next_layer_, core_, detail::shutdown_op(), init.handler);
+
+    return init.result.get();
   }
 
   /// Write some data to the stream.
@@ -492,16 +508,23 @@ public:
    * ensure that all data is written before the blocking operation completes.
    */
   template <typename ConstBufferSequence, typename WriteHandler>
-  void async_write_some(const ConstBufferSequence& buffers,
+  BOOST_ASIO_INITFN_RESULT_TYPE(WriteHandler,
+      void (boost::system::error_code, std::size_t))
+  async_write_some(const ConstBufferSequence& buffers,
       BOOST_ASIO_MOVE_ARG(WriteHandler) handler)
   {
     // If you get an error on the following line it means that your handler does
     // not meet the documented type requirements for a WriteHandler.
     BOOST_ASIO_WRITE_HANDLER_CHECK(WriteHandler, handler) type_check;
 
-    detail::async_io(next_layer_, core_,
-        detail::write_op<ConstBufferSequence>(buffers),
+    boost::asio::detail::async_result_init<
+      WriteHandler, void (boost::system::error_code, std::size_t)> init(
         BOOST_ASIO_MOVE_CAST(WriteHandler)(handler));
+
+    detail::async_io(next_layer_, core_,
+        detail::write_op<ConstBufferSequence>(buffers), init.handler);
+
+    return init.result.get();
   }
 
   /// Read some data from the stream.
@@ -577,16 +600,23 @@ public:
    * operation completes.
    */
   template <typename MutableBufferSequence, typename ReadHandler>
-  void async_read_some(const MutableBufferSequence& buffers,
+  BOOST_ASIO_INITFN_RESULT_TYPE(ReadHandler,
+      void (boost::system::error_code, std::size_t))
+  async_read_some(const MutableBufferSequence& buffers,
       BOOST_ASIO_MOVE_ARG(ReadHandler) handler)
   {
     // If you get an error on the following line it means that your handler does
     // not meet the documented type requirements for a ReadHandler.
     BOOST_ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
 
-    detail::async_io(next_layer_, core_,
-        detail::read_op<MutableBufferSequence>(buffers),
+    boost::asio::detail::async_result_init<
+      ReadHandler, void (boost::system::error_code, std::size_t)> init(
         BOOST_ASIO_MOVE_CAST(ReadHandler)(handler));
+
+    detail::async_io(next_layer_, core_,
+        detail::read_op<MutableBufferSequence>(buffers), init.handler);
+
+    return init.result.get();
   }
 
 private:

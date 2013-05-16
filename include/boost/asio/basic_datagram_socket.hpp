@@ -290,14 +290,16 @@ public:
    * std::vector.
    */
   template <typename ConstBufferSequence, typename WriteHandler>
-  void async_send(const ConstBufferSequence& buffers,
+  BOOST_ASIO_INITFN_RESULT_TYPE(WriteHandler,
+      void (boost::system::error_code, std::size_t))
+  async_send(const ConstBufferSequence& buffers,
       BOOST_ASIO_MOVE_ARG(WriteHandler) handler)
   {
     // If you get an error on the following line it means that your handler does
     // not meet the documented type requirements for a WriteHandler.
     BOOST_ASIO_WRITE_HANDLER_CHECK(WriteHandler, handler) type_check;
 
-    this->get_service().async_send(this->get_implementation(),
+    return this->get_service().async_send(this->get_implementation(),
         buffers, 0, BOOST_ASIO_MOVE_CAST(WriteHandler)(handler));
   }
 
@@ -331,7 +333,9 @@ public:
    * socket.
    */
   template <typename ConstBufferSequence, typename WriteHandler>
-  void async_send(const ConstBufferSequence& buffers,
+  BOOST_ASIO_INITFN_RESULT_TYPE(WriteHandler,
+      void (boost::system::error_code, std::size_t))
+  async_send(const ConstBufferSequence& buffers,
       socket_base::message_flags flags,
       BOOST_ASIO_MOVE_ARG(WriteHandler) handler)
   {
@@ -339,7 +343,7 @@ public:
     // not meet the documented type requirements for a WriteHandler.
     BOOST_ASIO_WRITE_HANDLER_CHECK(WriteHandler, handler) type_check;
 
-    this->get_service().async_send(this->get_implementation(),
+    return this->get_service().async_send(this->get_implementation(),
         buffers, flags, BOOST_ASIO_MOVE_CAST(WriteHandler)(handler));
   }
 
@@ -469,7 +473,9 @@ public:
    * std::vector.
    */
   template <typename ConstBufferSequence, typename WriteHandler>
-  void async_send_to(const ConstBufferSequence& buffers,
+  BOOST_ASIO_INITFN_RESULT_TYPE(WriteHandler,
+      void (boost::system::error_code, std::size_t))
+  async_send_to(const ConstBufferSequence& buffers,
       const endpoint_type& destination,
       BOOST_ASIO_MOVE_ARG(WriteHandler) handler)
   {
@@ -477,8 +483,9 @@ public:
     // not meet the documented type requirements for a WriteHandler.
     BOOST_ASIO_WRITE_HANDLER_CHECK(WriteHandler, handler) type_check;
 
-    this->get_service().async_send_to(this->get_implementation(), buffers,
-        destination, 0, BOOST_ASIO_MOVE_CAST(WriteHandler)(handler));
+    return this->get_service().async_send_to(
+        this->get_implementation(), buffers, destination, 0,
+        BOOST_ASIO_MOVE_CAST(WriteHandler)(handler));
   }
 
   /// Start an asynchronous send.
@@ -509,7 +516,9 @@ public:
    * boost::asio::io_service::post().
    */
   template <typename ConstBufferSequence, typename WriteHandler>
-  void async_send_to(const ConstBufferSequence& buffers,
+  BOOST_ASIO_INITFN_RESULT_TYPE(WriteHandler,
+      void (boost::system::error_code, std::size_t))
+  async_send_to(const ConstBufferSequence& buffers,
       const endpoint_type& destination, socket_base::message_flags flags,
       BOOST_ASIO_MOVE_ARG(WriteHandler) handler)
   {
@@ -517,8 +526,9 @@ public:
     // not meet the documented type requirements for a WriteHandler.
     BOOST_ASIO_WRITE_HANDLER_CHECK(WriteHandler, handler) type_check;
 
-    this->get_service().async_send_to(this->get_implementation(), buffers,
-        destination, flags, BOOST_ASIO_MOVE_CAST(WriteHandler)(handler));
+    return this->get_service().async_send_to(
+        this->get_implementation(), buffers, destination, flags,
+        BOOST_ASIO_MOVE_CAST(WriteHandler)(handler));
   }
 
   /// Receive some data on a connected socket.
@@ -647,14 +657,16 @@ public:
    * std::vector.
    */
   template <typename MutableBufferSequence, typename ReadHandler>
-  void async_receive(const MutableBufferSequence& buffers,
+  BOOST_ASIO_INITFN_RESULT_TYPE(ReadHandler,
+      void (boost::system::error_code, std::size_t))
+  async_receive(const MutableBufferSequence& buffers,
       BOOST_ASIO_MOVE_ARG(ReadHandler) handler)
   {
     // If you get an error on the following line it means that your handler does
     // not meet the documented type requirements for a ReadHandler.
     BOOST_ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
 
-    this->get_service().async_receive(this->get_implementation(),
+    return this->get_service().async_receive(this->get_implementation(),
         buffers, 0, BOOST_ASIO_MOVE_CAST(ReadHandler)(handler));
   }
 
@@ -687,7 +699,9 @@ public:
    * datagram socket.
    */
   template <typename MutableBufferSequence, typename ReadHandler>
-  void async_receive(const MutableBufferSequence& buffers,
+  BOOST_ASIO_INITFN_RESULT_TYPE(ReadHandler,
+      void (boost::system::error_code, std::size_t))
+  async_receive(const MutableBufferSequence& buffers,
       socket_base::message_flags flags,
       BOOST_ASIO_MOVE_ARG(ReadHandler) handler)
   {
@@ -695,7 +709,7 @@ public:
     // not meet the documented type requirements for a ReadHandler.
     BOOST_ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
 
-    this->get_service().async_receive(this->get_implementation(),
+    return this->get_service().async_receive(this->get_implementation(),
         buffers, flags, BOOST_ASIO_MOVE_CAST(ReadHandler)(handler));
   }
 
@@ -825,7 +839,9 @@ public:
    * std::vector.
    */
   template <typename MutableBufferSequence, typename ReadHandler>
-  void async_receive_from(const MutableBufferSequence& buffers,
+  BOOST_ASIO_INITFN_RESULT_TYPE(ReadHandler,
+      void (boost::system::error_code, std::size_t))
+  async_receive_from(const MutableBufferSequence& buffers,
       endpoint_type& sender_endpoint,
       BOOST_ASIO_MOVE_ARG(ReadHandler) handler)
   {
@@ -833,8 +849,9 @@ public:
     // not meet the documented type requirements for a ReadHandler.
     BOOST_ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
 
-    this->get_service().async_receive_from(this->get_implementation(), buffers,
-        sender_endpoint, 0, BOOST_ASIO_MOVE_CAST(ReadHandler)(handler));
+    return this->get_service().async_receive_from(
+        this->get_implementation(), buffers, sender_endpoint, 0,
+        BOOST_ASIO_MOVE_CAST(ReadHandler)(handler));
   }
 
   /// Start an asynchronous receive.
@@ -867,7 +884,9 @@ public:
    * boost::asio::io_service::post().
    */
   template <typename MutableBufferSequence, typename ReadHandler>
-  void async_receive_from(const MutableBufferSequence& buffers,
+  BOOST_ASIO_INITFN_RESULT_TYPE(ReadHandler,
+      void (boost::system::error_code, std::size_t))
+  async_receive_from(const MutableBufferSequence& buffers,
       endpoint_type& sender_endpoint, socket_base::message_flags flags,
       BOOST_ASIO_MOVE_ARG(ReadHandler) handler)
   {
@@ -875,8 +894,9 @@ public:
     // not meet the documented type requirements for a ReadHandler.
     BOOST_ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
 
-    this->get_service().async_receive_from(this->get_implementation(), buffers,
-        sender_endpoint, flags, BOOST_ASIO_MOVE_CAST(ReadHandler)(handler));
+    return this->get_service().async_receive_from(
+        this->get_implementation(), buffers, sender_endpoint, flags,
+        BOOST_ASIO_MOVE_CAST(ReadHandler)(handler));
   }
 };
 

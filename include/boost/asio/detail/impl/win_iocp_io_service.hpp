@@ -31,7 +31,7 @@ namespace asio {
 namespace detail {
 
 template <typename Handler>
-void win_iocp_io_service::dispatch(Handler handler)
+void win_iocp_io_service::dispatch(Handler& handler)
 {
   if (thread_call_stack::contains(this))
   {
@@ -55,7 +55,7 @@ void win_iocp_io_service::dispatch(Handler handler)
 }
 
 template <typename Handler>
-void win_iocp_io_service::post(Handler handler)
+void win_iocp_io_service::post(Handler& handler)
 {
   // Allocate and construct an operation to wrap the handler.
   typedef completion_handler<Handler> op;

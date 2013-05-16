@@ -68,6 +68,7 @@ test-suite "asio"
   [ run ip/basic_resolver_iterator.cpp <template>asio_unit_test ]
   [ run ip/basic_resolver_query.cpp <template>asio_unit_test ]
   [ run ip/host_name.cpp <template>asio_unit_test ]
+  [ run ip/icmp.cpp <template>asio_unit_test ]
   [ run ip/multicast.cpp <template>asio_unit_test ]
   [ run ip/resolver_query_base.cpp <template>asio_unit_test ]
   [ run ip/resolver_service.cpp <template>asio_unit_test ]
