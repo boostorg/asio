@@ -369,6 +369,14 @@ and asynchronous operations.
 * [@boost_asio/example/cpp11/echo/blocking_udp_echo_server.cpp] 
 
 
+[heading Futures]
+
+This example demonstrates how to use std::future in conjunction with
+Boost.Asio's asynchronous operations.
+
+* [@boost_asio/example/cpp11/futures/daytime_client.cpp] 
+
+
 [heading HTTP Server]
 
 This example illustrates the use of asio in a simple single-threaded server
