@@ -369,6 +369,33 @@ struct handler_type_requirements
             boost::asio::detail::lvref<const boost::system::error_code>()), \
         char(0))>
 
+#define BOOST_ASIO_BUFFERED_HANDSHAKE_HANDLER_CHECK( \
+    handler_type, handler) \
+  \
+  typedef BOOST_ASIO_HANDLER_TYPE(handler_type, \
+      void(boost::system::error_code, std::size_t)) \
+    asio_true_handler_type; \
+  \
+  BOOST_ASIO_HANDLER_TYPE_REQUIREMENTS_ASSERT( \
+      sizeof(boost::asio::detail::two_arg_handler_test( \
+          boost::asio::detail::clvref< \
+            asio_true_handler_type>(), \
+          static_cast<const boost::system::error_code*>(0), \
+          static_cast<const std::size_t*>(0))) == 1, \
+      "BufferedHandshakeHandler type requirements not met") \
+  \
+  typedef boost::asio::detail::handler_type_requirements< \
+      sizeof( \
+        boost::asio::detail::argbyv( \
+          boost::asio::detail::clvref< \
+            asio_true_handler_type>())) + \
+      sizeof( \
+        boost::asio::detail::lvref< \
+          asio_true_handler_type>()( \
+          boost::asio::detail::lvref<const boost::system::error_code>(), \
+          boost::asio::detail::lvref<const std::size_t>()), \
+        char(0))>
+
 #define BOOST_ASIO_SHUTDOWN_HANDLER_CHECK( \
     handler_type, handler) \
   \
@@ -433,6 +460,10 @@ struct handler_type_requirements
   typedef int
 
 #define BOOST_ASIO_HANDSHAKE_HANDLER_CHECK( \
+    handler_type, handler) \
+  typedef int
+
+#define BOOST_ASIO_BUFFERED_HANDSHAKE_HANDLER_CHECK( \
     handler_type, handler) \
   typedef int
 
