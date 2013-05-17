@@ -24,6 +24,7 @@
 #include <boost/asio/detail/consuming_buffers.hpp>
 #include <boost/asio/detail/dependent_type.hpp>
 #include <boost/asio/detail/handler_alloc_helpers.hpp>
+#include <boost/asio/detail/handler_cont_helpers.hpp>
 #include <boost/asio/detail/handler_invoke_helpers.hpp>
 #include <boost/asio/detail/handler_type_requirements.hpp>
 #include <boost/asio/detail/throw_error.hpp>
@@ -167,6 +168,7 @@ namespace detail
         device_(device),
         offset_(offset),
         buffers_(buffers),
+        start_(0),
         total_transferred_(0),
         handler_(BOOST_ASIO_MOVE_CAST(ReadHandler)(handler))
     {
@@ -178,6 +180,7 @@ namespace detail
         device_(other.device_),
         offset_(other.offset_),
         buffers_(other.buffers_),
+        start_(other.start_),
         total_transferred_(other.total_transferred_),
         handler_(other.handler_)
     {
@@ -188,6 +191,7 @@ namespace detail
         device_(other.device_),
         offset_(other.offset_),
         buffers_(other.buffers_),
+        start_(other.start_),
         total_transferred_(other.total_transferred_),
         handler_(BOOST_ASIO_MOVE_CAST(ReadHandler)(other.handler_))
     {
@@ -197,7 +201,7 @@ namespace detail
     void operator()(const boost::system::error_code& ec,
         std::size_t bytes_transferred, int start = 0)
     {
-      switch (start)
+      switch (start_ = start)
       {
         case 1:
         buffers_.prepare(this->check_for_completion(ec, total_transferred_));
@@ -223,6 +227,7 @@ namespace detail
     boost::uint64_t offset_;
     boost::asio::detail::consuming_buffers<
       mutable_buffer, MutableBufferSequence> buffers_;
+    int start_;
     std::size_t total_transferred_;
     ReadHandler handler_;
   };
@@ -242,6 +247,7 @@ namespace detail
         device_(device),
         offset_(offset),
         buffer_(buffers),
+        start_(0),
         total_transferred_(0),
         handler_(BOOST_ASIO_MOVE_CAST(ReadHandler)(handler))
     {
@@ -253,6 +259,7 @@ namespace detail
         device_(other.device_),
         offset_(other.offset_),
         buffer_(other.buffer_),
+        start_(other.start_),
         total_transferred_(other.total_transferred_),
         handler_(other.handler_)
     {
@@ -263,6 +270,7 @@ namespace detail
         device_(other.device_),
         offset_(other.offset_),
         buffer_(other.buffer_),
+        start_(other.start_),
         total_transferred_(other.total_transferred_),
         handler_(BOOST_ASIO_MOVE_CAST(ReadHandler)(other.handler_))
     {
@@ -273,7 +281,7 @@ namespace detail
         std::size_t bytes_transferred, int start = 0)
     {
       std::size_t n = 0;
-      switch (start)
+      switch (start_ = start)
       {
         case 1:
         n = this->check_for_completion(ec, total_transferred_);
@@ -298,6 +306,7 @@ namespace detail
     AsyncRandomAccessReadDevice& device_;
     boost::uint64_t offset_;
     boost::asio::mutable_buffer buffer_;
+    int start_;
     std::size_t total_transferred_;
     ReadHandler handler_;
   };
@@ -317,6 +326,7 @@ namespace detail
         device_(device),
         offset_(offset),
         buffers_(buffers),
+        start_(0),
         total_transferred_(0),
         handler_(BOOST_ASIO_MOVE_CAST(ReadHandler)(handler))
     {
@@ -328,6 +338,7 @@ namespace detail
         device_(other.device_),
         offset_(other.offset_),
         buffers_(other.buffers_),
+        start_(other.start_),
         total_transferred_(other.total_transferred_),
         handler_(other.handler_)
     {
@@ -338,6 +349,7 @@ namespace detail
         device_(other.device_),
         offset_(other.offset_),
         buffers_(other.buffers_),
+        start_(other.start_),
         total_transferred_(other.total_transferred_),
         handler_(BOOST_ASIO_MOVE_CAST(ReadHandler)(other.handler_))
     {
@@ -354,7 +366,7 @@ namespace detail
       std::size_t buffer_size0 = boost::asio::buffer_size(bufs[0]);
       std::size_t buffer_size1 = boost::asio::buffer_size(bufs[1]);
       std::size_t n = 0;
-      switch (start)
+      switch (start_ = start)
       {
         case 1:
         n = this->check_for_completion(ec, total_transferred_);
@@ -383,6 +395,7 @@ namespace detail
     AsyncRandomAccessReadDevice& device_;
     boost::uint64_t offset_;
     boost::array<Elem, 2> buffers_;
+    int start_;
     std::size_t total_transferred_;
     ReadHandler handler_;
   };
@@ -404,6 +417,7 @@ namespace detail
         device_(device),
         offset_(offset),
         buffers_(buffers),
+        start_(0),
         total_transferred_(0),
         handler_(BOOST_ASIO_MOVE_CAST(ReadHandler)(handler))
     {
@@ -415,6 +429,7 @@ namespace detail
         device_(other.device_),
         offset_(other.offset_),
         buffers_(other.buffers_),
+        start_(other.start_),
         total_transferred_(other.total_transferred_),
         handler_(other.handler_)
     {
@@ -425,6 +440,7 @@ namespace detail
         device_(other.device_),
         offset_(other.offset_),
         buffers_(other.buffers_),
+        start_(other.start_),
         total_transferred_(other.total_transferred_),
         handler_(BOOST_ASIO_MOVE_CAST(ReadHandler)(other.handler_))
     {
@@ -441,7 +457,7 @@ namespace detail
       std::size_t buffer_size0 = boost::asio::buffer_size(bufs[0]);
       std::size_t buffer_size1 = boost::asio::buffer_size(bufs[1]);
       std::size_t n = 0;
-      switch (start)
+      switch (start_ = start)
       {
         case 1:
         n = this->check_for_completion(ec, total_transferred_);
@@ -470,6 +486,7 @@ namespace detail
     AsyncRandomAccessReadDevice& device_;
     boost::uint64_t offset_;
     std::array<Elem, 2> buffers_;
+    int start_;
     std::size_t total_transferred_;
     ReadHandler handler_;
   };
@@ -496,6 +513,18 @@ namespace detail
   {
     boost_asio_handler_alloc_helpers::deallocate(
         pointer, size, this_handler->handler_);
+  }
+
+  template <typename AsyncRandomAccessReadDevice,
+      typename MutableBufferSequence, typename CompletionCondition,
+      typename ReadHandler>
+  inline bool asio_handler_is_continuation(
+      read_at_op<AsyncRandomAccessReadDevice, MutableBufferSequence,
+        CompletionCondition, ReadHandler>* this_handler)
+  {
+    return this_handler->start_ == 0 ? true
+      : boost_asio_handler_cont_helpers::is_continuation(
+          this_handler->handler_);
   }
 
   template <typename Function, typename AsyncRandomAccessReadDevice,
@@ -604,6 +633,7 @@ namespace detail
         device_(device),
         offset_(offset),
         streambuf_(streambuf),
+        start_(0),
         total_transferred_(0),
         handler_(BOOST_ASIO_MOVE_CAST(ReadHandler)(handler))
     {
@@ -615,6 +645,7 @@ namespace detail
         device_(other.device_),
         offset_(other.offset_),
         streambuf_(other.streambuf_),
+        start_(other.start_),
         total_transferred_(other.total_transferred_),
         handler_(other.handler_)
     {
@@ -625,6 +656,7 @@ namespace detail
         device_(other.device_),
         offset_(other.offset_),
         streambuf_(other.streambuf_),
+        start_(other.start_),
         total_transferred_(other.total_transferred_),
         handler_(BOOST_ASIO_MOVE_CAST(ReadHandler)(other.handler_))
     {
@@ -635,7 +667,7 @@ namespace detail
         std::size_t bytes_transferred, int start = 0)
     {
       std::size_t max_size, bytes_available;
-      switch (start)
+      switch (start_ = start)
       {
         case 1:
         max_size = this->check_for_completion(ec, total_transferred_);
@@ -662,6 +694,7 @@ namespace detail
     AsyncRandomAccessReadDevice& device_;
     boost::uint64_t offset_;
     boost::asio::basic_streambuf<Allocator>& streambuf_;
+    int start_;
     std::size_t total_transferred_;
     ReadHandler handler_;
   };
@@ -684,6 +717,17 @@ namespace detail
   {
     boost_asio_handler_alloc_helpers::deallocate(
         pointer, size, this_handler->handler_);
+  }
+
+  template <typename AsyncRandomAccessReadDevice, typename Allocator,
+      typename CompletionCondition, typename ReadHandler>
+  inline bool asio_handler_is_continuation(
+      read_at_streambuf_op<AsyncRandomAccessReadDevice, Allocator,
+        CompletionCondition, ReadHandler>* this_handler)
+  {
+    return this_handler->start_ == 0 ? true
+      : boost_asio_handler_cont_helpers::is_continuation(
+          this_handler->handler_);
   }
 
   template <typename Function, typename AsyncRandomAccessReadDevice,

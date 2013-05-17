@@ -18,6 +18,7 @@
 #include <boost/asio/detail/config.hpp>
 #include <boost/asio/async_result.hpp>
 #include <boost/asio/detail/handler_alloc_helpers.hpp>
+#include <boost/asio/detail/handler_cont_helpers.hpp>
 #include <boost/asio/detail/handler_invoke_helpers.hpp>
 #include <boost/asio/detail/noncopyable.hpp>
 #include <boost/asio/detail/shared_ptr.hpp>
@@ -109,6 +110,12 @@ namespace detail {
   {
     boost_asio_handler_alloc_helpers::deallocate(
         pointer, size, this_handler->handler_);
+  }
+
+  template <typename Handler, typename T>
+  inline bool asio_handler_is_continuation(coro_handler<Handler, T>*)
+  {
+    return true;
   }
 
   template <typename Function, typename Handler, typename T>

@@ -23,6 +23,7 @@
 #include <boost/asio/detail/consuming_buffers.hpp>
 #include <boost/asio/detail/dependent_type.hpp>
 #include <boost/asio/detail/handler_alloc_helpers.hpp>
+#include <boost/asio/detail/handler_cont_helpers.hpp>
 #include <boost/asio/detail/handler_invoke_helpers.hpp>
 #include <boost/asio/detail/handler_type_requirements.hpp>
 #include <boost/asio/detail/throw_error.hpp>
@@ -151,6 +152,7 @@ namespace detail
         device_(device),
         offset_(offset),
         buffers_(buffers),
+        start_(0),
         total_transferred_(0),
         handler_(BOOST_ASIO_MOVE_CAST(WriteHandler)(handler))
     {
@@ -162,6 +164,7 @@ namespace detail
         device_(other.device_),
         offset_(other.offset_),
         buffers_(other.buffers_),
+        start_(other.start_),
         total_transferred_(other.total_transferred_),
         handler_(other.handler_)
     {
@@ -172,6 +175,7 @@ namespace detail
         device_(other.device_),
         offset_(other.offset_),
         buffers_(other.buffers_),
+        start_(other.start_),
         total_transferred_(other.total_transferred_),
         handler_(BOOST_ASIO_MOVE_CAST(WriteHandler)(other.handler_))
     {
@@ -181,7 +185,7 @@ namespace detail
     void operator()(const boost::system::error_code& ec,
         std::size_t bytes_transferred, int start = 0)
     {
-      switch (start)
+      switch (start_ = start)
       {
         case 1:
         buffers_.prepare(this->check_for_completion(ec, total_transferred_));
@@ -208,6 +212,7 @@ namespace detail
     boost::uint64_t offset_;
     boost::asio::detail::consuming_buffers<
       const_buffer, ConstBufferSequence> buffers_;
+    int start_;
     std::size_t total_transferred_;
     WriteHandler handler_;
   };
@@ -228,6 +233,7 @@ namespace detail
         device_(device),
         offset_(offset),
         buffer_(buffers),
+        start_(0),
         total_transferred_(0),
         handler_(BOOST_ASIO_MOVE_CAST(WriteHandler)(handler))
     {
@@ -239,6 +245,7 @@ namespace detail
         device_(other.device_),
         offset_(other.offset_),
         buffer_(other.buffer_),
+        start_(other.start_),
         total_transferred_(other.total_transferred_),
         handler_(other.handler_)
     {
@@ -249,6 +256,7 @@ namespace detail
         device_(other.device_),
         offset_(other.offset_),
         buffer_(other.buffer_),
+        start_(other.start_),
         total_transferred_(other.total_transferred_),
         handler_(BOOST_ASIO_MOVE_CAST(WriteHandler)(other.handler_))
     {
@@ -259,7 +267,7 @@ namespace detail
         std::size_t bytes_transferred, int start = 0)
     {
       std::size_t n = 0;
-      switch (start)
+      switch (start_ = start)
       {
         case 1:
         n = this->check_for_completion(ec, total_transferred_);
@@ -284,6 +292,7 @@ namespace detail
     AsyncRandomAccessWriteDevice& device_;
     boost::uint64_t offset_;
     boost::asio::mutable_buffer buffer_;
+    int start_;
     std::size_t total_transferred_;
     WriteHandler handler_;
   };
@@ -304,6 +313,7 @@ namespace detail
         device_(device),
         offset_(offset),
         buffer_(buffers),
+        start_(0),
         total_transferred_(0),
         handler_(BOOST_ASIO_MOVE_CAST(WriteHandler)(handler))
     {
@@ -315,6 +325,7 @@ namespace detail
         device_(other.device_),
         offset_(other.offset_),
         buffer_(other.buffer_),
+        start_(other.start_),
         total_transferred_(other.total_transferred_),
         handler_(other.handler_)
     {
@@ -325,6 +336,7 @@ namespace detail
         device_(other.device_),
         offset_(other.offset_),
         buffer_(other.buffer_),
+        start_(other.start_),
         total_transferred_(other.total_transferred_),
         handler_(BOOST_ASIO_MOVE_CAST(WriteHandler)(other.handler_))
     {
@@ -335,7 +347,7 @@ namespace detail
         std::size_t bytes_transferred, int start = 0)
     {
       std::size_t n = 0;
-      switch (start)
+      switch (start_ = start)
       {
         case 1:
         n = this->check_for_completion(ec, total_transferred_);
@@ -360,6 +372,7 @@ namespace detail
     AsyncRandomAccessWriteDevice& device_;
     boost::uint64_t offset_;
     boost::asio::const_buffer buffer_;
+    int start_;
     std::size_t total_transferred_;
     WriteHandler handler_;
   };
@@ -379,6 +392,7 @@ namespace detail
         device_(device),
         offset_(offset),
         buffers_(buffers),
+        start_(0),
         total_transferred_(0),
         handler_(BOOST_ASIO_MOVE_CAST(WriteHandler)(handler))
     {
@@ -390,6 +404,7 @@ namespace detail
         device_(other.device_),
         offset_(other.offset_),
         buffers_(other.buffers_),
+        start_(other.start_),
         total_transferred_(other.total_transferred_),
         handler_(other.handler_)
     {
@@ -400,6 +415,7 @@ namespace detail
         device_(other.device_),
         offset_(other.offset_),
         buffers_(other.buffers_),
+        start_(other.start_),
         total_transferred_(other.total_transferred_),
         handler_(BOOST_ASIO_MOVE_CAST(WriteHandler)(other.handler_))
     {
@@ -416,7 +432,7 @@ namespace detail
       std::size_t buffer_size0 = boost::asio::buffer_size(bufs[0]);
       std::size_t buffer_size1 = boost::asio::buffer_size(bufs[1]);
       std::size_t n = 0;
-      switch (start)
+      switch (start_ = start)
       {
         case 1:
         n = this->check_for_completion(ec, total_transferred_);
@@ -445,6 +461,7 @@ namespace detail
     AsyncRandomAccessWriteDevice& device_;
     boost::uint64_t offset_;
     boost::array<Elem, 2> buffers_;
+    int start_;
     std::size_t total_transferred_;
     WriteHandler handler_;
   };
@@ -466,6 +483,7 @@ namespace detail
         device_(device),
         offset_(offset),
         buffers_(buffers),
+        start_(0),
         total_transferred_(0),
         handler_(BOOST_ASIO_MOVE_CAST(WriteHandler)(handler))
     {
@@ -477,6 +495,7 @@ namespace detail
         device_(other.device_),
         offset_(other.offset_),
         buffers_(other.buffers_),
+        start_(other.start_),
         total_transferred_(other.total_transferred_),
         handler_(other.handler_)
     {
@@ -487,6 +506,7 @@ namespace detail
         device_(other.device_),
         offset_(other.offset_),
         buffers_(other.buffers_),
+        start_(other.start_),
         total_transferred_(other.total_transferred_),
         handler_(BOOST_ASIO_MOVE_CAST(WriteHandler)(other.handler_))
     {
@@ -503,7 +523,7 @@ namespace detail
       std::size_t buffer_size0 = boost::asio::buffer_size(bufs[0]);
       std::size_t buffer_size1 = boost::asio::buffer_size(bufs[1]);
       std::size_t n = 0;
-      switch (start)
+      switch (start_ = start)
       {
         case 1:
         n = this->check_for_completion(ec, total_transferred_);
@@ -532,6 +552,7 @@ namespace detail
     AsyncRandomAccessWriteDevice& device_;
     boost::uint64_t offset_;
     std::array<Elem, 2> buffers_;
+    int start_;
     std::size_t total_transferred_;
     WriteHandler handler_;
   };
@@ -556,6 +577,17 @@ namespace detail
   {
     boost_asio_handler_alloc_helpers::deallocate(
         pointer, size, this_handler->handler_);
+  }
+
+  template <typename AsyncRandomAccessWriteDevice, typename ConstBufferSequence,
+      typename CompletionCondition, typename WriteHandler>
+  inline bool asio_handler_is_continuation(
+      write_at_op<AsyncRandomAccessWriteDevice, ConstBufferSequence,
+        CompletionCondition, WriteHandler>* this_handler)
+  {
+    return this_handler->start_ == 0 ? true
+      : boost_asio_handler_cont_helpers::is_continuation(
+          this_handler->handler_);
   }
 
   template <typename Function, typename AsyncRandomAccessWriteDevice,
@@ -701,6 +733,14 @@ namespace detail
   {
     boost_asio_handler_alloc_helpers::deallocate(
         pointer, size, this_handler->handler_);
+  }
+
+  template <typename Allocator, typename WriteHandler>
+  inline bool asio_handler_is_continuation(
+      write_at_streambuf_op<Allocator, WriteHandler>* this_handler)
+  {
+    return boost_asio_handler_cont_helpers::is_continuation(
+        this_handler->handler_);
   }
 
   template <typename Function, typename Allocator, typename WriteHandler>

@@ -50,7 +50,7 @@ void select_reactor::schedule_timer(timer_queue<Time_Traits>& queue,
 
   if (shutdown_)
   {
-    io_service_.post_immediate_completion(op);
+    io_service_.post_immediate_completion(op, false);
     return;
   }
 

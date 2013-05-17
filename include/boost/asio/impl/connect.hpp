@@ -18,6 +18,7 @@
 #include <boost/asio/detail/bind_handler.hpp>
 #include <boost/asio/detail/consuming_buffers.hpp>
 #include <boost/asio/detail/handler_alloc_helpers.hpp>
+#include <boost/asio/detail/handler_cont_helpers.hpp>
 #include <boost/asio/detail/handler_invoke_helpers.hpp>
 #include <boost/asio/detail/handler_type_requirements.hpp>
 #include <boost/asio/detail/throw_error.hpp>
@@ -184,6 +185,7 @@ namespace detail
         socket_(sock),
         iter_(begin),
         end_(end),
+        start_(0),
         handler_(BOOST_ASIO_MOVE_CAST(ComposedConnectHandler)(handler))
     {
     }
@@ -194,6 +196,7 @@ namespace detail
         socket_(other.socket_),
         iter_(other.iter_),
         end_(other.end_),
+        start_(other.start_),
         handler_(other.handler_)
     {
     }
@@ -203,6 +206,7 @@ namespace detail
         socket_(other.socket_),
         iter_(other.iter_),
         end_(other.end_),
+        start_(other.start_),
         handler_(BOOST_ASIO_MOVE_CAST(ComposedConnectHandler)(other.handler_))
     {
     }
@@ -210,7 +214,7 @@ namespace detail
 
     void operator()(boost::system::error_code ec, int start = 0)
     {
-      switch (start)
+      switch (start_ = start)
       {
         case 1:
         for (;;)
@@ -258,6 +262,7 @@ namespace detail
     basic_socket<Protocol, SocketService>& socket_;
     Iterator iter_;
     Iterator end_;
+    int start_;
     ComposedConnectHandler handler_;
   };
 
@@ -279,6 +284,16 @@ namespace detail
   {
     boost_asio_handler_alloc_helpers::deallocate(
         pointer, size, this_handler->handler_);
+  }
+
+  template <typename Protocol, typename SocketService, typename Iterator,
+      typename ConnectCondition, typename ComposedConnectHandler>
+  inline bool asio_handler_is_continuation(
+      connect_op<Protocol, SocketService, Iterator,
+        ConnectCondition, ComposedConnectHandler>* this_handler)
+  {
+    return boost_asio_handler_cont_helpers::is_continuation(
+        this_handler->handler_);
   }
 
   template <typename Function, typename Protocol,

@@ -46,7 +46,7 @@ struct strand_service::on_dispatch_exit
     impl_->mutex_.unlock();
 
     if (more_handlers)
-      io_service_->post_immediate_completion(impl_);
+      io_service_->post_immediate_completion(impl_, false);
   }
 };
 
@@ -94,6 +94,9 @@ template <typename Handler>
 void strand_service::post(strand_service::implementation_type& impl,
     Handler& handler)
 {
+  bool is_continuation =
+    boost_asio_handler_cont_helpers::is_continuation(handler);
+
   // Allocate and construct an operation to wrap the handler.
   typedef completion_handler<Handler> op;
   typename op::ptr p = { boost::addressof(handler),
@@ -103,7 +106,7 @@ void strand_service::post(strand_service::implementation_type& impl,
 
   BOOST_ASIO_HANDLER_CREATION((p.p, "strand", impl, "post"));
 
-  do_post(impl, p.p);
+  do_post(impl, p.p, is_continuation);
   p.v = p.p = 0;
 }
 

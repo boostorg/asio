@@ -49,7 +49,7 @@ void win_iocp_io_service::dispatch(Handler& handler)
 
     BOOST_ASIO_HANDLER_CREATION((p.p, "io_service", this, "dispatch"));
 
-    post_immediate_completion(p.p);
+    post_immediate_completion(p.p, false);
     p.v = p.p = 0;
   }
 }
@@ -66,7 +66,7 @@ void win_iocp_io_service::post(Handler& handler)
 
   BOOST_ASIO_HANDLER_CREATION((p.p, "io_service", this, "post"));
 
-  post_immediate_completion(p.p);
+  post_immediate_completion(p.p, false);
   p.v = p.p = 0;
 }
 
@@ -92,7 +92,7 @@ void win_iocp_io_service::schedule_timer(timer_queue<Time_Traits>& queue,
   // If the service has been shut down we silently discard the timer.
   if (::InterlockedExchangeAdd(&shutdown_, 0) != 0)
   {
-    post_immediate_completion(op);
+    post_immediate_completion(op, false);
     return;
   }
 

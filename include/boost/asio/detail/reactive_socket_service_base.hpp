@@ -200,6 +200,9 @@ public:
       const ConstBufferSequence& buffers,
       socket_base::message_flags flags, Handler handler)
   {
+    bool is_continuation =
+      boost_asio_handler_cont_helpers::is_continuation(handler);
+
     // Allocate and construct an operation to wrap the handler.
     typedef reactive_socket_send_op<ConstBufferSequence, Handler> op;
     typename op::ptr p = { boost::addressof(handler),
@@ -209,7 +212,7 @@ public:
 
     BOOST_ASIO_HANDLER_CREATION((p.p, "socket", &impl, "async_send"));
 
-    start_op(impl, reactor::write_op, p.p, true,
+    start_op(impl, reactor::write_op, p.p, is_continuation, true,
         ((impl.state_ & socket_ops::stream_oriented)
           && buffer_sequence_adapter<boost::asio::const_buffer,
             ConstBufferSequence>::all_empty(buffers)));
@@ -221,6 +224,9 @@ public:
   void async_send(base_implementation_type& impl, const null_buffers&,
       socket_base::message_flags, Handler handler)
   {
+    bool is_continuation =
+      boost_asio_handler_cont_helpers::is_continuation(handler);
+
     // Allocate and construct an operation to wrap the handler.
     typedef reactive_null_buffers_op<Handler> op;
     typename op::ptr p = { boost::addressof(handler),
@@ -231,7 +237,7 @@ public:
     BOOST_ASIO_HANDLER_CREATION((p.p, "socket",
           &impl, "async_send(null_buffers)"));
 
-    start_op(impl, reactor::write_op, p.p, false, false);
+    start_op(impl, reactor::write_op, p.p, is_continuation, false, false);
     p.v = p.p = 0;
   }
 
@@ -265,6 +271,9 @@ public:
       const MutableBufferSequence& buffers,
       socket_base::message_flags flags, Handler handler)
   {
+    bool is_continuation =
+      boost_asio_handler_cont_helpers::is_continuation(handler);
+
     // Allocate and construct an operation to wrap the handler.
     typedef reactive_socket_recv_op<MutableBufferSequence, Handler> op;
     typename op::ptr p = { boost::addressof(handler),
@@ -277,7 +286,8 @@ public:
     start_op(impl,
         (flags & socket_base::message_out_of_band)
           ? reactor::except_op : reactor::read_op,
-        p.p, (flags & socket_base::message_out_of_band) == 0,
+        p.p, is_continuation,
+        (flags & socket_base::message_out_of_band) == 0,
         ((impl.state_ & socket_ops::stream_oriented)
           && buffer_sequence_adapter<boost::asio::mutable_buffer,
             MutableBufferSequence>::all_empty(buffers)));
@@ -289,6 +299,9 @@ public:
   void async_receive(base_implementation_type& impl, const null_buffers&,
       socket_base::message_flags flags, Handler handler)
   {
+    bool is_continuation =
+      boost_asio_handler_cont_helpers::is_continuation(handler);
+
     // Allocate and construct an operation to wrap the handler.
     typedef reactive_null_buffers_op<Handler> op;
     typename op::ptr p = { boost::addressof(handler),
@@ -302,7 +315,7 @@ public:
     start_op(impl,
         (flags & socket_base::message_out_of_band)
           ? reactor::except_op : reactor::read_op,
-        p.p, false, false);
+        p.p, is_continuation, false, false);
     p.v = p.p = 0;
   }
 
@@ -343,6 +356,9 @@ public:
       const MutableBufferSequence& buffers, socket_base::message_flags in_flags,
       socket_base::message_flags& out_flags, Handler handler)
   {
+    bool is_continuation =
+      boost_asio_handler_cont_helpers::is_continuation(handler);
+
     // Allocate and construct an operation to wrap the handler.
     typedef reactive_socket_recvmsg_op<MutableBufferSequence, Handler> op;
     typename op::ptr p = { boost::addressof(handler),
@@ -356,7 +372,8 @@ public:
     start_op(impl,
         (in_flags & socket_base::message_out_of_band)
           ? reactor::except_op : reactor::read_op,
-        p.p, (in_flags & socket_base::message_out_of_band) == 0, false);
+        p.p, is_continuation,
+        (in_flags & socket_base::message_out_of_band) == 0, false);
     p.v = p.p = 0;
   }
 
@@ -366,6 +383,9 @@ public:
       const null_buffers&, socket_base::message_flags in_flags,
       socket_base::message_flags& out_flags, Handler handler)
   {
+    bool is_continuation =
+      boost_asio_handler_cont_helpers::is_continuation(handler);
+
     // Allocate and construct an operation to wrap the handler.
     typedef reactive_null_buffers_op<Handler> op;
     typename op::ptr p = { boost::addressof(handler),
@@ -383,7 +403,7 @@ public:
     start_op(impl,
         (in_flags & socket_base::message_out_of_band)
           ? reactor::except_op : reactor::read_op,
-        p.p, false, false);
+        p.p, is_continuation, false, false);
     p.v = p.p = 0;
   }
 
@@ -400,15 +420,16 @@ protected:
 
   // Start the asynchronous read or write operation.
   BOOST_ASIO_DECL void start_op(base_implementation_type& impl, int op_type,
-      reactor_op* op, bool is_non_blocking, bool noop);
+      reactor_op* op, bool is_continuation, bool is_non_blocking, bool noop);
 
   // Start the asynchronous accept operation.
   BOOST_ASIO_DECL void start_accept_op(base_implementation_type& impl,
-      reactor_op* op, bool peer_is_open);
+      reactor_op* op, bool is_continuation, bool peer_is_open);
 
   // Start the asynchronous connect operation.
   BOOST_ASIO_DECL void start_connect_op(base_implementation_type& impl,
-      reactor_op* op, const socket_addr_type* addr, size_t addrlen);
+      reactor_op* op, bool is_continuation,
+      const socket_addr_type* addr, size_t addrlen);
 
   // The selector that performs event demultiplexing for the service.
   reactor& reactor_;

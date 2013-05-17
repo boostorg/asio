@@ -23,6 +23,7 @@
 #include <boost/asio/detail/consuming_buffers.hpp>
 #include <boost/asio/detail/dependent_type.hpp>
 #include <boost/asio/detail/handler_alloc_helpers.hpp>
+#include <boost/asio/detail/handler_cont_helpers.hpp>
 #include <boost/asio/detail/handler_invoke_helpers.hpp>
 #include <boost/asio/detail/handler_type_requirements.hpp>
 #include <boost/asio/detail/throw_error.hpp>
@@ -140,6 +141,7 @@ namespace detail
           CompletionCondition>(completion_condition),
         stream_(stream),
         buffers_(buffers),
+        start_(0),
         total_transferred_(0),
         handler_(BOOST_ASIO_MOVE_CAST(WriteHandler)(handler))
     {
@@ -150,6 +152,7 @@ namespace detail
       : detail::base_from_completion_cond<CompletionCondition>(other),
         stream_(other.stream_),
         buffers_(other.buffers_),
+        start_(other.start_),
         total_transferred_(other.total_transferred_),
         handler_(other.handler_)
     {
@@ -159,6 +162,7 @@ namespace detail
       : detail::base_from_completion_cond<CompletionCondition>(other),
         stream_(other.stream_),
         buffers_(other.buffers_),
+        start_(other.start_),
         total_transferred_(other.total_transferred_),
         handler_(BOOST_ASIO_MOVE_CAST(WriteHandler)(other.handler_))
     {
@@ -168,7 +172,7 @@ namespace detail
     void operator()(const boost::system::error_code& ec,
         std::size_t bytes_transferred, int start = 0)
     {
-      switch (start)
+      switch (start_ = start)
       {
         case 1:
         buffers_.prepare(this->check_for_completion(ec, total_transferred_));
@@ -193,6 +197,7 @@ namespace detail
     AsyncWriteStream& stream_;
     boost::asio::detail::consuming_buffers<
       const_buffer, ConstBufferSequence> buffers_;
+    int start_;
     std::size_t total_transferred_;
     WriteHandler handler_;
   };
@@ -212,6 +217,7 @@ namespace detail
           CompletionCondition>(completion_condition),
         stream_(stream),
         buffer_(buffers),
+        start_(0),
         total_transferred_(0),
         handler_(BOOST_ASIO_MOVE_CAST(WriteHandler)(handler))
     {
@@ -222,6 +228,7 @@ namespace detail
       : detail::base_from_completion_cond<CompletionCondition>(other),
         stream_(other.stream_),
         buffer_(other.buffer_),
+        start_(other.start_),
         total_transferred_(other.total_transferred_),
         handler_(other.handler_)
     {
@@ -231,6 +238,7 @@ namespace detail
       : detail::base_from_completion_cond<CompletionCondition>(other),
         stream_(other.stream_),
         buffer_(other.buffer_),
+        start_(other.start_),
         total_transferred_(other.total_transferred_),
         handler_(BOOST_ASIO_MOVE_CAST(WriteHandler)(other.handler_))
     {
@@ -241,7 +249,7 @@ namespace detail
         std::size_t bytes_transferred, int start = 0)
     {
       std::size_t n = 0;
-      switch (start)
+      switch (start_ = start)
       {
         case 1:
         n = this->check_for_completion(ec, total_transferred_);
@@ -265,6 +273,7 @@ namespace detail
   //private:
     AsyncWriteStream& stream_;
     boost::asio::mutable_buffer buffer_;
+    int start_;
     std::size_t total_transferred_;
     WriteHandler handler_;
   };
@@ -284,6 +293,7 @@ namespace detail
           CompletionCondition>(completion_condition),
         stream_(stream),
         buffer_(buffers),
+        start_(0),
         total_transferred_(0),
         handler_(BOOST_ASIO_MOVE_CAST(WriteHandler)(handler))
     {
@@ -294,6 +304,7 @@ namespace detail
       : detail::base_from_completion_cond<CompletionCondition>(other),
         stream_(other.stream_),
         buffer_(other.buffer_),
+        start_(other.start_),
         total_transferred_(other.total_transferred_),
         handler_(other.handler_)
     {
@@ -303,6 +314,7 @@ namespace detail
       : detail::base_from_completion_cond<CompletionCondition>(other),
         stream_(other.stream_),
         buffer_(other.buffer_),
+        start_(other.start_),
         total_transferred_(other.total_transferred_),
         handler_(BOOST_ASIO_MOVE_CAST(WriteHandler)(other.handler_))
     {
@@ -313,7 +325,7 @@ namespace detail
         std::size_t bytes_transferred, int start = 0)
     {
       std::size_t n = 0;
-      switch (start)
+      switch (start_ = start)
       {
         case 1:
         n = this->check_for_completion(ec, total_transferred_);
@@ -337,6 +349,7 @@ namespace detail
   //private:
     AsyncWriteStream& stream_;
     boost::asio::const_buffer buffer_;
+    int start_;
     std::size_t total_transferred_;
     WriteHandler handler_;
   };
@@ -354,6 +367,7 @@ namespace detail
           CompletionCondition>(completion_condition),
         stream_(stream),
         buffers_(buffers),
+        start_(0),
         total_transferred_(0),
         handler_(BOOST_ASIO_MOVE_CAST(WriteHandler)(handler))
     {
@@ -364,6 +378,7 @@ namespace detail
       : detail::base_from_completion_cond<CompletionCondition>(other),
         stream_(other.stream_),
         buffers_(other.buffers_),
+        start_(other.start_),
         total_transferred_(other.total_transferred_),
         handler_(other.handler_)
     {
@@ -373,6 +388,7 @@ namespace detail
       : detail::base_from_completion_cond<CompletionCondition>(other),
         stream_(other.stream_),
         buffers_(other.buffers_),
+        start_(other.start_),
         total_transferred_(other.total_transferred_),
         handler_(BOOST_ASIO_MOVE_CAST(WriteHandler)(other.handler_))
     {
@@ -389,7 +405,7 @@ namespace detail
       std::size_t buffer_size0 = boost::asio::buffer_size(bufs[0]);
       std::size_t buffer_size1 = boost::asio::buffer_size(bufs[1]);
       std::size_t n = 0;
-      switch (start)
+      switch (start_ = start)
       {
         case 1:
         n = this->check_for_completion(ec, total_transferred_);
@@ -416,6 +432,7 @@ namespace detail
   //private:
     AsyncWriteStream& stream_;
     boost::array<Elem, 2> buffers_;
+    int start_;
     std::size_t total_transferred_;
     WriteHandler handler_;
   };
@@ -435,6 +452,7 @@ namespace detail
           CompletionCondition>(completion_condition),
         stream_(stream),
         buffers_(buffers),
+        start_(0),
         total_transferred_(0),
         handler_(BOOST_ASIO_MOVE_CAST(WriteHandler)(handler))
     {
@@ -445,6 +463,7 @@ namespace detail
       : detail::base_from_completion_cond<CompletionCondition>(other),
         stream_(other.stream_),
         buffers_(other.buffers_),
+        start_(other.start_),
         total_transferred_(other.total_transferred_),
         handler_(other.handler_)
     {
@@ -454,6 +473,7 @@ namespace detail
       : detail::base_from_completion_cond<CompletionCondition>(other),
         stream_(other.stream_),
         buffers_(other.buffers_),
+        start_(other.start_),
         total_transferred_(other.total_transferred_),
         handler_(BOOST_ASIO_MOVE_CAST(WriteHandler)(other.handler_))
     {
@@ -470,7 +490,7 @@ namespace detail
       std::size_t buffer_size0 = boost::asio::buffer_size(bufs[0]);
       std::size_t buffer_size1 = boost::asio::buffer_size(bufs[1]);
       std::size_t n = 0;
-      switch (start)
+      switch (start_ = start)
       {
         case 1:
         n = this->check_for_completion(ec, total_transferred_);
@@ -497,6 +517,7 @@ namespace detail
   //private:
     AsyncWriteStream& stream_;
     std::array<Elem, 2> buffers_;
+    int start_;
     std::size_t total_transferred_;
     WriteHandler handler_;
   };
@@ -521,6 +542,17 @@ namespace detail
   {
     boost_asio_handler_alloc_helpers::deallocate(
         pointer, size, this_handler->handler_);
+  }
+
+  template <typename AsyncWriteStream, typename ConstBufferSequence,
+      typename CompletionCondition, typename WriteHandler>
+  inline bool asio_handler_is_continuation(
+      write_op<AsyncWriteStream, ConstBufferSequence,
+        CompletionCondition, WriteHandler>* this_handler)
+  {
+    return this_handler->start_ == 0 ? true
+      : boost_asio_handler_cont_helpers::is_continuation(
+          this_handler->handler_);
   }
 
   template <typename Function, typename AsyncWriteStream,
@@ -650,6 +682,14 @@ namespace detail
   {
     boost_asio_handler_alloc_helpers::deallocate(
         pointer, size, this_handler->handler_);
+  }
+
+  template <typename Allocator, typename WriteHandler>
+  inline bool asio_handler_is_continuation(
+      write_streambuf_handler<Allocator, WriteHandler>* this_handler)
+  {
+    return boost_asio_handler_cont_helpers::is_continuation(
+        this_handler->handler_);
   }
 
   template <typename Function, typename Allocator, typename WriteHandler>

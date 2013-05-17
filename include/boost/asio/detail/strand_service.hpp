@@ -92,13 +92,18 @@ public:
   template <typename Handler>
   void post(implementation_type& impl, Handler& handler);
 
+  // Determine whether the strand is running in the current thread.
+  BOOST_ASIO_DECL bool running_in_this_thread(
+      const implementation_type& impl) const;
+
 private:
   // Helper function to dispatch a handler. Returns true if the handler should
   // be dispatched immediately.
   BOOST_ASIO_DECL bool do_dispatch(implementation_type& impl, operation* op);
 
   // Helper fiunction to post a handler.
-  BOOST_ASIO_DECL void do_post(implementation_type& impl, operation* op);
+  BOOST_ASIO_DECL void do_post(implementation_type& impl,
+      operation* op, bool is_continuation);
 
   BOOST_ASIO_DECL static void do_complete(io_service_impl* owner,
       operation* base, const boost::system::error_code& ec,
