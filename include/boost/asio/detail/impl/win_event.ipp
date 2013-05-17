@@ -17,7 +17,7 @@
 
 #include <boost/asio/detail/config.hpp>
 
-#if defined(BOOST_WINDOWS)
+#if defined(BOOST_ASIO_WINDOWS)
 
 #include <boost/asio/detail/throw_error.hpp>
 #include <boost/asio/detail/win_event.hpp>
@@ -47,6 +47,6 @@ win_event::win_event()
 
 #include <boost/asio/detail/pop_options.hpp>
 
-#endif // defined(BOOST_WINDOWS)
+#endif // defined(BOOST_ASIO_WINDOWS)
 
 #endif // BOOST_ASIO_DETAIL_IMPL_WIN_EVENT_IPP

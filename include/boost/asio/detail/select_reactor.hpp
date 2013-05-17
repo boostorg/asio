@@ -22,9 +22,9 @@
       && !defined(BOOST_ASIO_HAS_EPOLL) \
       && !defined(BOOST_ASIO_HAS_KQUEUE))
 
-#include <boost/limits.hpp>
 #include <cstddef>
 #include <boost/asio/detail/fd_set_adapter.hpp>
+#include <boost/asio/detail/limits.hpp>
 #include <boost/asio/detail/mutex.hpp>
 #include <boost/asio/detail/op_queue.hpp>
 #include <boost/asio/detail/reactor_op.hpp>
@@ -52,13 +52,13 @@ class select_reactor
   : public boost::asio::detail::service_base<select_reactor>
 {
 public:
-#if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
+#if defined(BOOST_ASIO_WINDOWS) || defined(__CYGWIN__)
   enum op_types { read_op = 0, write_op = 1, except_op = 2,
     max_select_ops = 3, connect_op = 3, max_ops = 4 };
-#else // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
+#else // defined(BOOST_ASIO_WINDOWS) || defined(__CYGWIN__)
   enum op_types { read_op = 0, write_op = 1, except_op = 2,
     max_select_ops = 3, connect_op = 1, max_ops = 3 };
-#endif // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
+#endif // defined(BOOST_ASIO_WINDOWS) || defined(__CYGWIN__)
 
   // Per-descriptor data.
   struct per_descriptor_data

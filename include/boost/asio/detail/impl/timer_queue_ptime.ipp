@@ -20,6 +20,8 @@
 
 #include <boost/asio/detail/push_options.hpp>
 
+#if defined(BOOST_ASIO_HAS_BOOST_DATE_TIME)
+
 namespace boost {
 namespace asio {
 namespace detail {
@@ -76,6 +78,8 @@ std::size_t timer_queue<time_traits<boost::posix_time::ptime> >::cancel_timer(
 } // namespace detail
 } // namespace asio
 } // namespace boost
+
+#endif // defined(BOOST_ASIO_HAS_BOOST_DATE_TIME)
 
 #include <boost/asio/detail/pop_options.hpp>
 

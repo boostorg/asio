@@ -19,6 +19,7 @@
 
 #if defined(BOOST_ASIO_HAS_IOCP)
 
+#include <boost/asio/detail/addressof.hpp>
 #include <boost/asio/detail/completion_handler.hpp>
 #include <boost/asio/detail/fenced_block.hpp>
 #include <boost/asio/detail/handler_alloc_helpers.hpp>
@@ -42,7 +43,7 @@ void win_iocp_io_service::dispatch(Handler& handler)
   {
     // Allocate and construct an operation to wrap the handler.
     typedef completion_handler<Handler> op;
-    typename op::ptr p = { boost::addressof(handler),
+    typename op::ptr p = { boost::asio::detail::addressof(handler),
       boost_asio_handler_alloc_helpers::allocate(
         sizeof(op), handler), 0 };
     p.p = new (p.v) op(handler);
@@ -59,7 +60,7 @@ void win_iocp_io_service::post(Handler& handler)
 {
   // Allocate and construct an operation to wrap the handler.
   typedef completion_handler<Handler> op;
-  typename op::ptr p = { boost::addressof(handler),
+  typename op::ptr p = { boost::asio::detail::addressof(handler),
     boost_asio_handler_alloc_helpers::allocate(
       sizeof(op), handler), 0 };
   p.p = new (p.v) op(handler);

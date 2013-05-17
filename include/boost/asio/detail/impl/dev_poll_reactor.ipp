@@ -19,8 +19,8 @@
 
 #if defined(BOOST_ASIO_HAS_DEV_POLL)
 
-#include <boost/assert.hpp>
 #include <boost/asio/detail/dev_poll_reactor.hpp>
+#include <boost/asio/detail/assert.hpp>
 #include <boost/asio/detail/throw_error.hpp>
 #include <boost/asio/error.hpp>
 
@@ -122,7 +122,7 @@ void dev_poll_reactor::fork_service(boost::asio::io_service::fork_event fork_ev)
 
     // The ops op_queue will always be empty because the fork_helper's set()
     // member function never returns false.
-    BOOST_ASSERT(ops.empty());
+    BOOST_ASIO_ASSERT(ops.empty());
   }
 }
 

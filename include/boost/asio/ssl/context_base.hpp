@@ -16,7 +16,6 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include <boost/asio/detail/config.hpp>
-#include <boost/detail/workaround.hpp>
 #include <boost/asio/ssl/detail/openssl_types.hpp>
 
 #include <boost/asio/detail/push_options.hpp>
@@ -89,11 +88,11 @@ public:
   /// Disable TLS v1.
   static const long no_tlsv1 = implementation_defined;
 #else
-  BOOST_STATIC_CONSTANT(long, default_workarounds = SSL_OP_ALL);
-  BOOST_STATIC_CONSTANT(long, single_dh_use = SSL_OP_SINGLE_DH_USE);
-  BOOST_STATIC_CONSTANT(long, no_sslv2 = SSL_OP_NO_SSLv2);
-  BOOST_STATIC_CONSTANT(long, no_sslv3 = SSL_OP_NO_SSLv3);
-  BOOST_STATIC_CONSTANT(long, no_tlsv1 = SSL_OP_NO_TLSv1);
+  BOOST_ASIO_STATIC_CONSTANT(long, default_workarounds = SSL_OP_ALL);
+  BOOST_ASIO_STATIC_CONSTANT(long, single_dh_use = SSL_OP_SINGLE_DH_USE);
+  BOOST_ASIO_STATIC_CONSTANT(long, no_sslv2 = SSL_OP_NO_SSLv2);
+  BOOST_ASIO_STATIC_CONSTANT(long, no_sslv3 = SSL_OP_NO_SSLv3);
+  BOOST_ASIO_STATIC_CONSTANT(long, no_tlsv1 = SSL_OP_NO_TLSv1);
 #endif
 
   /// File format types.
@@ -111,11 +110,11 @@ public:
   // New programs should use the equivalents of the same names that are defined
   // in the boost::asio::ssl namespace.
   typedef int verify_mode;
-  BOOST_STATIC_CONSTANT(int, verify_none = SSL_VERIFY_NONE);
-  BOOST_STATIC_CONSTANT(int, verify_peer = SSL_VERIFY_PEER);
-  BOOST_STATIC_CONSTANT(int,
+  BOOST_ASIO_STATIC_CONSTANT(int, verify_none = SSL_VERIFY_NONE);
+  BOOST_ASIO_STATIC_CONSTANT(int, verify_peer = SSL_VERIFY_PEER);
+  BOOST_ASIO_STATIC_CONSTANT(int,
       verify_fail_if_no_peer_cert = SSL_VERIFY_FAIL_IF_NO_PEER_CERT);
-  BOOST_STATIC_CONSTANT(int, verify_client_once = SSL_VERIFY_CLIENT_ONCE);
+  BOOST_ASIO_STATIC_CONSTANT(int, verify_client_once = SSL_VERIFY_CLIENT_ONCE);
 #endif
 
   /// Purpose of PEM password.
@@ -133,12 +132,6 @@ protected:
   ~context_base()
   {
   }
-
-#if BOOST_WORKAROUND(__BORLANDC__, BOOST_TESTED_AT(0x564))
-private:
-  // Workaround to enable the empty base optimisation with Borland C++.
-  char dummy_;
-#endif
 };
 
 } // namespace ssl

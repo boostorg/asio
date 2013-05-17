@@ -17,7 +17,7 @@
 
 #include <boost/asio/detail/config.hpp>
 
-#if defined(BOOST_HAS_PTHREADS) && !defined(BOOST_ASIO_DISABLE_THREADS)
+#if defined(BOOST_ASIO_HAS_PTHREADS)
 
 #include <pthread.h>
 #include <boost/asio/detail/scoped_lock.hpp>
@@ -61,6 +61,6 @@ struct posix_static_mutex
 
 #include <boost/asio/detail/pop_options.hpp>
 
-#endif // defined(BOOST_HAS_PTHREADS) && !defined(BOOST_ASIO_DISABLE_THREADS)
+#endif // defined(BOOST_ASIO_HAS_PTHREADS)
 
 #endif // BOOST_ASIO_DETAIL_POSIX_STATIC_MUTEX_HPP

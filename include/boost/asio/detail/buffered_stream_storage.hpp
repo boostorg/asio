@@ -17,7 +17,7 @@
 
 #include <boost/asio/detail/config.hpp>
 #include <boost/asio/buffer.hpp>
-#include <boost/assert.hpp>
+#include <boost/asio/detail/assert.hpp>
 #include <cstddef>
 #include <cstring>
 #include <vector>
@@ -79,7 +79,7 @@ public:
   // Resize the buffer to the specified length.
   void resize(size_type length)
   {
-    BOOST_ASSERT(length <= capacity());
+    BOOST_ASIO_ASSERT(length <= capacity());
     if (begin_offset_ + length <= capacity())
     {
       end_offset_ = begin_offset_ + length;
@@ -102,7 +102,7 @@ public:
   // Consume multiple bytes from the beginning of the buffer.
   void consume(size_type count)
   {
-    BOOST_ASSERT(begin_offset_ + count <= end_offset_);
+    BOOST_ASIO_ASSERT(begin_offset_ + count <= end_offset_);
     begin_offset_ += count;
     if (empty())
       clear();

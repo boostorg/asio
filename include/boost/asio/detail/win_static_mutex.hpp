@@ -17,7 +17,7 @@
 
 #include <boost/asio/detail/config.hpp>
 
-#if defined(BOOST_WINDOWS)
+#if defined(BOOST_ASIO_WINDOWS)
 
 #include <boost/asio/detail/scoped_lock.hpp>
 
@@ -71,6 +71,6 @@ struct win_static_mutex
 # include <boost/asio/detail/impl/win_static_mutex.ipp>
 #endif // defined(BOOST_ASIO_HEADER_ONLY)
 
-#endif // defined(BOOST_WINDOWS)
+#endif // defined(BOOST_ASIO_WINDOWS)
 
 #endif // BOOST_ASIO_DETAIL_WIN_STATIC_MUTEX_HPP

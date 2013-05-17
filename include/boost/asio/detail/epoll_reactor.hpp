@@ -19,11 +19,10 @@
 
 #if defined(BOOST_ASIO_HAS_EPOLL)
 
-#include <boost/cstdint.hpp>
-#include <boost/limits.hpp>
 #include <boost/asio/io_service.hpp>
 #include <boost/asio/detail/atomic_count.hpp>
 #include <boost/asio/detail/epoll_reactor_fwd.hpp>
+#include <boost/asio/detail/limits.hpp>
 #include <boost/asio/detail/mutex.hpp>
 #include <boost/asio/detail/object_pool.hpp>
 #include <boost/asio/detail/op_queue.hpp>
@@ -60,7 +59,7 @@ public:
     mutex mutex_;
     epoll_reactor* reactor_;
     int descriptor_;
-    boost::uint32_t registered_events_;
+    uint32_t registered_events_;
     op_queue<reactor_op> op_queue_[max_ops];
     bool shutdown_;
 

@@ -156,7 +156,7 @@ public:
    * std::vector.
    */
   template <typename ConstBufferSequence>
-  std::size_t write_some_at(boost::uint64_t offset,
+  std::size_t write_some_at(uint64_t offset,
       const ConstBufferSequence& buffers)
   {
     boost::system::error_code ec;
@@ -185,7 +185,7 @@ public:
    * all data is written before the blocking operation completes.
    */
   template <typename ConstBufferSequence>
-  std::size_t write_some_at(boost::uint64_t offset,
+  std::size_t write_some_at(uint64_t offset,
       const ConstBufferSequence& buffers, boost::system::error_code& ec)
   {
     return this->get_service().write_some_at(
@@ -232,7 +232,7 @@ public:
   template <typename ConstBufferSequence, typename WriteHandler>
   BOOST_ASIO_INITFN_RESULT_TYPE(WriteHandler,
       void (boost::system::error_code, std::size_t))
-  async_write_some_at(boost::uint64_t offset,
+  async_write_some_at(uint64_t offset,
       const ConstBufferSequence& buffers,
       BOOST_ASIO_MOVE_ARG(WriteHandler) handler)
   {
@@ -275,7 +275,7 @@ public:
    * std::vector.
    */
   template <typename MutableBufferSequence>
-  std::size_t read_some_at(boost::uint64_t offset,
+  std::size_t read_some_at(uint64_t offset,
       const MutableBufferSequence& buffers)
   {
     boost::system::error_code ec;
@@ -305,7 +305,7 @@ public:
    * completes.
    */
   template <typename MutableBufferSequence>
-  std::size_t read_some_at(boost::uint64_t offset,
+  std::size_t read_some_at(uint64_t offset,
       const MutableBufferSequence& buffers, boost::system::error_code& ec)
   {
     return this->get_service().read_some_at(
@@ -353,7 +353,7 @@ public:
   template <typename MutableBufferSequence, typename ReadHandler>
   BOOST_ASIO_INITFN_RESULT_TYPE(ReadHandler,
       void (boost::system::error_code, std::size_t))
-  async_read_some_at(boost::uint64_t offset,
+  async_read_some_at(uint64_t offset,
       const MutableBufferSequence& buffers,
       BOOST_ASIO_MOVE_ARG(ReadHandler) handler)
   {

@@ -396,7 +396,7 @@ public:
    * CancelIoEx function is always used. This function does not have the
    * problems described above.
    */
-#if defined(BOOST_MSVC) && (BOOST_MSVC >= 1400) \
+#if defined(BOOST_ASIO_MSVC) && (BOOST_ASIO_MSVC >= 1400) \
   && (!defined(_WIN32_WINNT) || _WIN32_WINNT < 0x0600) \
   && !defined(BOOST_ASIO_ENABLE_CANCELIO)
   __declspec(deprecated("By default, this function always fails with "
@@ -444,7 +444,7 @@ public:
    * CancelIoEx function is always used. This function does not have the
    * problems described above.
    */
-#if defined(BOOST_MSVC) && (BOOST_MSVC >= 1400) \
+#if defined(BOOST_ASIO_MSVC) && (BOOST_ASIO_MSVC >= 1400) \
   && (!defined(_WIN32_WINNT) || _WIN32_WINNT < 0x0600) \
   && !defined(BOOST_ASIO_ENABLE_CANCELIO)
   __declspec(deprecated("By default, this function always fails with "

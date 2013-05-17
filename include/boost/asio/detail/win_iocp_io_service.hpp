@@ -19,9 +19,9 @@
 
 #if defined(BOOST_ASIO_HAS_IOCP)
 
-#include <boost/limits.hpp>
 #include <boost/asio/io_service.hpp>
 #include <boost/asio/detail/call_stack.hpp>
+#include <boost/asio/detail/limits.hpp>
 #include <boost/asio/detail/mutex.hpp>
 #include <boost/asio/detail/op_queue.hpp>
 #include <boost/asio/detail/scoped_ptr.hpp>

@@ -16,8 +16,8 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include <boost/asio/detail/config.hpp>
-#include <boost/limits.hpp>
 #include <boost/asio/io_service.hpp>
+#include <boost/asio/detail/limits.hpp>
 #include <boost/asio/detail/scoped_ptr.hpp>
 #include <boost/asio/detail/service_registry.hpp>
 #include <boost/asio/detail/throw_error.hpp>

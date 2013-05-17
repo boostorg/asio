@@ -92,9 +92,8 @@ void test()
 
 //------------------------------------------------------------------------------
 
-test_suite* init_unit_test_suite(int, char*[])
-{
-  test_suite* test = BOOST_TEST_SUITE("serial_port_base");
-  test->add(BOOST_TEST_CASE(&serial_port_base_compile::test));
-  return test;
-}
+BOOST_ASIO_TEST_SUITE
+(
+  "serial_port_base",
+  BOOST_ASIO_TEST_CASE(serial_port_base_compile::test)
+)

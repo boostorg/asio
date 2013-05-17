@@ -16,8 +16,6 @@
 // Test that header file is self-contained.
 #include <boost/asio/is_read_buffered.hpp>
 
-#include <boost/bind.hpp>
-#include <boost/noncopyable.hpp>
 #include <boost/asio/buffered_read_stream.hpp>
 #include <boost/asio/buffered_write_stream.hpp>
 #include <boost/asio/io_service.hpp>
@@ -27,7 +25,6 @@
 using namespace std; // For memcmp, memcpy and memset.
 
 class test_stream
-  : private boost::noncopyable
 {
 public:
   typedef boost::asio::io_service io_service_type;
@@ -95,35 +92,34 @@ private:
 
 void is_read_buffered_test()
 {
-  BOOST_CHECK(!boost::asio::is_read_buffered<
+  BOOST_ASIO_CHECK(!boost::asio::is_read_buffered<
       boost::asio::ip::tcp::socket>::value);
 
-  BOOST_CHECK(!!boost::asio::is_read_buffered<
+  BOOST_ASIO_CHECK(!!boost::asio::is_read_buffered<
       boost::asio::buffered_read_stream<
         boost::asio::ip::tcp::socket> >::value);
 
-  BOOST_CHECK(!boost::asio::is_read_buffered<
+  BOOST_ASIO_CHECK(!boost::asio::is_read_buffered<
       boost::asio::buffered_write_stream<
         boost::asio::ip::tcp::socket> >::value);
 
-  BOOST_CHECK(!!boost::asio::is_read_buffered<
+  BOOST_ASIO_CHECK(!!boost::asio::is_read_buffered<
       boost::asio::buffered_stream<boost::asio::ip::tcp::socket> >::value);
 
-  BOOST_CHECK(!boost::asio::is_read_buffered<test_stream>::value);
+  BOOST_ASIO_CHECK(!boost::asio::is_read_buffered<test_stream>::value);
 
-  BOOST_CHECK(!!boost::asio::is_read_buffered<
+  BOOST_ASIO_CHECK(!!boost::asio::is_read_buffered<
       boost::asio::buffered_read_stream<test_stream> >::value);
 
-  BOOST_CHECK(!boost::asio::is_read_buffered<
+  BOOST_ASIO_CHECK(!boost::asio::is_read_buffered<
       boost::asio::buffered_write_stream<test_stream> >::value);
 
-  BOOST_CHECK(!!boost::asio::is_read_buffered<
+  BOOST_ASIO_CHECK(!!boost::asio::is_read_buffered<
       boost::asio::buffered_stream<test_stream> >::value);
 }
 
-test_suite* init_unit_test_suite(int, char*[])
-{
-  test_suite* test = BOOST_TEST_SUITE("is_read_buffered");
-  test->add(BOOST_TEST_CASE(&is_read_buffered_test));
-  return test;
-}
+BOOST_ASIO_TEST_SUITE
+(
+  "is_read_buffered",
+  BOOST_ASIO_TEST_CASE(is_read_buffered_test)
+)

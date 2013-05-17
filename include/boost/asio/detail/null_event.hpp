@@ -17,7 +17,7 @@
 
 #include <boost/asio/detail/config.hpp>
 
-#if !defined(BOOST_HAS_THREADS) || defined(BOOST_ASIO_DISABLE_THREADS)
+#if !defined(BOOST_ASIO_HAS_THREADS)
 
 #include <boost/asio/detail/noncopyable.hpp>
 
@@ -72,6 +72,6 @@ public:
 
 #include <boost/asio/detail/pop_options.hpp>
 
-#endif // !defined(BOOST_HAS_THREADS) || defined(BOOST_ASIO_DISABLE_THREADS)
+#endif // !defined(BOOST_ASIO_HAS_THREADS)
 
 #endif // BOOST_ASIO_DETAIL_NULL_EVENT_HPP

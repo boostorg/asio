@@ -20,12 +20,12 @@
 
 #if defined(BOOST_ASIO_HAS_KQUEUE)
 
-#include <boost/limits.hpp>
 #include <cstddef>
 #include <sys/types.h>
 #include <sys/event.h>
 #include <sys/time.h>
 #include <boost/asio/detail/kqueue_reactor_fwd.hpp>
+#include <boost/asio/detail/limits.hpp>
 #include <boost/asio/detail/mutex.hpp>
 #include <boost/asio/detail/object_pool.hpp>
 #include <boost/asio/detail/op_queue.hpp>

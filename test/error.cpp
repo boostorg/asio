@@ -22,23 +22,23 @@
 void test_error_code(const boost::system::error_code& code)
 {
   boost::system::error_code error(code);
-  BOOST_CHECK(code == error);
+  BOOST_ASIO_CHECK(code == error);
 
-  BOOST_CHECK(!code || error);
-  BOOST_CHECK(!code || !!error);
+  BOOST_ASIO_CHECK(!code || error);
+  BOOST_ASIO_CHECK(!code || !!error);
 
   boost::system::error_code error2(error);
-  BOOST_CHECK(error == error2);
-  BOOST_CHECK(!(error != error2));
+  BOOST_ASIO_CHECK(error == error2);
+  BOOST_ASIO_CHECK(!(error != error2));
 
   boost::system::error_code error3;
   error3 = error;
-  BOOST_CHECK(error == error3);
-  BOOST_CHECK(!(error != error3));
+  BOOST_ASIO_CHECK(error == error3);
+  BOOST_ASIO_CHECK(!(error != error3));
 
   std::ostringstream os;
   os << error;
-  BOOST_CHECK(!os.str().empty());
+  BOOST_ASIO_CHECK(!os.str().empty());
 }
 
 void error_test()
@@ -82,9 +82,8 @@ void error_test()
   test_error_code(boost::asio::error::would_block);
 }
 
-test_suite* init_unit_test_suite(int, char*[])
-{
-  test_suite* test = BOOST_TEST_SUITE("error");
-  test->add(BOOST_TEST_CASE(&error_test));
-  return test;
-}
+BOOST_ASIO_TEST_SUITE
+(
+  "error",
+  BOOST_ASIO_TEST_CASE(error_test)
+)

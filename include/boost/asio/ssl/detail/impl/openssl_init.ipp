@@ -18,7 +18,7 @@
 
 #include <boost/asio/detail/config.hpp>
 #include <vector>
-#include <boost/assert.hpp>
+#include <boost/asio/detail/assert.hpp>
 #include <boost/asio/detail/mutex.hpp>
 #include <boost/asio/detail/tss_ptr.hpp>
 #include <boost/asio/ssl/detail/openssl_init.hpp>
@@ -64,15 +64,15 @@ public:
 private:
   static unsigned long openssl_id_func()
   {
-#if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
+#if defined(BOOST_ASIO_WINDOWS) || defined(__CYGWIN__)
     return ::GetCurrentThreadId();
-#else // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
+#else // defined(BOOST_ASIO_WINDOWS) || defined(__CYGWIN__)
     void* id = instance()->thread_id_;
     if (id == 0)
       instance()->thread_id_ = id = &id; // Ugh.
-    BOOST_ASSERT(sizeof(unsigned long) >= sizeof(void*));
+    BOOST_ASIO_ASSERT(sizeof(unsigned long) >= sizeof(void*));
     return reinterpret_cast<unsigned long>(id);
-#endif // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
+#endif // defined(BOOST_ASIO_WINDOWS) || defined(__CYGWIN__)
   }
 
   static void openssl_locking_func(int mode, int n, 
@@ -88,10 +88,10 @@ private:
   std::vector<boost::asio::detail::shared_ptr<
         boost::asio::detail::mutex> > mutexes_;
 
-#if !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
+#if !defined(BOOST_ASIO_WINDOWS) && !defined(__CYGWIN__)
   // The thread identifiers to be used by openssl.
   boost::asio::detail::tss_ptr<void> thread_id_;
-#endif // !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
+#endif // !defined(BOOST_ASIO_WINDOWS) && !defined(__CYGWIN__)
 };
 
 boost::asio::detail::shared_ptr<openssl_init_base::do_init>

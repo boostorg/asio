@@ -24,6 +24,7 @@
 # include <boost/asio/detail/buffer_sequence_adapter.hpp>
 # include <boost/asio/detail/handler_type_requirements.hpp>
 # include <boost/asio/detail/noncopyable.hpp>
+# include <boost/asio/detail/type_traits.hpp>
 # include <boost/asio/ssl/context.hpp>
 # include <boost/asio/ssl/detail/handshake_op.hpp>
 # include <boost/asio/ssl/detail/io.hpp>
@@ -32,7 +33,6 @@
 # include <boost/asio/ssl/detail/stream_core.hpp>
 # include <boost/asio/ssl/detail/write_op.hpp>
 # include <boost/asio/ssl/stream_base.hpp>
-# include <boost/type_traits/remove_reference.hpp>
 #endif // defined(BOOST_ASIO_ENABLE_OLD_SSL)
 
 #include <boost/asio/detail/push_options.hpp>
@@ -88,7 +88,7 @@ public:
   typedef impl_struct* impl_type;
 
   /// The type of the next layer.
-  typedef typename boost::remove_reference<Stream>::type next_layer_type;
+  typedef typename remove_reference<Stream>::type next_layer_type;
 
   /// The type of the lowest layer.
   typedef typename next_layer_type::lowest_layer_type lowest_layer_type;

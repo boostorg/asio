@@ -17,7 +17,6 @@
 
 #include <boost/asio/detail/config.hpp>
 #include <cstddef>
-#include <boost/config.hpp>
 #include <boost/asio/detail/socket_types.hpp>
 
 #include <boost/asio/detail/push_options.hpp>

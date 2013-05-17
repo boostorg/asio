@@ -16,7 +16,7 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include <boost/asio/detail/config.hpp>
-#include <boost/utility/addressof.hpp>
+#include <boost/asio/detail/addressof.hpp>
 #include <boost/asio/handler_continuation_hook.hpp>
 
 #include <boost/asio/detail/push_options.hpp>
@@ -29,12 +29,12 @@ namespace boost_asio_handler_cont_helpers {
 template <typename Context>
 inline bool is_continuation(Context& context)
 {
-#if BOOST_WORKAROUND(__BORLANDC__, BOOST_TESTED_AT(0x564)) \
-  || BOOST_WORKAROUND(__GNUC__, < 3)
+#if !defined(BOOST_ASIO_HAS_HANDLER_HOOKS)
   return false;
 #else
   using boost::asio::asio_handler_is_continuation;
-  return asio_handler_is_continuation(boost::addressof(context));
+  return asio_handler_is_continuation(
+      boost::asio::detail::addressof(context));
 #endif
 }
 

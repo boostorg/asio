@@ -18,8 +18,8 @@
 #include <boost/asio/detail/config.hpp>
 
 #if defined(BOOST_ASIO_ENABLE_HANDLER_TRACKING)
-# include <boost/cstdint.hpp>
 # include <boost/system/error_code.hpp>
+# include <boost/asio/detail/cstdint.hpp>
 # include <boost/asio/detail/static_mutex.hpp>
 # include <boost/asio/detail/tss_ptr.hpp>
 #endif // defined(BOOST_ASIO_ENABLE_HANDLER_TRACKING)
@@ -44,7 +44,7 @@ public:
     // Only the handler_tracking class will have access to the id.
     friend class handler_tracking;
     friend class completion;
-    boost::uint64_t id_;
+    uint64_t id_;
 
   protected:
     // Constructor initialises with no id.
@@ -94,7 +94,7 @@ public:
 
   private:
     friend class handler_tracking;
-    boost::uint64_t id_;
+    uint64_t id_;
     bool invoked_;
     completion* next_;
   };

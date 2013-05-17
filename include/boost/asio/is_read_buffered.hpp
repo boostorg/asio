@@ -48,7 +48,7 @@ public:
   /// read data.
   static const bool value;
 #else
-  BOOST_STATIC_CONSTANT(bool,
+  BOOST_ASIO_STATIC_CONSTANT(bool,
       value = sizeof(detail::is_read_buffered_helper((Stream*)0)) == 1);
 #endif
 };

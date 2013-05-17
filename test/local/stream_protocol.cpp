@@ -16,7 +16,6 @@
 // Test that header file is self-contained.
 #include <boost/asio/local/stream_protocol.hpp>
 
-#include <boost/bind.hpp>
 #include <cstring>
 #include <boost/asio/io_service.hpp>
 #include "../unit_test.hpp"
@@ -202,9 +201,8 @@ void test()
 
 //------------------------------------------------------------------------------
 
-test_suite* init_unit_test_suite(int, char*[])
-{
-  test_suite* test = BOOST_TEST_SUITE("local/stream_protocol");
-  test->add(BOOST_TEST_CASE(&local_stream_protocol_socket_compile::test));
-  return test;
-}
+BOOST_ASIO_TEST_SUITE
+(
+  "local/stream_protocol",
+  BOOST_ASIO_TEST_CASE(local_stream_protocol_socket_compile::test)
+)

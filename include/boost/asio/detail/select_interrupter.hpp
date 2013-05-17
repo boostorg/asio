@@ -17,7 +17,7 @@
 
 #include <boost/asio/detail/config.hpp>
 
-#if defined(BOOST_WINDOWS) || defined(__CYGWIN__) || defined(__SYMBIAN32__)
+#if defined(BOOST_ASIO_WINDOWS) || defined(__CYGWIN__) || defined(__SYMBIAN32__)
 # include <boost/asio/detail/socket_select_interrupter.hpp>
 #elif defined(BOOST_ASIO_HAS_EVENTFD)
 # include <boost/asio/detail/eventfd_select_interrupter.hpp>
@@ -29,7 +29,7 @@ namespace boost {
 namespace asio {
 namespace detail {
 
-#if defined(BOOST_WINDOWS) || defined(__CYGWIN__) || defined(__SYMBIAN32__)
+#if defined(BOOST_ASIO_WINDOWS) || defined(__CYGWIN__) || defined(__SYMBIAN32__)
 typedef socket_select_interrupter select_interrupter;
 #elif defined(BOOST_ASIO_HAS_EVENTFD)
 typedef eventfd_select_interrupter select_interrupter;

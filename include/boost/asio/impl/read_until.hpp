@@ -19,7 +19,6 @@
 #include <string>
 #include <vector>
 #include <utility>
-#include <boost/limits.hpp>
 #include <boost/asio/buffer.hpp>
 #include <boost/asio/buffers_iterator.hpp>
 #include <boost/asio/detail/bind_handler.hpp>
@@ -27,6 +26,7 @@
 #include <boost/asio/detail/handler_cont_helpers.hpp>
 #include <boost/asio/detail/handler_invoke_helpers.hpp>
 #include <boost/asio/detail/handler_type_requirements.hpp>
+#include <boost/asio/detail/limits.hpp>
 #include <boost/asio/detail/throw_error.hpp>
 
 #include <boost/asio/detail/push_options.hpp>
@@ -190,6 +190,8 @@ std::size_t read_until(SyncReadStream& s,
   }
 }
 
+#if defined(BOOST_ASIO_HAS_BOOST_REGEX)
+
 template <typename SyncReadStream, typename Allocator>
 inline std::size_t read_until(SyncReadStream& s,
     boost::asio::basic_streambuf<Allocator>& b, const boost::regex& expr)
@@ -257,11 +259,13 @@ std::size_t read_until(SyncReadStream& s,
   }
 }
 
+#endif // defined(BOOST_ASIO_HAS_BOOST_REGEX)
+
 template <typename SyncReadStream, typename Allocator, typename MatchCondition>
 std::size_t read_until(SyncReadStream& s,
     boost::asio::basic_streambuf<Allocator>& b,
     MatchCondition match_condition, boost::system::error_code& ec,
-    typename boost::enable_if<is_match_condition<MatchCondition> >::type*)
+    typename enable_if<is_match_condition<MatchCondition>::value>::type*)
 {
   std::size_t search_position = 0;
   for (;;)
@@ -312,7 +316,7 @@ std::size_t read_until(SyncReadStream& s,
 template <typename SyncReadStream, typename Allocator, typename MatchCondition>
 inline std::size_t read_until(SyncReadStream& s,
     boost::asio::basic_streambuf<Allocator>& b, MatchCondition match_condition,
-    typename boost::enable_if<is_match_condition<MatchCondition> >::type*)
+    typename enable_if<is_match_condition<MatchCondition>::value>::type*)
 {
   boost::system::error_code ec;
   std::size_t bytes_transferred = read_until(s, b, match_condition, ec);
@@ -715,6 +719,8 @@ async_read_until(AsyncReadStream& s,
   return init.result.get();
 }
 
+#if defined(BOOST_ASIO_HAS_BOOST_REGEX)
+
 namespace detail
 {
   template <typename AsyncReadStream, typename Allocator,
@@ -925,6 +931,8 @@ async_read_until(AsyncReadStream& s,
   return init.result.get();
 }
 
+#endif // defined(BOOST_ASIO_HAS_BOOST_REGEX)
+
 namespace detail
 {
   template <typename AsyncReadStream, typename Allocator,
@@ -1114,7 +1122,7 @@ BOOST_ASIO_INITFN_RESULT_TYPE(ReadHandler,
 async_read_until(AsyncReadStream& s,
     boost::asio::basic_streambuf<Allocator>& b,
     MatchCondition match_condition, BOOST_ASIO_MOVE_ARG(ReadHandler) handler,
-    typename boost::enable_if<is_match_condition<MatchCondition> >::type*)
+    typename enable_if<is_match_condition<MatchCondition>::value>::type*)
 {
   // If you get an error on the following line it means that your handler does
   // not meet the documented type requirements for a ReadHandler.

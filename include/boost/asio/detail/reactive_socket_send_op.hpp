@@ -16,7 +16,7 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include <boost/asio/detail/config.hpp>
-#include <boost/utility/addressof.hpp>
+#include <boost/asio/detail/addressof.hpp>
 #include <boost/asio/detail/bind_handler.hpp>
 #include <boost/asio/detail/buffer_sequence_adapter.hpp>
 #include <boost/asio/detail/fenced_block.hpp>
@@ -84,7 +84,7 @@ public:
   {
     // Take ownership of the handler object.
     reactive_socket_send_op* o(static_cast<reactive_socket_send_op*>(base));
-    ptr p = { boost::addressof(o->handler_), o, o };
+    ptr p = { boost::asio::detail::addressof(o->handler_), o, o };
 
     BOOST_ASIO_HANDLER_COMPLETION((o));
 
@@ -96,7 +96,7 @@ public:
     // deallocated the memory here.
     detail::binder2<Handler, boost::system::error_code, std::size_t>
       handler(o->handler_, o->ec_, o->bytes_transferred_);
-    p.h = boost::addressof(handler.handler_);
+    p.h = boost::asio::detail::addressof(handler.handler_);
     p.reset();
 
     // Make the upcall if required.

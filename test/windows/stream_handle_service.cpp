@@ -19,9 +19,8 @@
 #include <boost/asio.hpp>
 #include "../unit_test.hpp"
 
-test_suite* init_unit_test_suite(int, char*[])
-{
-  test_suite* test = BOOST_TEST_SUITE("windows/stream_handle_service");
-  test->add(BOOST_TEST_CASE(&null_test));
-  return test;
-}
+BOOST_ASIO_TEST_SUITE
+(
+  "windows/stream_handle_service",
+  BOOST_ASIO_TEST_CASE(null_test)
+)

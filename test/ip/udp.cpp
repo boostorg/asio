@@ -16,15 +16,19 @@
 // Test that header file is self-contained.
 #include <boost/asio/ip/udp.hpp>
 
-#include <boost/bind.hpp>
 #include <cstring>
 #include <boost/asio/io_service.hpp>
-#include <boost/asio/placeholders.hpp>
 #include "../unit_test.hpp"
 #include "../archetypes/gettable_socket_option.hpp"
 #include "../archetypes/async_result.hpp"
 #include "../archetypes/io_control_command.hpp"
 #include "../archetypes/settable_socket_option.hpp"
+
+#if defined(BOOST_ASIO_HAS_BOOST_BIND)
+# include <boost/bind.hpp>
+#else // defined(BOOST_ASIO_HAS_BOOST_BIND)
+# include <functional>
+#endif // defined(BOOST_ASIO_HAS_BOOST_BIND)
 
 //------------------------------------------------------------------------------
 
@@ -393,15 +397,15 @@ namespace ip_udp_socket_runtime {
 void handle_send(size_t expected_bytes_sent,
     const boost::system::error_code& err, size_t bytes_sent)
 {
-  BOOST_CHECK(!err);
-  BOOST_CHECK(expected_bytes_sent == bytes_sent);
+  BOOST_ASIO_CHECK(!err);
+  BOOST_ASIO_CHECK(expected_bytes_sent == bytes_sent);
 }
 
 void handle_recv(size_t expected_bytes_recvd,
     const boost::system::error_code& err, size_t bytes_recvd)
 {
-  BOOST_CHECK(!err);
-  BOOST_CHECK(expected_bytes_recvd == bytes_recvd);
+  BOOST_ASIO_CHECK(!err);
+  BOOST_ASIO_CHECK(expected_bytes_recvd == bytes_recvd);
 }
 
 void test()
@@ -409,6 +413,14 @@ void test()
   using namespace std; // For memcmp and memset.
   using namespace boost::asio;
   namespace ip = boost::asio::ip;
+
+#if defined(BOOST_ASIO_HAS_BOOST_BIND)
+  namespace bindns = boost;
+#else // defined(BOOST_ASIO_HAS_BOOST_BIND)
+  namespace bindns = std;
+  using std::placeholders::_1;
+  using std::placeholders::_2;
+#endif // defined(BOOST_ASIO_HAS_BOOST_BIND)
 
   io_service ios;
 
@@ -427,24 +439,20 @@ void test()
   size_t bytes_recvd = s1.receive_from(buffer(recv_msg, sizeof(recv_msg)),
       sender_endpoint);
 
-  BOOST_CHECK(bytes_recvd == sizeof(send_msg));
-  BOOST_CHECK(memcmp(send_msg, recv_msg, sizeof(send_msg)) == 0);
+  BOOST_ASIO_CHECK(bytes_recvd == sizeof(send_msg));
+  BOOST_ASIO_CHECK(memcmp(send_msg, recv_msg, sizeof(send_msg)) == 0);
 
   memset(recv_msg, 0, sizeof(recv_msg));
 
   target_endpoint = sender_endpoint;
   s1.async_send_to(buffer(send_msg, sizeof(send_msg)), target_endpoint,
-      boost::bind(handle_send, sizeof(send_msg),
-        boost::asio::placeholders::error,
-        boost::asio::placeholders::bytes_transferred));
+      bindns::bind(handle_send, sizeof(send_msg), _1, _2));
   s2.async_receive_from(buffer(recv_msg, sizeof(recv_msg)), sender_endpoint,
-      boost::bind(handle_recv, sizeof(recv_msg),
-        boost::asio::placeholders::error,
-        boost::asio::placeholders::bytes_transferred));
+      bindns::bind(handle_recv, sizeof(recv_msg), _1, _2));
 
   ios.run();
 
-  BOOST_CHECK(memcmp(send_msg, recv_msg, sizeof(send_msg)) == 0);
+  BOOST_ASIO_CHECK(memcmp(send_msg, recv_msg, sizeof(send_msg)) == 0);
 }
 
 } // namespace ip_udp_socket_runtime
@@ -518,11 +526,10 @@ void test()
 
 //------------------------------------------------------------------------------
 
-test_suite* init_unit_test_suite(int, char*[])
-{
-  test_suite* test = BOOST_TEST_SUITE("ip/udp");
-  test->add(BOOST_TEST_CASE(&ip_udp_socket_compile::test));
-  test->add(BOOST_TEST_CASE(&ip_udp_socket_runtime::test));
-  test->add(BOOST_TEST_CASE(&ip_udp_resolver_compile::test));
-  return test;
-}
+BOOST_ASIO_TEST_SUITE
+(
+  "ip/udp",
+  BOOST_ASIO_TEST_CASE(ip_udp_socket_compile::test)
+  BOOST_ASIO_TEST_CASE(ip_udp_socket_runtime::test)
+  BOOST_ASIO_TEST_CASE(ip_udp_resolver_compile::test)
+)

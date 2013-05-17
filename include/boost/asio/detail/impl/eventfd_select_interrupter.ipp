@@ -28,6 +28,7 @@
 #else // __GLIBC__ == 2 && __GLIBC_MINOR__ < 8
 # include <sys/eventfd.h>
 #endif // __GLIBC__ == 2 && __GLIBC_MINOR__ < 8
+#include <boost/asio/detail/cstdint.hpp>
 #include <boost/asio/detail/eventfd_select_interrupter.hpp>
 #include <boost/asio/detail/throw_error.hpp>
 #include <boost/asio/error.hpp>

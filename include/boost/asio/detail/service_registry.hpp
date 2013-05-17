@@ -21,12 +21,6 @@
 #include <boost/asio/detail/noncopyable.hpp>
 #include <boost/asio/io_service.hpp>
 
-#if defined(BOOST_NO_TYPEID)
-# if !defined(BOOST_ASIO_NO_TYPEID)
-#  define BOOST_ASIO_NO_TYPEID
-# endif // !defined(BOOST_ASIO_NO_TYPEID)
-#endif // defined(BOOST_NO_TYPEID)
-
 #include <boost/asio/detail/push_options.hpp>
 
 namespace boost {

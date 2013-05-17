@@ -17,6 +17,9 @@
 
 #include <boost/asio/detail/socket_types.hpp> // Must come before posix_time.
 
+#if defined(BOOST_ASIO_HAS_BOOST_DATE_TIME) \
+  || defined(GENERATING_DOCUMENTATION)
+
 #include <boost/asio/detail/push_options.hpp>
 #include <boost/date_time/posix_time/posix_time_types.hpp>
 #include <boost/asio/detail/pop_options.hpp>
@@ -80,5 +83,8 @@ struct time_traits<boost::posix_time::ptime>
 } // namespace boost
 
 #include <boost/asio/detail/pop_options.hpp>
+
+#endif // defined(BOOST_ASIO_HAS_BOOST_DATE_TIME)
+       // || defined(GENERATING_DOCUMENTATION)
 
 #endif // BOOST_ASIO_TIME_TRAITS_HPP
