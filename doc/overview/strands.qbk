@@ -57,6 +57,6 @@ the strand.
 
 [link boost_asio.reference.io_service__strand io_service::strand],
 [link boost_asio.tutorial.tuttimer5 tutorial Timer.5],
-[link boost_asio.examples.http_server_3 HTTP server 3 example].
+[link boost_asio.examples.cpp03_examples.http_server_3 HTTP server 3 example].
 
 [endsect]

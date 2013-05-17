@@ -150,6 +150,6 @@ requirements.
 [link boost_asio.reference.ip__udp ip::udp],
 [link boost_asio.reference.ip__icmp ip::icmp],
 [link boost_asio.tutorial.tutdaytime1 daytime protocol tutorials],
-[link boost_asio.examples.icmp ICMP ping example].
+[link boost_asio.examples.cpp03_examples.icmp ICMP ping example].
 
 [endsect]

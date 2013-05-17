@@ -61,7 +61,7 @@ boost_asio.reference.basic_socket.native native()] member function.
 [link boost_asio.reference.local__stream_protocol.endpoint local::stream_protocol::endpoint],
 [link boost_asio.reference.local__stream_protocol.iostream local::stream_protocol::iostream],
 [link boost_asio.reference.local__stream_protocol.socket local::stream_protocol::socket],
-[link boost_asio.examples.unix_domain_sockets UNIX domain sockets examples].
+[link boost_asio.examples.cpp03_examples.unix_domain_sockets UNIX domain sockets examples].
 
 [heading Notes]
 
@@ -95,7 +95,8 @@ boost_asio.reference.async_read_until async_read_until()] free functions.
 [link boost_asio.reference.posix__stream_descriptor posix::stream_descriptor],
 [link boost_asio.reference.posix__basic_stream_descriptor posix::basic_stream_descriptor],
 [link boost_asio.reference.posix__stream_descriptor_service posix::stream_descriptor_service],
-[link boost_asio.examples.chat Chat example].
+[link boost_asio.examples.cpp03_examples.chat Chat example (C++03)],
+[link boost_asio.examples.cpp11_examples.chat Chat example (C++11)].
 
 [heading Notes]
 
@@ -138,7 +139,7 @@ as required.
 [link boost_asio.reference.io_service.notify_fork io_service::notify_fork()],
 [link boost_asio.reference.io_service.fork_event io_service::fork_event],
 [link boost_asio.reference.io_service__service.fork_service io_service::service::fork_service()],
-[link boost_asio.examples.fork Fork examples].
+[link boost_asio.examples.cpp03_examples.fork Fork examples].
 
 [endsect]
 

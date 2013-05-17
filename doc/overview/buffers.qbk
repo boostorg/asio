@@ -157,6 +157,7 @@ It can also be explicitly disabled by defining `BOOST_ASIO_DISABLE_BUFFER_DEBUGG
 [link boost_asio.reference.streambuf streambuf],
 [link boost_asio.reference.ConstBufferSequence ConstBufferSequence],
 [link boost_asio.reference.MutableBufferSequence MutableBufferSequence],
-[link boost_asio.examples.buffers buffers example].
+[link boost_asio.examples.cpp03_examples.buffers buffers example (C++03)],
+[link boost_asio.examples.cpp11_examples.buffers buffers example (c++11)].
 
 [endsect]

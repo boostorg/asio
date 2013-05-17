@@ -45,7 +45,7 @@ void session(socket_ptr sock)
   }
 }
 
-void server(boost::asio::io_service& io_service, short port)
+void server(boost::asio::io_service& io_service, unsigned short port)
 {
   tcp::acceptor a(io_service, tcp::endpoint(tcp::v4(), port));
   for (;;)

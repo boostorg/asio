@@ -16,7 +16,7 @@ using boost::asio::ip::udp;
 
 enum { max_length = 1024 };
 
-void server(boost::asio::io_service& io_service, short port)
+void server(boost::asio::io_service& io_service, unsigned short port)
 {
   udp::socket sock(io_service, udp::endpoint(udp::v4(), port));
   for (;;)
@@ -41,8 +41,7 @@ int main(int argc, char* argv[])
 
     boost::asio::io_service io_service;
 
-    using namespace std; // For atoi.
-    server(io_service, atoi(argv[1]));
+    server(io_service, std::atoi(argv[1]));
   }
   catch (std::exception& e)
   {
