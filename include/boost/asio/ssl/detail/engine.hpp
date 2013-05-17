@@ -73,6 +73,10 @@ public:
   BOOST_ASIO_DECL boost::system::error_code set_verify_mode(
       verify_mode v, boost::system::error_code& ec);
 
+  // Set the peer verification depth.
+  BOOST_ASIO_DECL boost::system::error_code set_verify_depth(
+      int depth, boost::system::error_code& ec);
+
   // Set a peer certificate verification callback.
   BOOST_ASIO_DECL boost::system::error_code set_verify_callback(
       verify_callback_base* callback, boost::system::error_code& ec);

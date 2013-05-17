@@ -84,6 +84,15 @@ boost::system::error_code engine::set_verify_mode(
   return ec;
 }
 
+boost::system::error_code engine::set_verify_depth(
+    int depth, boost::system::error_code& ec)
+{
+  ::SSL_set_verify_depth(ssl_, depth);
+
+  ec = boost::system::error_code();
+  return ec;
+}
+
 boost::system::error_code engine::set_verify_callback(
     verify_callback_base* callback, boost::system::error_code& ec)
 {

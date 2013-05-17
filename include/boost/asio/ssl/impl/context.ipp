@@ -226,6 +226,22 @@ boost::system::error_code context::set_verify_mode(
   return ec;
 }
 
+void context::set_verify_depth(int depth)
+{
+  boost::system::error_code ec;
+  set_verify_depth(depth, ec);
+  boost::asio::detail::throw_error(ec, "set_verify_depth");
+}
+
+boost::system::error_code context::set_verify_depth(
+    int depth, boost::system::error_code& ec)
+{
+  ::SSL_CTX_set_verify_depth(handle_, depth);
+
+  ec = boost::system::error_code();
+  return ec;
+}
+
 void context::load_verify_file(const std::string& filename)
 {
   boost::system::error_code ec;
