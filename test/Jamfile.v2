@@ -93,6 +93,8 @@ test-suite "asio" :
   [ link completion_condition.cpp : $(USE_SELECT) : completion_condition_select ]
   [ link connect.cpp ]
   [ link connect.cpp : $(USE_SELECT) : connect_select ]
+  [ link coroutine.cpp ]
+  [ link coroutine.cpp : $(USE_SELECT) : coroutine_select ]
   [ link datagram_socket_service.cpp ]
   [ link datagram_socket_service.cpp : $(USE_SELECT) : datagram_socket_service_select ]
   [ link deadline_timer_service.cpp ]

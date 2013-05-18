@@ -162,7 +162,6 @@ An HTTP server using a single io_service and a thread pool calling `io_service::
 
 A single-threaded HTTP server implemented using stackless coroutines.
 
-* [@boost_asio/example/cpp03/http/server4/coroutine.hpp]
 * [@boost_asio/example/cpp03/http/server4/file_handler.cpp]
 * [@boost_asio/example/cpp03/http/server4/file_handler.hpp]
 * [@boost_asio/example/cpp03/http/server4/header.hpp]
@@ -176,8 +175,6 @@ A single-threaded HTTP server implemented using stackless coroutines.
 * [@boost_asio/example/cpp03/http/server4/request_parser.hpp]
 * [@boost_asio/example/cpp03/http/server4/server.cpp]
 * [@boost_asio/example/cpp03/http/server4/server.hpp]
-* [@boost_asio/example/cpp03/http/server4/unyield.hpp]
-* [@boost_asio/example/cpp03/http/server4/yield.hpp]
 
 
 [heading ICMP]
