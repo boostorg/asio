@@ -332,7 +332,7 @@ with Boost.Asio.
 This example shows how to customise the allocation of memory associated with
 asynchronous operations.
 
-* [@boost_asio/example/cpp11/allocation/server.cpp] 
+* [@boost_asio/example/cpp11/allocation/server.cpp]
 
 
 [heading Buffers]
@@ -340,7 +340,7 @@ asynchronous operations.
 This example demonstrates how to create reference counted buffers that can be
 used with socket read and write operations.
 
-* [@boost_asio/example/cpp11/buffers/reference_counted.cpp] 
+* [@boost_asio/example/cpp11/buffers/reference_counted.cpp]
 
 
 [heading Chat]
@@ -348,9 +348,9 @@ used with socket read and write operations.
 This example implements a chat server and client. The programs use a custom
 protocol with a fixed length message header and variable length message body.
 
-* [@boost_asio/example/cpp11/chat/chat_message.hpp] 
-* [@boost_asio/example/cpp11/chat/chat_client.cpp] 
-* [@boost_asio/example/cpp11/chat/chat_server.cpp] 
+* [@boost_asio/example/cpp11/chat/chat_message.hpp]
+* [@boost_asio/example/cpp11/chat/chat_client.cpp]
+* [@boost_asio/example/cpp11/chat/chat_server.cpp]
 
 
 [heading Echo]
@@ -358,12 +358,12 @@ protocol with a fixed length message header and variable length message body.
 A collection of simple clients and servers, showing the use of both synchronous
 and asynchronous operations.
 
-* [@boost_asio/example/cpp11/echo/async_tcp_echo_server.cpp] 
-* [@boost_asio/example/cpp11/echo/async_udp_echo_server.cpp] 
-* [@boost_asio/example/cpp11/echo/blocking_tcp_echo_client.cpp] 
-* [@boost_asio/example/cpp11/echo/blocking_tcp_echo_server.cpp] 
-* [@boost_asio/example/cpp11/echo/blocking_udp_echo_client.cpp] 
-* [@boost_asio/example/cpp11/echo/blocking_udp_echo_server.cpp] 
+* [@boost_asio/example/cpp11/echo/async_tcp_echo_server.cpp]
+* [@boost_asio/example/cpp11/echo/async_udp_echo_server.cpp]
+* [@boost_asio/example/cpp11/echo/blocking_tcp_echo_client.cpp]
+* [@boost_asio/example/cpp11/echo/blocking_tcp_echo_server.cpp]
+* [@boost_asio/example/cpp11/echo/blocking_udp_echo_client.cpp]
+* [@boost_asio/example/cpp11/echo/blocking_udp_echo_server.cpp]
 
 
 [heading Futures]
@@ -371,7 +371,7 @@ and asynchronous operations.
 This example demonstrates how to use std::future in conjunction with
 Boost.Asio's asynchronous operations.
 
-* [@boost_asio/example/cpp11/futures/daytime_client.cpp] 
+* [@boost_asio/example/cpp11/futures/daytime_client.cpp]
 
 
 [heading HTTP Server]
@@ -380,23 +380,23 @@ This example illustrates the use of asio in a simple single-threaded server
 implementation of HTTP 1.0. It demonstrates how to perform a clean shutdown by
 cancelling all outstanding asynchronous operations.
 
-* [@boost_asio/example/cpp11/http/server/connection.cpp] 
-* [@boost_asio/example/cpp11/http/server/connection.hpp] 
-* [@boost_asio/example/cpp11/http/server/connection_manager.cpp] 
-* [@boost_asio/example/cpp11/http/server/connection_manager.hpp] 
-* [@boost_asio/example/cpp11/http/server/header.hpp] 
-* [@boost_asio/example/cpp11/http/server/main.cpp] 
-* [@boost_asio/example/cpp11/http/server/mime_types.cpp] 
-* [@boost_asio/example/cpp11/http/server/mime_types.hpp] 
-* [@boost_asio/example/cpp11/http/server/reply.cpp] 
-* [@boost_asio/example/cpp11/http/server/reply.hpp] 
-* [@boost_asio/example/cpp11/http/server/request.hpp] 
-* [@boost_asio/example/cpp11/http/server/request_handler.cpp] 
-* [@boost_asio/example/cpp11/http/server/request_handler.hpp] 
-* [@boost_asio/example/cpp11/http/server/request_parser.cpp] 
-* [@boost_asio/example/cpp11/http/server/request_parser.hpp] 
-* [@boost_asio/example/cpp11/http/server/server.cpp] 
-* [@boost_asio/example/cpp11/http/server/server.hpp] 
+* [@boost_asio/example/cpp11/http/server/connection.cpp]
+* [@boost_asio/example/cpp11/http/server/connection.hpp]
+* [@boost_asio/example/cpp11/http/server/connection_manager.cpp]
+* [@boost_asio/example/cpp11/http/server/connection_manager.hpp]
+* [@boost_asio/example/cpp11/http/server/header.hpp]
+* [@boost_asio/example/cpp11/http/server/main.cpp]
+* [@boost_asio/example/cpp11/http/server/mime_types.cpp]
+* [@boost_asio/example/cpp11/http/server/mime_types.hpp]
+* [@boost_asio/example/cpp11/http/server/reply.cpp]
+* [@boost_asio/example/cpp11/http/server/reply.hpp]
+* [@boost_asio/example/cpp11/http/server/request.hpp]
+* [@boost_asio/example/cpp11/http/server/request_handler.cpp]
+* [@boost_asio/example/cpp11/http/server/request_handler.hpp]
+* [@boost_asio/example/cpp11/http/server/request_parser.cpp]
+* [@boost_asio/example/cpp11/http/server/request_parser.hpp]
+* [@boost_asio/example/cpp11/http/server/server.cpp]
+* [@boost_asio/example/cpp11/http/server/server.hpp]
 
 
 [heading Spawn]
@@ -406,7 +406,7 @@ Example of using the boost::asio::spawn() function, a wrapper around the
 library, to implement a chain of asynchronous operations using stackful
 coroutines.
 
-* [@boost_asio/example/cpp11/spawn/echo_server.cpp] 
+* [@boost_asio/example/cpp11/spawn/echo_server.cpp]
 
 
 [endsect]
