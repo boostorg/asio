@@ -171,6 +171,51 @@ public:
         BOOST_ASIO_MOVE_CAST(basic_seq_packet_socket)(other));
     return *this;
   }
+
+  /// Move-construct a basic_seq_packet_socket from a socket of another protocol
+  /// type.
+  /**
+   * This constructor moves a sequenced packet socket from one object to
+   * another.
+   *
+   * @param other The other basic_seq_packet_socket object from which the move
+   * will occur.
+   *
+   * @note Following the move, the moved-from object is in the same state as if
+   * constructed using the @c basic_seq_packet_socket(io_service&) constructor.
+   */
+  template <typename Protocol1, typename SeqPacketSocketService1>
+  basic_seq_packet_socket(
+      basic_seq_packet_socket<Protocol1, SeqPacketSocketService1>&& other,
+      typename enable_if<is_convertible<Protocol1, Protocol>::value>::type* = 0)
+    : basic_socket<Protocol, SeqPacketSocketService>(
+        BOOST_ASIO_MOVE_CAST2(basic_seq_packet_socket<
+          Protocol1, SeqPacketSocketService1>)(other))
+  {
+  }
+
+  /// Move-assign a basic_seq_packet_socket from a socket of another protocol
+  /// type.
+  /**
+   * This assignment operator moves a sequenced packet socket from one object to
+   * another.
+   *
+   * @param other The other basic_seq_packet_socket object from which the move
+   * will occur.
+   *
+   * @note Following the move, the moved-from object is in the same state as if
+   * constructed using the @c basic_seq_packet_socket(io_service&) constructor.
+   */
+  template <typename Protocol1, typename SeqPacketSocketService1>
+  typename enable_if<is_convertible<Protocol1, Protocol>::value,
+      basic_seq_packet_socket>::type& operator=(
+        basic_seq_packet_socket<Protocol1, SeqPacketSocketService1>&& other)
+  {
+    basic_socket<Protocol, SeqPacketSocketService>::operator=(
+        BOOST_ASIO_MOVE_CAST2(basic_seq_packet_socket<
+          Protocol1, SeqPacketSocketService1>)(other));
+    return *this;
+  }
 #endif // defined(BOOST_ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
 
   /// Send some data on the socket.

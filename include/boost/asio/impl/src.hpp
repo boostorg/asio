@@ -59,6 +59,7 @@
 #include <boost/asio/detail/impl/win_thread.ipp>
 #include <boost/asio/detail/impl/win_tss_ptr.ipp>
 #include <boost/asio/detail/impl/winsock_init.ipp>
+#include <boost/asio/generic/detail/impl/endpoint.ipp>
 #include <boost/asio/ip/impl/address.ipp>
 #include <boost/asio/ip/impl/address_v4.ipp>
 #include <boost/asio/ip/impl/address_v6.ipp>

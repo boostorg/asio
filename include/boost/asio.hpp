@@ -46,6 +46,11 @@
 #include <boost/asio/deadline_timer_service.hpp>
 #include <boost/asio/deadline_timer.hpp>
 #include <boost/asio/error.hpp>
+#include <boost/asio/generic/basic_endpoint.hpp>
+#include <boost/asio/generic/datagram_protocol.hpp>
+#include <boost/asio/generic/raw_protocol.hpp>
+#include <boost/asio/generic/seq_packet_protocol.hpp>
+#include <boost/asio/generic/stream_protocol.hpp>
 #include <boost/asio/handler_alloc_hook.hpp>
 #include <boost/asio/handler_continuation_hook.hpp>
 #include <boost/asio/handler_invoke_hook.hpp>
