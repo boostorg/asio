@@ -3,7 +3,7 @@
 // ~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2005 Voipster / Indrek dot Juhani at voipster dot com
-// Copyright (c) 2005-2012 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2005-2013 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -33,6 +33,36 @@ namespace asio {
 namespace ssl {
 
 #if !defined(BOOST_ASIO_ENABLE_OLD_SSL)
+
+struct context::bio_cleanup
+{
+  BIO* p;
+  ~bio_cleanup() { if (p) ::BIO_free(p); }
+};
+
+struct context::x509_cleanup
+{
+  X509* p;
+  ~x509_cleanup() { if (p) ::X509_free(p); }
+};
+
+struct context::evp_pkey_cleanup
+{
+  EVP_PKEY* p;
+  ~evp_pkey_cleanup() { if (p) ::EVP_PKEY_free(p); }
+};
+
+struct context::rsa_cleanup
+{
+  RSA* p;
+  ~rsa_cleanup() { if (p) ::RSA_free(p); }
+};
+
+struct context::dh_cleanup
+{
+  DH* p;
+  ~dh_cleanup() { if (p) ::DH_free(p); }
+};
 
 context::context(context::method m)
   : handle_(0)
@@ -84,6 +114,42 @@ context::context(context::method m)
   case context::sslv23_server:
     handle_ = ::SSL_CTX_new(::SSLv23_server_method());
     break;
+#if defined(SSL_TXT_TLSV1_1)
+  case context::tlsv11:
+    handle_ = ::SSL_CTX_new(::TLSv1_1_method());
+    break;
+  case context::tlsv11_client:
+    handle_ = ::SSL_CTX_new(::TLSv1_1_client_method());
+    break;
+  case context::tlsv11_server:
+    handle_ = ::SSL_CTX_new(::TLSv1_1_server_method());
+    break;
+#else // defined(SSL_TXT_TLSV1_1)
+  case context::tlsv11:
+  case context::tlsv11_client:
+  case context::tlsv11_server:
+    boost::asio::detail::throw_error(
+        boost::asio::error::invalid_argument, "context");
+    break;
+#endif // defined(SSL_TXT_TLSV1_1)
+#if defined(SSL_TXT_TLSV1_2)
+  case context::tlsv12:
+    handle_ = ::SSL_CTX_new(::TLSv1_2_method());
+    break;
+  case context::tlsv12_client:
+    handle_ = ::SSL_CTX_new(::TLSv1_2_client_method());
+    break;
+  case context::tlsv12_server:
+    handle_ = ::SSL_CTX_new(::TLSv1_2_server_method());
+    break;
+#else // defined(SSL_TXT_TLSV1_2) 
+  case context::tlsv12:
+  case context::tlsv12_client:
+  case context::tlsv12_server:
+    boost::asio::detail::throw_error(
+        boost::asio::error::invalid_argument, "context");
+    break;
+#endif // defined(SSL_TXT_TLSV1_2) 
   default:
     handle_ = ::SSL_CTX_new(0);
     break;
@@ -190,6 +256,22 @@ boost::system::error_code context::set_verify_mode(
   return ec;
 }
 
+void context::set_verify_depth(int depth)
+{
+  boost::system::error_code ec;
+  set_verify_depth(depth, ec);
+  boost::asio::detail::throw_error(ec, "set_verify_depth");
+}
+
+boost::system::error_code context::set_verify_depth(
+    int depth, boost::system::error_code& ec)
+{
+  ::SSL_CTX_set_verify_depth(handle_, depth);
+
+  ec = boost::system::error_code();
+  return ec;
+}
+
 void context::load_verify_file(const std::string& filename)
 {
   boost::system::error_code ec;
@@ -209,6 +291,41 @@ boost::system::error_code context::load_verify_file(
   }
 
   ec = boost::system::error_code();
+  return ec;
+}
+
+void context::add_certificate_authority(const const_buffer& ca)
+{
+  boost::system::error_code ec;
+  add_certificate_authority(ca, ec);
+  boost::asio::detail::throw_error(ec, "add_certificate_authority");
+}
+
+boost::system::error_code context::add_certificate_authority(
+    const const_buffer& ca, boost::system::error_code& ec)
+{
+  ::ERR_clear_error();
+
+  bio_cleanup bio = { make_buffer_bio(ca) };
+  if (bio.p)
+  {
+    x509_cleanup cert = { ::PEM_read_bio_X509(bio.p, 0, 0, 0) };
+    if (cert.p)
+    {
+      if (X509_STORE* store = ::SSL_CTX_get_cert_store(handle_))
+      {
+        if (::X509_STORE_add_cert(store, cert.p) == 1)
+        {
+          ec = boost::system::error_code();
+          return ec;
+        }
+      }
+    }
+  }
+
+  ec = boost::system::error_code(
+      static_cast<int>(::ERR_get_error()),
+      boost::asio::error::get_ssl_category());
   return ec;
 }
 
@@ -256,6 +373,57 @@ boost::system::error_code context::add_verify_path(
   return ec;
 }
 
+void context::use_certificate(
+    const const_buffer& certificate, file_format format)
+{
+  boost::system::error_code ec;
+  use_certificate(certificate, format, ec);
+  boost::asio::detail::throw_error(ec, "use_certificate");
+}
+
+boost::system::error_code context::use_certificate(
+    const const_buffer& certificate, file_format format,
+    boost::system::error_code& ec)
+{
+  ::ERR_clear_error();
+
+  if (format == context_base::asn1)
+  {
+    if (::SSL_CTX_use_certificate_ASN1(handle_, buffer_size(certificate),
+          buffer_cast<const unsigned char*>(certificate)) == 1)
+    {
+      ec = boost::system::error_code();
+      return ec;
+    }
+  }
+  else if (format == context_base::pem)
+  {
+    bio_cleanup bio = { make_buffer_bio(certificate) };
+    if (bio.p)
+    {
+      x509_cleanup cert = { ::PEM_read_bio_X509(bio.p, 0, 0, 0) };
+      if (cert.p)
+      {
+        if (::SSL_CTX_use_certificate(handle_, cert.p) == 1)
+        {
+          ec = boost::system::error_code();
+          return ec;
+        }
+      }
+    }
+  }
+  else
+  {
+    ec = boost::asio::error::invalid_argument;
+    return ec;
+  }
+
+  ec = boost::system::error_code(
+      static_cast<int>(::ERR_get_error()),
+      boost::asio::error::get_ssl_category());
+  return ec;
+}
+
 void context::use_certificate_file(
     const std::string& filename, file_format format)
 {
@@ -296,6 +464,76 @@ boost::system::error_code context::use_certificate_file(
   return ec;
 }
 
+void context::use_certificate_chain(const const_buffer& chain)
+{
+  boost::system::error_code ec;
+  use_certificate_chain(chain, ec);
+  boost::asio::detail::throw_error(ec, "use_certificate_chain");
+}
+
+boost::system::error_code context::use_certificate_chain(
+    const const_buffer& chain, boost::system::error_code& ec)
+{
+  ::ERR_clear_error();
+
+  bio_cleanup bio = { make_buffer_bio(chain) };
+  if (bio.p)
+  {
+    x509_cleanup cert = {
+      ::PEM_read_bio_X509_AUX(bio.p, 0,
+          handle_->default_passwd_callback,
+          handle_->default_passwd_callback_userdata) };
+    if (!cert.p)
+    {
+      ec = boost::system::error_code(ERR_R_PEM_LIB,
+          boost::asio::error::get_ssl_category());
+      return ec;
+    }
+
+    int result = ::SSL_CTX_use_certificate(handle_, cert.p);
+    if (result == 0 || ::ERR_peek_error() != 0)
+    {
+      ec = boost::system::error_code(
+          static_cast<int>(::ERR_get_error()),
+          boost::asio::error::get_ssl_category());
+      return ec;
+    }
+
+    if (handle_->extra_certs)
+    {
+      ::sk_X509_pop_free(handle_->extra_certs, X509_free);
+      handle_->extra_certs = 0;
+    }
+
+    while (X509* cacert = ::PEM_read_bio_X509(bio.p, 0,
+          handle_->default_passwd_callback,
+          handle_->default_passwd_callback_userdata))
+    {
+      if (!::SSL_CTX_add_extra_chain_cert(handle_, cacert))
+      {
+        ec = boost::system::error_code(
+            static_cast<int>(::ERR_get_error()),
+            boost::asio::error::get_ssl_category());
+        return ec;
+      }
+    }
+  
+    result = ::ERR_peek_last_error();
+    if ((ERR_GET_LIB(result) == ERR_LIB_PEM)
+        && (ERR_GET_REASON(result) == PEM_R_NO_START_LINE))
+    {
+      ::ERR_clear_error();
+      ec = boost::system::error_code();
+      return ec;
+    }
+  }
+
+  ec = boost::system::error_code(
+      static_cast<int>(::ERR_get_error()),
+      boost::asio::error::get_ssl_category());
+  return ec;
+}
+
 void context::use_certificate_chain_file(const std::string& filename)
 {
   boost::system::error_code ec;
@@ -318,12 +556,110 @@ boost::system::error_code context::use_certificate_chain_file(
   return ec;
 }
 
+void context::use_private_key(
+    const const_buffer& private_key, context::file_format format)
+{
+  boost::system::error_code ec;
+  use_private_key(private_key, format, ec);
+  boost::asio::detail::throw_error(ec, "use_private_key");
+}
+
+boost::system::error_code context::use_private_key(
+    const const_buffer& private_key, context::file_format format,
+    boost::system::error_code& ec)
+{
+  ::ERR_clear_error();
+
+  bio_cleanup bio = { make_buffer_bio(private_key) };
+  if (bio.p)
+  {
+    evp_pkey_cleanup evp_private_key = { 0 };
+    switch (format)
+    {
+    case context_base::asn1:
+      evp_private_key.p = ::d2i_PrivateKey_bio(bio.p, 0);
+      break;
+    case context_base::pem:
+      evp_private_key.p = ::PEM_read_bio_PrivateKey(bio.p, 0, 0, 0);
+      break;
+    default:
+      {
+        ec = boost::asio::error::invalid_argument;
+        return ec;
+      }
+    }
+
+    if (evp_private_key.p)
+    {
+      if (::SSL_CTX_use_PrivateKey(handle_, evp_private_key.p) == 1)
+      {
+        ec = boost::system::error_code();
+        return ec;
+      }
+    }
+  }
+
+  ec = boost::system::error_code(
+      static_cast<int>(::ERR_get_error()),
+      boost::asio::error::get_ssl_category());
+  return ec;
+}
+
 void context::use_private_key_file(
     const std::string& filename, context::file_format format)
 {
   boost::system::error_code ec;
   use_private_key_file(filename, format, ec);
   boost::asio::detail::throw_error(ec, "use_private_key_file");
+}
+
+void context::use_rsa_private_key(
+    const const_buffer& private_key, context::file_format format)
+{
+  boost::system::error_code ec;
+  use_rsa_private_key(private_key, format, ec);
+  boost::asio::detail::throw_error(ec, "use_rsa_private_key");
+}
+
+boost::system::error_code context::use_rsa_private_key(
+    const const_buffer& private_key, context::file_format format,
+    boost::system::error_code& ec)
+{
+  ::ERR_clear_error();
+
+  bio_cleanup bio = { make_buffer_bio(private_key) };
+  if (bio.p)
+  {
+    rsa_cleanup rsa_private_key = { 0 };
+    switch (format)
+    {
+    case context_base::asn1:
+      rsa_private_key.p = ::d2i_RSAPrivateKey_bio(bio.p, 0);
+      break;
+    case context_base::pem:
+      rsa_private_key.p = ::PEM_read_bio_RSAPrivateKey(bio.p, 0, 0, 0);
+      break;
+    default:
+      {
+        ec = boost::asio::error::invalid_argument;
+        return ec;
+      }
+    }
+
+    if (rsa_private_key.p)
+    {
+      if (::SSL_CTX_use_RSAPrivateKey(handle_, rsa_private_key.p) == 1)
+      {
+        ec = boost::system::error_code();
+        return ec;
+      }
+    }
+  }
+
+  ec = boost::system::error_code(
+      static_cast<int>(::ERR_get_error()),
+      boost::asio::error::get_ssl_category());
+  return ec;
 }
 
 boost::system::error_code context::use_private_key_file(
@@ -399,6 +735,28 @@ boost::system::error_code context::use_rsa_private_key_file(
   return ec;
 }
 
+void context::use_tmp_dh(const const_buffer& dh)
+{
+  boost::system::error_code ec;
+  use_tmp_dh(dh, ec);
+  boost::asio::detail::throw_error(ec, "use_tmp_dh");
+}
+
+boost::system::error_code context::use_tmp_dh(
+    const const_buffer& dh, boost::system::error_code& ec)
+{
+  bio_cleanup bio = { make_buffer_bio(dh) };
+  if (bio.p)
+  {
+    return do_use_tmp_dh(bio.p, ec);
+  }
+
+  ec = boost::system::error_code(
+      static_cast<int>(::ERR_get_error()),
+      boost::asio::error::get_ssl_category());
+  return ec;
+}
+
 void context::use_tmp_dh_file(const std::string& filename)
 {
   boost::system::error_code ec;
@@ -409,33 +767,36 @@ void context::use_tmp_dh_file(const std::string& filename)
 boost::system::error_code context::use_tmp_dh_file(
     const std::string& filename, boost::system::error_code& ec)
 {
-  ::BIO* bio = ::BIO_new_file(filename.c_str(), "r");
-  if (!bio)
+  bio_cleanup bio = { ::BIO_new_file(filename.c_str(), "r") };
+  if (bio.p)
   {
-    ec = boost::asio::error::invalid_argument;
-    return ec;
+    return do_use_tmp_dh(bio.p, ec);
   }
 
-  ::DH* dh = ::PEM_read_bio_DHparams(bio, 0, 0, 0);
-  if (!dh)
+  ec = boost::system::error_code(
+      static_cast<int>(::ERR_get_error()),
+      boost::asio::error::get_ssl_category());
+  return ec;
+}
+
+boost::system::error_code context::do_use_tmp_dh(
+    BIO* bio, boost::system::error_code& ec)
+{
+  ::ERR_clear_error();
+
+  dh_cleanup dh = { ::PEM_read_bio_DHparams(bio, 0, 0, 0) };
+  if (dh.p)
   {
-    ::BIO_free(bio);
-    ec = boost::asio::error::invalid_argument;
-    return ec;
+    if (::SSL_CTX_set_tmp_dh(handle_, dh.p) == 1)
+    {
+      ec = boost::system::error_code();
+      return ec;
+    }
   }
 
-  ::BIO_free(bio);
-  long result = ::SSL_CTX_set_tmp_dh(handle_, dh);
-  ::DH_free(dh);
-  if (result != 1)
-  {
-    ec = boost::system::error_code(
-        static_cast<int>(::ERR_get_error()),
-        boost::asio::error::get_ssl_category());
-    return ec;
-  }
-
-  ec = boost::system::error_code();
+  ec = boost::system::error_code(
+      static_cast<int>(::ERR_get_error()),
+      boost::asio::error::get_ssl_category());
   return ec;
 }
 
@@ -512,17 +873,24 @@ int context::password_callback_function(
     std::string passwd = callback->call(static_cast<std::size_t>(size),
         purpose ? context_base::for_writing : context_base::for_reading);
 
-#if BOOST_WORKAROUND(BOOST_MSVC, >= 1400) && !defined(UNDER_CE)
+#if defined(BOOST_ASIO_HAS_SECURE_RTL)
     strcpy_s(buf, size, passwd.c_str());
-#else
+#else // defined(BOOST_ASIO_HAS_SECURE_RTL)
     *buf = '\0';
     strncat(buf, passwd.c_str(), size);
-#endif
+#endif // defined(BOOST_ASIO_HAS_SECURE_RTL)
 
     return static_cast<int>(strlen(buf));
   }
 
   return 0;
+}
+
+BIO* context::make_buffer_bio(const const_buffer& b)
+{
+  return ::BIO_new_mem_buf(
+      const_cast<void*>(buffer_cast<const void*>(b)),
+      buffer_size(b));
 }
 
 #endif // !defined(BOOST_ASIO_ENABLE_OLD_SSL)

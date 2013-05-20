@@ -2,7 +2,7 @@
 // udp.cpp
 // ~~~~~~~
 //
-// Copyright (c) 2003-2012 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2013 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -16,14 +16,19 @@
 // Test that header file is self-contained.
 #include <boost/asio/ip/udp.hpp>
 
-#include <boost/bind.hpp>
 #include <cstring>
 #include <boost/asio/io_service.hpp>
-#include <boost/asio/placeholders.hpp>
 #include "../unit_test.hpp"
 #include "../archetypes/gettable_socket_option.hpp"
+#include "../archetypes/async_result.hpp"
 #include "../archetypes/io_control_command.hpp"
 #include "../archetypes/settable_socket_option.hpp"
+
+#if defined(BOOST_ASIO_HAS_BOOST_BIND)
+# include <boost/bind.hpp>
+#else // defined(BOOST_ASIO_HAS_BOOST_BIND)
+# include <functional>
+#endif // defined(BOOST_ASIO_HAS_BOOST_BIND)
 
 //------------------------------------------------------------------------------
 
@@ -64,6 +69,7 @@ void test()
     archetypes::gettable_socket_option<int> gettable_socket_option2;
     archetypes::gettable_socket_option<double> gettable_socket_option3;
     archetypes::io_control_command io_control_command;
+    archetypes::lazy_handler lazy;
     boost::system::error_code ec;
 
     // basic_datagram_socket constructors.
@@ -152,6 +158,10 @@ void test()
         &connect_handler);
     socket1.async_connect(ip::udp::endpoint(ip::udp::v6(), 0),
         &connect_handler);
+    int i1 = socket1.async_connect(ip::udp::endpoint(ip::udp::v4(), 0), lazy);
+    (void)i1;
+    int i2 = socket1.async_connect(ip::udp::endpoint(ip::udp::v6(), 0), lazy);
+    (void)i2;
 
     socket1.set_option(settable_socket_option1);
     socket1.set_option(settable_socket_option1, ec);
@@ -207,6 +217,18 @@ void test()
     socket1.async_send(buffer(mutable_char_buffer), in_flags, &send_handler);
     socket1.async_send(buffer(const_char_buffer), in_flags, &send_handler);
     socket1.async_send(null_buffers(), in_flags, &send_handler);
+    int i3 = socket1.async_send(buffer(mutable_char_buffer), lazy);
+    (void)i3;
+    int i4 = socket1.async_send(buffer(const_char_buffer), lazy);
+    (void)i4;
+    int i5 = socket1.async_send(null_buffers(), lazy);
+    (void)i5;
+    int i6 = socket1.async_send(buffer(mutable_char_buffer), in_flags, lazy);
+    (void)i6;
+    int i7 = socket1.async_send(buffer(const_char_buffer), in_flags, lazy);
+    (void)i7;
+    int i8 = socket1.async_send(null_buffers(), in_flags, lazy);
+    (void)i8;
 
     socket1.send_to(buffer(mutable_char_buffer),
         ip::udp::endpoint(ip::udp::v4(), 0));
@@ -269,6 +291,42 @@ void test()
         ip::udp::endpoint(ip::udp::v4(), 0), in_flags, &send_handler);
     socket1.async_send_to(null_buffers(),
         ip::udp::endpoint(ip::udp::v6(), 0), in_flags, &send_handler);
+    int i9 = socket1.async_send_to(buffer(mutable_char_buffer),
+        ip::udp::endpoint(ip::udp::v4(), 0), lazy);
+    (void)i9;
+    int i10 = socket1.async_send_to(buffer(mutable_char_buffer),
+        ip::udp::endpoint(ip::udp::v6(), 0), lazy);
+    (void)i10;
+    int i11 = socket1.async_send_to(buffer(const_char_buffer),
+        ip::udp::endpoint(ip::udp::v4(), 0), lazy);
+    (void)i11;
+    int i12 = socket1.async_send_to(buffer(const_char_buffer),
+        ip::udp::endpoint(ip::udp::v6(), 0), lazy);
+    (void)i12;
+    int i13 = socket1.async_send_to(null_buffers(),
+        ip::udp::endpoint(ip::udp::v4(), 0), lazy);
+    (void)i13;
+    int i14 = socket1.async_send_to(null_buffers(),
+        ip::udp::endpoint(ip::udp::v6(), 0), lazy);
+    (void)i14;
+    int i15 = socket1.async_send_to(buffer(mutable_char_buffer),
+        ip::udp::endpoint(ip::udp::v4(), 0), in_flags, lazy);
+    (void)i15;
+    int i16 = socket1.async_send_to(buffer(mutable_char_buffer),
+        ip::udp::endpoint(ip::udp::v6(), 0), in_flags, lazy);
+    (void)i16;
+    int i17 = socket1.async_send_to(buffer(const_char_buffer),
+        ip::udp::endpoint(ip::udp::v4(), 0), in_flags, lazy);
+    (void)i17;
+    int i18 = socket1.async_send_to(buffer(const_char_buffer),
+        ip::udp::endpoint(ip::udp::v6(), 0), in_flags, lazy);
+    (void)i18;
+    int i19 = socket1.async_send_to(null_buffers(),
+        ip::udp::endpoint(ip::udp::v4(), 0), in_flags, lazy);
+    (void)i19;
+    int i20 = socket1.async_send_to(null_buffers(),
+        ip::udp::endpoint(ip::udp::v6(), 0), in_flags, lazy);
+    (void)i20;
 
     socket1.receive(buffer(mutable_char_buffer));
     socket1.receive(null_buffers());
@@ -282,6 +340,15 @@ void test()
     socket1.async_receive(buffer(mutable_char_buffer), in_flags,
         &receive_handler);
     socket1.async_receive(null_buffers(), in_flags, &receive_handler);
+    int i21 = socket1.async_receive(buffer(mutable_char_buffer), lazy);
+    (void)i21;
+    int i22 = socket1.async_receive(null_buffers(), lazy);
+    (void)i22;
+    int i23 = socket1.async_receive(buffer(mutable_char_buffer),
+        in_flags, lazy);
+    (void)i23;
+    int i24 = socket1.async_receive(null_buffers(), in_flags, lazy);
+    (void)i24;
 
     ip::udp::endpoint endpoint;
     socket1.receive_from(buffer(mutable_char_buffer), endpoint);
@@ -299,6 +366,18 @@ void test()
         endpoint, in_flags, &receive_handler);
     socket1.async_receive_from(null_buffers(),
         endpoint, in_flags, &receive_handler);
+    int i25 = socket1.async_receive_from(buffer(mutable_char_buffer),
+        endpoint, lazy);
+    (void)i25;
+    int i26 = socket1.async_receive_from(null_buffers(),
+        endpoint, lazy);
+    (void)i26;
+    int i27 = socket1.async_receive_from(buffer(mutable_char_buffer),
+        endpoint, in_flags, lazy);
+    (void)i27;
+    int i28 = socket1.async_receive_from(null_buffers(),
+        endpoint, in_flags, lazy);
+    (void)i28;
   }
   catch (std::exception&)
   {
@@ -318,15 +397,15 @@ namespace ip_udp_socket_runtime {
 void handle_send(size_t expected_bytes_sent,
     const boost::system::error_code& err, size_t bytes_sent)
 {
-  BOOST_CHECK(!err);
-  BOOST_CHECK(expected_bytes_sent == bytes_sent);
+  BOOST_ASIO_CHECK(!err);
+  BOOST_ASIO_CHECK(expected_bytes_sent == bytes_sent);
 }
 
 void handle_recv(size_t expected_bytes_recvd,
     const boost::system::error_code& err, size_t bytes_recvd)
 {
-  BOOST_CHECK(!err);
-  BOOST_CHECK(expected_bytes_recvd == bytes_recvd);
+  BOOST_ASIO_CHECK(!err);
+  BOOST_ASIO_CHECK(expected_bytes_recvd == bytes_recvd);
 }
 
 void test()
@@ -334,6 +413,14 @@ void test()
   using namespace std; // For memcmp and memset.
   using namespace boost::asio;
   namespace ip = boost::asio::ip;
+
+#if defined(BOOST_ASIO_HAS_BOOST_BIND)
+  namespace bindns = boost;
+#else // defined(BOOST_ASIO_HAS_BOOST_BIND)
+  namespace bindns = std;
+  using std::placeholders::_1;
+  using std::placeholders::_2;
+#endif // defined(BOOST_ASIO_HAS_BOOST_BIND)
 
   io_service ios;
 
@@ -352,24 +439,20 @@ void test()
   size_t bytes_recvd = s1.receive_from(buffer(recv_msg, sizeof(recv_msg)),
       sender_endpoint);
 
-  BOOST_CHECK(bytes_recvd == sizeof(send_msg));
-  BOOST_CHECK(memcmp(send_msg, recv_msg, sizeof(send_msg)) == 0);
+  BOOST_ASIO_CHECK(bytes_recvd == sizeof(send_msg));
+  BOOST_ASIO_CHECK(memcmp(send_msg, recv_msg, sizeof(send_msg)) == 0);
 
   memset(recv_msg, 0, sizeof(recv_msg));
 
   target_endpoint = sender_endpoint;
   s1.async_send_to(buffer(send_msg, sizeof(send_msg)), target_endpoint,
-      boost::bind(handle_send, sizeof(send_msg),
-        boost::asio::placeholders::error,
-        boost::asio::placeholders::bytes_transferred));
+      bindns::bind(handle_send, sizeof(send_msg), _1, _2));
   s2.async_receive_from(buffer(recv_msg, sizeof(recv_msg)), sender_endpoint,
-      boost::bind(handle_recv, sizeof(recv_msg),
-        boost::asio::placeholders::error,
-        boost::asio::placeholders::bytes_transferred));
+      bindns::bind(handle_recv, sizeof(recv_msg), _1, _2));
 
   ios.run();
 
-  BOOST_CHECK(memcmp(send_msg, recv_msg, sizeof(send_msg)) == 0);
+  BOOST_ASIO_CHECK(memcmp(send_msg, recv_msg, sizeof(send_msg)) == 0);
 }
 
 } // namespace ip_udp_socket_runtime
@@ -396,6 +479,7 @@ void test()
   try
   {
     io_service ios;
+    archetypes::lazy_handler lazy;
     boost::system::error_code ec;
     ip::udp::resolver::query q(ip::udp::v4(), "localhost", "0");
     ip::udp::endpoint e(ip::address_v4::loopback(), 0);
@@ -426,8 +510,12 @@ void test()
     (void)iter4;
 
     resolver.async_resolve(q, &resolve_handler);
+    int i1 = resolver.async_resolve(q, lazy);
+    (void)i1;
 
     resolver.async_resolve(e, &resolve_handler);
+    int i2 = resolver.async_resolve(e, lazy);
+    (void)i2;
   }
   catch (std::exception&)
   {
@@ -438,11 +526,10 @@ void test()
 
 //------------------------------------------------------------------------------
 
-test_suite* init_unit_test_suite(int, char*[])
-{
-  test_suite* test = BOOST_TEST_SUITE("ip/udp");
-  test->add(BOOST_TEST_CASE(&ip_udp_socket_compile::test));
-  test->add(BOOST_TEST_CASE(&ip_udp_socket_runtime::test));
-  test->add(BOOST_TEST_CASE(&ip_udp_resolver_compile::test));
-  return test;
-}
+BOOST_ASIO_TEST_SUITE
+(
+  "ip/udp",
+  BOOST_ASIO_TEST_CASE(ip_udp_socket_compile::test)
+  BOOST_ASIO_TEST_CASE(ip_udp_socket_runtime::test)
+  BOOST_ASIO_TEST_CASE(ip_udp_resolver_compile::test)
+)

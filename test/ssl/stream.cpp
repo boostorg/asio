@@ -2,7 +2,7 @@
 // stream.cpp
 // ~~~~~~~~~~
 //
-// Copyright (c) 2003-2012 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2013 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -18,6 +18,7 @@
 
 #include <boost/asio.hpp>
 #include <boost/asio/ssl.hpp>
+#include "../archetypes/async_result.hpp"
 #include "../unit_test.hpp"
 
 //------------------------------------------------------------------------------
@@ -37,6 +38,10 @@ bool verify_callback(bool, boost::asio::ssl::verify_context&)
 #endif // !defined(BOOST_ASIO_ENABLE_OLD_SSL)
 
 void handshake_handler(const boost::system::error_code&)
+{
+}
+
+void buffered_handshake_handler(const boost::system::error_code&, std::size_t)
 {
 }
 
@@ -63,6 +68,7 @@ void test()
     char mutable_char_buffer[128] = "";
     const char const_char_buffer[128] = "";
     boost::asio::ssl::context context(ios, boost::asio::ssl::context::sslv23);
+    archetypes::lazy_handler lazy;
     boost::system::error_code ec;
 
     // ssl::stream constructors.
@@ -99,6 +105,9 @@ void test()
     stream1.set_verify_mode(ssl::verify_none);
     stream1.set_verify_mode(ssl::verify_none, ec);
 
+    stream1.set_verify_depth(1);
+    stream1.set_verify_depth(1, ec);
+
     stream1.set_verify_callback(verify_callback);
     stream1.set_verify_callback(verify_callback, ec);
 #endif // !defined(BOOST_ASIO_ENABLE_OLD_SSL)
@@ -108,13 +117,57 @@ void test()
     stream1.handshake(ssl::stream_base::client, ec);
     stream1.handshake(ssl::stream_base::server, ec);
 
+#if !defined(BOOST_ASIO_ENABLE_OLD_SSL)
+    stream1.handshake(ssl::stream_base::client, buffer(mutable_char_buffer));
+    stream1.handshake(ssl::stream_base::server, buffer(mutable_char_buffer));
+    stream1.handshake(ssl::stream_base::client, buffer(const_char_buffer));
+    stream1.handshake(ssl::stream_base::server, buffer(const_char_buffer));
+    stream1.handshake(ssl::stream_base::client,
+        buffer(mutable_char_buffer), ec);
+    stream1.handshake(ssl::stream_base::server,
+        buffer(mutable_char_buffer), ec);
+    stream1.handshake(ssl::stream_base::client,
+        buffer(const_char_buffer), ec);
+    stream1.handshake(ssl::stream_base::server,
+        buffer(const_char_buffer), ec);
+#endif // !defined(BOOST_ASIO_ENABLE_OLD_SSL)
+
     stream1.async_handshake(ssl::stream_base::client, handshake_handler);
     stream1.async_handshake(ssl::stream_base::server, handshake_handler);
+    int i1 = stream1.async_handshake(ssl::stream_base::client, lazy);
+    (void)i1;
+    int i2 = stream1.async_handshake(ssl::stream_base::server, lazy);
+    (void)i2;
+
+#if !defined(BOOST_ASIO_ENABLE_OLD_SSL)
+    stream1.async_handshake(ssl::stream_base::client,
+        buffer(mutable_char_buffer), buffered_handshake_handler);
+    stream1.async_handshake(ssl::stream_base::server,
+        buffer(mutable_char_buffer), buffered_handshake_handler);
+    stream1.async_handshake(ssl::stream_base::client,
+        buffer(const_char_buffer), buffered_handshake_handler);
+    stream1.async_handshake(ssl::stream_base::server,
+        buffer(const_char_buffer), buffered_handshake_handler);
+    int i3 = stream1.async_handshake(ssl::stream_base::client,
+        buffer(mutable_char_buffer), lazy);
+    (void)i3;
+    int i4 = stream1.async_handshake(ssl::stream_base::server,
+        buffer(mutable_char_buffer), lazy);
+    (void)i4;
+    int i5 = stream1.async_handshake(ssl::stream_base::client,
+        buffer(const_char_buffer), lazy);
+    (void)i5;
+    int i6 = stream1.async_handshake(ssl::stream_base::server,
+        buffer(const_char_buffer), lazy);
+    (void)i6;
+#endif // !defined(BOOST_ASIO_ENABLE_OLD_SSL)
 
     stream1.shutdown();
     stream1.shutdown(ec);
 
     stream1.async_shutdown(shutdown_handler);
+    int i7 = stream1.async_shutdown(lazy);
+    (void)i7;
 
     stream1.write_some(buffer(mutable_char_buffer));
     stream1.write_some(buffer(const_char_buffer));
@@ -123,11 +176,17 @@ void test()
 
     stream1.async_write_some(buffer(mutable_char_buffer), write_some_handler);
     stream1.async_write_some(buffer(const_char_buffer), write_some_handler);
+    int i8 = stream1.async_write_some(buffer(mutable_char_buffer), lazy);
+    (void)i8;
+    int i9 = stream1.async_write_some(buffer(const_char_buffer), lazy);
+    (void)i9;
 
     stream1.read_some(buffer(mutable_char_buffer));
     stream1.read_some(buffer(mutable_char_buffer), ec);
 
     stream1.async_read_some(buffer(mutable_char_buffer), read_some_handler);
+    int i10 = stream1.async_read_some(buffer(mutable_char_buffer), lazy);
+    (void)i10;
 
 #if defined(BOOST_ASIO_ENABLE_OLD_SSL)
     stream1.peek(buffer(mutable_char_buffer));
@@ -148,9 +207,8 @@ void test()
 
 //------------------------------------------------------------------------------
 
-test_suite* init_unit_test_suite(int, char*[])
-{
-  test_suite* test = BOOST_TEST_SUITE("ssl/stream");
-  test->add(BOOST_TEST_CASE(&ssl_stream_compile::test));
-  return test;
-}
+BOOST_ASIO_TEST_SUITE
+(
+  "ssl/stream",
+  BOOST_ASIO_TEST_CASE(ssl_stream_compile::test)
+)

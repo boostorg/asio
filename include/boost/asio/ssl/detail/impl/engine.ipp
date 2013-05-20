@@ -2,7 +2,7 @@
 // ssl/detail/impl/engine.ipp
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2012 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2013 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -79,6 +79,15 @@ boost::system::error_code engine::set_verify_mode(
     verify_mode v, boost::system::error_code& ec)
 {
   ::SSL_set_verify(ssl_, v, ::SSL_get_verify_callback(ssl_));
+
+  ec = boost::system::error_code();
+  return ec;
+}
+
+boost::system::error_code engine::set_verify_depth(
+    int depth, boost::system::error_code& ec)
+{
+  ::SSL_set_verify_depth(ssl_, depth);
 
   ec = boost::system::error_code();
   return ec;

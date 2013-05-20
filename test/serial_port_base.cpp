@@ -2,7 +2,7 @@
 // serial_port_base.cpp
 // ~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2012 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2013 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 // Copyright (c) 2008 Rep Invariant Systems, Inc. (info@repinvariant.com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
@@ -92,9 +92,8 @@ void test()
 
 //------------------------------------------------------------------------------
 
-test_suite* init_unit_test_suite(int, char*[])
-{
-  test_suite* test = BOOST_TEST_SUITE("serial_port_base");
-  test->add(BOOST_TEST_CASE(&serial_port_base_compile::test));
-  return test;
-}
+BOOST_ASIO_TEST_SUITE
+(
+  "serial_port_base",
+  BOOST_ASIO_TEST_CASE(serial_port_base_compile::test)
+)

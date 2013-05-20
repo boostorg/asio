@@ -2,7 +2,7 @@
 // stream_descriptor.cpp
 // ~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2012 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2013 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -17,6 +17,7 @@
 #include <boost/asio/posix/stream_descriptor.hpp>
 
 #include <boost/asio/io_service.hpp>
+#include "../archetypes/async_result.hpp"
 #include "../unit_test.hpp"
 
 //------------------------------------------------------------------------------
@@ -49,6 +50,7 @@ void test()
     char mutable_char_buffer[128] = "";
     const char const_char_buffer[128] = "";
     posix::descriptor_base::bytes_readable io_control_command;
+    archetypes::lazy_handler lazy;
     boost::system::error_code ec;
 
     // basic_stream_descriptor constructors.
@@ -136,6 +138,12 @@ void test()
         write_some_handler);
     descriptor1.async_write_some(null_buffers(),
         write_some_handler);
+    int i1 = descriptor1.async_write_some(buffer(mutable_char_buffer), lazy);
+    (void)i1;
+    int i2 = descriptor1.async_write_some(buffer(const_char_buffer), lazy);
+    (void)i2;
+    int i3 = descriptor1.async_write_some(null_buffers(), lazy);
+    (void)i3;
 
     descriptor1.read_some(buffer(mutable_char_buffer));
     descriptor1.read_some(buffer(mutable_char_buffer), ec);
@@ -143,6 +151,10 @@ void test()
 
     descriptor1.async_read_some(buffer(mutable_char_buffer), read_some_handler);
     descriptor1.async_read_some(null_buffers(), read_some_handler);
+    int i4 = descriptor1.async_read_some(buffer(mutable_char_buffer), lazy);
+    (void)i4;
+    int i5 = descriptor1.async_read_some(null_buffers(), lazy);
+    (void)i5;
   }
   catch (std::exception&)
   {
@@ -153,9 +165,9 @@ void test()
 } // namespace posix_stream_descriptor_compile
 
 //------------------------------------------------------------------------------
-test_suite* init_unit_test_suite(int, char*[])
-{
-  test_suite* test = BOOST_TEST_SUITE("posix/stream_descriptor");
-  test->add(BOOST_TEST_CASE(&posix_stream_descriptor_compile::test));
-  return test;
-}
+
+BOOST_ASIO_TEST_SUITE
+(
+  "posix/stream_descriptor",
+  BOOST_ASIO_TEST_CASE(posix_stream_descriptor_compile::test)
+)

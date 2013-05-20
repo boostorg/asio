@@ -1,5 +1,5 @@
 [/
- / Copyright (c) 2003-2012 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+ / Copyright (c) 2003-2013 Christopher M. Kohlhoff (chris at kohlhoff dot com)
  /
  / Distributed under the Boost Software License, Version 1.0. (See accompanying
  / file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -172,5 +172,9 @@ and `h` is the handler. The implementation will perform
 to deallocate the storage prior to the invocation of the handler via
 `asio_handler_invoke`. Multiple storage blocks may be allocated for a single
 asynchronous operation.
+
+[section:return_type Return type of an initiating function]
+
+[endsect]
 
 [endsect]

@@ -17,9 +17,9 @@
 
 #include <boost/asio/detail/config.hpp>
 #include <boost/function.hpp>
-#include <boost/assert.hpp>
 #include <boost/bind.hpp>
 #include <boost/asio/buffer.hpp>
+#include <boost/asio/detail/assert.hpp>
 #include <boost/asio/detail/socket_ops.hpp>
 #include <boost/asio/placeholders.hpp>
 #include <boost/asio/ssl/detail/openssl_types.hpp>
@@ -314,7 +314,7 @@ private:
         unsigned char *data_start = send_buf_.get_unused_start();
         send_buf_.data_added(len);
  
-        BOOST_ASSERT(strand_); 
+        BOOST_ASIO_ASSERT(strand_);
         boost::asio::async_write
         ( 
           socket_, 
@@ -379,7 +379,7 @@ private:
   int do_async_read()
   {
     // Wait for new data
-    BOOST_ASSERT(strand_);
+    BOOST_ASIO_ASSERT(strand_);
     socket_.async_read_some
     ( 
       boost::asio::buffer(recv_buf_.get_unused_start(),

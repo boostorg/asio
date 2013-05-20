@@ -2,7 +2,7 @@
 // serial_port.cpp
 // ~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2012 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2013 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 // Copyright (c) 2008 Rep Invariant Systems, Inc. (info@repinvariant.com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
@@ -17,6 +17,7 @@
 // Test that header file is self-contained.
 #include <boost/asio/serial_port.hpp>
 
+#include "archetypes/async_result.hpp"
 #include <boost/asio/io_service.hpp>
 #include "unit_test.hpp"
 
@@ -48,6 +49,7 @@ void test()
     char mutable_char_buffer[128] = "";
     const char const_char_buffer[128] = "";
     serial_port::baud_rate serial_port_option;
+    archetypes::lazy_handler lazy;
     boost::system::error_code ec;
 
     // basic_serial_port constructors.
@@ -121,11 +123,17 @@ void test()
 
     port1.async_write_some(buffer(mutable_char_buffer), &write_some_handler);
     port1.async_write_some(buffer(const_char_buffer), &write_some_handler);
+    int i1 = port1.async_write_some(buffer(mutable_char_buffer), lazy);
+    (void)i1;
+    int i2 = port1.async_write_some(buffer(const_char_buffer), lazy);
+    (void)i2;
 
     port1.read_some(buffer(mutable_char_buffer));
     port1.read_some(buffer(mutable_char_buffer), ec);
 
     port1.async_read_some(buffer(mutable_char_buffer), &read_some_handler);
+    int i3 = port1.async_read_some(buffer(mutable_char_buffer), lazy);
+    (void)i3;
   }
   catch (std::exception&)
   {
@@ -137,9 +145,8 @@ void test()
 
 //------------------------------------------------------------------------------
 
-test_suite* init_unit_test_suite(int, char*[])
-{
-  test_suite* test = BOOST_TEST_SUITE("serial_port");
-  test->add(BOOST_TEST_CASE(&serial_port_compile::test));
-  return test;
-}
+BOOST_ASIO_TEST_SUITE
+(
+  "serial_port",
+  BOOST_ASIO_TEST_CASE(serial_port_compile::test)
+)

@@ -2,7 +2,7 @@
 // tcp.cpp
 // ~~~~~~~
 //
-// Copyright (c) 2003-2012 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2013 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -19,17 +19,27 @@
 // Test that header file is self-contained.
 #include <boost/asio/ip/tcp.hpp>
 
-#include <boost/array.hpp>
-#include <boost/bind.hpp>
 #include <cstring>
 #include <boost/asio/io_service.hpp>
-#include <boost/asio/placeholders.hpp>
 #include <boost/asio/read.hpp>
 #include <boost/asio/write.hpp>
 #include "../unit_test.hpp"
 #include "../archetypes/gettable_socket_option.hpp"
+#include "../archetypes/async_result.hpp"
 #include "../archetypes/io_control_command.hpp"
 #include "../archetypes/settable_socket_option.hpp"
+
+#if defined(BOOST_ASIO_HAS_BOOST_ARRAY)
+# include <boost/array.hpp>
+#else // defined(BOOST_ASIO_HAS_BOOST_ARRAY)
+# include <array>
+#endif // defined(BOOST_ASIO_HAS_BOOST_ARRAY)
+
+#if defined(BOOST_ASIO_HAS_BOOST_BIND)
+# include <boost/bind.hpp>
+#else // defined(BOOST_ASIO_HAS_BOOST_BIND)
+# include <functional>
+#endif // defined(BOOST_ASIO_HAS_BOOST_BIND)
 
 //------------------------------------------------------------------------------
 
@@ -88,32 +98,32 @@ void test()
   // no_delay class.
 
   ip::tcp::no_delay no_delay1(true);
-  BOOST_CHECK(no_delay1.value());
-  BOOST_CHECK(static_cast<bool>(no_delay1));
-  BOOST_CHECK(!!no_delay1);
+  BOOST_ASIO_CHECK(no_delay1.value());
+  BOOST_ASIO_CHECK(static_cast<bool>(no_delay1));
+  BOOST_ASIO_CHECK(!!no_delay1);
   sock.set_option(no_delay1, ec);
-  BOOST_CHECK(!ec);
+  BOOST_ASIO_CHECK(!ec);
 
   ip::tcp::no_delay no_delay2;
   sock.get_option(no_delay2, ec);
-  BOOST_CHECK(!ec);
-  BOOST_CHECK(no_delay2.value());
-  BOOST_CHECK(static_cast<bool>(no_delay2));
-  BOOST_CHECK(!!no_delay2);
+  BOOST_ASIO_CHECK(!ec);
+  BOOST_ASIO_CHECK(no_delay2.value());
+  BOOST_ASIO_CHECK(static_cast<bool>(no_delay2));
+  BOOST_ASIO_CHECK(!!no_delay2);
 
   ip::tcp::no_delay no_delay3(false);
-  BOOST_CHECK(!no_delay3.value());
-  BOOST_CHECK(!static_cast<bool>(no_delay3));
-  BOOST_CHECK(!no_delay3);
+  BOOST_ASIO_CHECK(!no_delay3.value());
+  BOOST_ASIO_CHECK(!static_cast<bool>(no_delay3));
+  BOOST_ASIO_CHECK(!no_delay3);
   sock.set_option(no_delay3, ec);
-  BOOST_CHECK(!ec);
+  BOOST_ASIO_CHECK(!ec);
 
   ip::tcp::no_delay no_delay4;
   sock.get_option(no_delay4, ec);
-  BOOST_CHECK(!ec);
-  BOOST_CHECK(!no_delay4.value());
-  BOOST_CHECK(!static_cast<bool>(no_delay4));
-  BOOST_CHECK(!no_delay4);
+  BOOST_ASIO_CHECK(!ec);
+  BOOST_ASIO_CHECK(!no_delay4.value());
+  BOOST_ASIO_CHECK(!static_cast<bool>(no_delay4));
+  BOOST_ASIO_CHECK(!no_delay4);
 }
 
 } // namespace ip_tcp_runtime
@@ -149,6 +159,12 @@ void read_some_handler(const boost::system::error_code&, std::size_t)
 
 void test()
 {
+#if defined(BOOST_ASIO_HAS_BOOST_ARRAY)
+  using boost::array;
+#else // defined(BOOST_ASIO_HAS_BOOST_ARRAY)
+  using std::array;
+#endif // defined(BOOST_ASIO_HAS_BOOST_ARRAY)
+
   using namespace boost::asio;
   namespace ip = boost::asio::ip;
 
@@ -157,10 +173,10 @@ void test()
     io_service ios;
     char mutable_char_buffer[128] = "";
     const char const_char_buffer[128] = "";
-    boost::array<boost::asio::mutable_buffer, 2> mutable_buffers = {{
+    array<boost::asio::mutable_buffer, 2> mutable_buffers = {{
         boost::asio::buffer(mutable_char_buffer, 10),
         boost::asio::buffer(mutable_char_buffer + 10, 10) }};
-    boost::array<boost::asio::const_buffer, 2> const_buffers = {{
+    array<boost::asio::const_buffer, 2> const_buffers = {{
         boost::asio::buffer(const_char_buffer, 10),
         boost::asio::buffer(const_char_buffer + 10, 10) }};
     socket_base::message_flags in_flags = 0;
@@ -171,6 +187,7 @@ void test()
     archetypes::gettable_socket_option<int> gettable_socket_option2;
     archetypes::gettable_socket_option<double> gettable_socket_option3;
     archetypes::io_control_command io_control_command;
+    archetypes::lazy_handler lazy;
     boost::system::error_code ec;
 
     // basic_stream_socket constructors.
@@ -259,6 +276,10 @@ void test()
         &connect_handler);
     socket1.async_connect(ip::tcp::endpoint(ip::tcp::v6(), 0),
         &connect_handler);
+    int i1 = socket1.async_connect(ip::tcp::endpoint(ip::tcp::v4(), 0), lazy);
+    (void)i1;
+    int i2 = socket1.async_connect(ip::tcp::endpoint(ip::tcp::v6(), 0), lazy);
+    (void)i2;
 
     socket1.set_option(settable_socket_option1);
     socket1.set_option(settable_socket_option1, ec);
@@ -324,6 +345,26 @@ void test()
     socket1.async_send(mutable_buffers, in_flags, &send_handler);
     socket1.async_send(const_buffers, in_flags, &send_handler);
     socket1.async_send(null_buffers(), in_flags, &send_handler);
+    int i3 = socket1.async_send(buffer(mutable_char_buffer), lazy);
+    (void)i3;
+    int i4 = socket1.async_send(buffer(const_char_buffer), lazy);
+    (void)i4;
+    int i5 = socket1.async_send(mutable_buffers, lazy);
+    (void)i5;
+    int i6 = socket1.async_send(const_buffers, lazy);
+    (void)i6;
+    int i7 = socket1.async_send(null_buffers(), lazy);
+    (void)i7;
+    int i8 = socket1.async_send(buffer(mutable_char_buffer), in_flags, lazy);
+    (void)i8;
+    int i9 = socket1.async_send(buffer(const_char_buffer), in_flags, lazy);
+    (void)i9;
+    int i10 = socket1.async_send(mutable_buffers, in_flags, lazy);
+    (void)i10;
+    int i11 = socket1.async_send(const_buffers, in_flags, lazy);
+    (void)i11;
+    int i12 = socket1.async_send(null_buffers(), in_flags, lazy);
+    (void)i12;
 
     socket1.receive(buffer(mutable_char_buffer));
     socket1.receive(mutable_buffers);
@@ -342,6 +383,19 @@ void test()
         &receive_handler);
     socket1.async_receive(mutable_buffers, in_flags, &receive_handler);
     socket1.async_receive(null_buffers(), in_flags, &receive_handler);
+    int i13 = socket1.async_receive(buffer(mutable_char_buffer), lazy);
+    (void)i13;
+    int i14 = socket1.async_receive(mutable_buffers, lazy);
+    (void)i14;
+    int i15 = socket1.async_receive(null_buffers(), lazy);
+    (void)i15;
+    int i16 = socket1.async_receive(buffer(mutable_char_buffer), in_flags,
+        lazy);
+    (void)i16;
+    int i17 = socket1.async_receive(mutable_buffers, in_flags, lazy);
+    (void)i17;
+    int i18 = socket1.async_receive(null_buffers(), in_flags, lazy);
+    (void)i18;
 
     socket1.write_some(buffer(mutable_char_buffer));
     socket1.write_some(buffer(const_char_buffer));
@@ -359,6 +413,16 @@ void test()
     socket1.async_write_some(mutable_buffers, &write_some_handler);
     socket1.async_write_some(const_buffers, &write_some_handler);
     socket1.async_write_some(null_buffers(), &write_some_handler);
+    int i19 = socket1.async_write_some(buffer(mutable_char_buffer), lazy);
+    (void)i19;
+    int i20 = socket1.async_write_some(buffer(const_char_buffer), lazy);
+    (void)i20;
+    int i21 = socket1.async_write_some(mutable_buffers, lazy);
+    (void)i21;
+    int i22 = socket1.async_write_some(const_buffers, lazy);
+    (void)i22;
+    int i23 = socket1.async_write_some(null_buffers(), lazy);
+    (void)i23;
 
     socket1.read_some(buffer(mutable_char_buffer));
     socket1.read_some(mutable_buffers);
@@ -370,6 +434,12 @@ void test()
     socket1.async_read_some(buffer(mutable_char_buffer), &read_some_handler);
     socket1.async_read_some(mutable_buffers, &read_some_handler);
     socket1.async_read_some(null_buffers(), &read_some_handler);
+    int i24 = socket1.async_read_some(buffer(mutable_char_buffer), lazy);
+    (void)i24;
+    int i25 = socket1.async_read_some(mutable_buffers, lazy);
+    (void)i25;
+    int i26 = socket1.async_read_some(null_buffers(), lazy);
+    (void)i26;
   }
   catch (std::exception&)
   {
@@ -393,48 +463,48 @@ void handle_read_noop(const boost::system::error_code& err,
     size_t bytes_transferred, bool* called)
 {
   *called = true;
-  BOOST_CHECK(!err);
-  BOOST_CHECK(bytes_transferred == 0);
+  BOOST_ASIO_CHECK(!err);
+  BOOST_ASIO_CHECK(bytes_transferred == 0);
 }
 
 void handle_write_noop(const boost::system::error_code& err,
     size_t bytes_transferred, bool* called)
 {
   *called = true;
-  BOOST_CHECK(!err);
-  BOOST_CHECK(bytes_transferred == 0);
+  BOOST_ASIO_CHECK(!err);
+  BOOST_ASIO_CHECK(bytes_transferred == 0);
 }
 
 void handle_read(const boost::system::error_code& err,
     size_t bytes_transferred, bool* called)
 {
   *called = true;
-  BOOST_CHECK(!err);
-  BOOST_CHECK(bytes_transferred == sizeof(write_data));
+  BOOST_ASIO_CHECK(!err);
+  BOOST_ASIO_CHECK(bytes_transferred == sizeof(write_data));
 }
 
 void handle_write(const boost::system::error_code& err,
     size_t bytes_transferred, bool* called)
 {
   *called = true;
-  BOOST_CHECK(!err);
-  BOOST_CHECK(bytes_transferred == sizeof(write_data));
+  BOOST_ASIO_CHECK(!err);
+  BOOST_ASIO_CHECK(bytes_transferred == sizeof(write_data));
 }
 
 void handle_read_cancel(const boost::system::error_code& err,
     size_t bytes_transferred, bool* called)
 {
   *called = true;
-  BOOST_CHECK(err == boost::asio::error::operation_aborted);
-  BOOST_CHECK(bytes_transferred == 0);
+  BOOST_ASIO_CHECK(err == boost::asio::error::operation_aborted);
+  BOOST_ASIO_CHECK(bytes_transferred == 0);
 }
 
 void handle_read_eof(const boost::system::error_code& err,
     size_t bytes_transferred, bool* called)
 {
   *called = true;
-  BOOST_CHECK(err == boost::asio::error::eof);
-  BOOST_CHECK(bytes_transferred == 0);
+  BOOST_ASIO_CHECK(err == boost::asio::error::eof);
+  BOOST_ASIO_CHECK(bytes_transferred == 0);
 }
 
 void test()
@@ -442,6 +512,14 @@ void test()
   using namespace std; // For memcmp.
   using namespace boost::asio;
   namespace ip = boost::asio::ip;
+
+#if defined(BOOST_ASIO_HAS_BOOST_BIND)
+  namespace bindns = boost;
+#else // defined(BOOST_ASIO_HAS_BOOST_BIND)
+  namespace bindns = std;
+  using std::placeholders::_1;
+  using std::placeholders::_2;
+#endif // defined(BOOST_ASIO_HAS_BOOST_BIND)
 
   io_service ios;
 
@@ -460,27 +538,23 @@ void test()
   bool read_noop_completed = false;
   client_side_socket.async_read_some(
       boost::asio::mutable_buffers_1(0, 0),
-      boost::bind(handle_read_noop,
-        boost::asio::placeholders::error,
-        boost::asio::placeholders::bytes_transferred,
-        &read_noop_completed));
+      bindns::bind(handle_read_noop,
+        _1, _2, &read_noop_completed));
 
   ios.run();
-  BOOST_CHECK(read_noop_completed);
+  BOOST_ASIO_CHECK(read_noop_completed);
 
   // No-op write.
 
   bool write_noop_completed = false;
   client_side_socket.async_write_some(
       boost::asio::const_buffers_1(0, 0),
-      boost::bind(handle_write_noop,
-        boost::asio::placeholders::error,
-        boost::asio::placeholders::bytes_transferred,
-        &write_noop_completed));
+      bindns::bind(handle_write_noop,
+        _1, _2, &write_noop_completed));
 
   ios.reset();
   ios.run();
-  BOOST_CHECK(write_noop_completed);
+  BOOST_ASIO_CHECK(write_noop_completed);
 
   // Read and write to transfer data.
 
@@ -488,60 +562,52 @@ void test()
   bool read_completed = false;
   boost::asio::async_read(client_side_socket,
       boost::asio::buffer(read_buffer),
-      boost::bind(handle_read,
-        boost::asio::placeholders::error,
-        boost::asio::placeholders::bytes_transferred,
-        &read_completed));
+      bindns::bind(handle_read,
+        _1, _2, &read_completed));
 
   bool write_completed = false;
   boost::asio::async_write(server_side_socket,
       boost::asio::buffer(write_data),
-      boost::bind(handle_write,
-        boost::asio::placeholders::error,
-        boost::asio::placeholders::bytes_transferred,
-        &write_completed));
+      bindns::bind(handle_write,
+        _1, _2, &write_completed));
 
   ios.reset();
   ios.run();
-  BOOST_CHECK(read_completed);
-  BOOST_CHECK(write_completed);
-  BOOST_CHECK(memcmp(read_buffer, write_data, sizeof(write_data)) == 0);
+  BOOST_ASIO_CHECK(read_completed);
+  BOOST_ASIO_CHECK(write_completed);
+  BOOST_ASIO_CHECK(memcmp(read_buffer, write_data, sizeof(write_data)) == 0);
 
   // Cancelled read.
 
   bool read_cancel_completed = false;
   boost::asio::async_read(server_side_socket,
       boost::asio::buffer(read_buffer),
-      boost::bind(handle_read_cancel,
-        boost::asio::placeholders::error,
-        boost::asio::placeholders::bytes_transferred,
-        &read_cancel_completed));
+      bindns::bind(handle_read_cancel,
+        _1, _2, &read_cancel_completed));
 
   ios.reset();
   ios.poll();
-  BOOST_CHECK(!read_cancel_completed);
+  BOOST_ASIO_CHECK(!read_cancel_completed);
 
   server_side_socket.cancel();
 
   ios.reset();
   ios.run();
-  BOOST_CHECK(read_cancel_completed);
+  BOOST_ASIO_CHECK(read_cancel_completed);
 
   // A read when the peer closes socket should fail with eof.
 
   bool read_eof_completed = false;
   boost::asio::async_read(client_side_socket,
       boost::asio::buffer(read_buffer),
-      boost::bind(handle_read_eof,
-        boost::asio::placeholders::error,
-        boost::asio::placeholders::bytes_transferred,
-        &read_eof_completed));
+      bindns::bind(handle_read_eof,
+        _1, _2, &read_eof_completed));
 
   server_side_socket.close();
 
   ios.reset();
   ios.run();
-  BOOST_CHECK(read_eof_completed);
+  BOOST_ASIO_CHECK(read_eof_completed);
 }
 
 } // namespace ip_tcp_socket_runtime
@@ -576,6 +642,7 @@ void test()
     archetypes::gettable_socket_option<int> gettable_socket_option2;
     archetypes::gettable_socket_option<double> gettable_socket_option3;
     archetypes::io_control_command io_control_command;
+    archetypes::lazy_handler lazy;
     boost::system::error_code ec;
 
     // basic_socket_acceptor constructors.
@@ -674,6 +741,10 @@ void test()
 
     acceptor1.async_accept(peer_socket, &accept_handler);
     acceptor1.async_accept(peer_socket, peer_endpoint, &accept_handler);
+    int i1 = acceptor1.async_accept(peer_socket, lazy);
+    (void)i1;
+    int i2 = acceptor1.async_accept(peer_socket, peer_endpoint, lazy);
+    (void)i2;
   }
   catch (std::exception&)
   {
@@ -693,12 +764,12 @@ namespace ip_tcp_acceptor_runtime {
 
 void handle_accept(const boost::system::error_code& err)
 {
-  BOOST_CHECK(!err);
+  BOOST_ASIO_CHECK(!err);
 }
 
 void handle_connect(const boost::system::error_code& err)
 {
-  BOOST_CHECK(!err);
+  BOOST_ASIO_CHECK(!err);
 }
 
 void test()
@@ -730,11 +801,12 @@ void test()
 
   ip::tcp::endpoint client_side_local_endpoint
     = client_side_socket.local_endpoint();
-  BOOST_CHECK(client_side_local_endpoint.port() == client_endpoint.port());
+  BOOST_ASIO_CHECK(client_side_local_endpoint.port() == client_endpoint.port());
 
   ip::tcp::endpoint server_side_remote_endpoint
     = server_side_socket.remote_endpoint();
-  BOOST_CHECK(server_side_remote_endpoint.port() == client_endpoint.port());
+  BOOST_ASIO_CHECK(server_side_remote_endpoint.port()
+      == client_endpoint.port());
 
   client_side_socket.close();
   server_side_socket.close();
@@ -754,10 +826,11 @@ void test()
   ios.run();
 
   client_side_local_endpoint = client_side_socket.local_endpoint();
-  BOOST_CHECK(client_side_local_endpoint.port() == client_endpoint.port());
+  BOOST_ASIO_CHECK(client_side_local_endpoint.port() == client_endpoint.port());
 
   server_side_remote_endpoint = server_side_socket.remote_endpoint();
-  BOOST_CHECK(server_side_remote_endpoint.port() == client_endpoint.port());
+  BOOST_ASIO_CHECK(server_side_remote_endpoint.port()
+      == client_endpoint.port());
 }
 
 } // namespace ip_tcp_acceptor_runtime
@@ -784,6 +857,7 @@ void test()
   try
   {
     io_service ios;
+    archetypes::lazy_handler lazy;
     boost::system::error_code ec;
     ip::tcp::resolver::query q(ip::tcp::v4(), "localhost", "0");
     ip::tcp::endpoint e(ip::address_v4::loopback(), 0);
@@ -814,8 +888,12 @@ void test()
     (void)iter4;
 
     resolver.async_resolve(q, &resolve_handler);
+    int i1 = resolver.async_resolve(q, lazy);
+    (void)i1;
 
     resolver.async_resolve(e, &resolve_handler);
+    int i2 = resolver.async_resolve(e, lazy);
+    (void)i2;
   }
   catch (std::exception&)
   {
@@ -826,15 +904,14 @@ void test()
 
 //------------------------------------------------------------------------------
 
-test_suite* init_unit_test_suite(int, char*[])
-{
-  test_suite* test = BOOST_TEST_SUITE("ip/tcp");
-  test->add(BOOST_TEST_CASE(&ip_tcp_compile::test));
-  test->add(BOOST_TEST_CASE(&ip_tcp_runtime::test));
-  test->add(BOOST_TEST_CASE(&ip_tcp_socket_compile::test));
-  test->add(BOOST_TEST_CASE(&ip_tcp_socket_runtime::test));
-  test->add(BOOST_TEST_CASE(&ip_tcp_acceptor_compile::test));
-  test->add(BOOST_TEST_CASE(&ip_tcp_acceptor_runtime::test));
-  test->add(BOOST_TEST_CASE(&ip_tcp_resolver_compile::test));
-  return test;
-}
+BOOST_ASIO_TEST_SUITE
+(
+  "ip/tcp",
+  BOOST_ASIO_TEST_CASE(ip_tcp_compile::test)
+  BOOST_ASIO_TEST_CASE(ip_tcp_runtime::test)
+  BOOST_ASIO_TEST_CASE(ip_tcp_socket_compile::test)
+  BOOST_ASIO_TEST_CASE(ip_tcp_socket_runtime::test)
+  BOOST_ASIO_TEST_CASE(ip_tcp_acceptor_compile::test)
+  BOOST_ASIO_TEST_CASE(ip_tcp_acceptor_runtime::test)
+  BOOST_ASIO_TEST_CASE(ip_tcp_resolver_compile::test)
+)

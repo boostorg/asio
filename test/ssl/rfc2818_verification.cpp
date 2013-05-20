@@ -2,7 +2,7 @@
 // rfc2818_verification.cpp
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2012 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2013 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -18,9 +18,8 @@
 
 #include "../unit_test.hpp"
 
-test_suite* init_unit_test_suite(int, char*[])
-{
-  test_suite* test = BOOST_TEST_SUITE("ssl/rfc2818_verification");
-  test->add(BOOST_TEST_CASE(&null_test));
-  return test;
-}
+BOOST_ASIO_TEST_SUITE
+(
+  "ssl/rfc2818_verification",
+  BOOST_ASIO_TEST_CASE(null_test)
+)

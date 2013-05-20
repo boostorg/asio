@@ -1,5 +1,5 @@
 [/
- / Copyright (c) 2003-2012 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+ / Copyright (c) 2003-2013 Christopher M. Kohlhoff (chris at kohlhoff dot com)
  /
  / Distributed under the Boost Software License, Version 1.0. (See accompanying
  / file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -52,6 +52,7 @@ threads.
 
 [link boost_asio.reference.asio_handler_allocate asio_handler_allocate],
 [link boost_asio.reference.asio_handler_deallocate asio_handler_deallocate],
-[link boost_asio.examples.allocation custom memory allocation example].
+[link boost_asio.examples.cpp03_examples.allocation custom memory allocation example (C++03)],
+[link boost_asio.examples.cpp11_examples.allocation custom memory allocation example (C++11)].
 
 [endsect]

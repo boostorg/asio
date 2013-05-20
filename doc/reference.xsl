@@ -2,7 +2,7 @@
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
 
 <!--
-  Copyright (c) 2003-2012 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+  Copyright (c) 2003-2013 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 
   Distributed under the Boost Software License, Version 1.0. (See accompanying
   file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -26,7 +26,7 @@
 -->
 <xsl:template match="/doxygen">
 <xsl:text>[/
- / Copyright (c) 2003-2012 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+ / Copyright (c) 2003-2013 Christopher M. Kohlhoff (chris at kohlhoff dot com)
  /
  / Distributed under the Boost Software License, Version 1.0. (See accompanying
  / file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -42,6 +42,7 @@
 [include requirements/AsyncRandomAccessWriteDevice.qbk]
 [include requirements/AsyncReadStream.qbk]
 [include requirements/AsyncWriteStream.qbk]
+[include requirements/BufferedHandshakeHandler.qbk]
 [include requirements/CompletionHandler.qbk]
 [include requirements/ComposedConnectHandler.qbk]
 [include requirements/ConnectHandler.qbk]
@@ -177,17 +178,27 @@
 
 <xsl:template name="cleanup-type">
   <xsl:param name="name"/>
+  <xsl:variable name="type">
+    <xsl:choose>
+      <xsl:when test="contains($name, 'BOOST_ASIO_DECL ')">
+        <xsl:value-of select="substring-after($name, 'BOOST_ASIO_DECL ')"/>
+      </xsl:when>
+      <xsl:when test="contains($name, 'BOOST_ASIO_DECL')">
+        <xsl:value-of select="substring-after($name, 'BOOST_ASIO_DECL')"/>
+      </xsl:when>
+      <xsl:when test="$name = 'virtual'"></xsl:when>
+      <xsl:otherwise>
+        <xsl:value-of select="$name"/>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:variable>
   <xsl:choose>
-    <xsl:when test="contains($name, 'BOOST_ASIO_DECL ')">
-      <xsl:value-of select="substring-after($name, 'BOOST_ASIO_DECL ')"/>
-    </xsl:when>
-    <xsl:when test="contains($name, 'BOOST_ASIO_DECL')">
-      <xsl:value-of select="substring-after($name, 'BOOST_ASIO_DECL')"/>
-    </xsl:when>
-    <xsl:when test="$name = 'virtual'"></xsl:when>
+    <xsl:when test="$type='void_or_deduced'">
+      <xsl:text>``[link boost_asio.reference.asynchronous_operations.return_type ['void-or-deduced]]``</xsl:text>
+    </xsl:when>   
     <xsl:otherwise>
-      <xsl:value-of select="$name"/>
-    </xsl:otherwise>
+      <xsl:value-of select="$type"/>
+    </xsl:otherwise>   
   </xsl:choose>
 </xsl:template>
 
@@ -413,7 +424,10 @@
 </xsl:template>
 
 
-<xsl:template match="emphasis" mode="markup">[*<xsl:value-of select="."/>]</xsl:template>
+<xsl:template match="bold" mode="markup">[*<xsl:apply-templates mode="markup"/>]</xsl:template>
+
+
+<xsl:template match="emphasis" mode="markup">['<xsl:apply-templates mode="markup"/>]</xsl:template>
 
 
 <xsl:template match="parameterlist" mode="markup">
@@ -1429,6 +1443,9 @@
         <xsl:when test="declname = 'Context_Service'">
           <xsl:value-of select="declname"/>
         </xsl:when>
+        <xsl:when test="declname = 'DatagramSocketService1'">
+          <xsl:value-of select="concat('``[link boost_asio.reference.DatagramSocketService ', declname, ']``')"/>
+        </xsl:when>
         <xsl:when test="declname = 'Elem'">
           <xsl:value-of select="declname"/>
         </xsl:when>
@@ -1456,11 +1473,23 @@
         <xsl:when test="declname = 'PointerToPodType'">
           <xsl:value-of select="declname"/>
         </xsl:when>
+        <xsl:when test="declname = 'Protocol1'">
+          <xsl:value-of select="concat('``[link boost_asio.reference.Protocol ', declname, ']``')"/>
+        </xsl:when>
+        <xsl:when test="declname = 'RawSocketService1'">
+          <xsl:value-of select="concat('``[link boost_asio.reference.RawSocketService ', declname, ']``')"/>
+        </xsl:when>
+        <xsl:when test="declname = 'SeqPacketSocketService1'">
+          <xsl:value-of select="concat('``[link boost_asio.reference.SeqPacketSocketService ', declname, ']``')"/>
+        </xsl:when>
         <xsl:when test="declname = 'SocketService1' or declname = 'SocketService2'">
           <xsl:value-of select="concat('``[link boost_asio.reference.SocketService ', declname, ']``')"/>
         </xsl:when>
         <xsl:when test="declname = 'Stream'">
           <xsl:value-of select="declname"/>
+        </xsl:when>
+        <xsl:when test="declname = 'StreamSocketService1'">
+          <xsl:value-of select="concat('``[link boost_asio.reference.StreamSocketService ', declname, ']``')"/>
         </xsl:when>
         <xsl:when test="declname = 'T'">
           <xsl:value-of select="declname"/>

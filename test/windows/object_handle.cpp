@@ -2,7 +2,7 @@
 // object_handle.cpp
 // ~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2012 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2013 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -17,6 +17,7 @@
 #include <boost/asio/windows/object_handle.hpp>
 
 #include <boost/asio/io_service.hpp>
+#include "../archetypes/async_result.hpp"
 #include "../unit_test.hpp"
 
 //------------------------------------------------------------------------------
@@ -42,6 +43,7 @@ void test()
   try
   {
     io_service ios;
+    archetypes::lazy_handler lazy;
     boost::system::error_code ec;
 
     // basic_object_handle constructors.
@@ -99,6 +101,8 @@ void test()
     handle1.wait(ec);
 
     handle1.async_wait(&wait_handler);
+    int i1 = handle1.async_wait(lazy);
+    (void)i1;
   }
   catch (std::exception&)
   {
@@ -109,9 +113,9 @@ void test()
 } // namespace windows_object_handle_compile
 
 //------------------------------------------------------------------------------
-test_suite* init_unit_test_suite(int, char*[])
-{
-  test_suite* test = BOOST_TEST_SUITE("windows/object_handle");
-  test->add(BOOST_TEST_CASE(&windows_object_handle_compile::test));
-  return test;
-}
+
+BOOST_ASIO_TEST_SUITE
+(
+  "windows/object_handle",
+  BOOST_ASIO_TEST_CASE(windows_object_handle_compile::test)
+)
