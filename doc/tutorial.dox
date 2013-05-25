@@ -72,9 +72,9 @@ WARN_LOGFILE           =
 #---------------------------------------------------------------------------
 # configuration options related to the input files
 #---------------------------------------------------------------------------
-INPUT                  = ./../example/tutorial/index_dox.txt \
-                         ./../example/tutorial/timer_dox.txt \
-                         ./../example/tutorial/daytime_dox.txt
+INPUT                  = ./../example/cpp03/tutorial/index_dox.txt \
+                         ./../example/cpp03/tutorial/timer_dox.txt \
+                         ./../example/cpp03/tutorial/daytime_dox.txt
 FILE_PATTERNS          = 
 RECURSIVE              = NO
 EXCLUDE                = 
