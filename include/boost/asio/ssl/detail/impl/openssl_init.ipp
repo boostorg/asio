@@ -45,10 +45,22 @@ public:
       mutexes_[i].reset(new boost::asio::detail::mutex);
     ::CRYPTO_set_locking_callback(&do_init::openssl_locking_func);
     ::CRYPTO_set_id_callback(&do_init::openssl_id_func);
+
+#if !defined(SSL_OP_NO_COMPRESSION) \
+  && (OPENSSL_VERSION_NUMBER >= 0x00908000L)
+    null_compression_methods_ = sk_SSL_COMP_new_null();
+#endif // !defined(SSL_OP_NO_COMPRESSION)
+       // && (OPENSSL_VERSION_NUMBER >= 0x00908000L)
   }
 
   ~do_init()
   {
+#if !defined(SSL_OP_NO_COMPRESSION) \
+  && (OPENSSL_VERSION_NUMBER >= 0x00908000L)
+    sk_SSL_COMP_free(null_compression_methods_);
+#endif // !defined(SSL_OP_NO_COMPRESSION)
+       // && (OPENSSL_VERSION_NUMBER >= 0x00908000L)
+
     ::CRYPTO_set_id_callback(0);
     ::CRYPTO_set_locking_callback(0);
     ::ERR_free_strings();
@@ -60,6 +72,15 @@ public:
     ::ENGINE_cleanup();
 #endif // !defined(OPENSSL_NO_ENGINE)
   }
+
+#if !defined(SSL_OP_NO_COMPRESSION) \
+  && (OPENSSL_VERSION_NUMBER >= 0x00908000L)
+  STACK_OF(SSL_COMP)* get_null_compression_methods() const
+  {
+    return null_compression_methods_;
+  }
+#endif // !defined(SSL_OP_NO_COMPRESSION)
+       // && (OPENSSL_VERSION_NUMBER >= 0x00908000L)
 
 private:
   static unsigned long openssl_id_func()
@@ -92,6 +113,12 @@ private:
   // The thread identifiers to be used by openssl.
   boost::asio::detail::tss_ptr<void> thread_id_;
 #endif // !defined(BOOST_ASIO_WINDOWS) && !defined(__CYGWIN__)
+
+#if !defined(SSL_OP_NO_COMPRESSION) \
+  && (OPENSSL_VERSION_NUMBER >= 0x00908000L)
+  STACK_OF(SSL_COMP)* null_compression_methods_;
+#endif // !defined(SSL_OP_NO_COMPRESSION)
+       // && (OPENSSL_VERSION_NUMBER >= 0x00908000L)
 };
 
 boost::asio::detail::shared_ptr<openssl_init_base::do_init>
@@ -100,6 +127,15 @@ openssl_init_base::instance()
   static boost::asio::detail::shared_ptr<do_init> init(new do_init);
   return init;
 }
+
+#if !defined(SSL_OP_NO_COMPRESSION) \
+  && (OPENSSL_VERSION_NUMBER >= 0x00908000L)
+STACK_OF(SSL_COMP)* openssl_init_base::get_null_compression_methods()
+{
+  return instance()->get_null_compression_methods();
+}
+#endif // !defined(SSL_OP_NO_COMPRESSION)
+       // && (OPENSSL_VERSION_NUMBER >= 0x00908000L)
 
 } // namespace detail
 } // namespace ssl
