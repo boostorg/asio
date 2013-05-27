@@ -194,7 +194,7 @@
   </xsl:variable>
   <xsl:choose>
     <xsl:when test="$type='void_or_deduced'">
-      <xsl:text>``[link boost_asio.reference.asynchronous_operations.return_type ['void-or-deduced]]``</xsl:text>
+      <xsl:text>``[link boost_asio.reference.asynchronous_operations.return_type_of_an_initiating_function ['void-or-deduced]]``</xsl:text>
     </xsl:when>   
     <xsl:otherwise>
       <xsl:value-of select="$type"/>
@@ -738,13 +738,13 @@
   <xsl:text>[heading Requirements]</xsl:text>
   <xsl:value-of select="$newline"/>
   <xsl:value-of select="$newline"/>
-  <xsl:text>[*Header: ]</xsl:text>
+  <xsl:text>['Header: ]</xsl:text>
   <xsl:text>[^boost/asio/</xsl:text>
   <xsl:value-of select="substring-after($file, 'boost/asio/')"/>
   <xsl:text>]</xsl:text>
   <xsl:value-of select="$newline"/>
   <xsl:value-of select="$newline"/>
-  <xsl:text>[*Convenience header: ]</xsl:text>
+  <xsl:text>['Convenience header: ]</xsl:text>
   <xsl:choose>
     <xsl:when test="contains($file, 'boost/asio/ssl')">
       <xsl:text>[^boost/asio/ssl.hpp]</xsl:text>
@@ -1464,6 +1464,9 @@
         <xsl:when test="declname = 'N'">
           <xsl:value-of select="declname"/>
         </xsl:when>
+        <xsl:when test="declname = 'OtherAllocator'">
+          <xsl:value-of select="declname"/>
+        </xsl:when>
         <xsl:when test="declname = 'PasswordCallback'">
           <xsl:value-of select="declname"/>
         </xsl:when>
@@ -1481,6 +1484,12 @@
         </xsl:when>
         <xsl:when test="declname = 'SeqPacketSocketService1'">
           <xsl:value-of select="concat('``[link boost_asio.reference.SeqPacketSocketService ', declname, ']``')"/>
+        </xsl:when>
+        <xsl:when test="declname = 'Signature'">
+          <xsl:value-of select="declname"/>
+        </xsl:when>
+        <xsl:when test="declname = 'SocketAcceptorService1' or declname = 'SocketAcceptorService2'">
+          <xsl:value-of select="concat('``[link boost_asio.reference.SocketAcceptorService ', declname, ']``')"/>
         </xsl:when>
         <xsl:when test="declname = 'SocketService1' or declname = 'SocketService2'">
           <xsl:value-of select="concat('``[link boost_asio.reference.SocketService ', declname, ']``')"/>

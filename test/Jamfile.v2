@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2003-2012 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+# Copyright (c) 2003-2013 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 #
 # Distributed under the Boost Software License, Version 1.0. (See accompanying
 # file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -93,6 +93,8 @@ test-suite "asio" :
   [ link completion_condition.cpp : $(USE_SELECT) : completion_condition_select ]
   [ link connect.cpp ]
   [ link connect.cpp : $(USE_SELECT) : connect_select ]
+  [ link coroutine.cpp ]
+  [ link coroutine.cpp : $(USE_SELECT) : coroutine_select ]
   [ link datagram_socket_service.cpp ]
   [ link datagram_socket_service.cpp : $(USE_SELECT) : datagram_socket_service_select ]
   [ link deadline_timer_service.cpp ]
@@ -101,6 +103,16 @@ test-suite "asio" :
   [ run deadline_timer.cpp : : : $(USE_SELECT) : deadline_timer_select ]
   [ run error.cpp ]
   [ run error.cpp : : : $(USE_SELECT) : error_select ]
+  [ link generic/basic_endpoint.cpp : : generic_basic_endpoint ]
+  [ link generic/basic_endpoint.cpp : $(USE_SELECT) : generic_basic_endpoint_select ]
+  [ link generic/datagram_protocol.cpp : : generic_datagram_protocol ]
+  [ link generic/datagram_protocol.cpp : $(USE_SELECT) : generic_datagram_protocol_select ]
+  [ link generic/raw_protocol.cpp : : generic_raw_protocol ]
+  [ link generic/raw_protocol.cpp : $(USE_SELECT) : generic_raw_protocol_select ]
+  [ link generic/seq_packet_protocol.cpp : : generic_seq_packet_protocol ]
+  [ link generic/seq_packet_protocol.cpp : $(USE_SELECT) : generic_seq_packet_protocol_select ]
+  [ link generic/stream_protocol.cpp : : generic_stream_protocol ]
+  [ link generic/stream_protocol.cpp : $(USE_SELECT) : generic_stream_protocol_select ]
   [ link high_resolution_timer.cpp ]
   [ link high_resolution_timer.cpp : $(USE_SELECT) : high_resolution_timer_select ]
   [ run io_service.cpp ]
@@ -123,6 +135,8 @@ test-suite "asio" :
   [ link ip/basic_resolver_query.cpp : $(USE_SELECT) : ip_basic_resolver_query_select ]
   [ run ip/host_name.cpp : : : : ip_host_name ]
   [ run ip/host_name.cpp : : : $(USE_SELECT) : ip_host_name_select ]
+  [ run ip/icmp.cpp : : : : ip_icmp ]
+  [ run ip/icmp.cpp : : : $(USE_SELECT) : ip_icmp_select ]
   [ run ip/multicast.cpp : : : : ip_multicast ]
   [ run ip/multicast.cpp : : : $(USE_SELECT) : ip_multicast_select ]
   [ link ip/resolver_query_base.cpp : : ip_resolver_query_base ]

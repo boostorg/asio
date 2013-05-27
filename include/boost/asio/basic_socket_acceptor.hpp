@@ -365,8 +365,9 @@ public:
    * @par Example
    * @code
    * boost::asio::ip::tcp::acceptor acceptor(io_service);
-   * acceptor.open(boost::asio::ip::tcp::v4());
-   * acceptor.bind(boost::asio::ip::tcp::endpoint(12345));
+   * boost::asio::ip::tcp::endpoint endpoint(boost::asio::ip::tcp::v4(), 12345);
+   * acceptor.open(endpoint.protocol());
+   * acceptor.bind(endpoint);
    * @endcode
    */
   void bind(const endpoint_type& endpoint)
@@ -389,9 +390,10 @@ public:
    * @par Example
    * @code
    * boost::asio::ip::tcp::acceptor acceptor(io_service);
-   * acceptor.open(boost::asio::ip::tcp::v4());
+   * boost::asio::ip::tcp::endpoint endpoint(boost::asio::ip::tcp::v4(), 12345);
+   * acceptor.open(endpoint.protocol());
    * boost::system::error_code ec;
-   * acceptor.bind(boost::asio::ip::tcp::endpoint(12345), ec);
+   * acceptor.bind(endpoint, ec);
    * if (ec)
    * {
    *   // An error occurred.

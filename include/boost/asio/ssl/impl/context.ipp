@@ -162,6 +162,8 @@ context::context(context::method m)
         boost::asio::error::get_ssl_category());
     boost::asio::detail::throw_error(ec, "context");
   }
+
+  set_options(no_compression);
 }
 
 context::context(boost::asio::io_service&, context::method m)
@@ -224,6 +226,32 @@ context::impl_type context::impl()
   return handle_;
 }
 
+void context::clear_options(context::options o)
+{
+  boost::system::error_code ec;
+  clear_options(o, ec);
+  boost::asio::detail::throw_error(ec, "clear_options");
+}
+
+boost::system::error_code context::clear_options(
+    context::options o, boost::system::error_code& ec)
+{
+#if !defined(SSL_OP_NO_COMPRESSION)
+  if ((o & context::no_compression) != 0)
+  {
+#if (OPENSSL_VERSION_NUMBER >= 0x00908000L)
+    handle_->comp_methods = SSL_COMP_get_compression_methods();
+#endif // (OPENSSL_VERSION_NUMBER >= 0x00908000L)
+    o ^= context::no_compression;
+  }
+#endif // !defined(SSL_OP_NO_COMPRESSION)
+
+  ::SSL_CTX_clear_options(handle_, o);
+
+  ec = boost::system::error_code();
+  return ec;
+}
+
 void context::set_options(context::options o)
 {
   boost::system::error_code ec;
@@ -234,6 +262,17 @@ void context::set_options(context::options o)
 boost::system::error_code context::set_options(
     context::options o, boost::system::error_code& ec)
 {
+#if !defined(SSL_OP_NO_COMPRESSION)
+  if ((o & context::no_compression) != 0)
+  {
+#if (OPENSSL_VERSION_NUMBER >= 0x00908000L)
+    handle_->comp_methods =
+      boost::asio::ssl::detail::openssl_init<>::get_null_compression_methods();
+#endif // (OPENSSL_VERSION_NUMBER >= 0x00908000L)
+    o ^= context::no_compression;
+  }
+#endif // !defined(SSL_OP_NO_COMPRESSION)
+
   ::SSL_CTX_set_options(handle_, o);
 
   ec = boost::system::error_code();

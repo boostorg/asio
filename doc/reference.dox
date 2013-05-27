@@ -74,6 +74,7 @@ WARN_LOGFILE           =
 #---------------------------------------------------------------------------
 INPUT                  = ./../../../boost/asio.hpp \
                          ./../../../boost/asio \
+                         ./../../../boost/asio/generic \
                          ./../../../boost/asio/impl \
                          ./../../../boost/asio/ip \
                          ./../../../boost/asio/local \
