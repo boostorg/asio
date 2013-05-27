@@ -19,8 +19,11 @@
   * [link boost_asio.overview.core.line_based Line-Based Operations]
   * [link boost_asio.overview.core.allocation Custom Memory Allocation]
   * [link boost_asio.overview.core.handler_tracking Handler Tracking]
+  * [link boost_asio.overview.core.coroutine Stackless Coroutines]
+  * [link boost_asio.overview.core.spawn Stackful Coroutines]
 * [link boost_asio.overview.networking Networking]
   * [link boost_asio.overview.networking.protocols TCP, UDP and ICMP]
+  * [link boost_asio.overview.networking.other_protocols Support for Other Protocols]
   * [link boost_asio.overview.networking.iostreams Socket Iostreams]
   * [link boost_asio.overview.networking.bsd_sockets The BSD Socket API and Boost.Asio]
 * [link boost_asio.overview.timers Timers]
@@ -43,6 +46,7 @@
   * [link boost_asio.overview.cpp2011.atomic Atomics]
   * [link boost_asio.overview.cpp2011.shared_ptr Shared Pointers]
   * [link boost_asio.overview.cpp2011.chrono Chrono]
+  * [link boost_asio.overview.cpp2011.futures Futures]
 * [link boost_asio.overview.implementation Platform-Specific Implementation Notes]
 
 [include overview/rationale.qbk]
@@ -59,6 +63,8 @@
 * [link boost_asio.overview.core.line_based Line-Based Operations]
 * [link boost_asio.overview.core.allocation Custom Memory Allocation]
 * [link boost_asio.overview.core.handler_tracking Handler Tracking]
+* [link boost_asio.overview.core.coroutine Stackless Coroutines]
+* [link boost_asio.overview.core.spawn Stackful Coroutines]
 
 [include overview/basics.qbk]
 [include overview/async.qbk]
@@ -70,16 +76,20 @@
 [include overview/line_based.qbk]
 [include overview/allocation.qbk]
 [include overview/handler_tracking.qbk]
+[include overview/coroutine.qbk]
+[include overview/spawn.qbk]
 
 [endsect]
 
 [section:networking Networking]
 
 * [link boost_asio.overview.networking.protocols TCP, UDP and ICMP]
+* [link boost_asio.overview.networking.other_protocols Support for Other Protocols]
 * [link boost_asio.overview.networking.iostreams Socket Iostreams]
 * [link boost_asio.overview.networking.bsd_sockets The BSD Socket API and Boost.Asio]
 
 [include overview/protocols.qbk]
+[include overview/other_protocols.qbk]
 [include overview/iostreams.qbk]
 [include overview/bsd_sockets.qbk]
 
