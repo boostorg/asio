@@ -157,6 +157,31 @@
 # endif // !defined(BOOST_ASIO_DISABLE_VARIADIC_TEMPLATES)
 #endif // !defined(BOOST_ASIO_HAS_VARIADIC_TEMPLATES)
 
+// Support constexpr on compilers known to allow it.
+#if !defined(BOOST_ASIO_HAS_CONSTEXPR)
+# if !defined(BOOST_ASIO_DISABLE_CONSTEXPR)
+#  if defined(__clang__)
+#   if __has_feature(__cxx_constexpr__)
+#    define BOOST_ASIO_HAS_CONSTEXPR 1
+#   endif // __has_feature(__cxx_constexr__)
+#  endif // defined(__clang__)
+#  if defined(__GNUC__)
+#   if ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 6)) || (__GNUC__ > 4)
+#    if defined(__GXX_EXPERIMENTAL_CXX0X__)
+#     define BOOST_ASIO_HAS_CONSTEXPR 1
+#    endif // defined(__GXX_EXPERIMENTAL_CXX0X__)
+#   endif // ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 6)) || (__GNUC__ > 4)
+#  endif // defined(__GNUC__)
+# endif // !defined(BOOST_ASIO_DISABLE_CONSTEXPR)
+#endif // !defined(BOOST_ASIO_HAS_CONSTEXPR)
+#if !defined(BOOST_ASIO_CONSTEXPR)
+# if defined(BOOST_ASIO_HAS_CONSTEXPR)
+#  define BOOST_ASIO_CONSTEXPR constexpr
+# else // defined(BOOST_ASIO_HAS_CONSTEXPR)
+#  define BOOST_ASIO_CONSTEXPR
+# endif // defined(BOOST_ASIO_HAS_CONSTEXPR)
+#endif // !defined(BOOST_ASIO_CONSTEXPR)
+
 // Standard library support for system errors.
 # if !defined(BOOST_ASIO_DISABLE_STD_SYSTEM_ERROR)
 #  if defined(BOOST_ASIO_HAS_CLANG_LIBCXX)
