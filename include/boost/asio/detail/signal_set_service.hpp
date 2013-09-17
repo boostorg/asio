@@ -46,7 +46,7 @@ enum { max_signal_number = 128 };
 
 extern BOOST_ASIO_DECL struct signal_state* get_signal_state();
 
-extern "C" BOOST_ASIO_DECL void asio_signal_handler(int signal_number);
+extern "C" BOOST_ASIO_DECL void boost_asio_signal_handler(int signal_number);
 
 class signal_set_service
 {
