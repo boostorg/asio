@@ -89,7 +89,8 @@ void test()
 
 #if defined(BOOST_ASIO_HAS_MOVE)
     sp::socket socket5(std::move(socket4));
-    sp::socket socket6(boost::asio::ip::tcp::socket(ios));
+    boost::asio::ip::tcp::socket tcp_socket(ios);
+    sp::socket socket6(std::move(tcp_socket));
 #endif // defined(BOOST_ASIO_HAS_MOVE)
 
     // basic_stream_socket operators.

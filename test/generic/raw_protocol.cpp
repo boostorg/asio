@@ -79,7 +79,8 @@ void test()
 
 #if defined(BOOST_ASIO_HAS_MOVE)
     rp::socket socket5(std::move(socket4));
-    rp::socket socket6(boost::asio::ip::icmp::socket(ios));
+    boost::asio::ip::icmp::socket icmp_socket(ios);
+    rp::socket socket6(std::move(icmp_socket));
 #endif // defined(BOOST_ASIO_HAS_MOVE)
 
     // basic_datagram_socket operators.
