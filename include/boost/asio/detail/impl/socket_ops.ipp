@@ -1752,7 +1752,7 @@ int poll_read(socket_type s, state_type state, boost::system::error_code& ec)
   zero_timeout.tv_usec = 0;
   timeval* timeout = (state & user_set_non_blocking) ? &zero_timeout : 0;
   clear_last_error();
-  int result = error_wrapper(::select(s, &fds, 0, 0, timeout), ec);
+  int result = error_wrapper(::select(s + 1, &fds, 0, 0, timeout), ec);
 #else // defined(BOOST_ASIO_WINDOWS)
       // || defined(__CYGWIN__)
       // || defined(__SYMBIAN32__)
@@ -1793,7 +1793,7 @@ int poll_write(socket_type s, state_type state, boost::system::error_code& ec)
   zero_timeout.tv_usec = 0;
   timeval* timeout = (state & user_set_non_blocking) ? &zero_timeout : 0;
   clear_last_error();
-  int result = error_wrapper(::select(s, 0, &fds, 0, timeout), ec);
+  int result = error_wrapper(::select(s + 1, 0, &fds, 0, timeout), ec);
 #else // defined(BOOST_ASIO_WINDOWS)
       // || defined(__CYGWIN__)
       // || defined(__SYMBIAN32__)
@@ -1833,7 +1833,8 @@ int poll_connect(socket_type s, boost::system::error_code& ec)
   FD_ZERO(&except_fds);
   FD_SET(s, &except_fds);
   clear_last_error();
-  int result = error_wrapper(::select(s, 0, &write_fds, &except_fds, 0), ec);
+  int result = error_wrapper(::select(
+        s + 1, 0, &write_fds, &except_fds, 0), ec);
   if (result >= 0)
     ec = boost::system::error_code();
   return result;
