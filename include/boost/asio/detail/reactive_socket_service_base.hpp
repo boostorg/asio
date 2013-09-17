@@ -17,7 +17,8 @@
 
 #include <boost/asio/detail/config.hpp>
 
-#if !defined(BOOST_ASIO_HAS_IOCP)
+#if !defined(BOOST_ASIO_HAS_IOCP) \
+  && !defined(BOOST_ASIO_WINDOWS_RUNTIME)
 
 #include <boost/asio/buffer.hpp>
 #include <boost/asio/error.hpp>
@@ -446,5 +447,6 @@ protected:
 #endif // defined(BOOST_ASIO_HEADER_ONLY)
 
 #endif // !defined(BOOST_ASIO_HAS_IOCP)
+       //   && !defined(BOOST_ASIO_WINDOWS_RUNTIME)
 
 #endif // BOOST_ASIO_DETAIL_REACTIVE_SOCKET_SERVICE_BASE_HPP
