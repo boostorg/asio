@@ -67,7 +67,13 @@ public:
     }
 #endif // defined(BOOST_ASIO_ENABLE_BUFFER_DEBUGGING)
 
-    // TODO check for end-of-file.
+    std::size_t bytes_transferred = o->result_ ? o->result_->Length : 0;
+    if (bytes_transferred == 0 && !o->ec_ &&
+        !buffer_sequence_adapter<boost::asio::mutable_buffer,
+          MutableBufferSequence>::all_empty(o->buffers_))
+    {
+      o->ec_ = boost::asio::error::eof;
+    }
 
     // Make a copy of the handler so that the memory can be deallocated before
     // the upcall is made. Even if we're not about to make an upcall, a
@@ -76,7 +82,7 @@ public:
     // to ensure that any owning sub-object remains valid until after we have
     // deallocated the memory here.
     detail::binder2<Handler, boost::system::error_code, std::size_t>
-      handler(o->handler_, o->ec_, o->result_ ? o->result_->Length : 0);
+      handler(o->handler_, o->ec_, bytes_transferred);
     p.h = boost::asio::detail::addressof(handler.handler_);
     p.reset();
 
