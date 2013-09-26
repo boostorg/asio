@@ -11,9 +11,9 @@
 #ifndef BOOST_ASIO_DETAIL_IMPL_SERVICE_REGISTRY_IPP
 #define BOOST_ASIO_DETAIL_IMPL_SERVICE_REGISTRY_IPP
 
-#if defined(_MSC_VER) && (_MSC_VER >= 1200)
+#if defined(_MSC_VER)
 # pragma once
-#endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
+#endif // defined(_MSC_VER)
 
 #include <boost/asio/detail/config.hpp>
 #include <vector>

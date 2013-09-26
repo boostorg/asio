@@ -11,9 +11,9 @@
 #ifndef BOOST_ASIO_DETAIL_WRAPPED_HANDLER_HPP
 #define BOOST_ASIO_DETAIL_WRAPPED_HANDLER_HPP
 
-#if defined(_MSC_VER) && (_MSC_VER >= 1200)
+#if defined(_MSC_VER)
 # pragma once
-#endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
+#endif // defined(_MSC_VER)
 
 #include <boost/asio/detail/bind_handler.hpp>
 #include <boost/asio/detail/handler_alloc_helpers.hpp>

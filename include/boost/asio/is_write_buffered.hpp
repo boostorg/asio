@@ -11,9 +11,9 @@
 #ifndef BOOST_ASIO_IS_WRITE_BUFFERED_HPP
 #define BOOST_ASIO_IS_WRITE_BUFFERED_HPP
 
-#if defined(_MSC_VER) && (_MSC_VER >= 1200)
+#if defined(_MSC_VER)
 # pragma once
-#endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
+#endif // defined(_MSC_VER)
 
 #include <boost/asio/detail/config.hpp>
 #include <boost/asio/buffered_stream_fwd.hpp>

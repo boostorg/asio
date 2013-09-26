@@ -11,9 +11,9 @@
 #ifndef BOOST_ASIO_IMPL_WRITE_HPP
 #define BOOST_ASIO_IMPL_WRITE_HPP
 
-#if defined(_MSC_VER) && (_MSC_VER >= 1200)
+#if defined(_MSC_VER)
 # pragma once
-#endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
+#endif // defined(_MSC_VER)
 
 #include <boost/asio/buffer.hpp>
 #include <boost/asio/completion_condition.hpp>

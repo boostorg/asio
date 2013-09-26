@@ -11,7 +11,7 @@
 #ifndef BOOST_ASIO_DETAIL_STD_EVENT_HPP
 #define BOOST_ASIO_DETAIL_STD_EVENT_HPP
 
-#if defined(_MSC_VER) && (_MSC_VER >= 1200)
+#if defined(_MSC_VER)
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 

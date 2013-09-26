@@ -11,9 +11,9 @@
 #ifndef BOOST_ASIO_DETAIL_CHRONO_TIME_TRAITS_HPP
 #define BOOST_ASIO_DETAIL_CHRONO_TIME_TRAITS_HPP
 
-#if defined(_MSC_VER) && (_MSC_VER >= 1200)
+#if defined(_MSC_VER)
 # pragma once
-#endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
+#endif // defined(_MSC_VER)
 
 #include <boost/asio/detail/cstdint.hpp>
 

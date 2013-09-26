@@ -11,9 +11,9 @@
 #ifndef BOOST_ASIO_DETAIL_REACTIVE_NULL_BUFFERS_OP_HPP
 #define BOOST_ASIO_DETAIL_REACTIVE_NULL_BUFFERS_OP_HPP
 
-#if defined(_MSC_VER) && (_MSC_VER >= 1200)
+#if defined(_MSC_VER)
 # pragma once
-#endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
+#endif // defined(_MSC_VER)
 
 #include <boost/asio/detail/config.hpp>
 #include <boost/asio/detail/addressof.hpp>
