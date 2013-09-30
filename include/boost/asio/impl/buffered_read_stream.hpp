@@ -13,7 +13,7 @@
 
 #if defined(_MSC_VER)
 # pragma once
-#endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
+#endif // defined(_MSC_VER)
 
 #include <boost/asio/detail/handler_alloc_helpers.hpp>
 #include <boost/asio/detail/handler_cont_helpers.hpp>
