@@ -454,11 +454,12 @@
 
 // WinRT target.
 #if !defined(BOOST_ASIO_WINDOWS_RUNTIME)
-# if defined(WINAPI_FAMILY)
-#  if ((WINAPI_FAMILY & WINAPI_PARTITION_APP) != 0)
+# if defined(__cplusplus_winrt)
+#  include <winapifamily.h>
+#  if WINAPI_FAMILY_ONE_PARTITION(WINAPI_FAMILY, WINAPI_PARTITION_APP)
 #   define BOOST_ASIO_WINDOWS_RUNTIME 1
-#  endif // ((WINAPI_FAMILY & WINAPI_PARTITION_APP) != 0)
-# endif // defined(WINAPI_FAMILY)
+#  endif // WINAPI_FAMILY_ONE_PARTITION(WINAPI_FAMILY, WINAPI_PARTITION_APP)
+# endif // defined(__cplusplus_winrt)
 #endif // !defined(BOOST_ASIO_WINDOWS_RUNTIME)
 
 // Windows target. Excludes WinRT.
@@ -869,12 +870,12 @@
 #   endif // ((__GNUC__ == 3) && (__GNUC_MINOR__ >= 3)) || (__GNUC__ > 3)
 #  endif // defined(__GNUC__) && (defined(__i386__) || defined(__x86_64__))
 # endif // defined(__linux__)
-# if defined(BOOST_ASIO_MSVC) && defined(WINAPI_FAMILY)
+# if defined(BOOST_ASIO_MSVC) && defined(BOOST_ASIO_WINDOWS_RUNTIME)
 #  if (_MSC_VER >= 1700)
 #   define BOOST_ASIO_HAS_THREAD_KEYWORD_EXTENSION 1
 #   define BOOST_ASIO_THREAD_KEYWORD __declspec(thread)
 #  endif // (_MSC_VER >= 1700)
-# endif // defined(BOOST_ASIO_MSVC) && defined(WINAPI_FAMILY)
+# endif // defined(BOOST_ASIO_MSVC) && defined(BOOST_ASIO_WINDOWS_RUNTIME)
 #endif // !defined(BOOST_ASIO_DISABLE_THREAD_KEYWORD_EXTENSION)
 #if !defined(BOOST_ASIO_THREAD_KEYWORD)
 # define BOOST_ASIO_THREAD_KEYWORD __thread
