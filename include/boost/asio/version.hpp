@@ -11,9 +11,9 @@
 #ifndef BOOST_ASIO_VERSION_HPP
 #define BOOST_ASIO_VERSION_HPP
 
-#if defined(_MSC_VER)
+#if defined(_MSC_VER) && (_MSC_VER >= 1200)
 # pragma once
-#endif // defined(_MSC_VER)
+#endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 // BOOST_ASIO_VERSION % 100 is the sub-minor version
 // BOOST_ASIO_VERSION / 100 % 1000 is the minor version

@@ -12,9 +12,9 @@
 #ifndef BOOST_ASIO_SSL_DETAIL_IMPL_OPENSSL_INIT_IPP
 #define BOOST_ASIO_SSL_DETAIL_IMPL_OPENSSL_INIT_IPP
 
-#if defined(_MSC_VER)
+#if defined(_MSC_VER) && (_MSC_VER >= 1200)
 # pragma once
-#endif // defined(_MSC_VER)
+#endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include <boost/asio/detail/config.hpp>
 #include <vector>

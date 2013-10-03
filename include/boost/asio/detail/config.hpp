@@ -846,7 +846,9 @@
 #if !defined(BOOST_ASIO_HAS_HANDLER_HOOKS)
 # if !defined(BOOST_ASIO_DISABLE_HANDLER_HOOKS)
 #  if defined(__GNUC__)
-#   define BOOST_ASIO_HAS_HANDLER_HOOKS 1
+#   if (__GNUC__ >= 3)
+#    define BOOST_ASIO_HAS_HANDLER_HOOKS 1
+#   endif // (__GNUC__ >= 3)
 #  elif !defined(__BORLANDC__)
 #   define BOOST_ASIO_HAS_HANDLER_HOOKS 1
 #  endif // !defined(__BORLANDC__)
@@ -857,12 +859,14 @@
 #if !defined(BOOST_ASIO_DISABLE_THREAD_KEYWORD_EXTENSION)
 # if defined(__linux__)
 #  if defined(__GNUC__) && (defined(__i386__) || defined(__x86_64__))
-#   if !defined(__INTEL_COMPILER) && !defined(__ICL)
-#    define BOOST_ASIO_HAS_THREAD_KEYWORD_EXTENSION 1
-#    define BOOST_ASIO_THREAD_KEYWORD __thread
-#   elif defined(__INTEL_COMPILER) && (__INTEL_COMPILER >= 1100)
-#    define BOOST_ASIO_HAS_THREAD_KEYWORD_EXTENSION 1
-#   endif // defined(__INTEL_COMPILER) && (__INTEL_COMPILER >= 1100)
+#   if ((__GNUC__ == 3) && (__GNUC_MINOR__ >= 3)) || (__GNUC__ > 3)
+#    if !defined(__INTEL_COMPILER) && !defined(__ICL)
+#     define BOOST_ASIO_HAS_THREAD_KEYWORD_EXTENSION 1
+#     define BOOST_ASIO_THREAD_KEYWORD __thread
+#    elif defined(__INTEL_COMPILER) && (__INTEL_COMPILER >= 1100)
+#     define BOOST_ASIO_HAS_THREAD_KEYWORD_EXTENSION 1
+#    endif // defined(__INTEL_COMPILER) && (__INTEL_COMPILER >= 1100)
+#   endif // ((__GNUC__ == 3) && (__GNUC_MINOR__ >= 3)) || (__GNUC__ > 3)
 #  endif // defined(__GNUC__) && (defined(__i386__) || defined(__x86_64__))
 # endif // defined(__linux__)
 # if defined(BOOST_ASIO_MSVC) && defined(WINAPI_FAMILY)

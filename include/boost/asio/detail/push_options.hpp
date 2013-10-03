@@ -114,6 +114,14 @@
 #  pragma warning (disable:4312)
 # endif // defined(_M_IX86) && defined(_Wp64)
 # pragma pack (push, 8)
+// Note that if the /Og optimisation flag is enabled with MSVC6, the compiler
+// has a tendency to incorrectly optimise away some calls to member template
+// functions, even though those functions contain code that should not be
+// optimised away! Therefore we will always disable this optimisation option
+// for the MSVC6 compiler.
+# if (_MSC_VER < 1300)
+#  pragma optimize ("g", off)
+# endif
 # if !defined(_MT)
 #  error Multithreaded RTL must be selected.
 # endif // !defined(_MT)

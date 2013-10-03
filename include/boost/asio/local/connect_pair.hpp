@@ -11,9 +11,9 @@
 #ifndef BOOST_ASIO_LOCAL_CONNECT_PAIR_HPP
 #define BOOST_ASIO_LOCAL_CONNECT_PAIR_HPP
 
-#if defined(_MSC_VER)
+#if defined(_MSC_VER) && (_MSC_VER >= 1200)
 # pragma once
-#endif // defined(_MSC_VER)
+#endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include <boost/asio/detail/config.hpp>
 

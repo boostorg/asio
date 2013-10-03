@@ -11,9 +11,9 @@
 #ifndef BOOST_ASIO_DETAIL_OLD_WIN_SDK_COMPAT_HPP
 #define BOOST_ASIO_DETAIL_OLD_WIN_SDK_COMPAT_HPP
 
-#if defined(_MSC_VER)
+#if defined(_MSC_VER) && (_MSC_VER >= 1200)
 # pragma once
-#endif // defined(_MSC_VER)
+#endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include <boost/asio/detail/config.hpp>
 
