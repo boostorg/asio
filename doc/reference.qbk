@@ -66332,7 +66332,7 @@ Create an iterator from a sequence of endpoints, host and service name.
 
 
   template<
-      typename ``[link boost_asio.reference.EndpointIterator EndpointIterator]``>
+      typename EndpointIterator>
   static basic_resolver_iterator ``[link boost_asio.reference.ip__basic_resolver_iterator.create.overload3 create]``(
       EndpointIterator begin,
       EndpointIterator end,
@@ -66382,7 +66382,7 @@ Create an iterator from a sequence of endpoints, host and service name.
 
 
   template<
-      typename ``[link boost_asio.reference.EndpointIterator EndpointIterator]``>
+      typename EndpointIterator>
   static basic_resolver_iterator create(
       EndpointIterator begin,
       EndpointIterator end,
