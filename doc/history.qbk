@@ -58,9 +58,11 @@
 * Removed a use of `std::min` in the Windows IOCP backend to avoid a
   dependency on the `<algorithm>` header ([ticket 8758]).
 * Eliminated some unnecessary handler copies.
+* Fixed support for older versions of OpenSSL that do not provide the
+  `SSL_CTX_clear_options` function ([ticket 9273]).
 * Fixed various minor and cosmetic issues in code and documentation
   (including [ticket 8347], [ticket 8950], [ticket 8953], [ticket 8965],
-  [ticket 8997]).
+  [ticket 8997], [ticket 9230]).
 
 [heading Asio 1.10.0 / Boost 1.54]
 
