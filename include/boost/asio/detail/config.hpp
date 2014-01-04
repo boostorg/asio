@@ -42,18 +42,16 @@
 #if defined(BOOST_ASIO_HEADER_ONLY)
 # define BOOST_ASIO_DECL inline
 #else // defined(BOOST_ASIO_HEADER_ONLY)
-# if defined(_MSC_VER) || defined(__BORLANDC__) || defined(__CODEGEARC__)
 // We need to import/export our code only if the user has specifically asked
 // for it by defining BOOST_ASIO_DYN_LINK.
 #  if defined(BOOST_ASIO_DYN_LINK)
 // Export if this is our own source, otherwise import.
 #   if defined(BOOST_ASIO_SOURCE)
-#    define BOOST_ASIO_DECL __declspec(dllexport)
+#    define BOOST_ASIO_DECL BOOST_SYMBOL_EXPORT
 #   else // defined(BOOST_ASIO_SOURCE)
-#    define BOOST_ASIO_DECL __declspec(dllimport)
+#    define BOOST_ASIO_DECL BOOST_SYMBOL_IMPORT
 #   endif // defined(BOOST_ASIO_SOURCE)
 #  endif // defined(BOOST_ASIO_DYN_LINK)
-# endif // defined(_MSC_VER) || defined(__BORLANDC__) || defined(__CODEGEARC__)
 #endif // defined(BOOST_ASIO_HEADER_ONLY)
 
 // If BOOST_ASIO_DECL isn't defined yet define it now.
