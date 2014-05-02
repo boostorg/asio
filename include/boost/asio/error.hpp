@@ -18,6 +18,7 @@
 #include <boost/asio/detail/config.hpp>
 #include <boost/cerrno.hpp>
 #include <boost/system/error_code.hpp>
+#include <boost/system/system_error.hpp>
 #if defined(BOOST_ASIO_WINDOWS) \
   || defined(__CYGWIN__) \
   || defined(BOOST_ASIO_WINDOWS_RUNTIME)
