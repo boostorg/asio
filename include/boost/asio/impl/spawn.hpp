@@ -171,7 +171,8 @@ public:
   typedef T type;
 
   explicit async_result(detail::coro_handler<Handler, T>& h)
-    : ca_(h.ca_)
+    : handler_(h),
+      ca_(h.ca_)
   {
     out_ec_ = h.ec_;
     if (!out_ec_) h.ec_ = &ec_;
@@ -180,12 +181,14 @@ public:
 
   type get()
   {
+    handler_.coro_.reset(); // Must not hold shared_ptr to coro while suspended.
     ca_();
     if (!out_ec_ && ec_) throw boost::system::system_error(ec_);
     return value_;
   }
 
 private:
+  detail::coro_handler<Handler, T>& handler_;
   typename basic_yield_context<Handler>::caller_type& ca_;
   boost::system::error_code* out_ec_;
   boost::system::error_code ec_;
@@ -199,7 +202,8 @@ public:
   typedef void type;
 
   explicit async_result(detail::coro_handler<Handler, void>& h)
-    : ca_(h.ca_)
+    : handler_(h),
+      ca_(h.ca_)
   {
     out_ec_ = h.ec_;
     if (!out_ec_) h.ec_ = &ec_;
@@ -207,11 +211,13 @@ public:
 
   void get()
   {
+    handler_.coro_.reset(); // Must not hold shared_ptr to coro while suspended.
     ca_();
     if (!out_ec_ && ec_) throw boost::system::system_error(ec_);
   }
 
 private:
+  detail::coro_handler<Handler, void>& handler_;
   typename basic_yield_context<Handler>::caller_type& ca_;
   boost::system::error_code* out_ec_;
   boost::system::error_code ec_;
