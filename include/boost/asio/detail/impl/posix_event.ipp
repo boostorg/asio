@@ -30,7 +30,7 @@ namespace asio {
 namespace detail {
 
 posix_event::posix_event()
-  : signalled_(false)
+  : state_(0)
 {
   int error = ::pthread_cond_init(&cond_, 0);
   boost::system::error_code ec(error,
