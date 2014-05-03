@@ -270,6 +270,8 @@ void task_io_service::post_immediate_completion(
       return;
     }
   }
+#else // defined(BOOST_ASIO_HAS_THREADS)
+  (void)is_continuation;
 #endif // defined(BOOST_ASIO_HAS_THREADS)
 
   work_started();
