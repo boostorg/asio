@@ -3784,7 +3784,7 @@ Start an asynchronous send on a connected socket.
       WriteHandler handler);
 
 
-This function is used to send data on the datagram socket. The function call will block until the data has been sent successfully or an error occurs.
+This function is used to asynchronously send data on the datagram socket. The function call always returns immediately.
 
 
 [heading Parameters]
@@ -43594,14 +43594,9 @@ Appends `n` characters from the start of the output sequence to the input sequen
 Requires a preceding call `prepare(x)` where `x >= n`, and no intervening operations that modify the input or output sequence.
 
 
-[heading Exceptions]
-    
-
-[variablelist
-  
-[[std::length_error][If `n` is greater than the size of the output sequence. ]]
-
-]
+[heading Remarks]
+      
+If `n` is greater than the size of the output sequence, the entire output sequence is moved to the input sequence and no error is issued. 
 
 
 
@@ -43644,14 +43639,9 @@ Remove characters from the input sequence.
 Removes `n` characters from the beginning of the input sequence.
 
 
-[heading Exceptions]
-    
-
-[variablelist
-  
-[[std::length_error][If `n > size()`. ]]
-
-]
+[heading Remarks]
+      
+If `n` is greater than the size of the input sequence, the entire input sequence is consumed and no error is issued. 
 
 
 
