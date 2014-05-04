@@ -23,6 +23,7 @@
 #include <boost/asio/io_service.hpp>
 #include <boost/asio/detail/atomic_count.hpp>
 #include <boost/asio/detail/call_stack.hpp>
+#include <boost/asio/detail/event.hpp>
 #include <boost/asio/detail/mutex.hpp>
 #include <boost/asio/detail/op_queue.hpp>
 #include <boost/asio/detail/reactor_fwd.hpp>

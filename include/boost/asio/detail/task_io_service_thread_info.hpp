@@ -15,7 +15,6 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include <boost/asio/detail/event.hpp>
 #include <boost/asio/detail/op_queue.hpp>
 #include <boost/asio/detail/thread_info_base.hpp>
 
