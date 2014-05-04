@@ -39,6 +39,13 @@ public:
   // Destructor.
   BOOST_ASIO_DECL ~win_event();
 
+  // Signal the event. (Retained for backward compatibility.)
+  template <typename Lock>
+  void signal(Lock& lock)
+  {
+    this->signal_all(lock);
+  }
+
   // Signal all waiters.
   template <typename Lock>
   void signal_all(Lock& lock)
