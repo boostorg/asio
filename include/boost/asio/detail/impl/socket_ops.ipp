@@ -2,7 +2,7 @@
 // detail/impl/socket_ops.ipp
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2013 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2014 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -520,6 +520,22 @@ void sync_connect(socket_type s, const socket_addr_type* addr,
   ec = boost::system::error_code(connect_error,
       boost::asio::error::get_system_category());
 }
+
+#if defined(BOOST_ASIO_HAS_IOCP)
+
+void complete_iocp_connect(socket_type s, boost::system::error_code& ec)
+{
+  if (!ec)
+  {
+    // Need to set the SO_UPDATE_CONNECT_CONTEXT option so that getsockname
+    // and getpeername will work on the connected socket.
+    socket_ops::state_type state = 0;
+    socket_ops::setsockopt(s, state, SOL_SOCKET,
+        SO_UPDATE_CONNECT_CONTEXT, 0, 0, ec);
+  }
+}
+
+#endif // defined(BOOST_ASIO_HAS_IOCP)
 
 bool non_blocking_connect(socket_type s, boost::system::error_code& ec)
 {
@@ -1975,7 +1991,9 @@ const char* inet_ntop(int af, const void* src, char* dest, size_t length,
     const in6_addr_type* ipv6_address = static_cast<const in6_addr_type*>(src);
     bool is_link_local = ((ipv6_address->s6_addr[0] == 0xfe)
         && ((ipv6_address->s6_addr[1] & 0xc0) == 0x80));
-    if (!is_link_local
+    bool is_multicast_link_local = ((ipv6_address->s6_addr[0] == 0xff)
+        && ((ipv6_address->s6_addr[1] & 0x0f) == 0x02));
+    if ((!is_link_local && !is_multicast_link_local)
         || if_indextoname(static_cast<unsigned>(scope_id), if_name + 1) == 0)
       sprintf(if_name + 1, "%lu", scope_id);
     strcat(dest, if_name);
@@ -2205,7 +2223,9 @@ int inet_pton(int af, const char* src, void* dest,
       in6_addr_type* ipv6_address = static_cast<in6_addr_type*>(dest);
       bool is_link_local = ((ipv6_address->s6_addr[0] == 0xfe)
           && ((ipv6_address->s6_addr[1] & 0xc0) == 0x80));
-      if (is_link_local)
+      bool is_multicast_link_local = ((ipv6_address->s6_addr[0] == 0xff)
+          && ((ipv6_address->s6_addr[1] & 0x0f) == 0x02));
+      if (is_link_local || is_multicast_link_local)
         *scope_id = if_nametoindex(if_name + 1);
       if (*scope_id == 0)
         *scope_id = atoi(if_name + 1);

@@ -2,7 +2,7 @@
 // unit_test.hpp
 // ~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2013 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2014 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -66,6 +66,10 @@
   test(); \
   std::cout << #test << " passed" << std::endl;
 
+#define BOOST_ASIO_COMPILE_TEST_CASE(test) \
+  compile_test<&test>(); \
+  std::cout << #test << " passed" << std::endl;
+
 #else // defined(BOOST_ASIO_STANDALONE)
 
 #include <boost/test/unit_test.hpp>
@@ -90,6 +94,9 @@ using boost::unit_test::test_suite;
 #define BOOST_ASIO_TEST_CASE(test) \
   t->add(BOOST_TEST_CASE(&test));
 
+#define BOOST_ASIO_COMPILE_TEST_CASE(test) \
+  t->add(BOOST_TEST_CASE(&compile_test<&test>));
+
 #endif // defined(BOOST_ASIO_STANDALONE)
 
 #if defined(BOOST_ASIO_MSVC)
@@ -97,6 +104,11 @@ using boost::unit_test::test_suite;
 #endif // defined(BOOST_ASIO_MSVC)
 
 inline void null_test()
+{
+}
+
+template <void (*)()>
+inline void compile_test()
 {
 }
 

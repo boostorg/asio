@@ -1,11 +1,48 @@
 [/
- / Copyright (c) 2003-2013 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+ / Copyright (c) 2003-2014 Christopher M. Kohlhoff (chris at kohlhoff dot com)
  /
  / Distributed under the Boost Software License, Version 1.0. (See accompanying
  / file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
  /]
 
 [section:history Revision History]
+
+[heading Asio 1.10.2 / Boost 1.56]
+
+* Fixed `asio::spawn()` to work correctly with new Boost.Coroutine interface
+  ([ticket 9442], [ticket 9928]).
+* Ensured that incomplete `asio::spawn()` coroutines are correctly unwound when
+  cleaned up by the `io_service` destructor ([ticket 9731]).
+* Fixed delegation of continuation hook for handlers produced by
+  `io_service::wrap()` and `strand::wrap()` ([ticket 9741]).
+* Changed the Windows I/O completion port backend to use `ConnectEx`, if
+  available, for connection-oriented IP sockets.
+* Changed the `io_service` backend for non-Windows (and non-IOCP Windows)
+  platforms to use a single condition variable per `io_service` instance.
+  This addresses a potential race condition when `run_one()` is used from
+  multiple threads.
+* Prevented integer overflow when computing timeouts based on some
+  `boost::chrono` and `std::chrono` clocks ([ticket 9662], [ticket 9778]).
+* Made further changes to `EV_CLEAR` handling in the kqueue backend, to address
+  other cases where the `close()` system call may hang on Mac OS X.
+* Fixed infinite recursion in implementation of
+  `resolver_query_base::flags::operator~` ([ticket 9548]).
+* Made the `select` reactor more efficient on Windows for large numbers of
+  sockets ([ticket 9528]).
+* Fixed a Windows-specific type-aliasing issue reported by [^gcc] ([ticket
+  9550]).
+* Prevented execution of compile-time-only buffer test to avoid triggering an
+  address sanitiser warning ([ticket 8295]).
+* Disabled the `GetQueuedCompletionStatus` timeout workaround on recent
+  versions of Windows.
+* Added support for string-based scope IDs when using link-local multicast
+  addresses.
+* Changed IPv6 multicast group join to use the address's scope ID as the
+  interface, if an interface is not explicitly specified.
+* Fixed multicast test failure on Mac OS X and the BSDs by using a link-local
+  multicast address.
+* Various minor documentation improvements ([ticket 8295], [ticket 9605],
+  [ticket 9771]).
 
 [heading Asio 1.10.1 / Boost 1.55]
 

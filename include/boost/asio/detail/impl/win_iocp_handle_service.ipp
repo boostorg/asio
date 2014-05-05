@@ -2,7 +2,7 @@
 // detail/impl/win_iocp_handle_service.ipp
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2013 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2014 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 // Copyright (c) 2008 Rep Invariant Systems, Inc. (info@repinvariant.com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
@@ -46,7 +46,8 @@ public:
       // As documented in GetQueuedCompletionStatus, setting the low order
       // bit of this event prevents our synchronous writes from being treated
       // as completion port events.
-      *reinterpret_cast<DWORD_PTR*>(&hEvent) |= 1;
+      DWORD_PTR tmp = reinterpret_cast<DWORD_PTR>(hEvent);
+      hEvent = reinterpret_cast<HANDLE>(tmp | 1);
     }
     else
     {
