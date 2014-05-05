@@ -21,7 +21,7 @@
   || (!defined(BOOST_ASIO_HAS_DEV_POLL) \
       && !defined(BOOST_ASIO_HAS_EPOLL) \
       && !defined(BOOST_ASIO_HAS_KQUEUE) \
-	  && !defined(BOOST_ASIO_WINDOWS_RUNTIME))
+      && !defined(BOOST_ASIO_WINDOWS_RUNTIME))
 
 #include <cstddef>
 #include <boost/asio/detail/fd_set_adapter.hpp>
