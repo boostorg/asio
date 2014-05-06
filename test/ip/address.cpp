@@ -117,8 +117,32 @@ void test()
 
 //------------------------------------------------------------------------------
 
+//------------------------------------------------------------------------------
+
+// ip_address_runtime test
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~
+// The following test checks that the various public member functions meet the
+// necessary postconditions.
+
+namespace ip_address_runtime {
+
+void test()
+{
+  using boost::asio::ip::address;
+
+  boost::asio::ip::address_v6 v6 = boost::asio::ip::address_v6::from_string("::FFFF:127.0.0.1");
+  boost::asio::ip::address a = v6;
+  boost::asio::ip::address_v4 v4 = boost::asio::ip::address_v4::from_string("127.0.0.1");
+  BOOST_ASIO_CHECK(v6.to_v4() == v4);
+  BOOST_ASIO_CHECK(a.to_v4() == v4);
+}
+
+} // namespace ip_address_runtime
+
+
 BOOST_ASIO_TEST_SUITE
 (
   "ip/address",
   BOOST_ASIO_TEST_CASE(ip_address_compile::test)
+  BOOST_ASIO_TEST_CASE(ip_address_runtime::test)
 )
