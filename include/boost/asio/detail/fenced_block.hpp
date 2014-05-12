@@ -24,6 +24,8 @@
 # include <boost/asio/detail/macos_fenced_block.hpp>
 #elif defined(__sun)
 # include <boost/asio/detail/solaris_fenced_block.hpp>
+#elif defined(_CRAYC)
+# include <boost/asio/detail/cray_fenced_block.hpp>
 #elif defined(__GNUC__) && defined(__arm__) \
   && !defined(__GCC_HAVE_SYNC_COMPARE_AND_SWAP_4)
 # include <boost/asio/detail/gcc_arm_fenced_block.hpp>
@@ -53,6 +55,8 @@ typedef null_fenced_block fenced_block;
 typedef macos_fenced_block fenced_block;
 #elif defined(__sun)
 typedef solaris_fenced_block fenced_block;
+#elif defined(_CRAYC)
+typedef cray_fenced_block fenced_block;
 #elif defined(__GNUC__) && defined(__arm__) \
   && !defined(__GCC_HAVE_SYNC_COMPARE_AND_SWAP_4)
 typedef gcc_arm_fenced_block fenced_block;
