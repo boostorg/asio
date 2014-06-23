@@ -33,7 +33,7 @@
 #include <boost/asio/detail/push_options.hpp>
 
 #ifndef ASIO_PREFERRED_READ_SIZE
-#define ASIO_PREFERRED_READ_SIZE 512
+# define ASIO_PREFERRED_READ_SIZE 512
 #endif
 
 namespace boost {
