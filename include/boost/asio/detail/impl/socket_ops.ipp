@@ -530,8 +530,9 @@ void complete_iocp_connect(socket_type s, boost::system::error_code& ec)
     // Need to set the SO_UPDATE_CONNECT_CONTEXT option so that getsockname
     // and getpeername will work on the connected socket.
     socket_ops::state_type state = 0;
+    const int so_update_connect_context = 0x7010;
     socket_ops::setsockopt(s, state, SOL_SOCKET,
-        SO_UPDATE_CONNECT_CONTEXT, 0, 0, ec);
+        so_update_connect_context, 0, 0, ec);
   }
 }
 
