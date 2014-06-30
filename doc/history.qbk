@@ -11,10 +11,10 @@
 
 * Worked around a [^gcc] problem to do with anonymous enums ([ticket 10042]).
 * Reverted the Windows `HANDLE` backend change to ignore `ERROR_MORE_DATA`.
-  Instead, the error will propagated as with any other (i.e. in an `error_code`
-  or thrown as a `system_error`), and the number of bytes transferred is now
-  returned. For code that needs to handle partial messages, the `error_code`
-  overload should be used ([ticket 10034]).
+  Instead, the error will be propagated as with any other (i.e. in an
+  `error_code` or thrown as a `system_error`), and the number of bytes
+  transferred will be returned. For code that needs to handle partial messages,
+  the `error_code` overload should be used ([ticket 10034]).
 * Fixed an off-by-one error in the `signal_set` implementation's signal
   number check ([ticket 9324]).
 * Changed the Windows IOCP backend to not assume that
