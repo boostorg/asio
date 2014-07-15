@@ -17,6 +17,13 @@
 # include <stdlib.h> // Needed for lrand48.
 #endif // defined(__sun)
 
+#ifdef _AIX
+// AIX needs this symbol defined in asio, even if it doesn't do anything.
+int test_main(int, char**)
+{
+}
+#endif
+
 #if defined(__BORLANDC__)
 
 // Prevent use of intrinsic for strcmp.
