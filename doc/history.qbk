@@ -14,6 +14,7 @@
 * Fixed a shadow variable warning on Windows.
 * Fixed a regression in the [^kqueue] backend that was introduced in Asio
   1.10.2.
+* Added a workaround for building the unit tests with [^gcc] on AIX.
 
 [heading Asio 1.10.3]
 
