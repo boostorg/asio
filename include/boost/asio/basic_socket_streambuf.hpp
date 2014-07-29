@@ -310,7 +310,7 @@ protected:
 
       io_handler handler = { this };
       this->get_service().async_receive(this->get_implementation(),
-          boost::asio::buffer(boost::asio::buffer(get_buffer_) + putback_max),
+          boost::asio::buffer(boost::asio::buffer(get_buffer_) + static_cast< std::size_t >(putback_max)),
           0, handler);
 
       ec_ = boost::asio::error::would_block;
@@ -320,8 +320,8 @@ protected:
       if (ec_)
         return traits_type::eof();
 
-      setg(&get_buffer_[0], &get_buffer_[0] + putback_max,
-          &get_buffer_[0] + putback_max + bytes_transferred_);
+      setg(&get_buffer_[0], &get_buffer_[0] + static_cast< std::size_t >(putback_max),
+          &get_buffer_[0] + static_cast< std::size_t >(putback_max) + bytes_transferred_);
       return traits_type::to_int_type(*gptr());
     }
     else
@@ -433,8 +433,8 @@ private:
   void init_buffers()
   {
     setg(&get_buffer_[0],
-        &get_buffer_[0] + putback_max,
-        &get_buffer_[0] + putback_max);
+        &get_buffer_[0] + static_cast< std::size_t >(putback_max),
+        &get_buffer_[0] + static_cast< std::size_t >(putback_max));
     if (unbuffered_)
       setp(0, 0);
     else
@@ -543,8 +543,11 @@ private:
     }
   }
 
-  enum { putback_max = 8 };
-  enum { buffer_size = 512 };
+  enum _
+  {
+    putback_max = 8,
+    buffer_size = 512
+  };
   boost::asio::detail::array<char, buffer_size> get_buffer_;
   boost::asio::detail::array<char, buffer_size> put_buffer_;
   bool unbuffered_;
