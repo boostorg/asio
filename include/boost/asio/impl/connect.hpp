@@ -118,7 +118,6 @@ Iterator connect(basic_socket<Protocol, SocketService>& s,
     iter = connect_condition(ec, iter);
     if (iter != end)
     {
-      s.close(ec);
       s.connect(*iter, ec);
       if (!ec)
         return iter;
@@ -223,7 +222,6 @@ namespace detail
 
           if (iter_ != end_)
           {
-            socket_.close(ec);
             socket_.async_connect(*iter_,
                 BOOST_ASIO_MOVE_CAST(connect_op)(*this));
             return;
