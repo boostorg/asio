@@ -47,10 +47,10 @@ kqueue_reactor::kqueue_reactor(boost::asio::io_service& io_service)
     interrupter_(),
     shutdown_(false)
 {
-  struct kevent event;
-  BOOST_ASIO_KQUEUE_EV_SET(&event, interrupter_.read_descriptor(),
+  struct kevent events[1];
+  BOOST_ASIO_KQUEUE_EV_SET(&events[0], interrupter_.read_descriptor(),
       EVFILT_READ, EV_ADD, 0, 0, &interrupter_);
-  if (::kevent(kqueue_fd_, &event, 1, 0, 0, 0) == -1)
+  if (::kevent(kqueue_fd_, events, 1, 0, 0, 0) == -1)
   {
     boost::system::error_code error(errno,
         boost::asio::error::get_system_category());
@@ -94,10 +94,10 @@ void kqueue_reactor::fork_service(boost::asio::io_service::fork_event fork_ev)
 
     interrupter_.recreate();
 
-    struct kevent event;
-    BOOST_ASIO_KQUEUE_EV_SET(&event, interrupter_.read_descriptor(),
+    struct kevent events[2];
+    BOOST_ASIO_KQUEUE_EV_SET(&events[0], interrupter_.read_descriptor(),
         EVFILT_READ, EV_ADD, 0, 0, &interrupter_);
-    if (::kevent(kqueue_fd_, &event, 1, 0, 0, 0) == -1)
+    if (::kevent(kqueue_fd_, events, 1, 0, 0, 0) == -1)
     {
       boost::system::error_code ec(errno,
           boost::asio::error::get_system_category());
@@ -109,7 +109,6 @@ void kqueue_reactor::fork_service(boost::asio::io_service::fork_event fork_ev)
     for (descriptor_state* state = registered_descriptors_.first();
         state != 0; state = state->next_)
     {
-      struct kevent events[2];
       BOOST_ASIO_KQUEUE_EV_SET(&events[0], state->descriptor_,
           EVFILT_READ, EV_ADD | EV_CLEAR, 0, 0, state);
       BOOST_ASIO_KQUEUE_EV_SET(&events[1], state->descriptor_,
