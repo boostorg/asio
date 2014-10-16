@@ -1,0 +1,15 @@
+{
+    "key": "asio",
+    "name": "Asio",
+    "authors": [
+        "Chris Kohlhoff"
+    ],
+    "description": "Portable networking, including sockets, timers, hostname resolution and socket iostreams.",
+    "category": [
+        "Concurrent",
+        "IO"
+    ],
+    "maintainers": [
+        "Chris Kohlhoff <chris -at- kohlhoff.com>"
+    ]
+}
