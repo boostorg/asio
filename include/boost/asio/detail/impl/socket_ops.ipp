@@ -1359,7 +1359,7 @@ socket_type socket(int af, int type, int protocol,
 {
   clear_last_error();
 #if defined(BOOST_ASIO_WINDOWS) || defined(__CYGWIN__)
-  socket_type s = error_wrapper(::WSASocket(af, type, protocol, 0, 0,
+  socket_type s = error_wrapper(::WSASocketW(af, type, protocol, 0, 0,
         WSA_FLAG_OVERLAPPED), ec);
   if (s == invalid_socket)
     return s;
