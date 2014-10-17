@@ -34,6 +34,7 @@
 #endif // defined(BOOST_ASIO_HAS_BOOST_BIND)
 
 using namespace boost::asio;
+typedef io_service::strand strand;
 
 #if defined(BOOST_ASIO_HAS_BOOST_BIND)
 namespace bindns = boost;

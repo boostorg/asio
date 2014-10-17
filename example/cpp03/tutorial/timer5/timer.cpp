@@ -57,7 +57,7 @@ public:
   }
 
 private:
-  boost::asio::strand strand_;
+  boost::asio::io_service::strand strand_;
   boost::asio::deadline_timer timer1_;
   boost::asio::deadline_timer timer2_;
   int count_;
