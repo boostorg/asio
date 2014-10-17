@@ -93875,7 +93875,7 @@ This typedef uses the C++11 `<chrono>` standard library facility, if available. 
 [section:strand strand]
 
 [indexterm1 strand] 
-Typedef for backwards compatibility. 
+(Deprecated: Use [link boost_asio.reference.io_service__strand `io_service::strand`].) Typedef for backwards compatibility. 
 
 
   typedef boost::asio::io_service::strand strand;

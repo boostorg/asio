@@ -707,7 +707,7 @@ In a multithreaded program, the handlers for asynchronous operations should be s
   ``''''''``  }
 
   ``''''''``private:
-  ``''''''``  boost::asio::strand strand_;
+  ``''''''``  boost::asio::io_service::strand strand_;
   ``''''''``  boost::asio::deadline_timer timer1_;
   ``''''''``  boost::asio::deadline_timer timer2_;
   ``''''''``  int count_;
@@ -806,7 +806,7 @@ Previous: [link boost_asio.tutorial.tuttimer4 Timer.4 - Using a member function 
   ``''''''``  }
 
   ``''''''``private:
-  ``''''''``  boost::asio::strand strand_;
+  ``''''''``  boost::asio::io_service::strand strand_;
   ``''''''``  boost::asio::deadline_timer timer1_;
   ``''''''``  boost::asio::deadline_timer timer2_;
   ``''''''``  int count_;
