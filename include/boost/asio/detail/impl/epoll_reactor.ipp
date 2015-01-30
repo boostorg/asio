@@ -333,10 +333,9 @@ void epoll_reactor::deregister_descriptor(socket_type descriptor,
     descriptor_data->descriptor_ = -1;
     descriptor_data->shutdown_ = true;
 
-    descriptor_lock.unlock();
-
     free_descriptor_state(descriptor_data);
     descriptor_data = 0;
+    descriptor_lock.unlock();
 
     io_service_.post_deferred_completions(ops);
   }
@@ -361,8 +360,6 @@ void epoll_reactor::deregister_internal_descriptor(socket_type descriptor,
 
     descriptor_data->descriptor_ = -1;
     descriptor_data->shutdown_ = true;
-
-    descriptor_lock.unlock();
 
     free_descriptor_state(descriptor_data);
     descriptor_data = 0;
