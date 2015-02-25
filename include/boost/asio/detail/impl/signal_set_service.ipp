@@ -575,14 +575,39 @@ void signal_set_service::open_descriptors()
   if (::pipe(pipe_fds) == 0)
   {
     state->read_descriptor_ = pipe_fds[0];
-    ::fcntl(state->read_descriptor_, F_SETFL, O_NONBLOCK);
+    int status;
+    status = ::fcntl(state->read_descriptor_, F_SETFL, O_NONBLOCK);
+    if (status == -1)
+    {
+      boost::system::error_code ec(errno,
+        boost::asio::error::get_system_category());
+      boost::asio::detail::throw_error(ec, "signal_set_service pipe");
+    }
 
     state->write_descriptor_ = pipe_fds[1];
-    ::fcntl(state->write_descriptor_, F_SETFL, O_NONBLOCK);
+    status = ::fcntl(state->write_descriptor_, F_SETFL, O_NONBLOCK);
+    if (status == -1)
+    {
+      boost::system::error_code ec(errno,
+        boost::asio::error::get_system_category());
+      boost::asio::detail::throw_error(ec, "signal_set_service pipe");
+    }
 
 #if defined(FD_CLOEXEC)
-    ::fcntl(state->read_descriptor_, F_SETFD, FD_CLOEXEC);
-    ::fcntl(state->write_descriptor_, F_SETFD, FD_CLOEXEC);
+    status = ::fcntl(state->read_descriptor_, F_SETFD, FD_CLOEXEC);
+    if (status == -1)
+    {
+      boost::system::error_code ec(errno,
+        boost::asio::error::get_system_category());
+      boost::asio::detail::throw_error(ec, "signal_set_service pipe");
+    }
+    status = ::fcntl(state->write_descriptor_, F_SETFD, FD_CLOEXEC);
+    if (status == -1)
+    {
+      boost::system::error_code ec(errno,
+        boost::asio::error::get_system_category());
+      boost::asio::detail::throw_error(ec, "signal_set_service pipe");
+    }
 #endif // defined(FD_CLOEXEC)
   }
   else
