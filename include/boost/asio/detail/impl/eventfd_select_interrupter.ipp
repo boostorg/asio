@@ -47,11 +47,24 @@ eventfd_select_interrupter::eventfd_select_interrupter()
 void eventfd_select_interrupter::open_descriptors()
 {
 #if __GLIBC__ == 2 && __GLIBC_MINOR__ < 8
+  int status;
   write_descriptor_ = read_descriptor_ = syscall(__NR_eventfd, 0);
   if (read_descriptor_ != -1)
   {
-    ::fcntl(read_descriptor_, F_SETFL, O_NONBLOCK);
-    ::fcntl(read_descriptor_, F_SETFD, FD_CLOEXEC);
+    status = ::fcntl(read_descriptor_, F_SETFL, O_NONBLOCK);
+    if (status == -1)
+    {
+      boost::system::error_code ec(errno,
+        boost::asio::error::get_system_category());
+      boost::asio::detail::throw_error(ec, "eventfd_select_interrupter");
+    }
+    status = ::fcntl(read_descriptor_, F_SETFD, FD_CLOEXEC);
+    if (status == -1)
+    {
+      boost::system::error_code ec(errno,
+        boost::asio::error::get_system_category());
+      boost::asio::detail::throw_error(ec, "eventfd_select_interrupter");
+    }
   }
 #else // __GLIBC__ == 2 && __GLIBC_MINOR__ < 8
 # if defined(EFD_CLOEXEC) && defined(EFD_NONBLOCK)
@@ -66,8 +79,20 @@ void eventfd_select_interrupter::open_descriptors()
     write_descriptor_ = read_descriptor_ = ::eventfd(0, 0);
     if (read_descriptor_ != -1)
     {
-      ::fcntl(read_descriptor_, F_SETFL, O_NONBLOCK);
-      ::fcntl(read_descriptor_, F_SETFD, FD_CLOEXEC);
+      status = ::fcntl(read_descriptor_, F_SETFL, O_NONBLOCK);
+      if (status == -1)
+      {
+        boost::system::error_code ec(errno,
+          boost::asio::error::get_system_category());
+        boost::asio::detail::throw_error(ec, "eventfd_select_interrupter");
+      }
+      status = ::fcntl(read_descriptor_, F_SETFD, FD_CLOEXEC);
+      if (status == -1)
+      {
+        boost::system::error_code ec(errno,
+          boost::asio::error::get_system_category());
+        boost::asio::detail::throw_error(ec, "eventfd_select_interrupter");
+      }
     }
   }
 #endif // __GLIBC__ == 2 && __GLIBC_MINOR__ < 8
@@ -78,11 +103,35 @@ void eventfd_select_interrupter::open_descriptors()
     if (pipe(pipe_fds) == 0)
     {
       read_descriptor_ = pipe_fds[0];
-      ::fcntl(read_descriptor_, F_SETFL, O_NONBLOCK);
-      ::fcntl(read_descriptor_, F_SETFD, FD_CLOEXEC);
+      status = ::fcntl(read_descriptor_, F_SETFL, O_NONBLOCK);
+      if (status == -1)
+      {
+        boost::system::error_code ec(errno,
+          boost::asio::error::get_system_category());
+        boost::asio::detail::throw_error(ec, "eventfd_select_interrupter");
+      }
+      status = ::fcntl(read_descriptor_, F_SETFD, FD_CLOEXEC);
+      if (status == -1)
+      {
+        boost::system::error_code ec(errno,
+          boost::asio::error::get_system_category());
+        boost::asio::detail::throw_error(ec, "eventfd_select_interrupter");
+      }
       write_descriptor_ = pipe_fds[1];
-      ::fcntl(write_descriptor_, F_SETFL, O_NONBLOCK);
-      ::fcntl(write_descriptor_, F_SETFD, FD_CLOEXEC);
+      status = ::fcntl(write_descriptor_, F_SETFL, O_NONBLOCK);
+      if (status == -1)
+      {
+        boost::system::error_code ec(errno,
+          boost::asio::error::get_system_category());
+        boost::asio::detail::throw_error(ec, "eventfd_select_interrupter");
+      }
+      status = ::fcntl(write_descriptor_, F_SETFD, FD_CLOEXEC);
+      if (status == -1)
+      {
+        boost::system::error_code ec(errno,
+          boost::asio::error::get_system_category());
+        boost::asio::detail::throw_error(ec, "eventfd_select_interrupter");
+      }
     }
     else
     {
