@@ -470,7 +470,15 @@ int epoll_reactor::do_epoll_create()
   {
     fd = epoll_create(epoll_size);
     if (fd != -1)
-      ::fcntl(fd, F_SETFD, FD_CLOEXEC);
+    {
+      int status = ::fcntl(fd, F_SETFD, FD_CLOEXEC);
+      if (status == -1)
+      {
+        boost::system::error_code ec(errno,
+          boost::asio::error::get_system_category());
+        boost::asio::detail::throw_error(ec, "epoll");
+      }
+    }
   }
 
   if (fd == -1)
@@ -497,7 +505,15 @@ int epoll_reactor::do_timerfd_create()
   {
     fd = timerfd_create(CLOCK_MONOTONIC, 0);
     if (fd != -1)
-      ::fcntl(fd, F_SETFD, FD_CLOEXEC);
+    {
+      int status = ::fcntl(fd, F_SETFD, FD_CLOEXEC);
+      if (status == -1)
+      {
+        boost::system::error_code ec(errno,
+          boost::asio::error::get_system_category());
+        boost::asio::detail::throw_error(ec, "epoll");
+      }
+    }
   }
 
   return fd;
