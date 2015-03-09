@@ -93,6 +93,7 @@ const int max_addr_v4_str_len = 256;
 const int max_addr_v6_str_len = 256;
 typedef unsigned __int32 u_long_type;
 typedef unsigned __int16 u_short_type;
+#undef s_addr
 struct in4_addr_type { u_long_type s_addr; };
 struct in4_mreq_type { in4_addr_type imr_multiaddr, imr_interface; };
 struct in6_addr_type { unsigned char s6_addr[16]; };
