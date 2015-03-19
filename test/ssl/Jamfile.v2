@@ -35,7 +35,7 @@ local USE_SELECT =
 project
   : requirements
     <library>/boost/date_time//boost_date_time
-    <library>/boost/test//boost_test_exec_monitor
+    <library>/boost/system//boost_system
     <define>BOOST_ALL_NO_LIB=1
     <threading>multi
     <os>SOLARIS:<library>socket
