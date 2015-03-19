@@ -184,7 +184,7 @@ public:
     handler_.coro_.reset(); // Must not hold shared_ptr to coro while suspended.
     ca_();
     if (!out_ec_ && ec_) throw boost::system::system_error(ec_);
-    return value_;
+    return BOOST_ASIO_MOVE_CAST(type)(value_);
   }
 
 private:
