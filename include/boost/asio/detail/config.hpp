@@ -550,6 +550,28 @@
 # endif // defined(BOOST_ASIO_WINDOWS) || defined(__CYGWIN__)
 #endif // !defined(BOOST_ASIO_HAS_IOCP)
 
+// On POSIX (and POSIX-like) platforms we need to include unistd.h in order to
+// get access to the various platform feature macros, e.g. to be able to test
+// for threads support.
+#if !defined(BOOST_ASIO_HAS_UNISTD_H)
+# if !defined(BOOST_ASIO_HAS_BOOST_CONFIG)
+#  if defined(unix) \
+   || defined(__unix) \
+   || defined(_XOPEN_SOURCE) \
+   || defined(_POSIX_SOURCE) \
+   || (defined(__MACH__) && defined(__APPLE__)) \
+   || defined(__FreeBSD__) \
+   || defined(__NetBSD__) \
+   || defined(__OpenBSD__) \
+   || defined(__linux__)
+#   define BOOST_ASIO_HAS_UNISTD_H 1
+#  endif
+# endif // !defined(BOOST_ASIO_HAS_BOOST_CONFIG)
+#endif // !defined(BOOST_ASIO_HAS_UNISTD_H)
+#if defined(BOOST_ASIO_HAS_UNISTD_H)
+# include <unistd.h>
+#endif // defined(BOOST_ASIO_HAS_UNISTD_H)
+
 // Linux: epoll, eventfd and timerfd.
 #if defined(__linux__)
 # include <linux/version.h>
@@ -736,28 +758,6 @@
 #  define BOOST_ASIO_NO_TYPEID 1
 # endif // !defined(BOOST_NO_TYPEID)
 #endif // !defined(BOOST_ASIO_NO_TYPEID)
-
-// On POSIX (and POSIX-like) platforms we need to include unistd.h in order to
-// get access to the various platform feature macros, e.g. to be able to test
-// for threads support.
-#if !defined(BOOST_ASIO_HAS_UNISTD_H)
-# if !defined(BOOST_ASIO_HAS_BOOST_CONFIG)
-#  if defined(unix) \
-   || defined(__unix) \
-   || defined(_XOPEN_SOURCE) \
-   || defined(_POSIX_SOURCE) \
-   || (defined(__MACH__) && defined(__APPLE__)) \
-   || defined(__FreeBSD__) \
-   || defined(__NetBSD__) \
-   || defined(__OpenBSD__) \
-   || defined(__linux__)
-#   define BOOST_ASIO_HAS_UNISTD_H 1
-#  endif
-# endif // !defined(BOOST_ASIO_HAS_BOOST_CONFIG)
-#endif // !defined(BOOST_ASIO_HAS_UNISTD_H)
-#if defined(BOOST_ASIO_HAS_UNISTD_H)
-# include <unistd.h>
-#endif // defined(BOOST_ASIO_HAS_UNISTD_H)
 
 // Threads.
 #if !defined(BOOST_ASIO_HAS_THREADS)
