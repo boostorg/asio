@@ -20,9 +20,7 @@
 #if defined(BOOST_ASIO_HAS_BOOST_DATE_TIME) \
   || defined(GENERATING_DOCUMENTATION)
 
-#include <boost/asio/detail/push_options.hpp>
 #include <boost/date_time/posix_time/posix_time_types.hpp>
-#include <boost/asio/detail/pop_options.hpp>
 
 #include <boost/asio/detail/push_options.hpp>
 

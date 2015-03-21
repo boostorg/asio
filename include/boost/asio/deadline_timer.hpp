@@ -23,9 +23,7 @@
 #include <boost/asio/detail/socket_types.hpp> // Must come before posix_time.
 #include <boost/asio/basic_deadline_timer.hpp>
 
-#include <boost/asio/detail/push_options.hpp>
 #include <boost/date_time/posix_time/posix_time_types.hpp>
-#include <boost/asio/detail/pop_options.hpp>
 
 namespace boost {
 namespace asio {
