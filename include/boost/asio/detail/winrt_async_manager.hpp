@@ -69,7 +69,7 @@ public:
     auto future = promise->get_future();
 
     action->Completed = ref new AsyncActionCompletedHandler(
-      [promise](IAsyncAction^ action, AsyncStatus status)
+		[promise](Windows::Foundation::IAsyncAction^ action, AsyncStatus status)
       {
         switch (status)
         {
@@ -137,7 +137,7 @@ public:
 
     operation->Completed
       = ref new AsyncOperationWithProgressCompletedHandler<TResult, TProgress>(
-        [promise](IAsyncOperationWithProgress<TResult, TProgress>^ operation,
+	    [promise](Windows::Foundation::IAsyncOperationWithProgress<TResult, TProgress>^ operation,
           AsyncStatus status)
         {
           switch (status)
@@ -169,7 +169,7 @@ public:
     using Windows::Foundation::AsyncStatus;
 
     auto on_completed = ref new AsyncActionCompletedHandler(
-      [this, handler](IAsyncAction^ action, AsyncStatus status)
+	  [this, handler](Windows::Foundation::IAsyncAction^ action, AsyncStatus status)
       {
         switch (status)
         {
@@ -244,7 +244,7 @@ public:
 
     auto on_completed
       = ref new AsyncOperationWithProgressCompletedHandler<TResult, TProgress>(
-        [this, handler](IAsyncOperationWithProgress<
+	      [this, handler](Windows::Foundation::IAsyncOperationWithProgress<
           TResult, TProgress>^ operation, AsyncStatus status)
         {
           switch (status)

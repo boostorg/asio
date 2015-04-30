@@ -22,7 +22,7 @@
 #include <boost/asio/io_service.hpp>
 
 #if defined(BOOST_ASIO_WINDOWS_RUNTIME)
-# include <boost/asio/detail/null_socket_service.hpp>
+# include <boost/asio/detail/reactive_socket_service.hpp>
 #elif defined(BOOST_ASIO_HAS_IOCP)
 # include <boost/asio/detail/win_iocp_socket_service.hpp>
 #else

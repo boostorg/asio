@@ -17,7 +17,7 @@
 
 #include <boost/asio/detail/config.hpp>
 
-#if defined(BOOST_ASIO_WINDOWS) && !defined(UNDER_CE)
+#if defined(BOOST_ASIO_WINDOWS) && !defined(UNDER_CE) && !defined(BOOST_ASIO_WINDOWS_RUNTIME)
 
 #include <process.h>
 #include <boost/asio/detail/throw_error.hpp>
@@ -41,23 +41,42 @@ win_thread::~win_thread()
 void win_thread::join()
 {
   HANDLE handles[2] = { exit_event_, thread_ };
+#if defined (BOOST_ASIO_WINDOWS_RUNTIME)
+   ::WaitForMultipleObjectsEx(2, handles, FALSE, INFINITE, false);
+#else
   ::WaitForMultipleObjects(2, handles, FALSE, INFINITE);
+#endif	// defined (BOOST_ASIO_WINDOWS_RUNTIME)
   ::CloseHandle(exit_event_);
   if (terminate_threads())
   {
+#if defined (BOOST_ASIO_WINDOWS_RUNTIME)
+     ::ExitThread(0);
+#else
     ::TerminateThread(thread_, 0);
+#endif	// defined (BOOST_ASIO_WINDOWS_RUNTIME)
   }
   else
   {
-    ::QueueUserAPC(apc_function, thread_, 0);
+#if !defined (BOOST_ASIO_WINDOWS_RUNTIME)
+     QueueUserAPC(apc_function, thread_, 0);
+#endif	// !defined (BOOST_ASIO_WINDOWS_RUNTIME)
+
+#if defined (BOOST_ASIO_WINDOWS_RUNTIME)
+     ::WaitForSingleObjectEx(thread_, INFINITE, false);
+#elif
     ::WaitForSingleObject(thread_, INFINITE);
+#endif	// defined (BOOST_ASIO_WINDOWS_RUNTIME)
   }
 }
 
 void win_thread::start_thread(func_base* arg, unsigned int stack_size)
 {
   ::HANDLE entry_event = 0;
+#if defined (BOOST_ASIO_WINDOWS_RUNTIME)
+  arg->entry_event_ = entry_event = ::CreateEventEx(0, 0, CREATE_EVENT_MANUAL_RESET, 0);
+#else
   arg->entry_event_ = entry_event = ::CreateEvent(0, true, false, 0);
+#endif  // defined (BOOST_ASIO_WINDOWS_RUNTIME)
   if (!entry_event)
   {
     DWORD last_error = ::GetLastError();
@@ -67,7 +86,11 @@ void win_thread::start_thread(func_base* arg, unsigned int stack_size)
     boost::asio::detail::throw_error(ec, "thread.entry_event");
   }
 
+#if defined (BOOST_ASIO_WINDOWS_RUNTIME)
+  arg->exit_event_ = exit_event_ = ::CreateEventEx(0, 0, CREATE_EVENT_MANUAL_RESET, 0);
+#else
   arg->exit_event_ = exit_event_ = ::CreateEvent(0, true, false, 0);
+#endif  // defined (BOOST_ASIO_WINDOWS_RUNTIME)
   if (!exit_event_)
   {
     DWORD last_error = ::GetLastError();
@@ -95,7 +118,11 @@ void win_thread::start_thread(func_base* arg, unsigned int stack_size)
 
   if (entry_event)
   {
+#if defined (BOOST_ASIO_WINDOWS_RUNTIME)
+      ::WaitForSingleObjectEx(entry_event, INFINITE, false);
+#else
     ::WaitForSingleObject(entry_event, INFINITE);
+#endif	// defined (BOOST_ASIO_WINDOWS_RUNTIME)
     ::CloseHandle(entry_event);
   }
 }

@@ -50,13 +50,22 @@ int win_static_mutex::do_init()
       mutex_name, 128, L"asio-58CCDC44-6264-4842-90C2-F3C545CB8AA7-%u-%p",
       static_cast<unsigned int>(::GetCurrentProcessId()), this);
 
+#if defined (BOOST_ASIO_WINDOWS_RUNTIME)
+  HANDLE mutex = ::CreateMutexEx(0, mutex_name, CREATE_MUTEX_INITIAL_OWNER, 0);
+#else
   HANDLE mutex = ::CreateMutexW(0, TRUE, mutex_name);
+#endif    // defined (BOOST_ASIO_WINDOWS_RUNTIME)
+
   DWORD last_error = ::GetLastError();
   if (mutex == 0)
     return ::GetLastError();
 
   if (last_error == ERROR_ALREADY_EXISTS)
+#if defined (BOOST_ASIO_WINDOWS_RUNTIME)
+    ::WaitForSingleObjectEx(mutex, INFINITE, false);
+#elif
     ::WaitForSingleObject(mutex, INFINITE);
+#endif  // defined (BOOST_ASIO_WINDOWS_RUNTIME)
 
   if (initialised_)
   {
@@ -84,6 +93,8 @@ int win_static_mutex::do_init()
   {
 # if defined(UNDER_CE)
     ::InitializeCriticalSection(&crit_section_);
+# elif defined (BOOST_ASIO_WINDOWS_RUNTIME)
+    ::InitializeCriticalSectionEx(&crit_section_, 0x80000000, 0);
 # else
     if (!::InitializeCriticalSectionAndSpinCount(&crit_section_, 0x80000000))
     {
@@ -92,7 +103,7 @@ int win_static_mutex::do_init()
       ::CloseHandle(mutex);
       return last_error;
     }
-# endif
+# endif // defined(UNDER_CE)
   }
   __except(GetExceptionCode() == STATUS_NO_MEMORY
       ? EXCEPTION_EXECUTE_HANDLER : EXCEPTION_CONTINUE_SEARCH)

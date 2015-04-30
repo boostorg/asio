@@ -50,8 +50,13 @@ struct win_iocp_io_service::timer_thread_function
   {
     while (::InterlockedExchangeAdd(&io_service_->shutdown_, 0) == 0)
     {
+      #if defined (BOOST_ASIO_WINDOWS_RUNTIME)
+      if (::WaitForSingleObjectEx(io_service_->waitable_timer_.handle,
+            INFINITE, false) == WAIT_OBJECT_0)
+      #else
       if (::WaitForSingleObject(io_service_->waitable_timer_.handle,
             INFINITE) == WAIT_OBJECT_0)
+      #endif    // defined (BOOST_ASIO_WINDOWS_RUNTIME)
       {
         ::InterlockedExchange(&io_service_->dispatch_required_, 1);
         ::PostQueuedCompletionStatus(io_service_->iocp_.handle,

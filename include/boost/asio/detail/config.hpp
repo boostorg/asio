@@ -515,18 +515,6 @@
 # endif // !defined(BOOST_ASIO_DISABLE_STD_MUTEX_AND_CONDVAR)
 #endif // !defined(BOOST_ASIO_HAS_STD_MUTEX_AND_CONDVAR)
 
-// WinRT target.
-#if !defined(BOOST_ASIO_WINDOWS_RUNTIME)
-# if defined(__cplusplus_winrt)
-#  include <winapifamily.h>
-#  if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP) \
-   && !WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
-#   define BOOST_ASIO_WINDOWS_RUNTIME 1
-#  endif // WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
-         // && !WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
-# endif // defined(__cplusplus_winrt)
-#endif // !defined(BOOST_ASIO_WINDOWS_RUNTIME)
-
 // Windows target. Excludes WinRT.
 #if !defined(BOOST_ASIO_WINDOWS)
 # if !defined(BOOST_ASIO_WINDOWS_RUNTIME)
@@ -601,11 +589,11 @@
 #if !defined(BOOST_ASIO_HAS_IOCP)
 # if defined(BOOST_ASIO_WINDOWS) || defined(__CYGWIN__)
 #  if defined(_WIN32_WINNT) && (_WIN32_WINNT >= 0x0400)
-#   if !defined(UNDER_CE)
+#   if !defined(UNDER_CE) && !defined(BOOST_ASIO_WINDOWS_RUNTIME)
 #    if !defined(BOOST_ASIO_DISABLE_IOCP)
 #     define BOOST_ASIO_HAS_IOCP 1
 #    endif // !defined(BOOST_ASIO_DISABLE_IOCP)
-#   endif // !defined(UNDER_CE)
+#   endif // !defined(UNDER_CE) && !defined(BOOST_ASIO_WINDOWS_RUNTIME)
 #  endif // defined(_WIN32_WINNT) && (_WIN32_WINNT >= 0x0400)
 # endif // defined(BOOST_ASIO_WINDOWS) || defined(__CYGWIN__)
 #endif // !defined(BOOST_ASIO_HAS_IOCP)
@@ -721,9 +709,9 @@
 #if !defined(BOOST_ASIO_HAS_WINDOWS_OBJECT_HANDLE)
 # if !defined(BOOST_ASIO_DISABLE_WINDOWS_OBJECT_HANDLE)
 #  if defined(BOOST_ASIO_WINDOWS) || defined(__CYGWIN__)
-#   if !defined(UNDER_CE)
+#   if !defined(UNDER_CE) && !defined(BOOST_ASIO_WINDOWS_RUNTIME)
 #    define BOOST_ASIO_HAS_WINDOWS_OBJECT_HANDLE 1
-#   endif // !defined(UNDER_CE)
+#   endif // !defined(UNDER_CE) && !defined(BOOST_ASIO_WINDOWS_RUNTIME)
 #  endif // defined(BOOST_ASIO_WINDOWS) || defined(__CYGWIN__)
 # endif // !defined(BOOST_ASIO_DISABLE_WINDOWS_OBJECT_HANDLE)
 #endif // !defined(BOOST_ASIO_HAS_WINDOWS_OBJECT_HANDLE)
