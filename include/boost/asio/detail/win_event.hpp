@@ -102,7 +102,11 @@ public:
     {
       state_ += 2;
       lock.unlock();
+#if defined (BOOST_ASIO_WINDOWS_RUNTIME)
+	  ::WaitForMultipleObjectsEx(2, events_, false, INFINITE, FALSE);
+#else
       ::WaitForMultipleObjects(2, events_, false, INFINITE);
+#endif // defined (BOOST_ASIO_WINDOWS_RUNTIME)
       lock.lock();
       state_ -= 2;
     }

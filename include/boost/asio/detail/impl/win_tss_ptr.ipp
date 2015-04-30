@@ -23,6 +23,10 @@
 #include <boost/asio/detail/win_tss_ptr.hpp>
 #include <boost/asio/error.hpp>
 
+# if defined(WINAPI_FAMILY) && (WINAPI_FAMILY == WINAPI_FAMILY_APP || WINAPI_FAMILY == WINAPI_FAMILY_PHONE_APP)
+#  include <Processthreadsapi.h>
+# endif // defined(WINAPI_FAMILY) && (WINAPI_FAMILY == WINAPI_FAMILY_APP || WINAPI_FAMILY == WINAPI_FAMILY_PHONE_APP)
+
 #include <boost/asio/detail/push_options.hpp>
 
 namespace boost {

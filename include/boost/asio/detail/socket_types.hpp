@@ -37,7 +37,11 @@
 # endif // defined(WINAPI_FAMILY)
 # include <winsock2.h>
 # include <ws2tcpip.h>
+# if defined(WINAPI_FAMILY) && (WINAPI_FAMILY == WINAPI_FAMILY_APP || WINAPI_FAMILY == WINAPI_FAMILY_PHONE_APP)
+   // Is WinRT app, do not include mswsock.h
+# else
 # include <mswsock.h>
+# endif // defined(WINAPI_FAMILY) && (WINAPI_FAMILY == WINAPI_FAMILY_APP || WINAPI_FAMILY == WINAPI_FAMILY_PHONE_APP)
 # if defined(BOOST_ASIO_WSPIAPI_H_DEFINED)
 #  undef _WSPIAPI_H_
 #  undef BOOST_ASIO_WSPIAPI_H_DEFINED
@@ -47,7 +51,9 @@
 #   pragma comment(lib, "ws2.lib")
 #  elif defined(_MSC_VER) || defined(__BORLANDC__)
 #   pragma comment(lib, "ws2_32.lib")
+#   if !defined(BOOST_ASIO_WINDOWS_RUNTIME)
 #   pragma comment(lib, "mswsock.lib")
+#   endif // !defined(BOOST_ASIO_WINDOWS_RUNTIME)
 #  endif // defined(_MSC_VER) || defined(__BORLANDC__)
 # endif // !defined(BOOST_ASIO_NO_DEFAULT_LINKED_LIBS)
 # include <boost/asio/detail/old_win_sdk_compat.hpp>

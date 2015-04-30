@@ -54,10 +54,12 @@ int win_mutex::do_init()
   {
 # if defined(UNDER_CE)
     ::InitializeCriticalSection(&crit_section_);
+# elif defined(BOOST_ASIO_WINDOWS_RUNTIME) 
+    ::InitializeCriticalSectionEx(&crit_section_, 0x80000000, 0);
 # else
     if (!::InitializeCriticalSectionAndSpinCount(&crit_section_, 0x80000000))
       return ::GetLastError();
-# endif
+# endif // defined(UNDER_CE)
   }
   __except(GetExceptionCode() == STATUS_NO_MEMORY
       ? EXCEPTION_EXECUTE_HANDLER : EXCEPTION_CONTINUE_SEARCH)

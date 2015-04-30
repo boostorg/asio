@@ -47,6 +47,9 @@ public:
   // Lock the mutex.
   void lock()
   {
+#if defined (BOOST_ASIO_WINDOWS_RUNTIME)
+    ::InitializeCriticalSectionEx(&crit_section_, 0, 0);
+#endif
     ::EnterCriticalSection(&crit_section_);
   }
 

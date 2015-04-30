@@ -317,7 +317,14 @@ void win_object_handle_service::wait(
     win_object_handle_service::implementation_type& impl,
     boost::system::error_code& ec)
 {
-  switch (::WaitForSingleObject(impl.handle_, INFINITE))
+  DWORD ret;
+
+#if defined (BOOST_ASIO_WINDOWS_RUNTIME)
+  ret = ::WaitForSingleObjectEx(thread_, INFINITE, false);
+#else
+  ret  =::WaitForSingleObject(thread_, INFINITE);
+#endif    // defined (BOOST_ASIO_WINDOWS_RUNTIME)
+  switch (ret)
   {
   case WAIT_FAILED:
     {
