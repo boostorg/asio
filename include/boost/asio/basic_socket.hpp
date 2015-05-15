@@ -544,6 +544,9 @@ public:
    * error occurs.
    *
    * @throws boost::system::system_error Thrown on failure.
+   *
+   * @note In the case of datagram socket returns the number of bytes
+   * contained in the next datagram, including zero for an empty datagram.
    */
   std::size_t available() const
   {
