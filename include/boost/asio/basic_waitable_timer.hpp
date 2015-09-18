@@ -123,7 +123,9 @@ namespace asio {
  */
 template <typename Clock,
     typename WaitTraits = boost::asio::wait_traits<Clock>,
-    typename WaitableTimerService = waitable_timer_service<Clock, WaitTraits> >
+    typename TimerSchedulerType = boost::asio::detail::timer_scheduler,
+    typename WaitableTimerService = waitable_timer_service<
+                                      Clock, WaitTraits, TimerSchedulerType> >
 class basic_waitable_timer
   : public basic_io_object<WaitableTimerService>
 {
@@ -139,6 +141,9 @@ public:
 
   /// The wait traits type.
   typedef WaitTraits traits_type;
+
+  /// The TimerSchedulerType.
+  typedef TimerSchedulerType timer_scheduler_type;
 
   /// Constructor.
   /**

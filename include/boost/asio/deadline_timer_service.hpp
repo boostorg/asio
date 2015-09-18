@@ -34,13 +34,14 @@ namespace asio {
 
 /// Default service implementation for a timer.
 template <typename TimeType,
-    typename TimeTraits = boost::asio::time_traits<TimeType> >
+    typename TimeTraits = boost::asio::time_traits<TimeType>,
+    typename TimerSchedulerType = boost::asio::detail::timer_scheduler>
 class deadline_timer_service
 #if defined(GENERATING_DOCUMENTATION)
   : public boost::asio::io_service::service
 #else
   : public boost::asio::detail::service_base<
-      deadline_timer_service<TimeType, TimeTraits> >
+      deadline_timer_service<TimeType, TimeTraits, TimerSchedulerType> >
 #endif
 {
 public:
@@ -48,6 +49,8 @@ public:
   /// The unique service identifier.
   static boost::asio::io_service::id id;
 #endif
+  /// The timer scheduler type
+  typedef TimerSchedulerType timer_scheduler_type;
 
   /// The time traits type.
   typedef TimeTraits traits_type;
@@ -60,7 +63,8 @@ public:
 
 private:
   // The type of the platform-specific implementation.
-  typedef detail::deadline_timer_service<traits_type> service_impl_type;
+  typedef detail::deadline_timer_service<
+    traits_type, timer_scheduler_type> service_impl_type;
 
 public:
   /// The implementation type of the deadline timer.
@@ -73,7 +77,8 @@ public:
   /// Construct a new timer service for the specified io_service.
   explicit deadline_timer_service(boost::asio::io_service& io_service)
     : boost::asio::detail::service_base<
-        deadline_timer_service<TimeType, TimeTraits> >(io_service),
+        deadline_timer_service<
+          TimeType, TimeTraits, TimerSchedulerType> >(io_service),
       service_impl_(io_service)
   {
   }

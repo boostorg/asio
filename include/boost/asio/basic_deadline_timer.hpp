@@ -122,7 +122,9 @@ namespace asio {
  */
 template <typename Time,
     typename TimeTraits = boost::asio::time_traits<Time>,
-    typename TimerService = deadline_timer_service<Time, TimeTraits> >
+    typename TimerSchedulerType = boost::asio::detail::timer_scheduler,
+    typename TimerService = deadline_timer_service<
+                              Time, TimeTraits, TimerSchedulerType> >
 class basic_deadline_timer
   : public basic_io_object<TimerService>
 {
@@ -132,6 +134,9 @@ public:
 
   /// The time type.
   typedef typename traits_type::time_type time_type;
+
+  /// The TimerSchedulerType.
+  typedef TimerSchedulerType timer_scheduler_type;
 
   /// The duration type.
   typedef typename traits_type::duration_type duration_type;

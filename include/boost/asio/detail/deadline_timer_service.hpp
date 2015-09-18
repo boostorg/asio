@@ -41,7 +41,7 @@ namespace boost {
 namespace asio {
 namespace detail {
 
-template <typename Time_Traits>
+template <typename Time_Traits, typename TimerSchedulerType>
 class deadline_timer_service
 {
 public:
@@ -63,7 +63,7 @@ public:
 
   // Constructor.
   deadline_timer_service(boost::asio::io_service& io_service)
-    : scheduler_(boost::asio::use_service<timer_scheduler>(io_service))
+    : scheduler_(boost::asio::use_service<TimerSchedulerType>(io_service))
   {
     scheduler_.init_task();
     scheduler_.add_timer_queue(timer_queue_);
