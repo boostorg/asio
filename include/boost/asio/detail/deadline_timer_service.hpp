@@ -51,6 +51,9 @@ public:
   // The duration type.
   typedef typename Time_Traits::duration_type duration_type;
 
+  // The timer scheduler type
+  typedef TimerSchedulerType timer_scheduler_type;
+
   // The implementation type of the timer. This type is dependent on the
   // underlying implementation of the timer service.
   struct implementation_type
@@ -217,7 +220,7 @@ private:
   timer_queue<Time_Traits> timer_queue_;
 
   // The object that schedules and executes timers. Usually a reactor.
-  timer_scheduler& scheduler_;
+  timer_scheduler_type& scheduler_;
 };
 
 } // namespace detail
