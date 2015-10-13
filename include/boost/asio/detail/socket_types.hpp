@@ -18,7 +18,11 @@
 #include <boost/asio/detail/config.hpp>
 
 #if defined(BOOST_ASIO_WINDOWS_RUNTIME)
-// Empty.
+# if _WIN32_WINNT >= 0x0A00
+#  include <winsock2.h>
+#  include <ws2tcpip.h>
+#  include <mswsock.h>
+# endif
 #elif defined(BOOST_ASIO_WINDOWS) || defined(__CYGWIN__)
 # if defined(_WINSOCKAPI_) && !defined(_WINSOCK2API_)
 #  error WinSock.h has already been included
@@ -89,15 +93,29 @@ namespace asio {
 namespace detail {
 
 #if defined(BOOST_ASIO_WINDOWS_RUNTIME)
+
 const int max_addr_v4_str_len = 256;
 const int max_addr_v6_str_len = 256;
 typedef unsigned __int32 u_long_type;
 typedef unsigned __int16 u_short_type;
+
+# if _WIN32_WINNT >= 0x0A00
+
+typedef in_addr in4_addr_type;
+typedef ip_mreq in4_inreq_type;
+typedef in6_addr in6_addr_type;
+typedef ipv6_mreq in6_mreq_type;
+
+# else
+
 struct in4_addr_type { u_long_type s_addr; };
 struct in4_mreq_type { in4_addr_type imr_multiaddr, imr_interface; };
 struct in6_addr_type { unsigned char s6_addr[16]; };
 struct in6_mreq_type { in6_addr_type ipv6mr_multiaddr;
   unsigned long ipv6mr_interface; };
+
+# endif
+
 struct socket_addr_type { int sa_family; };
 struct sockaddr_in4_type { int sin_family;
   in4_addr_type sin_addr; u_short_type sin_port; };
