@@ -225,8 +225,18 @@ public:
         }
 
         default:
-        if (bytes_transferred == ~std::size_t(0))
+        if (bytes_transferred == ~std::size_t(0)) {
+          if (want_ == engine::want_output) {
+            // Pass the result to the handler.
+            op_.call_handler(handler_,
+                core_.engine_.map_error_code(ec_),
+                ec_ ? 0 : bytes_transferred_);
+            return;
+          }
           bytes_transferred = 0; // Timer cancellation, no data transferred.
+          ec = boost::system::error_code();
+          continue;
+        }
         else if (!ec_)
           ec_ = ec;
 
