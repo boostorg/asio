@@ -61,6 +61,15 @@
 # define BOOST_ASIO_DECL
 #endif // !defined(BOOST_ASIO_DECL)
 
+// An attribute to mark unused variables to silence warnings
+#if defined(BOOST_ATTRIBUTE_UNUSED)
+# define BOOST_ASIO_ATTRIBUTE_UNUSED BOOST_ATTRIBUTE_UNUSED
+#elif defined(__GNUC__) && (__GNUC__ >= 4)
+# define BOOST_ASIO_ATTRIBUTE_UNUSED __attribute__((__unused__))
+#else
+# define BOOST_ASIO_ATTRIBUTE_UNUSED
+#endif
+
 // Microsoft Visual C++ detection.
 #if !defined(BOOST_ASIO_MSVC)
 # if defined(BOOST_ASIO_HAS_BOOST_CONFIG) && defined(BOOST_MSVC)
