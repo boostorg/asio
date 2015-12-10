@@ -59,7 +59,7 @@ void win_thread::join()
 void win_thread::start_thread(func_base* arg, unsigned int stack_size)
 {
   ::HANDLE entry_event = 0;
-  arg->entry_event_ = entry_event = ::CreateEvent(0, true, false, 0);
+  arg->entry_event_ = entry_event = ::CreateEventW(0, true, false, 0);
   if (!entry_event)
   {
     DWORD last_error = ::GetLastError();
@@ -69,7 +69,7 @@ void win_thread::start_thread(func_base* arg, unsigned int stack_size)
     boost::asio::detail::throw_error(ec, "thread.entry_event");
   }
 
-  arg->exit_event_ = exit_event_ = ::CreateEvent(0, true, false, 0);
+  arg->exit_event_ = exit_event_ = ::CreateEventW(0, true, false, 0);
   if (!exit_event_)
   {
     DWORD last_error = ::GetLastError();
