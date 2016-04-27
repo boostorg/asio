@@ -963,12 +963,14 @@
 #   endif // ((__GNUC__ == 3) && (__GNUC_MINOR__ >= 3)) || (__GNUC__ > 3)
 #  endif // defined(__GNUC__) && (defined(__i386__) || defined(__x86_64__))
 # endif // defined(__linux__)
-# if defined(BOOST_ASIO_MSVC) && defined(BOOST_ASIO_WINDOWS_RUNTIME)
-#  if (_MSC_VER >= 1700)
-#   define BOOST_ASIO_HAS_THREAD_KEYWORD_EXTENSION 1
-#   define BOOST_ASIO_THREAD_KEYWORD __declspec(thread)
-#  endif // (_MSC_VER >= 1700)
-# endif // defined(BOOST_ASIO_MSVC) && defined(BOOST_ASIO_WINDOWS_RUNTIME)
+# if defined(BOOST_ASIO_MSVC)
+#  if defined(BOOST_ASIO_WINDOWS_APP) || defined(BOOST_ASIO_WINDOWS_RUNTIME)
+#   if (_MSC_VER >= 1700)
+#    define BOOST_ASIO_HAS_THREAD_KEYWORD_EXTENSION 1
+#    define BOOST_ASIO_THREAD_KEYWORD __declspec(thread)
+#   endif // (_MSC_VER >= 1700)
+#  endif // defined(BOOST_ASIO_WINDOWS_APP) || defined(BOOST_ASIO_WINDOWS_RUNTIME)
+# endif // defined(BOOST_ASIO_MSVC)
 #endif // !defined(BOOST_ASIO_DISABLE_THREAD_KEYWORD_EXTENSION)
 #if !defined(BOOST_ASIO_THREAD_KEYWORD)
 # define BOOST_ASIO_THREAD_KEYWORD __thread
