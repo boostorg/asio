@@ -103,7 +103,7 @@ public:
     std::ostringstream os;
     os << impl->identifier << ": " << message;
 
-    // Pass the work of opening the file to the background thread.
+    // Pass the work of writing to the file to the background thread.
     work_io_service_.post(boost::bind(
           &logger_service::log_impl, this, os.str()));
   }
