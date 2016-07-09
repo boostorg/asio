@@ -91,6 +91,7 @@ boostbook asio
   :
     asio_doc
   :
+    <name>../../../doc/html
     <xsl:param>chapter.autolabel=0
     <xsl:param>chunk.section.depth=8
     <xsl:param>chunk.first.sections=1
