@@ -1750,9 +1750,9 @@ After the `async_read_until` operation completes successfully, the buffer `b` co
    { 'a', 'b', ..., 'c', '\n', 'd', 'e', ... } 
 
 
-The call to `std::getline` then extracts the data up to and including the delimiter, so that the string `line` contains: 
+The call to `std::getline` then extracts the data up to the newline, so that the string `line` contains: 
 
-   { 'a', 'b', ..., 'c', '\n' } 
+   { 'a', 'b', ..., 'c' } 
 
 
 The remaining data is left in the buffer `b` as follows: 
@@ -1855,9 +1855,9 @@ After the `async_read_until` operation completes successfully, the buffer `b` co
    { 'a', 'b', ..., 'c', '\r', '\n', 'd', 'e', ... } 
 
 
-The call to `std::getline` then extracts the data up to and including the delimiter, so that the string `line` contains: 
+The call to `std::getline` then extracts the data up to the newline, so that the string `line` contains: 
 
-   { 'a', 'b', ..., 'c', '\r', '\n' } 
+   { 'a', 'b', ..., 'c', '\r' } 
 
 
 The remaining data is left in the buffer `b` as follows: 
@@ -1961,9 +1961,9 @@ After the `async_read_until` operation completes successfully, the buffer `b` co
    { 'a', 'b', ..., 'c', '\r', '\n', 'd', 'e', ... } 
 
 
-The call to `std::getline` then extracts the data up to and including the match, so that the string `line` contains: 
+The call to `std::getline` then extracts the data up to the newline, so that the string `line` contains: 
 
-   { 'a', 'b', ..., 'c', '\r', '\n' } 
+   { 'a', 'b', ..., 'c', '\r' } 
 
 
 The remaining data is left in the buffer `b` as follows: 
@@ -82754,9 +82754,9 @@ After the `read_until` operation completes successfully, the buffer `b` contains
    { 'a', 'b', ..., 'c', '\n', 'd', 'e', ... } 
 
 
-The call to `std::getline` then extracts the data up to and including the delimiter, so that the string `line` contains: 
+The call to `std::getline` then extracts the data up to the newline, so that the string `line` contains: 
 
-   { 'a', 'b', ..., 'c', '\n' } 
+   { 'a', 'b', ..., 'c' } 
 
 
 The remaining data is left in the buffer `b` as follows: 
@@ -82908,9 +82908,9 @@ After the `read_until` operation completes successfully, the buffer `b` contains
    { 'a', 'b', ..., 'c', '\r', '\n', 'd', 'e', ... } 
 
 
-The call to `std::getline` then extracts the data up to and including the delimiter, so that the string `line` contains: 
+The call to `std::getline` then extracts the data up to the newline, so that the string `line` contains: 
 
-   { 'a', 'b', ..., 'c', '\r', '\n' } 
+   { 'a', 'b', ..., 'c', '\r' } 
 
 
 The remaining data is left in the buffer `b` as follows: 
@@ -83062,9 +83062,9 @@ After the `read_until` operation completes successfully, the buffer `b` contains
    { 'a', 'b', ..., 'c', '\r', '\n', 'd', 'e', ... } 
 
 
-The call to `std::getline` then extracts the data up to and including the match, so that the string `line` contains: 
+The call to `std::getline` then extracts the data up to newline, so that the string `line` contains: 
 
-   { 'a', 'b', ..., 'c', '\r', '\n' } 
+   { 'a', 'b', ..., 'c', '\r' } 
 
 
 The remaining data is left in the buffer `b` as follows: 
