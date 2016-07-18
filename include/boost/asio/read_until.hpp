@@ -112,9 +112,9 @@ struct is_match_condition
  * After the @c read_until operation completes successfully, the buffer @c b
  * contains the delimiter:
  * @code { 'a', 'b', ..., 'c', '\n', 'd', 'e', ... } @endcode
- * The call to @c std::getline then extracts the data up to and including the
- * delimiter, so that the string @c line contains:
- * @code { 'a', 'b', ..., 'c', '\n' } @endcode
+ * The call to @c std::getline then extracts the data up to the newline, so 
+ * that the string @c line contains:
+ * @code { 'a', 'b', ..., 'c' } @endcode
  * The remaining data is left in the buffer @c b as follows:
  * @code { 'd', 'e', ... } @endcode
  * This data may be the start of a new line, to be extracted by a subsequent
@@ -199,9 +199,9 @@ std::size_t read_until(SyncReadStream& s,
  * After the @c read_until operation completes successfully, the buffer @c b
  * contains the delimiter:
  * @code { 'a', 'b', ..., 'c', '\r', '\n', 'd', 'e', ... } @endcode
- * The call to @c std::getline then extracts the data up to and including the
- * delimiter, so that the string @c line contains:
- * @code { 'a', 'b', ..., 'c', '\r', '\n' } @endcode
+ * The call to @c std::getline then extracts the data up to the newline, so 
+ * that the string @c line contains:
+ * @code { 'a', 'b', ..., 'c', '\r' } @endcode
  * The remaining data is left in the buffer @c b as follows:
  * @code { 'd', 'e', ... } @endcode
  * This data may be the start of a new line, to be extracted by a subsequent
@@ -291,9 +291,9 @@ std::size_t read_until(SyncReadStream& s,
  * After the @c read_until operation completes successfully, the buffer @c b
  * contains the data which matched the regular expression:
  * @code { 'a', 'b', ..., 'c', '\r', '\n', 'd', 'e', ... } @endcode
- * The call to @c std::getline then extracts the data up to and including the
- * match, so that the string @c line contains:
- * @code { 'a', 'b', ..., 'c', '\r', '\n' } @endcode
+ * The call to @c std::getline then extracts the data up to the newline, so 
+ * that the string @c line contains:
+ * @code { 'a', 'b', ..., 'c', '\r' } @endcode
  * The remaining data is left in the buffer @c b as follows:
  * @code { 'd', 'e', ... } @endcode
  * This data may be the start of a new line, to be extracted by a subsequent
@@ -584,9 +584,9 @@ std::size_t read_until(SyncReadStream& s,
  * After the @c async_read_until operation completes successfully, the buffer
  * @c b contains the delimiter:
  * @code { 'a', 'b', ..., 'c', '\n', 'd', 'e', ... } @endcode
- * The call to @c std::getline then extracts the data up to and including the
- * delimiter, so that the string @c line contains:
- * @code { 'a', 'b', ..., 'c', '\n' } @endcode
+ * The call to @c std::getline then extracts the data up to the newline, so 
+ * that the string @c line contains:
+ * @code { 'a', 'b', ..., 'c' } @endcode
  * The remaining data is left in the buffer @c b as follows:
  * @code { 'd', 'e', ... } @endcode
  * This data may be the start of a new line, to be extracted by a subsequent
@@ -669,9 +669,9 @@ async_read_until(AsyncReadStream& s,
  * After the @c async_read_until operation completes successfully, the buffer
  * @c b contains the delimiter:
  * @code { 'a', 'b', ..., 'c', '\r', '\n', 'd', 'e', ... } @endcode
- * The call to @c std::getline then extracts the data up to and including the
- * delimiter, so that the string @c line contains:
- * @code { 'a', 'b', ..., 'c', '\r', '\n' } @endcode
+ * The call to @c std::getline then extracts the data up to the newline, so 
+ * that the string @c line contains:
+ * @code { 'a', 'b', ..., 'c', '\r' } @endcode
  * The remaining data is left in the buffer @c b as follows:
  * @code { 'd', 'e', ... } @endcode
  * This data may be the start of a new line, to be extracted by a subsequent
@@ -761,9 +761,9 @@ async_read_until(AsyncReadStream& s,
  * After the @c async_read_until operation completes successfully, the buffer
  * @c b contains the data which matched the regular expression:
  * @code { 'a', 'b', ..., 'c', '\r', '\n', 'd', 'e', ... } @endcode
- * The call to @c std::getline then extracts the data up to and including the
- * match, so that the string @c line contains:
- * @code { 'a', 'b', ..., 'c', '\r', '\n' } @endcode
+ * The call to @c std::getline then extracts the data up to the newline, so 
+ * that the string @c line contains:
+ * @code { 'a', 'b', ..., 'c', '\r' } @endcode
  * The remaining data is left in the buffer @c b as follows:
  * @code { 'd', 'e', ... } @endcode
  * This data may be the start of a new line, to be extracted by a subsequent
