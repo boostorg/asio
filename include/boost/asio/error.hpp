@@ -22,6 +22,9 @@
 #if defined(BOOST_ASIO_WINDOWS) \
   || defined(__CYGWIN__) \
   || defined(BOOST_ASIO_WINDOWS_RUNTIME)
+# if defined(__CYGWIN__)
+#  include <_mingw_mac.h>
+# endif
 # include <winerror.h>
 #else
 # include <cerrno>
