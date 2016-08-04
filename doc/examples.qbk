@@ -364,6 +364,9 @@ and asynchronous operations.
 * [@boost_asio/example/cpp11/echo/blocking_tcp_echo_server.cpp]
 * [@boost_asio/example/cpp11/echo/blocking_udp_echo_client.cpp]
 * [@boost_asio/example/cpp11/echo/blocking_udp_echo_server.cpp]
+* [@boost_asio/example/cpp11/echo/byte_buffer.hpp]
+* [@boost_asio/example/cpp11/echo/echo_client.cpp]
+* [@boost_asio/example/cpp11/echo/echo_server.cpp]
 
 
 [heading Futures]
