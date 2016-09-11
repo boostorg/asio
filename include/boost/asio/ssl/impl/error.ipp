@@ -52,6 +52,16 @@ const boost::system::error_category& get_ssl_category()
 } // namespace error
 namespace ssl {
 namespace error {
+
+#if (OPENSSL_VERSION_NUMBER < 0x10100000L) && !defined(OPENSSL_IS_BORINGSSL)
+
+const boost::system::error_category& get_stream_category()
+{
+  return boost::asio::error::get_ssl_category();
+}
+
+#else
+
 namespace detail {
 
 class stream_category : public boost::system::error_category
@@ -79,6 +89,8 @@ const boost::system::error_category& get_stream_category()
   static detail::stream_category instance;
   return instance;
 }
+
+#endif
 
 } // namespace error
 } // namespace ssl
