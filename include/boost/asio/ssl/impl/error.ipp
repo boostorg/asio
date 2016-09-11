@@ -24,7 +24,6 @@
 namespace boost {
 namespace asio {
 namespace error {
-
 namespace detail {
 
 class ssl_category : public boost::system::error_category
@@ -51,6 +50,38 @@ const boost::system::error_category& get_ssl_category()
 }
 
 } // namespace error
+namespace ssl {
+namespace error {
+namespace detail {
+
+class stream_category : public boost::system::error_category
+{
+public:
+  const char* name() const BOOST_ASIO_ERROR_CATEGORY_NOEXCEPT
+  {
+    return "asio.ssl.stream";
+  }
+
+  std::string message(int value) const
+  {
+    switch (value)
+    {
+    case stream_truncated: return "stream truncated";
+    default: return "asio.ssl.stream error";
+    }
+  }
+};
+
+} // namespace detail
+
+const boost::system::error_category& get_stream_category()
+{
+  static detail::stream_category instance;
+  return instance;
+}
+
+} // namespace error
+} // namespace ssl
 } // namespace asio
 } // namespace boost
 

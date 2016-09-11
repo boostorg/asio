@@ -203,9 +203,7 @@ const boost::system::error_code& engine::map_error_code(
   // If there's data yet to be read, it's an error.
   if (BIO_wpending(ext_bio_))
   {
-    ec = boost::system::error_code(
-        ERR_PACK(ERR_LIB_SSL, 0, SSL_R_SHORT_READ),
-        boost::asio::error::get_ssl_category());
+    ec = boost::asio::ssl::error::stream_truncated;
     return ec;
   }
 
@@ -217,9 +215,7 @@ const boost::system::error_code& engine::map_error_code(
   // Otherwise, the peer should have negotiated a proper shutdown.
   if ((::SSL_get_shutdown(ssl_) & SSL_RECEIVED_SHUTDOWN) == 0)
   {
-    ec = boost::system::error_code(
-        ERR_PACK(ERR_LIB_SSL, 0, SSL_R_SHORT_READ),
-        boost::asio::error::get_ssl_category());
+    ec = boost::asio::ssl::error::stream_truncated;
   }
 
   return ec;
