@@ -123,6 +123,8 @@ Iterator connect(basic_socket<Protocol, SocketService>& s,
       if (!ec)
         return iter;
     }
+    else
+      break;
   }
 
   if (!ec)
