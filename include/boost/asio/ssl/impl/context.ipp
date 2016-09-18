@@ -3,7 +3,7 @@
 // ~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2005 Voipster / Indrek dot Juhani at voipster dot com
-// Copyright (c) 2005-2015 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2005-2016 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -71,7 +71,8 @@ context::context(context::method m)
 
   switch (m)
   {
-#if defined(OPENSSL_NO_SSL2)
+#if defined(OPENSSL_NO_SSL2) \
+  || (OPENSSL_VERSION_NUMBER >= 0x10100000L)
   case context::sslv2:
   case context::sslv2_client:
   case context::sslv2_server:
@@ -79,6 +80,7 @@ context::context(context::method m)
         boost::asio::error::invalid_argument, "context");
     break;
 #else // defined(OPENSSL_NO_SSL2)
+      // || (OPENSSL_VERSION_NUMBER >= 0x10100000L)
   case context::sslv2:
     handle_ = ::SSL_CTX_new(::SSLv2_method());
     break;
@@ -89,6 +91,7 @@ context::context(context::method m)
     handle_ = ::SSL_CTX_new(::SSLv2_server_method());
     break;
 #endif // defined(OPENSSL_NO_SSL2)
+       // || (OPENSSL_VERSION_NUMBER >= 0x10100000L)
 #if defined(OPENSSL_NO_SSL3)
   case context::sslv3:
   case context::sslv3_client:
@@ -107,6 +110,7 @@ context::context(context::method m)
     handle_ = ::SSL_CTX_new(::SSLv3_server_method());
     break;
 #endif // defined(OPENSSL_NO_SSL3)
+#if (OPENSSL_VERSION_NUMBER < 0x10100000L)
   case context::tlsv1:
     handle_ = ::SSL_CTX_new(::TLSv1_method());
     break;
@@ -116,6 +120,7 @@ context::context(context::method m)
   case context::tlsv1_server:
     handle_ = ::SSL_CTX_new(::TLSv1_server_method());
     break;
+#endif // (OPENSSL_VERSION_NUMBER < 0x10100000L)
   case context::sslv23:
     handle_ = ::SSL_CTX_new(::SSLv23_method());
     break;
@@ -125,6 +130,7 @@ context::context(context::method m)
   case context::sslv23_server:
     handle_ = ::SSL_CTX_new(::SSLv23_server_method());
     break;
+#if (OPENSSL_VERSION_NUMBER < 0x10100000L)
 #if defined(SSL_TXT_TLSV1_1)
   case context::tlsv11:
     handle_ = ::SSL_CTX_new(::TLSv1_1_method());
@@ -161,6 +167,23 @@ context::context(context::method m)
         boost::asio::error::invalid_argument, "context");
     break;
 #endif // defined(SSL_TXT_TLSV1_2) 
+#else // (OPENSSL_VERSION_NUMBER < 0x10100000L)
+  case context::tlsv1:
+  case context::tlsv11:
+  case context::tlsv12:
+    handle_ = ::SSL_CTX_new(::TLS_method());
+    break;
+  case context::tlsv1_client:
+  case context::tlsv11_client:
+  case context::tlsv12_client:
+    handle_ = ::SSL_CTX_new(::TLS_client_method());
+    break;
+  case context::tlsv1_server:
+  case context::tlsv11_server:
+  case context::tlsv12_server:
+    handle_ = ::SSL_CTX_new(::TLS_server_method());
+    break;
+#endif // (OPENSSL_VERSION_NUMBER < 0x10100000L)
   default:
     handle_ = ::SSL_CTX_new(0);
     break;
@@ -205,13 +228,22 @@ context::~context()
 {
   if (handle_)
   {
-    if (handle_->default_passwd_callback_userdata)
+#if (OPENSSL_VERSION_NUMBER >= 0x10100000L)
+    void* cb_userdata = ::SSL_CTX_get_default_passwd_cb_userdata(handle_);
+#else // (OPENSSL_VERSION_NUMBER >= 0x10100000L)
+    void* cb_userdata = handle_->default_passwd_callback_userdata;
+#endif // (OPENSSL_VERSION_NUMBER >= 0x10100000L)
+    if (cb_userdata)
     {
       detail::password_callback_base* callback =
         static_cast<detail::password_callback_base*>(
-            handle_->default_passwd_callback_userdata);
+            cb_userdata);
       delete callback;
+#if (OPENSSL_VERSION_NUMBER >= 0x10100000L)
+      ::SSL_CTX_set_default_passwd_cb_userdata(handle_, 0);
+#else // (OPENSSL_VERSION_NUMBER >= 0x10100000L)
       handle_->default_passwd_callback_userdata = 0;
+#endif // (OPENSSL_VERSION_NUMBER >= 0x10100000L)
     }
 
     if (SSL_CTX_get_app_data(handle_))
@@ -546,10 +578,17 @@ boost::system::error_code context::use_certificate_chain(
   bio_cleanup bio = { make_buffer_bio(chain) };
   if (bio.p)
   {
+#if (OPENSSL_VERSION_NUMBER >= 0x10100000L)
+    pem_password_cb* callback = ::SSL_CTX_get_default_passwd_cb(handle_);
+    void* cb_userdata = ::SSL_CTX_get_default_passwd_cb_userdata(handle_);
+#else // (OPENSSL_VERSION_NUMBER >= 0x10100000L)
+    pem_password_cb* callback = handle_->default_passwd_callback;
+    void* cb_userdata = handle_->default_passwd_callback_userdata;
+#endif // (OPENSSL_VERSION_NUMBER >= 0x10100000L)
     x509_cleanup cert = {
       ::PEM_read_bio_X509_AUX(bio.p, 0,
-          handle_->default_passwd_callback,
-          handle_->default_passwd_callback_userdata) };
+          callback,
+          cb_userdata) };
     if (!cert.p)
     {
       ec = boost::system::error_code(ERR_R_PEM_LIB,
@@ -577,8 +616,8 @@ boost::system::error_code context::use_certificate_chain(
 #endif // (OPENSSL_VERSION_NUMBER >= 0x10002000L)
 
     while (X509* cacert = ::PEM_read_bio_X509(bio.p, 0,
-          handle_->default_passwd_callback,
-          handle_->default_passwd_callback_userdata))
+          callback,
+          cb_userdata))
     {
       if (!::SSL_CTX_add_extra_chain_cert(handle_, cacert))
       {
@@ -643,6 +682,14 @@ boost::system::error_code context::use_private_key(
 {
   ::ERR_clear_error();
 
+#if (OPENSSL_VERSION_NUMBER >= 0x10100000L)
+    pem_password_cb* callback = ::SSL_CTX_get_default_passwd_cb(handle_);
+    void* cb_userdata = ::SSL_CTX_get_default_passwd_cb_userdata(handle_);
+#else // (OPENSSL_VERSION_NUMBER >= 0x10100000L)
+    pem_password_cb* callback = handle_->default_passwd_callback;
+    void* cb_userdata = handle_->default_passwd_callback_userdata;
+#endif // (OPENSSL_VERSION_NUMBER >= 0x10100000L)
+
   bio_cleanup bio = { make_buffer_bio(private_key) };
   if (bio.p)
   {
@@ -654,8 +701,8 @@ boost::system::error_code context::use_private_key(
       break;
     case context_base::pem:
       evp_private_key.p = ::PEM_read_bio_PrivateKey(
-          bio.p, 0, handle_->default_passwd_callback,
-          handle_->default_passwd_callback_userdata);
+          bio.p, 0, callback,
+          cb_userdata);
       break;
     default:
       {
@@ -702,6 +749,14 @@ boost::system::error_code context::use_rsa_private_key(
 {
   ::ERR_clear_error();
 
+#if (OPENSSL_VERSION_NUMBER >= 0x10100000L)
+    pem_password_cb* callback = ::SSL_CTX_get_default_passwd_cb(handle_);
+    void* cb_userdata = ::SSL_CTX_get_default_passwd_cb_userdata(handle_);
+#else // (OPENSSL_VERSION_NUMBER >= 0x10100000L)
+    pem_password_cb* callback = handle_->default_passwd_callback;
+    void* cb_userdata = handle_->default_passwd_callback_userdata;
+#endif // (OPENSSL_VERSION_NUMBER >= 0x10100000L)
+
   bio_cleanup bio = { make_buffer_bio(private_key) };
   if (bio.p)
   {
@@ -713,8 +768,8 @@ boost::system::error_code context::use_rsa_private_key(
       break;
     case context_base::pem:
       rsa_private_key.p = ::PEM_read_bio_RSAPrivateKey(
-          bio.p, 0, handle_->default_passwd_callback,
-          handle_->default_passwd_callback_userdata);
+          bio.p, 0, callback,
+          cb_userdata);
       break;
     default:
       {
@@ -933,11 +988,17 @@ int context::verify_callback_function(int preverified, X509_STORE_CTX* ctx)
 boost::system::error_code context::do_set_password_callback(
     detail::password_callback_base* callback, boost::system::error_code& ec)
 {
-  if (handle_->default_passwd_callback_userdata)
-    delete static_cast<detail::password_callback_base*>(
-        handle_->default_passwd_callback_userdata);
-
+#if (OPENSSL_VERSION_NUMBER >= 0x10100000L)
+  void* old_callback = ::SSL_CTX_get_default_passwd_cb_userdata(handle_);
+  ::SSL_CTX_set_default_passwd_cb_userdata(handle_, callback);
+#else // (OPENSSL_VERSION_NUMBER >= 0x10100000L)
+  void* old_callback = handle_->default_passwd_callback_userdata;
   handle_->default_passwd_callback_userdata = callback;
+#endif // (OPENSSL_VERSION_NUMBER >= 0x10100000L)
+
+  if (old_callback)
+    delete static_cast<detail::password_callback_base*>(
+        old_callback);
 
   SSL_CTX_set_default_passwd_cb(handle_, &context::password_callback_function);
 

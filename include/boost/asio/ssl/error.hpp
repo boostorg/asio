@@ -2,7 +2,7 @@
 // ssl/error.hpp
 // ~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2015 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2016 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -26,6 +26,7 @@ namespace error {
 
 enum ssl_errors
 {
+  // Error numbers are those produced by openssl.
 };
 
 extern BOOST_ASIO_DECL
@@ -35,6 +36,29 @@ static const boost::system::error_category& ssl_category
   = boost::asio::error::get_ssl_category();
 
 } // namespace error
+namespace ssl {
+namespace error {
+
+enum stream_errors
+{
+#if defined(GENERATING_DOCUMENTATION)
+  /// The underlying stream closed before the ssl stream gracefully shut down.
+  stream_truncated
+#elif (OPENSSL_VERSION_NUMBER < 0x10100000L) && !defined(OPENSSL_IS_BORINGSSL)
+  stream_truncated = ERR_PACK(ERR_LIB_SSL, 0, SSL_R_SHORT_READ)
+#else
+  stream_truncated = 1
+#endif
+};
+
+extern BOOST_ASIO_DECL
+const boost::system::error_category& get_stream_category();
+
+static const boost::system::error_category& stream_category
+  = boost::asio::ssl::error::get_stream_category();
+
+} // namespace error
+} // namespace ssl
 } // namespace asio
 } // namespace boost
 
@@ -42,6 +66,11 @@ namespace boost {
 namespace system {
 
 template<> struct is_error_code_enum<boost::asio::error::ssl_errors>
+{
+  static const bool value = true;
+};
+
+template<> struct is_error_code_enum<boost::asio::ssl::error::stream_errors>
 {
   static const bool value = true;
 };
@@ -60,6 +89,17 @@ inline boost::system::error_code make_error_code(ssl_errors e)
 }
 
 } // namespace error
+namespace ssl {
+namespace error {
+
+inline boost::system::error_code make_error_code(stream_errors e)
+{
+  return boost::system::error_code(
+      static_cast<int>(e), get_stream_category());
+}
+
+} // namespace error
+} // namespace ssl
 } // namespace asio
 } // namespace boost
 
