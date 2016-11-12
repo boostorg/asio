@@ -109,6 +109,6 @@ struct handler_type<ReturnType(Arg1, Arg2, Arg3, Arg4, Arg5), Signature>
 #include <boost/asio/detail/pop_options.hpp>
 
 #define BOOST_ASIO_HANDLER_TYPE(h, sig) \
-  typename handler_type<h, sig>::type
+  typename ::boost::asio::handler_type<h, sig>::type
 
 #endif // BOOST_ASIO_HANDLER_TYPE_HPP
