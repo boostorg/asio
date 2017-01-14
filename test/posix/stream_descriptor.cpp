@@ -60,14 +60,14 @@ void test()
     posix::stream_descriptor descriptor2(ios, native_descriptor1);
 
 #if defined(BOOST_ASIO_HAS_MOVE)
-    posix::stream_descriptor descriptor3(std::move(descriptor3));
+    posix::stream_descriptor descriptor3(std::move(descriptor1));
 #endif // defined(BOOST_ASIO_HAS_MOVE)
 
     // basic_stream_descriptor operators.
 
 #if defined(BOOST_ASIO_HAS_MOVE)
     descriptor1 = posix::stream_descriptor(ios);
-    descriptor1 = std::move(descriptor2);
+    descriptor1 = std::move(descriptor3);
 #endif // defined(BOOST_ASIO_HAS_MOVE)
 
     // basic_io_object functions.
