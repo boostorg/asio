@@ -110,11 +110,7 @@ boostbook asio
 explicit asio ;
 
 ###############################################################################
-alias boostdoc
-    : asio_doc
-    :
-    : <dependency>asio_doc_images <dependency>asio_examples
-    : ;
+alias boostdoc ;
 explicit boostdoc ;
-alias boostrelease ;
+alias boostrelease : asio ;
 explicit boostrelease ;
