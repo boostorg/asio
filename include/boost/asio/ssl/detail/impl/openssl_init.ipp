@@ -36,11 +36,11 @@ class openssl_init_base::do_init
 public:
   do_init()
   {
+#if (OPENSSL_VERSION_NUMBER < 0x10100000L)
     ::SSL_library_init();
     ::SSL_load_error_strings();        
     ::OpenSSL_add_all_algorithms();
 
-#if (OPENSSL_VERSION_NUMBER < 0x10100000L)
     mutexes_.resize(::CRYPTO_num_locks());
     for (size_t i = 0; i < mutexes_.size(); ++i)
       mutexes_[i].reset(new boost::asio::detail::mutex);
