@@ -30,13 +30,13 @@
 #   define BOOST_ASIO_WSPIAPI_H_DEFINED
 #  endif // !defined(_WSPIAPI_H_)
 # endif // defined(__BORLANDC__)
+# include <winsock2.h>
+# include <ws2tcpip.h>
 # if defined(WINAPI_FAMILY)
 #  if ((WINAPI_FAMILY & WINAPI_PARTITION_DESKTOP) != 0)
 #   include <windows.h>
 #  endif // ((WINAPI_FAMILY & WINAPI_PARTITION_DESKTOP) != 0)
 # endif // defined(WINAPI_FAMILY)
-# include <winsock2.h>
-# include <ws2tcpip.h>
 # if !defined(BOOST_ASIO_WINDOWS_APP)
 #  include <mswsock.h>
 # endif // !defined(BOOST_ASIO_WINDOWS_APP)
