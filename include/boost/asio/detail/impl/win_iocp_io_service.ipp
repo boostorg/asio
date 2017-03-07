@@ -520,6 +520,12 @@ void win_iocp_io_service::update_timeout()
     long timeout_usec = timer_queues_.wait_duration_usec(max_timeout_usec);
     if (timeout_usec < max_timeout_usec)
     {
+#if defined(BOOST_ASIO_ENABLE_CPU_TIMER_TRADE_OFF)
+      if (timeout_usec < 1000)
+      {
+        timeout_usec = -1;
+      }
+#endif
       LARGE_INTEGER timeout;
       timeout.QuadPart = -timeout_usec;
       timeout.QuadPart *= 10;
