@@ -102,6 +102,11 @@ address& address::operator=(const boost::asio::ip::address_v6& ipv6_address)
 
 boost::asio::ip::address_v4 address::to_v4() const
 {
+  if (type_ == ipv6) 
+  {
+    return ipv6_address_.to_v4();
+  }
+
   if (type_ != ipv4)
   {
     std::bad_cast ex;
