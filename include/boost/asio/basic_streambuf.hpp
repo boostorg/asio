@@ -32,6 +32,10 @@
 
 #include <boost/asio/detail/push_options.hpp>
 
+#ifndef ASIO_PREFERRED_READ_SIZE
+# define ASIO_PREFERRED_READ_SIZE 512
+#endif
+
 namespace boost {
 namespace asio {
 
@@ -346,7 +350,7 @@ private:
       basic_streambuf& sb, std::size_t max_size)
   {
     return std::min<std::size_t>(
-        std::max<std::size_t>(512, sb.buffer_.capacity() - sb.size()),
+		std::max<std::size_t>(ASIO_PREFERRED_READ_SIZE, sb.buffer_.capacity() - sb.size()),
         std::min<std::size_t>(max_size, sb.max_size() - sb.size()));
   }
 };
@@ -357,7 +361,7 @@ template <typename Allocator>
 inline std::size_t read_size_helper(
     basic_streambuf<Allocator>& sb, std::size_t max_size)
 {
-  return std::min<std::size_t>(512,
+  return std::min<std::size_t>(ASIO_PREFERRED_READ_SIZE,
       std::min<std::size_t>(max_size, sb.max_size() - sb.size()));
 }
 
