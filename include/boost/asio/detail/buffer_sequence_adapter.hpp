@@ -31,7 +31,7 @@ class buffer_sequence_adapter_base
 protected:
 #if defined(BOOST_ASIO_WINDOWS_RUNTIME)
   // The maximum number of buffers to support in a single operation.
-  enum { max_buffers = 1 };
+  enum _ { max_buffers = 1 };
 
   typedef Windows::Storage::Streams::IBuffer^ native_buffer_type;
 
@@ -44,7 +44,7 @@ protected:
       const boost::asio::const_buffer& buffer);
 #elif defined(BOOST_ASIO_WINDOWS) || defined(__CYGWIN__)
   // The maximum number of buffers to support in a single operation.
-  enum { max_buffers = 64 < max_iov_len ? 64 : max_iov_len };
+  enum _ { max_buffers = 64 < max_iov_len ? 64 : max_iov_len };
 
   typedef WSABUF native_buffer_type;
 
@@ -63,7 +63,7 @@ protected:
   }
 #else // defined(BOOST_ASIO_WINDOWS) || defined(__CYGWIN__)
   // The maximum number of buffers to support in a single operation.
-  enum { max_buffers = 64 < max_iov_len ? 64 : max_iov_len };
+  enum _ { max_buffers = 64 < max_iov_len ? 64 : max_iov_len };
 
   typedef iovec native_buffer_type;
 
@@ -106,7 +106,7 @@ public:
   {
     typename Buffers::const_iterator iter = buffer_sequence.begin();
     typename Buffers::const_iterator end = buffer_sequence.end();
-    for (; iter != end && count_ < max_buffers; ++iter, ++count_)
+    for (; iter != end && count_ < static_cast< std::size_t >(max_buffers); ++iter, ++count_)
     {
       Buffer buffer(*iter);
       init_native_buffer(buffers_[count_], buffer);
@@ -134,7 +134,7 @@ public:
     typename Buffers::const_iterator iter = buffer_sequence.begin();
     typename Buffers::const_iterator end = buffer_sequence.end();
     std::size_t i = 0;
-    for (; iter != end && i < max_buffers; ++iter, ++i)
+    for (; iter != end && i < static_cast< std::size_t >(max_buffers); ++iter, ++i)
       if (boost::asio::buffer_size(Buffer(*iter)) > 0)
         return false;
     return true;

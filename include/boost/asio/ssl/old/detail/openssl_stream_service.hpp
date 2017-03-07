@@ -46,7 +46,7 @@ class openssl_stream_service
   : public boost::asio::detail::service_base<openssl_stream_service>
 {
 private:
-  enum { max_buffer_size = INT_MAX };
+  enum _ { max_buffer_size = INT_MAX };
 
   //Base handler for asyncrhonous operations
   template <typename Stream>
@@ -338,8 +338,8 @@ public:
           boost::asio::const_buffer, Const_Buffers>::first(buffers);
 
       std::size_t buffer_size = boost::asio::buffer_size(buffer);
-      if (buffer_size > max_buffer_size)
-        buffer_size = max_buffer_size;
+      if (buffer_size > static_cast< std::size_t >(max_buffer_size))
+        buffer_size = static_cast< std::size_t >(max_buffer_size);
       else if (buffer_size == 0)
       {
         ec = boost::system::error_code();
@@ -381,8 +381,8 @@ public:
         boost::asio::const_buffer, Const_Buffers>::first(buffers);
 
     std::size_t buffer_size = boost::asio::buffer_size(buffer);
-    if (buffer_size > max_buffer_size)
-      buffer_size = max_buffer_size;
+    if (buffer_size > static_cast< std::size_t >(max_buffer_size))
+      buffer_size = static_cast< std::size_t >(max_buffer_size);
     else if (buffer_size == 0)
     {
       get_io_service().post(boost::asio::detail::bind_handler(
@@ -431,8 +431,8 @@ public:
           boost::asio::mutable_buffer, Mutable_Buffers>::first(buffers);
 
       std::size_t buffer_size = boost::asio::buffer_size(buffer);
-      if (buffer_size > max_buffer_size)
-        buffer_size = max_buffer_size;
+      if (buffer_size > static_cast< std::size_t >(max_buffer_size))
+        buffer_size = static_cast< std::size_t >(max_buffer_size);
       else if (buffer_size == 0)
       {
         ec = boost::system::error_code();
@@ -474,8 +474,8 @@ public:
         boost::asio::mutable_buffer, Mutable_Buffers>::first(buffers);
 
     std::size_t buffer_size = boost::asio::buffer_size(buffer);
-    if (buffer_size > max_buffer_size)
-      buffer_size = max_buffer_size;
+    if (buffer_size > static_cast< std::size_t >(max_buffer_size))
+      buffer_size = static_cast< std::size_t >(max_buffer_size);
     else if (buffer_size == 0)
     {
       get_io_service().post(boost::asio::detail::bind_handler(
