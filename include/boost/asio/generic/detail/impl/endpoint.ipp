@@ -34,7 +34,7 @@ namespace detail {
 
 endpoint::endpoint()
 {
-  init(0, 0, 0);
+  init(nullptr, 0, 0);
 }
 
 endpoint::endpoint(const void* sock_addr,
