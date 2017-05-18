@@ -283,6 +283,14 @@
 # endif // !defined(BOOST_ASIO_DISABLE_STD_SHARED_PTR)
 #endif // !defined(BOOST_ASIO_HAS_STD_SHARED_PTR)
 
+// owning pointer, either (removed in c++17) auto_ptr or unique_ptr
+// take presence of shared_ptr as proxy for unique_ptr
+#if defined(BOOST_ASIO_HAS_STD_SHARED_PTR) && (BOOST_ASIO_HAS_STD_SHARED_PTR == 1)
+# define BOOST_ASIO_RAII_PTR std::unique_ptr
+#else
+# define BOOST_ASIO_RAII_PTR std::auto_ptr
+#endif
+
 // Standard library support for atomic operations.
 #if !defined(BOOST_ASIO_HAS_STD_ATOMIC)
 # if !defined(BOOST_ASIO_DISABLE_STD_ATOMIC)

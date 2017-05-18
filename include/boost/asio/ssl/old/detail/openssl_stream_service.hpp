@@ -101,7 +101,7 @@ private:
     Handler handler_;
     void handler_impl(const boost::system::error_code& error, size_t size)
     {
-      std::auto_ptr<io_handler<Stream, Handler> > this_ptr(this);
+      BOOST_ASIO_RAII_PTR<io_handler<Stream, Handler> > this_ptr(this);
       handler_(error, size);
     }
   };  // class io_handler 
@@ -125,7 +125,7 @@ private:
     Handler handler_;
     void handler_impl(const boost::system::error_code& error, size_t)
     {
-      std::auto_ptr<handshake_handler<Stream, Handler> > this_ptr(this);
+      BOOST_ASIO_RAII_PTR<handshake_handler<Stream, Handler> > this_ptr(this);
       handler_(error);
     }
 
@@ -150,7 +150,7 @@ private:
     Handler handler_;
     void handler_impl(const boost::system::error_code& error, size_t)
     {
-      std::auto_ptr<shutdown_handler<Stream, Handler> > this_ptr(this);
+      BOOST_ASIO_RAII_PTR<shutdown_handler<Stream, Handler> > this_ptr(this);
       handler_(error);
     }
   };  // class shutdown_handler
