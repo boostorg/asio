@@ -265,7 +265,7 @@ namespace detail {
     void operator()(typename basic_yield_context<Handler>::caller_type& ca)
     {
       shared_ptr<spawn_data<Handler, Function> > data(data_);
-#if !defined(BOOST_COROUTINES_UNIDIRECT) && !defined(BOOST_COROUTINES_V2)
+#if !defined(BOOST_COROUTINES_UNIDIRECT) && !defined(BOOST_COROUTINES_V2) && defined(BOOST_CONTEXT_NO_CXX11)
       ca(); // Yield until coroutine pointer has been initialised.
 #endif // !defined(BOOST_COROUTINES_UNIDIRECT) && !defined(BOOST_COROUTINES_V2)
       const basic_yield_context<Handler> yield(
@@ -278,26 +278,86 @@ namespace detail {
     shared_ptr<spawn_data<Handler, Function> > data_;
   };
 
+#if ! defined(BOOST_CONTEXT_NO_CXX11)
+  template <typename Handler, typename Function, typename StackAllocator>
+#else
   template <typename Handler, typename Function>
+#endif
   struct spawn_helper
   {
     void operator()()
     {
       typedef typename basic_yield_context<Handler>::callee_type callee_type;
       coro_entry_point<Handler, Function> entry_point = { data_ };
+#if ! defined(BOOST_CONTEXT_NO_CXX11)
+      shared_ptr<callee_type> coro(new callee_type(salloc_, entry_point));
+#else
       shared_ptr<callee_type> coro(new callee_type(entry_point, attributes_));
+#endif
       data_->coro_ = coro;
       (*coro)();
     }
 
     shared_ptr<spawn_data<Handler, Function> > data_;
+#if ! defined(BOOST_CONTEXT_NO_CXX11)
+    StackAllocator salloc_;
+#else
     boost::coroutines::attributes attributes_;
+#endif
   };
 
   inline void default_spawn_handler() {}
 
 } // namespace detail
 
+#if ! defined(BOOST_CONTEXT_NO_CXX11)
+template <typename Handler, typename Function, typename StackAllocator>
+void spawn(BOOST_ASIO_MOVE_ARG(Handler) handler,
+    BOOST_ASIO_MOVE_ARG(Function) function,
+    const StackAllocator& salloc)
+{
+  detail::spawn_helper<Handler, Function, StackAllocator> helper;
+  helper.data_.reset(
+      new detail::spawn_data<Handler, Function>(
+        BOOST_ASIO_MOVE_CAST(Handler)(handler), true,
+        BOOST_ASIO_MOVE_CAST(Function)(function)));
+  helper.salloc_ = salloc;
+  boost_asio_handler_invoke_helpers::invoke(helper, helper.data_->handler_);
+}
+
+template <typename Handler, typename Function, typename StackAllocator>
+void spawn(basic_yield_context<Handler> ctx,
+    BOOST_ASIO_MOVE_ARG(Function) function,
+    const StackAllocator& salloc)
+{
+  Handler handler(ctx.handler_); // Explicit copy that might be moved from.
+  detail::spawn_helper<Handler, Function, StackAllocator> helper;
+  helper.data_.reset(
+      new detail::spawn_data<Handler, Function>(
+        BOOST_ASIO_MOVE_CAST(Handler)(handler), false,
+        BOOST_ASIO_MOVE_CAST(Function)(function)));
+  helper.salloc_ = salloc;
+  boost_asio_handler_invoke_helpers::invoke(helper, helper.data_->handler_);
+}
+
+template <typename Function, typename StackAllocator>
+void spawn(boost::asio::io_service::strand strand,
+    BOOST_ASIO_MOVE_ARG(Function) function,
+    const StackAllocator& salloc)
+{
+  boost::asio::spawn(strand.wrap(&detail::default_spawn_handler),
+      BOOST_ASIO_MOVE_CAST(Function)(function), salloc);
+}
+
+template <typename Function, typename StackAllocator>
+void spawn(boost::asio::io_service& io_service,
+    BOOST_ASIO_MOVE_ARG(Function) function,
+    const StackAllocator& salloc)
+{
+  boost::asio::spawn(boost::asio::io_service::strand(io_service),
+      BOOST_ASIO_MOVE_CAST(Function)(function), salloc);
+}
+#else
 template <typename Handler, typename Function>
 void spawn(BOOST_ASIO_MOVE_ARG(Handler) handler,
     BOOST_ASIO_MOVE_ARG(Function) function,
@@ -344,6 +404,7 @@ void spawn(boost::asio::io_service& io_service,
   boost::asio::spawn(boost::asio::io_service::strand(io_service),
       BOOST_ASIO_MOVE_CAST(Function)(function), attributes);
 }
+#endif
 
 #endif // !defined(GENERATING_DOCUMENTATION)
 
