@@ -392,8 +392,11 @@ void epoll_reactor::cleanup_descriptor_data(
 {
   if (descriptor_data)
   {
-    free_descriptor_state(descriptor_data);
-    descriptor_data = 0;
+    if (!descriptor_data->shutdown_)
+    {
+      free_descriptor_state(descriptor_data);
+      descriptor_data = 0;
+    }
   }
 }
 
