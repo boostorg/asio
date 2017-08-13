@@ -16,7 +16,12 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include <boost/asio/detail/config.hpp>
-#include <boost/coroutine/all.hpp>
+#include <boost/context/detail/config.hpp>
+#if ! defined(BOOST_CONTEXT_NO_CXX11)
+# include <boost/coroutine2/all.hpp>
+#else
+# include <boost/coroutine/all.hpp>
+#endif
 #include <boost/asio/detail/weak_ptr.hpp>
 #include <boost/asio/detail/wrapped_handler.hpp>
 #include <boost/asio/io_service.hpp>
@@ -58,6 +63,8 @@ public:
    */
 #if defined(GENERATING_DOCUMENTATION)
   typedef implementation_defined callee_type;
+#elif ! defined(BOOST_CONTEXT_NO_CXX11)
+  typedef boost::coroutines2::coroutine<void>::push_type callee_type;
 #elif defined(BOOST_COROUTINES_UNIDIRECT) || defined(BOOST_COROUTINES_V2)
   typedef boost::coroutines::push_coroutine<void> callee_type;
 #else
@@ -73,6 +80,8 @@ public:
    */
 #if defined(GENERATING_DOCUMENTATION)
   typedef implementation_defined caller_type;
+#elif ! defined(BOOST_CONTEXT_NO_CXX11)
+  typedef boost::coroutines2::coroutine<void>::pull_type caller_type;
 #elif defined(BOOST_COROUTINES_UNIDIRECT) || defined(BOOST_COROUTINES_V2)
   typedef boost::coroutines::pull_coroutine<void> caller_type;
 #else
@@ -191,11 +200,18 @@ typedef basic_yield_context<
  *
  * @param attributes Boost.Coroutine attributes used to customise the coroutine.
  */
+#if ! defined(BOOST_CONTEXT_NO_CXX11)
+template <typename Handler, typename Function, typename StackAllocator = boost::coroutines2::default_stack>
+void spawn(BOOST_ASIO_MOVE_ARG(Handler) handler,
+    BOOST_ASIO_MOVE_ARG(Function) function,
+    const StackAllocator& salloc = StackAllocator());
+#else
 template <typename Handler, typename Function>
 void spawn(BOOST_ASIO_MOVE_ARG(Handler) handler,
     BOOST_ASIO_MOVE_ARG(Function) function,
     const boost::coroutines::attributes& attributes
       = boost::coroutines::attributes());
+#endif
 
 /// Start a new stackful coroutine, inheriting the execution context of another.
 /**
@@ -212,11 +228,18 @@ void spawn(BOOST_ASIO_MOVE_ARG(Handler) handler,
  *
  * @param attributes Boost.Coroutine attributes used to customise the coroutine.
  */
+#if ! defined(BOOST_CONTEXT_NO_CXX11)
+template <typename Handler, typename Function, typename StackAllocator = boost::coroutines2::default_stack>
+void spawn(basic_yield_context<Handler> ctx,
+    BOOST_ASIO_MOVE_ARG(Function) function,
+    const StackAllocator& salloc = StackAllocator());
+#else
 template <typename Handler, typename Function>
 void spawn(basic_yield_context<Handler> ctx,
     BOOST_ASIO_MOVE_ARG(Function) function,
     const boost::coroutines::attributes& attributes
       = boost::coroutines::attributes());
+#endif
 
 /// Start a new stackful coroutine that executes in the context of a strand.
 /**
@@ -231,11 +254,18 @@ void spawn(basic_yield_context<Handler> ctx,
  *
  * @param attributes Boost.Coroutine attributes used to customise the coroutine.
  */
+#if ! defined(BOOST_CONTEXT_NO_CXX11)
+template <typename Function, typename StackAllocator = boost::coroutines2::default_stack>
+void spawn(boost::asio::io_service::strand strand,
+    BOOST_ASIO_MOVE_ARG(Function) function,
+    const StackAllocator& salloc = StackAllocator());
+#else
 template <typename Function>
 void spawn(boost::asio::io_service::strand strand,
     BOOST_ASIO_MOVE_ARG(Function) function,
     const boost::coroutines::attributes& attributes
       = boost::coroutines::attributes());
+#endif
 
 /// Start a new stackful coroutine that executes on a given io_service.
 /**
@@ -249,11 +279,18 @@ void spawn(boost::asio::io_service::strand strand,
  *
  * @param attributes Boost.Coroutine attributes used to customise the coroutine.
  */
+#if ! defined(BOOST_CONTEXT_NO_CXX11)
+template <typename Function, typename StackAllocator = boost::coroutines2::default_stack>
+void spawn(boost::asio::io_service& io_service,
+    BOOST_ASIO_MOVE_ARG(Function) function,
+    const StackAllocator& salloc = StackAllocator());
+#else
 template <typename Function>
 void spawn(boost::asio::io_service& io_service,
     BOOST_ASIO_MOVE_ARG(Function) function,
     const boost::coroutines::attributes& attributes
       = boost::coroutines::attributes());
+#endif
 
 /*@}*/
 
