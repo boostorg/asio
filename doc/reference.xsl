@@ -96,7 +96,7 @@
 
   <xsl:for-each select="
       compounddef[@kind = 'class' or @kind = 'struct'] |
-      compounddef[@kind = 'namespace']/sectiondef[1]/memberdef">
+      compounddef[@kind = 'namespace']/sectiondef/memberdef">
     <xsl:sort select="concat((. | ancestor::*)/compoundname, '::', name, ':x')"/>
     <xsl:sort select="name"/>
     <xsl:choose>
@@ -195,10 +195,10 @@
   <xsl:choose>
     <xsl:when test="$type='void_or_deduced'">
       <xsl:text>``[link boost_asio.reference.asynchronous_operations.return_type_of_an_initiating_function ['void-or-deduced]]``</xsl:text>
-    </xsl:when>   
+    </xsl:when>
     <xsl:otherwise>
       <xsl:value-of select="$type"/>
-    </xsl:otherwise>   
+    </xsl:otherwise>
   </xsl:choose>
 </xsl:template>
 
@@ -1408,7 +1408,7 @@
    <xsl:with-param name="name" select="type"/>
  </xsl:call-template>
 </xsl:variable>
-<xsl:text>  </xsl:text><xsl:if test="@static='yes'">static </xsl:if><xsl:if 
+<xsl:text>  </xsl:text><xsl:if test="@static='yes'">static </xsl:if><xsl:if
  test="@virt='virtual'">virtual </xsl:if><xsl:if
  test="string-length($stripped-type) &gt; 0"><xsl:value-of select="$stripped-type"/><xsl:text> </xsl:text></xsl:if>
 <xsl:value-of select="name"/>(<xsl:apply-templates select="param"
