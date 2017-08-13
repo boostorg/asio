@@ -41,7 +41,7 @@ namespace boost {
 namespace asio {
 namespace detail {
 
-template <typename Time_Traits>
+template <typename Time_Traits, typename TimerSchedulerType>
 class deadline_timer_service
 {
 public:
@@ -50,6 +50,9 @@ public:
 
   // The duration type.
   typedef typename Time_Traits::duration_type duration_type;
+
+  // The timer scheduler type
+  typedef TimerSchedulerType timer_scheduler_type;
 
   // The implementation type of the timer. This type is dependent on the
   // underlying implementation of the timer service.
@@ -63,7 +66,7 @@ public:
 
   // Constructor.
   deadline_timer_service(boost::asio::io_service& io_service)
-    : scheduler_(boost::asio::use_service<timer_scheduler>(io_service))
+    : scheduler_(boost::asio::use_service<TimerSchedulerType>(io_service))
   {
     scheduler_.init_task();
     scheduler_.add_timer_queue(timer_queue_);
@@ -217,7 +220,7 @@ private:
   timer_queue<Time_Traits> timer_queue_;
 
   // The object that schedules and executes timers. Usually a reactor.
-  timer_scheduler& scheduler_;
+  timer_scheduler_type& scheduler_;
 };
 
 } // namespace detail

@@ -30,13 +30,14 @@ namespace asio {
 
 /// Default service implementation for a timer.
 template <typename Clock,
-    typename WaitTraits = boost::asio::wait_traits<Clock> >
+    typename WaitTraits = boost::asio::wait_traits<Clock>,
+    typename TimerSchedulerType = boost::asio::detail::timer_scheduler>
 class waitable_timer_service
 #if defined(GENERATING_DOCUMENTATION)
   : public boost::asio::io_service::service
 #else
   : public boost::asio::detail::service_base<
-      waitable_timer_service<Clock, WaitTraits> >
+      waitable_timer_service<Clock, WaitTraits, TimerSchedulerType> >
 #endif
 {
 public:
@@ -57,10 +58,14 @@ public:
   /// The wait traits type.
   typedef WaitTraits traits_type;
 
+  /// The TimerSchedulerType.
+  typedef TimerSchedulerType timer_scheduler_type;
+
 private:
   // The type of the platform-specific implementation.
   typedef detail::deadline_timer_service<
-    detail::chrono_time_traits<Clock, WaitTraits> > service_impl_type;
+    detail::chrono_time_traits<Clock, WaitTraits>,
+    TimerSchedulerType> service_impl_type;
 
 public:
   /// The implementation type of the waitable timer.
@@ -73,7 +78,8 @@ public:
   /// Construct a new timer service for the specified io_service.
   explicit waitable_timer_service(boost::asio::io_service& io_service)
     : boost::asio::detail::service_base<
-        waitable_timer_service<Clock, WaitTraits> >(io_service),
+        waitable_timer_service<
+          Clock, WaitTraits, TimerSchedulerType> >(io_service),
       service_impl_(io_service)
   {
   }
