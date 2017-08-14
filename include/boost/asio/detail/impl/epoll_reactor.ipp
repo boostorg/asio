@@ -653,8 +653,14 @@ struct epoll_reactor::perform_io_cleanup_on_block_exit
   operation* first_op_;
 };
 
-epoll_reactor::descriptor_state::descriptor_state()
-  : operation(&epoll_reactor::descriptor_state::do_complete)
+epoll_reactor::descriptor_state::descriptor_state() :
+operation(&epoll_reactor::descriptor_state::do_complete),
+next_(),
+prev_(),
+reactor_(),
+descriptor_(),
+registered_events_(),
+shutdown_()
 {
 }
 
