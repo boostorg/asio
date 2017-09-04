@@ -19,7 +19,11 @@
 #include <boost/asio/detail/config.hpp>
 
 #if defined(BOOST_ASIO_HAS_SERIAL_PORT)
-#if !defined(BOOST_ASIO_WINDOWS) && !defined(__CYGWIN__)
+#if !defined(BOOST_ASIO_WINDOWS) && !defined(__CYGWIN__) 
+
+#ifdef __VXWORKS__
+#include <ioLib.h>
+#endif
 
 #include <cstring>
 #include <boost/asio/detail/reactive_serial_port_service.hpp>
@@ -66,7 +70,10 @@ boost::system::error_code reactive_serial_port_service::open(
     descriptor_ops::close(fd, state, ignored_ec);
     return ec;
   }
-
+#ifdef __VXWORKS__
+  s = descriptor_ops::error_wrapper(::ioctl(
+         fd, FIOSETOPTIONS, OPT_RAW), ec);
+#else  
   // Set up default serial port options.
   termios ios;
   errno = 0;
@@ -88,6 +95,7 @@ boost::system::error_code reactive_serial_port_service::open(
     errno = 0;
     s = descriptor_ops::error_wrapper(::tcsetattr(fd, TCSANOW, &ios), ec);
   }
+#endif  
   if (s < 0)
   {
     boost::system::error_code ignored_ec;
@@ -112,8 +120,18 @@ boost::system::error_code reactive_serial_port_service::do_set_option(
 {
   termios ios;
   errno = 0;
+#if  defined (__VXWORKS__)
+  descriptor_ops::error_wrapper(::ioctl(descriptor_service_.native_handle(impl), 
+					FIOGETOPTIONS, &ios.tty_iflag),ec);
+  descriptor_ops::error_wrapper(::ioctl(descriptor_service_.native_handle(impl), 
+					SIO_HW_OPTS_GET, &ios.c_cflag), ec);
+  descriptor_ops::error_wrapper(::ioctl(descriptor_service_.native_handle(impl), 
+					SIO_BAUD_GET, &ios.BaudRate), ec);
+#else 
+
   descriptor_ops::error_wrapper(::tcgetattr(
         descriptor_service_.native_handle(impl), &ios), ec);
+#endif
   if (ec)
     return ec;
 
@@ -121,8 +139,17 @@ boost::system::error_code reactive_serial_port_service::do_set_option(
     return ec;
 
   errno = 0;
+#if  defined (__VXWORKS__)
+  descriptor_ops::error_wrapper(::ioctl(descriptor_service_.native_handle(impl), 
+					FIOSETOPTIONS, &ios.tty_iflag), ec);
+  descriptor_ops::error_wrapper(::ioctl(descriptor_service_.native_handle(impl), 
+					SIO_HW_OPTS_SET, &ios.c_cflag), ec);
+  descriptor_ops::error_wrapper(::ioctl(descriptor_service_.native_handle(impl), 
+					SIO_BAUD_SET, &ios.BaudRate), ec);
+#else 
   descriptor_ops::error_wrapper(::tcsetattr(
         descriptor_service_.native_handle(impl), TCSANOW, &ios), ec);
+#endif  
   return ec;
 }
 
@@ -133,8 +160,17 @@ boost::system::error_code reactive_serial_port_service::do_get_option(
 {
   termios ios;
   errno = 0;
+#if  defined (__VXWORKS__)
+  descriptor_ops::error_wrapper(::ioctl(descriptor_service_.native_handle(impl), 
+					FIOGETOPTIONS, &ios.tty_iflag),ec);
+  descriptor_ops::error_wrapper(::ioctl(descriptor_service_.native_handle(impl), 
+					SIO_HW_OPTS_GET, &ios.c_cflag), ec);
+  descriptor_ops::error_wrapper(::ioctl(descriptor_service_.native_handle(impl), 
+					SIO_BAUD_GET, &ios.BaudRate), ec);
+#else   
   descriptor_ops::error_wrapper(::tcgetattr(
         descriptor_service_.native_handle(impl), &ios), ec);
+#endif  
   if (ec)
     return ec;
 

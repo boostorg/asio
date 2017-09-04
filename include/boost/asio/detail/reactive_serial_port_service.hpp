@@ -141,8 +141,12 @@ public:
       boost::system::error_code& ec)
   {
     errno = 0;
+#ifdef __VXWORKS__
+    /* No supported equivlent  */
+#else    
     descriptor_ops::error_wrapper(::tcsendbreak(
           descriptor_service_.native_handle(impl), 0), ec);
+#endif    
     return ec;
   }
 

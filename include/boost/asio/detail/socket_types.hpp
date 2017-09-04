@@ -61,7 +61,9 @@
    || defined(__FreeBSD__) || defined(__NetBSD__) \
    || defined(__OpenBSD__) || defined(__linux__)
 #  include <poll.h>
-# elif !defined(__SYMBIAN32__)
+# elif !defined(__SYMBIAN32__) && !defined(__VXWORKS__ )
+#  include <sys/poll.h>
+# elif defined(__VXWORKS__ ) && (_WRS_VXWORKS_MAJOR > 6 )
 #  include <sys/poll.h>
 # endif
 # include <sys/types.h>
