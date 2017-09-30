@@ -29,8 +29,8 @@ else if [ os.name ] = HAIKU
 exe server
   : echo_server.cpp
     /boost/context//boost_context
-    /boost/coroutine//boost_coroutine
     /boost/system//boost_system
+    /boost/thread//boost_thread
   : <define>BOOST_ALL_NO_LIB=1
     <threading>multi
     <os>SOLARIS:<library>socket

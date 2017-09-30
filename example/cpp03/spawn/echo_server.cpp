@@ -91,7 +91,10 @@ void do_accept(boost::asio::io_service& io_service,
     boost::system::error_code ec;
     boost::shared_ptr<session> new_session(new session(io_service));
     acceptor.async_accept(new_session->socket(), yield[ec]);
-    if (!ec) new_session->go();
+    if (!ec)
+    {
+        new_session->go();
+    }
   }
 }
 

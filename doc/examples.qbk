@@ -297,9 +297,9 @@ library that wants to perform the I/O operations itself.
 [heading Spawn]
 
 Example of using the boost::asio::spawn() function, a wrapper around the
-[@http://www.boost.org/doc/libs/release/libs/coroutine/index.html Boost.Coroutine]
+[@http://www.boost.org/doc/libs/release/libs/context/index.html Boost.Context]
 library, to implement a chain of asynchronous operations using stackful
-coroutines.
+continuations.
 
 * [@boost_asio/example/cpp03/spawn/echo_server.cpp]
 
@@ -402,9 +402,9 @@ cancelling all outstanding asynchronous operations.
 [heading Spawn]
 
 Example of using the boost::asio::spawn() function, a wrapper around the
-[@http://www.boost.org/doc/libs/release/libs/coroutine/index.html Boost.Coroutine]
+[@http://www.boost.org/doc/libs/release/libs/context/index.html Boost.Context]
 library, to implement a chain of asynchronous operations using stackful
-coroutines.
+continuations.
 
 * [@boost_asio/example/cpp11/spawn/echo_server.cpp]
 

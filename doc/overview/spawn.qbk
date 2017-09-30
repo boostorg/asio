@@ -1,15 +1,16 @@
 [/
  / Copyright (c) 2003-2017 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+ / Copyright (c) 2017 Oliver Kowalke (oliver dot kowalke at gmail dot com)
  /
  / Distributed under the Boost Software License, Version 1.0. (See accompanying
  / file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
  /]
 
-[section:spawn Stackful Coroutines]
+[section:spawn Stackful Continuations]
 
 The [link boost_asio.reference.spawn `spawn()`] function is a high-level wrapper for
-running stackful coroutines. It is based on the Boost.Coroutine library. The
-`spawn()` function enables programs to implement asynchronous logic in a
+running continuations (callcc()/continuation). It is based on the Boost.Context library.
+The `spawn()` function enables programs to implement asynchronous logic in a
 synchronous manner, as shown in the following example:
 
   boost::asio::spawn(my_strand, do_echo);
@@ -41,16 +42,16 @@ The first argument to `spawn()` may be a
 [link boost_asio.reference.io_service__strand `strand`],
 [link boost_asio.reference.io_service `io_service`], or
 [link boost_asio.reference.CompletionHandler completion handler].
-This argument determines the context in which the coroutine is permitted to
+This argument determines the context in which the contnuation is permitted to
 execute. For example, a server's per-client object may consist of multiple
-coroutines; they should all run on the same `strand` so that no explicit
+continuations; they should all run on the same `strand` so that no explicit
 synchronisation is required.
 
 The second argument is a function object with signature:
 
-  void coroutine(boost::asio::yield_context yield);
+  void continuation(boost::asio::yield_context yield);
 
-that specifies the code to be run as part of the coroutine. The parameter
+that specifies the code to be run as part of the continuation. The parameter
 `yield` may be passed to an asynchronous operation in place of the completion
 handler, as in:
 
@@ -58,8 +59,8 @@ handler, as in:
     my_socket.async_read_some(
       boost::asio::buffer(data), yield);
 
-This starts the asynchronous operation and suspends the coroutine. The
-coroutine will be resumed automatically when the asynchronous operation
+This starts the asynchronous operation and suspends the continuation. The
+continuation will be resumed automatically when the asynchronous operation
 completes.
 
 Where an asynchronous operation's handler signature has the form:
@@ -75,7 +76,7 @@ Where a handler signature has the form:
   void handler(boost::system::error_code ec);
 
 the initiating function returns `void`. As above, an error is passed back to
-the coroutine as a `system_error` exception.
+the continuation as a `system_error` exception.
 
 To collect the `error_code` from an operation, rather than have it throw an
 exception, associate the output variable with the `yield_context` as follows:
@@ -88,7 +89,7 @@ exception, associate the output variable with the `yield_context` as follows:
 [*Note:] if `spawn()` is used with a custom completion handler of type
 `Handler`, the function object signature is actually:
   
-  void coroutine(boost::asio::basic_yield_context<Handler> yield);
+  void continuation(boost::asio::basic_yield_context<Handler> yield);
 
 [heading See Also]
 

@@ -50,7 +50,6 @@ public:
             timer_.cancel();
           }
         });
-
     boost::asio::spawn(strand_,
         [this, self](boost::asio::yield_context yield)
         {
@@ -93,7 +92,10 @@ int main(int argc, char* argv[])
             boost::system::error_code ec;
             tcp::socket socket(io_service);
             acceptor.async_accept(socket, yield[ec]);
-            if (!ec) std::make_shared<session>(std::move(socket))->go();
+            if (!ec) {
+                auto new_session = std::make_shared<session>(std::move(socket));
+                new_session->go();
+            }
           }
         });
 
