@@ -28,7 +28,7 @@ else if [ os.name ] = HAIKU
 
 exe server
   : connection.cpp
-    io_service_pool.cpp
+    io_context_pool.cpp
     main.cpp
     mime_types.cpp
     reply.cpp

@@ -40,16 +40,16 @@ class winrt_buffer_impl :
 public:
   explicit winrt_buffer_impl(const boost::asio::const_buffer& b)
   {
-    bytes_ = const_cast<byte*>(boost::asio::buffer_cast<const byte*>(b));
-    length_ = boost::asio::buffer_size(b);
-    capacity_ = boost::asio::buffer_size(b);
+    bytes_ = const_cast<byte*>(static_cast<const byte*>(b.data()));
+    length_ = b.size();
+    capacity_ = b.size();
   }
 
   explicit winrt_buffer_impl(const boost::asio::mutable_buffer& b)
   {
-    bytes_ = const_cast<byte*>(boost::asio::buffer_cast<const byte*>(b));
+    bytes_ = static_cast<byte*>(b.data());
     length_ = 0;
-    capacity_ = boost::asio::buffer_size(b);
+    capacity_ = b.size();
   }
 
   ~winrt_buffer_impl()

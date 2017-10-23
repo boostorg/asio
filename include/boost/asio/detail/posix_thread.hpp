@@ -19,6 +19,7 @@
 
 #if defined(BOOST_ASIO_HAS_PTHREADS)
 
+#include <cstddef>
 #include <pthread.h>
 #include <boost/asio/detail/noncopyable.hpp>
 
@@ -50,6 +51,9 @@ public:
 
   // Wait for the thread to exit.
   BOOST_ASIO_DECL void join();
+
+  // Get number of CPUs.
+  BOOST_ASIO_DECL static std::size_t hardware_concurrency();
 
 private:
   friend void* boost_asio_detail_posix_thread_function(void* arg);

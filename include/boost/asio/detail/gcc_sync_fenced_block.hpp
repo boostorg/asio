@@ -22,6 +22,8 @@
   && !defined(__INTEL_COMPILER) && !defined(__ICL) \
   && !defined(__ICC) && !defined(__ECC) && !defined(__PATHSCALE__)
 
+#include <boost/asio/detail/noncopyable.hpp>
+
 #include <boost/asio/detail/push_options.hpp>
 
 namespace boost {

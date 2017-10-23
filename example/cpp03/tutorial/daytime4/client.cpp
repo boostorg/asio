@@ -24,13 +24,13 @@ int main(int argc, char* argv[])
       return 1;
     }
 
-    boost::asio::io_service io_service;
+    boost::asio::io_context io_context;
 
-    udp::resolver resolver(io_service);
-    udp::resolver::query query(udp::v4(), argv[1], "daytime");
-    udp::endpoint receiver_endpoint = *resolver.resolve(query);
+    udp::resolver resolver(io_context);
+    udp::endpoint receiver_endpoint =
+      *resolver.resolve(udp::v4(), argv[1], "daytime").begin();
 
-    udp::socket socket(io_service);
+    udp::socket socket(io_context);
     socket.open(udp::v4());
 
     boost::array<char, 1> send_buf  = {{ 0 }};

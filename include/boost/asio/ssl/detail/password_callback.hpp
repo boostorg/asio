@@ -17,11 +17,9 @@
 
 #include <boost/asio/detail/config.hpp>
 
-#if !defined(BOOST_ASIO_ENABLE_OLD_SSL)
-# include <cstddef>
-# include <string>
-# include <boost/asio/ssl/context_base.hpp>
-#endif // !defined(BOOST_ASIO_ENABLE_OLD_SSL)
+#include <cstddef>
+#include <string>
+#include <boost/asio/ssl/context_base.hpp>
 
 #include <boost/asio/detail/push_options.hpp>
 
@@ -29,8 +27,6 @@ namespace boost {
 namespace asio {
 namespace ssl {
 namespace detail {
-
-#if !defined(BOOST_ASIO_ENABLE_OLD_SSL)
 
 class password_callback_base
 {
@@ -61,8 +57,6 @@ public:
 private:
   PasswordCallback callback_;
 };
-
-#endif // !defined(BOOST_ASIO_ENABLE_OLD_SSL)
 
 } // namespace detail
 } // namespace ssl

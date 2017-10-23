@@ -20,6 +20,7 @@
 #if defined(BOOST_ASIO_WINDOWS) && !defined(UNDER_CE)
 
 #include <boost/asio/detail/socket_types.hpp>
+#include <boost/asio/detail/noncopyable.hpp>
 
 #include <boost/asio/detail/push_options.hpp>
 

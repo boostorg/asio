@@ -16,7 +16,7 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include <boost/asio/detail/config.hpp>
-#include <boost/asio/detail/addressof.hpp>
+#include <boost/asio/detail/memory.hpp>
 #include <boost/asio/handler_invoke_hook.hpp>
 
 #include <boost/asio/detail/push_options.hpp>

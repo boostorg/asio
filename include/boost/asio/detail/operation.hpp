@@ -20,7 +20,7 @@
 #if defined(BOOST_ASIO_HAS_IOCP)
 # include <boost/asio/detail/win_iocp_operation.hpp>
 #else
-# include <boost/asio/detail/task_io_service_operation.hpp>
+# include <boost/asio/detail/scheduler_operation.hpp>
 #endif
 
 namespace boost {
@@ -30,7 +30,7 @@ namespace detail {
 #if defined(BOOST_ASIO_HAS_IOCP)
 typedef win_iocp_operation operation;
 #else
-typedef task_io_service_operation operation;
+typedef scheduler_operation operation;
 #endif
 
 } // namespace detail

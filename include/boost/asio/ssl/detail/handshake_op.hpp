@@ -17,9 +17,7 @@
 
 #include <boost/asio/detail/config.hpp>
 
-#if !defined(BOOST_ASIO_ENABLE_OLD_SSL)
-# include <boost/asio/ssl/detail/engine.hpp>
-#endif // !defined(BOOST_ASIO_ENABLE_OLD_SSL)
+#include <boost/asio/ssl/detail/engine.hpp>
 
 #include <boost/asio/detail/push_options.hpp>
 
@@ -27,8 +25,6 @@ namespace boost {
 namespace asio {
 namespace ssl {
 namespace detail {
-
-#if !defined(BOOST_ASIO_ENABLE_OLD_SSL)
 
 class handshake_op
 {
@@ -57,8 +53,6 @@ public:
 private:
   stream_base::handshake_type type_;
 };
-
-#endif // !defined(BOOST_ASIO_ENABLE_OLD_SSL)
 
 } // namespace detail
 } // namespace ssl
