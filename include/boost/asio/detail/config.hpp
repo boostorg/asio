@@ -628,9 +628,9 @@
 #   endif // ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 6)) || (__GNUC__ > 4)
 #  endif // defined(__GNUC__)
 #  if defined(BOOST_ASIO_MSVC)
-#   if (_MSC_VER >= 1700)
+#   if (_MSC_VER >= 1800)
 #    define BOOST_ASIO_HAS_CXX11_ALLOCATORS 1
-#   endif // (_MSC_VER >= 1700)
+#   endif // (_MSC_VER >= 1800)
 #  endif // defined(BOOST_ASIO_MSVC)
 # endif // !defined(BOOST_ASIO_DISABLE_CXX11_ALLOCATORS)
 #endif // !defined(BOOST_ASIO_HAS_CXX11_ALLOCATORS)
