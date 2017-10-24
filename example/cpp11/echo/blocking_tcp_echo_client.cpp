@@ -27,11 +27,11 @@ int main(int argc, char* argv[])
       return 1;
     }
 
-    boost::asio::io_service io_service;
+    boost::asio::io_context io_context;
 
-    tcp::socket s(io_service);
-    tcp::resolver resolver(io_service);
-    boost::asio::connect(s, resolver.resolve({argv[1], argv[2]}));
+    tcp::socket s(io_context);
+    tcp::resolver resolver(io_context);
+    boost::asio::connect(s, resolver.resolve(argv[1], argv[2]));
 
     std::cout << "Enter message: ";
     char request[max_length];

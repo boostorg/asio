@@ -21,6 +21,7 @@
   && !defined(BOOST_ASIO_WINDOWS_APP) \
   && !defined(UNDER_CE)
 
+#include <cstddef>
 #include <boost/asio/detail/noncopyable.hpp>
 #include <boost/asio/detail/socket_types.hpp>
 
@@ -78,6 +79,9 @@ public:
 
   // Wait for the thread to exit.
   BOOST_ASIO_DECL void join();
+
+  // Get number of CPUs.
+  BOOST_ASIO_DECL static std::size_t hardware_concurrency();
 
 private:
   friend BOOST_ASIO_DECL unsigned int __stdcall win_thread_function(void* arg);

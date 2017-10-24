@@ -27,14 +27,14 @@ int main(int argc, char* argv[])
       return 1;
     }
 
-    boost::asio::io_service io_service;
+    boost::asio::io_context io_context;
 
-    tcp::resolver resolver(io_service);
-    tcp::resolver::query query(tcp::v4(), argv[1], argv[2]);
-    tcp::resolver::iterator iterator = resolver.resolve(query);
+    tcp::resolver resolver(io_context);
+    tcp::resolver::results_type endpoints =
+      resolver.resolve(tcp::v4(), argv[1], argv[2]);
 
-    tcp::socket s(io_service);
-    boost::asio::connect(s, iterator);
+    tcp::socket s(io_context);
+    boost::asio::connect(s, endpoints);
 
     using namespace std; // For strlen.
     std::cout << "Enter message: ";

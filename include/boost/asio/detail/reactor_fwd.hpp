@@ -21,7 +21,7 @@ namespace boost {
 namespace asio {
 namespace detail {
 
-#if defined(BOOST_ASIO_WINDOWS_RUNTIME)
+#if defined(BOOST_ASIO_HAS_IOCP) || defined(BOOST_ASIO_WINDOWS_RUNTIME)
 typedef class null_reactor reactor;
 #elif defined(BOOST_ASIO_HAS_IOCP)
 typedef class select_reactor reactor;

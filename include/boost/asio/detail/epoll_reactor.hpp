@@ -19,10 +19,9 @@
 
 #if defined(BOOST_ASIO_HAS_EPOLL)
 
-#include <boost/asio/io_service.hpp>
 #include <boost/asio/detail/atomic_count.hpp>
+#include <boost/asio/detail/conditionally_enabled_mutex.hpp>
 #include <boost/asio/detail/limits.hpp>
-#include <boost/asio/detail/mutex.hpp>
 #include <boost/asio/detail/object_pool.hpp>
 #include <boost/asio/detail/op_queue.hpp>
 #include <boost/asio/detail/reactor_op.hpp>
@@ -31,6 +30,7 @@
 #include <boost/asio/detail/timer_queue_base.hpp>
 #include <boost/asio/detail/timer_queue_set.hpp>
 #include <boost/asio/detail/wait_op.hpp>
+#include <boost/asio/execution_context.hpp>
 
 #include <boost/asio/detail/push_options.hpp>
 
@@ -39,8 +39,12 @@ namespace asio {
 namespace detail {
 
 class epoll_reactor
-  : public boost::asio::detail::service_base<epoll_reactor>
+  : public execution_context_service_base<epoll_reactor>
 {
+private:
+  // The mutex type used by this reactor.
+  typedef conditionally_enabled_mutex mutex;
+
 public:
   enum op_types { read_op = 0, write_op = 1,
     connect_op = 1, except_op = 2, max_ops = 3 };
@@ -59,14 +63,15 @@ public:
     int descriptor_;
     uint32_t registered_events_;
     op_queue<reactor_op> op_queue_[max_ops];
+    bool try_speculative_[max_ops];
     bool shutdown_;
 
-    BOOST_ASIO_DECL descriptor_state();
+    BOOST_ASIO_DECL descriptor_state(bool locking);
     void set_ready_events(uint32_t events) { task_result_ = events; }
     void add_ready_events(uint32_t events) { task_result_ |= events; }
     BOOST_ASIO_DECL operation* perform_io(uint32_t events);
     BOOST_ASIO_DECL static void do_complete(
-        io_service_impl* owner, operation* base,
+        void* owner, operation* base,
         const boost::system::error_code& ec, std::size_t bytes_transferred);
   };
 
@@ -74,17 +79,17 @@ public:
   typedef descriptor_state* per_descriptor_data;
 
   // Constructor.
-  BOOST_ASIO_DECL epoll_reactor(boost::asio::io_service& io_service);
+  BOOST_ASIO_DECL epoll_reactor(boost::asio::execution_context& ctx);
 
   // Destructor.
   BOOST_ASIO_DECL ~epoll_reactor();
 
   // Destroy all user-defined handler objects owned by the service.
-  BOOST_ASIO_DECL void shutdown_service();
+  BOOST_ASIO_DECL void shutdown();
 
   // Recreate internal descriptors following a fork.
-  BOOST_ASIO_DECL void fork_service(
-      boost::asio::io_service::fork_event fork_ev);
+  BOOST_ASIO_DECL void notify_fork(
+      boost::asio::execution_context::fork_event fork_ev);
 
   // Initialise the task.
   BOOST_ASIO_DECL void init_task();
@@ -108,7 +113,7 @@ public:
   // Post a reactor operation for immediate completion.
   void post_immediate_completion(reactor_op* op, bool is_continuation)
   {
-    io_service_.post_immediate_completion(op, is_continuation);
+    scheduler_.post_immediate_completion(op, is_continuation);
   }
 
   // Start a new operation. The reactor operation will be performed when the
@@ -162,8 +167,14 @@ public:
       typename timer_queue<Time_Traits>::per_timer_data& timer,
       std::size_t max_cancelled = (std::numeric_limits<std::size_t>::max)());
 
+  // Move the timer operations associated with the given timer.
+  template <typename Time_Traits>
+  void move_timer(timer_queue<Time_Traits>& queue,
+      typename timer_queue<Time_Traits>::per_timer_data& target,
+      typename timer_queue<Time_Traits>::per_timer_data& source);
+
   // Run epoll once until interrupted or events are ready to be dispatched.
-  BOOST_ASIO_DECL void run(bool block, op_queue<operation>& ops);
+  BOOST_ASIO_DECL void run(long usec, op_queue<operation>& ops);
 
   // Interrupt the select loop.
   BOOST_ASIO_DECL void interrupt();
@@ -197,7 +208,7 @@ private:
   // Get the timeout value for the epoll_wait call. The timeout value is
   // returned as a number of milliseconds. A return value of -1 indicates
   // that epoll_wait should block indefinitely.
-  BOOST_ASIO_DECL int get_timeout();
+  BOOST_ASIO_DECL int get_timeout(int msec);
 
 #if defined(BOOST_ASIO_HAS_TIMERFD)
   // Get the timeout value for the timer descriptor. The return value is the
@@ -205,8 +216,8 @@ private:
   BOOST_ASIO_DECL int get_timeout(itimerspec& ts);
 #endif // defined(BOOST_ASIO_HAS_TIMERFD)
 
-  // The io_service implementation used to post completions.
-  io_service_impl& io_service_;
+  // The scheduler implementation used to post completions.
+  scheduler& scheduler_;
 
   // Mutex to protect access to internal data.
   mutex mutex_;

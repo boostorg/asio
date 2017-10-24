@@ -17,10 +17,8 @@
 
 #include <boost/asio/detail/config.hpp>
 
-#if !defined(BOOST_ASIO_ENABLE_OLD_SSL)
-# include <boost/asio/detail/buffer_sequence_adapter.hpp>
-# include <boost/asio/ssl/detail/engine.hpp>
-#endif // !defined(BOOST_ASIO_ENABLE_OLD_SSL)
+#include <boost/asio/detail/buffer_sequence_adapter.hpp>
+#include <boost/asio/ssl/detail/engine.hpp>
 
 #include <boost/asio/detail/push_options.hpp>
 
@@ -28,8 +26,6 @@ namespace boost {
 namespace asio {
 namespace ssl {
 namespace detail {
-
-#if !defined(BOOST_ASIO_ENABLE_OLD_SSL)
 
 template <typename ConstBufferSequence>
 class write_op
@@ -62,8 +58,6 @@ public:
 private:
   ConstBufferSequence buffers_;
 };
-
-#endif // !defined(BOOST_ASIO_ENABLE_OLD_SSL)
 
 } // namespace detail
 } // namespace ssl

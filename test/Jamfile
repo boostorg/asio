@@ -62,7 +62,7 @@ test-suite "asio"
   [ run generic/raw_protocol.cpp <template>asio_unit_test ]
   [ run generic/seq_packet_protocol.cpp <template>asio_unit_test ]
   [ run generic/stream_protocol.cpp <template>asio_unit_test ]
-  [ run io_service.cpp <template>asio_unit_test ]
+  [ run io_context.cpp <template>asio_unit_test ]
   [ run ip/address.cpp <template>asio_unit_test ]
   [ run ip/address_v4.cpp <template>asio_unit_test ]
   [ run ip/address_v6.cpp <template>asio_unit_test ]

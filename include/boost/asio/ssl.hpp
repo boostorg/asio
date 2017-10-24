@@ -15,15 +15,12 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include <boost/asio/ssl/basic_context.hpp>
 #include <boost/asio/ssl/context.hpp>
 #include <boost/asio/ssl/context_base.hpp>
-#include <boost/asio/ssl/context_service.hpp>
 #include <boost/asio/ssl/error.hpp>
 #include <boost/asio/ssl/rfc2818_verification.hpp>
 #include <boost/asio/ssl/stream.hpp>
 #include <boost/asio/ssl/stream_base.hpp>
-#include <boost/asio/ssl/stream_service.hpp>
 #include <boost/asio/ssl/verify_context.hpp>
 #include <boost/asio/ssl/verify_mode.hpp>
 
