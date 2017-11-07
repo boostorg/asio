@@ -20,7 +20,7 @@
 using boost::asio::dispatch;
 using boost::asio::spawn;
 using boost::asio::strand;
-using boost::thread_pool;
+using boost::asio::thread_pool;
 using boost::asio::yield_context;
 
 int main(int argc, char* argv[])
