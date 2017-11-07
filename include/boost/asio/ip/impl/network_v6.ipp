@@ -152,7 +152,14 @@ network_v6 make_network_v6(const std::string& str,
   if (ec)
     return network_v6();
 
-  return network_v6(addr, std::atoi(str.substr(pos + 1).c_str()));
+  const int prefix_len = std::atoi(str.substr(pos + 1).c_str());
+  if (prefix_len < 0 || prefix_len > 128)
+  {
+    ec = boost::asio::error::invalid_argument;
+    return network_v6();
+  }
+
+  return network_v6(addr, static_cast<unsigned short>(prefix_len));
 }
 
 #if defined(BOOST_ASIO_HAS_STD_STRING_VIEW)
