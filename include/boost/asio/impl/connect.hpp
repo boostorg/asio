@@ -42,6 +42,13 @@ namespace detail
       return true;
     }
   };
+
+  template <typename Protocol, typename Iterator>
+  inline typename Protocol::endpoint deref_connect_result(
+      Iterator iter, boost::system::error_code& ec)
+  {
+    return ec ? typename Protocol::endpoint() : *iter;
+  }
 }
 
 template <typename Protocol BOOST_ASIO_SVC_TPARAM, typename EndpointSequence>
@@ -64,10 +71,9 @@ typename Protocol::endpoint connect(
     typename enable_if<is_endpoint_sequence<
         EndpointSequence>::value>::type*)
 {
-  typename EndpointSequence::iterator iter = connect(
-      s, endpoints.begin(), endpoints.end(),
-      detail::default_connect_condition(), ec);
-  return ec ? typename Protocol::endpoint() : *iter;
+  return detail::deref_connect_result<Protocol>(
+      connect(s, endpoints.begin(), endpoints.end(),
+        detail::default_connect_condition(), ec), ec);
 }
 
 #if !defined(BOOST_ASIO_NO_DEPRECATED)
@@ -131,9 +137,9 @@ typename Protocol::endpoint connect(
     typename enable_if<is_endpoint_sequence<
         EndpointSequence>::value>::type*)
 {
-  typename EndpointSequence::iterator iter = connect(
-      s, endpoints.begin(), endpoints.end(), connect_condition, ec);
-  return ec ? typename Protocol::endpoint() : *iter;
+  return detail::deref_connect_result<Protocol>(
+      connect(s, endpoints.begin(), endpoints.end(),
+        connect_condition, ec), ec);
 }
 
 #if !defined(BOOST_ASIO_NO_DEPRECATED)
@@ -181,7 +187,7 @@ Iterator connect(basic_socket<Protocol BOOST_ASIO_SVC_TARG>& s,
 
   for (Iterator iter = begin; iter != end; ++iter)
   {
-    if (connect_condition(ec, iter))
+    if (connect_condition(ec, *iter))
     {
       s.close(ec);
       s.connect(*iter, ec);
