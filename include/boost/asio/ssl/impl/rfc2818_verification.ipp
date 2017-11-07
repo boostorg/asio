@@ -55,7 +55,7 @@ bool rfc2818_verification::operator()(
   // or IP address entries.
   GENERAL_NAMES* gens = static_cast<GENERAL_NAMES*>(
       X509_get_ext_d2i(cert, NID_subject_alt_name, 0, 0));
-  for (int i = 0; i < sk_GENERAL_NAME_num(gens); ++i)
+  for (size_t i = 0; i < sk_GENERAL_NAME_num(gens); ++i)
   {
     GENERAL_NAME* gen = sk_GENERAL_NAME_value(gens, i);
     if (gen->type == GEN_DNS && !is_address)
