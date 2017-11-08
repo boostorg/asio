@@ -220,6 +220,19 @@ void test()
   BOOST_ASIO_CHECK(make_network_v4("192.168.77.100/24").network() == make_address_v4("192.168.77.0"));
   BOOST_ASIO_CHECK(make_network_v4("192.168.77.128/25").network() == make_address_v4("192.168.77.128"));
 
+  // construct network from invalid string
+  boost::system::error_code ec;
+  make_network_v4("10.0.0.256/24", ec);
+  BOOST_ASIO_CHECK(!!ec);
+  make_network_v4("10.0.0.0/33", ec);
+  BOOST_ASIO_CHECK(!!ec);
+  make_network_v4("10.0.0.0/-1", ec);
+  BOOST_ASIO_CHECK(!!ec);
+  make_network_v4("10.0.0.0/", ec);
+  BOOST_ASIO_CHECK(!!ec);
+  make_network_v4("10.0.0.0", ec);
+  BOOST_ASIO_CHECK(!!ec);
+
   // prefix length
   BOOST_ASIO_CHECK(make_network_v4("193.99.144.80/24").prefix_length() == 24);
   BOOST_ASIO_CHECK(network_v4(make_address_v4("193.99.144.80"), 24).prefix_length() == 24);

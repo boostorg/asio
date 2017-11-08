@@ -153,6 +153,19 @@ void test()
   BOOST_ASIO_CHECK(make_network_v6("2001:370::10:7344/64").network() == make_address_v6("2001:370::"));
   BOOST_ASIO_CHECK(make_network_v6("2001:370::10:7344/27").network() == make_address_v6("2001:360::"));
 
+  // construct network from invalid string
+  boost::system::error_code ec;
+  make_network_v6("a:b/24", ec);
+  BOOST_ASIO_CHECK(!!ec);
+  make_network_v6("2001:370::10:7344/129", ec);
+  BOOST_ASIO_CHECK(!!ec);
+  make_network_v6("2001:370::10:7344/-1", ec);
+  BOOST_ASIO_CHECK(!!ec);
+  make_network_v6("2001:370::10:7344/", ec);
+  BOOST_ASIO_CHECK(!!ec);
+  make_network_v6("2001:370::10:7344", ec);
+  BOOST_ASIO_CHECK(!!ec);
+
   // prefix length
   BOOST_ASIO_CHECK(make_network_v6("2001:370::10:7344/128").prefix_length() == 128);
   BOOST_ASIO_CHECK(network_v6(make_address_v6("2001:370::10:7344"), 27).prefix_length() == 27);
