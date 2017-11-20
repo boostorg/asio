@@ -849,6 +849,10 @@ void complete_iocp_recv(state_type state,
   {
     ec = boost::asio::error::connection_refused;
   }
+  else if (ec.value() == ERROR_MORE_DATA)
+  {
+    ec = boost::asio::error::message_size;
+  }
 
   // Check for connection closed.
   else if (!ec && bytes_transferred == 0
@@ -987,6 +991,10 @@ void complete_iocp_recvfrom(
   else if (ec.value() == ERROR_PORT_UNREACHABLE)
   {
     ec = boost::asio::error::connection_refused;
+  }
+  else if (ec.value() == ERROR_MORE_DATA)
+  {
+    ec = boost::asio::error::message_size;
   }
 }
 
