@@ -31,14 +31,12 @@ namespace detail {
 
 DWORD win_tss_ptr_create()
 {
-#if defined(UNDER_CE)
-  enum { out_of_indexes = 0xFFFFFFFF };
-#else
-  enum { out_of_indexes = TLS_OUT_OF_INDEXES };
-#endif
-
   DWORD tss_key = ::TlsAlloc();
-  if (tss_key == out_of_indexes)
+#if defined(UNDER_CE)
+  if (tss_key == 0xFFFFFFFF)
+#else
+  if (tss_key == TLS_OUT_OF_INDEXES)
+#endif
   {
     DWORD last_error = ::GetLastError();
     boost::system::error_code ec(last_error,
