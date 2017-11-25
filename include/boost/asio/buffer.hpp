@@ -93,9 +93,10 @@ class mutable_buffer
 public:
   /// Construct an empty buffer.
   mutable_buffer() BOOST_ASIO_NOEXCEPT
-    : data_(0),
-      size_(0)
+    : size_(0)
   {
+      static unsigned char c;
+      data_ = &c;
   }
 
   /// Construct a buffer to represent a given memory range.
@@ -227,7 +228,7 @@ class const_buffer
 public:
   /// Construct an empty buffer.
   const_buffer() BOOST_ASIO_NOEXCEPT
-    : data_(0),
+    : data_(""),
       size_(0)
   {
   }
