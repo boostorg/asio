@@ -61,3 +61,13 @@ exe blocking_udp_echo_server
   : <template>asio_echo_example
     blocking_udp_echo_server.cpp
   ;
+
+exe echo_client
+  : <template>asio_echo_example
+    echo_client.cpp
+  ;
+
+exe echo_server
+  : <template>asio_echo_example
+    echo_server.cpp
+  ;
