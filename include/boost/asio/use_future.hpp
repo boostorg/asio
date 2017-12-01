@@ -127,7 +127,10 @@ private:
  * See the documentation for boost::asio::use_future_t for a usage example.
  */
 #if defined(BOOST_ASIO_MSVC)
+# pragma warning (push)
+# pragma warning (disable:4592)
 __declspec(selectany) use_future_t<> use_future;
+# pragma warning (pop)
 #elif defined(BOOST_ASIO_HAS_CONSTEXPR) || defined(GENERATING_DOCUMENTATION)
 constexpr use_future_t<> use_future;
 #endif
