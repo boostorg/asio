@@ -15,7 +15,7 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include <chrono>
+#include <boost/asio/detail/chrono.hpp>
 
 #include <boost/asio/wait_traits.hpp>
 #include <boost/asio/basic_waitable_timer.hpp>
