@@ -765,19 +765,10 @@
     <xsl:when test="contains($file, 'boost/asio/ssl')">
       <xsl:text>[^boost/asio/ssl.hpp]</xsl:text>
     </xsl:when>
-    <xsl:when test="contains($file, 'boost/asio/high_resolution_timer')">
-      <xsl:text>None</xsl:text>
-    </xsl:when>
     <xsl:when test="contains($file, 'boost/asio/package')">
       <xsl:text>None</xsl:text>
     </xsl:when>
     <xsl:when test="contains($file, 'boost/asio/spawn')">
-      <xsl:text>None</xsl:text>
-    </xsl:when>
-    <xsl:when test="contains($file, 'boost/asio/steady_timer')">
-      <xsl:text>None</xsl:text>
-    </xsl:when>
-    <xsl:when test="contains($file, 'boost/asio/system_timer')">
       <xsl:text>None</xsl:text>
     </xsl:when>
     <xsl:when test="contains($file, 'boost/asio/use_future')">
