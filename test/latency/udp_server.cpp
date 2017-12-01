@@ -19,9 +19,9 @@
 
 using boost::asio::ip::udp;
 
-#include "yield.hpp"
+#include <boost/asio/yield.hpp>
 
-class udp_server : coroutine
+class udp_server : boost::asio::coroutine
 {
 public:
   udp_server(boost::asio::io_context& io_context,
@@ -90,7 +90,7 @@ private:
   allocator allocator_;
 };
 
-#include "unyield.hpp"
+#include <boost/asio/unyield.hpp>
 
 int main(int argc, char* argv[])
 {
