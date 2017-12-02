@@ -389,6 +389,13 @@ Boost.Asio's asynchronous operations.
 * [@boost_asio/example/cpp11/futures/daytime_client.cpp]
 
 
+[heading Handler Tracking]
+
+This example shows how to implement custom handler tracking.
+
+* [@boost_asio/example/cpp11/handler_tracking/custom_tracking.hpp]
+
+
 [heading HTTP Server]
 
 This example illustrates the use of asio in a simple single-threaded server
