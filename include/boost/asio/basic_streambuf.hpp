@@ -161,6 +161,16 @@ public:
     return pptr() - gptr();
   }
 
+  /// Get the current capacity of the basic_streambuf.
+  /**
+   * @returns The current total capacity of the streambuf, i.e. for both the
+   * input sequence and output sequence.
+   */
+  std::size_t capacity() const
+  {
+    return buffer_.capacity();
+  }
+
   /// Get the maximum size of the basic_streambuf.
   /**
    * @returns The allowed maximum of the sum of the sizes of the input sequence
