@@ -80,7 +80,7 @@ public:
     typedef win_iocp_overlapped_op<Handler> op;
     typename op::ptr p = { boost::asio::detail::addressof(handler),
       op::ptr::allocate(handler), 0 };
-    p.p = new (p.v) op(handler);
+    p.p = new (p.v) op(BOOST_ASIO_MOVE_CAST(Handler)(handler));
 
     BOOST_ASIO_HANDLER_CREATION((io_context, *p.p,
           "io_context", &io_context.impl_, 0, "overlapped"));
