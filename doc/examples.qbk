@@ -309,6 +309,7 @@ coroutines.
 Examples showing how to use UNIX domain (local) sockets.
 
 * [@boost_asio/example/cpp03/local/connect_pair.cpp]
+* [@boost_asio/example/cpp03/local/iostream_client.cpp]
 * [@boost_asio/example/cpp03/local/stream_server.cpp]
 * [@boost_asio/example/cpp03/local/stream_client.cpp]
 
@@ -366,6 +367,20 @@ and asynchronous operations.
 * [@boost_asio/example/cpp11/echo/blocking_udp_echo_server.cpp]
 
 
+[heading Fork]
+
+These POSIX-specific examples show how to use Boost.Asio in conjunction with the
+`fork()` system call. The first example illustrates the steps required to start
+a daemon process:
+
+* [@boost_asio/example/cpp11/fork/daemon.cpp]
+
+The second example demonstrates how it is possible to fork a process from
+within a completion handler.
+
+* [@boost_asio/example/cpp11/fork/process_per_connection.cpp]
+
+
 [heading Futures]
 
 This example demonstrates how to use std::future in conjunction with
@@ -399,6 +414,23 @@ cancelling all outstanding asynchronous operations.
 * [@boost_asio/example/cpp11/http/server/server.hpp]
 
 
+[heading Multicast]
+
+An example showing the use of multicast to transmit packets to a group of
+subscribers.
+
+* [@boost_asio/example/cpp11/multicast/receiver.cpp]
+* [@boost_asio/example/cpp11/multicast/sender.cpp]
+
+
+[heading Nonblocking]
+
+Example demonstrating reactor-style operations for integrating a third-party
+library that wants to perform the I/O operations itself.
+
+* [@boost_asio/example/cpp11/nonblocking/third_party_lib.cpp]
+
+
 [heading Spawn]
 
 Example of using the boost::asio::spawn() function, a wrapper around the
@@ -407,6 +439,16 @@ library, to implement a chain of asynchronous operations using stackful
 coroutines.
 
 * [@boost_asio/example/cpp11/spawn/echo_server.cpp]
+
+
+[heading UNIX Domain Sockets]
+
+Examples showing how to use UNIX domain (local) sockets.
+
+* [@boost_asio/example/cpp11/local/connect_pair.cpp]
+* [@boost_asio/example/cpp11/local/iostream_client.cpp]
+* [@boost_asio/example/cpp11/local/stream_server.cpp]
+* [@boost_asio/example/cpp11/local/stream_client.cpp]
 
 
 [endsect]
