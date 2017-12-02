@@ -768,20 +768,22 @@
 # endif // !defined(BOOST_ASIO_DISABLE_STD_FUTURE)
 #endif // !defined(BOOST_ASIO_HAS_STD_FUTURE)
 
-// Standard library support for experimental::string_view.
+// Standard library support for string_view or experimental::string_view.
 #if !defined(BOOST_ASIO_HAS_STD_STRING_VIEW)
 # if !defined(BOOST_ASIO_DISABLE_STD_STRING_VIEW)
 #  if defined(__clang__)
-#   if (__cplusplus >= 201402)
-#    if __has_include(<experimental/string_view>)
-#     define BOOST_ASIO_HAS_STD_STRING_VIEW 1
-#     define BOOST_ASIO_HAS_STD_EXPERIMENTAL_STRING_VIEW 1
-#    endif // __has_include(<experimental/string_view>)
-#   endif // (__cplusplus >= 201402)
+#   if (__cplusplus >= 201703) && __has_include(<string_view>)
+#    define BOOST_ASIO_HAS_STD_STRING_VIEW 1
+#   elif (__cplusplus >= 201402) && __has_include(<experimental/string_view>)
+#    define BOOST_ASIO_HAS_STD_STRING_VIEW 1
+#    define BOOST_ASIO_HAS_STD_EXPERIMENTAL_STRING_VIEW 1
+#   endif // (__cplusplus >= 201402) && __has_include(<experimental/string_view>)
 #  endif // defined(__clang__)
 #  if defined(__GNUC__)
 #   if ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 9)) || (__GNUC__ > 4)
-#    if (__cplusplus >= 201402)
+#    if (__cplusplus >= 201703)
+#     define BOOST_ASIO_HAS_STD_STRING_VIEW 1
+#    elif (__cplusplus >= 201402)
 #     define BOOST_ASIO_HAS_STD_STRING_VIEW 1
 #     define BOOST_ASIO_HAS_STD_EXPERIMENTAL_STRING_VIEW 1
 #    endif // (__cplusplus >= 201402)
