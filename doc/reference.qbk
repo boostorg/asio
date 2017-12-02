@@ -2908,9 +2908,9 @@ After the `async_read_until` operation completes successfully, the buffer `b` co
    { 'a', 'b', ..., 'c', '\n', 'd', 'e', ... } 
 
 
-The call to `std::getline` then extracts the data up to and including the delimiter, so that the string `line` contains: 
+The call to `std::getline` then extracts the data up to and including the newline (which is discarded), so that the string `line` contains: 
 
-   { 'a', 'b', ..., 'c', '\n' } 
+   { 'a', 'b', ..., 'c' } 
 
 
 The remaining data is left in the buffer `b` as follows: 
@@ -3013,9 +3013,9 @@ After the `async_read_until` operation completes successfully, the buffer `b` co
    { 'a', 'b', ..., 'c', '\r', '\n', 'd', 'e', ... } 
 
 
-The call to `std::getline` then extracts the data up to and including the delimiter, so that the string `line` contains: 
+The call to `std::getline` then extracts the data up to and including the newline (which is discarded), so that the string `line` contains: 
 
-   { 'a', 'b', ..., 'c', '\r', '\n' } 
+   { 'a', 'b', ..., 'c', '\r' } 
 
 
 The remaining data is left in the buffer `b` as follows: 
@@ -3119,9 +3119,9 @@ After the `async_read_until` operation completes successfully, the buffer `b` co
    { 'a', 'b', ..., 'c', '\r', '\n', 'd', 'e', ... } 
 
 
-The call to `std::getline` then extracts the data up to and including the match, so that the string `line` contains: 
+The call to `std::getline` then extracts the data up to and including the newline (which is discarded), so that the string `line` contains: 
 
-   { 'a', 'b', ..., 'c', '\r', '\n' } 
+   { 'a', 'b', ..., 'c', '\r' } 
 
 
 The remaining data is left in the buffer `b` as follows: 
@@ -3578,7 +3578,7 @@ Partial specialisation of `async_result` for `std::packaged_task`.
 
 ['Header: ][^boost/asio/packaged_task.hpp]
 
-['Convenience header: ]None
+['Convenience header: ][^boost/asio.hpp]
 
 
 [section:async_result async_result< std::packaged_task< Result(Args...)>, Signature >::async_result]
@@ -3610,7 +3610,7 @@ The packaged task is the concrete completion handler type.
 
 ['Header: ][^boost/asio/packaged_task.hpp]
 
-['Convenience header: ]None
+['Convenience header: ][^boost/asio.hpp]
 
 
 [endsect]
@@ -3645,7 +3645,7 @@ The return type of the initiating function is the future obtained from the packa
 
 ['Header: ][^boost/asio/packaged_task.hpp]
 
-['Convenience header: ]None
+['Convenience header: ][^boost/asio.hpp]
 
 
 [endsect]
@@ -60006,7 +60006,7 @@ This typedef uses the C++11 `<chrono>` standard library facility, if available. 
 
 ['Header: ][^boost/asio/high_resolution_timer.hpp]
 
-['Convenience header: ]None
+['Convenience header: ][^boost/asio.hpp]
 
 
 [endsect]
@@ -60319,6 +60319,42 @@ For example:
        // Deal with exception as appropriate.
      }
    }
+
+
+
+
+
+[heading Submitting arbitrary tasks to the io_context]
+  
+
+
+To submit functions to the [link boost_asio.reference.io_context `io_context`], use the [link boost_asio.reference.dispatch `dispatch`] , [link boost_asio.reference.post `post`]  or [link boost_asio.reference.defer `defer`]  free functions.
+
+For example:
+
+
+
+   void my_task()
+   {
+     ...
+   }
+
+   ...
+
+   boost::asio::io_context io_context;
+
+   // Submit a function to the io_context.
+   boost::asio::post(io_context, my_task);
+
+   // Submit a lambda object to the io_context.
+   boost::asio::post(io_context,
+       []()
+       {
+         ...
+       });
+
+   // Run the io_context until it runs out of work.
+   io_context.run(); 
 
 
 
@@ -63146,6 +63182,42 @@ For example:
        // Deal with exception as appropriate.
      }
    }
+
+
+
+
+
+[heading Submitting arbitrary tasks to the io_context]
+  
+
+
+To submit functions to the [link boost_asio.reference.io_context `io_context`], use the [link boost_asio.reference.dispatch `dispatch`] , [link boost_asio.reference.post `post`]  or [link boost_asio.reference.defer `defer`]  free functions.
+
+For example:
+
+
+
+   void my_task()
+   {
+     ...
+   }
+
+   ...
+
+   boost::asio::io_context io_context;
+
+   // Submit a function to the io_context.
+   boost::asio::post(io_context, my_task);
+
+   // Submit a lambda object to the io_context.
+   boost::asio::post(io_context,
+       []()
+       {
+         ...
+       });
+
+   // Run the io_context until it runs out of work.
+   io_context.run(); 
 
 
 
@@ -92366,9 +92438,9 @@ After the `read_until` operation completes successfully, the buffer `b` contains
    { 'a', 'b', ..., 'c', '\n', 'd', 'e', ... } 
 
 
-The call to `std::getline` then extracts the data up to and including the delimiter, so that the string `line` contains: 
+The call to `std::getline` then extracts the data up to and including the newline (which is discarded), so that the string `line` contains: 
 
-   { 'a', 'b', ..., 'c', '\n' } 
+   { 'a', 'b', ..., 'c' } 
 
 
 The remaining data is left in the buffer `b` as follows: 
@@ -92520,9 +92592,9 @@ After the `read_until` operation completes successfully, the buffer `b` contains
    { 'a', 'b', ..., 'c', '\r', '\n', 'd', 'e', ... } 
 
 
-The call to `std::getline` then extracts the data up to and including the delimiter, so that the string `line` contains: 
+The call to `std::getline` then extracts the data up to and including the newline (which is discarded), so that the string `line` contains: 
 
-   { 'a', 'b', ..., 'c', '\r', '\n' } 
+   { 'a', 'b', ..., 'c', '\r' } 
 
 
 The remaining data is left in the buffer `b` as follows: 
@@ -92674,9 +92746,9 @@ After the `read_until` operation completes successfully, the buffer `b` contains
    { 'a', 'b', ..., 'c', '\r', '\n', 'd', 'e', ... } 
 
 
-The call to `std::getline` then extracts the data up to and including the match, so that the string `line` contains: 
+The call to `std::getline` then extracts the data up to and including the newline (which is discarded), so that the string `line` contains: 
 
-   { 'a', 'b', ..., 'c', '\r', '\n' } 
+   { 'a', 'b', ..., 'c', '\r' } 
 
 
 The remaining data is left in the buffer `b` as follows: 
@@ -103566,7 +103638,7 @@ This typedef uses the C++11 `<chrono>` standard library facility, if available. 
 
 ['Header: ][^boost/asio/steady_timer.hpp]
 
-['Convenience header: ]None
+['Convenience header: ][^boost/asio.hpp]
 
 
 [endsect]
@@ -105637,7 +105709,7 @@ This typedef uses the C++11 `<chrono>` standard library facility, if available. 
 
 ['Header: ][^boost/asio/system_timer.hpp]
 
-['Convenience header: ]None
+['Convenience header: ][^boost/asio.hpp]
 
 
 [endsect]
@@ -105753,7 +105825,44 @@ A simple fixed-size thread pool.
   
 ]
 
-The thread pool class is an execution context where functions are permitted to run on one of a fixed number of threads. 
+The thread pool class is an execution context where functions are permitted to run on one of a fixed number of threads.
+
+
+[heading Submitting tasks to the pool]
+  
+
+
+To submit functions to the [link boost_asio.reference.io_context `io_context`], use the [link boost_asio.reference.dispatch `dispatch`] , [link boost_asio.reference.post `post`]  or [link boost_asio.reference.defer `defer`]  free functions.
+
+For example:
+
+
+
+   void my_task()
+   {
+     ...
+   }
+
+   ...
+
+   // Launch the pool with four threads.
+   boost::asio::thread_pool pool(4);
+
+   // Submit a function to the pool.
+   boost::asio::post(pool, my_task);
+
+   // Submit a lambda object to the pool.
+   boost::asio::post(pool,
+       []()
+       {
+         ...
+       });
+
+   // Wait for all tasks in the pool to complete.
+   pool.join(); 
+
+
+
 
 [heading Requirements]
 
@@ -106959,7 +107068,7 @@ See the documentation for [link boost_asio.reference.use_future_t `use_future_t`
 
 ['Header: ][^boost/asio/use_future.hpp]
 
-['Convenience header: ]None
+['Convenience header: ][^boost/asio.hpp]
 
 
 [endsect]
@@ -107038,7 +107147,7 @@ The initiating function (async\_read\_some in the above example) returns a futur
 
 ['Header: ][^boost/asio/use_future.hpp]
 
-['Convenience header: ]None
+['Convenience header: ][^boost/asio.hpp]
 
 
 [section:allocator_type use_future_t::allocator_type]
@@ -107055,7 +107164,7 @@ The allocator type. The allocator is used when constructing the `std::promise` o
 
 ['Header: ][^boost/asio/use_future.hpp]
 
-['Convenience header: ]None
+['Convenience header: ][^boost/asio.hpp]
 
 
 [endsect]
