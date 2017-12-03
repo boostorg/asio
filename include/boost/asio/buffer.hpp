@@ -28,13 +28,13 @@
 #include <boost/asio/detail/throw_exception.hpp>
 #include <boost/asio/detail/type_traits.hpp>
 
-#if defined(BOOST_ASIO_MSVC)
+#if defined(BOOST_ASIO_MSVC) && (BOOST_ASIO_MSVC >= 1700)
 # if defined(_HAS_ITERATOR_DEBUGGING) && (_HAS_ITERATOR_DEBUGGING != 0)
 #  if !defined(BOOST_ASIO_DISABLE_BUFFER_DEBUGGING)
 #   define BOOST_ASIO_ENABLE_BUFFER_DEBUGGING
 #  endif // !defined(BOOST_ASIO_DISABLE_BUFFER_DEBUGGING)
 # endif // defined(_HAS_ITERATOR_DEBUGGING)
-#endif // defined(BOOST_ASIO_MSVC)
+#endif // defined(BOOST_ASIO_MSVC) && (BOOST_ASIO_MSVC >= 1700)
 
 #if defined(__GNUC__)
 # if defined(_GLIBCXX_DEBUG)
