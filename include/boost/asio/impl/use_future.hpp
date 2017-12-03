@@ -544,6 +544,8 @@ template <typename Arg>
 class promise_handler_selector<void(std::exception_ptr, Arg)>
   : public promise_handler_ex_1<Arg> {};
 
+#if defined(BOOST_ASIO_HAS_VARIADIC_TEMPLATES)
+
 template <typename... Arg>
 class promise_handler_selector<void(Arg...)>
   : public promise_handler_n<std::tuple<Arg...> > {};
@@ -555,6 +557,32 @@ class promise_handler_selector<void(boost::system::error_code, Arg...)>
 template <typename... Arg>
 class promise_handler_selector<void(std::exception_ptr, Arg...)>
   : public promise_handler_ex_n<std::tuple<Arg...> > {};
+
+#else // defined(BOOST_ASIO_HAS_VARIADIC_TEMPLATES)
+
+#define BOOST_ASIO_PRIVATE_PROMISE_SELECTOR_DEF(n) \
+  template <typename Arg, BOOST_ASIO_VARIADIC_TPARAMS(n)> \
+  class promise_handler_selector< \
+    void(Arg, BOOST_ASIO_VARIADIC_TARGS(n))> \
+      : public promise_handler_n< \
+        std::tuple<Arg, BOOST_ASIO_VARIADIC_TARGS(n)> > {}; \
+  \
+  template <typename Arg, BOOST_ASIO_VARIADIC_TPARAMS(n)> \
+  class promise_handler_selector< \
+    void(boost::system::error_code, Arg, BOOST_ASIO_VARIADIC_TARGS(n))> \
+      : public promise_handler_ec_n< \
+        std::tuple<Arg, BOOST_ASIO_VARIADIC_TARGS(n)> > {}; \
+  \
+  template <typename Arg, BOOST_ASIO_VARIADIC_TPARAMS(n)> \
+  class promise_handler_selector< \
+    void(std::exception_ptr, Arg, BOOST_ASIO_VARIADIC_TARGS(n))> \
+      : public promise_handler_ex_n< \
+        std::tuple<Arg, BOOST_ASIO_VARIADIC_TARGS(n)> > {}; \
+  /**/
+  BOOST_ASIO_VARIADIC_GENERATE(BOOST_ASIO_PRIVATE_PROMISE_SELECTOR_DEF)
+#undef BOOST_ASIO_PRIVATE_PROMISE_SELECTOR_DEF
+
+#endif // defined(BOOST_ASIO_HAS_VARIADIC_TEMPLATES)
 
 // Completion handlers produced from the use_future completion token, when not
 // using use_future::operator().
