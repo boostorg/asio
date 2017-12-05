@@ -92,7 +92,7 @@ C++ approach.
   ]
   [
     [
-      [link asio.net_ts Networking TS Compatibility]
+      [link boost_asio.net_ts Networking TS Compatibility]
     ]
     [
       Description of changes to provide compatibility with the "C++ Extensions
