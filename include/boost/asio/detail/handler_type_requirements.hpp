@@ -509,6 +509,10 @@ struct handler_type_requirements
     handler_type, handler) \
   typedef int BOOST_ASIO_UNUSED_TYPEDEF
 
+#define BOOST_ASIO_MOVE_ACCEPT_HANDLER_CHECK( \
+    handler_type, handler, socket_type) \
+  typedef int BOOST_ASIO_UNUSED_TYPEDEF
+
 #define BOOST_ASIO_CONNECT_HANDLER_CHECK( \
     handler_type, handler) \
   typedef int BOOST_ASIO_UNUSED_TYPEDEF

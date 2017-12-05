@@ -19,12 +19,13 @@
 #include <boost/asio/detail/scheduler.hpp>
 #include <boost/asio/detail/thread_group.hpp>
 #include <boost/asio/execution_context.hpp>
-#include <boost/asio/system_executor.hpp>
 
 #include <boost/asio/detail/push_options.hpp>
 
 namespace boost {
 namespace asio {
+
+class system_executor;
 
 /// The executor context for the system executor.
 class system_context : public execution_context
@@ -37,10 +38,7 @@ public:
   BOOST_ASIO_DECL ~system_context();
 
   /// Obtain an executor for the context.
-  executor_type get_executor() BOOST_ASIO_NOEXCEPT
-  {
-    return system_executor();
-  }
+  executor_type get_executor() BOOST_ASIO_NOEXCEPT;
 
   /// Signal all threads in the system thread pool to stop.
   BOOST_ASIO_DECL void stop();
@@ -74,6 +72,7 @@ private:
 
 #include <boost/asio/detail/pop_options.hpp>
 
+#include <boost/asio/impl/system_context.hpp>
 #if defined(BOOST_ASIO_HEADER_ONLY)
 # include <boost/asio/impl/system_context.ipp>
 #endif // defined(BOOST_ASIO_HEADER_ONLY)

@@ -36,11 +36,7 @@ int main()
       boost::array<char, 1> recv_buf;
       udp::endpoint remote_endpoint;
       boost::system::error_code error;
-      socket.receive_from(boost::asio::buffer(recv_buf),
-          remote_endpoint, 0, error);
-
-      if (error && error != boost::asio::error::message_size)
-        throw boost::system::system_error(error);
+      socket.receive_from(boost::asio::buffer(recv_buf), remote_endpoint);
 
       std::string message = make_daytime_string();
 

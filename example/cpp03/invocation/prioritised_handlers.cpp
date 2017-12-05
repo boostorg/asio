@@ -15,7 +15,7 @@
 
 using boost::asio::ip::tcp;
 
-class handler_priority_queue
+class handler_priority_queue : boost::asio::execution_context
 {
 public:
   void add(int priority, boost::function<void()> function)
@@ -33,43 +33,60 @@ public:
     }
   }
 
-  // A generic wrapper class for handlers to allow the invocation to be hooked.
-  template <typename Handler>
-  class wrapped_handler
+  class executor
   {
   public:
-    wrapped_handler(handler_priority_queue& q, int p, Handler h)
-      : queue_(q), priority_(p), handler_(h)
+    executor(handler_priority_queue& q, int p)
+      : context_(q), priority_(p)
     {
     }
 
-    void operator()()
+    handler_priority_queue& context() const
     {
-      handler_();
+      return context_;
     }
 
-    template <typename Arg1>
-    void operator()(Arg1 arg1)
+    template <typename Function, typename Allocator>
+    void dispatch(const Function& f, const Allocator&) const
     {
-      handler_(arg1);
+      context_.add(priority_, f);
     }
 
-    template <typename Arg1, typename Arg2>
-    void operator()(Arg1 arg1, Arg2 arg2)
+    template <typename Function, typename Allocator>
+    void post(const Function& f, const Allocator&) const
     {
-      handler_(arg1, arg2);
+      context_.add(priority_, f);
     }
 
-  //private:
-    handler_priority_queue& queue_;
+    template <typename Function, typename Allocator>
+    void defer(const Function& f, const Allocator&) const
+    {
+      context_.add(priority_, f);
+    }
+
+    void on_work_started() const {}
+    void on_work_finished() const {}
+
+    bool operator==(const executor& other) const
+    {
+      return &context_ == &other.context_ && priority_ == other.priority_;
+    }
+
+    bool operator!=(const executor& other) const
+    {
+      return !operator==(other);
+    }
+
+  private:
+    handler_priority_queue& context_;
     int priority_;
-    Handler handler_;
   };
 
   template <typename Handler>
-  wrapped_handler<Handler> wrap(int priority, Handler handler)
+  boost::asio::executor_binder<Handler, executor>
+  wrap(int priority, Handler handler)
   {
-    return wrapped_handler<Handler>(*this, priority, handler);
+    return boost::asio::bind_executor(executor(*this, priority), handler);
   }
 
 private:
@@ -99,14 +116,6 @@ private:
 
   std::priority_queue<queued_handler> handlers_;
 };
-
-// Custom invocation hook for wrapped handlers.
-template <typename Function, typename Handler>
-void asio_handler_invoke(Function f,
-    handler_priority_queue::wrapped_handler<Handler>* h)
-{
-  h->queue_.add(h->priority_, f);
-}
 
 //----------------------------------------------------------------------
 

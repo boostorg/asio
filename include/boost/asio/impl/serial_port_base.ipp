@@ -114,7 +114,7 @@ BOOST_ASIO_SYNC_OP_VOID serial_port_base::baud_rate::store(
     ec = boost::asio::error::invalid_argument;
     BOOST_ASIO_SYNC_OP_VOID_RETURN(ec);
   }
-# if defined(_BSD_SOURCE)
+# if defined(_BSD_SOURCE) || defined(_DEFAULT_SOURCE)
   ::cfsetspeed(&storage, baud);
 # else
   ::cfsetispeed(&storage, baud);
@@ -250,7 +250,7 @@ BOOST_ASIO_SYNC_OP_VOID serial_port_base::flow_control::store(
   {
   case none:
     storage.c_iflag &= ~(IXOFF | IXON);
-# if defined(_BSD_SOURCE)
+# if defined(_BSD_SOURCE) || defined(_DEFAULT_SOURCE)
     storage.c_cflag &= ~CRTSCTS;
 # elif defined(__QNXNTO__)
     storage.c_cflag &= ~(IHFLOW | OHFLOW);
@@ -258,14 +258,14 @@ BOOST_ASIO_SYNC_OP_VOID serial_port_base::flow_control::store(
     break;
   case software:
     storage.c_iflag |= IXOFF | IXON;
-# if defined(_BSD_SOURCE)
+# if defined(_BSD_SOURCE) || defined(_DEFAULT_SOURCE)
     storage.c_cflag &= ~CRTSCTS;
 # elif defined(__QNXNTO__)
     storage.c_cflag &= ~(IHFLOW | OHFLOW);
 # endif
     break;
   case hardware:
-# if defined(_BSD_SOURCE)
+# if defined(_BSD_SOURCE) || defined(_DEFAULT_SOURCE)
     storage.c_iflag &= ~(IXOFF | IXON);
     storage.c_cflag |= CRTSCTS;
     break;
@@ -306,7 +306,7 @@ BOOST_ASIO_SYNC_OP_VOID serial_port_base::flow_control::load(
   {
     value_ = software;
   }
-# if defined(_BSD_SOURCE)
+# if defined(_BSD_SOURCE) || defined(_DEFAULT_SOURCE)
   else if (storage.c_cflag & CRTSCTS)
   {
     value_ = hardware;

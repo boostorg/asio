@@ -63,6 +63,7 @@
 #include <boost/asio/handler_continuation_hook.hpp>
 #include <boost/asio/handler_invoke_hook.hpp>
 #include <boost/asio/handler_type.hpp>
+#include <boost/asio/high_resolution_timer.hpp>
 #include <boost/asio/io_context.hpp>
 #include <boost/asio/io_context_strand.hpp>
 #include <boost/asio/io_service.hpp>
@@ -118,11 +119,13 @@
 #include <boost/asio/signal_set_service.hpp>
 #include <boost/asio/socket_acceptor_service.hpp>
 #include <boost/asio/socket_base.hpp>
+#include <boost/asio/steady_timer.hpp>
 #include <boost/asio/strand.hpp>
 #include <boost/asio/stream_socket_service.hpp>
 #include <boost/asio/streambuf.hpp>
 #include <boost/asio/system_context.hpp>
 #include <boost/asio/system_executor.hpp>
+#include <boost/asio/system_timer.hpp>
 #include <boost/asio/thread_pool.hpp>
 #include <boost/asio/time_traits.hpp>
 #include <boost/asio/use_future.hpp>
