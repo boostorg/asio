@@ -7,12 +7,12 @@
 
 [section:concurrency_hint Concurrency Hints]
 
-The [link boost_asio.reference.io_context.io_context `io_context` constructor] allows
-programs to specify a concurrency hint. This is a suggestion to the
-implementation as to the number of active threads that should be used for
-running completion handlers.
+The [link boost_asio.reference.io_context.io_context `io_context` constructor]
+allows programs to specify a concurrency hint. This is a suggestion to the
+`io_context` implementation as to the number of active threads that should be
+used for running completion handlers.
 
-When the Windows I/O completion port backend is in used, this value is passed
+When the Windows I/O completion port backend is in use, this value is passed
 to [^CreateIoCompletionPort].
 
 When a reactor-based backend is used, the implementation recognises the
@@ -23,13 +23,14 @@ following special concurrency hint values:
   [
     [`1`]
     [
-
       The implementation assumes that the `io_context` will be run from a
       single thread, and applies several optimisations based on this
       assumption.
     
       For example, when a handler is posted from within another handler, the
-      new handler is held back until the currently executing handler finishes.
+      new handler is added to a fast thread-local queue (with the consequence
+      that the new handler is held back until the currently executing handler
+      finishes).
     ]
   ]
   [
@@ -38,14 +39,14 @@ following special concurrency hint values:
       This special concurrency hint disables locking in both the scheduler and
       reactor I/O. This hint has the following restrictions:
 
-      [mdash] Care must be taken to ensure that all operations on the io_context
-      and any of its associated I/O objects (such as sockets and timers) occur
-      in only one thread at a time.
+      [mdash] Care must be taken to ensure that all operations on the
+      `io_context` and any of its associated I/O objects (such as sockets and
+      timers) occur in only one thread at a time.
 
       [mdash] Asynchronous resolve operations fail with `operation_not_supported`.
 
-      [mdash] If a `signal_set` is used with the `io_context`, `signal_set` objects
-      cannot be used with any other io_context in the program.
+      [mdash] If a `signal_set` is used with the `io_context`, `signal_set`
+      objects cannot be used with any other io_context in the program.
     ]
   ]
   [
