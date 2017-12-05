@@ -12,7 +12,7 @@ programs to specify a concurrency hint. This is a suggestion to the
 implementation as to the number of active threads that should be used for
 running completion handlers.
 
-When then Windows I/O completion port backend is in used, this value is passed
+When the Windows I/O completion port backend is in used, this value is passed
 to [^CreateIoCompletionPort].
 
 When a reactor-based backend is used, the implementation recognises the
