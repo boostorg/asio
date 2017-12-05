@@ -92,6 +92,15 @@ C++ approach.
   ]
   [
     [
+      [link asio.net_ts Networking TS Compatibility]
+    ]
+    [
+      Description of changes to provide compatibility with the "C++ Extensions
+      for Networking" Technical Specification.
+    ]
+  ]
+  [
+    [
       [link boost_asio.history Revision History]
     ]
     [
@@ -113,5 +122,6 @@ C++ approach.
 [include tutorial.qbk]
 [include examples.qbk]
 [include reference.qbk]
+[include net_ts.qbk]
 [include history.qbk]
 [xinclude index.xml]
