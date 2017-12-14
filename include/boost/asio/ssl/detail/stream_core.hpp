@@ -120,7 +120,7 @@ struct stream_core
   std::vector<unsigned char> input_buffer_space_;
 
   // A buffer that may be used to read input intended for the engine.
-  const boost::asio::mutable_buffer input_buffer_;
+  const boost::asio::mutable_buffers_1 input_buffer_;
 
   // The buffer pointing to the engine's unconsumed input.
   boost::asio::const_buffer input_;
