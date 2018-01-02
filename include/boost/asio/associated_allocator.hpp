@@ -25,6 +25,8 @@ namespace boost {
 namespace asio {
 namespace detail {
 
+struct none { BOOST_ASIO_CONSTEXPR none() = default; };
+
 template <typename>
 struct associated_allocator_check
 {
@@ -75,7 +77,7 @@ struct associated_allocator_impl<T, E,
  * @li Provide a noexcept static member function named @c get, callable as @c
  * get(t,a) and with return type @c type.
  */
-template <typename T, typename Allocator = std::allocator<void> >
+template <typename T, typename Allocator = std::allocator<detail::none> >
 struct associated_allocator
 {
   /// If @c T has a nested type @c allocator_type, <tt>T::allocator_type</tt>.
@@ -119,7 +121,7 @@ get_associated_allocator(const T& t, const Allocator& a) BOOST_ASIO_NOEXCEPT
 
 #if defined(BOOST_ASIO_HAS_ALIAS_TEMPLATES)
 
-template <typename T, typename Allocator = std::allocator<void> >
+template <typename T, typename Allocator = std::allocator<detail::none> >
 using associated_allocator_t
   = typename associated_allocator<T, Allocator>::type;
 

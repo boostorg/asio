@@ -255,7 +255,7 @@ public:
   static impl_base* create(const system_executor&,
       const Allocator& = Allocator())
   {
-    return &detail::global<impl<system_executor, std::allocator<void> > >();
+    return &detail::global<impl<system_executor, std::allocator<detail::none> > >();
   }
 
   impl()
@@ -329,7 +329,7 @@ private:
 
 template <typename Executor>
 executor::executor(Executor e)
-  : impl_(impl<Executor, std::allocator<void> >::create(e))
+  : impl_(impl<Executor, std::allocator<detail::none> >::create(e))
 {
 }
 

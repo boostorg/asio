@@ -52,7 +52,7 @@ class packaged_handler;
  * completes with an error_code indicating failure, it is converted into a
  * system_error and passed back to the caller via the future.
  */
-template <typename Allocator = std::allocator<void> >
+template <typename Allocator = std::allocator<detail::none> >
 class use_future_t
 {
 public:
@@ -127,14 +127,14 @@ private:
     {
     }
 
-    operator std::allocator<void>() const
+    operator std::allocator<detail::none>() const
     {
-      return std::allocator<void>();
+      return std::allocator<detail::none>();
     }
   };
 
   typename conditional<
-    is_same<std::allocator<void>, Allocator>::value,
+    is_same<std::allocator<detail::none>, Allocator>::value,
     std_allocator_void, Allocator>::type allocator_;
 };
 
