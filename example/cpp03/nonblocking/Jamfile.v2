@@ -7,37 +7,25 @@
 
 import os ;
 
-if [ os.name ] = SOLARIS
-{
-  lib socket ;
-  lib nsl ;
-}
-else if [ os.name ] = NT
-{
-  lib ws2_32 ;
-  lib mswsock ;
-}
-else if [ os.name ] = HPUX
-{
-  lib ipv6 ;
-}
-else if [ os.name ] = HAIKU
-{
-  lib network ;
-}
+lib socket ;
+lib nsl ;
+lib ws2_32 ;
+lib mswsock ;
+lib ipv6 ;
+lib network ;
 
 exe third_party_lib
   : third_party_lib.cpp
     /boost/system//boost_system
   : <define>BOOST_ALL_NO_LIB=1
     <threading>multi
-    <os>SOLARIS:<library>socket
-    <os>SOLARIS:<library>nsl
+    <target-os>solaris:<library>socket
+    <target-os>solaris:<library>nsl
     <target-os>windows:<define>_WIN32_WINNT=0x0501
     <target-os>windows,<toolset>gcc:<library>ws2_32
     <target-os>windows,<toolset>gcc:<library>mswsock
     <target-os>windows,<toolset>gcc-cygwin:<define>__USE_W32_SOCKETS
-    <os>HPUX,<toolset>gcc:<define>_XOPEN_SOURCE_EXTENDED
-    <os>HPUX:<library>ipv6
-    <os>HAIKU:<library>network
+    <target-os>hpux,<toolset>gcc:<define>_XOPEN_SOURCE_EXTENDED
+    <target-os>hpux:<library>ipv6
+    <target-os>haiku:<library>network
   ;
