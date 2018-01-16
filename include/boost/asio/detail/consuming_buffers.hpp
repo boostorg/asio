@@ -401,7 +401,7 @@ public:
     // No-op.
   }
 
-  std::size_t total_consume() const
+  std::size_t total_consumed() const
   {
     return 0;
   }
