@@ -19,6 +19,8 @@
 
 #if defined(__GNUC__) && (defined(__hppa) || defined(__hppa__))
 
+#include <boost/asio/detail/noncopyable.hpp>
+
 #include <boost/asio/detail/push_options.hpp>
 
 namespace boost {

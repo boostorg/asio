@@ -9,7 +9,7 @@
 //
 
 #include <boost/asio/deadline_timer.hpp>
-#include <boost/asio/io_service.hpp>
+#include <boost/asio/io_context.hpp>
 #include <boost/asio/ip/tcp.hpp>
 #include <boost/asio/read_until.hpp>
 #include <boost/asio/streambuf.hpp>
@@ -83,20 +83,21 @@ using boost::asio::ip::tcp;
 class client
 {
 public:
-  client(boost::asio::io_service& io_service)
+  client(boost::asio::io_context& io_context)
     : stopped_(false),
-      socket_(io_service),
-      deadline_(io_service),
-      heartbeat_timer_(io_service)
+      socket_(io_context),
+      deadline_(io_context),
+      heartbeat_timer_(io_context)
   {
   }
 
   // Called by the user of the client class to initiate the connection process.
-  // The endpoint iterator will have been obtained using a tcp::resolver.
-  void start(tcp::resolver::iterator endpoint_iter)
+  // The endpoints will have been obtained using a tcp::resolver.
+  void start(tcp::resolver::results_type endpoints)
   {
     // Start the connect actor.
-    start_connect(endpoint_iter);
+    endpoints_ = endpoints;
+    start_connect(endpoints_.begin());
 
     // Start the deadline actor. You will note that we're not setting any
     // particular deadline here. Instead, the connect and input actors will
@@ -117,9 +118,9 @@ public:
   }
 
 private:
-  void start_connect(tcp::resolver::iterator endpoint_iter)
+  void start_connect(tcp::resolver::results_type::iterator endpoint_iter)
   {
-    if (endpoint_iter != tcp::resolver::iterator())
+    if (endpoint_iter != endpoints_.end())
     {
       std::cout << "Trying " << endpoint_iter->endpoint() << "...\n";
 
@@ -139,7 +140,7 @@ private:
   }
 
   void handle_connect(const boost::system::error_code& ec,
-      tcp::resolver::iterator endpoint_iter)
+      tcp::resolver::results_type::iterator endpoint_iter)
   {
     if (stopped_)
       return;
@@ -273,6 +274,7 @@ private:
 
 private:
   bool stopped_;
+  tcp::resolver::results_type endpoints_;
   tcp::socket socket_;
   boost::asio::streambuf input_buffer_;
   deadline_timer deadline_;
@@ -289,13 +291,13 @@ int main(int argc, char* argv[])
       return 1;
     }
 
-    boost::asio::io_service io_service;
-    tcp::resolver r(io_service);
-    client c(io_service);
+    boost::asio::io_context io_context;
+    tcp::resolver r(io_context);
+    client c(io_context);
 
-    c.start(r.resolve(tcp::resolver::query(argv[1], argv[2])));
+    c.start(r.resolve(argv[1], argv[2]));
 
-    io_service.run();
+    io_context.run();
   }
   catch (std::exception& e)
   {

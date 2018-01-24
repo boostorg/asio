@@ -20,8 +20,10 @@
 ]
 
 [template mdash[] '''&mdash; ''']
-[template indexterm1[term1] '''<indexterm><primary>'''[term1]'''</primary></indexterm>''']
-[template indexterm2[term1 term2] '''<indexterm><primary>'''[term1]'''</primary><secondary>'''[term2]'''</secondary></indexterm>''']
+[template half_open_range[text] '''&#91;'''[text])]
+[template indexterm1[id term1] '''<indexterm id="'''[id]'''"><primary>'''[term1]'''</primary></indexterm>''']
+[template indexterm2[id term1 term2] '''<indexterm id="'''[id]'''"><primary>'''[term1]'''</primary><secondary>'''[term2]'''</secondary></indexterm>''']
+[template inline_note[text] \[['Note:] [text] '''&mdash;'''['end note]\] ]
 [template ticket[number]'''<ulink url="https://svn.boost.org/trac/boost/ticket/'''[number]'''">'''#[number]'''</ulink>''']
 [def __POSIX__ /POSIX/]
 [def __Windows__ /Windows/]
@@ -31,9 +33,11 @@
 [def __getsockname__ [@http://www.opengroup.org/onlinepubs/000095399/functions/getsockname.html `getsockname()`]]
 [def __getsockopt__ [@http://www.opengroup.org/onlinepubs/000095399/functions/getsockopt.html `getsockopt()`]]
 [def __ioctl__ [@http://www.opengroup.org/onlinepubs/000095399/functions/ioctl.html `ioctl()`]]
+[def __poll__ [@http://www.opengroup.org/onlinepubs/000095399/functions/poll.html `poll()`]]
 [def __recvfrom__ [@http://www.opengroup.org/onlinepubs/000095399/functions/recvfrom.html `recvfrom()`]]
 [def __sendto__ [@http://www.opengroup.org/onlinepubs/000095399/functions/sendto.html `sendto()`]]
 [def __setsockopt__ [@http://www.opengroup.org/onlinepubs/000095399/functions/setsockopt.html `setsockopt()`]]
+[def __shutdown__ [@http://www.opengroup.org/onlinepubs/000095399/functions/shutdown.html `shutdown()`]]
 [def __socket__ [@http://www.opengroup.org/onlinepubs/000095399/functions/socket.html `socket()`]]
 
 [/=============================================================================]
@@ -88,6 +92,15 @@ C++ approach.
   ]
   [
     [
+      [link boost_asio.net_ts Networking TS Compatibility]
+    ]
+    [
+      Description of changes to provide compatibility with the "C++ Extensions
+      for Networking" Technical Specification.
+    ]
+  ]
+  [
+    [
       [link boost_asio.history Revision History]
     ]
     [
@@ -109,5 +122,6 @@ C++ approach.
 [include tutorial.qbk]
 [include examples.qbk]
 [include reference.qbk]
+[include net_ts.qbk]
 [include history.qbk]
 [xinclude index.xml]

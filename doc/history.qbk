@@ -7,6 +7,25 @@
 
 [section:history Revision History]
 
+[heading Asio 1.12.0 / Boost 1.66]
+
+* Implemented interface changes to reflect the Networking TS
+	([@www.open-std.org/jtc1/sc22/wg21/docs/papers/2017/n4656.pdf N4656]).
+	* See the [link boost_asio.net_ts list] of new interfaces and, where
+    applicable, the corresponding old interfaces that have been superseded.
+	* The service template parameters, and the corresponding classes, are disabled
+		by default. For example, instead of `basic_socket<Protocol, SocketService>` we
+		now have simply `basic_socket<Protocol>`. The old interface can be enabled by
+		defining the `BOOST_ASIO_ENABLE_OLD_SERVICES` macro.
+* Removed previously deprecated functions.
+* Added support for customised handler tracking.
+* Added reactor-related (i.e. descriptor readiness) events to handler tracking.
+* Added special [link boost_asio.overview.core.concurrency_hint concurrency
+  hint] values that may be used to disable locking on a per `io_context` basis.
+* Enabled perfect forwarding for the first `ssl::stream<>` constructor argument.
+* Added ability to release ownership of the underlying native socket. (Requires
+	Windows 8.1 or later when using the I/O completion port backend.)
+
 [heading Asio 1.10.10 / Boost 1.65]
 
 * Changed to require [^g++] versions >= 4.7 to use standard atomics, to fix

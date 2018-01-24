@@ -33,7 +33,7 @@ namespace unicast {
  * @par Examples
  * Setting the option:
  * @code
- * boost::asio::ip::udp::socket socket(io_service); 
+ * boost::asio::ip::udp::socket socket(io_context); 
  * ...
  * boost::asio::ip::unicast::hops option(4);
  * socket.set_option(option);
@@ -42,7 +42,7 @@ namespace unicast {
  * @par
  * Getting the current option value:
  * @code
- * boost::asio::ip::udp::socket socket(io_service); 
+ * boost::asio::ip::udp::socket socket(io_context); 
  * ...
  * boost::asio::ip::unicast::hops option;
  * socket.get_option(option);

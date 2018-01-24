@@ -98,13 +98,13 @@ public:
   {
   }
 
-#if defined(BOOST_ASIO_HAS_MOVE)
+#if defined(BOOST_ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
   /// Move constructor.
   basic_endpoint(basic_endpoint&& other)
     : impl_(other.impl_)
   {
   }
-#endif // defined(BOOST_ASIO_HAS_MOVE)
+#endif // defined(BOOST_ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
 
   /// Assign from another endpoint.
   basic_endpoint& operator=(const basic_endpoint& other)
@@ -113,14 +113,14 @@ public:
     return *this;
   }
 
-#if defined(BOOST_ASIO_HAS_MOVE)
+#if defined(BOOST_ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
   /// Move-assign from another endpoint.
   basic_endpoint& operator=(basic_endpoint&& other)
   {
     impl_ = other.impl_;
     return *this;
   }
-#endif // defined(BOOST_ASIO_HAS_MOVE)
+#endif // defined(BOOST_ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
 
   /// The protocol associated with the endpoint.
   protocol_type protocol() const

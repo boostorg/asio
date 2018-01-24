@@ -35,14 +35,15 @@ namespace asio {
 namespace detail {
 
 reactive_serial_port_service::reactive_serial_port_service(
-    boost::asio::io_service& io_service)
-  : descriptor_service_(io_service)
+    boost::asio::io_context& io_context)
+  : service_base<reactive_serial_port_service>(io_context),
+    descriptor_service_(io_context)
 {
 }
 
-void reactive_serial_port_service::shutdown_service()
+void reactive_serial_port_service::shutdown()
 {
-  descriptor_service_.shutdown_service();
+  descriptor_service_.shutdown();
 }
 
 boost::system::error_code reactive_serial_port_service::open(
@@ -80,7 +81,7 @@ boost::system::error_code reactive_serial_port_service::open(
   s = descriptor_ops::error_wrapper(::tcgetattr(fd, &ios), ec);
   if (s >= 0)
   {
-#if defined(_BSD_SOURCE)
+#if defined(_BSD_SOURCE) || defined(_DEFAULT_SOURCE)
     ::cfmakeraw(&ios);
 #else
     ios.c_iflag &= ~(IGNBRK | BRKINT | PARMRK

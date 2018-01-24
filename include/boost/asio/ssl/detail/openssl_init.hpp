@@ -17,8 +17,8 @@
 
 #include <boost/asio/detail/config.hpp>
 #include <cstring>
+#include <boost/asio/detail/memory.hpp>
 #include <boost/asio/detail/noncopyable.hpp>
-#include <boost/asio/detail/shared_ptr.hpp>
 #include <boost/asio/ssl/detail/openssl_types.hpp>
 
 #include <boost/asio/detail/push_options.hpp>

@@ -29,7 +29,7 @@ void print(const boost::system::error_code& /*e*/,
 
 int main()
 {
-  boost::asio::io_service io;
+  boost::asio::io_context io;
 
   int count = 0;
   boost::asio::deadline_timer t(io, boost::posix_time::seconds(1));

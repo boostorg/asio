@@ -35,8 +35,8 @@ class connection
 {
 public:
   /// Constructor.
-  connection(boost::asio::io_service& io_service)
-    : socket_(io_service)
+  connection(boost::asio::io_context& io_context)
+    : socket_(io_context)
   {
   }
 
@@ -65,7 +65,7 @@ public:
     {
       // Something went wrong, inform the caller.
       boost::system::error_code error(boost::asio::error::invalid_argument);
-      socket_.get_io_service().post(boost::bind(handler, error));
+      boost::asio::post(socket_.get_executor(), boost::bind(handler, error));
       return;
     }
     outbound_header_ = header_stream.str();

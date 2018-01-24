@@ -1,5 +1,5 @@
 //
-// sync_client.cpp
+// http_client.cpp
 // ~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2017 Christopher M. Kohlhoff (chris at kohlhoff dot com)
@@ -33,7 +33,7 @@ int main(int argc, char* argv[])
     // The entire sequence of I/O operations must complete within 60 seconds.
     // If an expiry occurs, the socket is automatically closed and the stream
     // becomes bad.
-    s.expires_from_now(boost::posix_time::seconds(60));
+    s.expires_after(boost::posix_time::seconds(60));
 
     // Establish a connection to the server.
     s.connect(argv[1], "http");

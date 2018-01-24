@@ -17,18 +17,14 @@
 
 #include <boost/asio/detail/config.hpp>
 
-#if !defined(BOOST_ASIO_ENABLE_OLD_SSL)
-# include <boost/asio/detail/noncopyable.hpp>
-# include <boost/asio/ssl/detail/openssl_types.hpp>
-#endif // !defined(BOOST_ASIO_ENABLE_OLD_SSL)
+#include <boost/asio/detail/noncopyable.hpp>
+#include <boost/asio/ssl/detail/openssl_types.hpp>
 
 #include <boost/asio/detail/push_options.hpp>
 
 namespace boost {
 namespace asio {
 namespace ssl {
-
-#if !defined(BOOST_ASIO_ENABLE_OLD_SSL)
 
 /// A simple wrapper around the X509_STORE_CTX type, used during verification of
 /// a peer certificate.
@@ -63,8 +59,6 @@ private:
   // The underlying native implementation.
   native_handle_type handle_;
 };
-
-#endif // defined(BOOST_ASIO_ENABLE_OLD_SSL)
 
 } // namespace ssl
 } // namespace asio
