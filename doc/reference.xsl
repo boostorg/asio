@@ -767,6 +767,9 @@
     <xsl:when test="contains($file, 'boost/asio/ssl')">
       <xsl:text>[^boost/asio/ssl.hpp]</xsl:text>
     </xsl:when>
+    <xsl:when test="contains($file, 'boost/asio/experimental')">
+      <xsl:text>[^boost/asio/experimental.hpp]</xsl:text>
+    </xsl:when>
     <xsl:when test="contains($file, 'boost/asio/spawn')">
       <xsl:text>None</xsl:text>
     </xsl:when>
@@ -1516,6 +1519,9 @@
         </xsl:when>
         <xsl:when test="declname = 'Executor'">
           <xsl:value-of select="concat('``[link boost_asio.reference.Executor1 ', declname, ']``')"/>
+        </xsl:when>
+        <xsl:when test="declname = 'F'">
+          <xsl:value-of select="declname"/>
         </xsl:when>
         <xsl:when test="declname = 'Function'">
           <xsl:value-of select="declname"/>
