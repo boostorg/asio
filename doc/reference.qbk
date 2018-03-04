@@ -31394,14 +31394,14 @@ Get an option from the acceptor.
   template<
       typename ``[link boost_asio.reference.GettableSocketOption GettableSocketOption]``>
   void ``[link boost_asio.reference.basic_socket_acceptor.get_option.overload1 get_option]``(
-      GettableSocketOption & option);
+      GettableSocketOption & option) const;
   ``  [''''&raquo;''' [link boost_asio.reference.basic_socket_acceptor.get_option.overload1 more...]]``
 
   template<
       typename ``[link boost_asio.reference.GettableSocketOption GettableSocketOption]``>
   void ``[link boost_asio.reference.basic_socket_acceptor.get_option.overload2 get_option]``(
       GettableSocketOption & option,
-      boost::system::error_code & ec);
+      boost::system::error_code & ec) const;
   ``  [''''&raquo;''' [link boost_asio.reference.basic_socket_acceptor.get_option.overload2 more...]]``
 
 
@@ -31414,7 +31414,7 @@ Get an option from the acceptor.
   template<
       typename ``[link boost_asio.reference.GettableSocketOption GettableSocketOption]``>
   void get_option(
-      GettableSocketOption & option);
+      GettableSocketOption & option) const;
 
 
 This function is used to get the current value of an option on the acceptor.
@@ -31471,7 +31471,7 @@ Get an option from the acceptor.
       typename ``[link boost_asio.reference.GettableSocketOption GettableSocketOption]``>
   void get_option(
       GettableSocketOption & option,
-      boost::system::error_code & ec);
+      boost::system::error_code & ec) const;
 
 
 This function is used to get the current value of an option on the acceptor.
@@ -55458,6 +55458,663 @@ Unless the object has already been reset, or is in a moved-from state, calls `on
 
 [endsect]
 
+[section:experimental__await_token experimental::await_token]
+
+
+A completion token that represents the currently executing coroutine. 
+
+
+  template<
+      typename ``[link boost_asio.reference.Executor1 Executor]``>
+  class await_token
+
+
+[heading Types]
+[table
+  [[Name][Description]]
+
+  [
+
+    [[link boost_asio.reference.experimental__await_token.executor_type [*executor_type]]]
+    [The associated executor type. ]
+  
+  ]
+
+]
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link boost_asio.reference.experimental__await_token.await_token [*await_token]]]
+    [Copy constructor. 
+
+     Move constructor. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.experimental__await_token.get_executor [*get_executor]]]
+    [Get the associated executor. ]
+  ]
+  
+]
+
+The [link boost_asio.reference.experimental__await_token `experimental::await_token`] class is used to represent the currently executing coroutine. An [link boost_asio.reference.experimental__await_token `experimental::await_token`] may be passed as a handler to an asynchronous operation. For example:
+
+
+
+   awaitable<void> my_coroutine()
+   {
+     await_token token = co_await this_coro::token();
+     ...
+     std::size_t n = co_await my_socket.async_read_some(buffer, token);
+     ...
+   } 
+
+
+
+
+The initiating function (async\_read\_some in the above example) suspends the current coroutine. The coroutine is resumed when the asynchronous operation completes, and the result of the operation is returned. 
+
+[heading Requirements]
+
+['Header: ][^boost/asio/experimental/co_spawn.hpp]
+
+['Convenience header: ][^boost/asio/experimental.hpp]
+
+[section:await_token experimental::await_token::await_token]
+
+[indexterm2 boost_asio.indexterm.experimental__await_token.await_token..await_token..experimental::await_token] 
+Copy constructor. 
+
+
+  ``[link boost_asio.reference.experimental__await_token.await_token.overload1 await_token]``(
+      const await_token & other);
+  ``  [''''&raquo;''' [link boost_asio.reference.experimental__await_token.await_token.overload1 more...]]``
+
+
+Move constructor. 
+
+
+  ``[link boost_asio.reference.experimental__await_token.await_token.overload2 await_token]``(
+      await_token && other);
+  ``  [''''&raquo;''' [link boost_asio.reference.experimental__await_token.await_token.overload2 more...]]``
+
+
+[section:overload1 experimental::await_token::await_token (1 of 2 overloads)]
+
+
+Copy constructor. 
+
+
+  await_token(
+      const await_token & other);
+
+
+
+[endsect]
+
+
+
+[section:overload2 experimental::await_token::await_token (2 of 2 overloads)]
+
+
+Move constructor. 
+
+
+  await_token(
+      await_token && other);
+
+
+
+[endsect]
+
+
+[endsect]
+
+
+[section:executor_type experimental::await_token::executor_type]
+
+[indexterm2 boost_asio.indexterm.experimental__await_token.executor_type..executor_type..experimental::await_token] 
+The associated executor type. 
+
+
+  typedef Executor executor_type;
+
+
+
+[heading Requirements]
+
+['Header: ][^boost/asio/experimental/co_spawn.hpp]
+
+['Convenience header: ][^boost/asio/experimental.hpp]
+
+
+[endsect]
+
+
+
+[section:get_executor experimental::await_token::get_executor]
+
+[indexterm2 boost_asio.indexterm.experimental__await_token.get_executor..get_executor..experimental::await_token] 
+Get the associated executor. 
+
+
+  executor_type get_executor() const;
+
+
+
+[endsect]
+
+
+
+[endsect]
+
+[section:experimental__awaitable experimental::awaitable]
+
+
+The return type of a coroutine or asynchronous operation. 
+
+
+  template<
+      typename T,
+      typename ``[link boost_asio.reference.Executor1 Executor]`` = strand<executor>>
+  class awaitable
+
+
+[heading Types]
+[table
+  [[Name][Description]]
+
+  [
+
+    [[link boost_asio.reference.experimental__awaitable.executor_type [*executor_type]]]
+    [The executor type that will be used for the coroutine. ]
+  
+  ]
+
+  [
+
+    [[link boost_asio.reference.experimental__awaitable.value_type [*value_type]]]
+    [The type of the awaited value. ]
+  
+  ]
+
+]
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link boost_asio.reference.experimental__awaitable.awaitable [*awaitable]]]
+    [Move constructor. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.experimental__awaitable._awaitable [*~awaitable]]]
+    [Destructor. ]
+  ]
+  
+]
+
+[heading Requirements]
+
+['Header: ][^boost/asio/experimental/co_spawn.hpp]
+
+['Convenience header: ][^boost/asio/experimental.hpp]
+
+
+[section:awaitable experimental::awaitable::awaitable]
+
+[indexterm2 boost_asio.indexterm.experimental__awaitable.awaitable..awaitable..experimental::awaitable] 
+Move constructor. 
+
+
+  awaitable(
+      awaitable && other);
+
+
+
+[endsect]
+
+
+
+[section:executor_type experimental::awaitable::executor_type]
+
+[indexterm2 boost_asio.indexterm.experimental__awaitable.executor_type..executor_type..experimental::awaitable] 
+The executor type that will be used for the coroutine. 
+
+
+  typedef Executor executor_type;
+
+
+
+[heading Requirements]
+
+['Header: ][^boost/asio/experimental/co_spawn.hpp]
+
+['Convenience header: ][^boost/asio/experimental.hpp]
+
+
+[endsect]
+
+
+
+[section:value_type experimental::awaitable::value_type]
+
+[indexterm2 boost_asio.indexterm.experimental__awaitable.value_type..value_type..experimental::awaitable] 
+The type of the awaited value. 
+
+
+  typedef T value_type;
+
+
+
+[heading Requirements]
+
+['Header: ][^boost/asio/experimental/co_spawn.hpp]
+
+['Convenience header: ][^boost/asio/experimental.hpp]
+
+
+[endsect]
+
+
+
+[section:_awaitable experimental::awaitable::~awaitable]
+
+[indexterm2 boost_asio.indexterm.experimental__awaitable._awaitable..~awaitable..experimental::awaitable] 
+Destructor. 
+
+
+  ~awaitable();
+
+
+
+[endsect]
+
+
+
+[endsect]
+
+[section:experimental__co_spawn experimental::co_spawn]
+
+[indexterm1 boost_asio.indexterm.experimental__co_spawn..experimental::co_spawn] 
+Spawn a new thread of execution. 
+
+    
+  template<
+      typename ``[link boost_asio.reference.Executor1 Executor]``,
+      typename F,
+      typename CompletionToken,
+      typename  = typename enable_if<is_executor<Executor>::value>::type>
+  auto ``[link boost_asio.reference.experimental__co_spawn.overload1 co_spawn]``(
+      const Executor & ex,
+      F && f,
+      CompletionToken && token);
+  ``  [''''&raquo;''' [link boost_asio.reference.experimental__co_spawn.overload1 more...]]``
+
+  template<
+      typename ExecutionContext,
+      typename F,
+      typename CompletionToken,
+      typename  = typename enable_if<      is_convertible<ExecutionContext&, execution_context&>::value>::type>
+  auto ``[link boost_asio.reference.experimental__co_spawn.overload2 co_spawn]``(
+      ExecutionContext & ctx,
+      F && f,
+      CompletionToken && token);
+  ``  [''''&raquo;''' [link boost_asio.reference.experimental__co_spawn.overload2 more...]]``
+
+  template<
+      typename ``[link boost_asio.reference.Executor1 Executor]``,
+      typename F,
+      typename CompletionToken>
+  auto ``[link boost_asio.reference.experimental__co_spawn.overload3 co_spawn]``(
+      const await_token< Executor > & parent,
+      F && f,
+      CompletionToken && token);
+  ``  [''''&raquo;''' [link boost_asio.reference.experimental__co_spawn.overload3 more...]]``
+
+[heading Requirements]
+
+['Header: ][^boost/asio/experimental/co_spawn.hpp]
+
+['Convenience header: ][^boost/asio/experimental.hpp]
+
+
+[section:overload1 experimental::co_spawn (1 of 3 overloads)]
+
+
+Spawn a new thread of execution. 
+
+
+  template<
+      typename ``[link boost_asio.reference.Executor1 Executor]``,
+      typename F,
+      typename CompletionToken,
+      typename  = typename enable_if<is_executor<Executor>::value>::type>
+  auto co_spawn(
+      const Executor & ex,
+      F && f,
+      CompletionToken && token);
+
+
+
+[endsect]
+
+
+
+[section:overload2 experimental::co_spawn (2 of 3 overloads)]
+
+
+Spawn a new thread of execution. 
+
+
+  template<
+      typename ExecutionContext,
+      typename F,
+      typename CompletionToken,
+      typename  = typename enable_if<      is_convertible<ExecutionContext&, execution_context&>::value>::type>
+  auto co_spawn(
+      ExecutionContext & ctx,
+      F && f,
+      CompletionToken && token);
+
+
+
+[endsect]
+
+
+
+[section:overload3 experimental::co_spawn (3 of 3 overloads)]
+
+
+Spawn a new thread of execution. 
+
+
+  template<
+      typename ``[link boost_asio.reference.Executor1 Executor]``,
+      typename F,
+      typename CompletionToken>
+  auto co_spawn(
+      const await_token< Executor > & parent,
+      F && f,
+      CompletionToken && token);
+
+
+
+[endsect]
+
+
+[endsect]
+
+
+[section:experimental__detached experimental::detached]
+
+[indexterm1 boost_asio.indexterm.experimental__detached..experimental::detached] 
+A special value, similar to std::nothrow. 
+
+
+  constexpr detached_t detached;
+
+
+See the documentation for [link boost_asio.reference.experimental__detached_t `experimental::detached_t`] for a usage example. 
+
+[heading Requirements]
+
+['Header: ][^boost/asio/experimental/detached.hpp]
+
+['Convenience header: ][^boost/asio/experimental.hpp]
+
+
+[endsect]
+
+
+[section:experimental__detached_t experimental::detached_t]
+
+
+Class used to specify that an asynchronous operation is detached. 
+
+
+  class detached_t
+
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link boost_asio.reference.experimental__detached_t.detached_t [*detached_t]]]
+    [Constructor. ]
+  ]
+  
+]
+
+The [link boost_asio.reference.experimental__detached_t `experimental::detached_t`] class is used to indicate that an asynchronous operation is detached. That is, there is no completion handler waiting for the operation's result. A [link boost_asio.reference.experimental__detached_t `experimental::detached_t`] object may be passed as a handler to an asynchronous operation, typically using the special value `boost::asio::experimental::detached`. For example:
+
+
+
+   my_socket.async_send(my_buffer, boost::asio::experimental::detached);
+
+
+
+
+[heading Requirements]
+
+['Header: ][^boost/asio/experimental/detached.hpp]
+
+['Convenience header: ][^boost/asio/experimental.hpp]
+
+
+[section:detached_t experimental::detached_t::detached_t]
+
+[indexterm2 boost_asio.indexterm.experimental__detached_t.detached_t..detached_t..experimental::detached_t] 
+Constructor. 
+
+
+  constexpr detached_t();
+
+
+
+[endsect]
+
+
+
+[endsect]
+
+
+[section:experimental__redirect_error experimental::redirect_error]
+
+[indexterm1 boost_asio.indexterm.experimental__redirect_error..experimental::redirect_error] 
+Create a completion token to capture error\_code values to a variable. 
+
+
+  template<
+      typename CompletionToken>
+  redirect_error_t< typename decay< CompletionToken >::type > redirect_error(
+      CompletionToken && completion_token,
+      boost::system::error_code & ec);
+
+
+[heading Requirements]
+
+['Header: ][^boost/asio/experimental/redirect_error.hpp]
+
+['Convenience header: ][^boost/asio/experimental.hpp]
+
+
+[endsect]
+
+
+[section:experimental__redirect_error_t experimental::redirect_error_t]
+
+
+Completion token type used to specify that an error produced by an asynchronous operation is captured to an error\_code variable. 
+
+
+  template<
+      typename CompletionToken>
+  class redirect_error_t
+
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link boost_asio.reference.experimental__redirect_error_t.redirect_error_t [*redirect_error_t]]]
+    [Constructor. ]
+  ]
+  
+]
+
+[heading Data Members]
+[table
+  [[Name][Description]]
+
+  [
+    [[link boost_asio.reference.experimental__redirect_error_t.ec_ [*ec_]]]
+    []
+  ]
+
+  [
+    [[link boost_asio.reference.experimental__redirect_error_t.token_ [*token_]]]
+    []
+  ]
+
+]
+
+The [link boost_asio.reference.experimental__redirect_error_t `experimental::redirect_error_t`] class is used to indicate that any error\_code produced by an asynchronous operation is captured to a specified variable. 
+
+[heading Requirements]
+
+['Header: ][^boost/asio/experimental/redirect_error.hpp]
+
+['Convenience header: ][^boost/asio/experimental.hpp]
+
+
+[section:ec_ experimental::redirect_error_t::ec_]
+
+[indexterm2 boost_asio.indexterm.experimental__redirect_error_t.ec_..ec_..experimental::redirect_error_t] 
+
+  boost::system::error_code & ec_;
+
+
+
+[endsect]
+
+
+
+[section:redirect_error_t experimental::redirect_error_t::redirect_error_t]
+
+[indexterm2 boost_asio.indexterm.experimental__redirect_error_t.redirect_error_t..redirect_error_t..experimental::redirect_error_t] 
+Constructor. 
+
+
+  template<
+      typename T>
+  redirect_error_t(
+      T && completion_token,
+      boost::system::error_code & ec);
+
+
+
+[endsect]
+
+
+
+[section:token_ experimental::redirect_error_t::token_]
+
+[indexterm2 boost_asio.indexterm.experimental__redirect_error_t.token_..token_..experimental::redirect_error_t] 
+
+  CompletionToken token_;
+
+
+
+[endsect]
+
+
+
+[endsect]
+
+
+[section:experimental__this_coro__executor experimental::this_coro::executor]
+
+[indexterm1 boost_asio.indexterm.experimental__this_coro__executor..experimental::this_coro::executor] 
+Awaitable object that returns the executor of the current coroutine. 
+
+
+  constexpr executor_t executor();
+
+
+[heading Requirements]
+
+['Header: ][^boost/asio/experimental/co_spawn.hpp]
+
+['Convenience header: ][^boost/asio/experimental.hpp]
+
+
+[endsect]
+
+
+[section:experimental__this_coro__executor_t experimental::this_coro::executor_t]
+
+
+Awaitable type that returns the executor of the current coroutine. 
+
+
+  struct executor_t
+
+
+[heading Requirements]
+
+['Header: ][^boost/asio/experimental/co_spawn.hpp]
+
+['Convenience header: ][^boost/asio/experimental.hpp]
+
+
+[endsect]
+
+
+[section:experimental__this_coro__token experimental::this_coro::token]
+
+[indexterm1 boost_asio.indexterm.experimental__this_coro__token..experimental::this_coro::token] 
+Awaitable object that returns a completion token for the current coroutine. 
+
+
+  constexpr token_t token();
+
+
+[heading Requirements]
+
+['Header: ][^boost/asio/experimental/co_spawn.hpp]
+
+['Convenience header: ][^boost/asio/experimental.hpp]
+
+
+[endsect]
+
+
+[section:experimental__this_coro__token_t experimental::this_coro::token_t]
+
+
+Awaitable type that returns a completion token for the current coroutine. 
+
+
+  struct token_t
+
+
+[heading Requirements]
+
+['Header: ][^boost/asio/experimental/co_spawn.hpp]
+
+['Convenience header: ][^boost/asio/experimental.hpp]
+
+
+[endsect]
+
 [section:generic__basic_endpoint generic::basic_endpoint]
 
 
@@ -65353,205 +66010,6 @@ An input iterator that can be used for traversing IPv4 addresses.
   typedef basic_address_iterator< address_v4 > address_v4_iterator;
 
 
-[heading Types]
-[table
-  [[Name][Description]]
-
-  [
-
-    [[link boost_asio.reference.ip__address_v4.bytes_type [*bytes_type]]]
-    [The type used to represent an address as an array of bytes. ]
-  
-  ]
-
-  [
-
-    [[link boost_asio.reference.ip__address_v4.uint_type [*uint_type]]]
-    [The type used to represent an address as an unsigned integer. ]
-  
-  ]
-
-]
-
-[heading Member Functions]
-[table
-  [[Name][Description]]
-
-  [
-    [[link boost_asio.reference.ip__address_v4.address_v4 [*address_v4]]]
-    [Default constructor. 
-
-     Construct an address from raw bytes. 
-
-     Construct an address from an unsigned integer in host byte order. 
-
-     Copy constructor. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v4.any [*any]]]
-    [Obtain an address object that represents any address. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v4.broadcast [*broadcast]]]
-    [Obtain an address object that represents the broadcast address. 
-
-     (Deprecated: Use network_v4 class.) Obtain an address object that represents the broadcast address that corresponds to the specified address and netmask. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v4.from_string [*from_string]]]
-    [(Deprecated: Use make_address_v4().) Create an address from an IP address string in dotted decimal form. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v4.is_class_a [*is_class_a]]]
-    [(Deprecated: Use network_v4 class.) Determine whether the address is a class A address. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v4.is_class_b [*is_class_b]]]
-    [(Deprecated: Use network_v4 class.) Determine whether the address is a class B address. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v4.is_class_c [*is_class_c]]]
-    [(Deprecated: Use network_v4 class.) Determine whether the address is a class C address. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v4.is_loopback [*is_loopback]]]
-    [Determine whether the address is a loopback address. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v4.is_multicast [*is_multicast]]]
-    [Determine whether the address is a multicast address. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v4.is_unspecified [*is_unspecified]]]
-    [Determine whether the address is unspecified. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v4.loopback [*loopback]]]
-    [Obtain an address object that represents the loopback address. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v4.netmask [*netmask]]]
-    [(Deprecated: Use network_v4 class.) Obtain the netmask that corresponds to the address, based on its address class. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v4.operator_eq_ [*operator=]]]
-    [Assign from another address. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v4.to_bytes [*to_bytes]]]
-    [Get the address in bytes, in network byte order. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v4.to_string [*to_string]]]
-    [Get the address as a string in dotted decimal format. 
-
-     (Deprecated: Use other overload.) Get the address as a string in dotted decimal format. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v4.to_uint [*to_uint]]]
-    [Get the address as an unsigned integer in host byte order. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v4.to_ulong [*to_ulong]]]
-    [Get the address as an unsigned long in host byte order. ]
-  ]
-  
-]
-
-[heading Friends]
-[table
-  [[Name][Description]]
-
-  [
-    [[link boost_asio.reference.ip__address_v4.operator_not__eq_ [*operator!=]]]
-    [Compare two addresses for inequality. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v4.operator_lt_ [*operator<]]]
-    [Compare addresses for ordering. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v4.operator_lt__eq_ [*operator<=]]]
-    [Compare addresses for ordering. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v4.operator_eq__eq_ [*operator==]]]
-    [Compare two addresses for equality. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v4.operator_gt_ [*operator>]]]
-    [Compare addresses for ordering. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v4.operator_gt__eq_ [*operator>=]]]
-    [Compare addresses for ordering. ]
-  ]
-  
-]
-
-[heading Related Functions]
-[table
-  [[Name][Description]]
-
-  [
-    [[link boost_asio.reference.ip__address_v4.make_address_v4 [*make_address_v4]]]
-    [Create an IPv4 address from raw bytes in network order. 
-
-     Create an IPv4 address from an unsigned integer in host byte order. 
-
-     Create an IPv4 address from an IP address string in dotted decimal form. 
-
-     Create an IPv4 address from a IPv4-mapped IPv6 address. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v4.make_network_v4 [*make_network_v4]]]
-    [Create an IPv4 network from an address and prefix length. 
-
-     Create an IPv4 network from an address and netmask. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v4.operator_lt__lt_ [*operator<<]]]
-    [Output an address as a string. 
-
-     Output a network as a string. ]
-  ]
-  
-]
-
-The [link boost_asio.reference.ip__address_v4 `ip::address_v4`] class provides the ability to use and manipulate IP version 4 addresses.
-
-
-[heading Thread Safety]
-  
-['Distinct] ['objects:] Safe.
-
-['Shared] ['objects:] Unsafe. 
-
-
-
 
 [heading Requirements]
 
@@ -65571,205 +66029,6 @@ Represents a range of IPv4 addresses.
 
 
   typedef basic_address_range< address_v4 > address_v4_range;
-
-
-[heading Types]
-[table
-  [[Name][Description]]
-
-  [
-
-    [[link boost_asio.reference.ip__address_v4.bytes_type [*bytes_type]]]
-    [The type used to represent an address as an array of bytes. ]
-  
-  ]
-
-  [
-
-    [[link boost_asio.reference.ip__address_v4.uint_type [*uint_type]]]
-    [The type used to represent an address as an unsigned integer. ]
-  
-  ]
-
-]
-
-[heading Member Functions]
-[table
-  [[Name][Description]]
-
-  [
-    [[link boost_asio.reference.ip__address_v4.address_v4 [*address_v4]]]
-    [Default constructor. 
-
-     Construct an address from raw bytes. 
-
-     Construct an address from an unsigned integer in host byte order. 
-
-     Copy constructor. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v4.any [*any]]]
-    [Obtain an address object that represents any address. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v4.broadcast [*broadcast]]]
-    [Obtain an address object that represents the broadcast address. 
-
-     (Deprecated: Use network_v4 class.) Obtain an address object that represents the broadcast address that corresponds to the specified address and netmask. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v4.from_string [*from_string]]]
-    [(Deprecated: Use make_address_v4().) Create an address from an IP address string in dotted decimal form. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v4.is_class_a [*is_class_a]]]
-    [(Deprecated: Use network_v4 class.) Determine whether the address is a class A address. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v4.is_class_b [*is_class_b]]]
-    [(Deprecated: Use network_v4 class.) Determine whether the address is a class B address. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v4.is_class_c [*is_class_c]]]
-    [(Deprecated: Use network_v4 class.) Determine whether the address is a class C address. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v4.is_loopback [*is_loopback]]]
-    [Determine whether the address is a loopback address. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v4.is_multicast [*is_multicast]]]
-    [Determine whether the address is a multicast address. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v4.is_unspecified [*is_unspecified]]]
-    [Determine whether the address is unspecified. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v4.loopback [*loopback]]]
-    [Obtain an address object that represents the loopback address. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v4.netmask [*netmask]]]
-    [(Deprecated: Use network_v4 class.) Obtain the netmask that corresponds to the address, based on its address class. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v4.operator_eq_ [*operator=]]]
-    [Assign from another address. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v4.to_bytes [*to_bytes]]]
-    [Get the address in bytes, in network byte order. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v4.to_string [*to_string]]]
-    [Get the address as a string in dotted decimal format. 
-
-     (Deprecated: Use other overload.) Get the address as a string in dotted decimal format. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v4.to_uint [*to_uint]]]
-    [Get the address as an unsigned integer in host byte order. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v4.to_ulong [*to_ulong]]]
-    [Get the address as an unsigned long in host byte order. ]
-  ]
-  
-]
-
-[heading Friends]
-[table
-  [[Name][Description]]
-
-  [
-    [[link boost_asio.reference.ip__address_v4.operator_not__eq_ [*operator!=]]]
-    [Compare two addresses for inequality. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v4.operator_lt_ [*operator<]]]
-    [Compare addresses for ordering. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v4.operator_lt__eq_ [*operator<=]]]
-    [Compare addresses for ordering. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v4.operator_eq__eq_ [*operator==]]]
-    [Compare two addresses for equality. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v4.operator_gt_ [*operator>]]]
-    [Compare addresses for ordering. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v4.operator_gt__eq_ [*operator>=]]]
-    [Compare addresses for ordering. ]
-  ]
-  
-]
-
-[heading Related Functions]
-[table
-  [[Name][Description]]
-
-  [
-    [[link boost_asio.reference.ip__address_v4.make_address_v4 [*make_address_v4]]]
-    [Create an IPv4 address from raw bytes in network order. 
-
-     Create an IPv4 address from an unsigned integer in host byte order. 
-
-     Create an IPv4 address from an IP address string in dotted decimal form. 
-
-     Create an IPv4 address from a IPv4-mapped IPv6 address. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v4.make_network_v4 [*make_network_v4]]]
-    [Create an IPv4 network from an address and prefix length. 
-
-     Create an IPv4 network from an address and netmask. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v4.operator_lt__lt_ [*operator<<]]]
-    [Output an address as a string. 
-
-     Output a network as a string. ]
-  ]
-  
-]
-
-The [link boost_asio.reference.ip__address_v4 `ip::address_v4`] class provides the ability to use and manipulate IP version 4 addresses.
-
-
-[heading Thread Safety]
-  
-['Distinct] ['objects:] Safe.
-
-['Shared] ['objects:] Unsafe. 
-
 
 
 
@@ -67019,222 +67278,6 @@ An input iterator that can be used for traversing IPv6 addresses.
   typedef basic_address_iterator< address_v6 > address_v6_iterator;
 
 
-[heading Types]
-[table
-  [[Name][Description]]
-
-  [
-
-    [[link boost_asio.reference.ip__address_v6.bytes_type [*bytes_type]]]
-    [The type used to represent an address as an array of bytes. ]
-  
-  ]
-
-]
-
-[heading Member Functions]
-[table
-  [[Name][Description]]
-
-  [
-    [[link boost_asio.reference.ip__address_v6.address_v6 [*address_v6]]]
-    [Default constructor. 
-
-     Construct an address from raw bytes and scope ID. 
-
-     Copy constructor. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v6.any [*any]]]
-    [Obtain an address object that represents any address. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v6.from_string [*from_string]]]
-    [(Deprecated: Use make_address_v6().) Create an IPv6 address from an IP address string. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v6.is_link_local [*is_link_local]]]
-    [Determine whether the address is link local. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v6.is_loopback [*is_loopback]]]
-    [Determine whether the address is a loopback address. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v6.is_multicast [*is_multicast]]]
-    [Determine whether the address is a multicast address. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v6.is_multicast_global [*is_multicast_global]]]
-    [Determine whether the address is a global multicast address. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v6.is_multicast_link_local [*is_multicast_link_local]]]
-    [Determine whether the address is a link-local multicast address. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v6.is_multicast_node_local [*is_multicast_node_local]]]
-    [Determine whether the address is a node-local multicast address. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v6.is_multicast_org_local [*is_multicast_org_local]]]
-    [Determine whether the address is a org-local multicast address. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v6.is_multicast_site_local [*is_multicast_site_local]]]
-    [Determine whether the address is a site-local multicast address. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v6.is_site_local [*is_site_local]]]
-    [Determine whether the address is site local. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v6.is_unspecified [*is_unspecified]]]
-    [Determine whether the address is unspecified. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v6.is_v4_compatible [*is_v4_compatible]]]
-    [(Deprecated: No replacement.) Determine whether the address is an IPv4-compatible address. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v6.is_v4_mapped [*is_v4_mapped]]]
-    [Determine whether the address is a mapped IPv4 address. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v6.loopback [*loopback]]]
-    [Obtain an address object that represents the loopback address. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v6.operator_eq_ [*operator=]]]
-    [Assign from another address. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v6.scope_id [*scope_id]]]
-    [The scope ID of the address. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v6.to_bytes [*to_bytes]]]
-    [Get the address in bytes, in network byte order. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v6.to_string [*to_string]]]
-    [Get the address as a string. 
-
-     (Deprecated: Use other overload.) Get the address as a string. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v6.to_v4 [*to_v4]]]
-    [(Deprecated: Use make_address_v4().) Converts an IPv4-mapped or IPv4-compatible address to an IPv4 address. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v6.v4_compatible [*v4_compatible]]]
-    [(Deprecated: No replacement.) Create an IPv4-compatible IPv6 address. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v6.v4_mapped [*v4_mapped]]]
-    [(Deprecated: Use make_address_v6().) Create an IPv4-mapped IPv6 address. ]
-  ]
-  
-]
-
-[heading Friends]
-[table
-  [[Name][Description]]
-
-  [
-    [[link boost_asio.reference.ip__address_v6.operator_not__eq_ [*operator!=]]]
-    [Compare two addresses for inequality. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v6.operator_lt_ [*operator<]]]
-    [Compare addresses for ordering. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v6.operator_lt__eq_ [*operator<=]]]
-    [Compare addresses for ordering. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v6.operator_eq__eq_ [*operator==]]]
-    [Compare two addresses for equality. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v6.operator_gt_ [*operator>]]]
-    [Compare addresses for ordering. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v6.operator_gt__eq_ [*operator>=]]]
-    [Compare addresses for ordering. ]
-  ]
-  
-]
-
-[heading Related Functions]
-[table
-  [[Name][Description]]
-
-  [
-    [[link boost_asio.reference.ip__address_v6.make_address_v6 [*make_address_v6]]]
-    [Create an IPv6 address from raw bytes and scope ID. 
-
-     Create an IPv6 address from an IP address string. 
-
-     Createan IPv6 address from an IP address string. 
-
-     Create an IPv4-mapped IPv6 address from an IPv4 address. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v6.make_network_v6 [*make_network_v6]]]
-    [Create an IPv6 network from an address and prefix length. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v6.operator_lt__lt_ [*operator<<]]]
-    [Output an address as a string. 
-
-     Output a network as a string. ]
-  ]
-  
-]
-
-The [link boost_asio.reference.ip__address_v6 `ip::address_v6`] class provides the ability to use and manipulate IP version 6 addresses.
-
-
-[heading Thread Safety]
-  
-['Distinct] ['objects:] Safe.
-
-['Shared] ['objects:] Unsafe. 
-
-
-
 
 [heading Requirements]
 
@@ -67254,222 +67297,6 @@ Represents a range of IPv6 addresses.
 
 
   typedef basic_address_range< address_v6 > address_v6_range;
-
-
-[heading Types]
-[table
-  [[Name][Description]]
-
-  [
-
-    [[link boost_asio.reference.ip__address_v6.bytes_type [*bytes_type]]]
-    [The type used to represent an address as an array of bytes. ]
-  
-  ]
-
-]
-
-[heading Member Functions]
-[table
-  [[Name][Description]]
-
-  [
-    [[link boost_asio.reference.ip__address_v6.address_v6 [*address_v6]]]
-    [Default constructor. 
-
-     Construct an address from raw bytes and scope ID. 
-
-     Copy constructor. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v6.any [*any]]]
-    [Obtain an address object that represents any address. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v6.from_string [*from_string]]]
-    [(Deprecated: Use make_address_v6().) Create an IPv6 address from an IP address string. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v6.is_link_local [*is_link_local]]]
-    [Determine whether the address is link local. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v6.is_loopback [*is_loopback]]]
-    [Determine whether the address is a loopback address. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v6.is_multicast [*is_multicast]]]
-    [Determine whether the address is a multicast address. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v6.is_multicast_global [*is_multicast_global]]]
-    [Determine whether the address is a global multicast address. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v6.is_multicast_link_local [*is_multicast_link_local]]]
-    [Determine whether the address is a link-local multicast address. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v6.is_multicast_node_local [*is_multicast_node_local]]]
-    [Determine whether the address is a node-local multicast address. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v6.is_multicast_org_local [*is_multicast_org_local]]]
-    [Determine whether the address is a org-local multicast address. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v6.is_multicast_site_local [*is_multicast_site_local]]]
-    [Determine whether the address is a site-local multicast address. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v6.is_site_local [*is_site_local]]]
-    [Determine whether the address is site local. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v6.is_unspecified [*is_unspecified]]]
-    [Determine whether the address is unspecified. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v6.is_v4_compatible [*is_v4_compatible]]]
-    [(Deprecated: No replacement.) Determine whether the address is an IPv4-compatible address. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v6.is_v4_mapped [*is_v4_mapped]]]
-    [Determine whether the address is a mapped IPv4 address. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v6.loopback [*loopback]]]
-    [Obtain an address object that represents the loopback address. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v6.operator_eq_ [*operator=]]]
-    [Assign from another address. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v6.scope_id [*scope_id]]]
-    [The scope ID of the address. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v6.to_bytes [*to_bytes]]]
-    [Get the address in bytes, in network byte order. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v6.to_string [*to_string]]]
-    [Get the address as a string. 
-
-     (Deprecated: Use other overload.) Get the address as a string. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v6.to_v4 [*to_v4]]]
-    [(Deprecated: Use make_address_v4().) Converts an IPv4-mapped or IPv4-compatible address to an IPv4 address. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v6.v4_compatible [*v4_compatible]]]
-    [(Deprecated: No replacement.) Create an IPv4-compatible IPv6 address. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v6.v4_mapped [*v4_mapped]]]
-    [(Deprecated: Use make_address_v6().) Create an IPv4-mapped IPv6 address. ]
-  ]
-  
-]
-
-[heading Friends]
-[table
-  [[Name][Description]]
-
-  [
-    [[link boost_asio.reference.ip__address_v6.operator_not__eq_ [*operator!=]]]
-    [Compare two addresses for inequality. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v6.operator_lt_ [*operator<]]]
-    [Compare addresses for ordering. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v6.operator_lt__eq_ [*operator<=]]]
-    [Compare addresses for ordering. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v6.operator_eq__eq_ [*operator==]]]
-    [Compare two addresses for equality. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v6.operator_gt_ [*operator>]]]
-    [Compare addresses for ordering. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v6.operator_gt__eq_ [*operator>=]]]
-    [Compare addresses for ordering. ]
-  ]
-  
-]
-
-[heading Related Functions]
-[table
-  [[Name][Description]]
-
-  [
-    [[link boost_asio.reference.ip__address_v6.make_address_v6 [*make_address_v6]]]
-    [Create an IPv6 address from raw bytes and scope ID. 
-
-     Create an IPv6 address from an IP address string. 
-
-     Createan IPv6 address from an IP address string. 
-
-     Create an IPv4-mapped IPv6 address from an IPv4 address. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v6.make_network_v6 [*make_network_v6]]]
-    [Create an IPv6 network from an address and prefix length. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v6.operator_lt__lt_ [*operator<<]]]
-    [Output an address as a string. 
-
-     Output a network as a string. ]
-  ]
-  
-]
-
-The [link boost_asio.reference.ip__address_v6 `ip::address_v6`] class provides the ability to use and manipulate IP version 6 addresses.
-
-
-[heading Thread Safety]
-  
-['Distinct] ['objects:] Safe.
-
-['Shared] ['objects:] Unsafe. 
-
 
 
 
@@ -69551,205 +69378,6 @@ The type of an iterator that points into the range.
   typedef basic_address_iterator< address_v4 > iterator;
 
 
-[heading Types]
-[table
-  [[Name][Description]]
-
-  [
-
-    [[link boost_asio.reference.ip__address_v4.bytes_type [*bytes_type]]]
-    [The type used to represent an address as an array of bytes. ]
-  
-  ]
-
-  [
-
-    [[link boost_asio.reference.ip__address_v4.uint_type [*uint_type]]]
-    [The type used to represent an address as an unsigned integer. ]
-  
-  ]
-
-]
-
-[heading Member Functions]
-[table
-  [[Name][Description]]
-
-  [
-    [[link boost_asio.reference.ip__address_v4.address_v4 [*address_v4]]]
-    [Default constructor. 
-
-     Construct an address from raw bytes. 
-
-     Construct an address from an unsigned integer in host byte order. 
-
-     Copy constructor. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v4.any [*any]]]
-    [Obtain an address object that represents any address. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v4.broadcast [*broadcast]]]
-    [Obtain an address object that represents the broadcast address. 
-
-     (Deprecated: Use network_v4 class.) Obtain an address object that represents the broadcast address that corresponds to the specified address and netmask. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v4.from_string [*from_string]]]
-    [(Deprecated: Use make_address_v4().) Create an address from an IP address string in dotted decimal form. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v4.is_class_a [*is_class_a]]]
-    [(Deprecated: Use network_v4 class.) Determine whether the address is a class A address. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v4.is_class_b [*is_class_b]]]
-    [(Deprecated: Use network_v4 class.) Determine whether the address is a class B address. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v4.is_class_c [*is_class_c]]]
-    [(Deprecated: Use network_v4 class.) Determine whether the address is a class C address. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v4.is_loopback [*is_loopback]]]
-    [Determine whether the address is a loopback address. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v4.is_multicast [*is_multicast]]]
-    [Determine whether the address is a multicast address. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v4.is_unspecified [*is_unspecified]]]
-    [Determine whether the address is unspecified. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v4.loopback [*loopback]]]
-    [Obtain an address object that represents the loopback address. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v4.netmask [*netmask]]]
-    [(Deprecated: Use network_v4 class.) Obtain the netmask that corresponds to the address, based on its address class. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v4.operator_eq_ [*operator=]]]
-    [Assign from another address. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v4.to_bytes [*to_bytes]]]
-    [Get the address in bytes, in network byte order. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v4.to_string [*to_string]]]
-    [Get the address as a string in dotted decimal format. 
-
-     (Deprecated: Use other overload.) Get the address as a string in dotted decimal format. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v4.to_uint [*to_uint]]]
-    [Get the address as an unsigned integer in host byte order. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v4.to_ulong [*to_ulong]]]
-    [Get the address as an unsigned long in host byte order. ]
-  ]
-  
-]
-
-[heading Friends]
-[table
-  [[Name][Description]]
-
-  [
-    [[link boost_asio.reference.ip__address_v4.operator_not__eq_ [*operator!=]]]
-    [Compare two addresses for inequality. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v4.operator_lt_ [*operator<]]]
-    [Compare addresses for ordering. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v4.operator_lt__eq_ [*operator<=]]]
-    [Compare addresses for ordering. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v4.operator_eq__eq_ [*operator==]]]
-    [Compare two addresses for equality. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v4.operator_gt_ [*operator>]]]
-    [Compare addresses for ordering. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v4.operator_gt__eq_ [*operator>=]]]
-    [Compare addresses for ordering. ]
-  ]
-  
-]
-
-[heading Related Functions]
-[table
-  [[Name][Description]]
-
-  [
-    [[link boost_asio.reference.ip__address_v4.make_address_v4 [*make_address_v4]]]
-    [Create an IPv4 address from raw bytes in network order. 
-
-     Create an IPv4 address from an unsigned integer in host byte order. 
-
-     Create an IPv4 address from an IP address string in dotted decimal form. 
-
-     Create an IPv4 address from a IPv4-mapped IPv6 address. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v4.make_network_v4 [*make_network_v4]]]
-    [Create an IPv4 network from an address and prefix length. 
-
-     Create an IPv4 network from an address and netmask. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v4.operator_lt__lt_ [*operator<<]]]
-    [Output an address as a string. 
-
-     Output a network as a string. ]
-  ]
-  
-]
-
-The [link boost_asio.reference.ip__address_v4 `ip::address_v4`] class provides the ability to use and manipulate IP version 4 addresses.
-
-
-[heading Thread Safety]
-  
-['Distinct] ['objects:] Safe.
-
-['Shared] ['objects:] Unsafe. 
-
-
-
 
 [heading Requirements]
 
@@ -70009,222 +69637,6 @@ The type of an iterator that points into the range.
 
 
   typedef basic_address_iterator< address_v6 > iterator;
-
-
-[heading Types]
-[table
-  [[Name][Description]]
-
-  [
-
-    [[link boost_asio.reference.ip__address_v6.bytes_type [*bytes_type]]]
-    [The type used to represent an address as an array of bytes. ]
-  
-  ]
-
-]
-
-[heading Member Functions]
-[table
-  [[Name][Description]]
-
-  [
-    [[link boost_asio.reference.ip__address_v6.address_v6 [*address_v6]]]
-    [Default constructor. 
-
-     Construct an address from raw bytes and scope ID. 
-
-     Copy constructor. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v6.any [*any]]]
-    [Obtain an address object that represents any address. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v6.from_string [*from_string]]]
-    [(Deprecated: Use make_address_v6().) Create an IPv6 address from an IP address string. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v6.is_link_local [*is_link_local]]]
-    [Determine whether the address is link local. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v6.is_loopback [*is_loopback]]]
-    [Determine whether the address is a loopback address. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v6.is_multicast [*is_multicast]]]
-    [Determine whether the address is a multicast address. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v6.is_multicast_global [*is_multicast_global]]]
-    [Determine whether the address is a global multicast address. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v6.is_multicast_link_local [*is_multicast_link_local]]]
-    [Determine whether the address is a link-local multicast address. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v6.is_multicast_node_local [*is_multicast_node_local]]]
-    [Determine whether the address is a node-local multicast address. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v6.is_multicast_org_local [*is_multicast_org_local]]]
-    [Determine whether the address is a org-local multicast address. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v6.is_multicast_site_local [*is_multicast_site_local]]]
-    [Determine whether the address is a site-local multicast address. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v6.is_site_local [*is_site_local]]]
-    [Determine whether the address is site local. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v6.is_unspecified [*is_unspecified]]]
-    [Determine whether the address is unspecified. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v6.is_v4_compatible [*is_v4_compatible]]]
-    [(Deprecated: No replacement.) Determine whether the address is an IPv4-compatible address. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v6.is_v4_mapped [*is_v4_mapped]]]
-    [Determine whether the address is a mapped IPv4 address. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v6.loopback [*loopback]]]
-    [Obtain an address object that represents the loopback address. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v6.operator_eq_ [*operator=]]]
-    [Assign from another address. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v6.scope_id [*scope_id]]]
-    [The scope ID of the address. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v6.to_bytes [*to_bytes]]]
-    [Get the address in bytes, in network byte order. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v6.to_string [*to_string]]]
-    [Get the address as a string. 
-
-     (Deprecated: Use other overload.) Get the address as a string. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v6.to_v4 [*to_v4]]]
-    [(Deprecated: Use make_address_v4().) Converts an IPv4-mapped or IPv4-compatible address to an IPv4 address. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v6.v4_compatible [*v4_compatible]]]
-    [(Deprecated: No replacement.) Create an IPv4-compatible IPv6 address. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v6.v4_mapped [*v4_mapped]]]
-    [(Deprecated: Use make_address_v6().) Create an IPv4-mapped IPv6 address. ]
-  ]
-  
-]
-
-[heading Friends]
-[table
-  [[Name][Description]]
-
-  [
-    [[link boost_asio.reference.ip__address_v6.operator_not__eq_ [*operator!=]]]
-    [Compare two addresses for inequality. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v6.operator_lt_ [*operator<]]]
-    [Compare addresses for ordering. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v6.operator_lt__eq_ [*operator<=]]]
-    [Compare addresses for ordering. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v6.operator_eq__eq_ [*operator==]]]
-    [Compare two addresses for equality. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v6.operator_gt_ [*operator>]]]
-    [Compare addresses for ordering. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v6.operator_gt__eq_ [*operator>=]]]
-    [Compare addresses for ordering. ]
-  ]
-  
-]
-
-[heading Related Functions]
-[table
-  [[Name][Description]]
-
-  [
-    [[link boost_asio.reference.ip__address_v6.make_address_v6 [*make_address_v6]]]
-    [Create an IPv6 address from raw bytes and scope ID. 
-
-     Create an IPv6 address from an IP address string. 
-
-     Createan IPv6 address from an IP address string. 
-
-     Create an IPv4-mapped IPv6 address from an IPv4 address. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v6.make_network_v6 [*make_network_v6]]]
-    [Create an IPv6 network from an address and prefix length. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.ip__address_v6.operator_lt__lt_ [*operator<<]]]
-    [Output an address as a string. 
-
-     Output a network as a string. ]
-  ]
-  
-]
-
-The [link boost_asio.reference.ip__address_v6 `ip::address_v6`] class provides the ability to use and manipulate IP version 6 addresses.
-
-
-[heading Thread Safety]
-  
-['Distinct] ['objects:] Safe.
-
-['Shared] ['objects:] Unsafe. 
-
 
 
 
@@ -84826,7 +84238,7 @@ Create an [link boost_asio.reference.executor_work_guard `executor_work_guard`] 
   executor_work_guard< typename associated_executor< T, typename ExecutionContext::executor_type >::type > ``[link boost_asio.reference.make_work_guard.overload5 make_work_guard]``(
       const T & t,
       ExecutionContext & ctx,
-      typename enable_if<!is_executor< T >::value &&!is_convertible< T &, execution_context & >::value >::type *  = 0);
+      typename enable_if<!is_executor< T >::value &&!is_convertible< T &, execution_context & >::value &&is_convertible< ExecutionContext &, execution_context & >::value >::type *  = 0);
   ``  [''''&raquo;''' [link boost_asio.reference.make_work_guard.overload5 more...]]``
 
 [heading Requirements]
@@ -84922,7 +84334,7 @@ Create an [link boost_asio.reference.executor_work_guard `executor_work_guard`] 
   executor_work_guard< typename associated_executor< T, typename ExecutionContext::executor_type >::type > make_work_guard(
       const T & t,
       ExecutionContext & ctx,
-      typename enable_if<!is_executor< T >::value &&!is_convertible< T &, execution_context & >::value >::type *  = 0);
+      typename enable_if<!is_executor< T >::value &&!is_convertible< T &, execution_context & >::value &&is_convertible< ExecutionContext &, execution_context & >::value >::type *  = 0);
 
 
 
