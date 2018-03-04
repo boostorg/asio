@@ -743,7 +743,7 @@ public:
    * @endcode
    */
   template <typename GettableSocketOption>
-  void get_option(GettableSocketOption& option)
+  void get_option(GettableSocketOption& option) const
   {
     boost::system::error_code ec;
     this->get_service().get_option(this->get_implementation(), option, ec);
@@ -779,7 +779,7 @@ public:
    */
   template <typename GettableSocketOption>
   BOOST_ASIO_SYNC_OP_VOID get_option(GettableSocketOption& option,
-      boost::system::error_code& ec)
+      boost::system::error_code& ec) const
   {
     this->get_service().get_option(this->get_implementation(), option, ec);
     BOOST_ASIO_SYNC_OP_VOID_RETURN(ec);
