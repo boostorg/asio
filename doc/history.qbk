@@ -7,6 +7,18 @@
 
 [section:history Revision History]
 
+[heading Asio 1.12.1 / Boost 1.67]
+
+* Added missing const qualifier to `basic_socket_acceptor::get_option`.
+* Worked around a parsing error that occurs with some versions of gcc.
+* Fixed broken code samples in tutorial.
+* Added new experimental features. (Note that "experimental" features may be
+  changed without notice in subsequent releases.)
+  * Added `experimental::detached` completion token.
+  * Added `experimental::redirect_error` completion token.
+  * Added `experimental::co_spawn` facility for integration with the coroutines
+    technical specification.
+
 [heading Asio 1.12.0 / Boost 1.66]
 
 * Implemented interface changes to reflect the Networking TS
