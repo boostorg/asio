@@ -1,5 +1,5 @@
 [/
- / Copyright (c) 2003-2017 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+ / Copyright (c) 2003-2018 Christopher M. Kohlhoff (chris at kohlhoff dot com)
  /
  / Distributed under the Boost Software License, Version 1.0. (See accompanying
  / file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -88,15 +88,22 @@ Since this example uses timers, we need to include the appropriate Boost.Date\_T
 
 
 
-All programs that use asio need to have at least one boost::asio::io\_service object. This class provides access to I/O functionality. We declare an object of this type first thing in the main function.
+All programs that use asio need to have at least one 
+[link boost_asio.reference.io_context io_context] object. This class provides access to I/O functionality. We declare an object of this type first thing in the main function.
 
 
 
+  ``''''''``int main()
+  ``''''''``{
+  ``''''''``  boost::asio::io_context io;
 
 
-Next we declare an object of type boost::asio::deadline\_timer. The core asio classes that provide I/O functionality (or as in this case timer functionality) always take a reference to an io\_service as their first constructor argument. The second argument to the constructor sets the timer to expire 5 seconds from now.
+
+Next we declare an object of type boost::asio::deadline\_timer. The core asio classes that provide I/O functionality (or as in this case timer functionality) always take a reference to an io\_context as their first constructor argument. The second argument to the constructor sets the timer to expire 5 seconds from now.
 
 
+
+  ``''''''``  boost::asio::deadline_timer t(io, boost::posix_time::seconds(5));
 
 
 
@@ -105,12 +112,18 @@ In this simple example we perform a blocking wait on the timer. That is, the cal
 A deadline timer is always in one of two states: "expired" or "not expired". If the [link boost_asio.reference.basic_deadline_timer.wait deadline_timer::wait()] function is called on an expired timer, it will return immediately.
 
 
+  ``''''''``  t.wait();
 
 
 
 Finally we print the obligatory `"Hello, world!"` message to show when the timer has expired.
 
 
+
+  ``''''''``  std::cout << "Hello, world!" << std::endl;
+
+  ``''''''``  return 0;
+  ``''''''``}
 
 
 
@@ -129,7 +142,7 @@ Next: [link boost_asio.tutorial.tuttimer2 Timer.2 - Using a timer asynchronously
   ``''''''``// timer.cpp
   ``''''''``// ~~~~~~~~~
   ``''''''``//
-  ``''''''``// Copyright (c) 2003-2017 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+  ``''''''``// Copyright (c) 2003-2018 Christopher M. Kohlhoff (chris at kohlhoff dot com)
   ``''''''``//
   ``''''''``// Distributed under the Boost Software License, Version 1.0. (See accompanying
   ``''''''``// file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -196,13 +209,13 @@ Next, instead of doing a blocking wait as in tutorial Timer.1, we call the [link
 
 
 
-Finally, we must call the [link boost_asio.reference.io_context.run io_service::run()] member function on the io\_service object.
+Finally, we must call the [link boost_asio.reference.io_context.run io_context::run()] member function on the io\_context object.
 
-The asio library provides a guarantee that callback handlers will only be called from threads that are currently calling [link boost_asio.reference.io_context.run io_service::run()]. Therefore unless the [link boost_asio.reference.io_context.run io_service::run()] function is called the callback for the asynchronous wait completion will never be invoked.
+The asio library provides a guarantee that callback handlers will only be called from threads that are currently calling [link boost_asio.reference.io_context.run io_context::run()]. Therefore unless the [link boost_asio.reference.io_context.run io_context::run()] function is called the callback for the asynchronous wait completion will never be invoked.
 
-The [link boost_asio.reference.io_context.run io_service::run()] function will also continue to run while there is still "work" to do. In this example, the work is the asynchronous wait on the timer, so the call will not return until the timer has expired and the callback has completed.
+The [link boost_asio.reference.io_context.run io_context::run()] function will also continue to run while there is still "work" to do. In this example, the work is the asynchronous wait on the timer, so the call will not return until the timer has expired and the callback has completed.
 
-It is important to remember to give the io\_service some work to do before calling [link boost_asio.reference.io_context.run io_service::run()]. For example, if we had omitted the above call to [link boost_asio.reference.basic_deadline_timer.async_wait deadline_timer::async_wait()], the io\_service would not have had any work to do, and consequently [link boost_asio.reference.io_context.run io_service::run()] would have returned immediately.
+It is important to remember to give the io\_context some work to do before calling [link boost_asio.reference.io_context.run io_context::run()]. For example, if we had omitted the above call to [link boost_asio.reference.basic_deadline_timer.async_wait deadline_timer::async_wait()], the io\_context would not have had any work to do, and consequently [link boost_asio.reference.io_context.run io_context::run()] would have returned immediately.
 
 
   ``''''''``  io.run();
@@ -229,7 +242,7 @@ Next: [link boost_asio.tutorial.tuttimer3 Timer.3 - Binding arguments to a handl
   ``''''''``// timer.cpp
   ``''''''``// ~~~~~~~~~
   ``''''''``//
-  ``''''''``// Copyright (c) 2003-2017 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+  ``''''''``// Copyright (c) 2003-2018 Christopher M. Kohlhoff (chris at kohlhoff dot com)
   ``''''''``//
   ``''''''``// Distributed under the Boost Software License, Version 1.0. (See accompanying
   ``''''''``// file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -294,7 +307,7 @@ To implement a repeating timer using asio you need to change the timer's expiry 
 
 
 
-As mentioned above, this tutorial program uses a counter to stop running when the timer fires for the sixth time. However you will observe that there is no explicit call to ask the io\_service to stop. Recall that in tutorial Timer.2 we learnt that the [link boost_asio.reference.io_context.run io_service::run()] function completes when there is no more "work" to do. By not starting a new asynchronous wait on the timer when `count` reaches 5, the io\_service will run out of work and stop running.
+As mentioned above, this tutorial program uses a counter to stop running when the timer fires for the sixth time. However you will observe that there is no explicit call to ask the io\_context to stop. Recall that in tutorial Timer.2 we learnt that the [link boost_asio.reference.io_context.run io_context::run()] function completes when there is no more "work" to do. By not starting a new asynchronous wait on the timer when `count` reaches 5, the io\_context will run out of work and stop running.
 
 
   ``''''''``  if (*count < 5)
@@ -319,6 +332,14 @@ See the [@http://www.boost.org/libs/bind/bind.html Boost.Bind documentation] for
 In this example, the boost::asio::placeholders::error argument to boost::bind() is a named placeholder for the error object passed to the handler. When initiating the asynchronous operation, and if using boost::bind(), you must specify only the arguments that match the handler's parameter list. In tutorial Timer.4 you will see that this placeholder may be elided if the parameter is not needed by the callback handler.
 
 
+  ``''''''``    t->async_wait(boost::bind(print,
+  ``''''''``          boost::asio::placeholders::error, t, count));
+  ``''''''``  }
+  ``''''''``}
+
+  ``''''''``int main()
+  ``''''''``{
+  ``''''''``  boost::asio::io_context io;
 
 
 
@@ -326,17 +347,29 @@ A new `count` variable is added so that we can stop the program when the timer f
 
 
 
+  ``''''''``  int count = 0;
+  ``''''''``  boost::asio::deadline_timer t(io, boost::posix_time::seconds(1));
+
 
 
 As in Step 4, when making the call to [link boost_asio.reference.basic_deadline_timer.async_wait deadline_timer::async_wait()] from `main` we bind the additional parameters needed for the `print` function.
 
 
+  ``''''''``  t.async_wait(boost::bind(print,
+  ``''''''``        boost::asio::placeholders::error, &t, &count));
+
+  ``''''''``  io.run();
 
 
 
 Finally, just to prove that the `count` variable was being used in the `print` handler function, we will print out its new value.
 
 
+
+  ``''''''``  std::cout << "Final count is " << count << std::endl;
+
+  ``''''''``  return 0;
+  ``''''''``}
 
 
 
@@ -357,7 +390,7 @@ Next: [link boost_asio.tutorial.tuttimer4 Timer.4 - Using a member function as a
   ``''''''``// timer.cpp
   ``''''''``// ~~~~~~~~~
   ``''''''``//
-  ``''''''``// Copyright (c) 2003-2017 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+  ``''''''``// Copyright (c) 2003-2018 Christopher M. Kohlhoff (chris at kohlhoff dot com)
   ``''''''``//
   ``''''''``// Distributed under the Boost Software License, Version 1.0. (See accompanying
   ``''''''``// file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -430,7 +463,7 @@ Instead of defining a free function `print` as the callback handler, as we did i
 
 
 
-The constructor of this class will take a reference to the io\_service object and use it when initialising the `timer_` member. The counter used to shut down the program is now also a member of the class.
+The constructor of this class will take a reference to the io\_context object and use it when initialising the `timer_` member. The counter used to shut down the program is now also a member of the class.
 
 
   ``''''''``  printer(boost::asio::io_context& io)
@@ -484,7 +517,7 @@ The `print` member function is very similar to the `print` function from tutoria
 
 
 
-The `main` function is much simpler than before, as it now declares a local `printer` object before running the io\_service as normal.
+The `main` function is much simpler than before, as it now declares a local `printer` object before running the io\_context as normal.
 
 
 
@@ -518,7 +551,7 @@ Next: [link boost_asio.tutorial.tuttimer5 Timer.5 - Synchronising handlers in mu
   ``''''''``// timer.cpp
   ``''''''``// ~~~~~~~~~
   ``''''''``//
-  ``''''''``// Copyright (c) 2003-2017 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+  ``''''''``// Copyright (c) 2003-2018 Christopher M. Kohlhoff (chris at kohlhoff dot com)
   ``''''''``//
   ``''''''``// Distributed under the Boost Software License, Version 1.0. (See accompanying
   ``''''''``// file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -578,9 +611,10 @@ Return to [link boost_asio.tutorial.tuttimer4 Timer.4 - Using a member function 
 
 [section:tuttimer5 Timer.5 - Synchronising handlers in multithreaded programs]
 
-This tutorial demonstrates the use of the boost::asio::io\_service::strand class to synchronise callback handlers in a multithreaded program.
+This tutorial demonstrates the use of the 
+[link boost_asio.reference.io_context__strand io_context::strand] class to synchronise callback handlers in a multithreaded program.
 
-The previous four tutorials avoided the issue of handler synchronisation by calling the [link boost_asio.reference.io_context.run io_service::run()] function from one thread only. As you already know, the asio library provides a guarantee that callback handlers will only be called from threads that are currently calling [link boost_asio.reference.io_context.run io_service::run()]. Consequently, calling [link boost_asio.reference.io_context.run io_service::run()] from only one thread ensures that callback handlers cannot run concurrently.
+The previous four tutorials avoided the issue of handler synchronisation by calling the [link boost_asio.reference.io_context.run io_context::run()] function from one thread only. As you already know, the asio library provides a guarantee that callback handlers will only be called from threads that are currently calling [link boost_asio.reference.io_context.run io_context::run()]. Consequently, calling [link boost_asio.reference.io_context.run io_context::run()] from only one thread ensures that callback handlers cannot run concurrently.
 
 The single threaded approach is usually the best place to start when developing applications using asio. The downside is the limitations it places on programs, particularly servers, including:
 
@@ -592,7 +626,7 @@ The single threaded approach is usually the best place to start when developing 
 
 
 
-If you find yourself running into these limitations, an alternative approach is to have a pool of threads calling [link boost_asio.reference.io_context.run io_service::run()]. However, as this allows handlers to execute concurrently, we need a method of synchronisation when handlers might be accessing a shared, thread-unsafe resource.
+If you find yourself running into these limitations, an alternative approach is to have a pool of threads calling [link boost_asio.reference.io_context.run io_context::run()]. However, as this allows handlers to execute concurrently, we need a method of synchronisation when handlers might be accessing a shared, thread-unsafe resource.
 
 
 
@@ -617,9 +651,13 @@ We start by defining a class called `printer`, similar to the class in the previ
 
 
 
-In addition to initialising a pair of boost::asio::deadline\_timer members, the constructor initialises the `strand_` member, an object of type boost::asio::io\_service::strand.
+In addition to initialising a pair of boost::asio::deadline\_timer members, the constructor initialises the `strand_` member, an object of type 
+[link boost_asio.reference.io_context__strand io_context::strand].
 
-An boost::asio::io\_service::strand is an executor that guarantees that, for those handlers that are dispatched through it, an executing handler will be allowed to complete before the next one is started. This is guaranteed irrespective of the number of threads that are calling [link boost_asio.reference.io_context.run io_service::run()]. Of course, the handlers may still execute concurrently with other handlers that were not dispatched through an boost::asio::io\_service::strand, or were dispatched through a different boost::asio::io\_service::strand object.
+An 
+[link boost_asio.reference.io_context__strand io_context::strand] is an executor that guarantees that, for those handlers that are dispatched through it, an executing handler will be allowed to complete before the next one is started. This is guaranteed irrespective of the number of threads that are calling [link boost_asio.reference.io_context.run io_context::run()]. Of course, the handlers may still execute concurrently with other handlers that were not dispatched through an 
+[link boost_asio.reference.io_context__strand io_context::strand], or were dispatched through a different 
+[link boost_asio.reference.io_context__strand io_context::strand] object.
 
 
   ``''''''``  printer(boost::asio::io_context& io)
@@ -631,7 +669,10 @@ An boost::asio::io\_service::strand is an executor that guarantees that, for tho
 
 
 
-When initiating the asynchronous operations, each callback handler is "bound" to an boost::asio::io\_service::strand object. The boost::asio::io\_service::strand::bind\_executor() function returns a new handler that automatically dispatches its contained handler through the boost::asio::io\_service::strand object. By binding the handlers to the same boost::asio::io\_service::strand, we are ensuring that they cannot execute concurrently.
+When initiating the asynchronous operations, each callback handler is "bound" to an 
+[link boost_asio.reference.io_context__strand io_context::strand] object. The boost::asio::io\_context::strand::bind\_executor() function returns a new handler that automatically dispatches its contained handler through the 
+[link boost_asio.reference.io_context__strand io_context::strand] object. By binding the handlers to the same 
+[link boost_asio.reference.io_context__strand io_context::strand], we are ensuring that they cannot execute concurrently.
 
 
   ``''''''``    timer1_.async_wait(boost::asio::bind_executor(strand_,
@@ -689,9 +730,9 @@ In a multithreaded program, the handlers for asynchronous operations should be s
 
 
 
-The `main` function now causes [link boost_asio.reference.io_context.run io_service::run()] to be called from two threads: the main thread and one additional thread. This is accomplished using an boost::thread object.
+The `main` function now causes [link boost_asio.reference.io_context.run io_context::run()] to be called from two threads: the main thread and one additional thread. This is accomplished using an boost::thread object.
 
-Just as it would with a call from a single thread, concurrent calls to [link boost_asio.reference.io_context.run io_service::run()] will continue to execute while there is "work" left to do. The background thread will not exit until all asynchronous operations have completed.
+Just as it would with a call from a single thread, concurrent calls to [link boost_asio.reference.io_context.run io_context::run()] will continue to execute while there is "work" left to do. The background thread will not exit until all asynchronous operations have completed.
 
 
 
@@ -725,7 +766,7 @@ Previous: [link boost_asio.tutorial.tuttimer4 Timer.4 - Using a member function 
   ``''''''``// timer.cpp
   ``''''''``// ~~~~~~~~~
   ``''''''``//
-  ``''''''``// Copyright (c) 2003-2017 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+  ``''''''``// Copyright (c) 2003-2018 Christopher M. Kohlhoff (chris at kohlhoff dot com)
   ``''''''``//
   ``''''''``// Distributed under the Boost Software License, Version 1.0. (See accompanying
   ``''''''``// file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -845,15 +886,20 @@ The purpose of this application is to access a daytime service, so we need the u
 
 
 
-All programs that use asio need to have at least one boost::asio::io\_service object.
+All programs that use asio need to have at least one 
+[link boost_asio.reference.io_context io_context] object.
 
 
+
+  ``''''''``    boost::asio::io_context io_context;
 
 
 
 We need to turn the server name that was specified as a parameter to the application, into a TCP endpoint. To do this we use an [link boost_asio.reference.ip__tcp.resolver ip::tcp::resolver] object.
 
 
+
+  ``''''''``    tcp::resolver resolver(io_context);
 
 
 
@@ -910,7 +956,7 @@ Next: [link boost_asio.tutorial.tutdaytime2 Daytime.2 - A synchronous TCP daytim
   ``''''''``// client.cpp
   ``''''''``// ~~~~~~~~~~
   ``''''''``//
-  ``''''''``// Copyright (c) 2003-2017 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+  ``''''''``// Copyright (c) 2003-2018 Christopher M. Kohlhoff (chris at kohlhoff dot com)
   ``''''''``//
   ``''''''``// Distributed under the Boost Software License, Version 1.0. (See accompanying
   ``''''''``// file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -992,11 +1038,26 @@ We define the function `make_daytime_string()` to create the string to be sent b
 
 
 
+  ``''''''``std::string make_daytime_string()
+  ``''''''``{
+  ``''''''``  using namespace std; // For time_t, time and ctime;
+  ``''''''``  time_t now = time(0);
+  ``''''''``  return ctime(&now);
+  ``''''''``}
+
+  ``''''''``int main()
+  ``''''''``{
+  ``''''''``  try
+  ``''''''``  {
+  ``''''''``    boost::asio::io_context io_context;
+
 
 
 A [link boost_asio.reference.ip__tcp.acceptor ip::tcp::acceptor] object needs to be created to listen for new connections. It is initialised to listen on TCP port 13, for IP version 4.
 
 
+
+  ``''''''``    tcp::acceptor acceptor(io_context, tcp::endpoint(tcp::v4(), 13));
 
 
 
@@ -1004,17 +1065,36 @@ This is an iterative server, which means that it will handle one connection at a
 
 
 
+  ``''''''``    for (;;)
+  ``''''''``    {
+  ``''''''``      tcp::socket socket(io_context);
+  ``''''''``      acceptor.accept(socket);
+
 
 
 A client is accessing our service. Determine the current time and transfer this information to the client.
 
 
 
+  ``''''''``      std::string message = make_daytime_string();
+
+  ``''''''``      boost::system::error_code ignored_error;
+  ``''''''``      boost::asio::write(socket, boost::asio::buffer(message), ignored_error);
+  ``''''''``    }
+  ``''''''``  }
+
 
 
 Finally, handle any exceptions.
 
 
+  ``''''''``  catch (std::exception& e)
+  ``''''''``  {
+  ``''''''``    std::cerr << e.what() << std::endl;
+  ``''''''``  }
+
+  ``''''''``  return 0;
+  ``''''''``}
 
 
 
@@ -1035,7 +1115,7 @@ Next: [link boost_asio.tutorial.tutdaytime3 Daytime.3 - An asynchronous TCP dayt
   ``''''''``// server.cpp
   ``''''''``// ~~~~~~~~~~
   ``''''''``//
-  ``''''''``// Copyright (c) 2003-2017 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+  ``''''''``// Copyright (c) 2003-2018 Christopher M. Kohlhoff (chris at kohlhoff dot com)
   ``''''''``//
   ``''''''``// Distributed under the Boost Software License, Version 1.0. (See accompanying
   ``''''''``// file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -1100,7 +1180,8 @@ Return to [link boost_asio.tutorial.tutdaytime2 Daytime.2 - A synchronous TCP da
 
 
 
-We need to create a server object to accept incoming client connections. The boost::asio::io\_service object provides I/O services, such as sockets, that the server object will use.
+We need to create a server object to accept incoming client connections. The 
+[link boost_asio.reference.io_context io_context] object provides I/O services, such as sockets, that the server object will use.
 
 
   ``''''''``    boost::asio::io_context io_context;
@@ -1108,7 +1189,8 @@ We need to create a server object to accept incoming client connections. The boo
 
 
 
-Run the boost::asio::io\_service object so that it will perform asynchronous operations on your behalf.
+Run the 
+[link boost_asio.reference.io_context io_context] object so that it will perform asynchronous operations on your behalf.
 
 
   ``''''''``    io_context.run();
@@ -1285,7 +1367,7 @@ Next: [link boost_asio.tutorial.tutdaytime4 Daytime.4 - A synchronous UDP daytim
   ``''''''``// server.cpp
   ``''''''``// ~~~~~~~~~~
   ``''''''``//
-  ``''''''``// Copyright (c) 2003-2017 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+  ``''''''``// Copyright (c) 2003-2018 Christopher M. Kohlhoff (chris at kohlhoff dot com)
   ``''''''``//
   ``''''''``// Distributed under the Boost Software License, Version 1.0. (See accompanying
   ``''''''``// file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -1422,17 +1504,42 @@ The start of the application is essentially the same as for the TCP daytime clie
 
 
 
+  ``''''''``int main(int argc, char* argv[])
+  ``''''''``{
+  ``''''''``  try
+  ``''''''``  {
+  ``''''''``    if (argc != 2)
+  ``''''''``    {
+  ``''''''``      std::cerr << "Usage: client <host>" << std::endl;
+  ``''''''``      return 1;
+  ``''''''``    }
+
+  ``''''''``    boost::asio::io_context io_context;
+
 
 
 We use an [link boost_asio.reference.ip__udp.resolver ip::udp::resolver] object to find the correct remote endpoint to use based on the host and service names. The query is restricted to return only IPv4 endpoints by the [link boost_asio.reference.ip__udp.v4 ip::udp::v4()] argument.
 
 
 
+  ``''''''``    udp::resolver resolver(io_context);
+  ``''''''``    udp::endpoint receiver_endpoint =
+  ``''''''``      *resolver.resolve(udp::v4(), argv[1], "daytime").begin();
+
 
 
 The [link boost_asio.reference.ip__basic_resolver.resolve ip::udp::resolver::resolve()] function is guaranteed to return at least one endpoint in the list if it does not fail. This means it is safe to dereference the return value directly.
 
 
+
+  ``''''''``    udp::socket socket(io_context);
+  ``''''''``    socket.open(udp::v4());
+
+  ``''''''``    boost::array<char, 1> send_buf  = {{ 0 }};
+  ``''''''``    socket.send_to(boost::asio::buffer(send_buf), receiver_endpoint);
+
+  ``''''''``    boost::array<char, 128> recv_buf;
+  ``''''''``    udp::endpoint sender_endpoint;
 
 
 
@@ -1469,7 +1576,7 @@ Next: [link boost_asio.tutorial.tutdaytime5 Daytime.5 - A synchronous UDP daytim
   ``''''''``// client.cpp
   ``''''''``// ~~~~~~~~~~
   ``''''''``//
-  ``''''''``// Copyright (c) 2003-2017 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+  ``''''''``// Copyright (c) 2003-2018 Christopher M. Kohlhoff (chris at kohlhoff dot com)
   ``''''''``//
   ``''''''``// Distributed under the Boost Software License, Version 1.0. (See accompanying
   ``''''''``// file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -1529,12 +1636,19 @@ Return to [link boost_asio.tutorial.tutdaytime4 Daytime.4 - A synchronous UDP da
 This tutorial program shows how to use asio to implement a server application with UDP.
 
 
+  ``''''''``int main()
+  ``''''''``{
+  ``''''''``  try
+  ``''''''``  {
+  ``''''''``    boost::asio::io_context io_context;
 
 
 
 Create an [link boost_asio.reference.ip__udp.socket ip::udp::socket] object to receive requests on UDP port 13.
 
 
+
+  ``''''''``    udp::socket socket(io_context, udp::endpoint(udp::v4(), 13));
 
 
 
@@ -1579,7 +1693,7 @@ Next: [link boost_asio.tutorial.tutdaytime6 Daytime.6 - An asynchronous UDP dayt
   ``''''''``// server.cpp
   ``''''''``// ~~~~~~~~~~
   ``''''''``//
-  ``''''''``// Copyright (c) 2003-2017 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+  ``''''''``// Copyright (c) 2003-2018 Christopher M. Kohlhoff (chris at kohlhoff dot com)
   ``''''''``//
   ``''''''``// Distributed under the Boost Software License, Version 1.0. (See accompanying
   ``''''''``// file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -1613,11 +1727,7 @@ Next: [link boost_asio.tutorial.tutdaytime6 Daytime.6 - An asynchronous UDP dayt
   ``''''''``      boost::array<char, 1> recv_buf;
   ``''''''``      udp::endpoint remote_endpoint;
   ``''''''``      boost::system::error_code error;
-  ``''''''``      socket.receive_from(boost::asio::buffer(recv_buf),
-  ``''''''``          remote_endpoint, 0, error);
-
-  ``''''''``      if (error && error != boost::asio::error::message_size)
-  ``''''''``        throw boost::system::system_error(error);
+  ``''''''``      socket.receive_from(boost::asio::buffer(recv_buf), remote_endpoint);
 
   ``''''''``      std::string message = make_daytime_string();
 
@@ -1652,7 +1762,8 @@ Return to [link boost_asio.tutorial.tutdaytime5 Daytime.5 - A synchronous UDP da
 
 
 
-Create a server object to accept incoming client requests, and run the boost::asio::io\_service object.
+Create a server object to accept incoming client requests, and run the 
+[link boost_asio.reference.io_context io_context] object.
 
 
   ``''''''``    boost::asio::io_context io_context;
@@ -1693,7 +1804,8 @@ The constructor initialises a socket to listen on UDP port 13.
 
 
 
-The function [link boost_asio.reference.basic_datagram_socket.async_receive_from ip::udp::socket::async_receive_from()] will cause the application to listen in the background for a new request. When such a request is received, the boost::asio::io\_service object will invoke the `handle_receive()` function with two arguments: a value of type boost::system::error\_code indicating whether the operation succeeded or failed, and a `size_t` value `bytes_transferred` specifying the number of bytes received.
+The function [link boost_asio.reference.basic_datagram_socket.async_receive_from ip::udp::socket::async_receive_from()] will cause the application to listen in the background for a new request. When such a request is received, the 
+[link boost_asio.reference.io_context io_context] object will invoke the `handle_receive()` function with two arguments: a value of type boost::system::error\_code indicating whether the operation succeeded or failed, and a `size_t` value `bytes_transferred` specifying the number of bytes received.
 
 
   ``''''''``    socket_.async_receive_from(
@@ -1715,10 +1827,11 @@ The function `handle_receive()` will service the client request.
 
 
 
-The `error` parameter contains the result of the asynchronous operation. Since we only provide the 1-byte `recv_buffer_` to contain the client's request, the boost::asio::io\_service object would return an error if the client sent anything larger. We can ignore such an error if it comes up.
+The `error` parameter contains the result of the asynchronous operation. Since we only provide the 1-byte `recv_buffer_` to contain the client's request, the 
+[link boost_asio.reference.io_context io_context] object would return an error if the client sent anything larger. We can ignore such an error if it comes up.
 
 
-  ``''''''``    if (!error || error == boost::asio::error::message_size)
+  ``''''''``    if (!error)
   ``''''''``    {
 
 
@@ -1794,7 +1907,7 @@ Next: [link boost_asio.tutorial.tutdaytime7 Daytime.7 - A combined TCP/UDP async
   ``''''''``// server.cpp
   ``''''''``// ~~~~~~~~~~
   ``''''''``//
-  ``''''''``// Copyright (c) 2003-2017 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+  ``''''''``// Copyright (c) 2003-2018 Christopher M. Kohlhoff (chris at kohlhoff dot com)
   ``''''''``//
   ``''''''``// Distributed under the Boost Software License, Version 1.0. (See accompanying
   ``''''''``// file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -1839,7 +1952,7 @@ Next: [link boost_asio.tutorial.tutdaytime7 Daytime.7 - A combined TCP/UDP async
   ``''''''``  void handle_receive(const boost::system::error_code& error,
   ``''''''``      std::size_t /*bytes_transferred*/)
   ``''''''``  {
-  ``''''''``    if (!error || error == boost::asio::error::message_size)
+  ``''''''``    if (!error)
   ``''''''``    {
   ``''''''``      boost::shared_ptr<std::string> message(
   ``''''''``          new std::string(make_daytime_string()));
@@ -1893,24 +2006,41 @@ This tutorial program shows how to combine the two asynchronous servers that we 
 [heading The main() function]
 
 
+  ``''''''``int main()
+  ``''''''``{
+  ``''''''``  try
+  ``''''''``  {
+  ``''''''``    boost::asio::io_context io_context;
 
 
 
 We will begin by creating a server object to accept a TCP client connection.
 
 
+  ``''''''``    tcp_server server1(io_context);
 
 
 
 We also need a server object to accept a UDP client request.
 
 
+  ``''''''``    udp_server server2(io_context);
 
 
 
-We have created two lots of work for the boost::asio::io\_service object to do.
+We have created two lots of work for the 
+[link boost_asio.reference.io_context io_context] object to do.
 
 
+  ``''''''``    io_context.run();
+  ``''''''``  }
+  ``''''''``  catch (std::exception& e)
+  ``''''''``  {
+  ``''''''``    std::cerr << e.what() << std::endl;
+  ``''''''``  }
+
+  ``''''''``  return 0;
+  ``''''''``}
 
 
 
@@ -2018,7 +2148,7 @@ Similarly, this next class is taken from the [link boost_asio.tutorial.tutdaytim
 
   ``''''''``  void handle_receive(const boost::system::error_code& error)
   ``''''''``  {
-  ``''''''``    if (!error || error == boost::asio::error::message_size)
+  ``''''''``    if (!error)
   ``''''''``    {
   ``''''''``      boost::shared_ptr<std::string> message(
   ``''''''``          new std::string(make_daytime_string()));
@@ -2056,7 +2186,7 @@ Previous: [link boost_asio.tutorial.tutdaytime6 Daytime.6 - An asynchronous UDP 
   ``''''''``// server.cpp
   ``''''''``// ~~~~~~~~~~
   ``''''''``//
-  ``''''''``// Copyright (c) 2003-2017 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+  ``''''''``// Copyright (c) 2003-2018 Christopher M. Kohlhoff (chris at kohlhoff dot com)
   ``''''''``//
   ``''''''``// Distributed under the Boost Software License, Version 1.0. (See accompanying
   ``''''''``// file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -2173,7 +2303,7 @@ Previous: [link boost_asio.tutorial.tutdaytime6 Daytime.6 - An asynchronous UDP 
 
   ``''''''``  void handle_receive(const boost::system::error_code& error)
   ``''''''``  {
-  ``''''''``    if (!error || error == boost::asio::error::message_size)
+  ``''''''``    if (!error)
   ``''''''``    {
   ``''''''``      boost::shared_ptr<std::string> message(
   ``''''''``          new std::string(make_daytime_string()));

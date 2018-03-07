@@ -2,7 +2,7 @@
 // detail/config.hpp
 // ~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2017 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2018 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -1366,5 +1366,25 @@
 #if !defined(BOOST_ASIO_UNUSED_VARIABLE)
 # define BOOST_ASIO_UNUSED_VARIABLE
 #endif // !defined(BOOST_ASIO_UNUSED_VARIABLE)
+
+// Support co_await on compilers known to allow it.
+#if !defined(BOOST_ASIO_HAS_CO_AWAIT)
+# if !defined(BOOST_ASIO_DISABLE_CO_AWAIT)
+#  if defined(BOOST_ASIO_MSVC)
+#   if (_MSC_FULL_VER >= 190023506)
+#    if defined(_RESUMABLE_FUNCTIONS_SUPPORTED)
+#     define BOOST_ASIO_HAS_CO_AWAIT 1
+#    endif // defined(_RESUMABLE_FUNCTIONS_SUPPORTED)
+#   endif // (_MSC_FULL_VER >= 190023506)
+#  endif // defined(BOOST_ASIO_MSVC)
+# endif // !defined(BOOST_ASIO_DISABLE_CO_AWAIT)
+# if defined(__clang__)
+#  if (__cpp_coroutines >= 201703)
+#   if __has_include(<experimental/coroutine>)
+#    define BOOST_ASIO_HAS_CO_AWAIT 1
+#   endif // __has_include(<experimental/coroutine>)
+#  endif // (__cpp_coroutines >= 201703)
+# endif // defined(__clang__)
+#endif // !defined(BOOST_ASIO_HAS_CO_AWAIT)
 
 #endif // BOOST_ASIO_DETAIL_CONFIG_HPP
