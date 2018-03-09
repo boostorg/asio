@@ -1,6 +1,6 @@
 //
-// echo_server.cpp
-// ~~~~~~~~~~~~~~~
+// range_based_for.cpp
+// ~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2018 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
@@ -14,7 +14,6 @@
 #include <boost/asio/ip/tcp.hpp>
 #include <boost/asio/signal_set.hpp>
 #include <boost/asio/write.hpp>
-#include <boost/asio/use_future.hpp>
 #include <cstdio>
 
 using boost::asio::ip::tcp;
