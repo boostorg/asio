@@ -32,6 +32,10 @@
 #include <boost/asio/detail/wait_op.hpp>
 #include <boost/asio/execution_context.hpp>
 
+#if defined(BOOST_ASIO_HAS_TIMERFD)
+# include <sys/timerfd.h>
+#endif // defined(BOOST_ASIO_HAS_TIMERFD)
+
 #include <boost/asio/detail/push_options.hpp>
 
 namespace boost {
