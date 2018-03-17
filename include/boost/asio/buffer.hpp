@@ -27,6 +27,7 @@
 #include <boost/asio/detail/string_view.hpp>
 #include <boost/asio/detail/throw_exception.hpp>
 #include <boost/asio/detail/type_traits.hpp>
+#include <boost/core/ignore_unused.hpp>
 
 #if defined(BOOST_ASIO_MSVC) && (BOOST_ASIO_MSVC >= 1700)
 # if defined(_HAS_ITERATOR_DEBUGGING) && (_HAS_ITERATOR_DEBUGGING != 0)
@@ -707,7 +708,7 @@ public:
 
   void operator()()
   {
-    *iter_;
+    boost::ignore_unused(*iter_);
   }
 
 private:
