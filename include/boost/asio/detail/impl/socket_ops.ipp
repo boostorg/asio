@@ -33,6 +33,10 @@
 # include <string>
 #endif // defined(BOOST_ASIO_WINDOWS_RUNTIME)
 
+#if defined(__VXWORKS__)
+extern "C" int 	gethostname (char *name, size_t nameLen);
+#endif 
+
 #if defined(BOOST_ASIO_WINDOWS) || defined(__CYGWIN__) \
   || defined(__MACH__) && defined(__APPLE__)
 # if defined(BOOST_ASIO_HAS_PTHREADS)
@@ -561,7 +565,8 @@ bool non_blocking_connect(socket_type s, boost::system::error_code& ec)
   // get spurious readiness notifications from the reactor.
 #if defined(BOOST_ASIO_WINDOWS) \
   || defined(__CYGWIN__) \
-  || defined(__SYMBIAN32__)
+  || defined(__SYMBIAN32__) \
+  || defined(__VXWORKS__)
   fd_set write_fds;
   FD_ZERO(&write_fds);
   FD_SET(s, &write_fds);
@@ -610,7 +615,7 @@ bool non_blocking_connect(socket_type s, boost::system::error_code& ec)
 int socketpair(int af, int type, int protocol,
     socket_type sv[2], boost::system::error_code& ec)
 {
-#if defined(BOOST_ASIO_WINDOWS) || defined(__CYGWIN__)
+#if defined(BOOST_ASIO_WINDOWS) || defined(__CYGWIN__) || defined(__VXWORKS__) 
   (void)(af);
   (void)(type);
   (void)(protocol);
@@ -1810,7 +1815,8 @@ int poll_read(socket_type s, state_type state,
 
 #if defined(BOOST_ASIO_WINDOWS) \
   || defined(__CYGWIN__) \
-  || defined(__SYMBIAN32__)
+  || defined(__SYMBIAN32__) \
+  || defined(__VXWORKS__)
   fd_set fds;
   FD_ZERO(&fds);
   FD_SET(s, &fds);
@@ -1864,7 +1870,8 @@ int poll_write(socket_type s, state_type state,
 
 #if defined(BOOST_ASIO_WINDOWS) \
   || defined(__CYGWIN__) \
-  || defined(__SYMBIAN32__)
+  || defined(__SYMBIAN32__) \
+  || defined(__VXWORKS__) 
   fd_set fds;
   FD_ZERO(&fds);
   FD_SET(s, &fds);
@@ -1971,7 +1978,8 @@ int poll_connect(socket_type s, int msec, boost::system::error_code& ec)
 
 #if defined(BOOST_ASIO_WINDOWS) \
   || defined(__CYGWIN__) \
-  || defined(__SYMBIAN32__)
+  || defined(__SYMBIAN32__) \
+  || defined(__VXWORKS__) 
   fd_set write_fds;
   FD_ZERO(&write_fds);
   FD_SET(s, &write_fds);
