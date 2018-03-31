@@ -41,16 +41,3 @@ exe time_t_timer
     <os>HPUX:<library>ipv6
     <os>HAIKU:<library>network
   ;
-
-if [ os.name ] = NT
-{
-  # The tick_count_timer is for Windows only.
-  exe tick_count_timer
-    : tick_count_timer.cpp
-      /boost/system//boost_system
-    : <define>BOOST_ALL_NO_LIB=1
-      <threading>multi
-      <os>NT,<toolset>gcc:<library>ws2_32
-      <os>NT,<toolset>gcc:<library>mswsock
-    ;
-}
