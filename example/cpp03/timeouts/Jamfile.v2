@@ -44,5 +44,6 @@ project
 
 exe async_tcp_client : async_tcp_client.cpp ;
 exe blocking_tcp_client : blocking_tcp_client.cpp ;
+exe blocking_token_tcp_client : blocking_token_tcp_client.cpp ;
 exe blocking_udp_client : blocking_udp_client.cpp ;
 exe server : server.cpp ;
