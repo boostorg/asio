@@ -254,7 +254,7 @@ template <typename SyncWriteStream, typename DynamicBuffer>
 std::size_t write(SyncWriteStream& s,
     BOOST_ASIO_MOVE_ARG(DynamicBuffer) buffers,
     typename enable_if<
-      is_dynamic_buffer<DynamicBuffer>::value
+      is_dynamic_buffer<typename decay<DynamicBuffer>::type>::value
     >::type* = 0);
 
 /// Write all of the supplied data to a stream before returning.
@@ -289,7 +289,7 @@ std::size_t write(SyncWriteStream& s,
     BOOST_ASIO_MOVE_ARG(DynamicBuffer) buffers,
     boost::system::error_code& ec,
     typename enable_if<
-      is_dynamic_buffer<DynamicBuffer>::value
+      is_dynamic_buffer<typename decay<DynamicBuffer>::type>::value
     >::type* = 0);
 
 /// Write a certain amount of data to a stream before returning.
@@ -334,7 +334,7 @@ std::size_t write(SyncWriteStream& s,
     BOOST_ASIO_MOVE_ARG(DynamicBuffer) buffers,
     CompletionCondition completion_condition,
     typename enable_if<
-      is_dynamic_buffer<DynamicBuffer>::value
+      is_dynamic_buffer<typename decay<DynamicBuffer>::type>::value
     >::type* = 0);
 
 /// Write a certain amount of data to a stream before returning.
@@ -380,7 +380,7 @@ std::size_t write(SyncWriteStream& s,
     BOOST_ASIO_MOVE_ARG(DynamicBuffer) buffers,
     CompletionCondition completion_condition, boost::system::error_code& ec,
     typename enable_if<
-      is_dynamic_buffer<DynamicBuffer>::value
+      is_dynamic_buffer<typename decay<DynamicBuffer>::type>::value
     >::type* = 0);
 
 #if !defined(BOOST_ASIO_NO_EXTENSIONS)
@@ -729,7 +729,7 @@ async_write(AsyncWriteStream& s,
     BOOST_ASIO_MOVE_ARG(DynamicBuffer) buffers,
     BOOST_ASIO_MOVE_ARG(WriteHandler) handler,
     typename enable_if<
-      is_dynamic_buffer<DynamicBuffer>::value
+      is_dynamic_buffer<typename decay<DynamicBuffer>::type>::value
     >::type* = 0);
 
 /// Start an asynchronous operation to write a certain amount of data to a
@@ -798,7 +798,7 @@ async_write(AsyncWriteStream& s,
     CompletionCondition completion_condition,
     BOOST_ASIO_MOVE_ARG(WriteHandler) handler,
     typename enable_if<
-      is_dynamic_buffer<DynamicBuffer>::value
+      is_dynamic_buffer<typename decay<DynamicBuffer>::type>::value
     >::type* = 0);
 
 #if !defined(BOOST_ASIO_NO_EXTENSIONS)
