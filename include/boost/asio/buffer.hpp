@@ -707,7 +707,7 @@ public:
 
   void operator()()
   {
-    *iter_;
+    (void)*iter_;
   }
 
 private:
