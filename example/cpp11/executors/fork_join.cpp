@@ -6,6 +6,7 @@
 #include <mutex>
 #include <queue>
 #include <thread>
+#include <numeric>
 
 using boost::asio::dispatch;
 using boost::asio::execution_context;
