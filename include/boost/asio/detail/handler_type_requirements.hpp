@@ -128,7 +128,7 @@ struct handler_type_requirements
 {
 };
 
-#define BOOST_ASIO_COMPLETION_HANDLER_CHECK( \
+#define BOOST_ASIO_LEGACY_COMPLETION_HANDLER_CHECK( \
     handler_type, handler) \
   \
   typedef BOOST_ASIO_HANDLER_TYPE(handler_type, \
@@ -493,7 +493,7 @@ struct handler_type_requirements
 
 #else // !defined(BOOST_ASIO_ENABLE_HANDLER_TYPE_REQUIREMENTS)
 
-#define BOOST_ASIO_COMPLETION_HANDLER_CHECK( \
+#define BOOST_ASIO_LEGACY_COMPLETION_HANDLER_CHECK( \
     handler_type, handler) \
   typedef int BOOST_ASIO_UNUSED_TYPEDEF
 
