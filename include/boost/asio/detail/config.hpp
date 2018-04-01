@@ -771,13 +771,37 @@
 # endif // !defined(BOOST_ASIO_DISABLE_STD_FUTURE)
 #endif // !defined(BOOST_ASIO_HAS_STD_FUTURE)
 
-// Standard library support for experimental::string_view.
+// Standard library support for std::string_view.
 #if !defined(BOOST_ASIO_HAS_STD_STRING_VIEW)
 # if !defined(BOOST_ASIO_DISABLE_STD_STRING_VIEW)
 #  if defined(__clang__)
+#   if (__cplusplus >= 201703)
+#    if __has_include(<string_view>)
+#     define BOOST_ASIO_HAS_STD_STRING_VIEW 1
+#    endif // __has_include(<string_view>)
+#   endif // (__cplusplus >= 201703)
+#  endif // defined(__clang__)
+#  if defined(__GNUC__)
+#   if (__GNUC__ >= 7)
+#    if (__cplusplus >= 201703)
+#     define BOOST_ASIO_HAS_STD_STRING_VIEW 1
+#    endif // (__cplusplus >= 201703)
+#   endif // (__GNUC__ >= 7)
+#  endif // defined(__GNUC__)
+#  if defined(BOOST_ASIO_MSVC)
+#   if (_MSC_VER >= 1910 && _HAS_CXX17)
+#    define BOOST_ASIO_HAS_STD_STRING_VIEW
+#   endif // (_MSC_VER >= 1910 && _HAS_CXX17)
+#  endif // defined(BOOST_ASIO_MSVC)
+# endif // !defined(BOOST_ASIO_DISABLE_STD_STRING_VIEW)
+#endif // !defined(BOOST_ASIO_HAS_STD_STRING_VIEW)
+
+// Standard library support for std::experimental::string_view.
+#if !defined(BOOST_ASIO_HAS_STD_EXPERIMENTAL_STRING_VIEW)
+# if !defined(BOOST_ASIO_DISABLE_STD_EXPERIMENTAL_STRING_VIEW)
+#  if defined(__clang__)
 #   if (__cplusplus >= 201402)
 #    if __has_include(<experimental/string_view>)
-#     define BOOST_ASIO_HAS_STD_STRING_VIEW 1
 #     define BOOST_ASIO_HAS_STD_EXPERIMENTAL_STRING_VIEW 1
 #    endif // __has_include(<experimental/string_view>)
 #   endif // (__cplusplus >= 201402)
@@ -785,18 +809,23 @@
 #  if defined(__GNUC__)
 #   if ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 9)) || (__GNUC__ > 4)
 #    if (__cplusplus >= 201402)
-#     define BOOST_ASIO_HAS_STD_STRING_VIEW 1
 #     define BOOST_ASIO_HAS_STD_EXPERIMENTAL_STRING_VIEW 1
 #    endif // (__cplusplus >= 201402)
-#   endif // ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 7)) || (__GNUC__ > 4)
+#   endif // ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 9)) || (__GNUC__ > 4)
 #  endif // defined(__GNUC__)
-#  if defined(BOOST_ASIO_MSVC)
-#   if (_MSC_VER >= 1910 && _HAS_CXX17)
-#    define BOOST_ASIO_HAS_STD_STRING_VIEW
-#   endif // (_MSC_VER >= 1910)
-#  endif // defined(BOOST_ASIO_MSVC)
-# endif // !defined(BOOST_ASIO_DISABLE_STD_STRING_VIEW)
-#endif // !defined(BOOST_ASIO_HAS_STD_STRING_VIEW)
+# endif // !defined(BOOST_ASIO_DISABLE_STD_EXPERIMENTAL_STRING_VIEW)
+#endif // !defined(BOOST_ASIO_HAS_STD_EXPERIMENTAL_STRING_VIEW)
+
+// Standard library has a string_view that we can use.
+#if !defined(BOOST_ASIO_HAS_STRING_VIEW)
+# if !defined(BOOST_ASIO_DISABLE_STRING_VIEW)
+#  if defined(BOOST_ASIO_HAS_STD_STRING_VIEW)
+#   define BOOST_ASIO_HAS_STRING_VIEW 1
+#  elif defined(BOOST_ASIO_HAS_STD_EXPERIMENTAL_STRING_VIEW)
+#   define BOOST_ASIO_HAS_STRING_VIEW 1
+#  endif // defined(BOOST_ASIO_HAS_STD_EXPERIMENTAL_STRING_VIEW)
+# endif // !defined(BOOST_ASIO_DISABLE_STRING_VIEW)
+#endif // !defined(BOOST_ASIO_HAS_STRING_VIEW)
 
 // Standard library support for iostream move construction and assignment.
 #if !defined(BOOST_ASIO_HAS_STD_IOSTREAM_MOVE)

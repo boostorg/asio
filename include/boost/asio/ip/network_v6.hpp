@@ -182,7 +182,7 @@ BOOST_ASIO_DECL network_v6 make_network_v6(const std::string& str);
 BOOST_ASIO_DECL network_v6 make_network_v6(
     const std::string& str, boost::system::error_code& ec);
 
-#if defined(BOOST_ASIO_HAS_STD_STRING_VIEW) \
+#if defined(BOOST_ASIO_HAS_STRING_VIEW) \
   || defined(GENERATING_DOCUMENTATION)
 
 /// Create an IPv6 network from a string containing IP address and prefix
@@ -200,7 +200,7 @@ BOOST_ASIO_DECL network_v6 make_network_v6(string_view str);
 BOOST_ASIO_DECL network_v6 make_network_v6(
     string_view str, boost::system::error_code& ec);
 
-#endif // defined(BOOST_ASIO_HAS_STD_STRING_VIEW)
+#endif // defined(BOOST_ASIO_HAS_STRING_VIEW)
        //  || defined(GENERATING_DOCUMENTATION)
 
 #if !defined(BOOST_ASIO_NO_IOSTREAM)
