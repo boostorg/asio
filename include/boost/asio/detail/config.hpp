@@ -69,6 +69,9 @@
       || (!defined(__MWERKS__) && !defined(__EDG_VERSION__)))
 #  define BOOST_ASIO_MSVC _MSC_VER
 # endif // defined(BOOST_ASIO_HAS_BOOST_CONFIG) && defined(BOOST_MSVC)
+#endif // !defined(BOOST_ASIO_MSVC)
+#if defined(BOOST_ASIO_MSVC)
+# include <ciso646> // Needed for _HAS_CXX17.
 #endif // defined(BOOST_ASIO_MSVC)
 
 // Clang / libc++ detection.
@@ -812,6 +815,17 @@
 #  endif // defined(BOOST_ASIO_MSVC)
 # endif // !defined(BOOST_ASIO_DISABLE_STD_IOSTREAM_MOVE)
 #endif // !defined(BOOST_ASIO_HAS_STD_IOSTREAM_MOVE)
+
+// Standard library has invoke_result (which supersedes result_of).
+#if !defined(BOOST_ASIO_HAS_STD_INVOKE_RESULT)
+# if !defined(BOOST_ASIO_DISABLE_STD_INVOKE_RESULT)
+#  if defined(BOOST_ASIO_MSVC)
+#   if (_MSC_VER >= 1910 && _HAS_CXX17)
+#    define BOOST_ASIO_HAS_STD_INVOKE_RESULT 1
+#   endif // (_MSC_VER >= 1910 && _HAS_CXX17)
+#  endif // defined(BOOST_ASIO_MSVC)
+# endif // !defined(BOOST_ASIO_DISABLE_STD_INVOKE_RESULT)
+#endif // !defined(BOOST_ASIO_HAS_STD_INVOKE_RESULT)
 
 // Windows App target. Windows but with a limited API.
 #if !defined(BOOST_ASIO_WINDOWS_APP)
