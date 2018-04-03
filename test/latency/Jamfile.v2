@@ -5,24 +5,12 @@
 # file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 #
 
-if [ os.name ] = SOLARIS
-{
-  lib socket ;
-  lib nsl ;
-}
-else if [ os.name ] = NT
-{
-  lib ws2_32 ;
-  lib mswsock ;
-}
-else if [ os.name ] = HPUX
-{
-  lib ipv6 ;
-}
-else if [ os.name ] = HAIKU
-{
-	lib network ;
-}
+lib socket ; # SOLARIS
+lib nsl ; # SOLARIS
+lib ws2_32 ; # NT
+lib mswsock ; # NT
+lib ipv6 ; # HPUX
+lib network ; # HAIKU
 
 project
   : requirements
