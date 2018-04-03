@@ -278,7 +278,7 @@ BOOST_ASIO_DECL address_v4 make_address_v4(const std::string& str);
 BOOST_ASIO_DECL address_v4 make_address_v4(
     const std::string& str, boost::system::error_code& ec);
 
-#if defined(BOOST_ASIO_HAS_STD_STRING_VIEW) \
+#if defined(BOOST_ASIO_HAS_STRING_VIEW) \
   || defined(GENERATING_DOCUMENTATION)
 
 /// Create an IPv4 address from an IP address string in dotted decimal form.
@@ -294,7 +294,7 @@ BOOST_ASIO_DECL address_v4 make_address_v4(string_view str);
 BOOST_ASIO_DECL address_v4 make_address_v4(
     string_view str, boost::system::error_code& ec);
 
-#endif // defined(BOOST_ASIO_HAS_STD_STRING_VIEW)
+#endif // defined(BOOST_ASIO_HAS_STRING_VIEW)
        //  || defined(GENERATING_DOCUMENTATION)
 
 #if !defined(BOOST_ASIO_NO_IOSTREAM)

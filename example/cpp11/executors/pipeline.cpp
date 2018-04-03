@@ -11,6 +11,7 @@
 #include <queue>
 #include <thread>
 #include <vector>
+#include <cctype>
 
 using boost::asio::execution_context;
 using boost::asio::executor_binder;

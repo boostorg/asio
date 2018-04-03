@@ -8,10 +8,10 @@
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
-#include <boost/asio/deadline_timer.hpp>
 #include <boost/asio/io_context.hpp>
 #include <boost/asio/ip/tcp.hpp>
 #include <boost/asio/spawn.hpp>
+#include <boost/asio/steady_timer.hpp>
 #include <boost/asio/write.hpp>
 #include <boost/bind.hpp>
 #include <boost/shared_ptr.hpp>
@@ -53,7 +53,7 @@ private:
       char data[128];
       for (;;)
       {
-        timer_.expires_from_now(boost::posix_time::seconds(10));
+        timer_.expires_after(boost::asio::chrono::seconds(10));
         std::size_t n = socket_.async_read_some(boost::asio::buffer(data), yield);
         boost::asio::async_write(socket_, boost::asio::buffer(data, n), yield);
       }
@@ -71,14 +71,14 @@ private:
     {
       boost::system::error_code ignored_ec;
       timer_.async_wait(yield[ignored_ec]);
-      if (timer_.expires_from_now() <= boost::posix_time::seconds(0))
+      if (timer_.expiry() <= boost::asio::steady_timer::clock_type::now())
         socket_.close();
     }
   }
 
   boost::asio::io_context::strand strand_;
   tcp::socket socket_;
-  boost::asio::deadline_timer timer_;
+  boost::asio::steady_timer timer_;
 };
 
 void do_accept(boost::asio::io_context& io_context,

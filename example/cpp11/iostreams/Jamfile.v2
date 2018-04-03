@@ -15,7 +15,6 @@ lib network ; # HAIKU
 project
   : requirements
     <library>/boost/system//boost_system
-    <library>/boost/thread//boost_thread
     <define>BOOST_ALL_NO_LIB=1
     <threading>multi
     <target-os>solaris:<library>socket
@@ -29,5 +28,4 @@ project
     <target-os>haiku:<library>network
   ;
 
-exe chat_server : chat_server.cpp ;
-exe chat_client : chat_client.cpp ;
+exe http_client : http_client.cpp ;

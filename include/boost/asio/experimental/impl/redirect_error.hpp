@@ -22,6 +22,7 @@
 #include <boost/asio/detail/handler_alloc_helpers.hpp>
 #include <boost/asio/detail/handler_cont_helpers.hpp>
 #include <boost/asio/detail/handler_invoke_helpers.hpp>
+#include <boost/asio/detail/type_traits.hpp>
 #include <boost/asio/detail/variadic_templates.hpp>
 #include <boost/asio/handler_type.hpp>
 #include <boost/system/system_error.hpp>
@@ -45,12 +46,21 @@ public:
   {
   }
 
+  void operator()()
+  {
+    handler_();
+  }
+
 #if defined(BOOST_ASIO_HAS_VARIADIC_TEMPLATES)
 
-  template <typename... Args>
-  void operator()(BOOST_ASIO_MOVE_ARG(Args)... args)
+  template <typename Arg, typename... Args>
+  typename enable_if<
+    !is_same<typename decay<Arg>::type, boost::system::error_code>::value
+  >::type
+  operator()(BOOST_ASIO_MOVE_ARG(Arg) arg, BOOST_ASIO_MOVE_ARG(Args)... args)
   {
-    handler_(BOOST_ASIO_MOVE_CAST(Args)(args)...);
+    handler_(BOOST_ASIO_MOVE_CAST(Arg)(arg),
+        BOOST_ASIO_MOVE_CAST(Args)(args)...);
   }
 
   template <typename... Args>
@@ -63,9 +73,13 @@ public:
 
 #else // defined(BOOST_ASIO_HAS_VARIADIC_TEMPLATES)
 
-  void operator()()
+  template <typename Arg>
+  typename enable_if<
+    !is_same<typename decay<Arg>::type, boost::system::error_code>::value
+  >::type
+  operator()(BOOST_ASIO_MOVE_ARG(Arg) arg)
   {
-    handler_();
+    handler_(BOOST_ASIO_MOVE_CAST(Arg)(arg));
   }
 
   void operator()(const boost::system::error_code& ec)
@@ -75,10 +89,14 @@ public:
   }
 
 #define BOOST_ASIO_PRIVATE_REDIRECT_ERROR_DEF(n) \
-  template <BOOST_ASIO_VARIADIC_TPARAMS(n)> \
-  void operator()(BOOST_ASIO_VARIADIC_MOVE_PARAMS(n)) \
+  template <typename Arg, BOOST_ASIO_VARIADIC_TPARAMS(n)> \
+  typename enable_if< \
+    !is_same<typename decay<Arg>::type, boost::system::error_code>::value \
+  >::type \
+  operator()(BOOST_ASIO_MOVE_ARG(Arg) arg, BOOST_ASIO_VARIADIC_MOVE_PARAMS(n)) \
   { \
-    handler_(BOOST_ASIO_VARIADIC_MOVE_ARGS(n)); \
+    handler_(BOOST_ASIO_MOVE_CAST(Arg)(arg), \
+        BOOST_ASIO_VARIADIC_MOVE_ARGS(n)); \
   } \
   \
   template <BOOST_ASIO_VARIADIC_TPARAMS(n)> \

@@ -255,7 +255,7 @@ template <typename SyncReadStream, typename DynamicBuffer>
 std::size_t read(SyncReadStream& s,
     BOOST_ASIO_MOVE_ARG(DynamicBuffer) buffers,
     typename enable_if<
-      is_dynamic_buffer<DynamicBuffer>::value
+      is_dynamic_buffer<typename decay<DynamicBuffer>::type>::value
     >::type* = 0);
 
 /// Attempt to read a certain amount of data from a stream before returning.
@@ -289,7 +289,7 @@ std::size_t read(SyncReadStream& s,
     BOOST_ASIO_MOVE_ARG(DynamicBuffer) buffers,
     boost::system::error_code& ec,
     typename enable_if<
-      is_dynamic_buffer<DynamicBuffer>::value
+      is_dynamic_buffer<typename decay<DynamicBuffer>::type>::value
     >::type* = 0);
 
 /// Attempt to read a certain amount of data from a stream before returning.
@@ -334,7 +334,7 @@ std::size_t read(SyncReadStream& s,
     BOOST_ASIO_MOVE_ARG(DynamicBuffer) buffers,
     CompletionCondition completion_condition,
     typename enable_if<
-      is_dynamic_buffer<DynamicBuffer>::value
+      is_dynamic_buffer<typename decay<DynamicBuffer>::type>::value
     >::type* = 0);
 
 /// Attempt to read a certain amount of data from a stream before returning.
@@ -380,7 +380,7 @@ std::size_t read(SyncReadStream& s,
     BOOST_ASIO_MOVE_ARG(DynamicBuffer) buffers,
     CompletionCondition completion_condition, boost::system::error_code& ec,
     typename enable_if<
-      is_dynamic_buffer<DynamicBuffer>::value
+      is_dynamic_buffer<typename decay<DynamicBuffer>::type>::value
     >::type* = 0);
 
 #if !defined(BOOST_ASIO_NO_EXTENSIONS)
@@ -740,7 +740,7 @@ async_read(AsyncReadStream& s,
     BOOST_ASIO_MOVE_ARG(DynamicBuffer) buffers,
     BOOST_ASIO_MOVE_ARG(ReadHandler) handler,
     typename enable_if<
-      is_dynamic_buffer<DynamicBuffer>::value
+      is_dynamic_buffer<typename decay<DynamicBuffer>::type>::value
     >::type* = 0);
 
 /// Start an asynchronous operation to read a certain amount of data from a
@@ -810,7 +810,7 @@ async_read(AsyncReadStream& s,
     CompletionCondition completion_condition,
     BOOST_ASIO_MOVE_ARG(ReadHandler) handler,
     typename enable_if<
-      is_dynamic_buffer<DynamicBuffer>::value
+      is_dynamic_buffer<typename decay<DynamicBuffer>::type>::value
     >::type* = 0);
 
 #if !defined(BOOST_ASIO_NO_EXTENSIONS)

@@ -130,15 +130,16 @@ inline void io_context::reset()
   restart();
 }
 
-template <typename CompletionHandler>
-BOOST_ASIO_INITFN_RESULT_TYPE(CompletionHandler, void ())
-io_context::dispatch(BOOST_ASIO_MOVE_ARG(CompletionHandler) handler)
+template <typename LegacyCompletionHandler>
+BOOST_ASIO_INITFN_RESULT_TYPE(LegacyCompletionHandler, void ())
+io_context::dispatch(BOOST_ASIO_MOVE_ARG(LegacyCompletionHandler) handler)
 {
   // If you get an error on the following line it means that your handler does
-  // not meet the documented type requirements for a CompletionHandler.
-  BOOST_ASIO_COMPLETION_HANDLER_CHECK(CompletionHandler, handler) type_check;
+  // not meet the documented type requirements for a LegacyCompletionHandler.
+  BOOST_ASIO_LEGACY_COMPLETION_HANDLER_CHECK(
+      LegacyCompletionHandler, handler) type_check;
 
-  async_completion<CompletionHandler, void ()> init(handler);
+  async_completion<LegacyCompletionHandler, void ()> init(handler);
 
   if (impl_.can_dispatch())
   {
@@ -150,7 +151,7 @@ io_context::dispatch(BOOST_ASIO_MOVE_ARG(CompletionHandler) handler)
   {
     // Allocate and construct an operation to wrap the handler.
     typedef detail::completion_handler<
-      typename handler_type<CompletionHandler, void ()>::type> op;
+      typename handler_type<LegacyCompletionHandler, void ()>::type> op;
     typename op::ptr p = { detail::addressof(init.completion_handler),
       op::ptr::allocate(init.completion_handler), 0 };
     p.p = new (p.v) op(init.completion_handler);
@@ -165,22 +166,23 @@ io_context::dispatch(BOOST_ASIO_MOVE_ARG(CompletionHandler) handler)
   return init.result.get();
 }
 
-template <typename CompletionHandler>
-BOOST_ASIO_INITFN_RESULT_TYPE(CompletionHandler, void ())
-io_context::post(BOOST_ASIO_MOVE_ARG(CompletionHandler) handler)
+template <typename LegacyCompletionHandler>
+BOOST_ASIO_INITFN_RESULT_TYPE(LegacyCompletionHandler, void ())
+io_context::post(BOOST_ASIO_MOVE_ARG(LegacyCompletionHandler) handler)
 {
   // If you get an error on the following line it means that your handler does
-  // not meet the documented type requirements for a CompletionHandler.
-  BOOST_ASIO_COMPLETION_HANDLER_CHECK(CompletionHandler, handler) type_check;
+  // not meet the documented type requirements for a LegacyCompletionHandler.
+  BOOST_ASIO_LEGACY_COMPLETION_HANDLER_CHECK(
+      LegacyCompletionHandler, handler) type_check;
 
-  async_completion<CompletionHandler, void ()> init(handler);
+  async_completion<LegacyCompletionHandler, void ()> init(handler);
 
   bool is_continuation =
     boost_asio_handler_cont_helpers::is_continuation(init.completion_handler);
 
   // Allocate and construct an operation to wrap the handler.
   typedef detail::completion_handler<
-    typename handler_type<CompletionHandler, void ()>::type> op;
+    typename handler_type<LegacyCompletionHandler, void ()>::type> op;
   typename op::ptr p = { detail::addressof(init.completion_handler),
       op::ptr::allocate(init.completion_handler), 0 };
   p.p = new (p.v) op(init.completion_handler);

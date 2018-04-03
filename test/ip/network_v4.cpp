@@ -95,15 +95,15 @@ void test()
     net1 = ip::make_network_v4("10.0.0.0/8", ec);
     net1 = ip::make_network_v4(s1);
     net1 = ip::make_network_v4(s1, ec);
-#if defined(BOOST_ASIO_HAS_STD_STRING_VIEW)
-# if defined(BOOST_ASIO_HAS_STD_EXPERIMENTAL_STRING_VIEW)
-    std::experimental::string_view string_view_value("10.0.0.0/8");
-# else // defined(BOOST_ASIO_HAS_STD_EXPERIMENTAL_STRING_VIEW)
+#if defined(BOOST_ASIO_HAS_STRING_VIEW)
+# if defined(BOOST_ASIO_HAS_STD_STRING_VIEW)
     std::string_view string_view_value("10.0.0.0/8");
+# elif defined(BOOST_ASIO_HAS_STD_EXPERIMENTAL_STRING_VIEW)
+    std::experimental::string_view string_view_value("10.0.0.0/8");
 # endif // defined(BOOST_ASIO_HAS_STD_EXPERIMENTAL_STRING_VIEW)
     net1 = ip::make_network_v4(string_view_value);
     net1 = ip::make_network_v4(string_view_value, ec);
-#endif // defined(BOOST_ASIO_HAS_STD_STRING_VIEW)
+#endif // defined(BOOST_ASIO_HAS_STRING_VIEW)
 
     // network_v4 I/O.
 

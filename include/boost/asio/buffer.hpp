@@ -707,7 +707,7 @@ public:
 
   void operator()()
   {
-    *iter_;
+    (void)*iter_;
   }
 
 private:
@@ -1476,7 +1476,7 @@ inline BOOST_ASIO_CONST_BUFFER buffer(
       );
 }
 
-#if defined(BOOST_ASIO_HAS_STD_STRING_VIEW) \
+#if defined(BOOST_ASIO_HAS_STRING_VIEW) \
   || defined(GENERATING_DOCUMENTATION)
 
 /// Create a new modifiable buffer that represents the given string_view.
@@ -1521,7 +1521,7 @@ inline BOOST_ASIO_CONST_BUFFER buffer(
       );
 }
 
-#endif // defined(BOOST_ASIO_HAS_STD_STRING_VIEW)
+#endif // defined(BOOST_ASIO_HAS_STRING_VIEW)
        //  || defined(GENERATING_DOCUMENTATION)
 
 /*@}*/

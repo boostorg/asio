@@ -96,6 +96,7 @@ std::string network_v6::to_string() const
 
 std::string network_v6::to_string(boost::system::error_code& ec) const
 {
+  using namespace std; // For sprintf.
   ec = boost::system::error_code();
   char prefix_len[16];
 #if defined(BOOST_ASIO_HAS_SECURE_RTL)
@@ -162,7 +163,7 @@ network_v6 make_network_v6(const std::string& str,
   return network_v6(addr, static_cast<unsigned short>(prefix_len));
 }
 
-#if defined(BOOST_ASIO_HAS_STD_STRING_VIEW)
+#if defined(BOOST_ASIO_HAS_STRING_VIEW)
 
 network_v6 make_network_v6(string_view str)
 {
@@ -175,7 +176,7 @@ network_v6 make_network_v6(string_view str,
   return make_network_v6(static_cast<std::string>(str), ec);
 }
 
-#endif // defined(BOOST_ASIO_HAS_STD_STRING_VIEW)
+#endif // defined(BOOST_ASIO_HAS_STRING_VIEW)
 
 } // namespace ip
 } // namespace asio
