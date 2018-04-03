@@ -15,6 +15,7 @@ lib network ; # HAIKU
 exe prioritised_handlers
   : prioritised_handlers.cpp
     /boost/system//boost_system
+    /boost/chrono//boost_chrono
   : <define>BOOST_ALL_NO_LIB=1
     <threading>multi
     <target-os>solaris:<library>socket

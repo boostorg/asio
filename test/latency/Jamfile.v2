@@ -27,6 +27,7 @@ else if [ os.name ] = HAIKU
 project
   : requirements
     <library>/boost/system//boost_system
+    <library>/boost/chrono//boost_chrono
     <library>/boost/thread//boost_thread
     <define>BOOST_ALL_NO_LIB=1
     <threading>multi

@@ -16,6 +16,7 @@ project
   : requirements
     <library>/boost/serialization//boost_serialization
     <library>/boost/system//boost_system
+    <library>/boost/chrono//boost_chrono
     <define>BOOST_ALL_NO_LIB=1
     <threading>multi
     <target-os>solaris:<library>socket

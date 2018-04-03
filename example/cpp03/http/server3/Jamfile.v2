@@ -21,6 +21,7 @@ exe server
     request_parser.cpp
     server.cpp
     /boost/system//boost_system
+    /boost/chrono//boost_chrono
     /boost/thread//boost_thread
   : <define>BOOST_ALL_NO_LIB=1
     <threading>multi

@@ -15,6 +15,7 @@ lib network ; # HAIKU
 exe connect_pair
   : connect_pair.cpp
     /boost/system//boost_system
+    /boost/chrono//boost_chrono
     /boost/thread//boost_thread
   : <define>BOOST_ALL_NO_LIB=1
     <threading>multi
@@ -32,6 +33,7 @@ exe connect_pair
 exe iostream_client
   : iostream_client.cpp
     /boost/system//boost_system
+    /boost/chrono//boost_chrono
   : <define>BOOST_ALL_NO_LIB=1
     <threading>multi
     <target-os>solaris:<library>socket
@@ -48,6 +50,7 @@ exe iostream_client
 exe stream_client
   : stream_client.cpp
     /boost/system//boost_system
+    /boost/chrono//boost_chrono
   : <define>BOOST_ALL_NO_LIB=1
     <threading>multi
     <target-os>solaris:<library>socket
@@ -64,6 +67,7 @@ exe stream_client
 exe stream_server
   : stream_server.cpp
     /boost/system//boost_system
+    /boost/chrono//boost_chrono
   : <define>BOOST_ALL_NO_LIB=1
     <threading>multi
     <target-os>solaris:<library>socket
