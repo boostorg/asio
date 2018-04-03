@@ -5,6 +5,8 @@
 # file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 #
 
+import os ;
+
 lib socket ; # SOLARIS
 lib nsl ; # SOLARIS
 lib ws2_32 ; # NT
