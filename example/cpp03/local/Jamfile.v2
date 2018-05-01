@@ -1,22 +1,21 @@
 #
-# Copyright (c) 2003-2017 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+# Copyright (c) 2003-2018 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 #
 # Distributed under the Boost Software License, Version 1.0. (See accompanying
 # file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 #
 
-import os ;
-
-lib socket ;
-lib nsl ;
-lib ws2_32 ;
-lib mswsock ;
-lib ipv6 ;
-lib network ;
+lib socket ; # SOLARIS
+lib nsl ; # SOLARIS
+lib ws2_32 ; # NT
+lib mswsock ; # NT
+lib ipv6 ; # HPUX
+lib network ; # HAIKU
 
 exe connect_pair
   : connect_pair.cpp
     /boost/system//boost_system
+    /boost/chrono//boost_chrono
     /boost/thread//boost_thread
   : <define>BOOST_ALL_NO_LIB=1
     <threading>multi
@@ -34,6 +33,7 @@ exe connect_pair
 exe iostream_client
   : iostream_client.cpp
     /boost/system//boost_system
+    /boost/chrono//boost_chrono
   : <define>BOOST_ALL_NO_LIB=1
     <threading>multi
     <target-os>solaris:<library>socket
@@ -50,6 +50,7 @@ exe iostream_client
 exe stream_client
   : stream_client.cpp
     /boost/system//boost_system
+    /boost/chrono//boost_chrono
   : <define>BOOST_ALL_NO_LIB=1
     <threading>multi
     <target-os>solaris:<library>socket
@@ -66,6 +67,7 @@ exe stream_client
 exe stream_server
   : stream_server.cpp
     /boost/system//boost_system
+    /boost/chrono//boost_chrono
   : <define>BOOST_ALL_NO_LIB=1
     <threading>multi
     <target-os>solaris:<library>socket

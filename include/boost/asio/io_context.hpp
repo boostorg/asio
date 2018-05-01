@@ -2,7 +2,7 @@
 // io_context.hpp
 // ~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2017 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2018 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -532,9 +532,9 @@ public:
    *
    * throws an exception.
    */
-  template <typename CompletionHandler>
-  BOOST_ASIO_INITFN_RESULT_TYPE(CompletionHandler, void ())
-  dispatch(BOOST_ASIO_MOVE_ARG(CompletionHandler) handler);
+  template <typename LegacyCompletionHandler>
+  BOOST_ASIO_INITFN_RESULT_TYPE(LegacyCompletionHandler, void ())
+  dispatch(BOOST_ASIO_MOVE_ARG(LegacyCompletionHandler) handler);
 
   /// (Deprecated: Use boost::asio::post().) Request the io_context to invoke
   /// the given handler and return immediately.
@@ -559,9 +559,9 @@ public:
    *
    * throws an exception.
    */
-  template <typename CompletionHandler>
-  BOOST_ASIO_INITFN_RESULT_TYPE(CompletionHandler, void ())
-  post(BOOST_ASIO_MOVE_ARG(CompletionHandler) handler);
+  template <typename LegacyCompletionHandler>
+  BOOST_ASIO_INITFN_RESULT_TYPE(LegacyCompletionHandler, void ())
+  post(BOOST_ASIO_MOVE_ARG(LegacyCompletionHandler) handler);
 
   /// (Deprecated: Use boost::asio::bind_executor().) Create a new handler that
   /// automatically dispatches the wrapped handler on the io_context.

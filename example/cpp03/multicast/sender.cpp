@@ -2,7 +2,7 @@
 // sender.cpp
 // ~~~~~~~~~~
 //
-// Copyright (c) 2003-2017 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2018 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -13,7 +13,6 @@
 #include <string>
 #include <boost/asio.hpp>
 #include "boost/bind.hpp"
-#include "boost/date_time/posix_time/posix_time_types.hpp"
 
 const short multicast_port = 30001;
 const int max_message_count = 10;
@@ -42,7 +41,7 @@ public:
   {
     if (!error && message_count_ < max_message_count)
     {
-      timer_.expires_from_now(boost::posix_time::seconds(1));
+      timer_.expires_after(boost::asio::chrono::seconds(1));
       timer_.async_wait(
           boost::bind(&sender::handle_timeout, this,
             boost::asio::placeholders::error));
@@ -67,7 +66,7 @@ public:
 private:
   boost::asio::ip::udp::endpoint endpoint_;
   boost::asio::ip::udp::socket socket_;
-  boost::asio::deadline_timer timer_;
+  boost::asio::steady_timer timer_;
   int message_count_;
   std::string message_;
 };

@@ -1,5 +1,5 @@
 [/
- / Copyright (c) 2003-2017 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+ / Copyright (c) 2003-2018 Christopher M. Kohlhoff (chris at kohlhoff dot com)
  /
  / Distributed under the Boost Software License, Version 1.0. (See accompanying
  / file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -15,6 +15,9 @@ examples make use of selected Boost C++ libraries.
 * [link boost_asio.examples.cpp11_examples C++11 Examples]: Contains a limited set of
 the C++03 Boost.Asio examples, updated to use only C++11 library and language
 facilities. These examples do not make direct use of Boost C++ libraries.
+
+* [link boost_asio.examples.cpp17_examples C++17 Examples]: Selected examples
+illustrating C++17 usage in conjunction with Technical Specifications.
 
 
 [section:cpp03_examples C++03 Examples]
@@ -264,15 +267,15 @@ operations after a period of time.
 
 * [@boost_asio/example/cpp03/timeouts/async_tcp_client.cpp]
 * [@boost_asio/example/cpp03/timeouts/blocking_tcp_client.cpp]
+* [@boost_asio/example/cpp03/timeouts/blocking_token_tcp_client.cpp]
 * [@boost_asio/example/cpp03/timeouts/blocking_udp_client.cpp]
 * [@boost_asio/example/cpp03/timeouts/server.cpp]
 
 
 [heading Timers]
 
-Examples showing how to customise deadline_timer using different time types.
+Example showing how to customise basic_waitable_timer using a different clock type.
 
-* [@boost_asio/example/cpp03/timers/tick_count_timer.cpp]
 * [@boost_asio/example/cpp03/timers/time_t_timer.cpp]
 
 
@@ -456,6 +459,24 @@ Examples showing how to use UNIX domain (local) sockets.
 * [@boost_asio/example/cpp11/local/iostream_client.cpp]
 * [@boost_asio/example/cpp11/local/stream_server.cpp]
 * [@boost_asio/example/cpp11/local/stream_client.cpp]
+
+
+[endsect]
+
+
+[section:cpp17_examples C++17 Examples]
+
+
+[heading Coroutines TS Support]
+
+Examples showing how to implement a chain of asynchronous operations using the
+Coroutines TS.
+
+* [@boost_asio/example/cpp17/coroutines_ts/echo_server.cpp]
+* [@boost_asio/example/cpp17/coroutines_ts/refactored_echo_server.cpp]
+* [@boost_asio/example/cpp17/coroutines_ts/double_buffered_echo_server.cpp]
+* [@boost_asio/example/cpp17/coroutines_ts/chat_server.cpp]
+* [@boost_asio/example/cpp17/coroutines_ts/range_based_for.cpp]
 
 
 [endsect]

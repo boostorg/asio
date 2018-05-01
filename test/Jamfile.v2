@@ -1,20 +1,18 @@
 #
-# Copyright (c) 2003-2017 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+# Copyright (c) 2003-2018 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 #
 # Distributed under the Boost Software License, Version 1.0. (See accompanying
 # file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 #
 
-import os ;
 import feature ;
 
-lib socket ;
-lib nsl ;
-lib ws2_32 ;
-lib mswsock ;
-lib ipv6 ;
-lib socket ;
-lib network ;
+lib socket ; # SOLARIS, QNXNTO
+lib nsl ; # SOLARIS
+lib ws2_32 ; # NT
+lib mswsock ; # NT
+lib ipv6 ; # HPUX
+lib network ; # HAIKU
 
 local USE_SELECT =
   <define>BOOST_ASIO_DISABLE_DEV_POLL
@@ -27,6 +25,7 @@ project
   : requirements
     <library>/boost/date_time//boost_date_time
     <library>/boost/system//boost_system
+    <library>/boost/chrono//boost_chrono
     <library>/boost/regex//boost_regex
     <define>BOOST_ALL_NO_LIB=1
     <threading>multi

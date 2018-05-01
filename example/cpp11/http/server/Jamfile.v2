@@ -1,30 +1,16 @@
 #
-# Copyright (c) 2003-2017 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+# Copyright (c) 2003-2018 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 #
 # Distributed under the Boost Software License, Version 1.0. (See accompanying
 # file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 #
 
-import os ;
-
-if [ os.name ] = SOLARIS
-{
-  lib socket ;
-  lib nsl ;
-}
-else if [ os.name ] = NT
-{
-  lib ws2_32 ;
-  lib mswsock ;
-}
-else if [ os.name ] = HPUX
-{
-  lib ipv6 ;
-}
-else if [ os.name ] = HAIKU
-{
-  lib network ;
-}
+lib socket ; # SOLARIS
+lib nsl ; # SOLARIS
+lib ws2_32 ; # NT
+lib mswsock ; # NT
+lib ipv6 ; # HPUX
+lib network ; # HAIKU
 
 exe server
   : connection.cpp
