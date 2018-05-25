@@ -70,9 +70,6 @@
 #  define BOOST_ASIO_MSVC _MSC_VER
 # endif // defined(BOOST_ASIO_HAS_BOOST_CONFIG) && defined(BOOST_MSVC)
 #endif // !defined(BOOST_ASIO_MSVC)
-#if defined(BOOST_ASIO_MSVC)
-# include <ciso646> // Needed for _HAS_CXX17.
-#endif // defined(BOOST_ASIO_MSVC)
 
 // Clang / libc++ detection.
 #if defined(__clang__)
@@ -791,9 +788,9 @@
 #   endif // (__GNUC__ >= 7)
 #  endif // defined(__GNUC__)
 #  if defined(BOOST_ASIO_MSVC)
-#   if (_MSC_VER >= 1910 && _HAS_CXX17)
+#   if (_MSC_VER >= 1910 && _MSVC_LANG >= 201703)
 #    define BOOST_ASIO_HAS_STD_STRING_VIEW
-#   endif // (_MSC_VER >= 1910 && _HAS_CXX17)
+#   endif // (_MSC_VER >= 1910 && _MSVC_LANG >= 201703)
 #  endif // defined(BOOST_ASIO_MSVC)
 # endif // !defined(BOOST_ASIO_DISABLE_STD_STRING_VIEW)
 #endif // !defined(BOOST_ASIO_HAS_STD_STRING_VIEW)
@@ -851,9 +848,11 @@
 #if !defined(BOOST_ASIO_HAS_STD_INVOKE_RESULT)
 # if !defined(BOOST_ASIO_DISABLE_STD_INVOKE_RESULT)
 #  if defined(BOOST_ASIO_MSVC)
-#   if (_MSC_VER >= 1910 && _HAS_CXX17)
+#   if (_MSC_VER >= 1911 && _MSVC_LANG >= 201703)
 #    define BOOST_ASIO_HAS_STD_INVOKE_RESULT 1
-#   endif // (_MSC_VER >= 1910 && _HAS_CXX17)
+#   elif (_MSC_VER == 1910 && _MSVC_LANG >= 201703)
+#    define _SILENCE_CXX17_RESULT_OF_DEPRECATION_WARNING
+#   endif // (_MSC_VER >= 1911 && _MSVC_LANG >= 201703)
 #  endif // defined(BOOST_ASIO_MSVC)
 # endif // !defined(BOOST_ASIO_DISABLE_STD_INVOKE_RESULT)
 #endif // !defined(BOOST_ASIO_HAS_STD_INVOKE_RESULT)
