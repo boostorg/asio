@@ -2,7 +2,7 @@
 // basic_socket_streambuf.hpp
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2017 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2018 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -32,15 +32,18 @@
 # include <boost/asio/stream_socket_service.hpp>
 #endif // defined(BOOST_ASIO_ENABLE_OLD_SERVICES)
 
-#if defined(BOOST_ASIO_HAS_BOOST_DATE_TIME)
+#if defined(BOOST_ASIO_HAS_BOOST_DATE_TIME) \
+  && defined(BOOST_ASIO_USE_BOOST_DATE_TIME_FOR_SOCKET_IOSTREAM)
 # if defined(BOOST_ASIO_ENABLE_OLD_SERVICES)
 #  include <boost/asio/deadline_timer_service.hpp>
 # else // defined(BOOST_ASIO_ENABLE_OLD_SERVICES)
 #  include <boost/asio/detail/deadline_timer_service.hpp>
 # endif // defined(BOOST_ASIO_ENABLE_OLD_SERVICES)
-#else
+#else // defined(BOOST_ASIO_HAS_BOOST_DATE_TIME)
+      // && defined(BOOST_ASIO_USE_BOOST_DATE_TIME_FOR_SOCKET_IOSTREAM)
 # include <boost/asio/steady_timer.hpp>
-#endif
+#endif // defined(BOOST_ASIO_HAS_BOOST_DATE_TIME)
+       // && defined(BOOST_ASIO_USE_BOOST_DATE_TIME_FOR_SOCKET_IOSTREAM)
 
 #if !defined(BOOST_ASIO_HAS_VARIADIC_TEMPLATES)
 
@@ -124,15 +127,18 @@ protected:
 // Forward declaration with defaulted arguments.
 template <typename Protocol
     BOOST_ASIO_SVC_TPARAM_DEF1(= stream_socket_service<Protocol>),
-#if defined(BOOST_ASIO_HAS_BOOST_DATE_TIME)
+#if defined(BOOST_ASIO_HAS_BOOST_DATE_TIME) \
+  && defined(BOOST_ASIO_USE_BOOST_DATE_TIME_FOR_SOCKET_IOSTREAM)
     typename Clock = boost::posix_time::ptime,
     typename WaitTraits = time_traits<Clock>
     BOOST_ASIO_SVC_TPARAM1_DEF2(= deadline_timer_service<Clock, WaitTraits>)>
-#else
+#else // defined(BOOST_ASIO_HAS_BOOST_DATE_TIME)
+      // && defined(BOOST_ASIO_USE_BOOST_DATE_TIME_FOR_SOCKET_IOSTREAM)
     typename Clock = chrono::steady_clock,
     typename WaitTraits = wait_traits<Clock>
     BOOST_ASIO_SVC_TPARAM1_DEF1(= steady_timer::service_type)>
-#endif
+#endif // defined(BOOST_ASIO_HAS_BOOST_DATE_TIME)
+       // && defined(BOOST_ASIO_USE_BOOST_DATE_TIME_FOR_SOCKET_IOSTREAM)
 class basic_socket_streambuf;
 
 #endif // !defined(BOOST_ASIO_BASIC_SOCKET_STREAMBUF_FWD_DECL)
@@ -159,11 +165,14 @@ class basic_socket_streambuf
 private:
   // These typedefs are intended keep this class's implementation independent
   // of whether it's using Boost.DateClock, Boost.Chrono or std::chrono.
-#if defined(BOOST_ASIO_HAS_BOOST_DATE_TIME)
+#if defined(BOOST_ASIO_HAS_BOOST_DATE_TIME) \
+  && defined(BOOST_ASIO_USE_BOOST_DATE_TIME_FOR_SOCKET_IOSTREAM)
   typedef WaitTraits traits_helper;
-#else
+#else // defined(BOOST_ASIO_HAS_BOOST_DATE_TIME)
+      // && defined(BOOST_ASIO_USE_BOOST_DATE_TIME_FOR_SOCKET_IOSTREAM)
   typedef detail::chrono_time_traits<Clock, WaitTraits> traits_helper;
-#endif
+#endif // defined(BOOST_ASIO_HAS_BOOST_DATE_TIME)
+       // && defined(BOOST_ASIO_USE_BOOST_DATE_TIME_FOR_SOCKET_IOSTREAM)
 
 public:
   /// The protocol type.
@@ -667,11 +676,14 @@ private:
   // Helper function to get the maximum expiry time.
   static time_point max_expiry_time()
   {
-#if defined(BOOST_ASIO_HAS_BOOST_DATE_TIME)
+#if defined(BOOST_ASIO_HAS_BOOST_DATE_TIME) \
+  && defined(BOOST_ASIO_USE_BOOST_DATE_TIME_FOR_SOCKET_IOSTREAM)
     return boost::posix_time::pos_infin;
 #else // defined(BOOST_ASIO_HAS_BOOST_DATE_TIME)
+      // && defined(BOOST_ASIO_USE_BOOST_DATE_TIME_FOR_SOCKET_IOSTREAM)
     return (time_point::max)();
 #endif // defined(BOOST_ASIO_HAS_BOOST_DATE_TIME)
+       // && defined(BOOST_ASIO_USE_BOOST_DATE_TIME_FOR_SOCKET_IOSTREAM)
   }
 
   enum { putback_max = 8 };

@@ -2,7 +2,7 @@
 // impl/read.hpp
 // ~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2017 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2018 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -114,7 +114,7 @@ std::size_t read(SyncReadStream& s,
     BOOST_ASIO_MOVE_ARG(DynamicBuffer) buffers,
     CompletionCondition completion_condition, boost::system::error_code& ec,
     typename enable_if<
-      is_dynamic_buffer<DynamicBuffer>::value
+      is_dynamic_buffer<typename decay<DynamicBuffer>::type>::value
     >::type*)
 {
   typename decay<DynamicBuffer>::type b(
@@ -145,7 +145,7 @@ template <typename SyncReadStream, typename DynamicBuffer>
 inline std::size_t read(SyncReadStream& s,
     BOOST_ASIO_MOVE_ARG(DynamicBuffer) buffers,
     typename enable_if<
-      is_dynamic_buffer<DynamicBuffer>::value
+      is_dynamic_buffer<typename decay<DynamicBuffer>::type>::value
     >::type*)
 {
   boost::system::error_code ec;
@@ -160,7 +160,7 @@ inline std::size_t read(SyncReadStream& s,
     BOOST_ASIO_MOVE_ARG(DynamicBuffer) buffers,
     boost::system::error_code& ec,
     typename enable_if<
-      is_dynamic_buffer<DynamicBuffer>::value
+      is_dynamic_buffer<typename decay<DynamicBuffer>::type>::value
     >::type*)
 {
   return read(s, BOOST_ASIO_MOVE_CAST(DynamicBuffer)(buffers),
@@ -173,7 +173,7 @@ inline std::size_t read(SyncReadStream& s,
     BOOST_ASIO_MOVE_ARG(DynamicBuffer) buffers,
     CompletionCondition completion_condition,
     typename enable_if<
-      is_dynamic_buffer<DynamicBuffer>::value
+      is_dynamic_buffer<typename decay<DynamicBuffer>::type>::value
     >::type*)
 {
   boost::system::error_code ec;
@@ -643,7 +643,7 @@ async_read(AsyncReadStream& s,
     BOOST_ASIO_MOVE_ARG(DynamicBuffer) buffers,
     BOOST_ASIO_MOVE_ARG(ReadHandler) handler,
     typename enable_if<
-      is_dynamic_buffer<DynamicBuffer>::value
+      is_dynamic_buffer<typename decay<DynamicBuffer>::type>::value
     >::type*)
 {
   return async_read(s,
@@ -660,7 +660,7 @@ async_read(AsyncReadStream& s,
     CompletionCondition completion_condition,
     BOOST_ASIO_MOVE_ARG(ReadHandler) handler,
     typename enable_if<
-      is_dynamic_buffer<DynamicBuffer>::value
+      is_dynamic_buffer<typename decay<DynamicBuffer>::type>::value
     >::type*)
 {
   // If you get an error on the following line it means that your handler does

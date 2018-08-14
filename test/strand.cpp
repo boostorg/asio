@@ -2,7 +2,7 @@
 // strand.cpp
 // ~~~~~~~~~~
 //
-// Copyright (c) 2003-2017 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2018 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -239,6 +239,7 @@ void strand_test()
 
 void strand_wrap_test()
 {
+#if !defined(BOOST_ASIO_NO_DEPRECATED)
   io_context ioc;
   io_context::strand s(ioc);
   int count = 0;
@@ -313,6 +314,7 @@ void strand_wrap_test()
 
   // The run() calls will not return until all work has finished.
   BOOST_ASIO_CHECK(count == 10);
+#endif // !defined(BOOST_ASIO_NO_DEPRECATED)
 }
 
 BOOST_ASIO_TEST_SUITE

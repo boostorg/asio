@@ -2,7 +2,7 @@
 // address_v4.cpp
 // ~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2017 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2018 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -132,15 +132,15 @@ void test()
     addr1 = ip::make_address_v4("127.0.0.1", ec);
     addr1 = ip::make_address_v4(string_value);
     addr1 = ip::make_address_v4(string_value, ec);
-#if defined(BOOST_ASIO_HAS_STD_STRING_VIEW)
-# if defined(BOOST_ASIO_HAS_STD_EXPERIMENTAL_STRING_VIEW)
-    std::experimental::string_view string_view_value("127.0.0.1");
-# else // defined(BOOST_ASIO_HAS_STD_EXPERIMENTAL_STRING_VIEW)
+#if defined(BOOST_ASIO_HAS_STRING_VIEW)
+# if defined(BOOST_ASIO_HAS_STD_STRING_VIEW)
     std::string_view string_view_value("127.0.0.1");
+# elif defined(BOOST_ASIO_HAS_STD_EXPERIMENTAL_STRING_VIEW)
+    std::experimental::string_view string_view_value("127.0.0.1");
 # endif // defined(BOOST_ASIO_HAS_STD_EXPERIMENTAL_STRING_VIEW)
     addr1 = ip::make_address_v4(string_view_value);
     addr1 = ip::make_address_v4(string_view_value, ec);
-#endif // defined(BOOST_ASIO_HAS_STD_STRING_VIEW)
+#endif // defined(BOOST_ASIO_HAS_STRING_VIEW)
 
     // address_v4 I/O.
 

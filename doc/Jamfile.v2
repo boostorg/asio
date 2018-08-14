@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2003-2017 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+# Copyright (c) 2003-2018 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 #
 # Distributed under the Boost Software License, Version 1.0. (See accompanying
 # file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -33,7 +33,7 @@ local example-names = cpp03/allocation cpp03/buffers cpp03/chat cpp03/echo
   cpp03/timeouts cpp03/timers cpp03/windows cpp11/allocation cpp11/buffers
   cpp11/chat cpp11/echo cpp11/executors cpp11/fork cpp11/futures
   cpp11/handler_tracking cpp11/http/server cpp11/invocation cpp11/local
-  cpp11/multicast cpp11/nonblockng cpp11/spawn ;
+  cpp11/multicast cpp11/nonblockng cpp11/spawn cpp17/coroutines_ts ;
 
 for local l in $(example-names)
 {
