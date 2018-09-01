@@ -245,7 +245,7 @@ public:
   /// Determine whether the results range is empty.
   bool empty() const BOOST_ASIO_NOEXCEPT
   {
-    return this->values_->empty();
+    return this->values_ != nullptr ? this->values_->empty() : true;
   }
 
   /// Obtain a begin iterator for the results range.
