@@ -764,9 +764,7 @@
 #  if defined(__GNUC__)
 #   if ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 7)) || (__GNUC__ > 4)
 #    if defined(__GXX_EXPERIMENTAL_CXX0X__)
-#     if defined(_GLIBCXX_HAS_GTHREADS)
-#      define BOOST_ASIO_HAS_STD_FUTURE 1
-#     endif // defined(_GLIBCXX_HAS_GTHREADS)
+#     define BOOST_ASIO_HAS_STD_FUTURE 1
 #    endif // defined(__GXX_EXPERIMENTAL_CXX0X__)
 #   endif // ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 7)) || (__GNUC__ > 4)
 #  endif // defined(__GNUC__)
