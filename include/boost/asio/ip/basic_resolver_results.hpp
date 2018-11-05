@@ -253,7 +253,7 @@ public:
   {
     basic_resolver_results tmp(*this);
     tmp.index_ = 0;
-    return tmp;
+    return BOOST_ASIO_MOVE_CAST(basic_resolver_results)(tmp);
   }
 
   /// Obtain an end iterator for the results range.
