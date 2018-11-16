@@ -206,7 +206,7 @@ int main(int argc, char* argv[])
     {
       unsigned short port = std::atoi(argv[i]);
       co_spawn(io_context,
-          [&]{ return listener(tcp::acceptor(io_context, {tcp::v4(), port})); },
+          [&, port]{ return listener(tcp::acceptor(io_context, {tcp::v4(), port})); },
           detached);
     }
 
