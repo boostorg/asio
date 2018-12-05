@@ -1368,7 +1368,7 @@ inline BOOST_ASIO_MUTABLE_BUFFER buffer(
       );
 }
 
-/// Create a new non-modifiable buffer that represents the given string.
+/// Create a new modifiable buffer that represents the given string.
 /**
  * @returns A mutable_buffer value equivalent to:
  * @code mutable_buffer(
