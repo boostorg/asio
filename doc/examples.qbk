@@ -463,6 +463,13 @@ operations after a period of time.
 * [@boost_asio/example/cpp11/timeouts/server.cpp]
 
 
+[heading Timers]
+
+Example showing how to customise basic_waitable_timer using a different clock type.
+
+* [@boost_asio/example/cpp11/timers/time_t_timer.cpp]
+
+
 [heading UNIX Domain Sockets]
 
 Examples showing how to use UNIX domain (local) sockets.
