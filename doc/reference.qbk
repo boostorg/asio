@@ -206,13 +206,17 @@ The default implementation of these allocation hooks uses `operator new` and `op
 [indexterm1 boost_asio.indexterm.asio_handler_invoke..asio_handler_invoke] 
 Default invoke function for handlers. 
 
-      
+
+Default handler invocation hook used for non-const function objects. 
+
   template<
       typename Function>
   void ``[link boost_asio.reference.asio_handler_invoke.overload1 asio_handler_invoke]``(
       Function & function,
       ... );
   ``  [''''&raquo;''' [link boost_asio.reference.asio_handler_invoke.overload1 more...]]``
+
+Default handler invocation hook used for const function objects. 
 
   template<
       typename Function>
@@ -715,9 +719,11 @@ The result of the asynchronous operation's initiating function.
 [section:async_connect async_connect]
 
 [indexterm1 boost_asio.indexterm.async_connect..async_connect] 
+The `async_connect` function is a composed asynchronous operation that establishes a socket connection by trying each endpoint in a sequence. 
+
+
 Asynchronously establishes a socket connection by trying each endpoint in a sequence. 
 
-      
   template<
       typename ``[link boost_asio.reference.Protocol Protocol]``,
       typename ``[link boost_asio.reference.EndpointSequence EndpointSequence]``,
@@ -729,6 +735,8 @@ Asynchronously establishes a socket connection by trying each endpoint in a sequ
       typename enable_if< is_endpoint_sequence< EndpointSequence >::value >::type *  = 0);
   ``  [''''&raquo;''' [link boost_asio.reference.async_connect.overload1 more...]]``
 
+(Deprecated: Use range overload.) Asynchronously establishes a socket connection by trying each endpoint in a sequence. 
+
   template<
       typename ``[link boost_asio.reference.Protocol Protocol]``,
       typename Iterator,
@@ -739,6 +747,8 @@ Asynchronously establishes a socket connection by trying each endpoint in a sequ
       IteratorConnectHandler && handler,
       typename enable_if<!is_endpoint_sequence< Iterator >::value >::type *  = 0);
   ``  [''''&raquo;''' [link boost_asio.reference.async_connect.overload2 more...]]``
+
+Asynchronously establishes a socket connection by trying each endpoint in a sequence. 
 
   template<
       typename ``[link boost_asio.reference.Protocol Protocol]``,
@@ -764,6 +774,8 @@ Asynchronously establishes a socket connection by trying each endpoint in a sequ
       typename enable_if< is_endpoint_sequence< EndpointSequence >::value >::type *  = 0);
   ``  [''''&raquo;''' [link boost_asio.reference.async_connect.overload4 more...]]``
 
+(Deprecated: Use range overload.) Asynchronously establishes a socket connection by trying each endpoint in a sequence. 
+
   template<
       typename ``[link boost_asio.reference.Protocol Protocol]``,
       typename Iterator,
@@ -776,6 +788,8 @@ Asynchronously establishes a socket connection by trying each endpoint in a sequ
       IteratorConnectHandler && handler,
       typename enable_if<!is_endpoint_sequence< Iterator >::value >::type *  = 0);
   ``  [''''&raquo;''' [link boost_asio.reference.async_connect.overload5 more...]]``
+
+Asynchronously establishes a socket connection by trying each endpoint in a sequence. 
 
   template<
       typename ``[link boost_asio.reference.Protocol Protocol]``,
@@ -890,7 +904,7 @@ Regardless of whether the asynchronous operation completes immediately or not, t
 [section:overload2 async_connect (2 of 6 overloads)]
 
 
-(Deprecated.) Asynchronously establishes a socket connection by trying each endpoint in a sequence. 
+(Deprecated: Use range overload.) Asynchronously establishes a socket connection by trying each endpoint in a sequence. 
 
 
   template<
@@ -1150,7 +1164,7 @@ It would be used with the `boost::asio::connect` function as follows:
 [section:overload5 async_connect (5 of 6 overloads)]
 
 
-(Deprecated.) Asynchronously establishes a socket connection by trying each endpoint in a sequence. 
+(Deprecated: Use range overload.) Asynchronously establishes a socket connection by trying each endpoint in a sequence. 
 
 
   template<
@@ -1346,9 +1360,11 @@ It would be used with the `boost::asio::connect` function as follows:
 [section:async_read async_read]
 
 [indexterm1 boost_asio.indexterm.async_read..async_read] 
+The `async_read` function is a composed asynchronous operation that reads a certain amount of data from a stream before completion. 
+
+
 Start an asynchronous operation to read a certain amount of data from a stream. 
 
-      
   template<
       typename ``[link boost_asio.reference.AsyncReadStream AsyncReadStream]``,
       typename ``[link boost_asio.reference.MutableBufferSequence MutableBufferSequence]``,
@@ -1890,9 +1906,11 @@ Regardless of whether the asynchronous operation completes immediately or not, t
 [section:async_read_at async_read_at]
 
 [indexterm1 boost_asio.indexterm.async_read_at..async_read_at] 
+The `async_read_at` function is a composed asynchronous operation that reads a certain amount of data at the specified offset. 
+
+
 Start an asynchronous operation to read a certain amount of data at the specified offset. 
 
-      
   template<
       typename ``[link boost_asio.reference.AsyncRandomAccessReadDevice AsyncRandomAccessReadDevice]``,
       typename ``[link boost_asio.reference.MutableBufferSequence MutableBufferSequence]``,
@@ -2269,9 +2287,11 @@ Regardless of whether the asynchronous operation completes immediately or not, t
 [section:async_read_until async_read_until]
 
 [indexterm1 boost_asio.indexterm.async_read_until..async_read_until] 
-Start an asynchronous operation to read data into a dynamic buffer sequence, or into a streambuf, until it contains a delimiter, matches a regular expression, or a function object indicates a match. 
+The `async_read_until` function is a composed asynchronous operation that reads data into a dynamic buffer sequence, or into a streambuf, until it contains a delimiter, matches a regular expression, or a function object indicates a match. 
 
-      
+
+Start an asynchronous operation to read data into a dynamic buffer sequence until it contains a specified delimiter. 
+
   template<
       typename ``[link boost_asio.reference.AsyncReadStream AsyncReadStream]``,
       typename ``[link boost_asio.reference.DynamicBuffer DynamicBuffer]``,
@@ -2294,6 +2314,8 @@ Start an asynchronous operation to read data into a dynamic buffer sequence, or 
       ReadHandler && handler);
   ``  [''''&raquo;''' [link boost_asio.reference.async_read_until.overload2 more...]]``
 
+Start an asynchronous operation to read data into a dynamic buffer sequence until some part of its data matches a regular expression. 
+
   template<
       typename ``[link boost_asio.reference.AsyncReadStream AsyncReadStream]``,
       typename ``[link boost_asio.reference.DynamicBuffer DynamicBuffer]``,
@@ -2304,6 +2326,8 @@ Start an asynchronous operation to read data into a dynamic buffer sequence, or 
       const boost::regex & expr,
       ReadHandler && handler);
   ``  [''''&raquo;''' [link boost_asio.reference.async_read_until.overload3 more...]]``
+
+Start an asynchronous operation to read data into a dynamic buffer sequence until a function object indicates a match. 
 
   template<
       typename ``[link boost_asio.reference.AsyncReadStream AsyncReadStream]``,
@@ -2317,6 +2341,8 @@ Start an asynchronous operation to read data into a dynamic buffer sequence, or 
       ReadHandler && handler,
       typename enable_if< is_match_condition< MatchCondition >::value >::type *  = 0);
   ``  [''''&raquo;''' [link boost_asio.reference.async_read_until.overload4 more...]]``
+
+Start an asynchronous operation to read data into a streambuf until it contains a specified delimiter. 
 
   template<
       typename ``[link boost_asio.reference.AsyncReadStream AsyncReadStream]``,
@@ -2340,6 +2366,8 @@ Start an asynchronous operation to read data into a dynamic buffer sequence, or 
       ReadHandler && handler);
   ``  [''''&raquo;''' [link boost_asio.reference.async_read_until.overload6 more...]]``
 
+Start an asynchronous operation to read data into a streambuf until some part of its data matches a regular expression. 
+
   template<
       typename ``[link boost_asio.reference.AsyncReadStream AsyncReadStream]``,
       typename Allocator,
@@ -2350,6 +2378,8 @@ Start an asynchronous operation to read data into a dynamic buffer sequence, or 
       const boost::regex & expr,
       ReadHandler && handler);
   ``  [''''&raquo;''' [link boost_asio.reference.async_read_until.overload7 more...]]``
+
+Start an asynchronous operation to read data into a streambuf until a function object indicates a match. 
 
   template<
       typename ``[link boost_asio.reference.AsyncReadStream AsyncReadStream]``,
@@ -3658,9 +3688,11 @@ The return type of the initiating function is the future obtained from the packa
 [section:async_write async_write]
 
 [indexterm1 boost_asio.indexterm.async_write..async_write] 
-Start an asynchronous operation to write a certain amount of data to a stream. 
+The `async_write` function is a composed asynchronous operation that writes a certain amount of data to a stream before completion. 
 
-      
+
+Start an asynchronous operation to write all of the supplied data to a stream. 
+
   template<
       typename ``[link boost_asio.reference.AsyncWriteStream AsyncWriteStream]``,
       typename ``[link boost_asio.reference.ConstBufferSequence ConstBufferSequence]``,
@@ -3671,6 +3703,8 @@ Start an asynchronous operation to write a certain amount of data to a stream.
       WriteHandler && handler,
       typename enable_if< is_const_buffer_sequence< ConstBufferSequence >::value >::type *  = 0);
   ``  [''''&raquo;''' [link boost_asio.reference.async_write.overload1 more...]]``
+
+Start an asynchronous operation to write a certain amount of data to a stream. 
 
   template<
       typename ``[link boost_asio.reference.AsyncWriteStream AsyncWriteStream]``,
@@ -3685,6 +3719,8 @@ Start an asynchronous operation to write a certain amount of data to a stream.
       typename enable_if< is_const_buffer_sequence< ConstBufferSequence >::value >::type *  = 0);
   ``  [''''&raquo;''' [link boost_asio.reference.async_write.overload2 more...]]``
 
+Start an asynchronous operation to write all of the supplied data to a stream. 
+
   template<
       typename ``[link boost_asio.reference.AsyncWriteStream AsyncWriteStream]``,
       typename ``[link boost_asio.reference.DynamicBuffer DynamicBuffer]``,
@@ -3695,6 +3731,8 @@ Start an asynchronous operation to write a certain amount of data to a stream.
       WriteHandler && handler,
       typename enable_if< is_dynamic_buffer< typename decay< DynamicBuffer >::type >::value >::type *  = 0);
   ``  [''''&raquo;''' [link boost_asio.reference.async_write.overload3 more...]]``
+
+Start an asynchronous operation to write a certain amount of data to a stream. 
 
   template<
       typename ``[link boost_asio.reference.AsyncWriteStream AsyncWriteStream]``,
@@ -3709,6 +3747,8 @@ Start an asynchronous operation to write a certain amount of data to a stream.
       typename enable_if< is_dynamic_buffer< typename decay< DynamicBuffer >::type >::value >::type *  = 0);
   ``  [''''&raquo;''' [link boost_asio.reference.async_write.overload4 more...]]``
 
+Start an asynchronous operation to write all of the supplied data to a stream. 
+
   template<
       typename ``[link boost_asio.reference.AsyncWriteStream AsyncWriteStream]``,
       typename Allocator,
@@ -3718,6 +3758,8 @@ Start an asynchronous operation to write a certain amount of data to a stream.
       basic_streambuf< Allocator > & b,
       WriteHandler && handler);
   ``  [''''&raquo;''' [link boost_asio.reference.async_write.overload5 more...]]``
+
+Start an asynchronous operation to write a certain amount of data to a stream. 
 
   template<
       typename ``[link boost_asio.reference.AsyncWriteStream AsyncWriteStream]``,
@@ -4159,9 +4201,11 @@ Regardless of whether the asynchronous operation completes immediately or not, t
 [section:async_write_at async_write_at]
 
 [indexterm1 boost_asio.indexterm.async_write_at..async_write_at] 
-Start an asynchronous operation to write a certain amount of data at the specified offset. 
+The `async_write_at` function is a composed asynchronous operation that writes a certain amount of data at the specified offset before completion. 
 
-      
+
+Start an asynchronous operation to write all of the supplied data at the specified offset. 
+
   template<
       typename ``[link boost_asio.reference.AsyncRandomAccessWriteDevice AsyncRandomAccessWriteDevice]``,
       typename ``[link boost_asio.reference.ConstBufferSequence ConstBufferSequence]``,
@@ -4172,6 +4216,8 @@ Start an asynchronous operation to write a certain amount of data at the specifi
       const ConstBufferSequence & buffers,
       WriteHandler && handler);
   ``  [''''&raquo;''' [link boost_asio.reference.async_write_at.overload1 more...]]``
+
+Start an asynchronous operation to write a certain amount of data at the specified offset. 
 
   template<
       typename ``[link boost_asio.reference.AsyncRandomAccessWriteDevice AsyncRandomAccessWriteDevice]``,
@@ -4186,6 +4232,8 @@ Start an asynchronous operation to write a certain amount of data at the specifi
       WriteHandler && handler);
   ``  [''''&raquo;''' [link boost_asio.reference.async_write_at.overload2 more...]]``
 
+Start an asynchronous operation to write all of the supplied data at the specified offset. 
+
   template<
       typename ``[link boost_asio.reference.AsyncRandomAccessWriteDevice AsyncRandomAccessWriteDevice]``,
       typename Allocator,
@@ -4196,6 +4244,8 @@ Start an asynchronous operation to write a certain amount of data at the specifi
       basic_streambuf< Allocator > & b,
       WriteHandler && handler);
   ``  [''''&raquo;''' [link boost_asio.reference.async_write_at.overload3 more...]]``
+
+Start an asynchronous operation to write a certain amount of data at the specified offset. 
 
   template<
       typename ``[link boost_asio.reference.AsyncRandomAccessWriteDevice AsyncRandomAccessWriteDevice]``,
@@ -4793,15 +4843,15 @@ Provides datagram-oriented socket functionality.
   [
     [[link boost_asio.reference.basic_datagram_socket.basic_datagram_socket [*basic_datagram_socket]]]
     [Construct a basic_datagram_socket without opening it. 
-
+     [hr]
      Construct and open a basic_datagram_socket. 
-
+     [hr]
      Construct a basic_datagram_socket, opening it and binding it to the given local endpoint. 
-
+     [hr]
      Construct a basic_datagram_socket on an existing native socket. 
-
+     [hr]
      Move-construct a basic_datagram_socket from another. 
-
+     [hr]
      Move-construct a basic_datagram_socket from a socket of another protocol type. ]
   ]
   
@@ -4863,7 +4913,7 @@ Provides datagram-oriented socket functionality.
   [
     [[link boost_asio.reference.basic_datagram_socket.lowest_layer [*lowest_layer]]]
     [Get a reference to the lowest layer. 
-
+     [hr]
      Get a const reference to the lowest layer. ]
   ]
   
@@ -4875,14 +4925,14 @@ Provides datagram-oriented socket functionality.
   [
     [[link boost_asio.reference.basic_datagram_socket.native_non_blocking [*native_non_blocking]]]
     [Gets the non-blocking mode of the native socket implementation. 
-
+     [hr]
      Sets the non-blocking mode of the native socket implementation. ]
   ]
   
   [
     [[link boost_asio.reference.basic_datagram_socket.non_blocking [*non_blocking]]]
     [Gets the non-blocking mode of the socket. 
-
+     [hr]
      Sets the non-blocking mode of the socket. ]
   ]
   
@@ -4894,7 +4944,7 @@ Provides datagram-oriented socket functionality.
   [
     [[link boost_asio.reference.basic_datagram_socket.operator_eq_ [*operator=]]]
     [Move-assign a basic_datagram_socket from another. 
-
+     [hr]
      Move-assign a basic_datagram_socket from a socket of another protocol type. ]
   ]
   
@@ -7876,15 +7926,15 @@ A [link boost_asio.reference.basic_socket `basic_socket`] is always the lowest l
   [
     [[link boost_asio.reference.basic_socket.basic_socket [*basic_socket]]]
     [Construct a basic_socket without opening it. 
-
+     [hr]
      Construct and open a basic_socket. 
-
+     [hr]
      Construct a basic_socket, opening it and binding it to the given local endpoint. 
-
+     [hr]
      Construct a basic_socket on an existing native socket. 
-
+     [hr]
      Move-construct a basic_socket from another. 
-
+     [hr]
      Move-construct a basic_socket from a socket of another protocol type. ]
   ]
   
@@ -7946,7 +7996,7 @@ A [link boost_asio.reference.basic_socket `basic_socket`] is always the lowest l
   [
     [[link boost_asio.reference.basic_socket.lowest_layer [*lowest_layer]]]
     [Get a reference to the lowest layer. 
-
+     [hr]
      Get a const reference to the lowest layer. ]
   ]
   
@@ -7958,14 +8008,14 @@ A [link boost_asio.reference.basic_socket `basic_socket`] is always the lowest l
   [
     [[link boost_asio.reference.basic_socket.native_non_blocking [*native_non_blocking]]]
     [Gets the non-blocking mode of the native socket implementation. 
-
+     [hr]
      Sets the non-blocking mode of the native socket implementation. ]
   ]
   
   [
     [[link boost_asio.reference.basic_socket.non_blocking [*non_blocking]]]
     [Gets the non-blocking mode of the socket. 
-
+     [hr]
      Sets the non-blocking mode of the socket. ]
   ]
   
@@ -7977,7 +8027,7 @@ A [link boost_asio.reference.basic_socket `basic_socket`] is always the lowest l
   [
     [[link boost_asio.reference.basic_socket.operator_eq_ [*operator=]]]
     [Move-assign a basic_socket from another. 
-
+     [hr]
      Move-assign a basic_socket from a socket of another protocol type. ]
   ]
   
@@ -10783,11 +10833,11 @@ Provides waitable timer functionality.
   [
     [[link boost_asio.reference.basic_deadline_timer.basic_deadline_timer [*basic_deadline_timer]]]
     [Constructor. 
-
+     [hr]
      Constructor to set a particular expiry time as an absolute time. 
-
+     [hr]
      Constructor to set a particular expiry time relative to now. 
-
+     [hr]
      Move-construct a basic_deadline_timer from another. ]
   ]
   
@@ -10804,14 +10854,14 @@ Provides waitable timer functionality.
   [
     [[link boost_asio.reference.basic_deadline_timer.expires_at [*expires_at]]]
     [Get the timer's expiry time as an absolute time. 
-
+     [hr]
      Set the timer's expiry time as an absolute time. ]
   ]
   
   [
     [[link boost_asio.reference.basic_deadline_timer.expires_from_now [*expires_from_now]]]
     [Get the timer's expiry time relative to now. 
-
+     [hr]
      Set the timer's expiry time relative to now. ]
   ]
   
@@ -12051,9 +12101,9 @@ Base class for all I/O objects.
   [
     [[link boost_asio.reference.basic_io_object.basic_io_object [*basic_io_object]]]
     [Construct a basic_io_object. 
-
+     [hr]
      Move-construct a basic_io_object. 
-
+     [hr]
      Perform a converting move-construction of a basic_io_object. ]
   ]
   
@@ -12728,15 +12778,15 @@ Provides raw-oriented socket functionality.
   [
     [[link boost_asio.reference.basic_raw_socket.basic_raw_socket [*basic_raw_socket]]]
     [Construct a basic_raw_socket without opening it. 
-
+     [hr]
      Construct and open a basic_raw_socket. 
-
+     [hr]
      Construct a basic_raw_socket, opening it and binding it to the given local endpoint. 
-
+     [hr]
      Construct a basic_raw_socket on an existing native socket. 
-
+     [hr]
      Move-construct a basic_raw_socket from another. 
-
+     [hr]
      Move-construct a basic_raw_socket from a socket of another protocol type. ]
   ]
   
@@ -12798,7 +12848,7 @@ Provides raw-oriented socket functionality.
   [
     [[link boost_asio.reference.basic_raw_socket.lowest_layer [*lowest_layer]]]
     [Get a reference to the lowest layer. 
-
+     [hr]
      Get a const reference to the lowest layer. ]
   ]
   
@@ -12810,14 +12860,14 @@ Provides raw-oriented socket functionality.
   [
     [[link boost_asio.reference.basic_raw_socket.native_non_blocking [*native_non_blocking]]]
     [Gets the non-blocking mode of the native socket implementation. 
-
+     [hr]
      Sets the non-blocking mode of the native socket implementation. ]
   ]
   
   [
     [[link boost_asio.reference.basic_raw_socket.non_blocking [*non_blocking]]]
     [Gets the non-blocking mode of the socket. 
-
+     [hr]
      Sets the non-blocking mode of the socket. ]
   ]
   
@@ -12829,7 +12879,7 @@ Provides raw-oriented socket functionality.
   [
     [[link boost_asio.reference.basic_raw_socket.operator_eq_ [*operator=]]]
     [Move-assign a basic_raw_socket from another. 
-
+     [hr]
      Move-assign a basic_raw_socket from a socket of another protocol type. ]
   ]
   
@@ -15811,15 +15861,15 @@ A [link boost_asio.reference.basic_socket `basic_socket`] is always the lowest l
   [
     [[link boost_asio.reference.basic_socket.basic_socket [*basic_socket]]]
     [Construct a basic_socket without opening it. 
-
+     [hr]
      Construct and open a basic_socket. 
-
+     [hr]
      Construct a basic_socket, opening it and binding it to the given local endpoint. 
-
+     [hr]
      Construct a basic_socket on an existing native socket. 
-
+     [hr]
      Move-construct a basic_socket from another. 
-
+     [hr]
      Move-construct a basic_socket from a socket of another protocol type. ]
   ]
   
@@ -15881,7 +15931,7 @@ A [link boost_asio.reference.basic_socket `basic_socket`] is always the lowest l
   [
     [[link boost_asio.reference.basic_socket.lowest_layer [*lowest_layer]]]
     [Get a reference to the lowest layer. 
-
+     [hr]
      Get a const reference to the lowest layer. ]
   ]
   
@@ -15893,14 +15943,14 @@ A [link boost_asio.reference.basic_socket `basic_socket`] is always the lowest l
   [
     [[link boost_asio.reference.basic_socket.native_non_blocking [*native_non_blocking]]]
     [Gets the non-blocking mode of the native socket implementation. 
-
+     [hr]
      Sets the non-blocking mode of the native socket implementation. ]
   ]
   
   [
     [[link boost_asio.reference.basic_socket.non_blocking [*non_blocking]]]
     [Gets the non-blocking mode of the socket. 
-
+     [hr]
      Sets the non-blocking mode of the socket. ]
   ]
   
@@ -15912,7 +15962,7 @@ A [link boost_asio.reference.basic_socket `basic_socket`] is always the lowest l
   [
     [[link boost_asio.reference.basic_socket.operator_eq_ [*operator=]]]
     [Move-assign a basic_socket from another. 
-
+     [hr]
      Move-assign a basic_socket from a socket of another protocol type. ]
   ]
   
@@ -18867,15 +18917,15 @@ Provides sequenced packet socket functionality.
   [
     [[link boost_asio.reference.basic_seq_packet_socket.basic_seq_packet_socket [*basic_seq_packet_socket]]]
     [Construct a basic_seq_packet_socket without opening it. 
-
+     [hr]
      Construct and open a basic_seq_packet_socket. 
-
+     [hr]
      Construct a basic_seq_packet_socket, opening it and binding it to the given local endpoint. 
-
+     [hr]
      Construct a basic_seq_packet_socket on an existing native socket. 
-
+     [hr]
      Move-construct a basic_seq_packet_socket from another. 
-
+     [hr]
      Move-construct a basic_seq_packet_socket from a socket of another protocol type. ]
   ]
   
@@ -18937,7 +18987,7 @@ Provides sequenced packet socket functionality.
   [
     [[link boost_asio.reference.basic_seq_packet_socket.lowest_layer [*lowest_layer]]]
     [Get a reference to the lowest layer. 
-
+     [hr]
      Get a const reference to the lowest layer. ]
   ]
   
@@ -18949,14 +18999,14 @@ Provides sequenced packet socket functionality.
   [
     [[link boost_asio.reference.basic_seq_packet_socket.native_non_blocking [*native_non_blocking]]]
     [Gets the non-blocking mode of the native socket implementation. 
-
+     [hr]
      Sets the non-blocking mode of the native socket implementation. ]
   ]
   
   [
     [[link boost_asio.reference.basic_seq_packet_socket.non_blocking [*non_blocking]]]
     [Gets the non-blocking mode of the socket. 
-
+     [hr]
      Sets the non-blocking mode of the socket. ]
   ]
   
@@ -18968,14 +19018,14 @@ Provides sequenced packet socket functionality.
   [
     [[link boost_asio.reference.basic_seq_packet_socket.operator_eq_ [*operator=]]]
     [Move-assign a basic_seq_packet_socket from another. 
-
+     [hr]
      Move-assign a basic_seq_packet_socket from a socket of another protocol type. ]
   ]
   
   [
     [[link boost_asio.reference.basic_seq_packet_socket.receive [*receive]]]
     [Receive some data on the socket. 
-
+     [hr]
      Receive some data on a connected socket. ]
   ]
   
@@ -21611,15 +21661,15 @@ A [link boost_asio.reference.basic_socket `basic_socket`] is always the lowest l
   [
     [[link boost_asio.reference.basic_socket.basic_socket [*basic_socket]]]
     [Construct a basic_socket without opening it. 
-
+     [hr]
      Construct and open a basic_socket. 
-
+     [hr]
      Construct a basic_socket, opening it and binding it to the given local endpoint. 
-
+     [hr]
      Construct a basic_socket on an existing native socket. 
-
+     [hr]
      Move-construct a basic_socket from another. 
-
+     [hr]
      Move-construct a basic_socket from a socket of another protocol type. ]
   ]
   
@@ -21681,7 +21731,7 @@ A [link boost_asio.reference.basic_socket `basic_socket`] is always the lowest l
   [
     [[link boost_asio.reference.basic_socket.lowest_layer [*lowest_layer]]]
     [Get a reference to the lowest layer. 
-
+     [hr]
      Get a const reference to the lowest layer. ]
   ]
   
@@ -21693,14 +21743,14 @@ A [link boost_asio.reference.basic_socket `basic_socket`] is always the lowest l
   [
     [[link boost_asio.reference.basic_socket.native_non_blocking [*native_non_blocking]]]
     [Gets the non-blocking mode of the native socket implementation. 
-
+     [hr]
      Sets the non-blocking mode of the native socket implementation. ]
   ]
   
   [
     [[link boost_asio.reference.basic_socket.non_blocking [*non_blocking]]]
     [Gets the non-blocking mode of the socket. 
-
+     [hr]
      Sets the non-blocking mode of the socket. ]
   ]
   
@@ -21712,7 +21762,7 @@ A [link boost_asio.reference.basic_socket `basic_socket`] is always the lowest l
   [
     [[link boost_asio.reference.basic_socket.operator_eq_ [*operator=]]]
     [Move-assign a basic_socket from another. 
-
+     [hr]
      Move-assign a basic_socket from a socket of another protocol type. ]
   ]
   
@@ -24236,15 +24286,15 @@ Provides socket functionality.
   [
     [[link boost_asio.reference.basic_socket.basic_socket [*basic_socket]]]
     [Construct a basic_socket without opening it. 
-
+     [hr]
      Construct and open a basic_socket. 
-
+     [hr]
      Construct a basic_socket, opening it and binding it to the given local endpoint. 
-
+     [hr]
      Construct a basic_socket on an existing native socket. 
-
+     [hr]
      Move-construct a basic_socket from another. 
-
+     [hr]
      Move-construct a basic_socket from a socket of another protocol type. ]
   ]
   
@@ -24306,7 +24356,7 @@ Provides socket functionality.
   [
     [[link boost_asio.reference.basic_socket.lowest_layer [*lowest_layer]]]
     [Get a reference to the lowest layer. 
-
+     [hr]
      Get a const reference to the lowest layer. ]
   ]
   
@@ -24318,14 +24368,14 @@ Provides socket functionality.
   [
     [[link boost_asio.reference.basic_socket.native_non_blocking [*native_non_blocking]]]
     [Gets the non-blocking mode of the native socket implementation. 
-
+     [hr]
      Sets the non-blocking mode of the native socket implementation. ]
   ]
   
   [
     [[link boost_asio.reference.basic_socket.non_blocking [*non_blocking]]]
     [Gets the non-blocking mode of the socket. 
-
+     [hr]
      Sets the non-blocking mode of the socket. ]
   ]
   
@@ -24337,7 +24387,7 @@ Provides socket functionality.
   [
     [[link boost_asio.reference.basic_socket.operator_eq_ [*operator=]]]
     [Move-assign a basic_socket from another. 
-
+     [hr]
      Move-assign a basic_socket from a socket of another protocol type. ]
   ]
   
@@ -26687,15 +26737,15 @@ A [link boost_asio.reference.basic_socket `basic_socket`] is always the lowest l
   [
     [[link boost_asio.reference.basic_socket.basic_socket [*basic_socket]]]
     [Construct a basic_socket without opening it. 
-
+     [hr]
      Construct and open a basic_socket. 
-
+     [hr]
      Construct a basic_socket, opening it and binding it to the given local endpoint. 
-
+     [hr]
      Construct a basic_socket on an existing native socket. 
-
+     [hr]
      Move-construct a basic_socket from another. 
-
+     [hr]
      Move-construct a basic_socket from a socket of another protocol type. ]
   ]
   
@@ -26757,7 +26807,7 @@ A [link boost_asio.reference.basic_socket `basic_socket`] is always the lowest l
   [
     [[link boost_asio.reference.basic_socket.lowest_layer [*lowest_layer]]]
     [Get a reference to the lowest layer. 
-
+     [hr]
      Get a const reference to the lowest layer. ]
   ]
   
@@ -26769,14 +26819,14 @@ A [link boost_asio.reference.basic_socket `basic_socket`] is always the lowest l
   [
     [[link boost_asio.reference.basic_socket.native_non_blocking [*native_non_blocking]]]
     [Gets the non-blocking mode of the native socket implementation. 
-
+     [hr]
      Sets the non-blocking mode of the native socket implementation. ]
   ]
   
   [
     [[link boost_asio.reference.basic_socket.non_blocking [*non_blocking]]]
     [Gets the non-blocking mode of the socket. 
-
+     [hr]
      Sets the non-blocking mode of the socket. ]
   ]
   
@@ -26788,7 +26838,7 @@ A [link boost_asio.reference.basic_socket `basic_socket`] is always the lowest l
   [
     [[link boost_asio.reference.basic_socket.operator_eq_ [*operator=]]]
     [Move-assign a basic_socket from another. 
-
+     [hr]
      Move-assign a basic_socket from a socket of another protocol type. ]
   ]
   
@@ -28882,7 +28932,7 @@ Provides the ability to accept new connections.
   [
     [[link boost_asio.reference.basic_socket_acceptor.accept [*accept]]]
     [Accept a new connection. 
-
+     [hr]
      Accept a new connection and obtain the endpoint of the peer. ]
   ]
   
@@ -28904,15 +28954,15 @@ Provides the ability to accept new connections.
   [
     [[link boost_asio.reference.basic_socket_acceptor.basic_socket_acceptor [*basic_socket_acceptor]]]
     [Construct an acceptor without opening it. 
-
+     [hr]
      Construct an open acceptor. 
-
+     [hr]
      Construct an acceptor opened on the given endpoint. 
-
+     [hr]
      Construct a basic_socket_acceptor on an existing native acceptor. 
-
+     [hr]
      Move-construct a basic_socket_acceptor from another. 
-
+     [hr]
      Move-construct a basic_socket_acceptor from an acceptor of another protocol type. ]
   ]
   
@@ -28979,14 +29029,14 @@ Provides the ability to accept new connections.
   [
     [[link boost_asio.reference.basic_socket_acceptor.native_non_blocking [*native_non_blocking]]]
     [Gets the non-blocking mode of the native acceptor implementation. 
-
+     [hr]
      Sets the non-blocking mode of the native acceptor implementation. ]
   ]
   
   [
     [[link boost_asio.reference.basic_socket_acceptor.non_blocking [*non_blocking]]]
     [Gets the non-blocking mode of the acceptor. 
-
+     [hr]
      Sets the non-blocking mode of the acceptor. ]
   ]
   
@@ -28998,7 +29048,7 @@ Provides the ability to accept new connections.
   [
     [[link boost_asio.reference.basic_socket_acceptor.operator_eq_ [*operator=]]]
     [Move-assign a basic_socket_acceptor from another. 
-
+     [hr]
      Move-assign a basic_socket_acceptor from an acceptor of another protocol type. ]
   ]
   
@@ -33442,11 +33492,11 @@ Iostream interface for a socket.
   [
     [[link boost_asio.reference.basic_socket_iostream.basic_socket_iostream [*basic_socket_iostream]]]
     [Construct a basic_socket_iostream without establishing a connection. 
-
+     [hr]
      Construct a basic_socket_iostream from the supplied socket. 
-
+     [hr]
      Move-construct a basic_socket_iostream from another. 
-
+     [hr]
      Establish a connection to an endpoint corresponding to a resolver query. ]
   ]
   
@@ -33473,14 +33523,14 @@ Iostream interface for a socket.
   [
     [[link boost_asio.reference.basic_socket_iostream.expires_at [*expires_at]]]
     [(Deprecated: Use expiry().) Get the stream's expiry time as an absolute time. 
-
+     [hr]
      Set the stream's expiry time as an absolute time. ]
   ]
   
   [
     [[link boost_asio.reference.basic_socket_iostream.expires_from_now [*expires_from_now]]]
     [(Deprecated: Use expiry().) Get the stream's expiry time relative to now. 
-
+     [hr]
      (Deprecated: Use expires_after().) Set the stream's expiry time relative to now. ]
   ]
   
@@ -34149,9 +34199,9 @@ Iostream streambuf for a socket.
   [
     [[link boost_asio.reference.basic_socket_streambuf.basic_socket_streambuf [*basic_socket_streambuf]]]
     [Construct a basic_socket_streambuf without establishing a connection. 
-
+     [hr]
      Construct a basic_socket_streambuf from the supplied socket. 
-
+     [hr]
      Move-construct a basic_socket_streambuf from another. ]
   ]
   
@@ -34178,14 +34228,14 @@ Iostream streambuf for a socket.
   [
     [[link boost_asio.reference.basic_socket_streambuf.expires_at [*expires_at]]]
     [(Deprecated: Use expiry().) Get the stream buffer's expiry time as an absolute time. 
-
+     [hr]
      Set the stream buffer's expiry time as an absolute time. ]
   ]
   
   [
     [[link boost_asio.reference.basic_socket_streambuf.expires_from_now [*expires_from_now]]]
     [(Deprecated: Use expiry().) Get the stream buffer's expiry time relative to now. 
-
+     [hr]
      (Deprecated: Use expires_after().) Set the stream buffer's expiry time relative to now. ]
   ]
   
@@ -35107,15 +35157,15 @@ Provides stream-oriented socket functionality.
   [
     [[link boost_asio.reference.basic_stream_socket.basic_stream_socket [*basic_stream_socket]]]
     [Construct a basic_stream_socket without opening it. 
-
+     [hr]
      Construct and open a basic_stream_socket. 
-
+     [hr]
      Construct a basic_stream_socket, opening it and binding it to the given local endpoint. 
-
+     [hr]
      Construct a basic_stream_socket on an existing native socket. 
-
+     [hr]
      Move-construct a basic_stream_socket from another. 
-
+     [hr]
      Move-construct a basic_stream_socket from a socket of another protocol type. ]
   ]
   
@@ -35177,7 +35227,7 @@ Provides stream-oriented socket functionality.
   [
     [[link boost_asio.reference.basic_stream_socket.lowest_layer [*lowest_layer]]]
     [Get a reference to the lowest layer. 
-
+     [hr]
      Get a const reference to the lowest layer. ]
   ]
   
@@ -35189,14 +35239,14 @@ Provides stream-oriented socket functionality.
   [
     [[link boost_asio.reference.basic_stream_socket.native_non_blocking [*native_non_blocking]]]
     [Gets the non-blocking mode of the native socket implementation. 
-
+     [hr]
      Sets the non-blocking mode of the native socket implementation. ]
   ]
   
   [
     [[link boost_asio.reference.basic_stream_socket.non_blocking [*non_blocking]]]
     [Gets the non-blocking mode of the socket. 
-
+     [hr]
      Sets the non-blocking mode of the socket. ]
   ]
   
@@ -35208,7 +35258,7 @@ Provides stream-oriented socket functionality.
   [
     [[link boost_asio.reference.basic_stream_socket.operator_eq_ [*operator=]]]
     [Move-assign a basic_stream_socket from another. 
-
+     [hr]
      Move-assign a basic_stream_socket from a socket of another protocol type. ]
   ]
   
@@ -35220,7 +35270,7 @@ Provides stream-oriented socket functionality.
   [
     [[link boost_asio.reference.basic_stream_socket.receive [*receive]]]
     [Receive some data on the socket. 
-
+     [hr]
      Receive some data on a connected socket. ]
   ]
   
@@ -38063,15 +38113,15 @@ A [link boost_asio.reference.basic_socket `basic_socket`] is always the lowest l
   [
     [[link boost_asio.reference.basic_socket.basic_socket [*basic_socket]]]
     [Construct a basic_socket without opening it. 
-
+     [hr]
      Construct and open a basic_socket. 
-
+     [hr]
      Construct a basic_socket, opening it and binding it to the given local endpoint. 
-
+     [hr]
      Construct a basic_socket on an existing native socket. 
-
+     [hr]
      Move-construct a basic_socket from another. 
-
+     [hr]
      Move-construct a basic_socket from a socket of another protocol type. ]
   ]
   
@@ -38133,7 +38183,7 @@ A [link boost_asio.reference.basic_socket `basic_socket`] is always the lowest l
   [
     [[link boost_asio.reference.basic_socket.lowest_layer [*lowest_layer]]]
     [Get a reference to the lowest layer. 
-
+     [hr]
      Get a const reference to the lowest layer. ]
   ]
   
@@ -38145,14 +38195,14 @@ A [link boost_asio.reference.basic_socket `basic_socket`] is always the lowest l
   [
     [[link boost_asio.reference.basic_socket.native_non_blocking [*native_non_blocking]]]
     [Gets the non-blocking mode of the native socket implementation. 
-
+     [hr]
      Sets the non-blocking mode of the native socket implementation. ]
   ]
   
   [
     [[link boost_asio.reference.basic_socket.non_blocking [*non_blocking]]]
     [Gets the non-blocking mode of the socket. 
-
+     [hr]
      Sets the non-blocking mode of the socket. ]
   ]
   
@@ -38164,7 +38214,7 @@ A [link boost_asio.reference.basic_socket `basic_socket`] is always the lowest l
   [
     [[link boost_asio.reference.basic_socket.operator_eq_ [*operator=]]]
     [Move-assign a basic_socket from another. 
-
+     [hr]
      Move-assign a basic_socket from a socket of another protocol type. ]
   ]
   
@@ -41308,9 +41358,9 @@ Adapts [link boost_asio.reference.basic_streambuf `basic_streambuf`] to the dyna
   [
     [[link boost_asio.reference.basic_streambuf_ref.basic_streambuf_ref [*basic_streambuf_ref]]]
     [Construct a basic_streambuf_ref for the given basic_streambuf object. 
-
+     [hr]
      Copy construct a basic_streambuf_ref. 
-
+     [hr]
      Move construct a basic_streambuf_ref. ]
   ]
   
@@ -41931,25 +41981,25 @@ Provides waitable timer functionality.
   [
     [[link boost_asio.reference.basic_waitable_timer.basic_waitable_timer [*basic_waitable_timer]]]
     [Constructor. 
-
+     [hr]
      Constructor to set a particular expiry time as an absolute time. 
-
+     [hr]
      Constructor to set a particular expiry time relative to now. 
-
+     [hr]
      Move-construct a basic_waitable_timer from another. ]
   ]
   
   [
     [[link boost_asio.reference.basic_waitable_timer.cancel [*cancel]]]
     [Cancel any asynchronous operations that are waiting on the timer. 
-
+     [hr]
      (Deprecated: Use non-error_code overload.) Cancel any asynchronous operations that are waiting on the timer. ]
   ]
   
   [
     [[link boost_asio.reference.basic_waitable_timer.cancel_one [*cancel_one]]]
     [Cancels one asynchronous operation that is waiting on the timer. 
-
+     [hr]
      (Deprecated: Use non-error_code overload.) Cancels one asynchronous operation that is waiting on the timer. ]
   ]
   
@@ -41961,16 +42011,16 @@ Provides waitable timer functionality.
   [
     [[link boost_asio.reference.basic_waitable_timer.expires_at [*expires_at]]]
     [(Deprecated: Use expiry().) Get the timer's expiry time as an absolute time. 
-
+     [hr]
      Set the timer's expiry time as an absolute time. 
-
+     [hr]
      (Deprecated: Use non-error_code overload.) Set the timer's expiry time as an absolute time. ]
   ]
   
   [
     [[link boost_asio.reference.basic_waitable_timer.expires_from_now [*expires_from_now]]]
     [(Deprecated: Use expiry().) Get the timer's expiry time relative to now. 
-
+     [hr]
      (Deprecated: Use expires_after().) Set the timer's expiry time relative to now. ]
   ]
   
@@ -43296,7 +43346,7 @@ Context object the represents the currently executing coroutine.
   [
     [[link boost_asio.reference.basic_yield_context.basic_yield_context [*basic_yield_context]]]
     [Construct a yield context to represent the specified coroutine. 
-
+     [hr]
      Construct a yield context from another yield context type. ]
   ]
   
@@ -43500,7 +43550,6 @@ By default, when a yield context is used with an asynchronous operation, a non-s
 [indexterm1 boost_asio.indexterm.bind_executor..bind_executor] 
 Associate an object of type `T` with an executor of type `Executor`. 
 
-    
   template<
       typename ``[link boost_asio.reference.Executor1 Executor]``,
       typename T>
@@ -43509,6 +43558,8 @@ Associate an object of type `T` with an executor of type `Executor`.
       T && t,
       typename enable_if< is_executor< Executor >::value >::type *  = 0);
   ``  [''''&raquo;''' [link boost_asio.reference.bind_executor.overload1 more...]]``
+
+Associate an object of type `T` with an execution context's executor. 
 
   template<
       typename ExecutionContext,
@@ -43572,7 +43623,9 @@ Associate an object of type `T` with an execution context's executor.
 [indexterm1 boost_asio.indexterm.buffer..buffer] 
 The `boost::asio::buffer` function is used to create a buffer object to represent raw memory, an array of POD elements, a vector of POD elements, or a std::string. 
 
-      
+
+Create a new modifiable buffer from an existing buffer. 
+
   mutable_buffer ``[link boost_asio.reference.buffer.overload1 buffer]``(
       const mutable_buffer & b);
   ``  [''''&raquo;''' [link boost_asio.reference.buffer.overload1 more...]]``
@@ -43581,6 +43634,8 @@ The `boost::asio::buffer` function is used to create a buffer object to represen
       const mutable_buffer & b,
       std::size_t max_size_in_bytes);
   ``  [''''&raquo;''' [link boost_asio.reference.buffer.overload2 more...]]``
+
+Create a new non-modifiable buffer from an existing buffer. 
 
   const_buffer ``[link boost_asio.reference.buffer.overload3 buffer]``(
       const const_buffer & b);
@@ -43591,15 +43646,21 @@ The `boost::asio::buffer` function is used to create a buffer object to represen
       std::size_t max_size_in_bytes);
   ``  [''''&raquo;''' [link boost_asio.reference.buffer.overload4 more...]]``
 
+Create a new modifiable buffer that represents the given memory range. 
+
   mutable_buffer ``[link boost_asio.reference.buffer.overload5 buffer]``(
       void * data,
       std::size_t size_in_bytes);
   ``  [''''&raquo;''' [link boost_asio.reference.buffer.overload5 more...]]``
 
+Create a new non-modifiable buffer that represents the given memory range. 
+
   const_buffer ``[link boost_asio.reference.buffer.overload6 buffer]``(
       const void * data,
       std::size_t size_in_bytes);
   ``  [''''&raquo;''' [link boost_asio.reference.buffer.overload6 more...]]``
+
+Create a new modifiable buffer that represents the given POD array. 
 
   template<
       typename PodType,
@@ -43616,6 +43677,8 @@ The `boost::asio::buffer` function is used to create a buffer object to represen
       std::size_t max_size_in_bytes);
   ``  [''''&raquo;''' [link boost_asio.reference.buffer.overload8 more...]]``
 
+Create a new non-modifiable buffer that represents the given POD array. 
+
   template<
       typename PodType,
       std::size_t N>
@@ -43631,6 +43694,8 @@ The `boost::asio::buffer` function is used to create a buffer object to represen
       std::size_t max_size_in_bytes);
   ``  [''''&raquo;''' [link boost_asio.reference.buffer.overload10 more...]]``
 
+Create a new modifiable buffer that represents the given POD array. 
+
   template<
       typename PodType,
       std::size_t N>
@@ -43645,6 +43710,8 @@ The `boost::asio::buffer` function is used to create a buffer object to represen
       boost::array< PodType, N > & data,
       std::size_t max_size_in_bytes);
   ``  [''''&raquo;''' [link boost_asio.reference.buffer.overload12 more...]]``
+
+Create a new non-modifiable buffer that represents the given POD array. 
 
   template<
       typename PodType,
@@ -43676,6 +43743,8 @@ The `boost::asio::buffer` function is used to create a buffer object to represen
       std::size_t max_size_in_bytes);
   ``  [''''&raquo;''' [link boost_asio.reference.buffer.overload16 more...]]``
 
+Create a new modifiable buffer that represents the given POD array. 
+
   template<
       typename PodType,
       std::size_t N>
@@ -43690,6 +43759,8 @@ The `boost::asio::buffer` function is used to create a buffer object to represen
       std::array< PodType, N > & data,
       std::size_t max_size_in_bytes);
   ``  [''''&raquo;''' [link boost_asio.reference.buffer.overload18 more...]]``
+
+Create a new non-modifiable buffer that represents the given POD array. 
 
   template<
       typename PodType,
@@ -43721,6 +43792,8 @@ The `boost::asio::buffer` function is used to create a buffer object to represen
       std::size_t max_size_in_bytes);
   ``  [''''&raquo;''' [link boost_asio.reference.buffer.overload22 more...]]``
 
+Create a new modifiable buffer that represents the given POD vector. 
+
   template<
       typename PodType,
       typename Allocator>
@@ -43736,6 +43809,8 @@ The `boost::asio::buffer` function is used to create a buffer object to represen
       std::size_t max_size_in_bytes);
   ``  [''''&raquo;''' [link boost_asio.reference.buffer.overload24 more...]]``
 
+Create a new non-modifiable buffer that represents the given POD vector. 
+
   template<
       typename PodType,
       typename Allocator>
@@ -43750,6 +43825,8 @@ The `boost::asio::buffer` function is used to create a buffer object to represen
       const std::vector< PodType, Allocator > & data,
       std::size_t max_size_in_bytes);
   ``  [''''&raquo;''' [link boost_asio.reference.buffer.overload26 more...]]``
+
+Create a new modifiable buffer that represents the given string. 
 
   template<
       typename Elem,
@@ -43768,6 +43845,8 @@ The `boost::asio::buffer` function is used to create a buffer object to represen
       std::size_t max_size_in_bytes);
   ``  [''''&raquo;''' [link boost_asio.reference.buffer.overload28 more...]]``
 
+Create a new non-modifiable buffer that represents the given string. 
+
   template<
       typename Elem,
       typename Traits,
@@ -43785,12 +43864,16 @@ The `boost::asio::buffer` function is used to create a buffer object to represen
       std::size_t max_size_in_bytes);
   ``  [''''&raquo;''' [link boost_asio.reference.buffer.overload30 more...]]``
 
+Create a new modifiable buffer that represents the given string\_view. 
+
   template<
       typename Elem,
       typename Traits>
   const_buffer ``[link boost_asio.reference.buffer.overload31 buffer]``(
       basic_string_view< Elem, Traits > data);
   ``  [''''&raquo;''' [link boost_asio.reference.buffer.overload31 more...]]``
+
+Create a new non-modifiable buffer that represents the given string. 
 
   template<
       typename Elem,
@@ -44835,7 +44918,7 @@ The buffer is invalidated by any non-const operation called on the given string 
 [section:overload28 buffer (28 of 32 overloads)]
 
 
-Create a new non-modifiable buffer that represents the given string. 
+Create a new modifiable buffer that represents the given string. 
 
 
   template<
@@ -45005,7 +45088,9 @@ A [link boost_asio.reference.mutable_buffer `mutable_buffer`] value equivalent t
 [indexterm1 boost_asio.indexterm.buffer_cast..buffer_cast] 
 (Deprecated: Use the `data()` member function.) The `boost::asio::buffer_cast` function is used to obtain a pointer to the underlying memory region associated with a buffer. 
 
-      
+
+Cast a non-modifiable buffer to a specified pointer to POD type. 
+
   template<
       typename PointerToPodType>
   PointerToPodType ``[link boost_asio.reference.buffer_cast.overload1 buffer_cast]``(
@@ -45088,7 +45173,9 @@ Cast a non-modifiable buffer to a specified pointer to POD type.
 [indexterm1 boost_asio.indexterm.buffer_copy..buffer_copy] 
 The `boost::asio::buffer_copy` function is used to copy bytes from a source buffer (or buffer sequence) to a target buffer (or buffer sequence). 
 
-      
+
+Copies bytes from a source buffer sequence to a target buffer sequence. 
+
   template<
       typename ``[link boost_asio.reference.MutableBufferSequence MutableBufferSequence]``,
       typename ``[link boost_asio.reference.ConstBufferSequence ConstBufferSequence]``>
@@ -45096,6 +45183,8 @@ The `boost::asio::buffer_copy` function is used to copy bytes from a source buff
       const MutableBufferSequence & target,
       const ConstBufferSequence & source);
   ``  [''''&raquo;''' [link boost_asio.reference.buffer_copy.overload1 more...]]``
+
+Copies a limited number of bytes from a source buffer sequence to a target buffer sequence. 
 
   template<
       typename ``[link boost_asio.reference.MutableBufferSequence MutableBufferSequence]``,
@@ -45246,7 +45335,9 @@ This function is implemented in terms of `memcpy`, and consequently it cannot be
 [indexterm1 boost_asio.indexterm.buffer_sequence_begin..buffer_sequence_begin] 
 The `boost::asio::buffer_sequence_begin` function returns an iterator pointing to the first element in a buffer sequence. 
 
-      
+
+Get an iterator to the first element in a buffer sequence. 
+
   const mutable_buffer * ``[link boost_asio.reference.buffer_sequence_begin.overload1 buffer_sequence_begin]``(
       const mutable_buffer & b);
   ``  [''''&raquo;''' [link boost_asio.reference.buffer_sequence_begin.overload1 more...]]``
@@ -45344,7 +45435,9 @@ Get an iterator to the first element in a buffer sequence.
 [indexterm1 boost_asio.indexterm.buffer_sequence_end..buffer_sequence_end] 
 The `boost::asio::buffer_sequence_end` function returns an iterator pointing to one past the end element in a buffer sequence. 
 
-      
+
+Get an iterator to one past the end element in a buffer sequence. 
+
   const mutable_buffer * ``[link boost_asio.reference.buffer_sequence_end.overload1 buffer_sequence_end]``(
       const mutable_buffer & b);
   ``  [''''&raquo;''' [link boost_asio.reference.buffer_sequence_end.overload1 more...]]``
@@ -45550,7 +45643,7 @@ Adds buffering to the read-related operations of a stream.
   [
     [[link boost_asio.reference.buffered_read_stream.fill [*fill]]]
     [Fill the buffer with some data. Returns the number of bytes placed in the buffer as a result of the operation. Throws an exception on failure. 
-
+     [hr]
      Fill the buffer with some data. Returns the number of bytes placed in the buffer as a result of the operation, or 0 if an error occurred. ]
   ]
   
@@ -45577,7 +45670,7 @@ Adds buffering to the read-related operations of a stream.
   [
     [[link boost_asio.reference.buffered_read_stream.lowest_layer [*lowest_layer]]]
     [Get a reference to the lowest layer. 
-
+     [hr]
      Get a const reference to the lowest layer. ]
   ]
   
@@ -45589,21 +45682,21 @@ Adds buffering to the read-related operations of a stream.
   [
     [[link boost_asio.reference.buffered_read_stream.peek [*peek]]]
     [Peek at the incoming data on the stream. Returns the number of bytes read. Throws an exception on failure. 
-
+     [hr]
      Peek at the incoming data on the stream. Returns the number of bytes read, or 0 if an error occurred. ]
   ]
   
   [
     [[link boost_asio.reference.buffered_read_stream.read_some [*read_some]]]
     [Read some data from the stream. Returns the number of bytes read. Throws an exception on failure. 
-
+     [hr]
      Read some data from the stream. Returns the number of bytes read or 0 if an error occurred. ]
   ]
   
   [
     [[link boost_asio.reference.buffered_read_stream.write_some [*write_some]]]
     [Write the given data to the stream. Returns the number of bytes written. Throws an exception on failure. 
-
+     [hr]
      Write the given data to the stream. Returns the number of bytes written, or 0 if an error occurred. ]
   ]
   
@@ -46323,14 +46416,14 @@ Adds buffering to the read- and write-related operations of a stream.
   [
     [[link boost_asio.reference.buffered_stream.fill [*fill]]]
     [Fill the buffer with some data. Returns the number of bytes placed in the buffer as a result of the operation. Throws an exception on failure. 
-
+     [hr]
      Fill the buffer with some data. Returns the number of bytes placed in the buffer as a result of the operation, or 0 if an error occurred. ]
   ]
   
   [
     [[link boost_asio.reference.buffered_stream.flush [*flush]]]
     [Flush all data from the buffer to the next layer. Returns the number of bytes written to the next layer on the last write operation. Throws an exception on failure. 
-
+     [hr]
      Flush all data from the buffer to the next layer. Returns the number of bytes written to the next layer on the last write operation, or 0 if an error occurred. ]
   ]
   
@@ -46357,7 +46450,7 @@ Adds buffering to the read- and write-related operations of a stream.
   [
     [[link boost_asio.reference.buffered_stream.lowest_layer [*lowest_layer]]]
     [Get a reference to the lowest layer. 
-
+     [hr]
      Get a const reference to the lowest layer. ]
   ]
   
@@ -46369,21 +46462,21 @@ Adds buffering to the read- and write-related operations of a stream.
   [
     [[link boost_asio.reference.buffered_stream.peek [*peek]]]
     [Peek at the incoming data on the stream. Returns the number of bytes read. Throws an exception on failure. 
-
+     [hr]
      Peek at the incoming data on the stream. Returns the number of bytes read, or 0 if an error occurred. ]
   ]
   
   [
     [[link boost_asio.reference.buffered_stream.read_some [*read_some]]]
     [Read some data from the stream. Returns the number of bytes read. Throws an exception on failure. 
-
+     [hr]
      Read some data from the stream. Returns the number of bytes read or 0 if an error occurred. ]
   ]
   
   [
     [[link boost_asio.reference.buffered_stream.write_some [*write_some]]]
     [Write the given data to the stream. Returns the number of bytes written. Throws an exception on failure. 
-
+     [hr]
      Write the given data to the stream. Returns the number of bytes written, or 0 if an error occurred. ]
   ]
   
@@ -47140,7 +47233,7 @@ Adds buffering to the write-related operations of a stream.
   [
     [[link boost_asio.reference.buffered_write_stream.flush [*flush]]]
     [Flush all data from the buffer to the next layer. Returns the number of bytes written to the next layer on the last write operation. Throws an exception on failure. 
-
+     [hr]
      Flush all data from the buffer to the next layer. Returns the number of bytes written to the next layer on the last write operation, or 0 if an error occurred. ]
   ]
   
@@ -47167,7 +47260,7 @@ Adds buffering to the write-related operations of a stream.
   [
     [[link boost_asio.reference.buffered_write_stream.lowest_layer [*lowest_layer]]]
     [Get a reference to the lowest layer. 
-
+     [hr]
      Get a const reference to the lowest layer. ]
   ]
   
@@ -47179,21 +47272,21 @@ Adds buffering to the write-related operations of a stream.
   [
     [[link boost_asio.reference.buffered_write_stream.peek [*peek]]]
     [Peek at the incoming data on the stream. Returns the number of bytes read. Throws an exception on failure. 
-
+     [hr]
      Peek at the incoming data on the stream. Returns the number of bytes read, or 0 if an error occurred. ]
   ]
   
   [
     [[link boost_asio.reference.buffered_write_stream.read_some [*read_some]]]
     [Read some data from the stream. Returns the number of bytes read. Throws an exception on failure. 
-
+     [hr]
      Read some data from the stream. Returns the number of bytes read or 0 if an error occurred. ]
   ]
   
   [
     [[link boost_asio.reference.buffered_write_stream.write_some [*write_some]]]
     [Write the given data to the stream. Returns the number of bytes written. Throws an exception on failure. 
-
+     [hr]
      Write the given data to the stream. Returns the number of bytes written, or 0 if an error occurred and the error handler did not throw. ]
   ]
   
@@ -47963,7 +48056,7 @@ A random access iterator over the bytes in a buffer sequence.
   [
     [[link boost_asio.reference.buffers_iterator.operator_plus__plus_ [*operator++]]]
     [Increment operator (prefix). 
-
+     [hr]
      Increment operator (postfix). ]
   ]
   
@@ -47975,7 +48068,7 @@ A random access iterator over the bytes in a buffer sequence.
   [
     [[link boost_asio.reference.buffers_iterator.operator_minus__minus_ [*operator--]]]
     [Decrement operator (prefix). 
-
+     [hr]
      Decrement operator (postfix). ]
   ]
   
@@ -48632,9 +48725,11 @@ The type of the value pointed to by the iterator.
 [section:connect connect]
 
 [indexterm1 boost_asio.indexterm.connect..connect] 
+The `connect` function is a composed operation that establishes a socket connection by trying each endpoint in a sequence. 
+
+
 Establishes a socket connection by trying each endpoint in a sequence. 
 
-      
   template<
       typename ``[link boost_asio.reference.Protocol Protocol]``,
       typename ``[link boost_asio.reference.EndpointSequence EndpointSequence]``>
@@ -48654,6 +48749,8 @@ Establishes a socket connection by trying each endpoint in a sequence.
       typename enable_if< is_endpoint_sequence< EndpointSequence >::value >::type *  = 0);
   ``  [''''&raquo;''' [link boost_asio.reference.connect.overload2 more...]]``
 
+(Deprecated: Use range overload.) Establishes a socket connection by trying each endpoint in a sequence. 
+
   template<
       typename ``[link boost_asio.reference.Protocol Protocol]``,
       typename Iterator>
@@ -48672,6 +48769,8 @@ Establishes a socket connection by trying each endpoint in a sequence.
       boost::system::error_code & ec,
       typename enable_if<!is_endpoint_sequence< Iterator >::value >::type *  = 0);
   ``  [''''&raquo;''' [link boost_asio.reference.connect.overload4 more...]]``
+
+Establishes a socket connection by trying each endpoint in a sequence. 
 
   template<
       typename ``[link boost_asio.reference.Protocol Protocol]``,
@@ -48715,6 +48814,8 @@ Establishes a socket connection by trying each endpoint in a sequence.
       typename enable_if< is_endpoint_sequence< EndpointSequence >::value >::type *  = 0);
   ``  [''''&raquo;''' [link boost_asio.reference.connect.overload8 more...]]``
 
+(Deprecated: Use range overload.) Establishes a socket connection by trying each endpoint in a sequence. 
+
   template<
       typename ``[link boost_asio.reference.Protocol Protocol]``,
       typename Iterator,
@@ -48737,6 +48838,8 @@ Establishes a socket connection by trying each endpoint in a sequence.
       boost::system::error_code & ec,
       typename enable_if<!is_endpoint_sequence< Iterator >::value >::type *  = 0);
   ``  [''''&raquo;''' [link boost_asio.reference.connect.overload10 more...]]``
+
+Establishes a socket connection by trying each endpoint in a sequence. 
 
   template<
       typename ``[link boost_asio.reference.Protocol Protocol]``,
@@ -48897,7 +49000,7 @@ On success, the successfully connected endpoint. Otherwise, a default-constructe
 [section:overload3 connect (3 of 12 overloads)]
 
 
-(Deprecated.) Establishes a socket connection by trying each endpoint in a sequence. 
+(Deprecated: Use range overload.) Establishes a socket connection by trying each endpoint in a sequence. 
 
 
   template<
@@ -48953,7 +49056,7 @@ This overload assumes that a default constructed object of type `Iterator` repre
 [section:overload4 connect (4 of 12 overloads)]
 
 
-(Deprecated.) Establishes a socket connection by trying each endpoint in a sequence. 
+(Deprecated: Use range overload.) Establishes a socket connection by trying each endpoint in a sequence. 
 
 
   template<
@@ -49317,7 +49420,7 @@ It would be used with the `boost::asio::connect` function as follows:
 [section:overload9 connect (9 of 12 overloads)]
 
 
-(Deprecated.) Establishes a socket connection by trying each endpoint in a sequence. 
+(Deprecated: Use range overload.) Establishes a socket connection by trying each endpoint in a sequence. 
 
 
   template<
@@ -49383,7 +49486,7 @@ This overload assumes that a default constructed object of type `Iterator` repre
 [section:overload10 connect (10 of 12 overloads)]
 
 
-(Deprecated.) Establishes a socket connection by trying each endpoint in a sequence. 
+(Deprecated: Use range overload.) Establishes a socket connection by trying each endpoint in a sequence. 
 
 
   template<
@@ -49645,9 +49748,9 @@ Holds a buffer that cannot be modified.
   [
     [[link boost_asio.reference.const_buffer.const_buffer [*const_buffer]]]
     [Construct an empty buffer. 
-
+     [hr]
      Construct a buffer to represent a given memory range. 
-
+     [hr]
      Construct a non-modifiable buffer from a modifiable one. ]
   ]
   
@@ -49916,7 +50019,7 @@ Get the size of the memory range.
   [
     [[link boost_asio.reference.const_buffers_1.const_buffers_1 [*const_buffers_1]]]
     [Construct to represent a given memory range. 
-
+     [hr]
      Construct to represent a single non-modifiable buffer. ]
   ]
   
@@ -50185,9 +50288,9 @@ The type for each element in the list of buffers.
   [
     [[link boost_asio.reference.const_buffer.const_buffer [*const_buffer]]]
     [Construct an empty buffer. 
-
+     [hr]
      Construct a buffer to represent a given memory range. 
-
+     [hr]
      Construct a non-modifiable buffer from a modifiable one. ]
   ]
   
@@ -50682,11 +50785,11 @@ Typedef for the typical usage of timer. Uses a UTC clock.
   [
     [[link boost_asio.reference.basic_deadline_timer.basic_deadline_timer [*basic_deadline_timer]]]
     [Constructor. 
-
+     [hr]
      Constructor to set a particular expiry time as an absolute time. 
-
+     [hr]
      Constructor to set a particular expiry time relative to now. 
-
+     [hr]
      Move-construct a basic_deadline_timer from another. ]
   ]
   
@@ -50703,14 +50806,14 @@ Typedef for the typical usage of timer. Uses a UTC clock.
   [
     [[link boost_asio.reference.basic_deadline_timer.expires_at [*expires_at]]]
     [Get the timer's expiry time as an absolute time. 
-
+     [hr]
      Set the timer's expiry time as an absolute time. ]
   ]
   
   [
     [[link boost_asio.reference.basic_deadline_timer.expires_from_now [*expires_from_now]]]
     [Get the timer's expiry time relative to now. 
-
+     [hr]
      Set the timer's expiry time relative to now. ]
   ]
   
@@ -50856,7 +50959,6 @@ Changing the expiry time of a timer while there are pending asynchronous waits c
 [indexterm1 boost_asio.indexterm.defer..defer] 
 Submits a completion token or function object for execution. 
 
-    
   template<
       typename CompletionToken>
   ``[link boost_asio.reference.asynchronous_operations.automatic_deduction_of_initiating_function_return_type ['DEDUCED]]`` ``[link boost_asio.reference.defer.overload1 defer]``(
@@ -51012,7 +51114,6 @@ Submits a completion token or function object for execution.
 [indexterm1 boost_asio.indexterm.dispatch..dispatch] 
 Submits a completion token or function object for execution. 
 
-    
   template<
       typename CompletionToken>
   ``[link boost_asio.reference.asynchronous_operations.automatic_deduction_of_initiating_function_return_type ['DEDUCED]]`` ``[link boost_asio.reference.dispatch.overload1 dispatch]``(
@@ -51168,7 +51269,9 @@ Submits a completion token or function object for execution.
 [indexterm1 boost_asio.indexterm.dynamic_buffer..dynamic_buffer] 
 The `boost::asio::dynamic_buffer` function is used to create a dynamically resized buffer from a `std::basic_string` or `std::vector`. 
 
-      
+
+Create a new dynamic buffer that represents the given string. 
+
   template<
       typename Elem,
       typename Traits,
@@ -51185,6 +51288,8 @@ The `boost::asio::dynamic_buffer` function is used to create a dynamically resiz
       std::basic_string< Elem, Traits, Allocator > & data,
       std::size_t max_size);
   ``  [''''&raquo;''' [link boost_asio.reference.dynamic_buffer.overload2 more...]]``
+
+Create a new dynamic buffer that represents the given vector. 
 
   template<
       typename Elem,
@@ -51373,7 +51478,7 @@ Adapt a basic\_string to the DynamicBuffer requirements.
   [
     [[link boost_asio.reference.dynamic_string_buffer.dynamic_string_buffer [*dynamic_string_buffer]]]
     [Construct a dynamic buffer from a string. 
-
+     [hr]
      Move construct a dynamic buffer. ]
   ]
   
@@ -51474,9 +51579,9 @@ The type used to represent the input sequence as a list of buffers.
   [
     [[link boost_asio.reference.const_buffer.const_buffer [*const_buffer]]]
     [Construct an empty buffer. 
-
+     [hr]
      Construct a buffer to represent a given memory range. 
-
+     [hr]
      Construct a non-modifiable buffer from a modifiable one. ]
   ]
   
@@ -51698,7 +51803,7 @@ The type used to represent the output sequence as a list of buffers.
   [
     [[link boost_asio.reference.mutable_buffer.mutable_buffer [*mutable_buffer]]]
     [Construct an empty buffer. 
-
+     [hr]
      Construct a buffer to represent a given memory range. ]
   ]
   
@@ -51871,7 +51976,7 @@ Adapt a vector to the DynamicBuffer requirements.
   [
     [[link boost_asio.reference.dynamic_vector_buffer.dynamic_vector_buffer [*dynamic_vector_buffer]]]
     [Construct a dynamic buffer from a string. 
-
+     [hr]
      Move construct a dynamic buffer. ]
   ]
   
@@ -51972,9 +52077,9 @@ The type used to represent the input sequence as a list of buffers.
   [
     [[link boost_asio.reference.const_buffer.const_buffer [*const_buffer]]]
     [Construct an empty buffer. 
-
+     [hr]
      Construct a buffer to represent a given memory range. 
-
+     [hr]
      Construct a non-modifiable buffer from a modifiable one. ]
   ]
   
@@ -52196,7 +52301,7 @@ The type used to represent the output sequence as a list of buffers.
   [
     [[link boost_asio.reference.mutable_buffer.mutable_buffer [*mutable_buffer]]]
     [Construct an empty buffer. 
-
+     [hr]
      Construct a buffer to represent a given memory range. ]
   ]
   
@@ -52685,7 +52790,6 @@ Get the size of the input sequence.
 [section:error__make_error_code error::make_error_code]
 
 [indexterm1 boost_asio.indexterm.error__make_error_code..error::make_error_code] 
-    
   boost::system::error_code ``[link boost_asio.reference.error__make_error_code.overload1 make_error_code]``(
       basic_errors e);
   ``  [''''&raquo;''' [link boost_asio.reference.error__make_error_code.overload1 more...]]``
@@ -53789,15 +53893,15 @@ Polymorphic wrapper for executors.
   [
     [[link boost_asio.reference.executor.executor [*executor]]]
     [Default constructor. 
-
+     [hr]
      Construct from nullptr. 
-
+     [hr]
      Copy constructor. 
-
+     [hr]
      Move constructor. 
-
+     [hr]
      Construct a polymorphic wrapper for the specified executor. 
-
+     [hr]
      Allocator-aware constructor to create a polymorphic wrapper for the specified executor. ]
   ]
   
@@ -53819,11 +53923,11 @@ Polymorphic wrapper for executors.
   [
     [[link boost_asio.reference.executor.operator_eq_ [*operator=]]]
     [Assignment operator. 
-
+     [hr]
      
-
+     [hr]
      Assignment operator for nullptr_t. 
-
+     [hr]
      Assignment operator to create a polymorphic wrapper for the specified executor. ]
   ]
   
@@ -54627,21 +54731,21 @@ A call wrapper type to bind an executor of type `Executor` to an object of type 
   [
     [[link boost_asio.reference.executor_binder.executor_binder [*executor_binder]]]
     [Construct an executor wrapper for the specified object. 
-
+     [hr]
      Copy constructor. 
-
+     [hr]
      Construct a copy, but specify a different executor. 
-
+     [hr]
      Construct a copy of a different executor wrapper type. 
-
+     [hr]
      Construct a copy of a different executor wrapper type, but specify a different executor. 
-
+     [hr]
      Move constructor. 
-
+     [hr]
      Move construct the target object, but specify a different executor. 
-
+     [hr]
      Move construct from a different executor wrapper type. 
-
+     [hr]
      Move construct from a different executor wrapper type, but specify a different executor. ]
   ]
   
@@ -55268,9 +55372,9 @@ An object of type `executor_work_guard` controls ownership of executor work with
   [
     [[link boost_asio.reference.executor_work_guard.executor_work_guard [*executor_work_guard]]]
     [Constructs a executor_work_guard object for the specified executor. 
-
+     [hr]
      Copy constructor. 
-
+     [hr]
      Move constructor. ]
   ]
   
@@ -55490,7 +55594,7 @@ A completion token that represents the currently executing coroutine.
   [
     [[link boost_asio.reference.experimental__await_token.await_token [*await_token]]]
     [Copy constructor. 
-
+     [hr]
      Move constructor. ]
   ]
   
@@ -55745,7 +55849,6 @@ Destructor.
 [indexterm1 boost_asio.indexterm.experimental__co_spawn..experimental::co_spawn] 
 Spawn a new thread of execution. 
 
-    
   template<
       typename ``[link boost_asio.reference.Executor1 Executor]``,
       typename F,
@@ -56154,11 +56257,11 @@ Describes an endpoint for any socket type.
   [
     [[link boost_asio.reference.generic__basic_endpoint.basic_endpoint [*basic_endpoint]]]
     [Default constructor. 
-
+     [hr]
      Construct an endpoint from the specified socket address. 
-
+     [hr]
      Construct an endpoint from the specific endpoint type. 
-
+     [hr]
      Copy constructor. ]
   ]
   
@@ -56682,7 +56785,7 @@ Encapsulates the flags needed for a generic datagram-oriented socket.
   [
     [[link boost_asio.reference.generic__datagram_protocol.datagram_protocol [*datagram_protocol]]]
     [Construct a protocol object for a specific address family and protocol. 
-
+     [hr]
      Construct a generic protocol object from a specific protocol. ]
   ]
   
@@ -56857,11 +56960,11 @@ The type of an endpoint.
   [
     [[link boost_asio.reference.generic__basic_endpoint.basic_endpoint [*basic_endpoint]]]
     [Default constructor. 
-
+     [hr]
      Construct an endpoint from the specified socket address. 
-
+     [hr]
      Construct an endpoint from the specific endpoint type. 
-
+     [hr]
      Copy constructor. ]
   ]
   
@@ -57248,15 +57351,15 @@ The generic socket type.
   [
     [[link boost_asio.reference.basic_datagram_socket.basic_datagram_socket [*basic_datagram_socket]]]
     [Construct a basic_datagram_socket without opening it. 
-
+     [hr]
      Construct and open a basic_datagram_socket. 
-
+     [hr]
      Construct a basic_datagram_socket, opening it and binding it to the given local endpoint. 
-
+     [hr]
      Construct a basic_datagram_socket on an existing native socket. 
-
+     [hr]
      Move-construct a basic_datagram_socket from another. 
-
+     [hr]
      Move-construct a basic_datagram_socket from a socket of another protocol type. ]
   ]
   
@@ -57318,7 +57421,7 @@ The generic socket type.
   [
     [[link boost_asio.reference.basic_datagram_socket.lowest_layer [*lowest_layer]]]
     [Get a reference to the lowest layer. 
-
+     [hr]
      Get a const reference to the lowest layer. ]
   ]
   
@@ -57330,14 +57433,14 @@ The generic socket type.
   [
     [[link boost_asio.reference.basic_datagram_socket.native_non_blocking [*native_non_blocking]]]
     [Gets the non-blocking mode of the native socket implementation. 
-
+     [hr]
      Sets the non-blocking mode of the native socket implementation. ]
   ]
   
   [
     [[link boost_asio.reference.basic_datagram_socket.non_blocking [*non_blocking]]]
     [Gets the non-blocking mode of the socket. 
-
+     [hr]
      Sets the non-blocking mode of the socket. ]
   ]
   
@@ -57349,7 +57452,7 @@ The generic socket type.
   [
     [[link boost_asio.reference.basic_datagram_socket.operator_eq_ [*operator=]]]
     [Move-assign a basic_datagram_socket from another. 
-
+     [hr]
      Move-assign a basic_datagram_socket from a socket of another protocol type. ]
   ]
   
@@ -57526,7 +57629,7 @@ Encapsulates the flags needed for a generic raw socket.
   [
     [[link boost_asio.reference.generic__raw_protocol.raw_protocol [*raw_protocol]]]
     [Construct a protocol object for a specific address family and protocol. 
-
+     [hr]
      Construct a generic protocol object from a specific protocol. ]
   ]
   
@@ -57623,11 +57726,11 @@ The type of an endpoint.
   [
     [[link boost_asio.reference.generic__basic_endpoint.basic_endpoint [*basic_endpoint]]]
     [Default constructor. 
-
+     [hr]
      Construct an endpoint from the specified socket address. 
-
+     [hr]
      Construct an endpoint from the specific endpoint type. 
-
+     [hr]
      Copy constructor. ]
   ]
   
@@ -58082,15 +58185,15 @@ The generic socket type.
   [
     [[link boost_asio.reference.basic_raw_socket.basic_raw_socket [*basic_raw_socket]]]
     [Construct a basic_raw_socket without opening it. 
-
+     [hr]
      Construct and open a basic_raw_socket. 
-
+     [hr]
      Construct a basic_raw_socket, opening it and binding it to the given local endpoint. 
-
+     [hr]
      Construct a basic_raw_socket on an existing native socket. 
-
+     [hr]
      Move-construct a basic_raw_socket from another. 
-
+     [hr]
      Move-construct a basic_raw_socket from a socket of another protocol type. ]
   ]
   
@@ -58152,7 +58255,7 @@ The generic socket type.
   [
     [[link boost_asio.reference.basic_raw_socket.lowest_layer [*lowest_layer]]]
     [Get a reference to the lowest layer. 
-
+     [hr]
      Get a const reference to the lowest layer. ]
   ]
   
@@ -58164,14 +58267,14 @@ The generic socket type.
   [
     [[link boost_asio.reference.basic_raw_socket.native_non_blocking [*native_non_blocking]]]
     [Gets the non-blocking mode of the native socket implementation. 
-
+     [hr]
      Sets the non-blocking mode of the native socket implementation. ]
   ]
   
   [
     [[link boost_asio.reference.basic_raw_socket.non_blocking [*non_blocking]]]
     [Gets the non-blocking mode of the socket. 
-
+     [hr]
      Sets the non-blocking mode of the socket. ]
   ]
   
@@ -58183,7 +58286,7 @@ The generic socket type.
   [
     [[link boost_asio.reference.basic_raw_socket.operator_eq_ [*operator=]]]
     [Move-assign a basic_raw_socket from another. 
-
+     [hr]
      Move-assign a basic_raw_socket from a socket of another protocol type. ]
   ]
   
@@ -58360,7 +58463,7 @@ Encapsulates the flags needed for a generic sequenced packet socket.
   [
     [[link boost_asio.reference.generic__seq_packet_protocol.seq_packet_protocol [*seq_packet_protocol]]]
     [Construct a protocol object for a specific address family and protocol. 
-
+     [hr]
      Construct a generic protocol object from a specific protocol. ]
   ]
   
@@ -58452,11 +58555,11 @@ The type of an endpoint.
   [
     [[link boost_asio.reference.generic__basic_endpoint.basic_endpoint [*basic_endpoint]]]
     [Default constructor. 
-
+     [hr]
      Construct an endpoint from the specified socket address. 
-
+     [hr]
      Construct an endpoint from the specific endpoint type. 
-
+     [hr]
      Copy constructor. ]
   ]
   
@@ -58901,15 +59004,15 @@ The generic socket type.
   [
     [[link boost_asio.reference.basic_seq_packet_socket.basic_seq_packet_socket [*basic_seq_packet_socket]]]
     [Construct a basic_seq_packet_socket without opening it. 
-
+     [hr]
      Construct and open a basic_seq_packet_socket. 
-
+     [hr]
      Construct a basic_seq_packet_socket, opening it and binding it to the given local endpoint. 
-
+     [hr]
      Construct a basic_seq_packet_socket on an existing native socket. 
-
+     [hr]
      Move-construct a basic_seq_packet_socket from another. 
-
+     [hr]
      Move-construct a basic_seq_packet_socket from a socket of another protocol type. ]
   ]
   
@@ -58971,7 +59074,7 @@ The generic socket type.
   [
     [[link boost_asio.reference.basic_seq_packet_socket.lowest_layer [*lowest_layer]]]
     [Get a reference to the lowest layer. 
-
+     [hr]
      Get a const reference to the lowest layer. ]
   ]
   
@@ -58983,14 +59086,14 @@ The generic socket type.
   [
     [[link boost_asio.reference.basic_seq_packet_socket.native_non_blocking [*native_non_blocking]]]
     [Gets the non-blocking mode of the native socket implementation. 
-
+     [hr]
      Sets the non-blocking mode of the native socket implementation. ]
   ]
   
   [
     [[link boost_asio.reference.basic_seq_packet_socket.non_blocking [*non_blocking]]]
     [Gets the non-blocking mode of the socket. 
-
+     [hr]
      Sets the non-blocking mode of the socket. ]
   ]
   
@@ -59002,14 +59105,14 @@ The generic socket type.
   [
     [[link boost_asio.reference.basic_seq_packet_socket.operator_eq_ [*operator=]]]
     [Move-assign a basic_seq_packet_socket from another. 
-
+     [hr]
      Move-assign a basic_seq_packet_socket from a socket of another protocol type. ]
   ]
   
   [
     [[link boost_asio.reference.basic_seq_packet_socket.receive [*receive]]]
     [Receive some data on the socket. 
-
+     [hr]
      Receive some data on a connected socket. ]
   ]
   
@@ -59178,7 +59281,7 @@ Encapsulates the flags needed for a generic stream-oriented socket.
   [
     [[link boost_asio.reference.generic__stream_protocol.stream_protocol [*stream_protocol]]]
     [Construct a protocol object for a specific address family and protocol. 
-
+     [hr]
      Construct a generic protocol object from a specific protocol. ]
   ]
   
@@ -59275,11 +59378,11 @@ The type of an endpoint.
   [
     [[link boost_asio.reference.generic__basic_endpoint.basic_endpoint [*basic_endpoint]]]
     [Default constructor. 
-
+     [hr]
      Construct an endpoint from the specified socket address. 
-
+     [hr]
      Construct an endpoint from the specific endpoint type. 
-
+     [hr]
      Copy constructor. ]
   ]
   
@@ -59465,11 +59568,11 @@ The generic socket iostream type.
   [
     [[link boost_asio.reference.basic_socket_iostream.basic_socket_iostream [*basic_socket_iostream]]]
     [Construct a basic_socket_iostream without establishing a connection. 
-
+     [hr]
      Construct a basic_socket_iostream from the supplied socket. 
-
+     [hr]
      Move-construct a basic_socket_iostream from another. 
-
+     [hr]
      Establish a connection to an endpoint corresponding to a resolver query. ]
   ]
   
@@ -59496,14 +59599,14 @@ The generic socket iostream type.
   [
     [[link boost_asio.reference.basic_socket_iostream.expires_at [*expires_at]]]
     [(Deprecated: Use expiry().) Get the stream's expiry time as an absolute time. 
-
+     [hr]
      Set the stream's expiry time as an absolute time. ]
   ]
   
   [
     [[link boost_asio.reference.basic_socket_iostream.expires_from_now [*expires_from_now]]]
     [(Deprecated: Use expiry().) Get the stream's expiry time relative to now. 
-
+     [hr]
      (Deprecated: Use expires_after().) Set the stream's expiry time relative to now. ]
   ]
   
@@ -59813,15 +59916,15 @@ The generic socket type.
   [
     [[link boost_asio.reference.basic_stream_socket.basic_stream_socket [*basic_stream_socket]]]
     [Construct a basic_stream_socket without opening it. 
-
+     [hr]
      Construct and open a basic_stream_socket. 
-
+     [hr]
      Construct a basic_stream_socket, opening it and binding it to the given local endpoint. 
-
+     [hr]
      Construct a basic_stream_socket on an existing native socket. 
-
+     [hr]
      Move-construct a basic_stream_socket from another. 
-
+     [hr]
      Move-construct a basic_stream_socket from a socket of another protocol type. ]
   ]
   
@@ -59883,7 +59986,7 @@ The generic socket type.
   [
     [[link boost_asio.reference.basic_stream_socket.lowest_layer [*lowest_layer]]]
     [Get a reference to the lowest layer. 
-
+     [hr]
      Get a const reference to the lowest layer. ]
   ]
   
@@ -59895,14 +59998,14 @@ The generic socket type.
   [
     [[link boost_asio.reference.basic_stream_socket.native_non_blocking [*native_non_blocking]]]
     [Gets the non-blocking mode of the native socket implementation. 
-
+     [hr]
      Sets the non-blocking mode of the native socket implementation. ]
   ]
   
   [
     [[link boost_asio.reference.basic_stream_socket.non_blocking [*non_blocking]]]
     [Gets the non-blocking mode of the socket. 
-
+     [hr]
      Sets the non-blocking mode of the socket. ]
   ]
   
@@ -59914,7 +60017,7 @@ The generic socket type.
   [
     [[link boost_asio.reference.basic_stream_socket.operator_eq_ [*operator=]]]
     [Move-assign a basic_stream_socket from another. 
-
+     [hr]
      Move-assign a basic_stream_socket from a socket of another protocol type. ]
   ]
   
@@ -59926,7 +60029,7 @@ The generic socket type.
   [
     [[link boost_asio.reference.basic_stream_socket.receive [*receive]]]
     [Receive some data on the socket. 
-
+     [hr]
      Receive some data on a connected socket. ]
   ]
   
@@ -60121,7 +60224,6 @@ Obtain an identifier for the type of the protocol.
 [indexterm1 boost_asio.indexterm.get_associated_allocator..get_associated_allocator] 
 Helper function to obtain an object's associated allocator. 
 
-    
   template<
       typename T>
   associated_allocator< T >::type ``[link boost_asio.reference.get_associated_allocator.overload1 get_associated_allocator]``(
@@ -60199,7 +60301,6 @@ Helper function to obtain an object's associated allocator.
 [indexterm1 boost_asio.indexterm.get_associated_executor..get_associated_executor] 
 Helper function to obtain an object's associated executor. 
 
-    
   template<
       typename T>
   associated_executor< T >::type ``[link boost_asio.reference.get_associated_executor.overload1 get_associated_executor]``(
@@ -60473,25 +60574,25 @@ Typedef for a timer based on the high resolution clock.
   [
     [[link boost_asio.reference.basic_waitable_timer.basic_waitable_timer [*basic_waitable_timer]]]
     [Constructor. 
-
+     [hr]
      Constructor to set a particular expiry time as an absolute time. 
-
+     [hr]
      Constructor to set a particular expiry time relative to now. 
-
+     [hr]
      Move-construct a basic_waitable_timer from another. ]
   ]
   
   [
     [[link boost_asio.reference.basic_waitable_timer.cancel [*cancel]]]
     [Cancel any asynchronous operations that are waiting on the timer. 
-
+     [hr]
      (Deprecated: Use non-error_code overload.) Cancel any asynchronous operations that are waiting on the timer. ]
   ]
   
   [
     [[link boost_asio.reference.basic_waitable_timer.cancel_one [*cancel_one]]]
     [Cancels one asynchronous operation that is waiting on the timer. 
-
+     [hr]
      (Deprecated: Use non-error_code overload.) Cancels one asynchronous operation that is waiting on the timer. ]
   ]
   
@@ -60503,16 +60604,16 @@ Typedef for a timer based on the high resolution clock.
   [
     [[link boost_asio.reference.basic_waitable_timer.expires_at [*expires_at]]]
     [(Deprecated: Use expiry().) Get the timer's expiry time as an absolute time. 
-
+     [hr]
      Set the timer's expiry time as an absolute time. 
-
+     [hr]
      (Deprecated: Use non-error_code overload.) Set the timer's expiry time as an absolute time. ]
   ]
   
   [
     [[link boost_asio.reference.basic_waitable_timer.expires_from_now [*expires_from_now]]]
     [(Deprecated: Use expiry().) Get the timer's expiry time relative to now. 
-
+     [hr]
      (Deprecated: Use expires_after().) Set the timer's expiry time relative to now. ]
   ]
   
@@ -60796,14 +60897,14 @@ Provides core I/O functionality.
   [
     [[link boost_asio.reference.io_context.poll [*poll]]]
     [Run the io_context object's event processing loop to execute ready handlers. 
-
+     [hr]
      (Deprecated: Use non-error_code overload.) Run the io_context object's event processing loop to execute ready handlers. ]
   ]
   
   [
     [[link boost_asio.reference.io_context.poll_one [*poll_one]]]
     [Run the io_context object's event processing loop to execute one ready handler. 
-
+     [hr]
      (Deprecated: Use non-error_code overload.) Run the io_context object's event processing loop to execute one ready handler. ]
   ]
   
@@ -60825,7 +60926,7 @@ Provides core I/O functionality.
   [
     [[link boost_asio.reference.io_context.run [*run]]]
     [Run the io_context object's event processing loop. 
-
+     [hr]
      (Deprecated: Use non-error_code overload.) Run the io_context object's event processing loop. ]
   ]
   
@@ -60837,7 +60938,7 @@ Provides core I/O functionality.
   [
     [[link boost_asio.reference.io_context.run_one [*run_one]]]
     [Run the io_context object's event processing loop to execute at most one handler. 
-
+     [hr]
      (Deprecated: Use non-error_code overlaod.) Run the io_context object's event processing loop to execute at most one handler. ]
   ]
   
@@ -60916,7 +61017,7 @@ Provides core I/O functionality.
   [
     [[link boost_asio.reference.io_context.use_service [*use_service]]]
     [
-
+     [hr]
      Obtain the service object corresponding to the given type. ]
   ]
   
@@ -62774,7 +62875,7 @@ Provides serialised handler execution.
   [
     [[link boost_asio.reference.io_context__strand.dispatch [*dispatch]]]
     [Request the strand to invoke the given function object. 
-
+     [hr]
      (Deprecated: Use boost::asio::dispatch().) Request the strand to invoke the given handler. ]
   ]
   
@@ -62801,7 +62902,7 @@ Provides serialised handler execution.
   [
     [[link boost_asio.reference.io_context__strand.post [*post]]]
     [Request the strand to invoke the given function object. 
-
+     [hr]
      (Deprecated: Use boost::asio::post().) Request the strand to invoke the given handler and return immediately. ]
   ]
   
@@ -63452,7 +63553,7 @@ Handlers posted through the strand that have not yet been invoked will still be 
   [
     [[link boost_asio.reference.io_context__work.work [*work]]]
     [Constructor notifies the io_context that work is starting. 
-
+     [hr]
      Copy constructor notifies the io_context that work is starting. ]
   ]
   
@@ -63659,14 +63760,14 @@ Typedef for backwards compatibility.
   [
     [[link boost_asio.reference.io_context.poll [*poll]]]
     [Run the io_context object's event processing loop to execute ready handlers. 
-
+     [hr]
      (Deprecated: Use non-error_code overload.) Run the io_context object's event processing loop to execute ready handlers. ]
   ]
   
   [
     [[link boost_asio.reference.io_context.poll_one [*poll_one]]]
     [Run the io_context object's event processing loop to execute one ready handler. 
-
+     [hr]
      (Deprecated: Use non-error_code overload.) Run the io_context object's event processing loop to execute one ready handler. ]
   ]
   
@@ -63688,7 +63789,7 @@ Typedef for backwards compatibility.
   [
     [[link boost_asio.reference.io_context.run [*run]]]
     [Run the io_context object's event processing loop. 
-
+     [hr]
      (Deprecated: Use non-error_code overload.) Run the io_context object's event processing loop. ]
   ]
   
@@ -63700,7 +63801,7 @@ Typedef for backwards compatibility.
   [
     [[link boost_asio.reference.io_context.run_one [*run_one]]]
     [Run the io_context object's event processing loop to execute at most one handler. 
-
+     [hr]
      (Deprecated: Use non-error_code overlaod.) Run the io_context object's event processing loop to execute at most one handler. ]
   ]
   
@@ -63779,7 +63880,7 @@ Typedef for backwards compatibility.
   [
     [[link boost_asio.reference.io_context.use_service [*use_service]]]
     [
-
+     [hr]
      Obtain the service object corresponding to the given type. ]
   ]
   
@@ -63939,11 +64040,11 @@ Implements version-independent IP addresses.
   [
     [[link boost_asio.reference.ip__address.address [*address]]]
     [Default constructor. 
-
+     [hr]
      Construct an address from an IPv4 address. 
-
+     [hr]
      Construct an address from an IPv6 address. 
-
+     [hr]
      Copy constructor. ]
   ]
   
@@ -63980,16 +64081,16 @@ Implements version-independent IP addresses.
   [
     [[link boost_asio.reference.ip__address.operator_eq_ [*operator=]]]
     [Assign from another address. 
-
+     [hr]
      Assign from an IPv4 address. 
-
+     [hr]
      Assign from an IPv6 address. ]
   ]
   
   [
     [[link boost_asio.reference.ip__address.to_string [*to_string]]]
     [Get the address as a string. 
-
+     [hr]
      (Deprecated: Use other overload.) Get the address as a string. ]
   ]
   
@@ -64814,11 +64915,11 @@ Implements IP version 4 style addresses.
   [
     [[link boost_asio.reference.ip__address_v4.address_v4 [*address_v4]]]
     [Default constructor. 
-
+     [hr]
      Construct an address from raw bytes. 
-
+     [hr]
      Construct an address from an unsigned integer in host byte order. 
-
+     [hr]
      Copy constructor. ]
   ]
   
@@ -64830,7 +64931,7 @@ Implements IP version 4 style addresses.
   [
     [[link boost_asio.reference.ip__address_v4.broadcast [*broadcast]]]
     [Obtain an address object that represents the broadcast address. 
-
+     [hr]
      (Deprecated: Use network_v4 class.) Obtain an address object that represents the broadcast address that corresponds to the specified address and netmask. ]
   ]
   
@@ -64892,7 +64993,7 @@ Implements IP version 4 style addresses.
   [
     [[link boost_asio.reference.ip__address_v4.to_string [*to_string]]]
     [Get the address as a string in dotted decimal format. 
-
+     [hr]
      (Deprecated: Use other overload.) Get the address as a string in dotted decimal format. ]
   ]
   
@@ -66072,9 +66173,9 @@ Implements IP version 6 style addresses.
   [
     [[link boost_asio.reference.ip__address_v6.address_v6 [*address_v6]]]
     [Default constructor. 
-
+     [hr]
      Construct an address from raw bytes and scope ID. 
-
+     [hr]
      Copy constructor. ]
   ]
   
@@ -66171,7 +66272,7 @@ Implements IP version 6 style addresses.
   [
     [[link boost_asio.reference.ip__address_v6.to_string [*to_string]]]
     [Get the address as a string. 
-
+     [hr]
      (Deprecated: Use other overload.) Get the address as a string. ]
   ]
   
@@ -67450,7 +67551,7 @@ An input iterator that can be used for traversing IPv4 addresses.
   [
     [[link boost_asio.reference.ip__basic_address_iterator_lt__address_v4__gt_.basic_address_iterator [*basic_address_iterator]]]
     [Construct an iterator that points to the specified address. 
-
+     [hr]
      Copy constructor. ]
   ]
   
@@ -67462,14 +67563,14 @@ An input iterator that can be used for traversing IPv4 addresses.
   [
     [[link boost_asio.reference.ip__basic_address_iterator_lt__address_v4__gt_.operator_plus__plus_ [*operator++]]]
     [Pre-increment operator. 
-
+     [hr]
      Post-increment operator. ]
   ]
   
   [
     [[link boost_asio.reference.ip__basic_address_iterator_lt__address_v4__gt_.operator_minus__minus_ [*operator--]]]
     [Pre-decrement operator. 
-
+     [hr]
      Post-decrement operator. ]
   ]
   
@@ -67851,11 +67952,11 @@ The type of a reference to an element pointed to by the iterator.
   [
     [[link boost_asio.reference.ip__address_v4.address_v4 [*address_v4]]]
     [Default constructor. 
-
+     [hr]
      Construct an address from raw bytes. 
-
+     [hr]
      Construct an address from an unsigned integer in host byte order. 
-
+     [hr]
      Copy constructor. ]
   ]
   
@@ -67867,7 +67968,7 @@ The type of a reference to an element pointed to by the iterator.
   [
     [[link boost_asio.reference.ip__address_v4.broadcast [*broadcast]]]
     [Obtain an address object that represents the broadcast address. 
-
+     [hr]
      (Deprecated: Use network_v4 class.) Obtain an address object that represents the broadcast address that corresponds to the specified address and netmask. ]
   ]
   
@@ -67929,7 +68030,7 @@ The type of a reference to an element pointed to by the iterator.
   [
     [[link boost_asio.reference.ip__address_v4.to_string [*to_string]]]
     [Get the address as a string in dotted decimal format. 
-
+     [hr]
      (Deprecated: Use other overload.) Get the address as a string in dotted decimal format. ]
   ]
   
@@ -68071,11 +68172,11 @@ The type of the elements pointed to by the iterator.
   [
     [[link boost_asio.reference.ip__address_v4.address_v4 [*address_v4]]]
     [Default constructor. 
-
+     [hr]
      Construct an address from raw bytes. 
-
+     [hr]
      Construct an address from an unsigned integer in host byte order. 
-
+     [hr]
      Copy constructor. ]
   ]
   
@@ -68087,7 +68188,7 @@ The type of the elements pointed to by the iterator.
   [
     [[link boost_asio.reference.ip__address_v4.broadcast [*broadcast]]]
     [Obtain an address object that represents the broadcast address. 
-
+     [hr]
      (Deprecated: Use network_v4 class.) Obtain an address object that represents the broadcast address that corresponds to the specified address and netmask. ]
   ]
   
@@ -68149,7 +68250,7 @@ The type of the elements pointed to by the iterator.
   [
     [[link boost_asio.reference.ip__address_v4.to_string [*to_string]]]
     [Get the address as a string in dotted decimal format. 
-
+     [hr]
      (Deprecated: Use other overload.) Get the address as a string in dotted decimal format. ]
   ]
   
@@ -68315,7 +68416,7 @@ An input iterator that can be used for traversing IPv6 addresses.
   [
     [[link boost_asio.reference.ip__basic_address_iterator_lt__address_v6__gt_.basic_address_iterator [*basic_address_iterator]]]
     [Construct an iterator that points to the specified address. 
-
+     [hr]
      Copy constructor. ]
   ]
   
@@ -68327,14 +68428,14 @@ An input iterator that can be used for traversing IPv6 addresses.
   [
     [[link boost_asio.reference.ip__basic_address_iterator_lt__address_v6__gt_.operator_plus__plus_ [*operator++]]]
     [Pre-increment operator. 
-
+     [hr]
      Post-increment operator. ]
   ]
   
   [
     [[link boost_asio.reference.ip__basic_address_iterator_lt__address_v6__gt_.operator_minus__minus_ [*operator--]]]
     [Pre-decrement operator. 
-
+     [hr]
      Post-decrement operator. ]
   ]
   
@@ -68709,9 +68810,9 @@ The type of a reference to an element pointed to by the iterator.
   [
     [[link boost_asio.reference.ip__address_v6.address_v6 [*address_v6]]]
     [Default constructor. 
-
+     [hr]
      Construct an address from raw bytes and scope ID. 
-
+     [hr]
      Copy constructor. ]
   ]
   
@@ -68808,7 +68909,7 @@ The type of a reference to an element pointed to by the iterator.
   [
     [[link boost_asio.reference.ip__address_v6.to_string [*to_string]]]
     [Get the address as a string. 
-
+     [hr]
      (Deprecated: Use other overload.) Get the address as a string. ]
   ]
   
@@ -68946,9 +69047,9 @@ The type of the elements pointed to by the iterator.
   [
     [[link boost_asio.reference.ip__address_v6.address_v6 [*address_v6]]]
     [Default constructor. 
-
+     [hr]
      Construct an address from raw bytes and scope ID. 
-
+     [hr]
      Copy constructor. ]
   ]
   
@@ -69045,7 +69146,7 @@ The type of the elements pointed to by the iterator.
   [
     [[link boost_asio.reference.ip__address_v6.to_string [*to_string]]]
     [Get the address as a string. 
-
+     [hr]
      (Deprecated: Use other overload.) Get the address as a string. ]
   ]
   
@@ -69186,9 +69287,9 @@ Represents a range of IPv4 addresses.
   [
     [[link boost_asio.reference.ip__basic_address_range_lt__address_v4__gt_.basic_address_range [*basic_address_range]]]
     [Construct an empty range. 
-
+     [hr]
      Construct an range that represents the given range of addresses. 
-
+     [hr]
      Copy constructor. ]
   ]
   
@@ -69452,9 +69553,9 @@ Represents a range of IPv6 addresses.
   [
     [[link boost_asio.reference.ip__basic_address_range_lt__address_v6__gt_.basic_address_range [*basic_address_range]]]
     [Construct an empty range. 
-
+     [hr]
      Construct an range that represents the given range of addresses. 
-
+     [hr]
      Copy constructor. ]
   ]
   
@@ -69707,20 +69808,20 @@ Describes an endpoint for a version-independent IP socket.
   [
     [[link boost_asio.reference.ip__basic_endpoint.address [*address]]]
     [Get the IP address associated with the endpoint. 
-
+     [hr]
      Set the IP address associated with the endpoint. ]
   ]
   
   [
     [[link boost_asio.reference.ip__basic_endpoint.basic_endpoint [*basic_endpoint]]]
     [Default constructor. 
-
+     [hr]
      Construct an endpoint using a port number, specified in the host's byte order. The IP address will be the any address (i.e. INADDR_ANY or in6addr_any). This constructor would typically be used for accepting new connections. 
-
+     [hr]
      Construct an endpoint using a port number and an IP address. This constructor may be used for accepting connections on a specific interface or for making a connection to a remote endpoint. 
-
+     [hr]
      Copy constructor. 
-
+     [hr]
      Move constructor. ]
   ]
   
@@ -69737,14 +69838,14 @@ Describes an endpoint for a version-independent IP socket.
   [
     [[link boost_asio.reference.ip__basic_endpoint.operator_eq_ [*operator=]]]
     [Assign from another endpoint. 
-
+     [hr]
      Move-assign from another endpoint. ]
   ]
   
   [
     [[link boost_asio.reference.ip__basic_endpoint.port [*port]]]
     [Get the port associated with the endpoint. The port number is always in the host's byte order. 
-
+     [hr]
      Set the port associated with the endpoint. The port number is always in the host's byte order. ]
   ]
   
@@ -70500,17 +70601,17 @@ Provides endpoint resolution functionality.
 
   [
     [[link boost_asio.reference.ip__basic_resolver.async_resolve [*async_resolve]]]
-    [(Deprecated.) Asynchronously perform forward resolution of a query to a list of entries. 
-
+    [(Deprecated: Use overload with separate host and service parameters.) Asynchronously perform forward resolution of a query to a list of entries. 
+     [hr]
      Asynchronously perform forward resolution of a query to a list of entries. 
-
+     [hr]
      Asynchronously perform reverse resolution of an endpoint to a list of entries. ]
   ]
   
   [
     [[link boost_asio.reference.ip__basic_resolver.basic_resolver [*basic_resolver]]]
     [Constructor. 
-
+     [hr]
      Move-construct a basic_resolver from another. ]
   ]
   
@@ -70541,10 +70642,10 @@ Provides endpoint resolution functionality.
   
   [
     [[link boost_asio.reference.ip__basic_resolver.resolve [*resolve]]]
-    [(Deprecated.) Perform forward resolution of a query to a list of entries. 
-
+    [(Deprecated: Use overload with separate host and service parameters.) Perform forward resolution of a query to a list of entries. 
+     [hr]
      Perform forward resolution of a query to a list of entries. 
-
+     [hr]
      Perform reverse resolution of an endpoint to a list of entries. ]
   ]
   
@@ -70650,7 +70751,7 @@ If used with v4\_mapped, return all matching IPv6 and IPv4 addresses.
 [section:async_resolve ip::basic_resolver::async_resolve]
 
 [indexterm2 boost_asio.indexterm.ip__basic_resolver.async_resolve..async_resolve..ip::basic_resolver] 
-(Deprecated.) Asynchronously perform forward resolution of a query to a list of entries. 
+(Deprecated: Use overload with separate host and service parameters.) Asynchronously perform forward resolution of a query to a list of entries. 
 
 
   template<
@@ -70715,7 +70816,7 @@ Asynchronously perform reverse resolution of an endpoint to a list of entries.
 [section:overload1 ip::basic_resolver::async_resolve (1 of 6 overloads)]
 
 
-(Deprecated.) Asynchronously perform forward resolution of a query to a list of entries. 
+(Deprecated: Use overload with separate host and service parameters.) Asynchronously perform forward resolution of a query to a list of entries. 
 
 
   template<
@@ -71368,9 +71469,9 @@ A reference to the [link boost_asio.reference.io_context `io_context`] object th
   [
     [[link boost_asio.reference.ip__basic_resolver_iterator.basic_resolver_iterator [*basic_resolver_iterator]]]
     [Default constructor creates an end iterator. 
-
+     [hr]
      Copy constructor. 
-
+     [hr]
      Move constructor. ]
   ]
   
@@ -71382,7 +71483,7 @@ A reference to the [link boost_asio.reference.io_context `io_context`] object th
   [
     [[link boost_asio.reference.ip__basic_resolver_iterator.operator_plus__plus_ [*operator++]]]
     [Increment operator (prefix). 
-
+     [hr]
      Increment operator (postfix). ]
   ]
   
@@ -71394,7 +71495,7 @@ A reference to the [link boost_asio.reference.io_context `io_context`] object th
   [
     [[link boost_asio.reference.ip__basic_resolver_iterator.operator_eq_ [*operator=]]]
     [Assignment operator. 
-
+     [hr]
      Move-assignment operator. ]
   ]
   
@@ -71625,11 +71726,11 @@ The protocol type.
   [
     [[link boost_asio.reference.ip__basic_resolver_query.basic_resolver_query [*basic_resolver_query]]]
     [Construct with specified service name for any protocol. 
-
+     [hr]
      Construct with specified service name for a given protocol. 
-
+     [hr]
      Construct with specified host name and service name for any protocol. 
-
+     [hr]
      Construct with specified host name and service name for a given protocol. ]
   ]
   
@@ -71716,7 +71817,7 @@ The [link boost_asio.reference.ip__basic_resolver_query `ip::basic_resolver_quer
 [section:resolve ip::basic_resolver::resolve]
 
 [indexterm2 boost_asio.indexterm.ip__basic_resolver.resolve..resolve..ip::basic_resolver] 
-(Deprecated.) Perform forward resolution of a query to a list of entries. 
+(Deprecated: Use overload with separate host and service parameters.) Perform forward resolution of a query to a list of entries. 
 
 
   results_type ``[link boost_asio.reference.ip__basic_resolver.resolve.overload1 resolve]``(
@@ -71801,7 +71902,7 @@ Perform reverse resolution of an endpoint to a list of entries.
 [section:overload1 ip::basic_resolver::resolve (1 of 12 overloads)]
 
 
-(Deprecated.) Perform forward resolution of a query to a list of entries. 
+(Deprecated: Use overload with separate host and service parameters.) Perform forward resolution of a query to a list of entries. 
 
 
   results_type resolve(
@@ -71845,7 +71946,7 @@ A range object representing the list of endpoint entries. A successful call to t
 [section:overload2 ip::basic_resolver::resolve (2 of 12 overloads)]
 
 
-(Deprecated.) Perform forward resolution of a query to a list of entries. 
+(Deprecated: Use overload with separate host and service parameters.) Perform forward resolution of a query to a list of entries. 
 
 
   results_type resolve(
@@ -72473,9 +72574,9 @@ The results type.
   [
     [[link boost_asio.reference.ip__basic_resolver_results.basic_resolver_results [*basic_resolver_results]]]
     [Default constructor creates an empty range. 
-
+     [hr]
      Copy constructor. 
-
+     [hr]
      Move constructor. ]
   ]
   
@@ -72517,7 +72618,7 @@ The results type.
   [
     [[link boost_asio.reference.ip__basic_resolver_results.operator_plus__plus_ [*operator++]]]
     [Increment operator (prefix). 
-
+     [hr]
      Increment operator (postfix). ]
   ]
   
@@ -72529,7 +72630,7 @@ The results type.
   [
     [[link boost_asio.reference.ip__basic_resolver_results.operator_eq_ [*operator=]]]
     [Assignment operator. 
-
+     [hr]
      Move-assignment operator. ]
   ]
   
@@ -72706,7 +72807,7 @@ An entry produced by a resolver.
   [
     [[link boost_asio.reference.ip__basic_resolver_entry.basic_resolver_entry [*basic_resolver_entry]]]
     [Default constructor. 
-
+     [hr]
      Construct with specified endpoint, host name and service name. ]
   ]
   
@@ -73029,9 +73130,9 @@ An iterator over the entries produced by a resolver.
   [
     [[link boost_asio.reference.ip__basic_resolver_iterator.basic_resolver_iterator [*basic_resolver_iterator]]]
     [Default constructor creates an end iterator. 
-
+     [hr]
      Copy constructor. 
-
+     [hr]
      Move constructor. ]
   ]
   
@@ -73043,7 +73144,7 @@ An iterator over the entries produced by a resolver.
   [
     [[link boost_asio.reference.ip__basic_resolver_iterator.operator_plus__plus_ [*operator++]]]
     [Increment operator (prefix). 
-
+     [hr]
      Increment operator (postfix). ]
   ]
   
@@ -73055,7 +73156,7 @@ An iterator over the entries produced by a resolver.
   [
     [[link boost_asio.reference.ip__basic_resolver_iterator.operator_eq_ [*operator=]]]
     [Assignment operator. 
-
+     [hr]
      Move-assignment operator. ]
   ]
   
@@ -73528,7 +73629,7 @@ The type of the result of applying `operator*()` to the iterator.
   [
     [[link boost_asio.reference.ip__basic_resolver_entry.basic_resolver_entry [*basic_resolver_entry]]]
     [Default constructor. 
-
+     [hr]
      Construct with specified endpoint, host name and service name. ]
   ]
   
@@ -73613,7 +73714,7 @@ The type of the value pointed to by the iterator.
   [
     [[link boost_asio.reference.ip__basic_resolver_entry.basic_resolver_entry [*basic_resolver_entry]]]
     [Default constructor. 
-
+     [hr]
      Construct with specified endpoint, host name and service name. ]
   ]
   
@@ -73715,11 +73816,11 @@ An query to be passed to a resolver.
   [
     [[link boost_asio.reference.ip__basic_resolver_query.basic_resolver_query [*basic_resolver_query]]]
     [Construct with specified service name for any protocol. 
-
+     [hr]
      Construct with specified service name for a given protocol. 
-
+     [hr]
      Construct with specified host name and service name for any protocol. 
-
+     [hr]
      Construct with specified host name and service name for a given protocol. ]
   ]
   
@@ -74313,9 +74414,9 @@ A range of entries produced by a resolver.
   [
     [[link boost_asio.reference.ip__basic_resolver_results.basic_resolver_results [*basic_resolver_results]]]
     [Default constructor creates an empty range. 
-
+     [hr]
      Copy constructor. 
-
+     [hr]
      Move constructor. ]
   ]
   
@@ -74357,7 +74458,7 @@ A range of entries produced by a resolver.
   [
     [[link boost_asio.reference.ip__basic_resolver_results.operator_plus__plus_ [*operator++]]]
     [Increment operator (prefix). 
-
+     [hr]
      Increment operator (postfix). ]
   ]
   
@@ -74369,7 +74470,7 @@ A range of entries produced by a resolver.
   [
     [[link boost_asio.reference.ip__basic_resolver_results.operator_eq_ [*operator=]]]
     [Assignment operator. 
-
+     [hr]
      Move-assignment operator. ]
   ]
   
@@ -74638,9 +74739,9 @@ The type of an iterator into the range.
   [
     [[link boost_asio.reference.ip__basic_resolver_iterator.basic_resolver_iterator [*basic_resolver_iterator]]]
     [Default constructor creates an end iterator. 
-
+     [hr]
      Copy constructor. 
-
+     [hr]
      Move constructor. ]
   ]
   
@@ -74652,7 +74753,7 @@ The type of an iterator into the range.
   [
     [[link boost_asio.reference.ip__basic_resolver_iterator.operator_plus__plus_ [*operator++]]]
     [Increment operator (prefix). 
-
+     [hr]
      Increment operator (postfix). ]
   ]
   
@@ -74664,7 +74765,7 @@ The type of an iterator into the range.
   [
     [[link boost_asio.reference.ip__basic_resolver_iterator.operator_eq_ [*operator=]]]
     [Assignment operator. 
-
+     [hr]
      Move-assignment operator. ]
   ]
   
@@ -74789,7 +74890,7 @@ The type of a const reference to a value in the range.
   [
     [[link boost_asio.reference.ip__basic_resolver_entry.basic_resolver_entry [*basic_resolver_entry]]]
     [Default constructor. 
-
+     [hr]
      Construct with specified endpoint, host name and service name. ]
   ]
   
@@ -75026,9 +75127,9 @@ The type of an iterator into the range.
   [
     [[link boost_asio.reference.ip__basic_resolver_iterator.basic_resolver_iterator [*basic_resolver_iterator]]]
     [Default constructor creates an end iterator. 
-
+     [hr]
      Copy constructor. 
-
+     [hr]
      Move constructor. ]
   ]
   
@@ -75040,7 +75141,7 @@ The type of an iterator into the range.
   [
     [[link boost_asio.reference.ip__basic_resolver_iterator.operator_plus__plus_ [*operator++]]]
     [Increment operator (prefix). 
-
+     [hr]
      Increment operator (postfix). ]
   ]
   
@@ -75052,7 +75153,7 @@ The type of an iterator into the range.
   [
     [[link boost_asio.reference.ip__basic_resolver_iterator.operator_eq_ [*operator=]]]
     [Assignment operator. 
-
+     [hr]
      Move-assignment operator. ]
   ]
   
@@ -75528,7 +75629,7 @@ The type of a non-const reference to a value in the range.
   [
     [[link boost_asio.reference.ip__basic_resolver_entry.basic_resolver_entry [*basic_resolver_entry]]]
     [Default constructor. 
-
+     [hr]
      Construct with specified endpoint, host name and service name. ]
   ]
   
@@ -75663,7 +75764,7 @@ The type of a value in the results range.
   [
     [[link boost_asio.reference.ip__basic_resolver_entry.basic_resolver_entry [*basic_resolver_entry]]]
     [Default constructor. 
-
+     [hr]
      Construct with specified endpoint, host name and service name. ]
   ]
   
@@ -75734,7 +75835,6 @@ The [link boost_asio.reference.ip__basic_resolver_entry `ip::basic_resolver_entr
 [indexterm1 boost_asio.indexterm.ip__host_name..ip::host_name] 
 Get the current host name. 
 
-    
   std::string ``[link boost_asio.reference.ip__host_name.overload1 host_name]``();
   ``  [''''&raquo;''' [link boost_asio.reference.ip__host_name.overload1 more...]]``
 
@@ -75917,20 +76017,20 @@ The type of a ICMP endpoint.
   [
     [[link boost_asio.reference.ip__basic_endpoint.address [*address]]]
     [Get the IP address associated with the endpoint. 
-
+     [hr]
      Set the IP address associated with the endpoint. ]
   ]
   
   [
     [[link boost_asio.reference.ip__basic_endpoint.basic_endpoint [*basic_endpoint]]]
     [Default constructor. 
-
+     [hr]
      Construct an endpoint using a port number, specified in the host's byte order. The IP address will be the any address (i.e. INADDR_ANY or in6addr_any). This constructor would typically be used for accepting new connections. 
-
+     [hr]
      Construct an endpoint using a port number and an IP address. This constructor may be used for accepting connections on a specific interface or for making a connection to a remote endpoint. 
-
+     [hr]
      Copy constructor. 
-
+     [hr]
      Move constructor. ]
   ]
   
@@ -75947,14 +76047,14 @@ The type of a ICMP endpoint.
   [
     [[link boost_asio.reference.ip__basic_endpoint.operator_eq_ [*operator=]]]
     [Assign from another endpoint. 
-
+     [hr]
      Move-assign from another endpoint. ]
   ]
   
   [
     [[link boost_asio.reference.ip__basic_endpoint.port [*port]]]
     [Get the port associated with the endpoint. The port number is always in the host's byte order. 
-
+     [hr]
      Set the port associated with the endpoint. The port number is always in the host's byte order. ]
   ]
   
@@ -76188,17 +76288,17 @@ The ICMP resolver type.
 
   [
     [[link boost_asio.reference.ip__basic_resolver.async_resolve [*async_resolve]]]
-    [(Deprecated.) Asynchronously perform forward resolution of a query to a list of entries. 
-
+    [(Deprecated: Use overload with separate host and service parameters.) Asynchronously perform forward resolution of a query to a list of entries. 
+     [hr]
      Asynchronously perform forward resolution of a query to a list of entries. 
-
+     [hr]
      Asynchronously perform reverse resolution of an endpoint to a list of entries. ]
   ]
   
   [
     [[link boost_asio.reference.ip__basic_resolver.basic_resolver [*basic_resolver]]]
     [Constructor. 
-
+     [hr]
      Move-construct a basic_resolver from another. ]
   ]
   
@@ -76229,10 +76329,10 @@ The ICMP resolver type.
   
   [
     [[link boost_asio.reference.ip__basic_resolver.resolve [*resolve]]]
-    [(Deprecated.) Perform forward resolution of a query to a list of entries. 
-
+    [(Deprecated: Use overload with separate host and service parameters.) Perform forward resolution of a query to a list of entries. 
+     [hr]
      Perform forward resolution of a query to a list of entries. 
-
+     [hr]
      Perform reverse resolution of an endpoint to a list of entries. ]
   ]
   
@@ -76521,15 +76621,15 @@ The ICMP socket type.
   [
     [[link boost_asio.reference.basic_raw_socket.basic_raw_socket [*basic_raw_socket]]]
     [Construct a basic_raw_socket without opening it. 
-
+     [hr]
      Construct and open a basic_raw_socket. 
-
+     [hr]
      Construct a basic_raw_socket, opening it and binding it to the given local endpoint. 
-
+     [hr]
      Construct a basic_raw_socket on an existing native socket. 
-
+     [hr]
      Move-construct a basic_raw_socket from another. 
-
+     [hr]
      Move-construct a basic_raw_socket from a socket of another protocol type. ]
   ]
   
@@ -76591,7 +76691,7 @@ The ICMP socket type.
   [
     [[link boost_asio.reference.basic_raw_socket.lowest_layer [*lowest_layer]]]
     [Get a reference to the lowest layer. 
-
+     [hr]
      Get a const reference to the lowest layer. ]
   ]
   
@@ -76603,14 +76703,14 @@ The ICMP socket type.
   [
     [[link boost_asio.reference.basic_raw_socket.native_non_blocking [*native_non_blocking]]]
     [Gets the non-blocking mode of the native socket implementation. 
-
+     [hr]
      Sets the non-blocking mode of the native socket implementation. ]
   ]
   
   [
     [[link boost_asio.reference.basic_raw_socket.non_blocking [*non_blocking]]]
     [Gets the non-blocking mode of the socket. 
-
+     [hr]
      Sets the non-blocking mode of the socket. ]
   ]
   
@@ -76622,7 +76722,7 @@ The ICMP socket type.
   [
     [[link boost_asio.reference.basic_raw_socket.operator_eq_ [*operator=]]]
     [Move-assign a basic_raw_socket from another. 
-
+     [hr]
      Move-assign a basic_raw_socket from a socket of another protocol type. ]
   ]
   
@@ -77062,11 +77162,11 @@ Represents an IPv4 network.
   [
     [[link boost_asio.reference.ip__network_v4.network_v4 [*network_v4]]]
     [Default constructor. 
-
+     [hr]
      Construct a network based on the specified address and prefix length. 
-
+     [hr]
      Construct network based on the specified address and netmask. 
-
+     [hr]
      Copy constructor. ]
   ]
   
@@ -77636,9 +77736,9 @@ Represents an IPv6 network.
   [
     [[link boost_asio.reference.ip__network_v6.network_v6 [*network_v6]]]
     [Default constructor. 
-
+     [hr]
      Construct a network based on the specified address and prefix length. 
-
+     [hr]
      Copy constructor. ]
   ]
   
@@ -78851,7 +78951,7 @@ The TCP acceptor type.
   [
     [[link boost_asio.reference.basic_socket_acceptor.accept [*accept]]]
     [Accept a new connection. 
-
+     [hr]
      Accept a new connection and obtain the endpoint of the peer. ]
   ]
   
@@ -78873,15 +78973,15 @@ The TCP acceptor type.
   [
     [[link boost_asio.reference.basic_socket_acceptor.basic_socket_acceptor [*basic_socket_acceptor]]]
     [Construct an acceptor without opening it. 
-
+     [hr]
      Construct an open acceptor. 
-
+     [hr]
      Construct an acceptor opened on the given endpoint. 
-
+     [hr]
      Construct a basic_socket_acceptor on an existing native acceptor. 
-
+     [hr]
      Move-construct a basic_socket_acceptor from another. 
-
+     [hr]
      Move-construct a basic_socket_acceptor from an acceptor of another protocol type. ]
   ]
   
@@ -78948,14 +79048,14 @@ The TCP acceptor type.
   [
     [[link boost_asio.reference.basic_socket_acceptor.native_non_blocking [*native_non_blocking]]]
     [Gets the non-blocking mode of the native acceptor implementation. 
-
+     [hr]
      Sets the non-blocking mode of the native acceptor implementation. ]
   ]
   
   [
     [[link boost_asio.reference.basic_socket_acceptor.non_blocking [*non_blocking]]]
     [Gets the non-blocking mode of the acceptor. 
-
+     [hr]
      Sets the non-blocking mode of the acceptor. ]
   ]
   
@@ -78967,7 +79067,7 @@ The TCP acceptor type.
   [
     [[link boost_asio.reference.basic_socket_acceptor.operator_eq_ [*operator=]]]
     [Move-assign a basic_socket_acceptor from another. 
-
+     [hr]
      Move-assign a basic_socket_acceptor from an acceptor of another protocol type. ]
   ]
   
@@ -79103,20 +79203,20 @@ The type of a TCP endpoint.
   [
     [[link boost_asio.reference.ip__basic_endpoint.address [*address]]]
     [Get the IP address associated with the endpoint. 
-
+     [hr]
      Set the IP address associated with the endpoint. ]
   ]
   
   [
     [[link boost_asio.reference.ip__basic_endpoint.basic_endpoint [*basic_endpoint]]]
     [Default constructor. 
-
+     [hr]
      Construct an endpoint using a port number, specified in the host's byte order. The IP address will be the any address (i.e. INADDR_ANY or in6addr_any). This constructor would typically be used for accepting new connections. 
-
+     [hr]
      Construct an endpoint using a port number and an IP address. This constructor may be used for accepting connections on a specific interface or for making a connection to a remote endpoint. 
-
+     [hr]
      Copy constructor. 
-
+     [hr]
      Move constructor. ]
   ]
   
@@ -79133,14 +79233,14 @@ The type of a TCP endpoint.
   [
     [[link boost_asio.reference.ip__basic_endpoint.operator_eq_ [*operator=]]]
     [Assign from another endpoint. 
-
+     [hr]
      Move-assign from another endpoint. ]
   ]
   
   [
     [[link boost_asio.reference.ip__basic_endpoint.port [*port]]]
     [Get the port associated with the endpoint. The port number is always in the host's byte order. 
-
+     [hr]
      Set the port associated with the endpoint. The port number is always in the host's byte order. ]
   ]
   
@@ -79317,11 +79417,11 @@ The TCP iostream type.
   [
     [[link boost_asio.reference.basic_socket_iostream.basic_socket_iostream [*basic_socket_iostream]]]
     [Construct a basic_socket_iostream without establishing a connection. 
-
+     [hr]
      Construct a basic_socket_iostream from the supplied socket. 
-
+     [hr]
      Move-construct a basic_socket_iostream from another. 
-
+     [hr]
      Establish a connection to an endpoint corresponding to a resolver query. ]
   ]
   
@@ -79348,14 +79448,14 @@ The TCP iostream type.
   [
     [[link boost_asio.reference.basic_socket_iostream.expires_at [*expires_at]]]
     [(Deprecated: Use expiry().) Get the stream's expiry time as an absolute time. 
-
+     [hr]
      Set the stream's expiry time as an absolute time. ]
   ]
   
   [
     [[link boost_asio.reference.basic_socket_iostream.expires_from_now [*expires_from_now]]]
     [(Deprecated: Use expiry().) Get the stream's expiry time relative to now. 
-
+     [hr]
      (Deprecated: Use expires_after().) Set the stream's expiry time relative to now. ]
   ]
   
@@ -79572,17 +79672,17 @@ The TCP resolver type.
 
   [
     [[link boost_asio.reference.ip__basic_resolver.async_resolve [*async_resolve]]]
-    [(Deprecated.) Asynchronously perform forward resolution of a query to a list of entries. 
-
+    [(Deprecated: Use overload with separate host and service parameters.) Asynchronously perform forward resolution of a query to a list of entries. 
+     [hr]
      Asynchronously perform forward resolution of a query to a list of entries. 
-
+     [hr]
      Asynchronously perform reverse resolution of an endpoint to a list of entries. ]
   ]
   
   [
     [[link boost_asio.reference.ip__basic_resolver.basic_resolver [*basic_resolver]]]
     [Constructor. 
-
+     [hr]
      Move-construct a basic_resolver from another. ]
   ]
   
@@ -79613,10 +79713,10 @@ The TCP resolver type.
   
   [
     [[link boost_asio.reference.ip__basic_resolver.resolve [*resolve]]]
-    [(Deprecated.) Perform forward resolution of a query to a list of entries. 
-
+    [(Deprecated: Use overload with separate host and service parameters.) Perform forward resolution of a query to a list of entries. 
+     [hr]
      Perform forward resolution of a query to a list of entries. 
-
+     [hr]
      Perform reverse resolution of an endpoint to a list of entries. ]
   ]
   
@@ -79905,15 +80005,15 @@ The TCP socket type.
   [
     [[link boost_asio.reference.basic_stream_socket.basic_stream_socket [*basic_stream_socket]]]
     [Construct a basic_stream_socket without opening it. 
-
+     [hr]
      Construct and open a basic_stream_socket. 
-
+     [hr]
      Construct a basic_stream_socket, opening it and binding it to the given local endpoint. 
-
+     [hr]
      Construct a basic_stream_socket on an existing native socket. 
-
+     [hr]
      Move-construct a basic_stream_socket from another. 
-
+     [hr]
      Move-construct a basic_stream_socket from a socket of another protocol type. ]
   ]
   
@@ -79975,7 +80075,7 @@ The TCP socket type.
   [
     [[link boost_asio.reference.basic_stream_socket.lowest_layer [*lowest_layer]]]
     [Get a reference to the lowest layer. 
-
+     [hr]
      Get a const reference to the lowest layer. ]
   ]
   
@@ -79987,14 +80087,14 @@ The TCP socket type.
   [
     [[link boost_asio.reference.basic_stream_socket.native_non_blocking [*native_non_blocking]]]
     [Gets the non-blocking mode of the native socket implementation. 
-
+     [hr]
      Sets the non-blocking mode of the native socket implementation. ]
   ]
   
   [
     [[link boost_asio.reference.basic_stream_socket.non_blocking [*non_blocking]]]
     [Gets the non-blocking mode of the socket. 
-
+     [hr]
      Sets the non-blocking mode of the socket. ]
   ]
   
@@ -80006,7 +80106,7 @@ The TCP socket type.
   [
     [[link boost_asio.reference.basic_stream_socket.operator_eq_ [*operator=]]]
     [Move-assign a basic_stream_socket from another. 
-
+     [hr]
      Move-assign a basic_stream_socket from a socket of another protocol type. ]
   ]
   
@@ -80018,7 +80118,7 @@ The TCP socket type.
   [
     [[link boost_asio.reference.basic_stream_socket.receive [*receive]]]
     [Receive some data on the socket. 
-
+     [hr]
      Receive some data on a connected socket. ]
   ]
   
@@ -80306,20 +80406,20 @@ The type of a UDP endpoint.
   [
     [[link boost_asio.reference.ip__basic_endpoint.address [*address]]]
     [Get the IP address associated with the endpoint. 
-
+     [hr]
      Set the IP address associated with the endpoint. ]
   ]
   
   [
     [[link boost_asio.reference.ip__basic_endpoint.basic_endpoint [*basic_endpoint]]]
     [Default constructor. 
-
+     [hr]
      Construct an endpoint using a port number, specified in the host's byte order. The IP address will be the any address (i.e. INADDR_ANY or in6addr_any). This constructor would typically be used for accepting new connections. 
-
+     [hr]
      Construct an endpoint using a port number and an IP address. This constructor may be used for accepting connections on a specific interface or for making a connection to a remote endpoint. 
-
+     [hr]
      Copy constructor. 
-
+     [hr]
      Move constructor. ]
   ]
   
@@ -80336,14 +80436,14 @@ The type of a UDP endpoint.
   [
     [[link boost_asio.reference.ip__basic_endpoint.operator_eq_ [*operator=]]]
     [Assign from another endpoint. 
-
+     [hr]
      Move-assign from another endpoint. ]
   ]
   
   [
     [[link boost_asio.reference.ip__basic_endpoint.port [*port]]]
     [Get the port associated with the endpoint. The port number is always in the host's byte order. 
-
+     [hr]
      Set the port associated with the endpoint. The port number is always in the host's byte order. ]
   ]
   
@@ -80577,17 +80677,17 @@ The UDP resolver type.
 
   [
     [[link boost_asio.reference.ip__basic_resolver.async_resolve [*async_resolve]]]
-    [(Deprecated.) Asynchronously perform forward resolution of a query to a list of entries. 
-
+    [(Deprecated: Use overload with separate host and service parameters.) Asynchronously perform forward resolution of a query to a list of entries. 
+     [hr]
      Asynchronously perform forward resolution of a query to a list of entries. 
-
+     [hr]
      Asynchronously perform reverse resolution of an endpoint to a list of entries. ]
   ]
   
   [
     [[link boost_asio.reference.ip__basic_resolver.basic_resolver [*basic_resolver]]]
     [Constructor. 
-
+     [hr]
      Move-construct a basic_resolver from another. ]
   ]
   
@@ -80618,10 +80718,10 @@ The UDP resolver type.
   
   [
     [[link boost_asio.reference.ip__basic_resolver.resolve [*resolve]]]
-    [(Deprecated.) Perform forward resolution of a query to a list of entries. 
-
+    [(Deprecated: Use overload with separate host and service parameters.) Perform forward resolution of a query to a list of entries. 
+     [hr]
      Perform forward resolution of a query to a list of entries. 
-
+     [hr]
      Perform reverse resolution of an endpoint to a list of entries. ]
   ]
   
@@ -80910,15 +81010,15 @@ The UDP socket type.
   [
     [[link boost_asio.reference.basic_datagram_socket.basic_datagram_socket [*basic_datagram_socket]]]
     [Construct a basic_datagram_socket without opening it. 
-
+     [hr]
      Construct and open a basic_datagram_socket. 
-
+     [hr]
      Construct a basic_datagram_socket, opening it and binding it to the given local endpoint. 
-
+     [hr]
      Construct a basic_datagram_socket on an existing native socket. 
-
+     [hr]
      Move-construct a basic_datagram_socket from another. 
-
+     [hr]
      Move-construct a basic_datagram_socket from a socket of another protocol type. ]
   ]
   
@@ -80980,7 +81080,7 @@ The UDP socket type.
   [
     [[link boost_asio.reference.basic_datagram_socket.lowest_layer [*lowest_layer]]]
     [Get a reference to the lowest layer. 
-
+     [hr]
      Get a const reference to the lowest layer. ]
   ]
   
@@ -80992,14 +81092,14 @@ The UDP socket type.
   [
     [[link boost_asio.reference.basic_datagram_socket.native_non_blocking [*native_non_blocking]]]
     [Gets the non-blocking mode of the native socket implementation. 
-
+     [hr]
      Sets the non-blocking mode of the native socket implementation. ]
   ]
   
   [
     [[link boost_asio.reference.basic_datagram_socket.non_blocking [*non_blocking]]]
     [Gets the non-blocking mode of the socket. 
-
+     [hr]
      Sets the non-blocking mode of the socket. ]
   ]
   
@@ -81011,7 +81111,7 @@ The UDP socket type.
   [
     [[link boost_asio.reference.basic_datagram_socket.operator_eq_ [*operator=]]]
     [Move-assign a basic_datagram_socket from another. 
-
+     [hr]
      Move-assign a basic_datagram_socket from a socket of another protocol type. ]
   ]
   
@@ -81604,9 +81704,9 @@ Describes an endpoint for a UNIX socket.
   [
     [[link boost_asio.reference.local__basic_endpoint.basic_endpoint [*basic_endpoint]]]
     [Default constructor. 
-
+     [hr]
      Construct an endpoint using the specified path name. 
-
+     [hr]
      Copy constructor. ]
   ]
   
@@ -81628,7 +81728,7 @@ Describes an endpoint for a UNIX socket.
   [
     [[link boost_asio.reference.local__basic_endpoint.path [*path]]]
     [Get the path associated with the endpoint. 
-
+     [hr]
      Set the path associated with the endpoint. ]
   ]
   
@@ -82204,7 +82304,6 @@ Get the underlying size of the endpoint in the native type.
 [indexterm1 boost_asio.indexterm.local__connect_pair..local::connect_pair] 
 Create a pair of connected sockets. 
 
-    
   template<
       typename ``[link boost_asio.reference.Protocol Protocol]``>
   void ``[link boost_asio.reference.local__connect_pair.overload1 connect_pair]``(
@@ -82370,9 +82469,9 @@ The type of a UNIX domain endpoint.
   [
     [[link boost_asio.reference.local__basic_endpoint.basic_endpoint [*basic_endpoint]]]
     [Default constructor. 
-
+     [hr]
      Construct an endpoint using the specified path name. 
-
+     [hr]
      Copy constructor. ]
   ]
   
@@ -82394,7 +82493,7 @@ The type of a UNIX domain endpoint.
   [
     [[link boost_asio.reference.local__basic_endpoint.path [*path]]]
     [Get the path associated with the endpoint. 
-
+     [hr]
      Set the path associated with the endpoint. ]
   ]
   
@@ -82728,15 +82827,15 @@ The UNIX domain socket type.
   [
     [[link boost_asio.reference.basic_datagram_socket.basic_datagram_socket [*basic_datagram_socket]]]
     [Construct a basic_datagram_socket without opening it. 
-
+     [hr]
      Construct and open a basic_datagram_socket. 
-
+     [hr]
      Construct a basic_datagram_socket, opening it and binding it to the given local endpoint. 
-
+     [hr]
      Construct a basic_datagram_socket on an existing native socket. 
-
+     [hr]
      Move-construct a basic_datagram_socket from another. 
-
+     [hr]
      Move-construct a basic_datagram_socket from a socket of another protocol type. ]
   ]
   
@@ -82798,7 +82897,7 @@ The UNIX domain socket type.
   [
     [[link boost_asio.reference.basic_datagram_socket.lowest_layer [*lowest_layer]]]
     [Get a reference to the lowest layer. 
-
+     [hr]
      Get a const reference to the lowest layer. ]
   ]
   
@@ -82810,14 +82909,14 @@ The UNIX domain socket type.
   [
     [[link boost_asio.reference.basic_datagram_socket.native_non_blocking [*native_non_blocking]]]
     [Gets the non-blocking mode of the native socket implementation. 
-
+     [hr]
      Sets the non-blocking mode of the native socket implementation. ]
   ]
   
   [
     [[link boost_asio.reference.basic_datagram_socket.non_blocking [*non_blocking]]]
     [Gets the non-blocking mode of the socket. 
-
+     [hr]
      Sets the non-blocking mode of the socket. ]
   ]
   
@@ -82829,7 +82928,7 @@ The UNIX domain socket type.
   [
     [[link boost_asio.reference.basic_datagram_socket.operator_eq_ [*operator=]]]
     [Move-assign a basic_datagram_socket from another. 
-
+     [hr]
      Move-assign a basic_datagram_socket from a socket of another protocol type. ]
   ]
   
@@ -83205,7 +83304,7 @@ The UNIX domain acceptor type.
   [
     [[link boost_asio.reference.basic_socket_acceptor.accept [*accept]]]
     [Accept a new connection. 
-
+     [hr]
      Accept a new connection and obtain the endpoint of the peer. ]
   ]
   
@@ -83227,15 +83326,15 @@ The UNIX domain acceptor type.
   [
     [[link boost_asio.reference.basic_socket_acceptor.basic_socket_acceptor [*basic_socket_acceptor]]]
     [Construct an acceptor without opening it. 
-
+     [hr]
      Construct an open acceptor. 
-
+     [hr]
      Construct an acceptor opened on the given endpoint. 
-
+     [hr]
      Construct a basic_socket_acceptor on an existing native acceptor. 
-
+     [hr]
      Move-construct a basic_socket_acceptor from another. 
-
+     [hr]
      Move-construct a basic_socket_acceptor from an acceptor of another protocol type. ]
   ]
   
@@ -83302,14 +83401,14 @@ The UNIX domain acceptor type.
   [
     [[link boost_asio.reference.basic_socket_acceptor.native_non_blocking [*native_non_blocking]]]
     [Gets the non-blocking mode of the native acceptor implementation. 
-
+     [hr]
      Sets the non-blocking mode of the native acceptor implementation. ]
   ]
   
   [
     [[link boost_asio.reference.basic_socket_acceptor.non_blocking [*non_blocking]]]
     [Gets the non-blocking mode of the acceptor. 
-
+     [hr]
      Sets the non-blocking mode of the acceptor. ]
   ]
   
@@ -83321,7 +83420,7 @@ The UNIX domain acceptor type.
   [
     [[link boost_asio.reference.basic_socket_acceptor.operator_eq_ [*operator=]]]
     [Move-assign a basic_socket_acceptor from another. 
-
+     [hr]
      Move-assign a basic_socket_acceptor from an acceptor of another protocol type. ]
   ]
   
@@ -83457,9 +83556,9 @@ The type of a UNIX domain endpoint.
   [
     [[link boost_asio.reference.local__basic_endpoint.basic_endpoint [*basic_endpoint]]]
     [Default constructor. 
-
+     [hr]
      Construct an endpoint using the specified path name. 
-
+     [hr]
      Copy constructor. ]
   ]
   
@@ -83481,7 +83580,7 @@ The type of a UNIX domain endpoint.
   [
     [[link boost_asio.reference.local__basic_endpoint.path [*path]]]
     [Get the path associated with the endpoint. 
-
+     [hr]
      Set the path associated with the endpoint. ]
   ]
   
@@ -83658,11 +83757,11 @@ The UNIX domain iostream type.
   [
     [[link boost_asio.reference.basic_socket_iostream.basic_socket_iostream [*basic_socket_iostream]]]
     [Construct a basic_socket_iostream without establishing a connection. 
-
+     [hr]
      Construct a basic_socket_iostream from the supplied socket. 
-
+     [hr]
      Move-construct a basic_socket_iostream from another. 
-
+     [hr]
      Establish a connection to an endpoint corresponding to a resolver query. ]
   ]
   
@@ -83689,14 +83788,14 @@ The UNIX domain iostream type.
   [
     [[link boost_asio.reference.basic_socket_iostream.expires_at [*expires_at]]]
     [(Deprecated: Use expiry().) Get the stream's expiry time as an absolute time. 
-
+     [hr]
      Set the stream's expiry time as an absolute time. ]
   ]
   
   [
     [[link boost_asio.reference.basic_socket_iostream.expires_from_now [*expires_from_now]]]
     [(Deprecated: Use expiry().) Get the stream's expiry time relative to now. 
-
+     [hr]
      (Deprecated: Use expires_after().) Set the stream's expiry time relative to now. ]
   ]
   
@@ -83962,15 +84061,15 @@ The UNIX domain socket type.
   [
     [[link boost_asio.reference.basic_stream_socket.basic_stream_socket [*basic_stream_socket]]]
     [Construct a basic_stream_socket without opening it. 
-
+     [hr]
      Construct and open a basic_stream_socket. 
-
+     [hr]
      Construct a basic_stream_socket, opening it and binding it to the given local endpoint. 
-
+     [hr]
      Construct a basic_stream_socket on an existing native socket. 
-
+     [hr]
      Move-construct a basic_stream_socket from another. 
-
+     [hr]
      Move-construct a basic_stream_socket from a socket of another protocol type. ]
   ]
   
@@ -84032,7 +84131,7 @@ The UNIX domain socket type.
   [
     [[link boost_asio.reference.basic_stream_socket.lowest_layer [*lowest_layer]]]
     [Get a reference to the lowest layer. 
-
+     [hr]
      Get a const reference to the lowest layer. ]
   ]
   
@@ -84044,14 +84143,14 @@ The UNIX domain socket type.
   [
     [[link boost_asio.reference.basic_stream_socket.native_non_blocking [*native_non_blocking]]]
     [Gets the non-blocking mode of the native socket implementation. 
-
+     [hr]
      Sets the non-blocking mode of the native socket implementation. ]
   ]
   
   [
     [[link boost_asio.reference.basic_stream_socket.non_blocking [*non_blocking]]]
     [Gets the non-blocking mode of the socket. 
-
+     [hr]
      Sets the non-blocking mode of the socket. ]
   ]
   
@@ -84063,7 +84162,7 @@ The UNIX domain socket type.
   [
     [[link boost_asio.reference.basic_stream_socket.operator_eq_ [*operator=]]]
     [Move-assign a basic_stream_socket from another. 
-
+     [hr]
      Move-assign a basic_stream_socket from a socket of another protocol type. ]
   ]
   
@@ -84075,7 +84174,7 @@ The UNIX domain socket type.
   [
     [[link boost_asio.reference.basic_stream_socket.receive [*receive]]]
     [Receive some data on the socket. 
-
+     [hr]
      Receive some data on a connected socket. ]
   ]
   
@@ -84202,7 +84301,6 @@ Obtain an identifier for the type of the protocol.
 [indexterm1 boost_asio.indexterm.make_work_guard..make_work_guard] 
 Create an [link boost_asio.reference.executor_work_guard `executor_work_guard`]  object. 
 
-    
   template<
       typename ``[link boost_asio.reference.Executor1 Executor]``>
   executor_work_guard< Executor > ``[link boost_asio.reference.make_work_guard.overload1 make_work_guard]``(
@@ -84365,7 +84463,7 @@ Holds a buffer that can be modified.
   [
     [[link boost_asio.reference.mutable_buffer.mutable_buffer [*mutable_buffer]]]
     [Construct an empty buffer. 
-
+     [hr]
      Construct a buffer to represent a given memory range. ]
   ]
   
@@ -84616,7 +84714,7 @@ Get the size of the memory range.
   [
     [[link boost_asio.reference.mutable_buffers_1.mutable_buffers_1 [*mutable_buffers_1]]]
     [Construct to represent a given memory range. 
-
+     [hr]
      Construct to represent a single modifiable buffer. ]
   ]
   
@@ -84880,7 +84978,7 @@ The type for each element in the list of buffers.
   [
     [[link boost_asio.reference.mutable_buffer.mutable_buffer [*mutable_buffer]]]
     [Construct an empty buffer. 
-
+     [hr]
      Construct a buffer to represent a given memory range. ]
   ]
   
@@ -85063,7 +85161,7 @@ The type for each element in the list of buffers.
   [
     [[link boost_asio.reference.mutable_buffer.mutable_buffer [*mutable_buffer]]]
     [Construct an empty buffer. 
-
+     [hr]
      Construct a buffer to represent a given memory range. ]
   ]
   
@@ -85322,9 +85420,9 @@ Provides POSIX descriptor functionality.
   [
     [[link boost_asio.reference.posix__descriptor.descriptor [*descriptor]]]
     [Construct a descriptor without opening it. 
-
+     [hr]
      Construct a descriptor on an existing native descriptor. 
-
+     [hr]
      Move-construct a descriptor from another. ]
   ]
   
@@ -85356,7 +85454,7 @@ Provides POSIX descriptor functionality.
   [
     [[link boost_asio.reference.posix__descriptor.lowest_layer [*lowest_layer]]]
     [Get a reference to the lowest layer. 
-
+     [hr]
      Get a const reference to the lowest layer. ]
   ]
   
@@ -85368,14 +85466,14 @@ Provides POSIX descriptor functionality.
   [
     [[link boost_asio.reference.posix__descriptor.native_non_blocking [*native_non_blocking]]]
     [Gets the non-blocking mode of the native descriptor implementation. 
-
+     [hr]
      Sets the non-blocking mode of the native descriptor implementation. ]
   ]
   
   [
     [[link boost_asio.reference.posix__descriptor.non_blocking [*non_blocking]]]
     [Gets the non-blocking mode of the descriptor. 
-
+     [hr]
      Sets the non-blocking mode of the descriptor. ]
   ]
   
@@ -86279,9 +86377,9 @@ A descriptor is always the lowest layer.
   [
     [[link boost_asio.reference.posix__descriptor.descriptor [*descriptor]]]
     [Construct a descriptor without opening it. 
-
+     [hr]
      Construct a descriptor on an existing native descriptor. 
-
+     [hr]
      Move-construct a descriptor from another. ]
   ]
   
@@ -86313,7 +86411,7 @@ A descriptor is always the lowest layer.
   [
     [[link boost_asio.reference.posix__descriptor.lowest_layer [*lowest_layer]]]
     [Get a reference to the lowest layer. 
-
+     [hr]
      Get a const reference to the lowest layer. ]
   ]
   
@@ -86325,14 +86423,14 @@ A descriptor is always the lowest layer.
   [
     [[link boost_asio.reference.posix__descriptor.native_non_blocking [*native_non_blocking]]]
     [Gets the non-blocking mode of the native descriptor implementation. 
-
+     [hr]
      Sets the non-blocking mode of the native descriptor implementation. ]
   ]
   
   [
     [[link boost_asio.reference.posix__descriptor.non_blocking [*non_blocking]]]
     [Gets the non-blocking mode of the descriptor. 
-
+     [hr]
      Sets the non-blocking mode of the descriptor. ]
   ]
   
@@ -87143,7 +87241,7 @@ Provides stream-oriented descriptor functionality.
   [
     [[link boost_asio.reference.posix__stream_descriptor.lowest_layer [*lowest_layer]]]
     [Get a reference to the lowest layer. 
-
+     [hr]
      Get a const reference to the lowest layer. ]
   ]
   
@@ -87155,14 +87253,14 @@ Provides stream-oriented descriptor functionality.
   [
     [[link boost_asio.reference.posix__stream_descriptor.native_non_blocking [*native_non_blocking]]]
     [Gets the non-blocking mode of the native descriptor implementation. 
-
+     [hr]
      Sets the non-blocking mode of the native descriptor implementation. ]
   ]
   
   [
     [[link boost_asio.reference.posix__stream_descriptor.non_blocking [*non_blocking]]]
     [Gets the non-blocking mode of the descriptor. 
-
+     [hr]
      Sets the non-blocking mode of the descriptor. ]
   ]
   
@@ -87184,9 +87282,9 @@ Provides stream-oriented descriptor functionality.
   [
     [[link boost_asio.reference.posix__stream_descriptor.stream_descriptor [*stream_descriptor]]]
     [Construct a stream_descriptor without opening it. 
-
+     [hr]
      Construct a stream_descriptor on an existing native descriptor. 
-
+     [hr]
      Move-construct a stream_descriptor from another. ]
   ]
   
@@ -88109,9 +88207,9 @@ A descriptor is always the lowest layer.
   [
     [[link boost_asio.reference.posix__descriptor.descriptor [*descriptor]]]
     [Construct a descriptor without opening it. 
-
+     [hr]
      Construct a descriptor on an existing native descriptor. 
-
+     [hr]
      Move-construct a descriptor from another. ]
   ]
   
@@ -88143,7 +88241,7 @@ A descriptor is always the lowest layer.
   [
     [[link boost_asio.reference.posix__descriptor.lowest_layer [*lowest_layer]]]
     [Get a reference to the lowest layer. 
-
+     [hr]
      Get a const reference to the lowest layer. ]
   ]
   
@@ -88155,14 +88253,14 @@ A descriptor is always the lowest layer.
   [
     [[link boost_asio.reference.posix__descriptor.native_non_blocking [*native_non_blocking]]]
     [Gets the non-blocking mode of the native descriptor implementation. 
-
+     [hr]
      Sets the non-blocking mode of the native descriptor implementation. ]
   ]
   
   [
     [[link boost_asio.reference.posix__descriptor.non_blocking [*non_blocking]]]
     [Gets the non-blocking mode of the descriptor. 
-
+     [hr]
      Sets the non-blocking mode of the descriptor. ]
   ]
   
@@ -89128,7 +89226,6 @@ The write\_some operation may not transmit all of the data to the peer. Consider
 [indexterm1 boost_asio.indexterm.post..post] 
 Submits a completion token or function object for execution. 
 
-    
   template<
       typename CompletionToken>
   ``[link boost_asio.reference.asynchronous_operations.automatic_deduction_of_initiating_function_return_type ['DEDUCED]]`` ``[link boost_asio.reference.post.overload1 post]``(
@@ -89282,9 +89379,11 @@ Submits a completion token or function object for execution.
 [section:read read]
 
 [indexterm1 boost_asio.indexterm.read..read] 
+The `read` function is a composed operation that reads a certain amount of data from a stream before returning. 
+
+
 Attempt to read a certain amount of data from a stream before returning. 
 
-      
   template<
       typename ``[link boost_asio.reference.SyncReadStream SyncReadStream]``,
       typename ``[link boost_asio.reference.MutableBufferSequence MutableBufferSequence]``>
@@ -90267,9 +90366,11 @@ The number of bytes read. If an error occurs, returns the total number of bytes 
 [section:read_at read_at]
 
 [indexterm1 boost_asio.indexterm.read_at..read_at] 
+The `read_at` function is a composed operation that reads a certain amount of data at the specified offset before returning. 
+
+
 Attempt to read a certain amount of data at the specified offset before returning. 
 
-      
   template<
       typename ``[link boost_asio.reference.SyncRandomAccessReadDevice SyncRandomAccessReadDevice]``,
       typename ``[link boost_asio.reference.MutableBufferSequence MutableBufferSequence]``>
@@ -90949,9 +91050,11 @@ The number of bytes read. If an error occurs, returns the total number of bytes 
 [section:read_until read_until]
 
 [indexterm1 boost_asio.indexterm.read_until..read_until] 
-Read data into a dynamic buffer sequence, or into a streambuf, until it contains a delimiter, matches a regular expression, or a function object indicates a match. 
+The `read_until` function is a composed operation that reads data into a dynamic buffer sequence, or into a streambuf, until it contains a delimiter, matches a regular expression, or a function object indicates a match. 
 
-      
+
+Read data into a dynamic buffer sequence until it contains a specified delimiter. 
+
   template<
       typename ``[link boost_asio.reference.SyncReadStream SyncReadStream]``,
       typename ``[link boost_asio.reference.DynamicBuffer DynamicBuffer]``>
@@ -90990,6 +91093,8 @@ Read data into a dynamic buffer sequence, or into a streambuf, until it contains
       boost::system::error_code & ec);
   ``  [''''&raquo;''' [link boost_asio.reference.read_until.overload4 more...]]``
 
+Read data into a dynamic buffer sequence until some part of the data it contains matches a regular expression. 
+
   template<
       typename ``[link boost_asio.reference.SyncReadStream SyncReadStream]``,
       typename ``[link boost_asio.reference.DynamicBuffer DynamicBuffer]``>
@@ -91008,6 +91113,8 @@ Read data into a dynamic buffer sequence, or into a streambuf, until it contains
       const boost::regex & expr,
       boost::system::error_code & ec);
   ``  [''''&raquo;''' [link boost_asio.reference.read_until.overload6 more...]]``
+
+Read data into a dynamic buffer sequence until a function object indicates a match. 
 
   template<
       typename ``[link boost_asio.reference.SyncReadStream SyncReadStream]``,
@@ -91031,6 +91138,8 @@ Read data into a dynamic buffer sequence, or into a streambuf, until it contains
       boost::system::error_code & ec,
       typename enable_if< is_match_condition< MatchCondition >::value >::type *  = 0);
   ``  [''''&raquo;''' [link boost_asio.reference.read_until.overload8 more...]]``
+
+Read data into a streambuf until it contains a specified delimiter. 
 
   template<
       typename ``[link boost_asio.reference.SyncReadStream SyncReadStream]``,
@@ -91070,6 +91179,8 @@ Read data into a dynamic buffer sequence, or into a streambuf, until it contains
       boost::system::error_code & ec);
   ``  [''''&raquo;''' [link boost_asio.reference.read_until.overload12 more...]]``
 
+Read data into a streambuf until some part of the data it contains matches a regular expression. 
+
   template<
       typename ``[link boost_asio.reference.SyncReadStream SyncReadStream]``,
       typename Allocator>
@@ -91088,6 +91199,8 @@ Read data into a dynamic buffer sequence, or into a streambuf, until it contains
       const boost::regex & expr,
       boost::system::error_code & ec);
   ``  [''''&raquo;''' [link boost_asio.reference.read_until.overload14 more...]]``
+
+Read data into a streambuf until a function object indicates a match. 
 
   template<
       typename ``[link boost_asio.reference.SyncReadStream SyncReadStream]``,
@@ -92554,7 +92667,7 @@ Provides serial port functionality.
   [
     [[link boost_asio.reference.serial_port.lowest_layer [*lowest_layer]]]
     [Get a reference to the lowest layer. 
-
+     [hr]
      Get a const reference to the lowest layer. ]
   ]
   
@@ -92586,11 +92699,11 @@ Provides serial port functionality.
   [
     [[link boost_asio.reference.serial_port.serial_port [*serial_port]]]
     [Construct a serial_port without opening it. 
-
+     [hr]
      Construct and open a serial_port. 
-
+     [hr]
      Construct a serial_port on an existing native serial port. 
-
+     [hr]
      Move-construct a serial_port from another. ]
   ]
   
@@ -93342,7 +93455,7 @@ A basic\_serial\_port is always the lowest layer.
   [
     [[link boost_asio.reference.serial_port.lowest_layer [*lowest_layer]]]
     [Get a reference to the lowest layer. 
-
+     [hr]
      Get a const reference to the lowest layer. ]
   ]
   
@@ -93374,11 +93487,11 @@ A basic\_serial\_port is always the lowest layer.
   [
     [[link boost_asio.reference.serial_port.serial_port [*serial_port]]]
     [Construct a serial_port without opening it. 
-
+     [hr]
      Construct and open a serial_port. 
-
+     [hr]
      Construct a serial_port on an existing native serial port. 
-
+     [hr]
      Move-construct a serial_port from another. ]
   ]
   
@@ -95069,11 +95182,11 @@ Provides signal functionality.
   [
     [[link boost_asio.reference.signal_set.signal_set [*signal_set]]]
     [Construct a signal set without adding any signals. 
-
+     [hr]
      Construct a signal set and add one signal. 
-
+     [hr]
      Construct a signal set and add two signals. 
-
+     [hr]
      Construct a signal set and add three signals. ]
   ]
   
@@ -96969,7 +97082,9 @@ Protected destructor to prevent deletion through this type.
 [indexterm1 boost_asio.indexterm.spawn..spawn] 
 Start a new stackful coroutine. 
 
-      
+
+Start a new stackful coroutine, calling the specified handler when it completes. 
+
   template<
       typename Function>
   void ``[link boost_asio.reference.spawn.overload1 spawn]``(
@@ -96987,6 +97102,8 @@ Start a new stackful coroutine.
       typename enable_if<!is_executor< typename decay< Handler >::type >::value &&!is_convertible< Handler &, execution_context & >::value >::type *  = 0);
   ``  [''''&raquo;''' [link boost_asio.reference.spawn.overload2 more...]]``
 
+Start a new stackful coroutine, inheriting the execution context of another. 
+
   template<
       typename ``[link boost_asio.reference.Handler Handler]``,
       typename Function>
@@ -96995,6 +97112,8 @@ Start a new stackful coroutine.
       Function && function,
       const boost::coroutines::attributes & attributes = boost::coroutines::attributes());
   ``  [''''&raquo;''' [link boost_asio.reference.spawn.overload3 more...]]``
+
+Start a new stackful coroutine that executes on a given executor. 
 
   template<
       typename Function,
@@ -97006,6 +97125,8 @@ Start a new stackful coroutine.
       typename enable_if< is_executor< Executor >::value >::type *  = 0);
   ``  [''''&raquo;''' [link boost_asio.reference.spawn.overload4 more...]]``
 
+Start a new stackful coroutine that executes on a given strand. 
+
   template<
       typename Function,
       typename ``[link boost_asio.reference.Executor1 Executor]``>
@@ -97015,6 +97136,8 @@ Start a new stackful coroutine.
       const boost::coroutines::attributes & attributes = boost::coroutines::attributes());
   ``  [''''&raquo;''' [link boost_asio.reference.spawn.overload5 more...]]``
 
+Start a new stackful coroutine that executes in the context of a strand. 
+
   template<
       typename Function>
   void ``[link boost_asio.reference.spawn.overload6 spawn]``(
@@ -97022,6 +97145,8 @@ Start a new stackful coroutine.
       Function && function,
       const boost::coroutines::attributes & attributes = boost::coroutines::attributes());
   ``  [''''&raquo;''' [link boost_asio.reference.spawn.overload6 more...]]``
+
+Start a new stackful coroutine that executes on a given execution context. 
 
   template<
       typename Function,
@@ -97441,7 +97566,7 @@ This function is used to launch a new coroutine.
   [
     [[link boost_asio.reference.ssl__context.context [*context]]]
     [Constructor. 
-
+     [hr]
      Move-construct a context from another. ]
   ]
   
@@ -97584,6 +97709,11 @@ This function is used to launch a new coroutine.
   [
     [[link boost_asio.reference.ssl__context.no_tlsv1_2 [*no_tlsv1_2]]]
     [Disable TLS v1.2. ]
+  ]
+
+  [
+    [[link boost_asio.reference.ssl__context.no_tlsv1_3 [*no_tlsv1_3]]]
+    [Disable TLS v1.3. ]
   ]
 
   [
@@ -98138,6 +98268,9 @@ Different methods supported by a context.
 [indexterm2 boost_asio.indexterm.ssl__context.method.tlsv12..tlsv12..ssl::context]
 [indexterm2 boost_asio.indexterm.ssl__context.method.tlsv12_client..tlsv12_client..ssl::context]
 [indexterm2 boost_asio.indexterm.ssl__context.method.tlsv12_server..tlsv12_server..ssl::context]
+[indexterm2 boost_asio.indexterm.ssl__context.method.tlsv13..tlsv13..ssl::context]
+[indexterm2 boost_asio.indexterm.ssl__context.method.tlsv13_client..tlsv13_client..ssl::context]
+[indexterm2 boost_asio.indexterm.ssl__context.method.tlsv13_server..tlsv13_server..ssl::context]
 [indexterm2 boost_asio.indexterm.ssl__context.method.tls..tls..ssl::context]
 [indexterm2 boost_asio.indexterm.ssl__context.method.tls_client..tls_client..ssl::context]
 [indexterm2 boost_asio.indexterm.ssl__context.method.tls_server..tls_server..ssl::context]
@@ -98233,6 +98366,21 @@ Different methods supported by a context.
   [
     [tlsv12_server]
     [TLS version 1.2 server. ]
+  ]
+
+  [
+    [tlsv13]
+    [Generic TLS version 1.3. ]
+  ]
+
+  [
+    [tlsv13_client]
+    [TLS version 1.3 client. ]
+  ]
+
+  [
+    [tlsv13_server]
+    [TLS version 1.3 server. ]
   ]
 
   [
@@ -98372,6 +98520,20 @@ Disable TLS v1.2.
 
 
   static const long no_tlsv1_2 = implementation_defined;
+
+
+
+[endsect]
+
+
+
+[section:no_tlsv1_3 ssl::context::no_tlsv1_3]
+
+[indexterm2 boost_asio.indexterm.ssl__context.no_tlsv1_3..no_tlsv1_3..ssl::context] 
+Disable TLS v1.3. 
+
+
+  static const long no_tlsv1_3 = implementation_defined;
 
 
 
@@ -100239,6 +100401,11 @@ The [link boost_asio.reference.ssl__context_base `ssl::context_base`] class is u
   ]
 
   [
+    [[link boost_asio.reference.ssl__context_base.no_tlsv1_3 [*no_tlsv1_3]]]
+    [Disable TLS v1.3. ]
+  ]
+
+  [
     [[link boost_asio.reference.ssl__context_base.single_dh_use [*single_dh_use]]]
     [Always create a new key when using tmp_dh parameters. ]
   ]
@@ -100324,6 +100491,9 @@ Different methods supported by a context.
 [indexterm2 boost_asio.indexterm.ssl__context_base.method.tlsv12..tlsv12..ssl::context_base]
 [indexterm2 boost_asio.indexterm.ssl__context_base.method.tlsv12_client..tlsv12_client..ssl::context_base]
 [indexterm2 boost_asio.indexterm.ssl__context_base.method.tlsv12_server..tlsv12_server..ssl::context_base]
+[indexterm2 boost_asio.indexterm.ssl__context_base.method.tlsv13..tlsv13..ssl::context_base]
+[indexterm2 boost_asio.indexterm.ssl__context_base.method.tlsv13_client..tlsv13_client..ssl::context_base]
+[indexterm2 boost_asio.indexterm.ssl__context_base.method.tlsv13_server..tlsv13_server..ssl::context_base]
 [indexterm2 boost_asio.indexterm.ssl__context_base.method.tls..tls..ssl::context_base]
 [indexterm2 boost_asio.indexterm.ssl__context_base.method.tls_client..tls_client..ssl::context_base]
 [indexterm2 boost_asio.indexterm.ssl__context_base.method.tls_server..tls_server..ssl::context_base]
@@ -100419,6 +100589,21 @@ Different methods supported by a context.
   [
     [tlsv12_server]
     [TLS version 1.2 server. ]
+  ]
+
+  [
+    [tlsv13]
+    [Generic TLS version 1.3. ]
+  ]
+
+  [
+    [tlsv13_client]
+    [TLS version 1.3 client. ]
+  ]
+
+  [
+    [tlsv13_server]
+    [TLS version 1.3 server. ]
   ]
 
   [
@@ -100521,6 +100706,20 @@ Disable TLS v1.2.
 
 
   static const long no_tlsv1_2 = implementation_defined;
+
+
+
+[endsect]
+
+
+
+[section:no_tlsv1_3 ssl::context_base::no_tlsv1_3]
+
+[indexterm2 boost_asio.indexterm.ssl__context_base.no_tlsv1_3..no_tlsv1_3..ssl::context_base] 
+Disable TLS v1.3. 
+
+
+  static const long no_tlsv1_3 = implementation_defined;
 
 
 
@@ -101252,7 +101451,7 @@ This function is used to asynchronously write one or more bytes of data to the s
 
 [heading Remarks]
       
-The async\_write\_some operation may not transmit all of the data to the peer. Consider using the [link boost_asio.reference.async_write `async_write`]  function if you need to ensure that all data is written before the blocking operation completes. 
+The async\_write\_some operation may not transmit all of the data to the peer. Consider using the [link boost_asio.reference.async_write `async_write`]  function if you need to ensure that all data is written before the asynchronous operation completes. 
 
 
 
@@ -102860,25 +103059,25 @@ Typedef for a timer based on the steady clock.
   [
     [[link boost_asio.reference.basic_waitable_timer.basic_waitable_timer [*basic_waitable_timer]]]
     [Constructor. 
-
+     [hr]
      Constructor to set a particular expiry time as an absolute time. 
-
+     [hr]
      Constructor to set a particular expiry time relative to now. 
-
+     [hr]
      Move-construct a basic_waitable_timer from another. ]
   ]
   
   [
     [[link boost_asio.reference.basic_waitable_timer.cancel [*cancel]]]
     [Cancel any asynchronous operations that are waiting on the timer. 
-
+     [hr]
      (Deprecated: Use non-error_code overload.) Cancel any asynchronous operations that are waiting on the timer. ]
   ]
   
   [
     [[link boost_asio.reference.basic_waitable_timer.cancel_one [*cancel_one]]]
     [Cancels one asynchronous operation that is waiting on the timer. 
-
+     [hr]
      (Deprecated: Use non-error_code overload.) Cancels one asynchronous operation that is waiting on the timer. ]
   ]
   
@@ -102890,16 +103089,16 @@ Typedef for a timer based on the steady clock.
   [
     [[link boost_asio.reference.basic_waitable_timer.expires_at [*expires_at]]]
     [(Deprecated: Use expiry().) Get the timer's expiry time as an absolute time. 
-
+     [hr]
      Set the timer's expiry time as an absolute time. 
-
+     [hr]
      (Deprecated: Use non-error_code overload.) Set the timer's expiry time as an absolute time. ]
   ]
   
   [
     [[link boost_asio.reference.basic_waitable_timer.expires_from_now [*expires_from_now]]]
     [(Deprecated: Use expiry().) Get the timer's expiry time relative to now. 
-
+     [hr]
      (Deprecated: Use expires_after().) Set the timer's expiry time relative to now. ]
   ]
   
@@ -103118,11 +103317,11 @@ Provides serialised function invocation for any executor type.
   [
     [[link boost_asio.reference.strand.operator_eq_ [*operator=]]]
     [Assignment operator. 
-
+     [hr]
      Converting assignment operator. 
-
+     [hr]
      Move assignment operator. 
-
+     [hr]
      Converting move assignment operator. ]
   ]
   
@@ -103139,15 +103338,15 @@ Provides serialised function invocation for any executor type.
   [
     [[link boost_asio.reference.strand.strand [*strand]]]
     [Default constructor. 
-
+     [hr]
      Construct a strand for the specified executor. 
-
+     [hr]
      Copy constructor. 
-
+     [hr]
      Converting constructor. 
-
+     [hr]
      Move constructor. 
-
+     [hr]
      Converting move constructor. ]
   ]
   
@@ -104931,25 +105130,25 @@ Typedef for a timer based on the system clock.
   [
     [[link boost_asio.reference.basic_waitable_timer.basic_waitable_timer [*basic_waitable_timer]]]
     [Constructor. 
-
+     [hr]
      Constructor to set a particular expiry time as an absolute time. 
-
+     [hr]
      Constructor to set a particular expiry time relative to now. 
-
+     [hr]
      Move-construct a basic_waitable_timer from another. ]
   ]
   
   [
     [[link boost_asio.reference.basic_waitable_timer.cancel [*cancel]]]
     [Cancel any asynchronous operations that are waiting on the timer. 
-
+     [hr]
      (Deprecated: Use non-error_code overload.) Cancel any asynchronous operations that are waiting on the timer. ]
   ]
   
   [
     [[link boost_asio.reference.basic_waitable_timer.cancel_one [*cancel_one]]]
     [Cancels one asynchronous operation that is waiting on the timer. 
-
+     [hr]
      (Deprecated: Use non-error_code overload.) Cancels one asynchronous operation that is waiting on the timer. ]
   ]
   
@@ -104961,16 +105160,16 @@ Typedef for a timer based on the system clock.
   [
     [[link boost_asio.reference.basic_waitable_timer.expires_at [*expires_at]]]
     [(Deprecated: Use expiry().) Get the timer's expiry time as an absolute time. 
-
+     [hr]
      Set the timer's expiry time as an absolute time. 
-
+     [hr]
      (Deprecated: Use non-error_code overload.) Set the timer's expiry time as an absolute time. ]
   ]
   
   [
     [[link boost_asio.reference.basic_waitable_timer.expires_from_now [*expires_from_now]]]
     [(Deprecated: Use expiry().) Get the timer's expiry time relative to now. 
-
+     [hr]
      (Deprecated: Use expires_after().) Set the timer's expiry time relative to now. ]
   ]
   
@@ -105185,7 +105384,7 @@ A simple fixed-size thread pool.
   [
     [[link boost_asio.reference.thread_pool.thread_pool [*thread_pool]]]
     [Constructs a pool with an automatically determined number of threads. 
-
+     [hr]
      Constructs a pool with a specified number of threads. ]
   ]
   
@@ -105245,7 +105444,7 @@ The thread pool class is an execution context where functions are permitted to r
   
 
 
-To submit functions to the [link boost_asio.reference.io_context `io_context`], use the [link boost_asio.reference.dispatch `dispatch`] , [link boost_asio.reference.post `post`]  or [link boost_asio.reference.defer `defer`]  free functions.
+To submit functions to the [link boost_asio.reference.thread_pool `thread_pool`], use the [link boost_asio.reference.dispatch `dispatch`] , [link boost_asio.reference.post `post`]  or [link boost_asio.reference.defer `defer`]  free functions.
 
 For example:
 
@@ -106538,7 +106737,7 @@ Class used to specify that an asynchronous operation should return a future.
   [
     [[link boost_asio.reference.use_future_t.use_future_t [*use_future_t]]]
     [Construct using default-constructed allocator. 
-
+     [hr]
      Construct using specified allocator. ]
   ]
   
@@ -106723,7 +106922,6 @@ Construct using specified allocator.
 [section:use_service use_service]
 
 [indexterm1 boost_asio.indexterm.use_service..use_service] 
-    
   template<
       typename ``[link boost_asio.reference.Service Service]``>
   Service & ``[link boost_asio.reference.use_service.overload1 use_service]``(
@@ -107014,7 +107212,7 @@ Provides object-oriented handle functionality.
   [
     [[link boost_asio.reference.windows__object_handle.lowest_layer [*lowest_layer]]]
     [Get a reference to the lowest layer. 
-
+     [hr]
      Get a const reference to the lowest layer. ]
   ]
   
@@ -107026,9 +107224,9 @@ Provides object-oriented handle functionality.
   [
     [[link boost_asio.reference.windows__object_handle.object_handle [*object_handle]]]
     [Construct an object_handle without opening it. 
-
+     [hr]
      Construct an object_handle on an existing native handle. 
-
+     [hr]
      Move-construct an object_handle from another. ]
   ]
   
@@ -107590,7 +107788,7 @@ An [link boost_asio.reference.windows__object_handle `windows::object_handle`] i
   [
     [[link boost_asio.reference.windows__object_handle.lowest_layer [*lowest_layer]]]
     [Get a reference to the lowest layer. 
-
+     [hr]
      Get a const reference to the lowest layer. ]
   ]
   
@@ -107602,9 +107800,9 @@ An [link boost_asio.reference.windows__object_handle `windows::object_handle`] i
   [
     [[link boost_asio.reference.windows__object_handle.object_handle [*object_handle]]]
     [Construct an object_handle without opening it. 
-
+     [hr]
      Construct an object_handle on an existing native handle. 
-
+     [hr]
      Move-construct an object_handle from another. ]
   ]
   
@@ -108000,7 +108198,7 @@ Provides Windows handle functionality for objects that support overlapped I/O.
   [
     [[link boost_asio.reference.windows__overlapped_handle.lowest_layer [*lowest_layer]]]
     [Get a reference to the lowest layer. 
-
+     [hr]
      Get a const reference to the lowest layer. ]
   ]
   
@@ -108017,9 +108215,9 @@ Provides Windows handle functionality for objects that support overlapped I/O.
   [
     [[link boost_asio.reference.windows__overlapped_handle.overlapped_handle [*overlapped_handle]]]
     [Construct an overlapped_handle without opening it. 
-
+     [hr]
      Construct an overlapped_handle on an existing native handle. 
-
+     [hr]
      Move-construct an overlapped_handle from another. ]
   ]
   
@@ -108540,7 +108738,7 @@ An [link boost_asio.reference.windows__overlapped_handle `windows::overlapped_ha
   [
     [[link boost_asio.reference.windows__overlapped_handle.lowest_layer [*lowest_layer]]]
     [Get a reference to the lowest layer. 
-
+     [hr]
      Get a const reference to the lowest layer. ]
   ]
   
@@ -108557,9 +108755,9 @@ An [link boost_asio.reference.windows__overlapped_handle `windows::overlapped_ha
   [
     [[link boost_asio.reference.windows__overlapped_handle.overlapped_handle [*overlapped_handle]]]
     [Construct an overlapped_handle without opening it. 
-
+     [hr]
      Construct an overlapped_handle on an existing native handle. 
-
+     [hr]
      Move-construct an overlapped_handle from another. ]
   ]
   
@@ -108849,7 +109047,7 @@ Wraps a handler to create an OVERLAPPED object for use with overlapped I/O.
   [
     [[link boost_asio.reference.windows__overlapped_ptr.overlapped_ptr [*overlapped_ptr]]]
     [Construct an empty overlapped_ptr. 
-
+     [hr]
      Construct an overlapped_ptr to contain the specified handler. ]
   ]
   
@@ -108861,7 +109059,7 @@ Wraps a handler to create an OVERLAPPED object for use with overlapped I/O.
   [
     [[link boost_asio.reference.windows__overlapped_ptr.reset [*reset]]]
     [Reset to empty. 
-
+     [hr]
      Reset to contain the specified handler, freeing any current OVERLAPPED object. ]
   ]
   
@@ -109175,7 +109373,7 @@ Provides random-access handle functionality.
   [
     [[link boost_asio.reference.windows__random_access_handle.lowest_layer [*lowest_layer]]]
     [Get a reference to the lowest layer. 
-
+     [hr]
      Get a const reference to the lowest layer. ]
   ]
   
@@ -109192,9 +109390,9 @@ Provides random-access handle functionality.
   [
     [[link boost_asio.reference.windows__random_access_handle.random_access_handle [*random_access_handle]]]
     [Construct a random_access_handle without opening it. 
-
+     [hr]
      Construct a random_access_handle on an existing native handle. 
-
+     [hr]
      Move-construct a random_access_handle from another. ]
   ]
   
@@ -109876,7 +110074,7 @@ An [link boost_asio.reference.windows__overlapped_handle `windows::overlapped_ha
   [
     [[link boost_asio.reference.windows__overlapped_handle.lowest_layer [*lowest_layer]]]
     [Get a reference to the lowest layer. 
-
+     [hr]
      Get a const reference to the lowest layer. ]
   ]
   
@@ -109893,9 +110091,9 @@ An [link boost_asio.reference.windows__overlapped_handle `windows::overlapped_ha
   [
     [[link boost_asio.reference.windows__overlapped_handle.overlapped_handle [*overlapped_handle]]]
     [Construct an overlapped_handle without opening it. 
-
+     [hr]
      Construct an overlapped_handle on an existing native handle. 
-
+     [hr]
      Move-construct an overlapped_handle from another. ]
   ]
   
@@ -110505,7 +110703,7 @@ Provides stream-oriented handle functionality.
   [
     [[link boost_asio.reference.windows__stream_handle.lowest_layer [*lowest_layer]]]
     [Get a reference to the lowest layer. 
-
+     [hr]
      Get a const reference to the lowest layer. ]
   ]
   
@@ -110527,9 +110725,9 @@ Provides stream-oriented handle functionality.
   [
     [[link boost_asio.reference.windows__stream_handle.stream_handle [*stream_handle]]]
     [Construct a stream_handle without opening it. 
-
+     [hr]
      Construct a stream_handle on an existing native handle. 
-
+     [hr]
      Move-construct a stream_handle from another. ]
   ]
   
@@ -111201,7 +111399,7 @@ An [link boost_asio.reference.windows__overlapped_handle `windows::overlapped_ha
   [
     [[link boost_asio.reference.windows__overlapped_handle.lowest_layer [*lowest_layer]]]
     [Get a reference to the lowest layer. 
-
+     [hr]
      Get a const reference to the lowest layer. ]
   ]
   
@@ -111218,9 +111416,9 @@ An [link boost_asio.reference.windows__overlapped_handle `windows::overlapped_ha
   [
     [[link boost_asio.reference.windows__overlapped_handle.overlapped_handle [*overlapped_handle]]]
     [Construct an overlapped_handle without opening it. 
-
+     [hr]
      Construct an overlapped_handle on an existing native handle. 
-
+     [hr]
      Move-construct an overlapped_handle from another. ]
   ]
   
@@ -111728,9 +111926,11 @@ The write\_some operation may not transmit all of the data to the peer. Consider
 [section:write write]
 
 [indexterm1 boost_asio.indexterm.write..write] 
-Write a certain amount of data to a stream before returning. 
+The `write` function is a composed operation that writes a certain amount of data to a stream before returning. 
 
-      
+
+Write all of the supplied data to a stream before returning. 
+
   template<
       typename ``[link boost_asio.reference.SyncWriteStream SyncWriteStream]``,
       typename ``[link boost_asio.reference.ConstBufferSequence ConstBufferSequence]``>
@@ -111749,6 +111949,8 @@ Write a certain amount of data to a stream before returning.
       boost::system::error_code & ec,
       typename enable_if< is_const_buffer_sequence< ConstBufferSequence >::value >::type *  = 0);
   ``  [''''&raquo;''' [link boost_asio.reference.write.overload2 more...]]``
+
+Write a certain amount of data to a stream before returning. 
 
   template<
       typename ``[link boost_asio.reference.SyncWriteStream SyncWriteStream]``,
@@ -111773,6 +111975,8 @@ Write a certain amount of data to a stream before returning.
       typename enable_if< is_const_buffer_sequence< ConstBufferSequence >::value >::type *  = 0);
   ``  [''''&raquo;''' [link boost_asio.reference.write.overload4 more...]]``
 
+Write all of the supplied data to a stream before returning. 
+
   template<
       typename ``[link boost_asio.reference.SyncWriteStream SyncWriteStream]``,
       typename ``[link boost_asio.reference.DynamicBuffer DynamicBuffer]``>
@@ -111791,6 +111995,8 @@ Write a certain amount of data to a stream before returning.
       boost::system::error_code & ec,
       typename enable_if< is_dynamic_buffer< typename decay< DynamicBuffer >::type >::value >::type *  = 0);
   ``  [''''&raquo;''' [link boost_asio.reference.write.overload6 more...]]``
+
+Write a certain amount of data to a stream before returning. 
 
   template<
       typename ``[link boost_asio.reference.SyncWriteStream SyncWriteStream]``,
@@ -111815,6 +112021,8 @@ Write a certain amount of data to a stream before returning.
       typename enable_if< is_dynamic_buffer< typename decay< DynamicBuffer >::type >::value >::type *  = 0);
   ``  [''''&raquo;''' [link boost_asio.reference.write.overload8 more...]]``
 
+Write all of the supplied data to a stream before returning. 
+
   template<
       typename ``[link boost_asio.reference.SyncWriteStream SyncWriteStream]``,
       typename Allocator>
@@ -111831,6 +112039,8 @@ Write a certain amount of data to a stream before returning.
       basic_streambuf< Allocator > & b,
       boost::system::error_code & ec);
   ``  [''''&raquo;''' [link boost_asio.reference.write.overload10 more...]]``
+
+Write a certain amount of data to a stream before returning. 
 
   template<
       typename ``[link boost_asio.reference.SyncWriteStream SyncWriteStream]``,
@@ -112713,9 +112923,11 @@ The number of bytes written. If an error occurs, returns the total number of byt
 [section:write_at write_at]
 
 [indexterm1 boost_asio.indexterm.write_at..write_at] 
-Write a certain amount of data at a specified offset before returning. 
+The `write_at` function is a composed operation that writes a certain amount of data at a specified offset before returning. 
 
-      
+
+Write all of the supplied data at the specified offset before returning. 
+
   template<
       typename ``[link boost_asio.reference.SyncRandomAccessWriteDevice SyncRandomAccessWriteDevice]``,
       typename ``[link boost_asio.reference.ConstBufferSequence ConstBufferSequence]``>
@@ -112734,6 +112946,8 @@ Write a certain amount of data at a specified offset before returning.
       const ConstBufferSequence & buffers,
       boost::system::error_code & ec);
   ``  [''''&raquo;''' [link boost_asio.reference.write_at.overload2 more...]]``
+
+Write a certain amount of data at a specified offset before returning. 
 
   template<
       typename ``[link boost_asio.reference.SyncRandomAccessWriteDevice SyncRandomAccessWriteDevice]``,
@@ -112758,6 +112972,8 @@ Write a certain amount of data at a specified offset before returning.
       boost::system::error_code & ec);
   ``  [''''&raquo;''' [link boost_asio.reference.write_at.overload4 more...]]``
 
+Write all of the supplied data at the specified offset before returning. 
+
   template<
       typename ``[link boost_asio.reference.SyncRandomAccessWriteDevice SyncRandomAccessWriteDevice]``,
       typename Allocator>
@@ -112776,6 +112992,8 @@ Write a certain amount of data at a specified offset before returning.
       basic_streambuf< Allocator > & b,
       boost::system::error_code & ec);
   ``  [''''&raquo;''' [link boost_asio.reference.write_at.overload6 more...]]``
+
+Write a certain amount of data at a specified offset before returning. 
 
   template<
       typename ``[link boost_asio.reference.SyncRandomAccessWriteDevice SyncRandomAccessWriteDevice]``,
@@ -113441,7 +113659,7 @@ Context object that represents the currently executing coroutine.
   [
     [[link boost_asio.reference.basic_yield_context.basic_yield_context [*basic_yield_context]]]
     [Construct a yield context to represent the specified coroutine. 
-
+     [hr]
      Construct a yield context from another yield context type. ]
   ]
   
