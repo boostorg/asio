@@ -8,7 +8,7 @@
 [section:coroutines_ts Coroutines TS Support (experimental)]
 
 (Note: "Experimental" means that this interface is provided to gather feedback
-and may change in subsequent Asio releases.)
+and may change in subsequent Boost.Asio releases.)
 
 Experimental support for the Coroutines TS is provided via the [link
 boost_asio.reference.experimental__co_spawn `experimental::co_spawn()`]
