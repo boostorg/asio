@@ -97,6 +97,13 @@ below shows the new Networking TS interfaces and the facilities they replace:
     []
   ]
   [
+    [[link boost_asio.reference.io_context.io_context `io_context`] constructor
+    `concurrency_hint` parameter is type `int`]
+    [[link boost_asio.reference.io_context.io_context `io_context`] constructor
+    `concurrency_hint` parameter is type `std::size_t`]
+    [The old constructor has not been retained as a deprecated overload.]
+  ]
+  [
     [[link boost_asio.reference.execution_context `execution_context`], [link
     boost_asio.reference.execution_context__service `execution_context::service`],
     and [link boost_asio.reference.execution_context__id `execution_context::id`]]

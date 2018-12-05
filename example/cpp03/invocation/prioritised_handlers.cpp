@@ -15,7 +15,7 @@
 
 using boost::asio::ip::tcp;
 
-class handler_priority_queue : boost::asio::execution_context
+class handler_priority_queue : public boost::asio::execution_context
 {
 public:
   void add(int priority, boost::function<void()> function)
