@@ -451,6 +451,15 @@ coroutines.
 * [@boost_asio/example/cpp11/spawn/echo_server.cpp]
 
 
+[heading SSL]
+
+Example client and server programs showing the use of the [link
+boost_asio.reference.ssl__stream ssl::stream<>] template with asynchronous operations.
+
+* [@boost_asio/example/cpp11/ssl/client.cpp]
+* [@boost_asio/example/cpp11/ssl/server.cpp]
+
+
 [heading Timeouts]
 
 A collection of examples showing how to cancel long running asynchronous
