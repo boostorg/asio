@@ -441,6 +441,15 @@ library that wants to perform the I/O operations itself.
 * [@boost_asio/example/cpp11/nonblocking/third_party_lib.cpp]
 
 
+[heading SOCKS 4]
+
+Example client program implementing the SOCKS 4 protocol for communication via
+a proxy.
+
+* [@boost_asio/example/cpp11/socks4/sync_client.cpp]
+* [@boost_asio/example/cpp11/socks4/socks4.hpp]
+
+
 [heading Spawn]
 
 Example of using the boost::asio::spawn() function, a wrapper around the
