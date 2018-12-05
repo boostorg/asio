@@ -34,6 +34,8 @@
   `io_context::executor_type::dispatch`.
 * Fixed a buffer overflow that could occur when parsing an address string with
   a 64-bit scope id.
+* Added examples showing how to write composed operations.
+* Added C++11 versions of the Timeouts, Timers, SOCKS4 and SSL examples.
 * Fixed minor issues in documentation and examples.
 
 [heading Asio 1.12.1 / Boost 1.67]
