@@ -237,17 +237,18 @@ engine::want engine::perform(int (engine::* op)(void*, std::size_t),
   int sys_error = static_cast<int>(::ERR_get_error());
   std::size_t pending_output_after = ::BIO_ctrl_pending(ext_bio_);
 
-  if (ssl_error == SSL_ERROR_SSL)
+  if (ssl_error == SSL_ERROR_SSL || ssl_error == SSL_ERROR_SYSCALL)
   {
-    ec = boost::system::error_code(sys_error,
+    if(sys_error == 0)
+    {
+      // remap success to a code that indicates failure
+      ec = boost::asio::ssl::error::read_sys_error;
+    }
+    else
+    {
+      ec = boost::system::error_code(sys_error,
         boost::asio::error::get_ssl_category());
-    return want_nothing;
-  }
-
-  if (ssl_error == SSL_ERROR_SYSCALL)
-  {
-    ec = boost::system::error_code(sys_error,
-        boost::asio::error::get_system_category());
+    }
     return want_nothing;
   }
 
@@ -274,8 +275,15 @@ engine::want engine::perform(int (engine::* op)(void*, std::size_t),
     ec = boost::asio::error::eof;
     return want_nothing;
   }
+  else if (ssl_error == SSL_ERROR_ZERO_RETURN)
+  {
+    ec = boost::asio::error::eof;
+    return want_nothing;
+  }
   else
   {
+    BOOST_ASIO_ASSERT(result > 0);
+    //if(result <= 0) std::cerr << "result <= 0, ssl_error = " << ssl_error << std::endl;
     ec = boost::system::error_code();
     return want_nothing;
   }

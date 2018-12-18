@@ -46,11 +46,15 @@ enum stream_errors
 #if defined(GENERATING_DOCUMENTATION)
   /// The underlying stream closed before the ssl stream gracefully shut down.
   stream_truncated
+
 #elif (OPENSSL_VERSION_NUMBER < 0x10100000L) && !defined(OPENSSL_IS_BORINGSSL)
   stream_truncated = ERR_PACK(ERR_LIB_SSL, 0, SSL_R_SHORT_READ)
 #else
   stream_truncated = 1
 #endif
+
+  /// An unspecified system error occurred during an ssl read operation.
+  ,read_sys_error = stream_truncated + 1
 };
 
 extern BOOST_ASIO_DECL

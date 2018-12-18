@@ -77,6 +77,7 @@ public:
     switch (value)
     {
     case stream_truncated: return "stream truncated";
+    case read_sys_error: return "sys_error=0 on read";
     default: return "asio.ssl.stream error";
     }
   }
