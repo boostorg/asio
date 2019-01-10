@@ -241,6 +241,10 @@ engine::want engine::perform(int (engine::* op)(void*, std::size_t),
   {
     ec = boost::system::error_code(sys_error,
         boost::asio::error::get_ssl_category());
+    if (pending_output_after > pending_output_before)
+    {
+      return want_output;
+    }
     return want_nothing;
   }
 
