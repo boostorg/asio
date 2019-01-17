@@ -157,12 +157,6 @@ void test()
     socket1.io_control(io_control_command);
     socket1.io_control(io_control_command, ec);
 
-    spp::endpoint endpoint1 = socket1.local_endpoint();
-    spp::endpoint endpoint2 = socket1.local_endpoint(ec);
-
-    spp::endpoint endpoint3 = socket1.remote_endpoint();
-    spp::endpoint endpoint4 = socket1.remote_endpoint(ec);
-
     socket1.shutdown(socket_base::shutdown_both);
     socket1.shutdown(socket_base::shutdown_both, ec);
 
