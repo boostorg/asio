@@ -33,15 +33,17 @@ namespace detail {
 class endpoint
 {
 public:
+  // The type of an endpoint's port.
+  typedef unsigned short port_t;
+
   // Default constructor.
   BOOST_ASIO_DECL endpoint();
 
   // Construct an endpoint using a family and port number.
-  BOOST_ASIO_DECL endpoint(int family, unsigned short port_num);
+  BOOST_ASIO_DECL endpoint(int family, port_t port_num);
 
   // Construct an endpoint using an address and port number.
-  BOOST_ASIO_DECL endpoint(const boost::asio::ip::address& addr,
-      unsigned short port_num);
+  BOOST_ASIO_DECL endpoint(const boost::asio::ip::address& addr, port_t port_num);
 
   // Copy constructor.
   endpoint(const endpoint& other)
@@ -87,10 +89,10 @@ public:
   }
 
   // Get the port associated with the endpoint.
-  BOOST_ASIO_DECL unsigned short port() const;
+  BOOST_ASIO_DECL port_t port() const;
 
   // Set the port associated with the endpoint.
-  BOOST_ASIO_DECL void port(unsigned short port_num);
+  BOOST_ASIO_DECL void port(port_t port_num);
 
   // Get the IP address associated with the endpoint.
   BOOST_ASIO_DECL boost::asio::ip::address address() const;
