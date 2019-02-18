@@ -33,7 +33,7 @@ server::server(const std::string& address, const std::string& port,
   signals_.async_wait(boost::bind(&server::handle_stop, this));
 
   // Open the acceptor with the option to reuse the address (i.e. SO_REUSEADDR).
-  boost::asio::ip::tcp::resolver resolver(acceptor_.get_executor().context());
+  boost::asio::ip::tcp::resolver resolver(acceptor_.get_executor());
   boost::asio::ip::tcp::endpoint endpoint =
     *resolver.resolve(address, port).begin();
   acceptor_.open(endpoint.protocol());

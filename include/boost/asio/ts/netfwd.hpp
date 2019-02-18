@@ -63,7 +63,8 @@ struct time_traits;
 #define BOOST_ASIO_BASIC_WAITABLE_TIMER_FWD_DECL
 
 template <typename Clock,
-    typename WaitTraits = boost::asio::wait_traits<Clock> >
+    typename WaitTraits = wait_traits<Clock>,
+    typename Executor = executor>
 class basic_waitable_timer;
 
 #endif // !defined(BOOST_ASIO_BASIC_WAITABLE_TIMER_FWD_DECL)
@@ -79,17 +80,38 @@ typedef basic_waitable_timer<chrono::high_resolution_clock>
 
 #endif // defined(BOOST_ASIO_HAS_CHRONO)
 
-template <class Protocol>
+#if !defined(BOOST_ASIO_BASIC_SOCKET_FWD_DECL)
+#define BOOST_ASIO_BASIC_SOCKET_FWD_DECL
+
+template <typename Protocol, typename Executor = executor>
 class basic_socket;
 
-template <typename Protocol>
+#endif // !defined(BOOST_ASIO_BASIC_SOCKET_FWD_DECL)
+
+#if !defined(BOOST_ASIO_BASIC_DATAGRAM_SOCKET_FWD_DECL)
+#define BOOST_ASIO_BASIC_DATAGRAM_SOCKET_FWD_DECL
+
+template <typename Protocol, typename Executor = executor>
 class basic_datagram_socket;
 
-template <typename Protocol>
+#endif // !defined(BOOST_ASIO_BASIC_DATAGRAM_SOCKET_FWD_DECL)
+
+#if !defined(BOOST_ASIO_BASIC_STREAM_SOCKET_FWD_DECL)
+#define BOOST_ASIO_BASIC_STREAM_SOCKET_FWD_DECL
+
+// Forward declaration with defaulted arguments.
+template <typename Protocol, typename Executor = executor>
 class basic_stream_socket;
 
-template <typename Protocol>
+#endif // !defined(BOOST_ASIO_BASIC_STREAM_SOCKET_FWD_DECL)
+
+#if !defined(BOOST_ASIO_BASIC_SOCKET_ACCEPTOR_FWD_DECL)
+#define BOOST_ASIO_BASIC_SOCKET_ACCEPTOR_FWD_DECL
+
+template <typename Protocol, typename Executor = executor>
 class basic_socket_acceptor;
+
+#endif // !defined(BOOST_ASIO_BASIC_SOCKET_ACCEPTOR_FWD_DECL)
 
 #if !defined(BOOST_ASIO_BASIC_SOCKET_STREAMBUF_FWD_DECL)
 #define BOOST_ASIO_BASIC_SOCKET_STREAMBUF_FWD_DECL
@@ -160,8 +182,13 @@ class basic_resolver_entry;
 template <typename InternetProtocol>
 class basic_resolver_results;
 
-template <typename InternetProtocol>
+#if !defined(BOOST_ASIO_IP_BASIC_RESOLVER_FWD_DECL)
+#define BOOST_ASIO_IP_BASIC_RESOLVER_FWD_DECL
+
+template <typename InternetProtocol, typename Executor = executor>
 class basic_resolver;
+
+#endif // !defined(BOOST_ASIO_IP_BASIC_RESOLVER_FWD_DECL)
 
 class tcp;
 

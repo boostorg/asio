@@ -33,27 +33,28 @@ namespace asio {
 namespace local {
 
 /// Create a pair of connected sockets.
-template <typename Protocol>
-void connect_pair(basic_socket<Protocol>& socket1,
-    basic_socket<Protocol>& socket2);
+template <typename Protocol, typename Executor1, typename Executor2>
+void connect_pair(basic_socket<Protocol, Executor1>& socket1,
+    basic_socket<Protocol, Executor2>& socket2);
 
 /// Create a pair of connected sockets.
-template <typename Protocol>
-BOOST_ASIO_SYNC_OP_VOID connect_pair(basic_socket<Protocol>& socket1,
-    basic_socket<Protocol>& socket2, boost::system::error_code& ec);
+template <typename Protocol, typename Executor1, typename Executor2>
+BOOST_ASIO_SYNC_OP_VOID connect_pair(basic_socket<Protocol, Executor1>& socket1,
+    basic_socket<Protocol, Executor2>& socket2, boost::system::error_code& ec);
 
-template <typename Protocol>
-inline void connect_pair(basic_socket<Protocol>& socket1,
-    basic_socket<Protocol>& socket2)
+template <typename Protocol, typename Executor1, typename Executor2>
+inline void connect_pair(basic_socket<Protocol, Executor1>& socket1,
+    basic_socket<Protocol, Executor2>& socket2)
 {
   boost::system::error_code ec;
   connect_pair(socket1, socket2, ec);
   boost::asio::detail::throw_error(ec, "connect_pair");
 }
 
-template <typename Protocol>
-inline BOOST_ASIO_SYNC_OP_VOID connect_pair(basic_socket<Protocol>& socket1,
-    basic_socket<Protocol>& socket2, boost::system::error_code& ec)
+template <typename Protocol, typename Executor1, typename Executor2>
+inline BOOST_ASIO_SYNC_OP_VOID connect_pair(
+    basic_socket<Protocol, Executor1>& socket1,
+    basic_socket<Protocol, Executor2>& socket2, boost::system::error_code& ec)
 {
   // Check that this function is only being used with a UNIX domain socket.
   boost::asio::local::basic_endpoint<Protocol>* tmp

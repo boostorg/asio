@@ -57,7 +57,7 @@ public:
    *
    * @par Example
    * @code
-   * boost::asio::posix::stream_descriptor descriptor(io_context); 
+   * boost::asio::posix::stream_descriptor descriptor(my_context);
    * ...
    * boost::asio::descriptor_base::bytes_readable command(true);
    * descriptor.io_control(command);

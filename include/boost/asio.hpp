@@ -25,6 +25,9 @@
 #include <boost/asio/basic_io_object.hpp>
 #include <boost/asio/basic_raw_socket.hpp>
 #include <boost/asio/basic_seq_packet_socket.hpp>
+#include <boost/asio/basic_serial_port.hpp>
+#include <boost/asio/basic_signal_set.hpp>
+#include <boost/asio/basic_socket.hpp>
 #include <boost/asio/basic_socket_acceptor.hpp>
 #include <boost/asio/basic_socket_iostream.hpp>
 #include <boost/asio/basic_socket_streambuf.hpp>
@@ -95,6 +98,8 @@
 #include <boost/asio/local/stream_protocol.hpp>
 #include <boost/asio/packaged_task.hpp>
 #include <boost/asio/placeholders.hpp>
+#include <boost/asio/posix/basic_descriptor.hpp>
+#include <boost/asio/posix/basic_stream_descriptor.hpp>
 #include <boost/asio/posix/descriptor.hpp>
 #include <boost/asio/posix/descriptor_base.hpp>
 #include <boost/asio/posix/stream_descriptor.hpp>
@@ -118,6 +123,10 @@
 #include <boost/asio/uses_executor.hpp>
 #include <boost/asio/version.hpp>
 #include <boost/asio/wait_traits.hpp>
+#include <boost/asio/windows/basic_object_handle.hpp>
+#include <boost/asio/windows/basic_overlapped_handle.hpp>
+#include <boost/asio/windows/basic_random_access_handle.hpp>
+#include <boost/asio/windows/basic_stream_handle.hpp>
 #include <boost/asio/windows/object_handle.hpp>
 #include <boost/asio/windows/overlapped_handle.hpp>
 #include <boost/asio/windows/overlapped_ptr.hpp>

@@ -22,13 +22,17 @@
 
 using boost::asio::ip::tcp;
 
+// We will use our sockets only with an io_context.
+typedef boost::asio::basic_stream_socket<tcp,
+    boost::asio::io_context::executor_type> tcp_socket;
+
 //----------------------------------------------------------------------
 
 // A custom completion token that makes asynchronous operations behave as
 // though they are blocking calls with a timeout.
 struct close_after
 {
-  close_after(boost::asio::chrono::steady_clock::duration t, tcp::socket& s)
+  close_after(boost::asio::chrono::steady_clock::duration t, tcp_socket& s)
     : timeout_(t), socket_(s)
   {
   }
@@ -37,7 +41,7 @@ struct close_after
   boost::asio::chrono::steady_clock::duration timeout_;
 
   // The socket to be closed if the operation does not complete in time.
-  tcp::socket& socket_;
+  tcp_socket& socket_;
 };
 
 namespace boost {
@@ -125,7 +129,7 @@ public:
 
 private:
   boost::asio::chrono::steady_clock::duration timeout_;
-  tcp::socket& socket_;
+  tcp_socket& socket_;
   boost::system::error_code ec_;
   T t_;
 };
@@ -151,7 +155,7 @@ int main(int argc, char* argv[])
     tcp::resolver::results_type endpoints =
       tcp::resolver(io_context).resolve(argv[1], argv[2]);
 
-    tcp::socket socket(io_context);
+    tcp_socket socket(io_context);
 
     // Run an asynchronous connect operation with a timeout.
     boost::asio::async_connect(socket, endpoints,

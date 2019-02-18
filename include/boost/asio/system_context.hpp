@@ -60,6 +60,9 @@ private:
 
   struct thread_function;
 
+  // Helper function to create the underlying scheduler.
+  BOOST_ASIO_DECL detail::scheduler& add_scheduler(detail::scheduler* s);
+
   // The underlying scheduler.
   detail::scheduler& scheduler_;
 

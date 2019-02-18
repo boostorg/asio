@@ -30,9 +30,9 @@ namespace asio {
 namespace detail {
 
 win_iocp_serial_port_service::win_iocp_serial_port_service(
-    boost::asio::io_context& io_context)
-  : service_base<win_iocp_serial_port_service>(io_context),
-    handle_service_(io_context)
+    execution_context& context)
+  : execution_context_service_base<win_iocp_serial_port_service>(context),
+    handle_service_(context)
 {
 }
 

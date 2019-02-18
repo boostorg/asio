@@ -23,7 +23,8 @@
 #include <boost/asio/detail/string_view.hpp>
 #include <boost/asio/detail/throw_error.hpp>
 #include <boost/asio/error.hpp>
-#include <boost/asio/io_context.hpp>
+#include <boost/asio/execution_context.hpp>
+#include <boost/asio/executor.hpp>
 #include <boost/asio/ip/basic_resolver_iterator.hpp>
 #include <boost/asio/ip/basic_resolver_query.hpp>
 #include <boost/asio/ip/basic_resolver_results.hpp>
@@ -44,6 +45,15 @@ namespace boost {
 namespace asio {
 namespace ip {
 
+#if !defined(BOOST_ASIO_IP_BASIC_RESOLVER_FWD_DECL)
+#define BOOST_ASIO_IP_BASIC_RESOLVER_FWD_DECL
+
+// Forward declaration with defaulted arguments.
+template <typename InternetProtocol, typename Executor = executor>
+class basic_resolver;
+
+#endif // !defined(BOOST_ASIO_IP_BASIC_RESOLVER_FWD_DECL)
+
 /// Provides endpoint resolution functionality.
 /**
  * The basic_resolver class template provides the ability to resolve a query
@@ -53,13 +63,13 @@ namespace ip {
  * @e Distinct @e objects: Safe.@n
  * @e Shared @e objects: Unsafe.
  */
-template <typename InternetProtocol>
+template <typename InternetProtocol, typename Executor>
 class basic_resolver
   : public resolver_base
 {
 public:
   /// The type of the executor associated with the object.
-  typedef io_context::executor_type executor_type;
+  typedef Executor executor_type;
 
   /// The protocol type.
   typedef InternetProtocol protocol_type;
@@ -78,16 +88,33 @@ public:
   /// The results type.
   typedef basic_resolver_results<InternetProtocol> results_type;
 
-  /// Constructor.
+  /// Construct with executor.
   /**
    * This constructor creates a basic_resolver.
    *
-   * @param io_context The io_context object that the resolver will use to
+   * @param ex The I/O executor that the resolver will use, by default, to
    * dispatch handlers for any asynchronous operations performed on the
    * resolver.
    */
-  explicit basic_resolver(boost::asio::io_context& io_context)
-    : impl_(io_context)
+  explicit basic_resolver(const executor_type& ex)
+    : impl_(ex)
+  {
+  }
+
+  /// Construct with execution context.
+  /**
+   * This constructor creates a basic_resolver.
+   *
+   * @param context An execution context which provides the I/O executor that
+   * the resolver will use, by default, to dispatch handlers for any
+   * asynchronous operations performed on the resolver.
+   */
+  template <typename ExecutionContext>
+  explicit basic_resolver(ExecutionContext& context,
+      typename enable_if<
+        is_convertible<ExecutionContext&, execution_context&>::value
+      >::type* = 0)
+    : impl_(context)
   {
   }
 
@@ -100,7 +127,7 @@ public:
    * occur.
    *
    * @note Following the move, the moved-from object is in the same state as if
-   * constructed using the @c basic_resolver(io_context&) constructor.
+   * constructed using the @c basic_resolver(const executor_type&) constructor.
    */
   basic_resolver(basic_resolver&& other)
     : impl_(std::move(other.impl_))
@@ -117,7 +144,7 @@ public:
    * occur.
    *
    * @note Following the move, the moved-from object is in the same state as if
-   * constructed using the @c basic_resolver(io_context&) constructor.
+   * constructed using the @c basic_resolver(const executor_type&) constructor.
    */
   basic_resolver& operator=(basic_resolver&& other)
   {
@@ -574,9 +601,9 @@ public:
    *   resolver::results_type results // Resolved endpoints as a range.
    * ); @endcode
    * Regardless of whether the asynchronous operation completes immediately or
-   * not, the handler will not be invoked from within this function. Invocation
-   * of the handler will be performed in a manner equivalent to using
-   * boost::asio::io_context::post().
+   * not, the handler will not be invoked from within this function. On
+   * immediate completion, invocation of the handler will be performed in a
+   * manner equivalent to using boost::asio::post().
    *
    * A successful resolve operation is guaranteed to pass a non-empty range to
    * the handler.
@@ -595,8 +622,8 @@ public:
     boost::asio::async_completion<ResolveHandler,
       void (boost::system::error_code, results_type)> init(handler);
 
-    impl_.get_service().async_resolve(
-        impl_.get_implementation(), q, init.completion_handler);
+    impl_.get_service().async_resolve(impl_.get_implementation(), q,
+        init.completion_handler, impl_.get_implementation_executor());
 
     return init.result.get();
   }
@@ -626,9 +653,9 @@ public:
    *   resolver::results_type results // Resolved endpoints as a range.
    * ); @endcode
    * Regardless of whether the asynchronous operation completes immediately or
-   * not, the handler will not be invoked from within this function. Invocation
-   * of the handler will be performed in a manner equivalent to using
-   * boost::asio::io_context::post().
+   * not, the handler will not be invoked from within this function. On
+   * immediate completion, invocation of the handler will be performed in a
+   * manner equivalent to using boost::asio::post().
    *
    * A successful resolve operation is guaranteed to pass a non-empty range to
    * the handler.
@@ -683,9 +710,9 @@ public:
    *   resolver::results_type results // Resolved endpoints as a range.
    * ); @endcode
    * Regardless of whether the asynchronous operation completes immediately or
-   * not, the handler will not be invoked from within this function. Invocation
-   * of the handler will be performed in a manner equivalent to using
-   * boost::asio::io_context::post().
+   * not, the handler will not be invoked from within this function. On
+   * immediate completion, invocation of the handler will be performed in a
+   * manner equivalent to using boost::asio::post().
    *
    * A successful resolve operation is guaranteed to pass a non-empty range to
    * the handler.
@@ -720,8 +747,8 @@ public:
     boost::asio::async_completion<ResolveHandler,
       void (boost::system::error_code, results_type)> init(handler);
 
-    impl_.get_service().async_resolve(
-        impl_.get_implementation(), q, init.completion_handler);
+    impl_.get_service().async_resolve(impl_.get_implementation(), q,
+        init.completion_handler, impl_.get_implementation_executor());
 
     return init.result.get();
   }
@@ -753,9 +780,9 @@ public:
    *   resolver::results_type results // Resolved endpoints as a range.
    * ); @endcode
    * Regardless of whether the asynchronous operation completes immediately or
-   * not, the handler will not be invoked from within this function. Invocation
-   * of the handler will be performed in a manner equivalent to using
-   * boost::asio::io_context::post().
+   * not, the handler will not be invoked from within this function. On
+   * immediate completion, invocation of the handler will be performed in a
+   * manner equivalent to using boost::asio::post().
    *
    * A successful resolve operation is guaranteed to pass a non-empty range to
    * the handler.
@@ -813,9 +840,9 @@ public:
    *   resolver::results_type results // Resolved endpoints as a range.
    * ); @endcode
    * Regardless of whether the asynchronous operation completes immediately or
-   * not, the handler will not be invoked from within this function. Invocation
-   * of the handler will be performed in a manner equivalent to using
-   * boost::asio::io_context::post().
+   * not, the handler will not be invoked from within this function. On
+   * immediate completion, invocation of the handler will be performed in a
+   * manner equivalent to using boost::asio::post().
    *
    * A successful resolve operation is guaranteed to pass a non-empty range to
    * the handler.
@@ -851,8 +878,8 @@ public:
     boost::asio::async_completion<ResolveHandler,
       void (boost::system::error_code, results_type)> init(handler);
 
-    impl_.get_service().async_resolve(
-        impl_.get_implementation(), q, init.completion_handler);
+    impl_.get_service().async_resolve(impl_.get_implementation(), q,
+        init.completion_handler, impl_.get_implementation_executor());
 
     return init.result.get();
   }
@@ -916,9 +943,9 @@ public:
    *   resolver::results_type results // Resolved endpoints as a range.
    * ); @endcode
    * Regardless of whether the asynchronous operation completes immediately or
-   * not, the handler will not be invoked from within this function. Invocation
-   * of the handler will be performed in a manner equivalent to using
-   * boost::asio::io_context::post().
+   * not, the handler will not be invoked from within this function. On
+   * immediate completion, invocation of the handler will be performed in a
+   * manner equivalent to using boost::asio::post().
    *
    * A successful resolve operation is guaranteed to pass a non-empty range to
    * the handler.
@@ -937,8 +964,8 @@ public:
     boost::asio::async_completion<ResolveHandler,
       void (boost::system::error_code, results_type)> init(handler);
 
-    impl_.get_service().async_resolve(
-        impl_.get_implementation(), e, init.completion_handler);
+    impl_.get_service().async_resolve(impl_.get_implementation(), e,
+        init.completion_handler, impl_.get_implementation_executor());
 
     return init.result.get();
   }
@@ -950,10 +977,12 @@ private:
 
 # if defined(BOOST_ASIO_WINDOWS_RUNTIME)
   boost::asio::detail::io_object_impl<
-    boost::asio::detail::winrt_resolver_service<InternetProtocol> > impl_;
+    boost::asio::detail::winrt_resolver_service<InternetProtocol>,
+    Executor> impl_;
 # else
   boost::asio::detail::io_object_impl<
-    boost::asio::detail::resolver_service<InternetProtocol> > impl_;
+    boost::asio::detail::resolver_service<InternetProtocol>,
+    Executor> impl_;
 # endif
 };
 

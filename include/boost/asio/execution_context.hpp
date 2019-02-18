@@ -110,13 +110,14 @@ public:
   class id;
   class service;
 
-protected:
+public:
   /// Constructor.
   BOOST_ASIO_DECL execution_context();
 
   /// Destructor.
   BOOST_ASIO_DECL ~execution_context();
 
+protected:
   /// Shuts down all services in the context.
   /**
    * This function is implemented as follows:
