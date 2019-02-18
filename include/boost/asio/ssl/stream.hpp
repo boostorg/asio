@@ -20,6 +20,7 @@
 #include <boost/asio/async_result.hpp>
 #include <boost/asio/detail/buffer_sequence_adapter.hpp>
 #include <boost/asio/detail/handler_type_requirements.hpp>
+#include <boost/asio/detail/non_const_lvalue.hpp>
 #include <boost/asio/detail/noncopyable.hpp>
 #include <boost/asio/detail/type_traits.hpp>
 #include <boost/asio/ssl/context.hpp>
@@ -436,17 +437,9 @@ public:
   async_handshake(handshake_type type,
       BOOST_ASIO_MOVE_ARG(HandshakeHandler) handler)
   {
-    // If you get an error on the following line it means that your handler does
-    // not meet the documented type requirements for a HandshakeHandler.
-    BOOST_ASIO_HANDSHAKE_HANDLER_CHECK(HandshakeHandler, handler) type_check;
-
-    boost::asio::async_completion<HandshakeHandler,
-      void (boost::system::error_code)> init(handler);
-
-    detail::async_io(next_layer_, core_,
-        detail::handshake_op(type), init.completion_handler);
-
-    return init.result.get();
+    return async_initiate<HandshakeHandler,
+      void (boost::system::error_code, std::size_t)>(
+        initiate_async_handshake(), handler, this, type);
   }
 
   /// Start an asynchronous SSL handshake.
@@ -476,19 +469,9 @@ public:
   async_handshake(handshake_type type, const ConstBufferSequence& buffers,
       BOOST_ASIO_MOVE_ARG(BufferedHandshakeHandler) handler)
   {
-    // If you get an error on the following line it means that your handler does
-    // not meet the documented type requirements for a BufferedHandshakeHandler.
-    BOOST_ASIO_BUFFERED_HANDSHAKE_HANDLER_CHECK(
-        BufferedHandshakeHandler, handler) type_check;
-
-    boost::asio::async_completion<BufferedHandshakeHandler,
-      void (boost::system::error_code, std::size_t)> init(handler);
-
-    detail::async_io(next_layer_, core_,
-        detail::buffered_handshake_op<ConstBufferSequence>(type, buffers),
-        init.completion_handler);
-
-    return init.result.get();
+    return async_initiate<BufferedHandshakeHandler,
+      void (boost::system::error_code, std::size_t)>(
+        initiate_async_buffered_handshake(), handler, this, type, buffers);
   }
 
   /// Shut down SSL on the stream.
@@ -535,17 +518,9 @@ public:
       void (boost::system::error_code))
   async_shutdown(BOOST_ASIO_MOVE_ARG(ShutdownHandler) handler)
   {
-    // If you get an error on the following line it means that your handler does
-    // not meet the documented type requirements for a ShutdownHandler.
-    BOOST_ASIO_SHUTDOWN_HANDLER_CHECK(ShutdownHandler, handler) type_check;
-
-    boost::asio::async_completion<ShutdownHandler,
-      void (boost::system::error_code)> init(handler);
-
-    detail::async_io(next_layer_, core_, detail::shutdown_op(),
-        init.completion_handler);
-
-    return init.result.get();
+    return async_initiate<ShutdownHandler,
+      void (boost::system::error_code, std::size_t)>(
+        initiate_async_shutdown(), handler, this);
   }
 
   /// Write some data to the stream.
@@ -626,18 +601,9 @@ public:
   async_write_some(const ConstBufferSequence& buffers,
       BOOST_ASIO_MOVE_ARG(WriteHandler) handler)
   {
-    // If you get an error on the following line it means that your handler does
-    // not meet the documented type requirements for a WriteHandler.
-    BOOST_ASIO_WRITE_HANDLER_CHECK(WriteHandler, handler) type_check;
-
-    boost::asio::async_completion<WriteHandler,
-      void (boost::system::error_code, std::size_t)> init(handler);
-
-    detail::async_io(next_layer_, core_,
-        detail::write_op<ConstBufferSequence>(buffers),
-        init.completion_handler);
-
-    return init.result.get();
+    return async_initiate<WriteHandler,
+      void (boost::system::error_code, std::size_t)>(
+        initiate_async_write_some(), handler, this, buffers);
   }
 
   /// Read some data from the stream.
@@ -718,21 +684,97 @@ public:
   async_read_some(const MutableBufferSequence& buffers,
       BOOST_ASIO_MOVE_ARG(ReadHandler) handler)
   {
-    // If you get an error on the following line it means that your handler does
-    // not meet the documented type requirements for a ReadHandler.
-    BOOST_ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
-
-    boost::asio::async_completion<ReadHandler,
-      void (boost::system::error_code, std::size_t)> init(handler);
-
-    detail::async_io(next_layer_, core_,
-        detail::read_op<MutableBufferSequence>(buffers),
-        init.completion_handler);
-
-    return init.result.get();
+    return async_initiate<ReadHandler,
+      void (boost::system::error_code, std::size_t)>(
+        initiate_async_read_some(), handler, this, buffers);
   }
 
 private:
+  struct initiate_async_handshake
+  {
+    template <typename HandshakeHandler>
+    void operator()(BOOST_ASIO_MOVE_ARG(HandshakeHandler) handler,
+        stream* self, handshake_type type) const
+    {
+      // If you get an error on the following line it means that your handler
+      // does not meet the documented type requirements for a HandshakeHandler.
+      BOOST_ASIO_HANDSHAKE_HANDLER_CHECK(HandshakeHandler, handler) type_check;
+
+      boost::asio::detail::non_const_lvalue<HandshakeHandler> handler2(handler);
+      detail::async_io(self->next_layer_, self->core_,
+          detail::handshake_op(type), handler2.value);
+    }
+  };
+
+  struct initiate_async_buffered_handshake
+  {
+    template <typename BufferedHandshakeHandler, typename ConstBufferSequence>
+    void operator()(BOOST_ASIO_MOVE_ARG(BufferedHandshakeHandler) handler,
+        stream* self, handshake_type type,
+        const ConstBufferSequence& buffers) const
+    {
+      // If you get an error on the following line it means that your
+      // handler does not meet the documented type requirements for a
+      // BufferedHandshakeHandler.
+      BOOST_ASIO_BUFFERED_HANDSHAKE_HANDLER_CHECK(
+          BufferedHandshakeHandler, handler) type_check;
+
+      boost::asio::detail::non_const_lvalue<
+          BufferedHandshakeHandler> handler2(handler);
+      detail::async_io(self->next_layer_, self->core_,
+          detail::buffered_handshake_op<ConstBufferSequence>(type, buffers),
+          handler2.value);
+    }
+  };
+
+  struct initiate_async_shutdown
+  {
+    template <typename ShutdownHandler>
+    void operator()(BOOST_ASIO_MOVE_ARG(ShutdownHandler) handler,
+        stream* self) const
+    {
+      // If you get an error on the following line it means that your handler
+      // does not meet the documented type requirements for a ShutdownHandler.
+      BOOST_ASIO_HANDSHAKE_HANDLER_CHECK(ShutdownHandler, handler) type_check;
+
+      boost::asio::detail::non_const_lvalue<ShutdownHandler> handler2(handler);
+      detail::async_io(self->next_layer_, self->core_,
+          detail::shutdown_op(), handler2.value);
+    }
+  };
+
+  struct initiate_async_write_some
+  {
+    template <typename WriteHandler, typename ConstBufferSequence>
+    void operator()(BOOST_ASIO_MOVE_ARG(WriteHandler) handler,
+        stream* self, const ConstBufferSequence& buffers) const
+    {
+      // If you get an error on the following line it means that your handler
+      // does not meet the documented type requirements for a WriteHandler.
+      BOOST_ASIO_WRITE_HANDLER_CHECK(WriteHandler, handler) type_check;
+
+      boost::asio::detail::non_const_lvalue<WriteHandler> handler2(handler);
+      detail::async_io(self->next_layer_, self->core_,
+          detail::write_op<ConstBufferSequence>(buffers), handler2.value);
+    }
+  };
+
+  struct initiate_async_read_some
+  {
+    template <typename ReadHandler, typename MutableBufferSequence>
+    void operator()(BOOST_ASIO_MOVE_ARG(ReadHandler) handler,
+        stream* self, const MutableBufferSequence& buffers) const
+    {
+      // If you get an error on the following line it means that your handler
+      // does not meet the documented type requirements for a ReadHandler.
+      BOOST_ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
+
+      boost::asio::detail::non_const_lvalue<ReadHandler> handler2(handler);
+      detail::async_io(self->next_layer_, self->core_,
+          detail::read_op<MutableBufferSequence>(buffers), handler2.value);
+    }
+  };
+
   Stream next_layer_;
   detail::stream_core core_;
 };

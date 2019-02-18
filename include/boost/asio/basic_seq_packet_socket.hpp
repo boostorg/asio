@@ -436,18 +436,9 @@ public:
       socket_base::message_flags flags,
       BOOST_ASIO_MOVE_ARG(WriteHandler) handler)
   {
-    // If you get an error on the following line it means that your handler does
-    // not meet the documented type requirements for a WriteHandler.
-    BOOST_ASIO_WRITE_HANDLER_CHECK(WriteHandler, handler) type_check;
-
-    async_completion<WriteHandler,
-      void (boost::system::error_code, std::size_t)> init(handler);
-
-    this->impl_.get_service().async_send(this->impl_.get_implementation(),
-        buffers, flags, init.completion_handler,
-        this->impl_.get_implementation_executor());
-
-    return init.result.get();
+    return async_initiate<WriteHandler,
+      void (boost::system::error_code, std::size_t)>(
+        initiate_async_send(), handler, this, buffers, flags);
   }
 
   /// Receive some data on the socket.
@@ -614,19 +605,10 @@ public:
       socket_base::message_flags& out_flags,
       BOOST_ASIO_MOVE_ARG(ReadHandler) handler)
   {
-    // If you get an error on the following line it means that your handler does
-    // not meet the documented type requirements for a ReadHandler.
-    BOOST_ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
-
-    async_completion<ReadHandler,
-      void (boost::system::error_code, std::size_t)> init(handler);
-
-    this->impl_.get_service().async_receive_with_flags(
-        this->impl_.get_implementation(), buffers,
-        0, out_flags, init.completion_handler,
-        this->impl_.get_implementation_executor());
-
-    return init.result.get();
+    return async_initiate<ReadHandler,
+      void (boost::system::error_code, std::size_t)>(
+        initiate_async_receive_with_flags(), handler, this,
+        buffers, socket_base::message_flags(0), &out_flags);
   }
 
   /// Start an asynchronous receive.
@@ -679,20 +661,49 @@ public:
       socket_base::message_flags& out_flags,
       BOOST_ASIO_MOVE_ARG(ReadHandler) handler)
   {
-    // If you get an error on the following line it means that your handler does
-    // not meet the documented type requirements for a ReadHandler.
-    BOOST_ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
-
-    async_completion<ReadHandler,
-      void (boost::system::error_code, std::size_t)> init(handler);
-
-    this->impl_.get_service().async_receive_with_flags(
-        this->impl_.get_implementation(), buffers,
-        in_flags, out_flags, init.completion_handler,
-        this->impl_.get_implementation_executor());
-
-    return init.result.get();
+    return async_initiate<ReadHandler,
+      void (boost::system::error_code, std::size_t)>(
+        initiate_async_receive_with_flags(), handler,
+        this, buffers, in_flags, &out_flags);
   }
+
+private:
+  struct initiate_async_send
+  {
+    template <typename WriteHandler, typename ConstBufferSequence>
+    void operator()(BOOST_ASIO_MOVE_ARG(WriteHandler) handler,
+        basic_seq_packet_socket* self, const ConstBufferSequence& buffers,
+        socket_base::message_flags flags) const
+    {
+      // If you get an error on the following line it means that your handler
+      // does not meet the documented type requirements for a WriteHandler.
+      BOOST_ASIO_WRITE_HANDLER_CHECK(WriteHandler, handler) type_check;
+
+      detail::non_const_lvalue<WriteHandler> handler2(handler);
+      self->impl_.get_service().async_send(
+          self->impl_.get_implementation(), buffers, flags,
+          handler2.value, self->impl_.get_implementation_executor());
+    }
+  };
+
+  struct initiate_async_receive_with_flags
+  {
+    template <typename ReadHandler, typename MutableBufferSequence>
+    void operator()(BOOST_ASIO_MOVE_ARG(ReadHandler) handler,
+        basic_seq_packet_socket* self, const MutableBufferSequence& buffers,
+        socket_base::message_flags in_flags,
+        socket_base::message_flags* out_flags) const
+    {
+      // If you get an error on the following line it means that your handler
+      // does not meet the documented type requirements for a ReadHandler.
+      BOOST_ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
+
+      detail::non_const_lvalue<ReadHandler> handler2(handler);
+      self->impl_.get_service().async_receive_with_flags(
+          self->impl_.get_implementation(), buffers, in_flags, *out_flags,
+          handler2.value, self->impl_.get_implementation_executor());
+    }
+  };
 };
 
 } // namespace asio

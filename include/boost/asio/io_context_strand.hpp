@@ -186,16 +186,8 @@ public:
   BOOST_ASIO_INITFN_RESULT_TYPE(LegacyCompletionHandler, void ())
   dispatch(BOOST_ASIO_MOVE_ARG(LegacyCompletionHandler) handler)
   {
-    // If you get an error on the following line it means that your handler does
-    // not meet the documented type requirements for a LegacyCompletionHandler.
-    BOOST_ASIO_LEGACY_COMPLETION_HANDLER_CHECK(
-        LegacyCompletionHandler, handler) type_check;
-
-    async_completion<LegacyCompletionHandler, void ()> init(handler);
-
-    service_.dispatch(impl_, init.completion_handler);
-
-    return init.result.get();
+    return async_initiate<LegacyCompletionHandler, void ()>(
+        initiate_dispatch(), handler, this);
   }
 #endif // !defined(BOOST_ASIO_NO_DEPRECATED)
 
@@ -241,16 +233,8 @@ public:
   BOOST_ASIO_INITFN_RESULT_TYPE(LegacyCompletionHandler, void ())
   post(BOOST_ASIO_MOVE_ARG(LegacyCompletionHandler) handler)
   {
-    // If you get an error on the following line it means that your handler does
-    // not meet the documented type requirements for a LegacyCompletionHandler.
-    BOOST_ASIO_LEGACY_COMPLETION_HANDLER_CHECK(
-        LegacyCompletionHandler, handler) type_check;
-
-    async_completion<LegacyCompletionHandler, void ()> init(handler);
-
-    service_.post(impl_, init.completion_handler);
-
-    return init.result.get();
+    return async_initiate<LegacyCompletionHandler, void ()>(
+        initiate_post(), handler, this);
   }
 #endif // !defined(BOOST_ASIO_NO_DEPRECATED)
 
@@ -342,6 +326,42 @@ public:
   }
 
 private:
+#if !defined(BOOST_ASIO_NO_DEPRECATED)
+  struct initiate_dispatch
+  {
+    template <typename LegacyCompletionHandler>
+    void operator()(BOOST_ASIO_MOVE_ARG(LegacyCompletionHandler) handler,
+        strand* self) const
+    {
+      // If you get an error on the following line it means that your
+      // handler does not meet the documented type requirements for a
+      // LegacyCompletionHandler.
+      BOOST_ASIO_LEGACY_COMPLETION_HANDLER_CHECK(
+          LegacyCompletionHandler, handler) type_check;
+
+      detail::non_const_lvalue<LegacyCompletionHandler> handler2(handler);
+      self->service_.dispatch(self->impl_, handler2.value);
+    }
+  };
+
+  struct initiate_post
+  {
+    template <typename LegacyCompletionHandler>
+    void operator()(BOOST_ASIO_MOVE_ARG(LegacyCompletionHandler) handler,
+        strand* self) const
+    {
+      // If you get an error on the following line it means that your
+      // handler does not meet the documented type requirements for a
+      // LegacyCompletionHandler.
+      BOOST_ASIO_LEGACY_COMPLETION_HANDLER_CHECK(
+          LegacyCompletionHandler, handler) type_check;
+
+      detail::non_const_lvalue<LegacyCompletionHandler> handler2(handler);
+      self->service_.post(self->impl_, handler2.value);
+    }
+  };
+#endif // !defined(BOOST_ASIO_NO_DEPRECATED)
+
   boost::asio::detail::strand_service& service_;
   mutable boost::asio::detail::strand_service::implementation_type impl_;
 };

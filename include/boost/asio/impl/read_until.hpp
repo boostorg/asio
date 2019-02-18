@@ -29,6 +29,7 @@
 #include <boost/asio/detail/handler_invoke_helpers.hpp>
 #include <boost/asio/detail/handler_type_requirements.hpp>
 #include <boost/asio/detail/limits.hpp>
+#include <boost/asio/detail/non_const_lvalue.hpp>
 #include <boost/asio/detail/throw_error.hpp>
 
 #include <boost/asio/detail/push_options.hpp>
@@ -600,6 +601,26 @@ namespace detail
     boost_asio_handler_invoke_helpers::invoke(
         function, this_handler->handler_);
   }
+
+  struct initiate_async_read_until_delim
+  {
+    template <typename ReadHandler, typename AsyncReadStream,
+        typename DynamicBuffer>
+    void operator()(BOOST_ASIO_MOVE_ARG(ReadHandler) handler,
+        AsyncReadStream* s, BOOST_ASIO_MOVE_ARG(DynamicBuffer) buffers,
+        char delim) const
+    {
+      // If you get an error on the following line it means that your handler
+      // does not meet the documented type requirements for a ReadHandler.
+      BOOST_ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
+
+      non_const_lvalue<ReadHandler> handler2(handler);
+      read_until_delim_op<AsyncReadStream,
+        typename decay<DynamicBuffer>::type, typename decay<ReadHandler>::type>(
+          *s, BOOST_ASIO_MOVE_CAST(DynamicBuffer)(buffers),
+          delim, handler2.value)(boost::system::error_code(), 0, 1);
+    }
+  };
 } // namespace detail
 
 #if !defined(GENERATING_DOCUMENTATION)
@@ -650,21 +671,10 @@ async_read_until(AsyncReadStream& s,
     BOOST_ASIO_MOVE_ARG(DynamicBuffer) buffers,
     char delim, BOOST_ASIO_MOVE_ARG(ReadHandler) handler)
 {
-  // If you get an error on the following line it means that your handler does
-  // not meet the documented type requirements for a ReadHandler.
-  BOOST_ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
-
-  async_completion<ReadHandler,
-    void (boost::system::error_code, std::size_t)> init(handler);
-
-  detail::read_until_delim_op<AsyncReadStream,
-    typename decay<DynamicBuffer>::type,
-      BOOST_ASIO_HANDLER_TYPE(ReadHandler,
-        void (boost::system::error_code, std::size_t))>(
-          s, BOOST_ASIO_MOVE_CAST(DynamicBuffer)(buffers),
-            delim, init.completion_handler)(boost::system::error_code(), 0, 1);
-
-  return init.result.get();
+  return async_initiate<ReadHandler,
+    void (boost::system::error_code, std::size_t)>(
+      detail::initiate_async_read_until_delim(), handler,
+      &s, BOOST_ASIO_MOVE_CAST(DynamicBuffer)(buffers), delim);
 }
 
 namespace detail
@@ -853,6 +863,26 @@ namespace detail
     boost_asio_handler_invoke_helpers::invoke(
         function, this_handler->handler_);
   }
+
+  struct initiate_async_read_until_delim_string
+  {
+    template <typename ReadHandler, typename AsyncReadStream,
+        typename DynamicBuffer>
+    void operator()(BOOST_ASIO_MOVE_ARG(ReadHandler) handler,
+        AsyncReadStream* s, BOOST_ASIO_MOVE_ARG(DynamicBuffer) buffers,
+        const std::string& delim) const
+    {
+      // If you get an error on the following line it means that your handler
+      // does not meet the documented type requirements for a ReadHandler.
+      BOOST_ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
+
+      non_const_lvalue<ReadHandler> handler2(handler);
+      read_until_delim_string_op<AsyncReadStream,
+        typename decay<DynamicBuffer>::type, typename decay<ReadHandler>::type>(
+          *s, BOOST_ASIO_MOVE_CAST(DynamicBuffer)(buffers),
+          delim, handler2.value)(boost::system::error_code(), 0, 1);
+    }
+  };
 } // namespace detail
 
 #if !defined(GENERATING_DOCUMENTATION)
@@ -904,22 +934,11 @@ async_read_until(AsyncReadStream& s,
     BOOST_ASIO_STRING_VIEW_PARAM delim,
     BOOST_ASIO_MOVE_ARG(ReadHandler) handler)
 {
-  // If you get an error on the following line it means that your handler does
-  // not meet the documented type requirements for a ReadHandler.
-  BOOST_ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
-
-  async_completion<ReadHandler,
-    void (boost::system::error_code, std::size_t)> init(handler);
-
-  detail::read_until_delim_string_op<AsyncReadStream,
-    typename decay<DynamicBuffer>::type,
-      BOOST_ASIO_HANDLER_TYPE(ReadHandler,
-        void (boost::system::error_code, std::size_t))>(
-          s, BOOST_ASIO_MOVE_CAST(DynamicBuffer)(buffers),
-            static_cast<std::string>(delim),
-              init.completion_handler)(boost::system::error_code(), 0, 1);
-
-  return init.result.get();
+  return async_initiate<ReadHandler,
+    void (boost::system::error_code, std::size_t)>(
+      detail::initiate_async_read_until_delim_string(),
+      handler, &s, BOOST_ASIO_MOVE_CAST(DynamicBuffer)(buffers),
+      static_cast<std::string>(delim));
 }
 
 #if !defined(BOOST_ASIO_NO_EXTENSIONS)
@@ -1114,6 +1133,26 @@ namespace detail
     boost_asio_handler_invoke_helpers::invoke(
         function, this_handler->handler_);
   }
+
+  struct initiate_async_read_until_expr
+  {
+    template <typename ReadHandler, typename AsyncReadStream,
+        typename DynamicBuffer, typename RegEx>
+    void operator()(BOOST_ASIO_MOVE_ARG(ReadHandler) handler,
+        AsyncReadStream* s, BOOST_ASIO_MOVE_ARG(DynamicBuffer) buffers,
+        const RegEx& expr) const
+    {
+      // If you get an error on the following line it means that your handler
+      // does not meet the documented type requirements for a ReadHandler.
+      BOOST_ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
+
+      non_const_lvalue<ReadHandler> handler2(handler);
+      read_until_expr_op<AsyncReadStream, typename decay<DynamicBuffer>::type,
+        RegEx, typename decay<ReadHandler>::type>(
+          *s, BOOST_ASIO_MOVE_CAST(DynamicBuffer)(buffers),
+          expr, handler2.value)(boost::system::error_code(), 0, 1);
+    }
+  };
 } // namespace detail
 
 #if !defined(GENERATING_DOCUMENTATION)
@@ -1165,21 +1204,10 @@ async_read_until(AsyncReadStream& s,
     const boost::regex& expr,
     BOOST_ASIO_MOVE_ARG(ReadHandler) handler)
 {
-  // If you get an error on the following line it means that your handler does
-  // not meet the documented type requirements for a ReadHandler.
-  BOOST_ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
-
-  async_completion<ReadHandler,
-    void (boost::system::error_code, std::size_t)> init(handler);
-
-  detail::read_until_expr_op<AsyncReadStream,
-    typename decay<DynamicBuffer>::type,
-      boost::regex, BOOST_ASIO_HANDLER_TYPE(ReadHandler,
-        void (boost::system::error_code, std::size_t))>(
-          s, BOOST_ASIO_MOVE_CAST(DynamicBuffer)(buffers),
-            expr, init.completion_handler)(boost::system::error_code(), 0, 1);
-
-  return init.result.get();
+  return async_initiate<ReadHandler,
+    void (boost::system::error_code, std::size_t)>(
+      detail::initiate_async_read_until_expr(), handler,
+      &s, BOOST_ASIO_MOVE_CAST(DynamicBuffer)(buffers), expr);
 }
 
 #endif // defined(BOOST_ASIO_HAS_BOOST_REGEX)
@@ -1371,6 +1399,26 @@ namespace detail
     boost_asio_handler_invoke_helpers::invoke(
         function, this_handler->handler_);
   }
+
+  struct initiate_async_read_until_match
+  {
+    template <typename ReadHandler, typename AsyncReadStream,
+        typename DynamicBuffer, typename MatchCondition>
+    void operator()(BOOST_ASIO_MOVE_ARG(ReadHandler) handler,
+        AsyncReadStream* s, BOOST_ASIO_MOVE_ARG(DynamicBuffer) buffers,
+        MatchCondition match_condition) const
+    {
+      // If you get an error on the following line it means that your handler
+      // does not meet the documented type requirements for a ReadHandler.
+      BOOST_ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
+
+      non_const_lvalue<ReadHandler> handler2(handler);
+      read_until_match_op<AsyncReadStream, typename decay<DynamicBuffer>::type,
+        MatchCondition, typename decay<ReadHandler>::type>(
+          *s, BOOST_ASIO_MOVE_CAST(DynamicBuffer)(buffers),
+          match_condition, handler2.value)(boost::system::error_code(), 0, 1);
+    }
+  };
 } // namespace detail
 
 #if !defined(GENERATING_DOCUMENTATION)
@@ -1422,22 +1470,10 @@ async_read_until(AsyncReadStream& s,
     MatchCondition match_condition, BOOST_ASIO_MOVE_ARG(ReadHandler) handler,
     typename enable_if<is_match_condition<MatchCondition>::value>::type*)
 {
-  // If you get an error on the following line it means that your handler does
-  // not meet the documented type requirements for a ReadHandler.
-  BOOST_ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
-
-  async_completion<ReadHandler,
-    void (boost::system::error_code, std::size_t)> init(handler);
-
-  detail::read_until_match_op<AsyncReadStream,
-    typename decay<DynamicBuffer>::type,
-      MatchCondition, BOOST_ASIO_HANDLER_TYPE(ReadHandler,
-        void (boost::system::error_code, std::size_t))>(
-          s, BOOST_ASIO_MOVE_CAST(DynamicBuffer)(buffers),
-            match_condition, init.completion_handler)(
-              boost::system::error_code(), 0, 1);
-
-  return init.result.get();
+  return async_initiate<ReadHandler,
+    void (boost::system::error_code, std::size_t)>(
+      detail::initiate_async_read_until_match(), handler,
+      &s, BOOST_ASIO_MOVE_CAST(DynamicBuffer)(buffers), match_condition);
 }
 
 #if !defined(BOOST_ASIO_NO_IOSTREAM)

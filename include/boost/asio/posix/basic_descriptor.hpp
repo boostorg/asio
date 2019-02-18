@@ -23,6 +23,7 @@
 #include <boost/asio/async_result.hpp>
 #include <boost/asio/detail/handler_type_requirements.hpp>
 #include <boost/asio/detail/io_object_impl.hpp>
+#include <boost/asio/detail/non_const_lvalue.hpp>
 #include <boost/asio/detail/reactive_descriptor_service.hpp>
 #include <boost/asio/detail/throw_error.hpp>
 #include <boost/asio/error.hpp>
@@ -619,17 +620,8 @@ public:
       void (boost::system::error_code))
   async_wait(wait_type w, BOOST_ASIO_MOVE_ARG(WaitHandler) handler)
   {
-    // If you get an error on the following line it means that your handler does
-    // not meet the documented type requirements for a WaitHandler.
-    BOOST_ASIO_WAIT_HANDLER_CHECK(WaitHandler, handler) type_check;
-
-    async_completion<WaitHandler,
-      void (boost::system::error_code)> init(handler);
-
-    impl_.get_service().async_wait(impl_.get_implementation(), w,
-        init.completion_handler, impl_.get_implementation_executor());
-
-    return init.result.get();
+    return async_initiate<WaitHandler, void (boost::system::error_code)>(
+        initiate_async_wait(), handler, this, w);
   }
 
 protected:
@@ -649,6 +641,23 @@ private:
   // Disallow copying and assignment.
   basic_descriptor(const basic_descriptor&) BOOST_ASIO_DELETED;
   basic_descriptor& operator=(const basic_descriptor&) BOOST_ASIO_DELETED;
+
+  struct initiate_async_wait
+  {
+    template <typename WaitHandler>
+    void operator()(BOOST_ASIO_MOVE_ARG(WaitHandler) handler,
+        basic_descriptor* self, wait_type w) const
+    {
+      // If you get an error on the following line it means that your handler
+      // does not meet the documented type requirements for a WaitHandler.
+      BOOST_ASIO_WAIT_HANDLER_CHECK(WaitHandler, handler) type_check;
+
+      detail::non_const_lvalue<WaitHandler> handler2(handler);
+      self->impl_.get_service().async_wait(
+          self->impl_.get_implementation(), w, handler2.value,
+          self->impl_.get_implementation_executor());
+    }
+  };
 };
 
 } // namespace posix

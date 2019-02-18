@@ -28,6 +28,7 @@
 #include <boost/asio/detail/handler_cont_helpers.hpp>
 #include <boost/asio/detail/handler_invoke_helpers.hpp>
 #include <boost/asio/detail/handler_type_requirements.hpp>
+#include <boost/asio/detail/non_const_lvalue.hpp>
 #include <boost/asio/detail/throw_error.hpp>
 
 #include <boost/asio/detail/push_options.hpp>
@@ -346,6 +347,24 @@ namespace detail
           boost::system::error_code(), 0, 1);
   }
 
+  struct initiate_async_write_buffer_sequence
+  {
+    template <typename WriteHandler, typename AsyncWriteStream,
+        typename ConstBufferSequence, typename CompletionCondition>
+    void operator()(BOOST_ASIO_MOVE_ARG(WriteHandler) handler,
+        AsyncWriteStream* s, const ConstBufferSequence& buffers,
+        CompletionCondition completion_condition) const
+    {
+      // If you get an error on the following line it means that your handler
+      // does not meet the documented type requirements for a WriteHandler.
+      BOOST_ASIO_WRITE_HANDLER_CHECK(WriteHandler, handler) type_check;
+
+      non_const_lvalue<WriteHandler> handler2(handler);
+      start_write_buffer_sequence_op(*s, buffers,
+          boost::asio::buffer_sequence_begin(buffers),
+          completion_condition, handler2.value);
+    }
+  };
 } // namespace detail
 
 #if !defined(GENERATING_DOCUMENTATION)
@@ -401,18 +420,10 @@ async_write(AsyncWriteStream& s, const ConstBufferSequence& buffers,
       is_const_buffer_sequence<ConstBufferSequence>::value
     >::type*)
 {
-  // If you get an error on the following line it means that your handler does
-  // not meet the documented type requirements for a WriteHandler.
-  BOOST_ASIO_WRITE_HANDLER_CHECK(WriteHandler, handler) type_check;
-
-  async_completion<WriteHandler,
-    void (boost::system::error_code, std::size_t)> init(handler);
-
-  detail::start_write_buffer_sequence_op(s, buffers,
-      boost::asio::buffer_sequence_begin(buffers), completion_condition,
-      init.completion_handler);
-
-  return init.result.get();
+  return async_initiate<WriteHandler,
+    void (boost::system::error_code, std::size_t)>(
+      detail::initiate_async_write_buffer_sequence(),
+      handler, &s, buffers, completion_condition);
 }
 
 template <typename AsyncWriteStream, typename ConstBufferSequence,
@@ -425,18 +436,10 @@ async_write(AsyncWriteStream& s, const ConstBufferSequence& buffers,
       is_const_buffer_sequence<ConstBufferSequence>::value
     >::type*)
 {
-  // If you get an error on the following line it means that your handler does
-  // not meet the documented type requirements for a WriteHandler.
-  BOOST_ASIO_WRITE_HANDLER_CHECK(WriteHandler, handler) type_check;
-
-  async_completion<WriteHandler,
-    void (boost::system::error_code, std::size_t)> init(handler);
-
-  detail::start_write_buffer_sequence_op(s, buffers,
-      boost::asio::buffer_sequence_begin(buffers), transfer_all(),
-      init.completion_handler);
-
-  return init.result.get();
+  return async_initiate<WriteHandler,
+    void (boost::system::error_code, std::size_t)>(
+      detail::initiate_async_write_buffer_sequence(),
+      handler, &s, buffers, transfer_all());
 }
 
 namespace detail
@@ -550,6 +553,27 @@ namespace detail
     boost_asio_handler_invoke_helpers::invoke(
         function, this_handler->handler_);
   }
+
+  struct initiate_async_write_dynbuf
+  {
+    template <typename WriteHandler, typename AsyncWriteStream,
+        typename DynamicBuffer, typename CompletionCondition>
+    void operator()(BOOST_ASIO_MOVE_ARG(WriteHandler) handler,
+        AsyncWriteStream* s, BOOST_ASIO_MOVE_ARG(DynamicBuffer) buffers,
+        CompletionCondition completion_condition) const
+    {
+      // If you get an error on the following line it means that your handler
+      // does not meet the documented type requirements for a WriteHandler.
+      BOOST_ASIO_WRITE_HANDLER_CHECK(WriteHandler, handler) type_check;
+
+      non_const_lvalue<WriteHandler> handler2(handler);
+      write_dynbuf_op<AsyncWriteStream, typename decay<DynamicBuffer>::type,
+        CompletionCondition, typename decay<WriteHandler>::type>(
+          *s, BOOST_ASIO_MOVE_CAST(DynamicBuffer)(buffers),
+            completion_condition, handler2.value)(
+              boost::system::error_code(), 0, 1);
+    }
+  };
 } // namespace detail
 
 #if !defined(GENERATING_DOCUMENTATION)
@@ -620,22 +644,10 @@ async_write(AsyncWriteStream& s,
       is_dynamic_buffer<typename decay<DynamicBuffer>::type>::value
     >::type*)
 {
-  // If you get an error on the following line it means that your handler does
-  // not meet the documented type requirements for a WriteHandler.
-  BOOST_ASIO_WRITE_HANDLER_CHECK(WriteHandler, handler) type_check;
-
-  async_completion<WriteHandler,
-    void (boost::system::error_code, std::size_t)> init(handler);
-
-  detail::write_dynbuf_op<AsyncWriteStream,
-    typename decay<DynamicBuffer>::type,
-      CompletionCondition, BOOST_ASIO_HANDLER_TYPE(
-        WriteHandler, void (boost::system::error_code, std::size_t))>(
-          s, BOOST_ASIO_MOVE_CAST(DynamicBuffer)(buffers),
-            completion_condition, init.completion_handler)(
-              boost::system::error_code(), 0, 1);
-
-  return init.result.get();
+  return async_initiate<WriteHandler,
+    void (boost::system::error_code, std::size_t)>(
+      detail::initiate_async_write_dynbuf(), handler, &s,
+      BOOST_ASIO_MOVE_CAST(DynamicBuffer)(buffers), completion_condition);
 }
 
 #if !defined(BOOST_ASIO_NO_EXTENSIONS)

@@ -20,6 +20,7 @@
 #include <boost/asio/async_result.hpp>
 #include <boost/asio/detail/handler_type_requirements.hpp>
 #include <boost/asio/detail/io_object_impl.hpp>
+#include <boost/asio/detail/non_const_lvalue.hpp>
 #include <boost/asio/detail/string_view.hpp>
 #include <boost/asio/detail/throw_error.hpp>
 #include <boost/asio/error.hpp>
@@ -614,18 +615,9 @@ public:
   async_resolve(const query& q,
       BOOST_ASIO_MOVE_ARG(ResolveHandler) handler)
   {
-    // If you get an error on the following line it means that your handler does
-    // not meet the documented type requirements for a ResolveHandler.
-    BOOST_ASIO_RESOLVE_HANDLER_CHECK(
-        ResolveHandler, handler, results_type) type_check;
-
-    boost::asio::async_completion<ResolveHandler,
-      void (boost::system::error_code, results_type)> init(handler);
-
-    impl_.get_service().async_resolve(impl_.get_implementation(), q,
-        init.completion_handler, impl_.get_implementation_executor());
-
-    return init.result.get();
+    return boost::asio::async_initiate<ResolveHandler,
+      void (boost::system::error_code, results_type)>(
+        initiate_async_resolve(), handler, this, q);
   }
 #endif // !defined(BOOST_ASIO_NO_DEPRECATED)
 
@@ -736,21 +728,12 @@ public:
       resolver_base::flags resolve_flags,
       BOOST_ASIO_MOVE_ARG(ResolveHandler) handler)
   {
-    // If you get an error on the following line it means that your handler does
-    // not meet the documented type requirements for a ResolveHandler.
-    BOOST_ASIO_RESOLVE_HANDLER_CHECK(
-        ResolveHandler, handler, results_type) type_check;
-
     basic_resolver_query<protocol_type> q(static_cast<std::string>(host),
         static_cast<std::string>(service), resolve_flags);
 
-    boost::asio::async_completion<ResolveHandler,
-      void (boost::system::error_code, results_type)> init(handler);
-
-    impl_.get_service().async_resolve(impl_.get_implementation(), q,
-        init.completion_handler, impl_.get_implementation_executor());
-
-    return init.result.get();
+    return boost::asio::async_initiate<ResolveHandler,
+      void (boost::system::error_code, results_type)>(
+        initiate_async_resolve(), handler, this, q);
   }
 
   /// Asynchronously perform forward resolution of a query to a list of entries.
@@ -866,22 +849,13 @@ public:
       resolver_base::flags resolve_flags,
       BOOST_ASIO_MOVE_ARG(ResolveHandler) handler)
   {
-    // If you get an error on the following line it means that your handler does
-    // not meet the documented type requirements for a ResolveHandler.
-    BOOST_ASIO_RESOLVE_HANDLER_CHECK(
-        ResolveHandler, handler, results_type) type_check;
-
     basic_resolver_query<protocol_type> q(
         protocol, static_cast<std::string>(host),
         static_cast<std::string>(service), resolve_flags);
 
-    boost::asio::async_completion<ResolveHandler,
-      void (boost::system::error_code, results_type)> init(handler);
-
-    impl_.get_service().async_resolve(impl_.get_implementation(), q,
-        init.completion_handler, impl_.get_implementation_executor());
-
-    return init.result.get();
+    return boost::asio::async_initiate<ResolveHandler,
+      void (boost::system::error_code, results_type)>(
+        initiate_async_resolve(), handler, this, q);
   }
 
   /// Perform reverse resolution of an endpoint to a list of entries.
@@ -956,24 +930,33 @@ public:
   async_resolve(const endpoint_type& e,
       BOOST_ASIO_MOVE_ARG(ResolveHandler) handler)
   {
-    // If you get an error on the following line it means that your handler does
-    // not meet the documented type requirements for a ResolveHandler.
-    BOOST_ASIO_RESOLVE_HANDLER_CHECK(
-        ResolveHandler, handler, results_type) type_check;
-
-    boost::asio::async_completion<ResolveHandler,
-      void (boost::system::error_code, results_type)> init(handler);
-
-    impl_.get_service().async_resolve(impl_.get_implementation(), e,
-        init.completion_handler, impl_.get_implementation_executor());
-
-    return init.result.get();
+    return boost::asio::async_initiate<ResolveHandler,
+      void (boost::system::error_code, results_type)>(
+        initiate_async_resolve(), handler, this, e);
   }
 
 private:
   // Disallow copying and assignment.
   basic_resolver(const basic_resolver&) BOOST_ASIO_DELETED;
   basic_resolver& operator=(const basic_resolver&) BOOST_ASIO_DELETED;
+
+  struct initiate_async_resolve
+  {
+    template <typename ResolveHandler, typename Query>
+    void operator()(BOOST_ASIO_MOVE_ARG(ResolveHandler) handler,
+        basic_resolver* self, const Query& q) const
+    {
+      // If you get an error on the following line it means that your handler
+      // does not meet the documented type requirements for a ResolveHandler.
+      BOOST_ASIO_RESOLVE_HANDLER_CHECK(
+          ResolveHandler, handler, results_type) type_check;
+
+      boost::asio::detail::non_const_lvalue<ResolveHandler> handler2(handler);
+      self->impl_.get_service().async_resolve(
+          self->impl_.get_implementation(), q, handler2.value,
+          self->impl_.get_implementation_executor());
+    }
+  };
 
 # if defined(BOOST_ASIO_WINDOWS_RUNTIME)
   boost::asio::detail::io_object_impl<

@@ -19,6 +19,7 @@
 #include <boost/asio/async_result.hpp>
 #include <boost/asio/detail/handler_type_requirements.hpp>
 #include <boost/asio/detail/io_object_impl.hpp>
+#include <boost/asio/detail/non_const_lvalue.hpp>
 #include <boost/asio/detail/throw_error.hpp>
 #include <boost/asio/detail/type_traits.hpp>
 #include <boost/asio/error.hpp>
@@ -945,37 +946,15 @@ public:
   async_connect(const endpoint_type& peer_endpoint,
       BOOST_ASIO_MOVE_ARG(ConnectHandler) handler)
   {
-    // If you get an error on the following line it means that your handler does
-    // not meet the documented type requirements for a ConnectHandler.
-    BOOST_ASIO_CONNECT_HANDLER_CHECK(ConnectHandler, handler) type_check;
-
+    boost::system::error_code open_ec;
     if (!is_open())
     {
-      boost::system::error_code ec;
       const protocol_type protocol = peer_endpoint.protocol();
-      impl_.get_service().open(impl_.get_implementation(), protocol, ec);
-      if (ec)
-      {
-        async_completion<ConnectHandler,
-          void (boost::system::error_code)> init(handler);
-
-        boost::asio::post(impl_.get_executor(),
-            boost::asio::detail::bind_handler(
-              BOOST_ASIO_MOVE_CAST(BOOST_ASIO_HANDLER_TYPE(
-                ConnectHandler, void (boost::system::error_code)))(
-                  init.completion_handler), ec));
-
-        return init.result.get();
-      }
+      impl_.get_service().open(impl_.get_implementation(), protocol, open_ec);
     }
 
-    async_completion<ConnectHandler,
-      void (boost::system::error_code)> init(handler);
-
-    impl_.get_service().async_connect(impl_.get_implementation(), peer_endpoint,
-        init.completion_handler, impl_.get_implementation_executor());
-
-    return init.result.get();
+    return async_initiate<ConnectHandler, void (boost::system::error_code)>(
+        initiate_async_connect(), handler, this, peer_endpoint, open_ec);
   }
 
   /// Set an option on the socket.
@@ -1796,17 +1775,8 @@ public:
       void (boost::system::error_code))
   async_wait(wait_type w, BOOST_ASIO_MOVE_ARG(WaitHandler) handler)
   {
-    // If you get an error on the following line it means that your handler does
-    // not meet the documented type requirements for a WaitHandler.
-    BOOST_ASIO_WAIT_HANDLER_CHECK(WaitHandler, handler) type_check;
-
-    async_completion<WaitHandler,
-      void (boost::system::error_code)> init(handler);
-
-    impl_.get_service().async_wait(impl_.get_implementation(), w,
-        init.completion_handler, impl_.get_implementation_executor());
-
-    return init.result.get();
+    return async_initiate<WaitHandler, void (boost::system::error_code)>(
+        initiate_async_wait(), handler, this, w);
   }
 
 protected:
@@ -1834,6 +1804,50 @@ private:
   // Disallow copying and assignment.
   basic_socket(const basic_socket&) BOOST_ASIO_DELETED;
   basic_socket& operator=(const basic_socket&) BOOST_ASIO_DELETED;
+
+  struct initiate_async_connect
+  {
+    template <typename ConnectHandler>
+    void operator()(BOOST_ASIO_MOVE_ARG(ConnectHandler) handler,
+        basic_socket* self, const endpoint_type& peer_endpoint,
+        const boost::system::error_code& open_ec) const
+    {
+      // If you get an error on the following line it means that your handler
+      // does not meet the documented type requirements for a ConnectHandler.
+      BOOST_ASIO_CONNECT_HANDLER_CHECK(ConnectHandler, handler) type_check;
+
+      if (open_ec)
+      {
+          boost::asio::post(self->impl_.get_executor(),
+              boost::asio::detail::bind_handler(
+                BOOST_ASIO_MOVE_CAST(ConnectHandler)(handler), open_ec));
+      }
+      else
+      {
+        detail::non_const_lvalue<ConnectHandler> handler2(handler);
+        self->impl_.get_service().async_connect(
+            self->impl_.get_implementation(), peer_endpoint,
+            handler2.value, self->impl_.get_implementation_executor());
+      }
+    }
+  };
+
+  struct initiate_async_wait
+  {
+    template <typename WaitHandler>
+    void operator()(BOOST_ASIO_MOVE_ARG(WaitHandler) handler,
+        basic_socket* self, wait_type w) const
+    {
+      // If you get an error on the following line it means that your handler
+      // does not meet the documented type requirements for a WaitHandler.
+      BOOST_ASIO_WAIT_HANDLER_CHECK(WaitHandler, handler) type_check;
+
+      detail::non_const_lvalue<WaitHandler> handler2(handler);
+      self->impl_.get_service().async_wait(
+          self->impl_.get_implementation(), w, handler2.value,
+          self->impl_.get_implementation_executor());
+    }
+  };
 };
 
 } // namespace asio

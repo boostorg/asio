@@ -20,6 +20,7 @@
 #include <boost/asio/async_result.hpp>
 #include <boost/asio/detail/handler_type_requirements.hpp>
 #include <boost/asio/detail/io_object_impl.hpp>
+#include <boost/asio/detail/non_const_lvalue.hpp>
 #include <boost/asio/detail/signal_set_service.hpp>
 #include <boost/asio/detail/throw_error.hpp>
 #include <boost/asio/detail/type_traits.hpp>
@@ -507,23 +508,31 @@ public:
       void (boost::system::error_code, int))
   async_wait(BOOST_ASIO_MOVE_ARG(SignalHandler) handler)
   {
-    // If you get an error on the following line it means that your handler does
-    // not meet the documented type requirements for a SignalHandler.
-    BOOST_ASIO_SIGNAL_HANDLER_CHECK(SignalHandler, handler) type_check;
-
-    async_completion<SignalHandler,
-      void (boost::system::error_code, int)> init(handler);
-
-    impl_.get_service().async_wait(impl_.get_implementation(),
-        init.completion_handler, impl_.get_implementation_executor());
-
-    return init.result.get();
+    return async_initiate<SignalHandler, void (boost::system::error_code, int)>(
+        initiate_async_wait(), handler, this);
   }
 
 private:
   // Disallow copying and assignment.
   basic_signal_set(const basic_signal_set&) BOOST_ASIO_DELETED;
   basic_signal_set& operator=(const basic_signal_set&) BOOST_ASIO_DELETED;
+
+  struct initiate_async_wait
+  {
+    template <typename SignalHandler>
+    void operator()(BOOST_ASIO_MOVE_ARG(SignalHandler) handler,
+        basic_signal_set* self) const
+    {
+      // If you get an error on the following line it means that your handler
+      // does not meet the documented type requirements for a SignalHandler.
+      BOOST_ASIO_SIGNAL_HANDLER_CHECK(SignalHandler, handler) type_check;
+
+      detail::non_const_lvalue<SignalHandler> handler2(handler);
+      self->impl_.get_service().async_wait(
+          self->impl_.get_implementation(), handler2.value,
+          self->impl_.get_implementation_executor());
+    }
+  };
 
   detail::io_object_impl<detail::signal_set_service, Executor> impl_;
 };

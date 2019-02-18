@@ -595,6 +595,11 @@ public:
 #endif // !defined(BOOST_ASIO_NO_DEPRECATED)
 
 private:
+#if !defined(BOOST_ASIO_NO_DEPRECATED)
+  struct initiate_dispatch;
+  struct initiate_post;
+#endif // !defined(BOOST_ASIO_NO_DEPRECATED)
+
   // Helper function to add the implementation.
   BOOST_ASIO_DECL impl_type& add_impl(impl_type* impl);
 
