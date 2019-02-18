@@ -21,20 +21,12 @@
 #if defined(BOOST_ASIO_HAS_WINDOWS_RANDOM_ACCESS_HANDLE) \
   || defined(GENERATING_DOCUMENTATION)
 
-#if defined(BOOST_ASIO_ENABLE_OLD_SERVICES)
-# include <boost/asio/windows/basic_random_access_handle.hpp>
-#endif // defined(BOOST_ASIO_ENABLE_OLD_SERVICES)
-
 #include <boost/asio/detail/push_options.hpp>
 
 namespace boost {
 namespace asio {
 namespace windows {
 
-#if defined(BOOST_ASIO_ENABLE_OLD_SERVICES)
-// Typedef for the typical usage of a random-access handle.
-typedef basic_random_access_handle<> random_access_handle;
-#else // defined(BOOST_ASIO_ENABLE_OLD_SERVICES)
 /// Provides random-access handle functionality.
 /**
  * The windows::random_access_handle class provides asynchronous and
@@ -151,8 +143,8 @@ public:
       const ConstBufferSequence& buffers)
   {
     boost::system::error_code ec;
-    std::size_t s = this->get_service().write_some_at(
-        this->get_implementation(), offset, buffers, ec);
+    std::size_t s = this->impl_.get_service().write_some_at(
+        this->impl_.get_implementation(), offset, buffers, ec);
     boost::asio::detail::throw_error(ec, "write_some_at");
     return s;
   }
@@ -179,8 +171,8 @@ public:
   std::size_t write_some_at(uint64_t offset,
       const ConstBufferSequence& buffers, boost::system::error_code& ec)
   {
-    return this->get_service().write_some_at(
-        this->get_implementation(), offset, buffers, ec);
+    return this->impl_.get_service().write_some_at(
+        this->impl_.get_implementation(), offset, buffers, ec);
   }
 
   /// Start an asynchronous write at the specified offset.
@@ -234,8 +226,9 @@ public:
     boost::asio::async_completion<WriteHandler,
       void (boost::system::error_code, std::size_t)> init(handler);
 
-    this->get_service().async_write_some_at(this->get_implementation(),
-        offset, buffers, init.completion_handler);
+    this->impl_.get_service().async_write_some_at(
+        this->impl_.get_implementation(), offset,
+        buffers, init.completion_handler);
 
     return init.result.get();
   }
@@ -275,8 +268,8 @@ public:
       const MutableBufferSequence& buffers)
   {
     boost::system::error_code ec;
-    std::size_t s = this->get_service().read_some_at(
-        this->get_implementation(), offset, buffers, ec);
+    std::size_t s = this->impl_.get_service().read_some_at(
+        this->impl_.get_implementation(), offset, buffers, ec);
     boost::asio::detail::throw_error(ec, "read_some_at");
     return s;
   }
@@ -304,8 +297,8 @@ public:
   std::size_t read_some_at(uint64_t offset,
       const MutableBufferSequence& buffers, boost::system::error_code& ec)
   {
-    return this->get_service().read_some_at(
-        this->get_implementation(), offset, buffers, ec);
+    return this->impl_.get_service().read_some_at(
+        this->impl_.get_implementation(), offset, buffers, ec);
   }
 
   /// Start an asynchronous read at the specified offset.
@@ -360,13 +353,13 @@ public:
     boost::asio::async_completion<ReadHandler,
       void (boost::system::error_code, std::size_t)> init(handler);
 
-    this->get_service().async_read_some_at(this->get_implementation(),
-        offset, buffers, init.completion_handler);
+    this->impl_.get_service().async_read_some_at(
+        this->impl_.get_implementation(), offset,
+        buffers, init.completion_handler);
 
     return init.result.get();
   }
 };
-#endif // defined(BOOST_ASIO_ENABLE_OLD_SERVICES)
 
 } // namespace windows
 } // namespace asio

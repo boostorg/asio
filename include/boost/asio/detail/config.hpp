@@ -1365,33 +1365,6 @@
         //   || (defined(__MACH__) && defined(__APPLE__))
 #endif // !defined(BOOST_ASIO_DISABLE_SSIZE_T)
 
-// Helper macros to manage the transition away from the old services-based API.
-#if defined(BOOST_ASIO_ENABLE_OLD_SERVICES)
-# define BOOST_ASIO_SVC_TPARAM , typename Service
-# define BOOST_ASIO_SVC_TPARAM_DEF1(d1) , typename Service d1
-# define BOOST_ASIO_SVC_TPARAM_DEF2(d1, d2) , typename Service d1, d2
-# define BOOST_ASIO_SVC_TARG , Service
-# define BOOST_ASIO_SVC_T Service
-# define BOOST_ASIO_SVC_TPARAM1 , typename Service1
-# define BOOST_ASIO_SVC_TPARAM1_DEF1(d1) , typename Service1 d1
-# define BOOST_ASIO_SVC_TPARAM1_DEF2(d1, d2) , typename Service1 d1, d2
-# define BOOST_ASIO_SVC_TARG1 , Service1
-# define BOOST_ASIO_SVC_T1 Service1
-# define BOOST_ASIO_SVC_ACCESS public
-#else // defined(BOOST_ASIO_ENABLE_OLD_SERVICES)
-# define BOOST_ASIO_SVC_TPARAM
-# define BOOST_ASIO_SVC_TPARAM_DEF1(d1)
-# define BOOST_ASIO_SVC_TPARAM_DEF2(d1, d2)
-# define BOOST_ASIO_SVC_TARG
-// BOOST_ASIO_SVC_T is defined at each point of use.
-# define BOOST_ASIO_SVC_TPARAM1
-# define BOOST_ASIO_SVC_TPARAM1_DEF1(d1)
-# define BOOST_ASIO_SVC_TPARAM1_DEF2(d1, d2)
-# define BOOST_ASIO_SVC_TARG1
-// BOOST_ASIO_SVC_T1 is defined at each point of use.
-# define BOOST_ASIO_SVC_ACCESS protected
-#endif // defined(BOOST_ASIO_ENABLE_OLD_SERVICES)
-
 // Helper macros to manage transition away from error_code return values.
 #if defined(BOOST_ASIO_NO_DEPRECATED)
 # define BOOST_ASIO_SYNC_OP_VOID void

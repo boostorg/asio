@@ -18,8 +18,8 @@
 #include <boost/asio/detail/config.hpp>
 #include <string>
 #include <boost/asio/async_result.hpp>
-#include <boost/asio/basic_io_object.hpp>
 #include <boost/asio/detail/handler_type_requirements.hpp>
+#include <boost/asio/detail/io_object_impl.hpp>
 #include <boost/asio/detail/string_view.hpp>
 #include <boost/asio/detail/throw_error.hpp>
 #include <boost/asio/error.hpp>
@@ -28,24 +28,15 @@
 #include <boost/asio/ip/basic_resolver_query.hpp>
 #include <boost/asio/ip/basic_resolver_results.hpp>
 #include <boost/asio/ip/resolver_base.hpp>
+#if defined(BOOST_ASIO_WINDOWS_RUNTIME)
+# include <boost/asio/detail/winrt_resolver_service.hpp>
+#else
+# include <boost/asio/detail/resolver_service.hpp>
+#endif
 
 #if defined(BOOST_ASIO_HAS_MOVE)
 # include <utility>
 #endif // defined(BOOST_ASIO_HAS_MOVE)
-
-#if defined(BOOST_ASIO_ENABLE_OLD_SERVICES)
-# include <boost/asio/ip/resolver_service.hpp>
-#else // defined(BOOST_ASIO_ENABLE_OLD_SERVICES)
-# if defined(BOOST_ASIO_WINDOWS_RUNTIME)
-#  include <boost/asio/detail/winrt_resolver_service.hpp>
-#  define BOOST_ASIO_SVC_T \
-    boost::asio::detail::winrt_resolver_service<InternetProtocol>
-# else
-#  include <boost/asio/detail/resolver_service.hpp>
-#  define BOOST_ASIO_SVC_T \
-    boost::asio::detail::resolver_service<InternetProtocol>
-# endif
-#endif // defined(BOOST_ASIO_ENABLE_OLD_SERVICES)
 
 #include <boost/asio/detail/push_options.hpp>
 
@@ -62,11 +53,9 @@ namespace ip {
  * @e Distinct @e objects: Safe.@n
  * @e Shared @e objects: Unsafe.
  */
-template <typename InternetProtocol
-    BOOST_ASIO_SVC_TPARAM_DEF1(= resolver_service<InternetProtocol>)>
+template <typename InternetProtocol>
 class basic_resolver
-  : BOOST_ASIO_SVC_ACCESS basic_io_object<BOOST_ASIO_SVC_T>,
-    public resolver_base
+  : public resolver_base
 {
 public:
   /// The type of the executor associated with the object.
@@ -98,7 +87,7 @@ public:
    * resolver.
    */
   explicit basic_resolver(boost::asio::io_context& io_context)
-    : basic_io_object<BOOST_ASIO_SVC_T>(io_context)
+    : impl_(io_context)
   {
   }
 
@@ -114,7 +103,7 @@ public:
    * constructed using the @c basic_resolver(io_context&) constructor.
    */
   basic_resolver(basic_resolver&& other)
-    : basic_io_object<BOOST_ASIO_SVC_T>(std::move(other))
+    : impl_(std::move(other.impl_))
   {
   }
 
@@ -132,7 +121,7 @@ public:
    */
   basic_resolver& operator=(basic_resolver&& other)
   {
-    basic_io_object<BOOST_ASIO_SVC_T>::operator=(std::move(other));
+    impl_ = std::move(other.impl_);
     return *this;
   }
 #endif // defined(BOOST_ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
@@ -147,9 +136,6 @@ public:
   {
   }
 
-#if defined(BOOST_ASIO_ENABLE_OLD_SERVICES)
-  // These functions are provided by basic_io_object<>.
-#else // defined(BOOST_ASIO_ENABLE_OLD_SERVICES)
 #if !defined(BOOST_ASIO_NO_DEPRECATED)
   /// (Deprecated: Use get_executor().) Get the io_context associated with the
   /// object.
@@ -162,7 +148,7 @@ public:
    */
   boost::asio::io_context& get_io_context()
   {
-    return basic_io_object<BOOST_ASIO_SVC_T>::get_io_context();
+    return impl_.get_io_context();
   }
 
   /// (Deprecated: Use get_executor().) Get the io_context associated with the
@@ -176,16 +162,15 @@ public:
    */
   boost::asio::io_context& get_io_service()
   {
-    return basic_io_object<BOOST_ASIO_SVC_T>::get_io_service();
+    return impl_.get_io_service();
   }
 #endif // !defined(BOOST_ASIO_NO_DEPRECATED)
 
   /// Get the executor associated with the object.
   executor_type get_executor() BOOST_ASIO_NOEXCEPT
   {
-    return basic_io_object<BOOST_ASIO_SVC_T>::get_executor();
+    return impl_.get_executor();
   }
-#endif // defined(BOOST_ASIO_ENABLE_OLD_SERVICES)
 
   /// Cancel any asynchronous operations that are waiting on the resolver.
   /**
@@ -195,7 +180,7 @@ public:
    */
   void cancel()
   {
-    return this->get_service().cancel(this->get_implementation());
+    return impl_.get_service().cancel(impl_.get_implementation());
   }
 
 #if !defined(BOOST_ASIO_NO_DEPRECATED)
@@ -215,8 +200,8 @@ public:
   results_type resolve(const query& q)
   {
     boost::system::error_code ec;
-    results_type r = this->get_service().resolve(
-        this->get_implementation(), q, ec);
+    results_type r = impl_.get_service().resolve(
+        impl_.get_implementation(), q, ec);
     boost::asio::detail::throw_error(ec, "resolve");
     return r;
   }
@@ -236,7 +221,7 @@ public:
    */
   results_type resolve(const query& q, boost::system::error_code& ec)
   {
-    return this->get_service().resolve(this->get_implementation(), q, ec);
+    return impl_.get_service().resolve(impl_.get_implementation(), q, ec);
   }
 #endif // !defined(BOOST_ASIO_NO_DEPRECATED)
 
@@ -361,8 +346,8 @@ public:
     boost::system::error_code ec;
     basic_resolver_query<protocol_type> q(static_cast<std::string>(host),
         static_cast<std::string>(service), resolve_flags);
-    results_type r = this->get_service().resolve(
-        this->get_implementation(), q, ec);
+    results_type r = impl_.get_service().resolve(
+        impl_.get_implementation(), q, ec);
     boost::asio::detail::throw_error(ec, "resolve");
     return r;
   }
@@ -410,7 +395,7 @@ public:
   {
     basic_resolver_query<protocol_type> q(static_cast<std::string>(host),
         static_cast<std::string>(service), resolve_flags);
-    return this->get_service().resolve(this->get_implementation(), q, ec);
+    return impl_.get_service().resolve(impl_.get_implementation(), q, ec);
   }
 
   /// Perform forward resolution of a query to a list of entries.
@@ -546,8 +531,8 @@ public:
     basic_resolver_query<protocol_type> q(
         protocol, static_cast<std::string>(host),
         static_cast<std::string>(service), resolve_flags);
-    results_type r = this->get_service().resolve(
-        this->get_implementation(), q, ec);
+    results_type r = impl_.get_service().resolve(
+        impl_.get_implementation(), q, ec);
     boost::asio::detail::throw_error(ec, "resolve");
     return r;
   }
@@ -599,7 +584,7 @@ public:
     basic_resolver_query<protocol_type> q(
         protocol, static_cast<std::string>(host),
         static_cast<std::string>(service), resolve_flags);
-    return this->get_service().resolve(this->get_implementation(), q, ec);
+    return impl_.get_service().resolve(impl_.get_implementation(), q, ec);
   }
 
 #if !defined(BOOST_ASIO_NO_DEPRECATED)
@@ -637,18 +622,13 @@ public:
     BOOST_ASIO_RESOLVE_HANDLER_CHECK(
         ResolveHandler, handler, results_type) type_check;
 
-#if defined(BOOST_ASIO_ENABLE_OLD_SERVICES)
-    return this->get_service().async_resolve(this->get_implementation(), q,
-        BOOST_ASIO_MOVE_CAST(ResolveHandler)(handler));
-#else // defined(BOOST_ASIO_ENABLE_OLD_SERVICES)
     boost::asio::async_completion<ResolveHandler,
       void (boost::system::error_code, results_type)> init(handler);
 
-    this->get_service().async_resolve(
-        this->get_implementation(), q, init.completion_handler);
+    impl_.get_service().async_resolve(
+        impl_.get_implementation(), q, init.completion_handler);
 
     return init.result.get();
-#endif // defined(BOOST_ASIO_ENABLE_OLD_SERVICES)
   }
 #endif // !defined(BOOST_ASIO_NO_DEPRECATED)
 
@@ -767,18 +747,13 @@ public:
     basic_resolver_query<protocol_type> q(static_cast<std::string>(host),
         static_cast<std::string>(service), resolve_flags);
 
-#if defined(BOOST_ASIO_ENABLE_OLD_SERVICES)
-    return this->get_service().async_resolve(this->get_implementation(), q,
-        BOOST_ASIO_MOVE_CAST(ResolveHandler)(handler));
-#else // defined(BOOST_ASIO_ENABLE_OLD_SERVICES)
     boost::asio::async_completion<ResolveHandler,
       void (boost::system::error_code, results_type)> init(handler);
 
-    this->get_service().async_resolve(
-        this->get_implementation(), q, init.completion_handler);
+    impl_.get_service().async_resolve(
+        impl_.get_implementation(), q, init.completion_handler);
 
     return init.result.get();
-#endif // defined(BOOST_ASIO_ENABLE_OLD_SERVICES)
   }
 
   /// Asynchronously perform forward resolution of a query to a list of entries.
@@ -903,18 +878,13 @@ public:
         protocol, static_cast<std::string>(host),
         static_cast<std::string>(service), resolve_flags);
 
-#if defined(BOOST_ASIO_ENABLE_OLD_SERVICES)
-    return this->get_service().async_resolve(this->get_implementation(), q,
-        BOOST_ASIO_MOVE_CAST(ResolveHandler)(handler));
-#else // defined(BOOST_ASIO_ENABLE_OLD_SERVICES)
     boost::asio::async_completion<ResolveHandler,
       void (boost::system::error_code, results_type)> init(handler);
 
-    this->get_service().async_resolve(
-        this->get_implementation(), q, init.completion_handler);
+    impl_.get_service().async_resolve(
+        impl_.get_implementation(), q, init.completion_handler);
 
     return init.result.get();
-#endif // defined(BOOST_ASIO_ENABLE_OLD_SERVICES)
   }
 
   /// Perform reverse resolution of an endpoint to a list of entries.
@@ -934,8 +904,8 @@ public:
   results_type resolve(const endpoint_type& e)
   {
     boost::system::error_code ec;
-    results_type i = this->get_service().resolve(
-        this->get_implementation(), e, ec);
+    results_type i = impl_.get_service().resolve(
+        impl_.get_implementation(), e, ec);
     boost::asio::detail::throw_error(ec, "resolve");
     return i;
   }
@@ -956,7 +926,7 @@ public:
    */
   results_type resolve(const endpoint_type& e, boost::system::error_code& ec)
   {
-    return this->get_service().resolve(this->get_implementation(), e, ec);
+    return impl_.get_service().resolve(impl_.get_implementation(), e, ec);
   }
 
   /// Asynchronously perform reverse resolution of an endpoint to a list of
@@ -994,19 +964,27 @@ public:
     BOOST_ASIO_RESOLVE_HANDLER_CHECK(
         ResolveHandler, handler, results_type) type_check;
 
-#if defined(BOOST_ASIO_ENABLE_OLD_SERVICES)
-    return this->get_service().async_resolve(this->get_implementation(), e,
-        BOOST_ASIO_MOVE_CAST(ResolveHandler)(handler));
-#else // defined(BOOST_ASIO_ENABLE_OLD_SERVICES)
     boost::asio::async_completion<ResolveHandler,
       void (boost::system::error_code, results_type)> init(handler);
 
-    this->get_service().async_resolve(
-        this->get_implementation(), e, init.completion_handler);
+    impl_.get_service().async_resolve(
+        impl_.get_implementation(), e, init.completion_handler);
 
     return init.result.get();
-#endif // defined(BOOST_ASIO_ENABLE_OLD_SERVICES)
   }
+
+private:
+  // Disallow copying and assignment.
+  basic_resolver(const basic_resolver&) BOOST_ASIO_DELETED;
+  basic_resolver& operator=(const basic_resolver&) BOOST_ASIO_DELETED;
+
+# if defined(BOOST_ASIO_WINDOWS_RUNTIME)
+  boost::asio::detail::io_object_impl<
+    boost::asio::detail::winrt_resolver_service<InternetProtocol> > impl_;
+# else
+  boost::asio::detail::io_object_impl<
+    boost::asio::detail::resolver_service<InternetProtocol> > impl_;
+# endif
 };
 
 } // namespace ip
@@ -1014,9 +992,5 @@ public:
 } // namespace boost
 
 #include <boost/asio/detail/pop_options.hpp>
-
-#if !defined(BOOST_ASIO_ENABLE_OLD_SERVICES)
-# undef BOOST_ASIO_SVC_T
-#endif // !defined(BOOST_ASIO_ENABLE_OLD_SERVICES)
 
 #endif // BOOST_ASIO_IP_BASIC_RESOLVER_HPP

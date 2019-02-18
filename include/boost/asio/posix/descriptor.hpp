@@ -17,14 +17,12 @@
 
 #include <boost/asio/detail/config.hpp>
 
-#if !defined(BOOST_ASIO_ENABLE_OLD_SERVICES)
-
 #if defined(BOOST_ASIO_HAS_POSIX_STREAM_DESCRIPTOR) \
   || defined(GENERATING_DOCUMENTATION)
 
 #include <boost/asio/async_result.hpp>
-#include <boost/asio/basic_io_object.hpp>
 #include <boost/asio/detail/handler_type_requirements.hpp>
+#include <boost/asio/detail/io_object_impl.hpp>
 #include <boost/asio/detail/reactive_descriptor_service.hpp>
 #include <boost/asio/detail/throw_error.hpp>
 #include <boost/asio/error.hpp>
@@ -34,8 +32,6 @@
 #if defined(BOOST_ASIO_HAS_MOVE)
 # include <utility>
 #endif // defined(BOOST_ASIO_HAS_MOVE)
-
-#define BOOST_ASIO_SVC_T boost::asio::detail::reactive_descriptor_service
 
 #include <boost/asio/detail/push_options.hpp>
 
@@ -53,8 +49,7 @@ namespace posix {
  * @e Shared @e objects: Unsafe.
  */
 class descriptor
-  : BOOST_ASIO_SVC_ACCESS basic_io_object<BOOST_ASIO_SVC_T>,
-    public descriptor_base
+  : public descriptor_base
 {
 public:
   /// The type of the executor associated with the object.
@@ -64,7 +59,8 @@ public:
 #if defined(GENERATING_DOCUMENTATION)
   typedef implementation_defined native_handle_type;
 #else
-  typedef BOOST_ASIO_SVC_T::native_handle_type native_handle_type;
+  typedef detail::reactive_descriptor_service::native_handle_type
+    native_handle_type;
 #endif
 
   /// A descriptor is always the lowest layer.
@@ -79,7 +75,7 @@ public:
    * descriptor.
    */
   explicit descriptor(boost::asio::io_context& io_context)
-    : basic_io_object<BOOST_ASIO_SVC_T>(io_context)
+    : impl_(io_context)
   {
   }
 
@@ -98,10 +94,10 @@ public:
    */
   descriptor(boost::asio::io_context& io_context,
       const native_handle_type& native_descriptor)
-    : basic_io_object<BOOST_ASIO_SVC_T>(io_context)
+    : impl_(io_context)
   {
     boost::system::error_code ec;
-    this->get_service().assign(this->get_implementation(),
+    impl_.get_service().assign(impl_.get_implementation(),
         native_descriptor, ec);
     boost::asio::detail::throw_error(ec, "assign");
   }
@@ -118,7 +114,7 @@ public:
    * constructed using the @c descriptor(io_context&) constructor.
    */
   descriptor(descriptor&& other)
-    : basic_io_object<BOOST_ASIO_SVC_T>(std::move(other))
+    : impl_(std::move(other.impl_))
   {
   }
 
@@ -134,7 +130,7 @@ public:
    */
   descriptor& operator=(descriptor&& other)
   {
-    basic_io_object<BOOST_ASIO_SVC_T>::operator=(std::move(other));
+    impl_ = std::move(other.impl_);
     return *this;
   }
 #endif // defined(BOOST_ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
@@ -151,7 +147,7 @@ public:
    */
   boost::asio::io_context& get_io_context()
   {
-    return basic_io_object<BOOST_ASIO_SVC_T>::get_io_context();
+    return impl_.get_io_context();
   }
 
   /// (Deprecated: Use get_executor().) Get the io_context associated with the
@@ -165,14 +161,14 @@ public:
    */
   boost::asio::io_context& get_io_service()
   {
-    return basic_io_object<BOOST_ASIO_SVC_T>::get_io_service();
+    return impl_.get_io_service();
   }
 #endif // !defined(BOOST_ASIO_NO_DEPRECATED)
 
   /// Get the executor associated with the object.
   executor_type get_executor() BOOST_ASIO_NOEXCEPT
   {
-    return basic_io_object<BOOST_ASIO_SVC_T>::get_executor();
+    return impl_.get_executor();
   }
 
   /// Get a reference to the lowest layer.
@@ -214,7 +210,7 @@ public:
   void assign(const native_handle_type& native_descriptor)
   {
     boost::system::error_code ec;
-    this->get_service().assign(this->get_implementation(),
+    impl_.get_service().assign(impl_.get_implementation(),
         native_descriptor, ec);
     boost::asio::detail::throw_error(ec, "assign");
   }
@@ -230,15 +226,15 @@ public:
   BOOST_ASIO_SYNC_OP_VOID assign(const native_handle_type& native_descriptor,
       boost::system::error_code& ec)
   {
-    this->get_service().assign(
-        this->get_implementation(), native_descriptor, ec);
+    impl_.get_service().assign(
+        impl_.get_implementation(), native_descriptor, ec);
     BOOST_ASIO_SYNC_OP_VOID_RETURN(ec);
   }
 
   /// Determine whether the descriptor is open.
   bool is_open() const
   {
-    return this->get_service().is_open(this->get_implementation());
+    return impl_.get_service().is_open(impl_.get_implementation());
   }
 
   /// Close the descriptor.
@@ -253,7 +249,7 @@ public:
   void close()
   {
     boost::system::error_code ec;
-    this->get_service().close(this->get_implementation(), ec);
+    impl_.get_service().close(impl_.get_implementation(), ec);
     boost::asio::detail::throw_error(ec, "close");
   }
 
@@ -268,7 +264,7 @@ public:
    */
   BOOST_ASIO_SYNC_OP_VOID close(boost::system::error_code& ec)
   {
-    this->get_service().close(this->get_implementation(), ec);
+    impl_.get_service().close(impl_.get_implementation(), ec);
     BOOST_ASIO_SYNC_OP_VOID_RETURN(ec);
   }
 
@@ -280,7 +276,7 @@ public:
    */
   native_handle_type native_handle()
   {
-    return this->get_service().native_handle(this->get_implementation());
+    return impl_.get_service().native_handle(impl_.get_implementation());
   }
 
   /// Release ownership of the native descriptor implementation.
@@ -295,7 +291,7 @@ public:
    */
   native_handle_type release()
   {
-    return this->get_service().release(this->get_implementation());
+    return impl_.get_service().release(impl_.get_implementation());
   }
 
   /// Cancel all asynchronous operations associated with the descriptor.
@@ -309,7 +305,7 @@ public:
   void cancel()
   {
     boost::system::error_code ec;
-    this->get_service().cancel(this->get_implementation(), ec);
+    impl_.get_service().cancel(impl_.get_implementation(), ec);
     boost::asio::detail::throw_error(ec, "cancel");
   }
 
@@ -323,7 +319,7 @@ public:
    */
   BOOST_ASIO_SYNC_OP_VOID cancel(boost::system::error_code& ec)
   {
-    this->get_service().cancel(this->get_implementation(), ec);
+    impl_.get_service().cancel(impl_.get_implementation(), ec);
     BOOST_ASIO_SYNC_OP_VOID_RETURN(ec);
   }
 
@@ -353,7 +349,7 @@ public:
   void io_control(IoControlCommand& command)
   {
     boost::system::error_code ec;
-    this->get_service().io_control(this->get_implementation(), command, ec);
+    impl_.get_service().io_control(impl_.get_implementation(), command, ec);
     boost::asio::detail::throw_error(ec, "io_control");
   }
 
@@ -388,7 +384,7 @@ public:
   BOOST_ASIO_SYNC_OP_VOID io_control(IoControlCommand& command,
       boost::system::error_code& ec)
   {
-    this->get_service().io_control(this->get_implementation(), command, ec);
+    impl_.get_service().io_control(impl_.get_implementation(), command, ec);
     BOOST_ASIO_SYNC_OP_VOID_RETURN(ec);
   }
 
@@ -405,7 +401,7 @@ public:
    */
   bool non_blocking() const
   {
-    return this->get_service().non_blocking(this->get_implementation());
+    return impl_.get_service().non_blocking(impl_.get_implementation());
   }
 
   /// Sets the non-blocking mode of the descriptor.
@@ -424,7 +420,7 @@ public:
   void non_blocking(bool mode)
   {
     boost::system::error_code ec;
-    this->get_service().non_blocking(this->get_implementation(), mode, ec);
+    impl_.get_service().non_blocking(impl_.get_implementation(), mode, ec);
     boost::asio::detail::throw_error(ec, "non_blocking");
   }
 
@@ -444,7 +440,7 @@ public:
   BOOST_ASIO_SYNC_OP_VOID non_blocking(
       bool mode, boost::system::error_code& ec)
   {
-    this->get_service().non_blocking(this->get_implementation(), mode, ec);
+    impl_.get_service().non_blocking(impl_.get_implementation(), mode, ec);
     BOOST_ASIO_SYNC_OP_VOID_RETURN(ec);
   }
 
@@ -464,8 +460,8 @@ public:
    */
   bool native_non_blocking() const
   {
-    return this->get_service().native_non_blocking(
-        this->get_implementation());
+    return impl_.get_service().native_non_blocking(
+        impl_.get_implementation());
   }
 
   /// Sets the non-blocking mode of the native descriptor implementation.
@@ -486,8 +482,8 @@ public:
   void native_non_blocking(bool mode)
   {
     boost::system::error_code ec;
-    this->get_service().native_non_blocking(
-        this->get_implementation(), mode, ec);
+    impl_.get_service().native_non_blocking(
+        impl_.get_implementation(), mode, ec);
     boost::asio::detail::throw_error(ec, "native_non_blocking");
   }
 
@@ -509,8 +505,8 @@ public:
   BOOST_ASIO_SYNC_OP_VOID native_non_blocking(
       bool mode, boost::system::error_code& ec)
   {
-    this->get_service().native_non_blocking(
-        this->get_implementation(), mode, ec);
+    impl_.get_service().native_non_blocking(
+        impl_.get_implementation(), mode, ec);
     BOOST_ASIO_SYNC_OP_VOID_RETURN(ec);
   }
 
@@ -533,7 +529,7 @@ public:
   void wait(wait_type w)
   {
     boost::system::error_code ec;
-    this->get_service().wait(this->get_implementation(), w, ec);
+    impl_.get_service().wait(impl_.get_implementation(), w, ec);
     boost::asio::detail::throw_error(ec, "wait");
   }
 
@@ -558,7 +554,7 @@ public:
    */
   BOOST_ASIO_SYNC_OP_VOID wait(wait_type w, boost::system::error_code& ec)
   {
-    this->get_service().wait(this->get_implementation(), w, ec);
+    impl_.get_service().wait(impl_.get_implementation(), w, ec);
     BOOST_ASIO_SYNC_OP_VOID_RETURN(ec);
   }
 
@@ -612,8 +608,8 @@ public:
     async_completion<WaitHandler,
       void (boost::system::error_code)> init(handler);
 
-    this->get_service().async_wait(
-        this->get_implementation(), w, init.completion_handler);
+    impl_.get_service().async_wait(
+        impl_.get_implementation(), w, init.completion_handler);
 
     return init.result.get();
   }
@@ -628,6 +624,13 @@ protected:
   ~descriptor()
   {
   }
+
+  detail::io_object_impl<detail::reactive_descriptor_service> impl_;
+
+private:
+  // Disallow copying and assignment.
+  descriptor(const descriptor&) BOOST_ASIO_DELETED;
+  descriptor& operator=(const descriptor&) BOOST_ASIO_DELETED;
 };
 
 } // namespace posix
@@ -636,11 +639,7 @@ protected:
 
 #include <boost/asio/detail/pop_options.hpp>
 
-#undef BOOST_ASIO_SVC_T
-
 #endif // defined(BOOST_ASIO_HAS_POSIX_STREAM_DESCRIPTOR)
        //   || defined(GENERATING_DOCUMENTATION)
-
-#endif // !defined(BOOST_ASIO_ENABLE_OLD_SERVICES)
 
 #endif // BOOST_ASIO_POSIX_DESCRIPTOR_HPP

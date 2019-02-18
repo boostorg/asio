@@ -1364,11 +1364,7 @@ void test()
 
   (void)static_cast<std::streambuf*>(ios1.rdbuf());
 
-#if defined(BOOST_ASIO_ENABLE_OLD_SERVICES)
-  basic_socket<ip::tcp, stream_socket_service<ip::tcp> >& sref = ios1.socket();
-#else // defined(BOOST_ASIO_ENABLE_OLD_SERVICES)
   basic_socket<ip::tcp>& sref = ios1.socket();
-#endif // defined(BOOST_ASIO_ENABLE_OLD_SERVICES)
   (void)sref;
 
   boost::system::error_code ec = ios1.error();

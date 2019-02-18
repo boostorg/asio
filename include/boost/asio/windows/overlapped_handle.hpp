@@ -17,15 +17,13 @@
 
 #include <boost/asio/detail/config.hpp>
 
-#if !defined(BOOST_ASIO_ENABLE_OLD_SERVICES)
-
 #if defined(BOOST_ASIO_HAS_WINDOWS_RANDOM_ACCESS_HANDLE) \
   || defined(BOOST_ASIO_HAS_WINDOWS_STREAM_HANDLE) \
   || defined(GENERATING_DOCUMENTATION)
 
 #include <cstddef>
 #include <boost/asio/async_result.hpp>
-#include <boost/asio/basic_io_object.hpp>
+#include <boost/asio/detail/io_object_impl.hpp>
 #include <boost/asio/detail/throw_error.hpp>
 #include <boost/asio/detail/win_iocp_handle_service.hpp>
 #include <boost/asio/error.hpp>
@@ -34,8 +32,6 @@
 #if defined(BOOST_ASIO_HAS_MOVE)
 # include <utility>
 #endif // defined(BOOST_ASIO_HAS_MOVE)
-
-#define BOOST_ASIO_SVC_T boost::asio::detail::win_iocp_handle_service
 
 #include <boost/asio/detail/push_options.hpp>
 
@@ -55,7 +51,6 @@ namespace windows {
  * @e Shared @e objects: Unsafe.
  */
 class overlapped_handle
-  : BOOST_ASIO_SVC_ACCESS basic_io_object<BOOST_ASIO_SVC_T>
 {
 public:
   /// The type of the executor associated with the object.
@@ -65,7 +60,8 @@ public:
 #if defined(GENERATING_DOCUMENTATION)
   typedef implementation_defined native_handle_type;
 #else
-  typedef BOOST_ASIO_SVC_T::native_handle_type native_handle_type;
+  typedef boost::asio::detail::win_iocp_handle_service::native_handle_type
+    native_handle_type;
 #endif
 
   /// An overlapped_handle is always the lowest layer.
@@ -79,7 +75,7 @@ public:
    * dispatch handlers for any asynchronous operations performed on the handle.
    */
   explicit overlapped_handle(boost::asio::io_context& io_context)
-    : basic_io_object<BOOST_ASIO_SVC_T>(io_context)
+    : impl_(io_context)
   {
   }
 
@@ -96,10 +92,10 @@ public:
    */
   overlapped_handle(boost::asio::io_context& io_context,
       const native_handle_type& handle)
-    : basic_io_object<BOOST_ASIO_SVC_T>(io_context)
+    : impl_(io_context)
   {
     boost::system::error_code ec;
-    this->get_service().assign(this->get_implementation(), handle, ec);
+    impl_.get_service().assign(impl_.get_implementation(), handle, ec);
     boost::asio::detail::throw_error(ec, "assign");
   }
 
@@ -115,7 +111,7 @@ public:
    * constructed using the @c overlapped_handle(io_context&) constructor.
    */
   overlapped_handle(overlapped_handle&& other)
-    : basic_io_object<BOOST_ASIO_SVC_T>(std::move(other))
+    : impl_(std::move(other.impl_))
   {
   }
 
@@ -131,7 +127,7 @@ public:
    */
   overlapped_handle& operator=(overlapped_handle&& other)
   {
-    basic_io_object<BOOST_ASIO_SVC_T>::operator=(std::move(other));
+    impl_ = std::move(other.impl_);
     return *this;
   }
 #endif // defined(BOOST_ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
@@ -148,7 +144,7 @@ public:
    */
   boost::asio::io_context& get_io_context()
   {
-    return basic_io_object<BOOST_ASIO_SVC_T>::get_io_context();
+    return impl_.get_io_context();
   }
 
   /// (Deprecated: Use get_executor().) Get the io_context associated with the
@@ -162,14 +158,14 @@ public:
    */
   boost::asio::io_context& get_io_service()
   {
-    return basic_io_object<BOOST_ASIO_SVC_T>::get_io_service();
+    return impl_.get_io_service();
   }
 #endif // !defined(BOOST_ASIO_NO_DEPRECATED)
 
   /// Get the executor associated with the object.
   executor_type get_executor() BOOST_ASIO_NOEXCEPT
   {
-    return basic_io_object<BOOST_ASIO_SVC_T>::get_executor();
+    return impl_.get_executor();
   }
 
   /// Get a reference to the lowest layer.
@@ -211,7 +207,7 @@ public:
   void assign(const native_handle_type& handle)
   {
     boost::system::error_code ec;
-    this->get_service().assign(this->get_implementation(), handle, ec);
+    impl_.get_service().assign(impl_.get_implementation(), handle, ec);
     boost::asio::detail::throw_error(ec, "assign");
   }
 
@@ -226,14 +222,14 @@ public:
   BOOST_ASIO_SYNC_OP_VOID assign(const native_handle_type& handle,
       boost::system::error_code& ec)
   {
-    this->get_service().assign(this->get_implementation(), handle, ec);
+    impl_.get_service().assign(impl_.get_implementation(), handle, ec);
     BOOST_ASIO_SYNC_OP_VOID_RETURN(ec);
   }
 
   /// Determine whether the handle is open.
   bool is_open() const
   {
-    return this->get_service().is_open(this->get_implementation());
+    return impl_.get_service().is_open(impl_.get_implementation());
   }
 
   /// Close the handle.
@@ -247,7 +243,7 @@ public:
   void close()
   {
     boost::system::error_code ec;
-    this->get_service().close(this->get_implementation(), ec);
+    impl_.get_service().close(impl_.get_implementation(), ec);
     boost::asio::detail::throw_error(ec, "close");
   }
 
@@ -261,7 +257,7 @@ public:
    */
   BOOST_ASIO_SYNC_OP_VOID close(boost::system::error_code& ec)
   {
-    this->get_service().close(this->get_implementation(), ec);
+    impl_.get_service().close(impl_.get_implementation(), ec);
     BOOST_ASIO_SYNC_OP_VOID_RETURN(ec);
   }
 
@@ -273,7 +269,7 @@ public:
    */
   native_handle_type native_handle()
   {
-    return this->get_service().native_handle(this->get_implementation());
+    return impl_.get_service().native_handle(impl_.get_implementation());
   }
 
   /// Cancel all asynchronous operations associated with the handle.
@@ -287,7 +283,7 @@ public:
   void cancel()
   {
     boost::system::error_code ec;
-    this->get_service().cancel(this->get_implementation(), ec);
+    impl_.get_service().cancel(impl_.get_implementation(), ec);
     boost::asio::detail::throw_error(ec, "cancel");
   }
 
@@ -301,7 +297,7 @@ public:
    */
   BOOST_ASIO_SYNC_OP_VOID cancel(boost::system::error_code& ec)
   {
-    this->get_service().cancel(this->get_implementation(), ec);
+    impl_.get_service().cancel(impl_.get_implementation(), ec);
     BOOST_ASIO_SYNC_OP_VOID_RETURN(ec);
   }
 
@@ -314,6 +310,14 @@ protected:
   ~overlapped_handle()
   {
   }
+
+  boost::asio::detail::io_object_impl<
+    boost::asio::detail::win_iocp_handle_service> impl_;
+
+private:
+  // Disallow copying and assignment.
+  overlapped_handle(const overlapped_handle&) BOOST_ASIO_DELETED;
+  overlapped_handle& operator=(const overlapped_handle&) BOOST_ASIO_DELETED;
 };
 
 } // namespace windows
@@ -322,12 +326,8 @@ protected:
 
 #include <boost/asio/detail/pop_options.hpp>
 
-#undef BOOST_ASIO_SVC_T
-
 #endif // defined(BOOST_ASIO_HAS_WINDOWS_RANDOM_ACCESS_HANDLE)
        //   || defined(BOOST_ASIO_HAS_WINDOWS_STREAM_HANDLE)
        //   || defined(GENERATING_DOCUMENTATION)
-
-#endif // !defined(BOOST_ASIO_ENABLE_OLD_SERVICES)
 
 #endif // BOOST_ASIO_WINDOWS_OVERLAPPED_HANDLE_HPP

@@ -23,10 +23,6 @@
 #include <boost/asio/detail/type_traits.hpp>
 #include <boost/asio/error.hpp>
 
-#if defined(BOOST_ASIO_ENABLE_OLD_SERVICES)
-# include <boost/asio/datagram_socket_service.hpp>
-#endif // defined(BOOST_ASIO_ENABLE_OLD_SERVICES)
-
 #include <boost/asio/detail/push_options.hpp>
 
 namespace boost {
@@ -41,10 +37,9 @@ namespace asio {
  * @e Distinct @e objects: Safe.@n
  * @e Shared @e objects: Unsafe.
  */
-template <typename Protocol
-    BOOST_ASIO_SVC_TPARAM_DEF1(= datagram_socket_service<Protocol>)>
+template <typename Protocol>
 class basic_datagram_socket
-  : public basic_socket<Protocol BOOST_ASIO_SVC_TARG>
+  : public basic_socket<Protocol>
 {
 public:
   /// The native representation of a socket.
@@ -52,7 +47,7 @@ public:
   typedef implementation_defined native_handle_type;
 #else
   typedef typename basic_socket<
-    Protocol BOOST_ASIO_SVC_TARG>::native_handle_type native_handle_type;
+    Protocol>::native_handle_type native_handle_type;
 #endif
 
   /// The protocol type.
@@ -71,7 +66,7 @@ public:
    * socket.
    */
   explicit basic_datagram_socket(boost::asio::io_context& io_context)
-    : basic_socket<Protocol BOOST_ASIO_SVC_TARG>(io_context)
+    : basic_socket<Protocol>(io_context)
   {
   }
 
@@ -89,7 +84,7 @@ public:
    */
   basic_datagram_socket(boost::asio::io_context& io_context,
       const protocol_type& protocol)
-    : basic_socket<Protocol BOOST_ASIO_SVC_TARG>(io_context, protocol)
+    : basic_socket<Protocol>(io_context, protocol)
   {
   }
 
@@ -111,7 +106,7 @@ public:
    */
   basic_datagram_socket(boost::asio::io_context& io_context,
       const endpoint_type& endpoint)
-    : basic_socket<Protocol BOOST_ASIO_SVC_TARG>(io_context, endpoint)
+    : basic_socket<Protocol>(io_context, endpoint)
   {
   }
 
@@ -132,8 +127,7 @@ public:
    */
   basic_datagram_socket(boost::asio::io_context& io_context,
       const protocol_type& protocol, const native_handle_type& native_socket)
-    : basic_socket<Protocol BOOST_ASIO_SVC_TARG>(
-        io_context, protocol, native_socket)
+    : basic_socket<Protocol>(io_context, protocol, native_socket)
   {
   }
 
@@ -149,7 +143,7 @@ public:
    * constructed using the @c basic_datagram_socket(io_context&) constructor.
    */
   basic_datagram_socket(basic_datagram_socket&& other)
-    : basic_socket<Protocol BOOST_ASIO_SVC_TARG>(std::move(other))
+    : basic_socket<Protocol>(std::move(other))
   {
   }
 
@@ -166,7 +160,7 @@ public:
    */
   basic_datagram_socket& operator=(basic_datagram_socket&& other)
   {
-    basic_socket<Protocol BOOST_ASIO_SVC_TARG>::operator=(std::move(other));
+    basic_socket<Protocol>::operator=(std::move(other));
     return *this;
   }
 
@@ -181,11 +175,10 @@ public:
    * @note Following the move, the moved-from object is in the same state as if
    * constructed using the @c basic_datagram_socket(io_context&) constructor.
    */
-  template <typename Protocol1 BOOST_ASIO_SVC_TPARAM1>
-  basic_datagram_socket(
-      basic_datagram_socket<Protocol1 BOOST_ASIO_SVC_TARG1>&& other,
+  template <typename Protocol1>
+  basic_datagram_socket(basic_datagram_socket<Protocol1>&& other,
       typename enable_if<is_convertible<Protocol1, Protocol>::value>::type* = 0)
-    : basic_socket<Protocol BOOST_ASIO_SVC_TARG>(std::move(other))
+    : basic_socket<Protocol>(std::move(other))
   {
   }
 
@@ -201,12 +194,12 @@ public:
    * @note Following the move, the moved-from object is in the same state as if
    * constructed using the @c basic_datagram_socket(io_context&) constructor.
    */
-  template <typename Protocol1 BOOST_ASIO_SVC_TPARAM1>
+  template <typename Protocol1>
   typename enable_if<is_convertible<Protocol1, Protocol>::value,
       basic_datagram_socket>::type& operator=(
-        basic_datagram_socket<Protocol1 BOOST_ASIO_SVC_TARG1>&& other)
+        basic_datagram_socket<Protocol1>&& other)
   {
-    basic_socket<Protocol BOOST_ASIO_SVC_TARG>::operator=(std::move(other));
+    basic_socket<Protocol>::operator=(std::move(other));
     return *this;
   }
 #endif // defined(BOOST_ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
@@ -246,8 +239,8 @@ public:
   std::size_t send(const ConstBufferSequence& buffers)
   {
     boost::system::error_code ec;
-    std::size_t s = this->get_service().send(
-        this->get_implementation(), buffers, 0, ec);
+    std::size_t s = this->impl_.get_service().send(
+        this->impl_.get_implementation(), buffers, 0, ec);
     boost::asio::detail::throw_error(ec, "send");
     return s;
   }
@@ -274,8 +267,8 @@ public:
       socket_base::message_flags flags)
   {
     boost::system::error_code ec;
-    std::size_t s = this->get_service().send(
-        this->get_implementation(), buffers, flags, ec);
+    std::size_t s = this->impl_.get_service().send(
+        this->impl_.get_implementation(), buffers, flags, ec);
     boost::asio::detail::throw_error(ec, "send");
     return s;
   }
@@ -301,8 +294,8 @@ public:
   std::size_t send(const ConstBufferSequence& buffers,
       socket_base::message_flags flags, boost::system::error_code& ec)
   {
-    return this->get_service().send(
-        this->get_implementation(), buffers, flags, ec);
+    return this->impl_.get_service().send(
+        this->impl_.get_implementation(), buffers, flags, ec);
   }
 
   /// Start an asynchronous send on a connected socket.
@@ -350,18 +343,13 @@ public:
     // not meet the documented type requirements for a WriteHandler.
     BOOST_ASIO_WRITE_HANDLER_CHECK(WriteHandler, handler) type_check;
 
-#if defined(BOOST_ASIO_ENABLE_OLD_SERVICES)
-    return this->get_service().async_send(this->get_implementation(),
-        buffers, 0, BOOST_ASIO_MOVE_CAST(WriteHandler)(handler));
-#else // defined(BOOST_ASIO_ENABLE_OLD_SERVICES)
     async_completion<WriteHandler,
       void (boost::system::error_code, std::size_t)> init(handler);
 
-    this->get_service().async_send(this->get_implementation(),
+    this->impl_.get_service().async_send(this->impl_.get_implementation(),
         buffers, 0, init.completion_handler);
 
     return init.result.get();
-#endif // defined(BOOST_ASIO_ENABLE_OLD_SERVICES)
   }
 
   /// Start an asynchronous send on a connected socket.
@@ -403,18 +391,13 @@ public:
     // not meet the documented type requirements for a WriteHandler.
     BOOST_ASIO_WRITE_HANDLER_CHECK(WriteHandler, handler) type_check;
 
-#if defined(BOOST_ASIO_ENABLE_OLD_SERVICES)
-    return this->get_service().async_send(this->get_implementation(),
-        buffers, flags, BOOST_ASIO_MOVE_CAST(WriteHandler)(handler));
-#else // defined(BOOST_ASIO_ENABLE_OLD_SERVICES)
     async_completion<WriteHandler,
       void (boost::system::error_code, std::size_t)> init(handler);
 
-    this->get_service().async_send(this->get_implementation(),
+    this->impl_.get_service().async_send(this->impl_.get_implementation(),
         buffers, flags, init.completion_handler);
 
     return init.result.get();
-#endif // defined(BOOST_ASIO_ENABLE_OLD_SERVICES)
   }
 
   /// Send a datagram to the specified endpoint.
@@ -447,8 +430,8 @@ public:
       const endpoint_type& destination)
   {
     boost::system::error_code ec;
-    std::size_t s = this->get_service().send_to(
-        this->get_implementation(), buffers, destination, 0, ec);
+    std::size_t s = this->impl_.get_service().send_to(
+        this->impl_.get_implementation(), buffers, destination, 0, ec);
     boost::asio::detail::throw_error(ec, "send_to");
     return s;
   }
@@ -474,8 +457,8 @@ public:
       const endpoint_type& destination, socket_base::message_flags flags)
   {
     boost::system::error_code ec;
-    std::size_t s = this->get_service().send_to(
-        this->get_implementation(), buffers, destination, flags, ec);
+    std::size_t s = this->impl_.get_service().send_to(
+        this->impl_.get_implementation(), buffers, destination, flags, ec);
     boost::asio::detail::throw_error(ec, "send_to");
     return s;
   }
@@ -501,7 +484,7 @@ public:
       const endpoint_type& destination, socket_base::message_flags flags,
       boost::system::error_code& ec)
   {
-    return this->get_service().send_to(this->get_implementation(),
+    return this->impl_.get_service().send_to(this->impl_.get_implementation(),
         buffers, destination, flags, ec);
   }
 
@@ -553,20 +536,14 @@ public:
     // not meet the documented type requirements for a WriteHandler.
     BOOST_ASIO_WRITE_HANDLER_CHECK(WriteHandler, handler) type_check;
 
-#if defined(BOOST_ASIO_ENABLE_OLD_SERVICES)
-    return this->get_service().async_send_to(
-        this->get_implementation(), buffers, destination, 0,
-        BOOST_ASIO_MOVE_CAST(WriteHandler)(handler));
-#else // defined(BOOST_ASIO_ENABLE_OLD_SERVICES)
     async_completion<WriteHandler,
       void (boost::system::error_code, std::size_t)> init(handler);
 
-    this->get_service().async_send_to(
-        this->get_implementation(), buffers, destination, 0,
+    this->impl_.get_service().async_send_to(
+        this->impl_.get_implementation(), buffers, destination, 0,
         init.completion_handler);
 
     return init.result.get();
-#endif // defined(BOOST_ASIO_ENABLE_OLD_SERVICES)
   }
 
   /// Start an asynchronous send.
@@ -607,20 +584,14 @@ public:
     // not meet the documented type requirements for a WriteHandler.
     BOOST_ASIO_WRITE_HANDLER_CHECK(WriteHandler, handler) type_check;
 
-#if defined(BOOST_ASIO_ENABLE_OLD_SERVICES)
-    return this->get_service().async_send_to(
-        this->get_implementation(), buffers, destination, flags,
-        BOOST_ASIO_MOVE_CAST(WriteHandler)(handler));
-#else // defined(BOOST_ASIO_ENABLE_OLD_SERVICES)
     async_completion<WriteHandler,
       void (boost::system::error_code, std::size_t)> init(handler);
 
-    this->get_service().async_send_to(
-        this->get_implementation(), buffers, destination, flags,
+    this->impl_.get_service().async_send_to(
+        this->impl_.get_implementation(), buffers, destination, flags,
         init.completion_handler);
 
     return init.result.get();
-#endif // defined(BOOST_ASIO_ENABLE_OLD_SERVICES)
   }
 
   /// Receive some data on a connected socket.
@@ -651,8 +622,8 @@ public:
   std::size_t receive(const MutableBufferSequence& buffers)
   {
     boost::system::error_code ec;
-    std::size_t s = this->get_service().receive(
-        this->get_implementation(), buffers, 0, ec);
+    std::size_t s = this->impl_.get_service().receive(
+        this->impl_.get_implementation(), buffers, 0, ec);
     boost::asio::detail::throw_error(ec, "receive");
     return s;
   }
@@ -680,8 +651,8 @@ public:
       socket_base::message_flags flags)
   {
     boost::system::error_code ec;
-    std::size_t s = this->get_service().receive(
-        this->get_implementation(), buffers, flags, ec);
+    std::size_t s = this->impl_.get_service().receive(
+        this->impl_.get_implementation(), buffers, flags, ec);
     boost::asio::detail::throw_error(ec, "receive");
     return s;
   }
@@ -708,8 +679,8 @@ public:
   std::size_t receive(const MutableBufferSequence& buffers,
       socket_base::message_flags flags, boost::system::error_code& ec)
   {
-    return this->get_service().receive(
-        this->get_implementation(), buffers, flags, ec);
+    return this->impl_.get_service().receive(
+        this->impl_.get_implementation(), buffers, flags, ec);
   }
 
   /// Start an asynchronous receive on a connected socket.
@@ -758,18 +729,13 @@ public:
     // not meet the documented type requirements for a ReadHandler.
     BOOST_ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
 
-#if defined(BOOST_ASIO_ENABLE_OLD_SERVICES)
-    return this->get_service().async_receive(this->get_implementation(),
-        buffers, 0, BOOST_ASIO_MOVE_CAST(ReadHandler)(handler));
-#else // defined(BOOST_ASIO_ENABLE_OLD_SERVICES)
     async_completion<ReadHandler,
       void (boost::system::error_code, std::size_t)> init(handler);
 
-    this->get_service().async_receive(this->get_implementation(),
+    this->impl_.get_service().async_receive(this->impl_.get_implementation(),
         buffers, 0, init.completion_handler);
 
     return init.result.get();
-#endif // defined(BOOST_ASIO_ENABLE_OLD_SERVICES)
   }
 
   /// Start an asynchronous receive on a connected socket.
@@ -811,18 +777,13 @@ public:
     // not meet the documented type requirements for a ReadHandler.
     BOOST_ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
 
-#if defined(BOOST_ASIO_ENABLE_OLD_SERVICES)
-    return this->get_service().async_receive(this->get_implementation(),
-        buffers, flags, BOOST_ASIO_MOVE_CAST(ReadHandler)(handler));
-#else // defined(BOOST_ASIO_ENABLE_OLD_SERVICES)
     async_completion<ReadHandler,
       void (boost::system::error_code, std::size_t)> init(handler);
 
-    this->get_service().async_receive(this->get_implementation(),
+    this->impl_.get_service().async_receive(this->impl_.get_implementation(),
         buffers, flags, init.completion_handler);
 
     return init.result.get();
-#endif // defined(BOOST_ASIO_ENABLE_OLD_SERVICES)
   }
 
   /// Receive a datagram with the endpoint of the sender.
@@ -856,8 +817,8 @@ public:
       endpoint_type& sender_endpoint)
   {
     boost::system::error_code ec;
-    std::size_t s = this->get_service().receive_from(
-        this->get_implementation(), buffers, sender_endpoint, 0, ec);
+    std::size_t s = this->impl_.get_service().receive_from(
+        this->impl_.get_implementation(), buffers, sender_endpoint, 0, ec);
     boost::asio::detail::throw_error(ec, "receive_from");
     return s;
   }
@@ -883,8 +844,8 @@ public:
       endpoint_type& sender_endpoint, socket_base::message_flags flags)
   {
     boost::system::error_code ec;
-    std::size_t s = this->get_service().receive_from(
-        this->get_implementation(), buffers, sender_endpoint, flags, ec);
+    std::size_t s = this->impl_.get_service().receive_from(
+        this->impl_.get_implementation(), buffers, sender_endpoint, flags, ec);
     boost::asio::detail::throw_error(ec, "receive_from");
     return s;
   }
@@ -910,8 +871,8 @@ public:
       endpoint_type& sender_endpoint, socket_base::message_flags flags,
       boost::system::error_code& ec)
   {
-    return this->get_service().receive_from(this->get_implementation(),
-        buffers, sender_endpoint, flags, ec);
+    return this->impl_.get_service().receive_from(
+        this->impl_.get_implementation(), buffers, sender_endpoint, flags, ec);
   }
 
   /// Start an asynchronous receive.
@@ -961,20 +922,14 @@ public:
     // not meet the documented type requirements for a ReadHandler.
     BOOST_ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
 
-#if defined(BOOST_ASIO_ENABLE_OLD_SERVICES)
-    return this->get_service().async_receive_from(
-        this->get_implementation(), buffers, sender_endpoint, 0,
-        BOOST_ASIO_MOVE_CAST(ReadHandler)(handler));
-#else // defined(BOOST_ASIO_ENABLE_OLD_SERVICES)
     async_completion<ReadHandler,
       void (boost::system::error_code, std::size_t)> init(handler);
 
-    this->get_service().async_receive_from(
-        this->get_implementation(), buffers, sender_endpoint, 0,
-        init.completion_handler);
+    this->impl_.get_service().async_receive_from(
+        this->impl_.get_implementation(), buffers,
+        sender_endpoint, 0, init.completion_handler);
 
     return init.result.get();
-#endif // defined(BOOST_ASIO_ENABLE_OLD_SERVICES)
   }
 
   /// Start an asynchronous receive.
@@ -1017,20 +972,14 @@ public:
     // not meet the documented type requirements for a ReadHandler.
     BOOST_ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
 
-#if defined(BOOST_ASIO_ENABLE_OLD_SERVICES)
-    return this->get_service().async_receive_from(
-        this->get_implementation(), buffers, sender_endpoint, flags,
-        BOOST_ASIO_MOVE_CAST(ReadHandler)(handler));
-#else // defined(BOOST_ASIO_ENABLE_OLD_SERVICES)
     async_completion<ReadHandler,
       void (boost::system::error_code, std::size_t)> init(handler);
 
-    this->get_service().async_receive_from(
-        this->get_implementation(), buffers, sender_endpoint, flags,
-        init.completion_handler);
+    this->impl_.get_service().async_receive_from(
+        this->impl_.get_implementation(), buffers,
+        sender_endpoint, flags, init.completion_handler);
 
     return init.result.get();
-#endif // defined(BOOST_ASIO_ENABLE_OLD_SERVICES)
   }
 };
 
