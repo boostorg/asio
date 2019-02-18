@@ -35,8 +35,8 @@ class connection
 {
 public:
   /// Constructor.
-  connection(boost::asio::io_context& io_context)
-    : socket_(io_context)
+  connection(const boost::asio::executor& ex)
+    : socket_(ex)
   {
   }
 
