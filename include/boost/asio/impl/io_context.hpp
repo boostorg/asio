@@ -320,24 +320,12 @@ inline boost::asio::io_context& io_context::work::get_io_context()
 {
   return static_cast<boost::asio::io_context&>(io_context_impl_.context());
 }
-
-inline boost::asio::io_context& io_context::work::get_io_service()
-{
-  return static_cast<boost::asio::io_context&>(io_context_impl_.context());
-}
 #endif // !defined(BOOST_ASIO_NO_DEPRECATED)
 
 inline boost::asio::io_context& io_context::service::get_io_context()
 {
   return static_cast<boost::asio::io_context&>(context());
 }
-
-#if !defined(BOOST_ASIO_NO_DEPRECATED)
-inline boost::asio::io_context& io_context::service::get_io_service()
-{
-  return static_cast<boost::asio::io_context&>(context());
-}
-#endif // !defined(BOOST_ASIO_NO_DEPRECATED)
 
 } // namespace asio
 } // namespace boost

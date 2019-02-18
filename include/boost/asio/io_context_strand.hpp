@@ -114,36 +114,6 @@ public:
   {
   }
 
-#if !defined(BOOST_ASIO_NO_DEPRECATED)
-  /// (Deprecated: Use context().) Get the io_context associated with the
-  /// strand.
-  /**
-   * This function may be used to obtain the io_context object that the strand
-   * uses to dispatch handlers for asynchronous operations.
-   *
-   * @return A reference to the io_context object that the strand will use to
-   * dispatch handlers. Ownership is not transferred to the caller.
-   */
-  boost::asio::io_context& get_io_context()
-  {
-    return service_.get_io_context();
-  }
-
-  /// (Deprecated: Use context().) Get the io_context associated with the
-  /// strand.
-  /**
-   * This function may be used to obtain the io_context object that the strand
-   * uses to dispatch handlers for asynchronous operations.
-   *
-   * @return A reference to the io_context object that the strand will use to
-   * dispatch handlers. Ownership is not transferred to the caller.
-   */
-  boost::asio::io_context& get_io_service()
-  {
-    return service_.get_io_context();
-  }
-#endif // !defined(BOOST_ASIO_NO_DEPRECATED)
-
   /// Obtain the underlying execution context.
   boost::asio::io_context& context() const BOOST_ASIO_NOEXCEPT
   {

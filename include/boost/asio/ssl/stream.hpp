@@ -132,22 +132,6 @@ public:
     return next_layer_.lowest_layer().get_executor();
   }
 
-#if !defined(BOOST_ASIO_NO_DEPRECATED)
-  /// (Deprecated: Use get_executor().) Get the io_context associated with the
-  /// object.
-  boost::asio::io_context& get_io_context()
-  {
-    return next_layer_.lowest_layer().get_io_context();
-  }
-
-  /// (Deprecated: Use get_executor().) Get the io_context associated with the
-  /// object.
-  boost::asio::io_context& get_io_service()
-  {
-    return next_layer_.lowest_layer().get_io_service();
-  }
-#endif // !defined(BOOST_ASIO_NO_DEPRECATED)
-
   /// Get the underlying implementation in the native type.
   /**
    * This function may be used to obtain the underlying implementation of the

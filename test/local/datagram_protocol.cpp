@@ -69,11 +69,6 @@ void test()
 
     // basic_io_object functions.
 
-#if !defined(BOOST_ASIO_NO_DEPRECATED)
-    io_context& ioc_ref = socket1.get_io_context();
-    (void)ioc_ref;
-#endif // !defined(BOOST_ASIO_NO_DEPRECATED)
-
     dp::socket::executor_type ex = socket1.get_executor();
     (void)ex;
 
