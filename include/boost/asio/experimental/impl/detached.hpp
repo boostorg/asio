@@ -18,7 +18,6 @@
 #include <boost/asio/detail/config.hpp>
 #include <boost/asio/async_result.hpp>
 #include <boost/asio/detail/variadic_templates.hpp>
-#include <boost/asio/handler_type.hpp>
 #include <boost/system/system_error.hpp>
 
 #include <boost/asio/detail/push_options.hpp>

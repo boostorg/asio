@@ -151,7 +151,8 @@ io_context::dispatch(BOOST_ASIO_MOVE_ARG(LegacyCompletionHandler) handler)
   {
     // Allocate and construct an operation to wrap the handler.
     typedef detail::completion_handler<
-      typename handler_type<LegacyCompletionHandler, void ()>::type> op;
+      typename async_completion<LegacyCompletionHandler,
+        void ()>::completion_handler_type> op;
     typename op::ptr p = { detail::addressof(init.completion_handler),
       op::ptr::allocate(init.completion_handler), 0 };
     p.p = new (p.v) op(init.completion_handler);
@@ -182,7 +183,8 @@ io_context::post(BOOST_ASIO_MOVE_ARG(LegacyCompletionHandler) handler)
 
   // Allocate and construct an operation to wrap the handler.
   typedef detail::completion_handler<
-    typename handler_type<LegacyCompletionHandler, void ()>::type> op;
+    typename async_completion<LegacyCompletionHandler,
+      void ()>::completion_handler_type> op;
   typename op::ptr p = { detail::addressof(init.completion_handler),
       op::ptr::allocate(init.completion_handler), 0 };
   p.p = new (p.v) op(init.completion_handler);

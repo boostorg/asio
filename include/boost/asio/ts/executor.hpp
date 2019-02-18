@@ -15,7 +15,6 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include <boost/asio/handler_type.hpp>
 #include <boost/asio/async_result.hpp>
 #include <boost/asio/associated_allocator.hpp>
 #include <boost/asio/execution_context.hpp>
