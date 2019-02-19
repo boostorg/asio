@@ -438,7 +438,7 @@ public:
       BOOST_ASIO_MOVE_ARG(HandshakeHandler) handler)
   {
     return async_initiate<HandshakeHandler,
-      void (boost::system::error_code, std::size_t)>(
+      void (boost::system::error_code)>(
         initiate_async_handshake(), handler, this, type);
   }
 
@@ -519,7 +519,7 @@ public:
   async_shutdown(BOOST_ASIO_MOVE_ARG(ShutdownHandler) handler)
   {
     return async_initiate<ShutdownHandler,
-      void (boost::system::error_code, std::size_t)>(
+      void (boost::system::error_code)>(
         initiate_async_shutdown(), handler, this);
   }
 
