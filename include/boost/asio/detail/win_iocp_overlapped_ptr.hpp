@@ -44,14 +44,27 @@ public:
   {
   }
 
-  // Construct an win_iocp_overlapped_ptr to contain the specified handler.
-  template <typename Handler>
+  // Construct a win_iocp_overlapped_ptr to contain the specified handler.
+  template <typename Executor, typename Handler>
   explicit win_iocp_overlapped_ptr(
-      boost::asio::io_context& io_context, BOOST_ASIO_MOVE_ARG(Handler) handler)
+      const Executor& ex, BOOST_ASIO_MOVE_ARG(Handler) handler)
     : ptr_(0),
       iocp_service_(0)
   {
-    this->reset(io_context, BOOST_ASIO_MOVE_CAST(Handler)(handler));
+    this->reset(ex, BOOST_ASIO_MOVE_CAST(Handler)(handler));
+  }
+
+  // Construct a win_iocp_overlapped_ptr to contain the specified handler.
+  template <typename ExecutionContext, typename Handler>
+  explicit win_iocp_overlapped_ptr(
+      ExecutionContext& context, BOOST_ASIO_MOVE_ARG(Handler) handler,
+      typename enable_if<
+        is_convertible<ExecutionContext&, execution_context&>::value
+      >::type* = 0)
+    : ptr_(0),
+      iocp_service_(0)
+  {
+    this->reset(context.get_executor(), BOOST_ASIO_MOVE_CAST(Handler)(handler));
   }
 
   // Destructor automatically frees the OVERLAPPED object unless released.
@@ -74,22 +87,24 @@ public:
 
   // Reset to contain the specified handler, freeing any current OVERLAPPED
   // object.
-  template <typename Handler>
-  void reset(boost::asio::io_context& io_context, Handler handler)
+  template <typename Executor, typename Handler>
+  void reset(const Executor& ex, Handler handler)
   {
-    typedef win_iocp_overlapped_op<Handler> op;
+    detail::win_iocp_io_context* svc =
+        &boost::asio::use_service<detail::win_iocp_io_context>(ex.context());
+    typedef win_iocp_overlapped_op<Executor, Handler> op;
     typename op::ptr p = { boost::asio::detail::addressof(handler),
       op::ptr::allocate(handler), 0 };
-    p.p = new (p.v) op(handler);
+    p.p = new (p.v) op(ex, handler);
 
     BOOST_ASIO_HANDLER_CREATION((io_context, *p.p,
-          "io_context", &io_context.impl_, 0, "overlapped"));
+          "io_context", svc, 0, "overlapped"));
 
-    io_context.impl_.work_started();
+    svc->work_started();
     reset();
     ptr_ = p.p;
     p.v = p.p = 0;
-    iocp_service_ = &io_context.impl_;
+    iocp_service_ = svc;
   }
 
   // Get the contained OVERLAPPED object.

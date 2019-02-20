@@ -20,6 +20,7 @@
 #if defined(BOOST_ASIO_HAS_IOCP)
 
 #include <boost/asio/error.hpp>
+#include <boost/asio/executor_work_guard.hpp>
 #include <boost/asio/detail/bind_handler.hpp>
 #include <boost/asio/detail/fenced_block.hpp>
 #include <boost/asio/detail/handler_alloc_helpers.hpp>
@@ -33,15 +34,16 @@ namespace boost {
 namespace asio {
 namespace detail {
 
-template <typename Handler>
+template <typename Executor, typename Handler>
 class win_iocp_overlapped_op : public operation
 {
 public:
   BOOST_ASIO_DEFINE_HANDLER_PTR(win_iocp_overlapped_op);
 
-  win_iocp_overlapped_op(Handler& handler)
+  win_iocp_overlapped_op(const Executor& ex, Handler& handler)
     : operation(&win_iocp_overlapped_op::do_complete),
-      handler_(BOOST_ASIO_MOVE_CAST(Handler)(handler))
+      handler_(BOOST_ASIO_MOVE_CAST(Handler)(handler)),
+      work_(ex)
   {
     handler_work<Handler>::start(handler_);
   }
@@ -79,6 +81,7 @@ public:
 
 private:
   Handler handler_;
+  executor_work_guard<Executor> work_;
 };
 
 } // namespace detail

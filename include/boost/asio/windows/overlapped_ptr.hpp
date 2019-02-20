@@ -50,10 +50,20 @@ public:
   }
 
   /// Construct an overlapped_ptr to contain the specified handler.
-  template <typename Handler>
-  explicit overlapped_ptr(boost::asio::io_context& io_context,
-      BOOST_ASIO_MOVE_ARG(Handler) handler)
-    : impl_(io_context, BOOST_ASIO_MOVE_CAST(Handler)(handler))
+  template <typename Executor, typename Handler>
+  overlapped_ptr(
+      const Executor& ex, BOOST_ASIO_MOVE_ARG(Handler) handler)
+    : impl_(ex, BOOST_ASIO_MOVE_CAST(Handler)(handler))
+  {
+  }
+
+  /// Construct an overlapped_ptr to contain the specified handler.
+  template <typename ExecutionContext, typename Handler>
+  overlapped_ptr(ExecutionContext& context,
+      BOOST_ASIO_MOVE_ARG(Handler) handler, typename enable_if<
+        is_convertible<ExecutionContext&, execution_context&>::value
+      >::type* = 0)
+      : impl_(context, BOOST_ASIO_MOVE_CAST(Handler)(handler))
   {
   }
 
