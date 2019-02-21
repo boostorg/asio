@@ -2,7 +2,7 @@
 // server.cpp
 // ~~~~~~~~~~
 //
-// Copyright (c) 2003-2018 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2019 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -36,8 +36,7 @@ public:
       next_frame_number_(1)
   {
     // Start waiting for a new control connection.
-    tcp_socket_ptr new_socket(
-        new tcp::socket(acceptor_.get_executor().context()));
+    tcp_socket_ptr new_socket(new tcp::socket(acceptor_.get_executor()));
     acceptor_.async_accept(*new_socket,
         boost::bind(&server::handle_accept, this,
           boost::asio::placeholders::error, new_socket));
@@ -60,8 +59,7 @@ public:
     }
 
     // Start waiting for a new control connection.
-    tcp_socket_ptr new_socket(
-        new tcp::socket(acceptor_.get_executor().context()));
+    tcp_socket_ptr new_socket(new tcp::socket(acceptor_.get_executor()));
     acceptor_.async_accept(*new_socket,
         boost::bind(&server::handle_accept, this,
           boost::asio::placeholders::error, new_socket));
@@ -75,7 +73,7 @@ public:
     {
       // Delay handling of the control request to simulate network latency.
       timer_ptr delay_timer(
-          new boost::asio::steady_timer(acceptor_.get_executor().context()));
+          new boost::asio::steady_timer(acceptor_.get_executor()));
       delay_timer->expires_after(boost::asio::chrono::seconds(2));
       delay_timer->async_wait(
           boost::bind(&server::handle_control_request_timer, this,

@@ -2,7 +2,7 @@
 // detail/win_iocp_socket_accept_op.hpp
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2018 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2019 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -36,7 +36,8 @@ namespace boost {
 namespace asio {
 namespace detail {
 
-template <typename Socket, typename Protocol, typename Handler>
+template <typename Socket, typename Protocol,
+    typename Handler, typename IoExecutor>
 class win_iocp_socket_accept_op : public operation
 {
 public:
@@ -45,7 +46,7 @@ public:
   win_iocp_socket_accept_op(win_iocp_socket_service_base& socket_service,
       socket_type socket, Socket& peer, const Protocol& protocol,
       typename Protocol::endpoint* peer_endpoint,
-      bool enable_connection_aborted, Handler& handler)
+      bool enable_connection_aborted, Handler& handler, const IoExecutor& io_ex)
     : operation(&win_iocp_socket_accept_op::do_complete),
       socket_service_(socket_service),
       socket_(socket),
@@ -53,9 +54,10 @@ public:
       protocol_(protocol),
       peer_endpoint_(peer_endpoint),
       enable_connection_aborted_(enable_connection_aborted),
-      handler_(BOOST_ASIO_MOVE_CAST(Handler)(handler))
+      handler_(BOOST_ASIO_MOVE_CAST(Handler)(handler)),
+      io_executor_(io_ex)
   {
-    handler_work<Handler>::start(handler_);
+    handler_work<Handler, IoExecutor>::start(handler_, io_executor_);
   }
 
   socket_holder& new_socket()
@@ -82,7 +84,7 @@ public:
     // Take ownership of the operation object.
     win_iocp_socket_accept_op* o(static_cast<win_iocp_socket_accept_op*>(base));
     ptr p = { boost::asio::detail::addressof(o->handler_), o, o };
-    handler_work<Handler> w(o->handler_);
+    handler_work<Handler, IoExecutor> w(o->handler_, o->io_executor_);
 
     if (owner)
     {
@@ -156,11 +158,13 @@ private:
   unsigned char output_buffer_[(sizeof(sockaddr_storage_type) + 16) * 2];
   bool enable_connection_aborted_;
   Handler handler_;
+  IoExecutor io_executor_;
 };
 
 #if defined(BOOST_ASIO_HAS_MOVE)
 
-template <typename Protocol, typename Handler>
+template <typename Protocol, typename PeerIoExecutor,
+    typename Handler, typename IoExecutor>
 class win_iocp_socket_move_accept_op : public operation
 {
 public:
@@ -168,19 +172,20 @@ public:
 
   win_iocp_socket_move_accept_op(
       win_iocp_socket_service_base& socket_service, socket_type socket,
-      const Protocol& protocol, boost::asio::io_context& peer_io_context,
+      const Protocol& protocol, const PeerIoExecutor& peer_io_ex,
       typename Protocol::endpoint* peer_endpoint,
-      bool enable_connection_aborted, Handler& handler)
+      bool enable_connection_aborted, Handler& handler, const IoExecutor& io_ex)
     : operation(&win_iocp_socket_move_accept_op::do_complete),
       socket_service_(socket_service),
       socket_(socket),
-      peer_(peer_io_context),
+      peer_(peer_io_ex),
       protocol_(protocol),
       peer_endpoint_(peer_endpoint),
       enable_connection_aborted_(enable_connection_aborted),
-      handler_(BOOST_ASIO_MOVE_CAST(Handler)(handler))
+      handler_(BOOST_ASIO_MOVE_CAST(Handler)(handler)),
+      io_executor_(io_ex)
   {
-    handler_work<Handler>::start(handler_);
+    handler_work<Handler, IoExecutor>::start(handler_, io_executor_);
   }
 
   socket_holder& new_socket()
@@ -208,7 +213,7 @@ public:
     win_iocp_socket_move_accept_op* o(
         static_cast<win_iocp_socket_move_accept_op*>(base));
     ptr p = { boost::asio::detail::addressof(o->handler_), o, o };
-    handler_work<Handler> w(o->handler_);
+    handler_work<Handler, IoExecutor> w(o->handler_, o->io_executor_);
 
     if (owner)
     {
@@ -284,6 +289,7 @@ private:
   unsigned char output_buffer_[(sizeof(sockaddr_storage_type) + 16) * 2];
   bool enable_connection_aborted_;
   Handler handler_;
+  IoExecutor io_executor_;
 };
 
 #endif // defined(BOOST_ASIO_HAS_MOVE)

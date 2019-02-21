@@ -2,7 +2,7 @@
 // detail/handler_work.hpp
 // ~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2018 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2019 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -28,24 +28,41 @@ namespace detail {
 // A helper class template to allow completion handlers to be dispatched
 // through either the new executors framework or the old invocaton hook. The
 // primary template uses the new executors framework.
-template <typename Handler, typename Executor
-    = typename associated_executor<Handler>::type>
+template <typename Handler,
+    typename IoExecutor = system_executor, typename HandlerExecutor
+      = typename associated_executor<Handler, IoExecutor>::type>
 class handler_work
 {
 public:
   explicit handler_work(Handler& handler) BOOST_ASIO_NOEXCEPT
-    : executor_(associated_executor<Handler>::get(handler))
+    : io_executor_(),
+      executor_(boost::asio::get_associated_executor(handler, io_executor_))
+  {
+  }
+
+  handler_work(Handler& handler, const IoExecutor& io_ex) BOOST_ASIO_NOEXCEPT
+    : io_executor_(io_ex),
+      executor_(boost::asio::get_associated_executor(handler, io_executor_))
   {
   }
 
   static void start(Handler& handler) BOOST_ASIO_NOEXCEPT
   {
-    Executor ex(associated_executor<Handler>::get(handler));
+    HandlerExecutor ex(boost::asio::get_associated_executor(handler));
     ex.on_work_started();
+  }
+
+  static void start(Handler& handler,
+      const IoExecutor& io_ex) BOOST_ASIO_NOEXCEPT
+  {
+    HandlerExecutor ex(boost::asio::get_associated_executor(handler, io_ex));
+    ex.on_work_started();
+    io_ex.on_work_started();
   }
 
   ~handler_work()
   {
+    io_executor_.on_work_finished();
     executor_.on_work_finished();
   }
 
@@ -53,7 +70,7 @@ public:
   void complete(Function& function, Handler& handler)
   {
     executor_.dispatch(BOOST_ASIO_MOVE_CAST(Function)(function),
-        associated_allocator<Handler>::get(handler));
+        boost::asio::get_associated_allocator(handler));
   }
 
 private:
@@ -61,7 +78,8 @@ private:
   handler_work(const handler_work&);
   handler_work& operator=(const handler_work&);
 
-  typename associated_executor<Handler>::type executor_;
+  IoExecutor io_executor_;
+  HandlerExecutor executor_;
 };
 
 // This specialisation dispatches a handler through the old invocation hook.
@@ -69,7 +87,7 @@ private:
 // system_executor will dispatch through the hook anyway. However, by doing
 // this we avoid an extra copy of the handler.
 template <typename Handler>
-class handler_work<Handler, system_executor>
+class handler_work<Handler, system_executor, system_executor>
 {
 public:
   explicit handler_work(Handler&) BOOST_ASIO_NOEXCEPT {}

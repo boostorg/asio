@@ -2,7 +2,7 @@
 // detail/win_iocp_socket_connect_op.hpp
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2018 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2019 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -57,18 +57,20 @@ public:
   bool connect_ex_;
 };
 
-template <typename Handler>
+template <typename Handler, typename IoExecutor>
 class win_iocp_socket_connect_op : public win_iocp_socket_connect_op_base
 {
 public:
   BOOST_ASIO_DEFINE_HANDLER_PTR(win_iocp_socket_connect_op);
 
-  win_iocp_socket_connect_op(socket_type socket, Handler& handler)
+  win_iocp_socket_connect_op(socket_type socket,
+      Handler& handler, const IoExecutor& io_ex)
     : win_iocp_socket_connect_op_base(socket,
         &win_iocp_socket_connect_op::do_complete),
-      handler_(BOOST_ASIO_MOVE_CAST(Handler)(handler))
+      handler_(BOOST_ASIO_MOVE_CAST(Handler)(handler)),
+      io_executor_(io_ex)
   {
-    handler_work<Handler>::start(handler_);
+    handler_work<Handler, IoExecutor>::start(handler_, io_executor_);
   }
 
   static void do_complete(void* owner, operation* base,
@@ -81,7 +83,7 @@ public:
     win_iocp_socket_connect_op* o(
         static_cast<win_iocp_socket_connect_op*>(base));
     ptr p = { boost::asio::detail::addressof(o->handler_), o, o };
-    handler_work<Handler> w(o->handler_);
+    handler_work<Handler, IoExecutor> w(o->handler_, o->io_executor_);
 
     if (owner)
     {
@@ -116,6 +118,7 @@ public:
 
 private:
   Handler handler_;
+  IoExecutor io_executor_;
 };
 
 } // namespace detail

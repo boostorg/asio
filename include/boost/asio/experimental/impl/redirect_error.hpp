@@ -2,7 +2,7 @@
 // experimental/impl/redirect_error.hpp
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2018 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2019 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -24,7 +24,6 @@
 #include <boost/asio/detail/handler_invoke_helpers.hpp>
 #include <boost/asio/detail/type_traits.hpp>
 #include <boost/asio/detail/variadic_templates.hpp>
-#include <boost/asio/handler_type.hpp>
 #include <boost/system/system_error.hpp>
 
 #include <boost/asio/detail/push_options.hpp>
@@ -233,30 +232,6 @@ struct async_result<experimental::redirect_error_t<CompletionToken>, Signature>
   {
   }
 };
-
-#if !defined(BOOST_ASIO_NO_DEPRECATED)
-
-template <typename CompletionToken, typename Signature>
-struct handler_type<experimental::redirect_error_t<CompletionToken>, Signature>
-{
-  typedef experimental::detail::redirect_error_handler<
-    typename async_result<CompletionToken,
-      typename experimental::detail::redirect_error_signature<Signature>::type>
-        ::completion_handler_type> type;
-};
-
-template <typename Handler>
-struct async_result<experimental::detail::redirect_error_handler<Handler> >
-  : async_result<Handler>
-{
-  explicit async_result(
-      experimental::detail::redirect_error_handler<Handler>& h)
-    : async_result<Handler>(h.handler_)
-  {
-  }
-};
-
-#endif // !defined(BOOST_ASIO_NO_DEPRECATED)
 
 template <typename Handler, typename Executor>
 struct associated_executor<

@@ -2,7 +2,7 @@
 // detail/handler_alloc_helpers.hpp
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2018 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2019 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -194,7 +194,7 @@ struct get_hook_allocator<Handler, std::allocator<T> >
   } \
   /**/
 
-#define BOOST_ASIO_DEFINE_HANDLER_ALLOCATOR_PTR(op) \
+#define BOOST_ASIO_DEFINE_TAGGED_HANDLER_ALLOCATOR_PTR(purpose, op) \
   struct ptr \
   { \
     const Alloc* a; \
@@ -207,9 +207,10 @@ struct get_hook_allocator<Handler, std::allocator<T> >
     static op* allocate(const Alloc& a) \
     { \
       typedef typename ::boost::asio::detail::get_recycling_allocator< \
-        Alloc>::type recycling_allocator_type; \
+        Alloc, purpose>::type recycling_allocator_type; \
       BOOST_ASIO_REBIND_ALLOC(recycling_allocator_type, op) a1( \
-            ::boost::asio::detail::get_recycling_allocator<Alloc>::get(a)); \
+            ::boost::asio::detail::get_recycling_allocator< \
+              Alloc, purpose>::get(a)); \
       return a1.allocate(1); \
     } \
     void reset() \
@@ -222,14 +223,20 @@ struct get_hook_allocator<Handler, std::allocator<T> >
       if (v) \
       { \
         typedef typename ::boost::asio::detail::get_recycling_allocator< \
-          Alloc>::type recycling_allocator_type; \
+          Alloc, purpose>::type recycling_allocator_type; \
         BOOST_ASIO_REBIND_ALLOC(recycling_allocator_type, op) a1( \
-              ::boost::asio::detail::get_recycling_allocator<Alloc>::get(*a)); \
+              ::boost::asio::detail::get_recycling_allocator< \
+                Alloc, purpose>::get(*a)); \
         a1.deallocate(static_cast<op*>(v), 1); \
         v = 0; \
       } \
     } \
   } \
+  /**/
+
+#define BOOST_ASIO_DEFINE_HANDLER_ALLOCATOR_PTR(op) \
+  BOOST_ASIO_DEFINE_TAGGED_HANDLER_ALLOCATOR_PTR( \
+      ::boost::asio::detail::thread_info_base::default_tag, op ) \
   /**/
 
 #include <boost/asio/detail/pop_options.hpp>

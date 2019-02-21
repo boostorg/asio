@@ -2,7 +2,7 @@
 // io_context.hpp
 // ~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2018 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2019 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -595,6 +595,11 @@ public:
 #endif // !defined(BOOST_ASIO_NO_DEPRECATED)
 
 private:
+#if !defined(BOOST_ASIO_NO_DEPRECATED)
+  struct initiate_dispatch;
+  struct initiate_post;
+#endif // !defined(BOOST_ASIO_NO_DEPRECATED)
+
   // Helper function to add the implementation.
   BOOST_ASIO_DECL impl_type& add_impl(impl_type* impl);
 
@@ -769,10 +774,6 @@ public:
   /// Get the io_context associated with the work.
   boost::asio::io_context& get_io_context();
 
-  /// (Deprecated: Use get_io_context().) Get the io_context associated with the
-  /// work.
-  boost::asio::io_context& get_io_service();
-
 private:
   // Prevent assignment.
   void operator=(const work& other);
@@ -789,11 +790,6 @@ class io_context::service
 public:
   /// Get the io_context object that owns the service.
   boost::asio::io_context& get_io_context();
-
-#if !defined(BOOST_ASIO_NO_DEPRECATED)
-  /// Get the io_context object that owns the service.
-  boost::asio::io_context& get_io_service();
-#endif // !defined(BOOST_ASIO_NO_DEPRECATED)
 
 private:
   /// Destroy all user-defined handler objects owned by the service.

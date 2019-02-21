@@ -2,7 +2,7 @@
 // logger_service.hpp
 // ~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2018 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2019 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -25,11 +25,11 @@ namespace services {
 
 /// Service implementation for the logger.
 class logger_service
-  : public boost::asio::io_context::service
+  : public boost::asio::execution_context::service
 {
 public:
-  /// The unique service identifier.
-  static boost::asio::io_context::id id;
+  /// The type used to identify this service in the execution context.
+  typedef logger_service key_type;
 
   /// The backend implementation of a logger.
   struct logger_impl
@@ -42,8 +42,8 @@ public:
   typedef logger_impl* impl_type;
 
   /// Constructor creates a thread to run a private io_context.
-  logger_service(boost::asio::io_context& io_context)
-    : boost::asio::io_context::service(io_context),
+  logger_service(boost::asio::execution_context& context)
+    : boost::asio::execution_context::service(context),
       work_io_context_(),
       work_(boost::asio::make_work_guard(work_io_context_)),
       work_thread_(new boost::thread(
@@ -62,7 +62,7 @@ public:
   }
 
   /// Destroy all user-defined handler objects owned by the service.
-  void shutdown_service()
+  void shutdown()
   {
   }
 

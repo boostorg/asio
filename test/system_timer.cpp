@@ -2,7 +2,7 @@
 // system_timer.cpp
 // ~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2018 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2019 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -96,6 +96,7 @@ void system_timer_test()
 #endif // !defined(BOOST_ASIO_HAS_BOOST_BIND)
 
   boost::asio::io_context ioc;
+  const boost::asio::io_context::executor_type ioc_ex = ioc.get_executor();
   int count = 0;
 
   boost::asio::system_timer::time_point start = now();
@@ -110,7 +111,7 @@ void system_timer_test()
 
   start = now();
 
-  boost::asio::system_timer t2(ioc, seconds(1) + microseconds(500000));
+  boost::asio::system_timer t2(ioc_ex, seconds(1) + microseconds(500000));
   t2.wait();
 
   // The timer must block until after its expiry time.

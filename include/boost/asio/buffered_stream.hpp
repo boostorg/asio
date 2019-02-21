@@ -2,7 +2,7 @@
 // buffered_stream.hpp
 // ~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2018 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2019 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -23,7 +23,6 @@
 #include <boost/asio/buffered_stream_fwd.hpp>
 #include <boost/asio/detail/noncopyable.hpp>
 #include <boost/asio/error.hpp>
-#include <boost/asio/io_context.hpp>
 
 #include <boost/asio/detail/push_options.hpp>
 
@@ -96,22 +95,6 @@ public:
   {
     return stream_impl_.lowest_layer().get_executor();
   }
-
-#if !defined(BOOST_ASIO_NO_DEPRECATED)
-  /// (Deprecated: Use get_executor().) Get the io_context associated with the
-  /// object.
-  boost::asio::io_context& get_io_context()
-  {
-    return stream_impl_.get_io_context();
-  }
-
-  /// (Deprecated: Use get_executor().) Get the io_context associated with the
-  /// object.
-  boost::asio::io_context& get_io_service()
-  {
-    return stream_impl_.get_io_service();
-  }
-#endif // !defined(BOOST_ASIO_NO_DEPRECATED)
 
   /// Close the stream.
   void close()

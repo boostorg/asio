@@ -2,7 +2,7 @@
 // server.cpp
 // ~~~~~~~~~~
 //
-// Copyright (c) 2003-2018 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2019 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -55,7 +55,7 @@ public:
     stocks_.push_back(s);
 
     // Start an accept operation for a new connection.
-    connection_ptr new_conn(new connection(acceptor_.get_io_context()));
+    connection_ptr new_conn(new connection(acceptor_.get_executor()));
     acceptor_.async_accept(new_conn->socket(),
         boost::bind(&server::handle_accept, this,
           boost::asio::placeholders::error, new_conn));
@@ -75,7 +75,7 @@ public:
     }
 
     // Start an accept operation for a new connection.
-    connection_ptr new_conn(new connection(acceptor_.get_io_context()));
+    connection_ptr new_conn(new connection(acceptor_.get_executor()));
     acceptor_.async_accept(new_conn->socket(),
         boost::bind(&server::handle_accept, this,
           boost::asio::placeholders::error, new_conn));

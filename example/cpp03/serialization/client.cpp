@@ -2,7 +2,7 @@
 // client.cpp
 // ~~~~~~~~~~
 //
-// Copyright (c) 2003-2018 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2019 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -25,7 +25,7 @@ public:
   /// Constructor starts the asynchronous connect operation.
   client(boost::asio::io_context& io_context,
       const std::string& host, const std::string& service)
-    : connection_(io_context)
+    : connection_(io_context.get_executor())
   {
     // Resolve the host name into an IP address.
     boost::asio::ip::tcp::resolver resolver(io_context);

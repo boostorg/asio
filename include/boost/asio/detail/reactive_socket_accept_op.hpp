@@ -2,7 +2,7 @@
 // detail/reactive_socket_accept_op.hpp
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2018 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2019 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -86,7 +86,8 @@ private:
   std::size_t addrlen_;
 };
 
-template <typename Socket, typename Protocol, typename Handler>
+template <typename Socket, typename Protocol,
+    typename Handler, typename IoExecutor>
 class reactive_socket_accept_op :
   public reactive_socket_accept_op_base<Socket, Protocol>
 {
@@ -95,12 +96,14 @@ public:
 
   reactive_socket_accept_op(socket_type socket,
       socket_ops::state_type state, Socket& peer, const Protocol& protocol,
-      typename Protocol::endpoint* peer_endpoint, Handler& handler)
+      typename Protocol::endpoint* peer_endpoint, Handler& handler,
+      const IoExecutor& io_ex)
     : reactive_socket_accept_op_base<Socket, Protocol>(socket, state, peer,
         protocol, peer_endpoint, &reactive_socket_accept_op::do_complete),
-      handler_(BOOST_ASIO_MOVE_CAST(Handler)(handler))
+      handler_(BOOST_ASIO_MOVE_CAST(Handler)(handler)),
+      io_executor_(io_ex)
   {
-    handler_work<Handler>::start(handler_);
+    handler_work<Handler, IoExecutor>::start(handler_, io_executor_);
   }
 
   static void do_complete(void* owner, operation* base,
@@ -110,7 +113,7 @@ public:
     // Take ownership of the handler object.
     reactive_socket_accept_op* o(static_cast<reactive_socket_accept_op*>(base));
     ptr p = { boost::asio::detail::addressof(o->handler_), o, o };
-    handler_work<Handler> w(o->handler_);
+    handler_work<Handler, IoExecutor> w(o->handler_, o->io_executor_);
 
     // On success, assign new connection to peer socket object.
     if (owner)
@@ -141,11 +144,13 @@ public:
 
 private:
   Handler handler_;
+  IoExecutor io_executor_;
 };
 
 #if defined(BOOST_ASIO_HAS_MOVE)
 
-template <typename Protocol, typename Handler>
+template <typename Protocol, typename PeerIoExecutor,
+    typename Handler, typename IoExecutor>
 class reactive_socket_move_accept_op :
   private Protocol::socket,
   public reactive_socket_accept_op_base<typename Protocol::socket, Protocol>
@@ -153,16 +158,18 @@ class reactive_socket_move_accept_op :
 public:
   BOOST_ASIO_DEFINE_HANDLER_PTR(reactive_socket_move_accept_op);
 
-  reactive_socket_move_accept_op(io_context& ioc, socket_type socket,
-      socket_ops::state_type state, const Protocol& protocol,
-      typename Protocol::endpoint* peer_endpoint, Handler& handler)
-    : Protocol::socket(ioc),
+  reactive_socket_move_accept_op(const PeerIoExecutor& peer_io_ex,
+      socket_type socket, socket_ops::state_type state,
+      const Protocol& protocol, typename Protocol::endpoint* peer_endpoint,
+      Handler& handler, const IoExecutor& io_ex)
+    : Protocol::socket(peer_io_ex),
       reactive_socket_accept_op_base<typename Protocol::socket, Protocol>(
         socket, state, *this, protocol, peer_endpoint,
         &reactive_socket_move_accept_op::do_complete),
-      handler_(BOOST_ASIO_MOVE_CAST(Handler)(handler))
+      handler_(BOOST_ASIO_MOVE_CAST(Handler)(handler)),
+      io_executor_(io_ex)
   {
-    handler_work<Handler>::start(handler_);
+    handler_work<Handler, IoExecutor>::start(handler_, io_executor_);
   }
 
   static void do_complete(void* owner, operation* base,
@@ -173,7 +180,7 @@ public:
     reactive_socket_move_accept_op* o(
         static_cast<reactive_socket_move_accept_op*>(base));
     ptr p = { boost::asio::detail::addressof(o->handler_), o, o };
-    handler_work<Handler> w(o->handler_);
+    handler_work<Handler, IoExecutor> w(o->handler_, o->io_executor_);
 
     // On success, assign new connection to peer socket object.
     if (owner)
@@ -206,6 +213,7 @@ public:
 
 private:
   Handler handler_;
+  IoExecutor io_executor_;
 };
 
 #endif // defined(BOOST_ASIO_HAS_MOVE)

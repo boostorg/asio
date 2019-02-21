@@ -2,7 +2,7 @@
 // detail/config.hpp
 // ~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2018 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2019 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -120,11 +120,14 @@
 #endif // !defined(BOOST_ASIO_HAS_MOVE)
 
 // If BOOST_ASIO_MOVE_CAST isn't defined, and move support is available, define
-// BOOST_ASIO_MOVE_ARG and BOOST_ASIO_MOVE_CAST to take advantage of rvalue
-// references and perfect forwarding.
+// * BOOST_ASIO_MOVE_ARG,
+// * BOOST_ASIO_NONDEDUCED_MOVE_ARG, and
+// * BOOST_ASIO_MOVE_CAST
+// to take advantage of rvalue references and perfect forwarding.
 #if defined(BOOST_ASIO_HAS_MOVE) && !defined(BOOST_ASIO_MOVE_CAST)
 # define BOOST_ASIO_MOVE_ARG(type) type&&
 # define BOOST_ASIO_MOVE_ARG2(type1, type2) type1, type2&&
+# define BOOST_ASIO_NONDEDUCED_MOVE_ARG(type) type&
 # define BOOST_ASIO_MOVE_CAST(type) static_cast<type&&>
 # define BOOST_ASIO_MOVE_CAST2(type1, type2) static_cast<type1, type2&&>
 #endif // defined(BOOST_ASIO_HAS_MOVE) && !defined(BOOST_ASIO_MOVE_CAST)
@@ -150,6 +153,7 @@
 # else
 #  define BOOST_ASIO_MOVE_ARG(type) type
 # endif
+# define BOOST_ASIO_NONDEDUCED_MOVE_ARG(type) const type&
 # define BOOST_ASIO_MOVE_CAST(type) static_cast<const type&>
 # define BOOST_ASIO_MOVE_CAST2(type1, type2) static_cast<const type1, type2&>
 #endif // !defined(BOOST_ASIO_MOVE_CAST)
@@ -1364,33 +1368,6 @@
 # endif // defined(__linux__)
         //   || (defined(__MACH__) && defined(__APPLE__))
 #endif // !defined(BOOST_ASIO_DISABLE_SSIZE_T)
-
-// Helper macros to manage the transition away from the old services-based API.
-#if defined(BOOST_ASIO_ENABLE_OLD_SERVICES)
-# define BOOST_ASIO_SVC_TPARAM , typename Service
-# define BOOST_ASIO_SVC_TPARAM_DEF1(d1) , typename Service d1
-# define BOOST_ASIO_SVC_TPARAM_DEF2(d1, d2) , typename Service d1, d2
-# define BOOST_ASIO_SVC_TARG , Service
-# define BOOST_ASIO_SVC_T Service
-# define BOOST_ASIO_SVC_TPARAM1 , typename Service1
-# define BOOST_ASIO_SVC_TPARAM1_DEF1(d1) , typename Service1 d1
-# define BOOST_ASIO_SVC_TPARAM1_DEF2(d1, d2) , typename Service1 d1, d2
-# define BOOST_ASIO_SVC_TARG1 , Service1
-# define BOOST_ASIO_SVC_T1 Service1
-# define BOOST_ASIO_SVC_ACCESS public
-#else // defined(BOOST_ASIO_ENABLE_OLD_SERVICES)
-# define BOOST_ASIO_SVC_TPARAM
-# define BOOST_ASIO_SVC_TPARAM_DEF1(d1)
-# define BOOST_ASIO_SVC_TPARAM_DEF2(d1, d2)
-# define BOOST_ASIO_SVC_TARG
-// BOOST_ASIO_SVC_T is defined at each point of use.
-# define BOOST_ASIO_SVC_TPARAM1
-# define BOOST_ASIO_SVC_TPARAM1_DEF1(d1)
-# define BOOST_ASIO_SVC_TPARAM1_DEF2(d1, d2)
-# define BOOST_ASIO_SVC_TARG1
-// BOOST_ASIO_SVC_T1 is defined at each point of use.
-# define BOOST_ASIO_SVC_ACCESS protected
-#endif // defined(BOOST_ASIO_ENABLE_OLD_SERVICES)
 
 // Helper macros to manage transition away from error_code return values.
 #if defined(BOOST_ASIO_NO_DEPRECATED)

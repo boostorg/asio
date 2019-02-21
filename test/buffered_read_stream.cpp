@@ -2,7 +2,7 @@
 // buffered_read_stream.cpp
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2018 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2019 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -80,14 +80,6 @@ void test_compile()
 
     stream_type::executor_type ex = stream1.get_executor();
     (void)ex;
-
-#if !defined(BOOST_ASIO_NO_DEPRECATED)
-    io_context& ioc_ref = stream1.get_io_context();
-    (void)ioc_ref;
-
-    io_context& ioc_ref2 = stream1.get_io_service();
-    (void)ioc_ref2;
-#endif // !defined(BOOST_ASIO_NO_DEPRECATED)
 
     stream_type::lowest_layer_type& lowest_layer = stream1.lowest_layer();
     (void)lowest_layer;

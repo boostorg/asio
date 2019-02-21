@@ -2,7 +2,7 @@
 // impl/buffered_write_stream.hpp
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2018 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2019 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -21,6 +21,7 @@
 #include <boost/asio/detail/handler_cont_helpers.hpp>
 #include <boost/asio/detail/handler_invoke_helpers.hpp>
 #include <boost/asio/detail/handler_type_requirements.hpp>
+#include <boost/asio/detail/non_const_lvalue.hpp>
 
 #include <boost/asio/detail/push_options.hpp>
 
@@ -124,6 +125,23 @@ namespace detail
     boost_asio_handler_invoke_helpers::invoke(
         function, this_handler->handler_);
   }
+
+  struct initiate_async_buffered_flush
+  {
+    template <typename WriteHandler, typename Stream>
+    void operator()(BOOST_ASIO_MOVE_ARG(WriteHandler) handler,
+        buffered_stream_storage* storage, Stream* next_layer) const
+    {
+      // If you get an error on the following line it means that your handler
+      // does not meet the documented type requirements for a WriteHandler.
+      BOOST_ASIO_WRITE_HANDLER_CHECK(WriteHandler, handler) type_check;
+
+      non_const_lvalue<WriteHandler> handler2(handler);
+      async_write(*next_layer, buffer(storage->data(), storage->size()),
+          buffered_flush_handler<typename decay<WriteHandler>::type>(
+            *storage, handler2.value));
+    }
+  };
 } // namespace detail
 
 #if !defined(GENERATING_DOCUMENTATION)
@@ -163,19 +181,10 @@ BOOST_ASIO_INITFN_RESULT_TYPE(WriteHandler,
 buffered_write_stream<Stream>::async_flush(
     BOOST_ASIO_MOVE_ARG(WriteHandler) handler)
 {
-  // If you get an error on the following line it means that your handler does
-  // not meet the documented type requirements for a WriteHandler.
-  BOOST_ASIO_WRITE_HANDLER_CHECK(WriteHandler, handler) type_check;
-
-  async_completion<WriteHandler,
-    void (boost::system::error_code, std::size_t)> init(handler);
-
-  async_write(next_layer_, buffer(storage_.data(), storage_.size()),
-      detail::buffered_flush_handler<BOOST_ASIO_HANDLER_TYPE(
-        WriteHandler, void (boost::system::error_code, std::size_t))>(
-        storage_, init.completion_handler));
-
-  return init.result.get();
+  return async_initiate<WriteHandler,
+    void (boost::system::error_code, std::size_t)>(
+      detail::initiate_async_buffered_flush(),
+      handler, &storage_, &next_layer_);
 }
 
 template <typename Stream>
@@ -314,6 +323,38 @@ namespace detail
     boost_asio_handler_invoke_helpers::invoke(
         function, this_handler->handler_);
   }
+
+  struct initiate_async_buffered_write_some
+  {
+    template <typename WriteHandler, typename Stream,
+        typename ConstBufferSequence>
+    void operator()(BOOST_ASIO_MOVE_ARG(WriteHandler) handler,
+        buffered_stream_storage* storage, Stream* next_layer,
+        const ConstBufferSequence& buffers) const
+    {
+      // If you get an error on the following line it means that your handler
+      // does not meet the documented type requirements for a WriteHandler.
+      BOOST_ASIO_WRITE_HANDLER_CHECK(WriteHandler, handler) type_check;
+
+      using boost::asio::buffer_size;
+      non_const_lvalue<WriteHandler> handler2(handler);
+      if (buffer_size(buffers) == 0 || storage->size() < storage->capacity())
+      {
+        next_layer->async_write_some(BOOST_ASIO_CONST_BUFFER(0, 0),
+            buffered_write_some_handler<ConstBufferSequence,
+              typename decay<WriteHandler>::type>(
+                *storage, buffers, handler2.value));
+      }
+      else
+      {
+        initiate_async_buffered_flush()(
+            buffered_write_some_handler<ConstBufferSequence,
+              typename decay<WriteHandler>::type>(
+                *storage, buffers, handler2.value),
+            storage, next_layer);
+      }
+    }
+  };
 } // namespace detail
 
 #if !defined(GENERATING_DOCUMENTATION)
@@ -362,32 +403,10 @@ buffered_write_stream<Stream>::async_write_some(
     const ConstBufferSequence& buffers,
     BOOST_ASIO_MOVE_ARG(WriteHandler) handler)
 {
-  // If you get an error on the following line it means that your handler does
-  // not meet the documented type requirements for a WriteHandler.
-  BOOST_ASIO_WRITE_HANDLER_CHECK(WriteHandler, handler) type_check;
-
-  async_completion<WriteHandler,
-    void (boost::system::error_code, std::size_t)> init(handler);
-
-  using boost::asio::buffer_size;
-  if (buffer_size(buffers) == 0
-      || storage_.size() < storage_.capacity())
-  {
-    next_layer_.async_write_some(BOOST_ASIO_CONST_BUFFER(0, 0),
-        detail::buffered_write_some_handler<
-          ConstBufferSequence, BOOST_ASIO_HANDLER_TYPE(
-            WriteHandler, void (boost::system::error_code, std::size_t))>(
-            storage_, buffers, init.completion_handler));
-  }
-  else
-  {
-    this->async_flush(detail::buffered_write_some_handler<
-          ConstBufferSequence, BOOST_ASIO_HANDLER_TYPE(
-            WriteHandler, void (boost::system::error_code, std::size_t))>(
-            storage_, buffers, init.completion_handler));
-  }
-
-  return init.result.get();
+  return async_initiate<WriteHandler,
+    void (boost::system::error_code, std::size_t)>(
+      detail::initiate_async_buffered_write_some(),
+      handler, &storage_, &next_layer_, buffers);
 }
 
 template <typename Stream>

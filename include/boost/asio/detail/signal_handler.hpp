@@ -2,7 +2,7 @@
 // detail/signal_handler.hpp
 // ~~~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2018 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2019 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -30,17 +30,18 @@ namespace boost {
 namespace asio {
 namespace detail {
 
-template <typename Handler>
+template <typename Handler, typename IoExecutor>
 class signal_handler : public signal_op
 {
 public:
   BOOST_ASIO_DEFINE_HANDLER_PTR(signal_handler);
 
-  signal_handler(Handler& h)
+  signal_handler(Handler& h, const IoExecutor& io_ex)
     : signal_op(&signal_handler::do_complete),
-      handler_(BOOST_ASIO_MOVE_CAST(Handler)(h))
+      handler_(BOOST_ASIO_MOVE_CAST(Handler)(h)),
+      io_executor_(io_ex)
   {
-    handler_work<Handler>::start(handler_);
+    handler_work<Handler, IoExecutor>::start(handler_, io_executor_);
   }
 
   static void do_complete(void* owner, operation* base,
@@ -50,7 +51,7 @@ public:
     // Take ownership of the handler object.
     signal_handler* h(static_cast<signal_handler*>(base));
     ptr p = { boost::asio::detail::addressof(h->handler_), h, h };
-    handler_work<Handler> w(h->handler_);
+    handler_work<Handler, IoExecutor> w(h->handler_, h->io_executor_);
 
     BOOST_ASIO_HANDLER_COMPLETION((*h));
 
@@ -77,6 +78,7 @@ public:
 
 private:
   Handler handler_;
+  IoExecutor io_executor_;
 };
 
 } // namespace detail

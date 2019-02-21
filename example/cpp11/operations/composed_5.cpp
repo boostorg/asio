@@ -2,7 +2,7 @@
 // composed_5.cpp
 // ~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2018 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2019 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -179,7 +179,7 @@ auto async_write_messages(tcp::socket& socket,
 
   // Create a steady_timer to be used for the delay between messages.
   std::unique_ptr<boost::asio::steady_timer> delay_timer(
-      new boost::asio::steady_timer(socket.get_executor().context()));
+      new boost::asio::steady_timer(socket.get_executor()));
 
   // Initiate the underlying operations by explicitly calling our intermediate
   // completion handler's function call operator.

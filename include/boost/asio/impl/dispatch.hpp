@@ -2,7 +2,7 @@
 // impl/dispatch.hpp
 // ~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2018 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2019 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -24,24 +24,46 @@
 
 namespace boost {
 namespace asio {
+namespace detail {
+
+struct initiate_dispatch
+{
+  template <typename CompletionHandler>
+  void operator()(BOOST_ASIO_MOVE_ARG(CompletionHandler) handler) const
+  {
+    typedef typename decay<CompletionHandler>::type DecayedHandler;
+
+    typename associated_executor<DecayedHandler>::type ex(
+        (get_associated_executor)(handler));
+
+    typename associated_allocator<DecayedHandler>::type alloc(
+        (get_associated_allocator)(handler));
+
+    ex.dispatch(BOOST_ASIO_MOVE_CAST(CompletionHandler)(handler), alloc);
+  }
+
+  template <typename CompletionHandler, typename Executor>
+  void operator()(BOOST_ASIO_MOVE_ARG(CompletionHandler) handler,
+      BOOST_ASIO_MOVE_ARG(Executor) ex) const
+  {
+    typedef typename decay<CompletionHandler>::type DecayedHandler;
+
+    typename associated_allocator<DecayedHandler>::type alloc(
+        (get_associated_allocator)(handler));
+
+    ex.dispatch(detail::work_dispatcher<DecayedHandler>(
+          BOOST_ASIO_MOVE_CAST(CompletionHandler)(handler)), alloc);
+  }
+};
+
+} // namespace detail
 
 template <typename CompletionToken>
 BOOST_ASIO_INITFN_RESULT_TYPE(CompletionToken, void()) dispatch(
     BOOST_ASIO_MOVE_ARG(CompletionToken) token)
 {
-  typedef BOOST_ASIO_HANDLER_TYPE(CompletionToken, void()) handler;
-
-  async_completion<CompletionToken, void()> init(token);
-
-  typename associated_executor<handler>::type ex(
-      (get_associated_executor)(init.completion_handler));
-
-  typename associated_allocator<handler>::type alloc(
-      (get_associated_allocator)(init.completion_handler));
-
-  ex.dispatch(BOOST_ASIO_MOVE_CAST(handler)(init.completion_handler), alloc);
-
-  return init.result.get();
+  return async_initiate<CompletionToken, void()>(
+      detail::initiate_dispatch(), token);
 }
 
 template <typename Executor, typename CompletionToken>
@@ -49,17 +71,8 @@ BOOST_ASIO_INITFN_RESULT_TYPE(CompletionToken, void()) dispatch(
     const Executor& ex, BOOST_ASIO_MOVE_ARG(CompletionToken) token,
     typename enable_if<is_executor<Executor>::value>::type*)
 {
-  typedef BOOST_ASIO_HANDLER_TYPE(CompletionToken, void()) handler;
-
-  async_completion<CompletionToken, void()> init(token);
-
-  typename associated_allocator<handler>::type alloc(
-      (get_associated_allocator)(init.completion_handler));
-
-  ex.dispatch(detail::work_dispatcher<handler>(
-        init.completion_handler), alloc);
-
-  return init.result.get();
+  return async_initiate<CompletionToken, void()>(
+      detail::initiate_dispatch(), token, ex);
 }
 
 template <typename ExecutionContext, typename CompletionToken>

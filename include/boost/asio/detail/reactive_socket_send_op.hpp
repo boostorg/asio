@@ -2,7 +2,7 @@
 // detail/reactive_socket_send_op.hpp
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2018 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2019 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -74,21 +74,22 @@ private:
   socket_base::message_flags flags_;
 };
 
-template <typename ConstBufferSequence, typename Handler>
+template <typename ConstBufferSequence, typename Handler, typename IoExecutor>
 class reactive_socket_send_op :
   public reactive_socket_send_op_base<ConstBufferSequence>
 {
 public:
   BOOST_ASIO_DEFINE_HANDLER_PTR(reactive_socket_send_op);
 
-  reactive_socket_send_op(socket_type socket,
-      socket_ops::state_type state, const ConstBufferSequence& buffers,
-      socket_base::message_flags flags, Handler& handler)
+  reactive_socket_send_op(socket_type socket, socket_ops::state_type state,
+      const ConstBufferSequence& buffers, socket_base::message_flags flags,
+      Handler& handler, const IoExecutor& io_ex)
     : reactive_socket_send_op_base<ConstBufferSequence>(socket,
         state, buffers, flags, &reactive_socket_send_op::do_complete),
-      handler_(BOOST_ASIO_MOVE_CAST(Handler)(handler))
+      handler_(BOOST_ASIO_MOVE_CAST(Handler)(handler)),
+      io_executor_(io_ex)
   {
-    handler_work<Handler>::start(handler_);
+    handler_work<Handler, IoExecutor>::start(handler_, io_executor_);
   }
 
   static void do_complete(void* owner, operation* base,
@@ -98,7 +99,7 @@ public:
     // Take ownership of the handler object.
     reactive_socket_send_op* o(static_cast<reactive_socket_send_op*>(base));
     ptr p = { boost::asio::detail::addressof(o->handler_), o, o };
-    handler_work<Handler> w(o->handler_);
+    handler_work<Handler, IoExecutor> w(o->handler_, o->io_executor_);
 
     BOOST_ASIO_HANDLER_COMPLETION((*o));
 
@@ -125,6 +126,7 @@ public:
 
 private:
   Handler handler_;
+  IoExecutor io_executor_;
 };
 
 } // namespace detail

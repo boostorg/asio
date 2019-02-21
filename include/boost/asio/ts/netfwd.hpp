@@ -2,7 +2,7 @@
 // ts/netfwd.hpp
 // ~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2018 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2019 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -59,26 +59,12 @@ struct time_traits;
 
 #endif // defined(BOOST_ASIO_HAS_BOOST_DATE_TIME)
 
-#if defined(BOOST_ASIO_ENABLE_OLD_SERVICES)
-
-template <typename Clock, typename WaitTraits>
-class waitable_timer_service;
-
-#if defined(BOOST_ASIO_HAS_BOOST_DATE_TIME)
-
-template <typename TimeType, typename TimeTraits>
-class deadline_timer_service;
-
-#endif // defined(BOOST_ASIO_HAS_BOOST_DATE_TIME)
-
-#endif // defined(BOOST_ASIO_ENABLE_OLD_SERVICES)
-
 #if !defined(BOOST_ASIO_BASIC_WAITABLE_TIMER_FWD_DECL)
 #define BOOST_ASIO_BASIC_WAITABLE_TIMER_FWD_DECL
 
 template <typename Clock,
-    typename WaitTraits = boost::asio::wait_traits<Clock>
-    BOOST_ASIO_SVC_TPARAM_DEF2(= waitable_timer_service<Clock, WaitTraits>)>
+    typename WaitTraits = wait_traits<Clock>,
+    typename Executor = executor>
 class basic_waitable_timer;
 
 #endif // !defined(BOOST_ASIO_BASIC_WAITABLE_TIMER_FWD_DECL)
@@ -94,33 +80,51 @@ typedef basic_waitable_timer<chrono::high_resolution_clock>
 
 #endif // defined(BOOST_ASIO_HAS_CHRONO)
 
-template <class Protocol BOOST_ASIO_SVC_TPARAM>
+#if !defined(BOOST_ASIO_BASIC_SOCKET_FWD_DECL)
+#define BOOST_ASIO_BASIC_SOCKET_FWD_DECL
+
+template <typename Protocol, typename Executor = executor>
 class basic_socket;
 
-template <typename Protocol BOOST_ASIO_SVC_TPARAM>
+#endif // !defined(BOOST_ASIO_BASIC_SOCKET_FWD_DECL)
+
+#if !defined(BOOST_ASIO_BASIC_DATAGRAM_SOCKET_FWD_DECL)
+#define BOOST_ASIO_BASIC_DATAGRAM_SOCKET_FWD_DECL
+
+template <typename Protocol, typename Executor = executor>
 class basic_datagram_socket;
 
-template <typename Protocol BOOST_ASIO_SVC_TPARAM>
+#endif // !defined(BOOST_ASIO_BASIC_DATAGRAM_SOCKET_FWD_DECL)
+
+#if !defined(BOOST_ASIO_BASIC_STREAM_SOCKET_FWD_DECL)
+#define BOOST_ASIO_BASIC_STREAM_SOCKET_FWD_DECL
+
+// Forward declaration with defaulted arguments.
+template <typename Protocol, typename Executor = executor>
 class basic_stream_socket;
 
-template <typename Protocol BOOST_ASIO_SVC_TPARAM>
+#endif // !defined(BOOST_ASIO_BASIC_STREAM_SOCKET_FWD_DECL)
+
+#if !defined(BOOST_ASIO_BASIC_SOCKET_ACCEPTOR_FWD_DECL)
+#define BOOST_ASIO_BASIC_SOCKET_ACCEPTOR_FWD_DECL
+
+template <typename Protocol, typename Executor = executor>
 class basic_socket_acceptor;
+
+#endif // !defined(BOOST_ASIO_BASIC_SOCKET_ACCEPTOR_FWD_DECL)
 
 #if !defined(BOOST_ASIO_BASIC_SOCKET_STREAMBUF_FWD_DECL)
 #define BOOST_ASIO_BASIC_SOCKET_STREAMBUF_FWD_DECL
 
 // Forward declaration with defaulted arguments.
-template <typename Protocol
-    BOOST_ASIO_SVC_TPARAM_DEF1(= stream_socket_service<Protocol>),
+template <typename Protocol,
 #if defined(BOOST_ASIO_HAS_BOOST_DATE_TIME) \
   || defined(GENERATING_DOCUMENTATION)
     typename Clock = boost::posix_time::ptime,
-    typename WaitTraits = time_traits<Clock>
-    BOOST_ASIO_SVC_TPARAM1_DEF2(= deadline_timer_service<Clock, WaitTraits>)>
+    typename WaitTraits = time_traits<Clock> >
 #else
     typename Clock = chrono::steady_clock,
-    typename WaitTraits = wait_traits<Clock>
-    BOOST_ASIO_SVC_TPARAM1_DEF1(= steady_timer::service_type)>
+    typename WaitTraits = wait_traits<Clock> >
 #endif
 class basic_socket_streambuf;
 
@@ -130,17 +134,14 @@ class basic_socket_streambuf;
 #define BOOST_ASIO_BASIC_SOCKET_IOSTREAM_FWD_DECL
 
 // Forward declaration with defaulted arguments.
-template <typename Protocol
-    BOOST_ASIO_SVC_TPARAM_DEF1(= stream_socket_service<Protocol>),
+template <typename Protocol,
 #if defined(BOOST_ASIO_HAS_BOOST_DATE_TIME) \
   || defined(GENERATING_DOCUMENTATION)
     typename Clock = boost::posix_time::ptime,
-    typename WaitTraits = time_traits<Clock>
-    BOOST_ASIO_SVC_TPARAM1_DEF2(= deadline_timer_service<Clock, WaitTraits>)>
+    typename WaitTraits = time_traits<Clock> >
 #else
     typename Clock = chrono::steady_clock,
-    typename WaitTraits = wait_traits<Clock>
-    BOOST_ASIO_SVC_TPARAM1_DEF1(= steady_timer::service_type)>
+    typename WaitTraits = wait_traits<Clock> >
 #endif
 class basic_socket_iostream;
 
@@ -181,8 +182,13 @@ class basic_resolver_entry;
 template <typename InternetProtocol>
 class basic_resolver_results;
 
-template <typename InternetProtocol BOOST_ASIO_SVC_TPARAM>
+#if !defined(BOOST_ASIO_IP_BASIC_RESOLVER_FWD_DECL)
+#define BOOST_ASIO_IP_BASIC_RESOLVER_FWD_DECL
+
+template <typename InternetProtocol, typename Executor = executor>
 class basic_resolver;
+
+#endif // !defined(BOOST_ASIO_IP_BASIC_RESOLVER_FWD_DECL)
 
 class tcp;
 

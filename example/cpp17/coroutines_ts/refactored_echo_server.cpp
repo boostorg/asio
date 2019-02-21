@@ -2,7 +2,7 @@
 // refactored_echo_server.cpp
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2018 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2019 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -58,7 +58,7 @@ awaitable<void> listener()
   auto executor = co_await this_coro::executor();
   auto token = co_await this_coro::token();
 
-  tcp::acceptor acceptor(executor.context(), {tcp::v4(), 55555});
+  tcp::acceptor acceptor(executor, {tcp::v4(), 55555});
   for (;;)
   {
     tcp::socket socket = co_await acceptor.async_accept(token);
