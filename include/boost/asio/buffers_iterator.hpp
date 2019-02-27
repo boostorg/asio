@@ -387,10 +387,12 @@ private:
       return;
     }
 
-    // Find the previous non-empty buffer.
+    // Find the previous non-empty buffer, which must exist,
+    // otherwise position_ could not have been > 0.
     buffer_sequence_iterator_type iter = current_;
-    while (iter != begin_)
+    for (;;)
     {
+      BOOST_ASIO_ASSERT(iter != begin_);
       --iter;
       buffer_type buffer = *iter;
       std::size_t buffer_size = buffer.size();
