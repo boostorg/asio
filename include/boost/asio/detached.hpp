@@ -1,6 +1,6 @@
 //
-// experimental/detached.hpp
-// ~~~~~~~~~~~~~~~~~~~~~~~~~
+// detached.hpp
+// ~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2019 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
@@ -8,8 +8,8 @@
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
-#ifndef BOOST_ASIO_EXPERIMENTAL_DETACHED_HPP
-#define BOOST_ASIO_EXPERIMENTAL_DETACHED_HPP
+#ifndef BOOST_ASIO_DETACHED_HPP
+#define BOOST_ASIO_DETACHED_HPP
 
 #if defined(_MSC_VER) && (_MSC_VER >= 1200)
 # pragma once
@@ -22,7 +22,6 @@
 
 namespace boost {
 namespace asio {
-namespace experimental {
 
 /// Class used to specify that an asynchronous operation is detached.
 /**
@@ -31,9 +30,9 @@ namespace experimental {
  * detached. That is, there is no completion handler waiting for the
  * operation's result. A detached_t object may be passed as a handler to an
  * asynchronous operation, typically using the special value
- * @c boost::asio::experimental::detached. For example:
+ * @c boost::asio::detached. For example:
 
- * @code my_socket.async_send(my_buffer, boost::asio::experimental::detached);
+ * @code my_socket.async_send(my_buffer, boost::asio::detached);
  * @endcode
  */
 class detached_t
@@ -47,8 +46,7 @@ public:
 
 /// A special value, similar to std::nothrow.
 /**
- * See the documentation for boost::asio::experimental::detached_t for a usage
- * example.
+ * See the documentation for boost::asio::detached_t for a usage example.
  */
 #if defined(BOOST_ASIO_HAS_CONSTEXPR) || defined(GENERATING_DOCUMENTATION)
 constexpr detached_t detached;
@@ -56,12 +54,11 @@ constexpr detached_t detached;
 __declspec(selectany) detached_t detached;
 #endif
 
-} // namespace experimental
 } // namespace asio
 } // namespace boost
 
 #include <boost/asio/detail/pop_options.hpp>
 
-#include <boost/asio/experimental/impl/detached.hpp>
+#include <boost/asio/impl/detached.hpp>
 
-#endif // BOOST_ASIO_EXPERIMENTAL_DETACHED_HPP
+#endif // BOOST_ASIO_DETACHED_HPP

@@ -1,6 +1,6 @@
 //
-// experimental/redirect_error.hpp
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// redirect_error.hpp
+// ~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2019 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
@@ -8,8 +8,8 @@
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
-#ifndef BOOST_ASIO_EXPERIMENTAL_REDIRECT_ERROR_HPP
-#define BOOST_ASIO_EXPERIMENTAL_REDIRECT_ERROR_HPP
+#ifndef BOOST_ASIO_REDIRECT_ERROR_HPP
+#define BOOST_ASIO_REDIRECT_ERROR_HPP
 
 #if defined(_MSC_VER) && (_MSC_VER >= 1200)
 # pragma once
@@ -23,7 +23,6 @@
 
 namespace boost {
 namespace asio {
-namespace experimental {
 
 /// Completion token type used to specify that an error produced by an
 /// asynchronous operation is captured to an error_code variable.
@@ -52,18 +51,17 @@ public:
 /// Create a completion token to capture error_code values to a variable.
 template <typename CompletionToken>
 inline redirect_error_t<typename decay<CompletionToken>::type> redirect_error(
-    CompletionToken&& completion_token, boost::system::error_code& ec)
+    BOOST_ASIO_MOVE_ARG(CompletionToken) completion_token, boost::system::error_code& ec)
 {
   return redirect_error_t<typename decay<CompletionToken>::type>(
       BOOST_ASIO_MOVE_CAST(CompletionToken)(completion_token), ec);
 }
 
-} // namespace experimental
 } // namespace asio
 } // namespace boost
 
 #include <boost/asio/detail/pop_options.hpp>
 
-#include <boost/asio/experimental/impl/redirect_error.hpp>
+#include <boost/asio/impl/redirect_error.hpp>
 
-#endif // BOOST_ASIO_EXPERIMENTAL_REDIRECT_ERROR_HPP
+#endif // BOOST_ASIO_REDIRECT_ERROR_HPP

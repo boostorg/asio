@@ -16,20 +16,24 @@
 #include <set>
 #include <string>
 #include <utility>
-#include <boost/asio/experimental.hpp>
+#include <boost/asio/awaitable.hpp>
+#include <boost/asio/detached.hpp>
+#include <boost/asio/co_spawn.hpp>
 #include <boost/asio/io_context.hpp>
 #include <boost/asio/ip/tcp.hpp>
 #include <boost/asio/read_until.hpp>
+#include <boost/asio/redirect_error.hpp>
 #include <boost/asio/signal_set.hpp>
 #include <boost/asio/steady_timer.hpp>
+#include <boost/asio/use_awaitable.hpp>
 #include <boost/asio/write.hpp>
 
 using boost::asio::ip::tcp;
-using boost::asio::experimental::awaitable;
-using boost::asio::experimental::co_spawn;
-using boost::asio::experimental::detached;
-using boost::asio::experimental::redirect_error;
-namespace this_coro = boost::asio::experimental::this_coro;
+using boost::asio::awaitable;
+using boost::asio::co_spawn;
+using boost::asio::detached;
+using boost::asio::redirect_error;
+using boost::asio::use_awaitable;
 
 //----------------------------------------------------------------------
 
@@ -112,14 +116,12 @@ public:
 private:
   awaitable<void> reader()
   {
-    auto token = co_await this_coro::token();
-
     try
     {
       for (std::string read_msg;;)
       {
         std::size_t n = co_await boost::asio::async_read_until(socket_,
-            boost::asio::dynamic_buffer(read_msg, 1024), "\n", token);
+            boost::asio::dynamic_buffer(read_msg, 1024), "\n", use_awaitable);
 
         room_.deliver(read_msg.substr(0, n));
         read_msg.erase(0, n);
@@ -133,8 +135,6 @@ private:
 
   awaitable<void> writer()
   {
-    auto token = co_await this_coro::token();
-
     try
     {
       while (socket_.is_open())
@@ -142,12 +142,12 @@ private:
         if (write_msgs_.empty())
         {
           boost::system::error_code ec;
-          co_await timer_.async_wait(redirect_error(token, ec));
+          co_await timer_.async_wait(redirect_error(use_awaitable, ec));
         }
         else
         {
           co_await boost::asio::async_write(socket_,
-              boost::asio::buffer(write_msgs_.front()), token);
+              boost::asio::buffer(write_msgs_.front()), use_awaitable);
           write_msgs_.pop_front();
         }
       }
@@ -175,14 +175,12 @@ private:
 
 awaitable<void> listener(tcp::acceptor acceptor)
 {
-  auto token = co_await this_coro::token();
-
   chat_room room;
 
   for (;;)
   {
     std::make_shared<chat_session>(
-        co_await acceptor.async_accept(token),
+        co_await acceptor.async_accept(use_awaitable),
         room
       )->start();
   }
