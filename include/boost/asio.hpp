@@ -76,6 +76,8 @@
 #include <boost/asio/ip/address_v6.hpp>
 #include <boost/asio/ip/address_v6_iterator.hpp>
 #include <boost/asio/ip/address_v6_range.hpp>
+#include <boost/asio/ip/network_v4.hpp>
+#include <boost/asio/ip/network_v6.hpp>
 #include <boost/asio/ip/bad_address_cast.hpp>
 #include <boost/asio/ip/basic_endpoint.hpp>
 #include <boost/asio/ip/basic_resolver.hpp>
