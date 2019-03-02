@@ -247,8 +247,15 @@ engine::want engine::perform(int (engine::* op)(void*, std::size_t),
 
   if (ssl_error == SSL_ERROR_SYSCALL)
   {
-    ec = boost::system::error_code(sys_error,
-        boost::asio::error::get_system_category());
+    if (sys_error == 0)
+    {
+      ec = boost::asio::ssl::error::unspecified_system_error;
+    }
+    else
+    {
+      ec = boost::system::error_code(sys_error,
+          boost::asio::error::get_ssl_category());
+    }
     return pending_output_after > pending_output_before
       ? want_output : want_nothing;
   }
@@ -271,14 +278,19 @@ engine::want engine::perform(int (engine::* op)(void*, std::size_t),
     ec = boost::system::error_code();
     return want_input_and_retry;
   }
-  else if (::SSL_get_shutdown(ssl_) & SSL_RECEIVED_SHUTDOWN)
+  else if (ssl_error == SSL_ERROR_ZERO_RETURN)
   {
     ec = boost::asio::error::eof;
     return want_nothing;
   }
-  else
+  else if (ssl_error == SSL_ERROR_NONE)
   {
     ec = boost::system::error_code();
+    return want_nothing;
+  }
+  else
+  {
+    ec = boost::asio::ssl::error::unexpected_result;
     return want_nothing;
   }
 }
