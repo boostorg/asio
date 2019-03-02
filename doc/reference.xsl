@@ -771,9 +771,6 @@
     <xsl:when test="contains($file, 'boost/asio/ssl')">
       <xsl:text>[^boost/asio/ssl.hpp]</xsl:text>
     </xsl:when>
-    <xsl:when test="contains($file, 'boost/asio/experimental')">
-      <xsl:text>[^boost/asio/experimental.hpp]</xsl:text>
-    </xsl:when>
     <xsl:when test="contains($file, 'boost/asio/spawn')">
       <xsl:text>None</xsl:text>
     </xsl:when>
