@@ -106,6 +106,8 @@ test-suite "asio" :
   [ link high_resolution_timer.cpp : $(USE_SELECT) : high_resolution_timer_select ]
   [ run io_context.cpp ]
   [ run io_context.cpp : : : $(USE_SELECT) : io_context_select ]
+  [ run io_context_strand.cpp ]
+  [ run io_context_strand.cpp : : : $(USE_SELECT) : io_context_strand_select ]
   [ link ip/address.cpp : : ip_address ]
   [ link ip/address.cpp : $(USE_SELECT) : ip_address_select ]
   [ link ip/address_v4.cpp : : ip_address_v4 ]
