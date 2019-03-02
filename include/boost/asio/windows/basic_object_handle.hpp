@@ -90,7 +90,8 @@ public:
   template <typename ExecutionContext>
   explicit basic_object_handle(ExecutionContext& context,
       typename enable_if<
-        is_convertible<ExecutionContext&, execution_context&>::value
+        is_convertible<ExecutionContext&, execution_context&>::value,
+        basic_object_handle
       >::type* = 0)
     : impl_(context)
   {
@@ -101,9 +102,9 @@ public:
    * This constructor creates an object handle object to hold an existing native
    * handle.
    *
-   * @param context An execution context which provides the I/O executor that
-   * the object handle will use, by default, to dispatch handlers for any
-   * asynchronous operations performed on the object handle.
+   * @param ex The I/O executor that the object handle will use, by default, to
+   * dispatch handlers for any asynchronous operations performed on the
+   * object handle.
    *
    * @param native_handle The new underlying handle implementation.
    *

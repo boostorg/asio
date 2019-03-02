@@ -23,6 +23,7 @@
 #include <string>
 #include <vector>
 #include <boost/asio/detail/array_fwd.hpp>
+#include <boost/asio/detail/memory.hpp>
 #include <boost/asio/detail/string_view.hpp>
 #include <boost/asio/detail/throw_exception.hpp>
 #include <boost/asio/detail/type_traits.hpp>
@@ -382,29 +383,45 @@ private:
 /*@{*/
 
 /// Get an iterator to the first element in a buffer sequence.
-inline const mutable_buffer* buffer_sequence_begin(const mutable_buffer& b)
+template <typename MutableBuffer>
+inline const mutable_buffer* buffer_sequence_begin(const MutableBuffer& b,
+    typename enable_if<
+      is_convertible<const MutableBuffer*, const mutable_buffer*>::value
+    >::type* = 0) BOOST_ASIO_NOEXCEPT
 {
-  return &b;
+  return static_cast<const mutable_buffer*>(detail::addressof(b));
 }
 
 /// Get an iterator to the first element in a buffer sequence.
-inline const const_buffer* buffer_sequence_begin(const const_buffer& b)
+template <typename ConstBuffer>
+inline const const_buffer* buffer_sequence_begin(const ConstBuffer& b,
+    typename enable_if<
+      is_convertible<const ConstBuffer*, const const_buffer*>::value
+    >::type* = 0) BOOST_ASIO_NOEXCEPT
 {
-  return &b;
+  return static_cast<const const_buffer*>(detail::addressof(b));
 }
 
 #if defined(BOOST_ASIO_HAS_DECLTYPE) || defined(GENERATING_DOCUMENTATION)
 
 /// Get an iterator to the first element in a buffer sequence.
 template <typename C>
-inline auto buffer_sequence_begin(C& c) -> decltype(c.begin())
+inline auto buffer_sequence_begin(C& c,
+    typename enable_if<
+      !is_convertible<const C*, const mutable_buffer*>::value
+        && !is_convertible<const C*, const const_buffer*>::value
+    >::type* = 0) BOOST_ASIO_NOEXCEPT -> decltype(c.begin())
 {
   return c.begin();
 }
 
 /// Get an iterator to the first element in a buffer sequence.
 template <typename C>
-inline auto buffer_sequence_begin(const C& c) -> decltype(c.begin())
+inline auto buffer_sequence_begin(const C& c,
+    typename enable_if<
+      !is_convertible<const C*, const mutable_buffer*>::value
+        && !is_convertible<const C*, const const_buffer*>::value
+    >::type* = 0) BOOST_ASIO_NOEXCEPT -> decltype(c.begin())
 {
   return c.begin();
 }
@@ -412,13 +429,21 @@ inline auto buffer_sequence_begin(const C& c) -> decltype(c.begin())
 #else // defined(BOOST_ASIO_HAS_DECLTYPE) || defined(GENERATING_DOCUMENTATION)
 
 template <typename C>
-inline typename C::iterator buffer_sequence_begin(C& c)
+inline typename C::iterator buffer_sequence_begin(C& c,
+    typename enable_if<
+      !is_convertible<const C*, const mutable_buffer*>::value
+        && !is_convertible<const C*, const const_buffer*>::value
+    >::type* = 0) BOOST_ASIO_NOEXCEPT
 {
   return c.begin();
 }
 
 template <typename C>
-inline typename C::const_iterator buffer_sequence_begin(const C& c)
+inline typename C::const_iterator buffer_sequence_begin(const C& c,
+    typename enable_if<
+      !is_convertible<const C*, const mutable_buffer*>::value
+        && !is_convertible<const C*, const const_buffer*>::value
+    >::type* = 0) BOOST_ASIO_NOEXCEPT
 {
   return c.begin();
 }
@@ -435,29 +460,45 @@ inline typename C::const_iterator buffer_sequence_begin(const C& c)
 /*@{*/
 
 /// Get an iterator to one past the end element in a buffer sequence.
-inline const mutable_buffer* buffer_sequence_end(const mutable_buffer& b)
+template <typename MutableBuffer>
+inline const mutable_buffer* buffer_sequence_end(const MutableBuffer& b,
+    typename enable_if<
+      is_convertible<const MutableBuffer*, const mutable_buffer*>::value
+    >::type* = 0) BOOST_ASIO_NOEXCEPT
 {
-  return &b + 1;
+  return static_cast<const mutable_buffer*>(detail::addressof(b)) + 1;
 }
 
 /// Get an iterator to one past the end element in a buffer sequence.
-inline const const_buffer* buffer_sequence_end(const const_buffer& b)
+template <typename ConstBuffer>
+inline const const_buffer* buffer_sequence_end(const ConstBuffer& b,
+    typename enable_if<
+      is_convertible<const ConstBuffer*, const const_buffer*>::value
+    >::type* = 0) BOOST_ASIO_NOEXCEPT
 {
-  return &b + 1;
+  return static_cast<const const_buffer*>(detail::addressof(b)) + 1;
 }
 
 #if defined(BOOST_ASIO_HAS_DECLTYPE) || defined(GENERATING_DOCUMENTATION)
 
 /// Get an iterator to one past the end element in a buffer sequence.
 template <typename C>
-inline auto buffer_sequence_end(C& c) -> decltype(c.end())
+inline auto buffer_sequence_end(C& c,
+    typename enable_if<
+      !is_convertible<const C*, const mutable_buffer*>::value
+        && !is_convertible<const C*, const const_buffer*>::value
+    >::type* = 0) BOOST_ASIO_NOEXCEPT -> decltype(c.end())
 {
   return c.end();
 }
 
 /// Get an iterator to one past the end element in a buffer sequence.
 template <typename C>
-inline auto buffer_sequence_end(const C& c) -> decltype(c.end())
+inline auto buffer_sequence_end(const C& c,
+    typename enable_if<
+      !is_convertible<const C*, const mutable_buffer*>::value
+        && !is_convertible<const C*, const const_buffer*>::value
+    >::type* = 0) BOOST_ASIO_NOEXCEPT -> decltype(c.end())
 {
   return c.end();
 }
@@ -465,13 +506,21 @@ inline auto buffer_sequence_end(const C& c) -> decltype(c.end())
 #else // defined(BOOST_ASIO_HAS_DECLTYPE) || defined(GENERATING_DOCUMENTATION)
 
 template <typename C>
-inline typename C::iterator buffer_sequence_end(C& c)
+inline typename C::iterator buffer_sequence_end(C& c,
+    typename enable_if<
+      !is_convertible<const C*, const mutable_buffer*>::value
+        && !is_convertible<const C*, const const_buffer*>::value
+    >::type* = 0) BOOST_ASIO_NOEXCEPT
 {
   return c.end();
 }
 
 template <typename C>
-inline typename C::const_iterator buffer_sequence_end(const C& c)
+inline typename C::const_iterator buffer_sequence_end(const C& c,
+    typename enable_if<
+      !is_convertible<const C*, const mutable_buffer*>::value
+        && !is_convertible<const C*, const const_buffer*>::value
+    >::type* = 0) BOOST_ASIO_NOEXCEPT
 {
   return c.end();
 }

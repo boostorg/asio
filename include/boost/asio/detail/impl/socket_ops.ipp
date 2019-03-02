@@ -772,7 +772,7 @@ signed_size_type recv(socket_type s, buf* bufs, size_t count,
   else if (ec.value() == ERROR_PORT_UNREACHABLE)
     ec = boost::asio::error::connection_refused;
   else if (ec.value() == WSAEMSGSIZE || ec.value() == ERROR_MORE_DATA)
-    ec.assign(0, ec.category());
+    result = 0;
   if (result != 0)
     return socket_error_retval;
   ec = boost::system::error_code();
@@ -926,7 +926,7 @@ signed_size_type recvfrom(socket_type s, buf* bufs, size_t count,
   else if (ec.value() == ERROR_PORT_UNREACHABLE)
     ec = boost::asio::error::connection_refused;
   else if (ec.value() == WSAEMSGSIZE || ec.value() == ERROR_MORE_DATA)
-    ec.assign(0, ec.category());
+    result = 0;
   if (result != 0)
     return socket_error_retval;
   ec = boost::system::error_code();
@@ -1503,7 +1503,8 @@ int setsockopt(socket_type s, state_type& state, int level, int optname,
     ec = boost::system::error_code();
 
 #if defined(__MACH__) && defined(__APPLE__) \
-  || defined(__NetBSD__) || defined(__FreeBSD__) || defined(__OpenBSD__)
+  || defined(__NetBSD__) || defined(__FreeBSD__) \
+  || defined(__OpenBSD__) || defined(__QNX__)
     // To implement portable behaviour for SO_REUSEADDR with UDP sockets we
     // need to also set SO_REUSEPORT on BSD-based platforms.
     if ((state & datagram_oriented)

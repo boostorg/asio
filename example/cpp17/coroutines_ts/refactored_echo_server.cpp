@@ -8,8 +8,8 @@
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
-#include <boost/asio/experimental/co_spawn.hpp>
-#include <boost/asio/experimental/detached.hpp>
+#include <boost/asio/co_spawn.hpp>
+#include <boost/asio/detached.hpp>
 #include <boost/asio/io_context.hpp>
 #include <boost/asio/ip/tcp.hpp>
 #include <boost/asio/signal_set.hpp>
@@ -17,21 +17,17 @@
 #include <cstdio>
 
 using boost::asio::ip::tcp;
-using boost::asio::experimental::co_spawn;
-using boost::asio::experimental::detached;
-namespace this_coro = boost::asio::experimental::this_coro;
-
-template <typename T>
-  using awaitable = boost::asio::experimental::awaitable<
-    T, boost::asio::io_context::executor_type>;
+using boost::asio::awaitable;
+using boost::asio::co_spawn;
+using boost::asio::detached;
+using boost::asio::use_awaitable;
+namespace this_coro = boost::asio::this_coro;
 
 awaitable<void> echo_once(tcp::socket& socket)
 {
-  auto token = co_await this_coro::token();
-
   char data[128];
-  std::size_t n = co_await socket.async_read_some(boost::asio::buffer(data), token);
-  co_await async_write(socket, boost::asio::buffer(data, n), token);
+  std::size_t n = co_await socket.async_read_some(boost::asio::buffer(data), use_awaitable);
+  co_await async_write(socket, boost::asio::buffer(data, n), use_awaitable);
 }
 
 awaitable<void> echo(tcp::socket socket)
@@ -55,13 +51,11 @@ awaitable<void> echo(tcp::socket socket)
 
 awaitable<void> listener()
 {
-  auto executor = co_await this_coro::executor();
-  auto token = co_await this_coro::token();
-
+  auto executor = co_await this_coro::executor;
   tcp::acceptor acceptor(executor, {tcp::v4(), 55555});
   for (;;)
   {
-    tcp::socket socket = co_await acceptor.async_accept(token);
+    tcp::socket socket = co_await acceptor.async_accept(use_awaitable);
     co_spawn(executor,
         [socket = std::move(socket)]() mutable
         {

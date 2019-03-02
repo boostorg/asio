@@ -27,6 +27,8 @@
 
 #include <boost/asio/detail/push_options.hpp>
 
+#if !defined(GENERATING_DOCUMENTATION)
+
 namespace boost {
 namespace asio {
 
@@ -49,6 +51,8 @@ inline detail::io_context_impl& use_service<detail::io_context_impl>(
 
 } // namespace asio
 } // namespace boost
+
+#endif // !defined(GENERATING_DOCUMENTATION)
 
 #include <boost/asio/detail/pop_options.hpp>
 

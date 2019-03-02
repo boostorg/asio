@@ -77,6 +77,14 @@ public:
   {
   }
 
+  #if defined(BOOST_ASIO_HAS_STRING_VIEW)
+  /// Construct an endpoint using the specified path name.
+  basic_endpoint(string_view path_name)
+    : impl_(path_name)
+  {
+  }
+  #endif // defined(BOOST_ASIO_HAS_STRING_VIEW)
+
   /// Copy constructor.
   basic_endpoint(const basic_endpoint& other)
     : impl_(other.impl_)

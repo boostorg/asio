@@ -44,6 +44,14 @@ public:
   /// The type of the executor associated with the object.
   typedef Executor executor_type;
 
+  /// The native representation of a handle.
+#if defined(GENERATING_DOCUMENTATION)
+  typedef implementation_defined native_handle_type;
+#else
+  typedef boost::asio::detail::win_iocp_handle_service::native_handle_type
+    native_handle_type;
+#endif
+
   /// Construct a random-access handle without opening it.
   /**
    * This constructor creates a random-access handle without opening it.
@@ -70,7 +78,8 @@ public:
   template <typename ExecutionContext>
   explicit basic_random_access_handle(ExecutionContext& context,
       typename enable_if<
-        is_convertible<ExecutionContext&, execution_context&>::value
+        is_convertible<ExecutionContext&, execution_context&>::value,
+        basic_random_access_handle
       >::type* = 0)
     : basic_overlapped_handle<Executor>(context)
   {

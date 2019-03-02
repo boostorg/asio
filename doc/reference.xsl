@@ -771,9 +771,6 @@
     <xsl:when test="contains($file, 'boost/asio/ssl')">
       <xsl:text>[^boost/asio/ssl.hpp]</xsl:text>
     </xsl:when>
-    <xsl:when test="contains($file, 'boost/asio/experimental')">
-      <xsl:text>[^boost/asio/experimental.hpp]</xsl:text>
-    </xsl:when>
     <xsl:when test="contains($file, 'boost/asio/spawn')">
       <xsl:text>None</xsl:text>
     </xsl:when>
@@ -1504,6 +1501,9 @@
         <xsl:when test="declname = 'CompletionToken'">
           <xsl:value-of select="declname"/>
         </xsl:when>
+        <xsl:when test="declname = 'ConstBuffer'">
+          <xsl:value-of select="declname"/>
+        </xsl:when>
         <xsl:when test="declname = 'Context_Service'">
           <xsl:value-of select="declname"/>
         </xsl:when>
@@ -1541,6 +1541,9 @@
           <xsl:value-of select="declname"/>
         </xsl:when>
         <xsl:when test="declname = 'MatchCondition'">
+          <xsl:value-of select="declname"/>
+        </xsl:when>
+        <xsl:when test="declname = 'MutableBuffer'">
           <xsl:value-of select="declname"/>
         </xsl:when>
         <xsl:when test="declname = 'N'">
