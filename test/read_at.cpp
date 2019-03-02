@@ -125,7 +125,7 @@ public:
 
   template <typename Mutable_Buffers, typename Handler>
   void async_read_some_at(boost::asio::uint64_t offset,
-      const Mutable_Buffers& buffers, Handler handler)
+      const Mutable_Buffers& buffers, BOOST_ASIO_MOVE_ARG(Handler) handler)
   {
     size_t bytes_transferred = read_some_at(offset, buffers);
     boost::asio::post(get_executor(),

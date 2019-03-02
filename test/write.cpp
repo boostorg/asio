@@ -120,7 +120,8 @@ public:
   }
 
   template <typename Const_Buffers, typename Handler>
-  void async_write_some(const Const_Buffers& buffers, Handler handler)
+  void async_write_some(const Const_Buffers& buffers,
+      BOOST_ASIO_MOVE_ARG(Handler) handler)
   {
     size_t bytes_transferred = write_some(buffers);
     boost::asio::post(get_executor(),

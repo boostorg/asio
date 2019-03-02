@@ -263,7 +263,7 @@ namespace detail
           BOOST_ASIO_MOVE_CAST(detail::base_from_completion_cond<
             CompletionCondition>)(other)),
         stream_(other.stream_),
-        buffers_(other.buffers_),
+        buffers_(BOOST_ASIO_MOVE_CAST(buffers_type)(other.buffers_)),
         start_(other.start_),
         handler_(BOOST_ASIO_MOVE_CAST(ReadHandler)(other.handler_))
     {
@@ -294,9 +294,11 @@ namespace detail
     }
 
   //private:
+    typedef boost::asio::detail::consuming_buffers<mutable_buffer,
+        MutableBufferSequence, MutableBufferIterator> buffers_type;
+
     AsyncReadStream& stream_;
-    boost::asio::detail::consuming_buffers<mutable_buffer,
-        MutableBufferSequence, MutableBufferIterator> buffers_;
+    buffers_type buffers_;
     int start_;
     ReadHandler handler_;
   };
