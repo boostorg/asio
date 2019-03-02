@@ -405,6 +405,8 @@ protected:
 } // namespace asio
 } // namespace boost
 
+#if !defined(GENERATING_DOCUMENTATION)
+
 namespace std { namespace experimental {
 
 template <typename T, typename Executor, typename... Args>
@@ -414,6 +416,8 @@ struct coroutine_traits<boost::asio::awaitable<T, Executor>, Args...>
 };
 
 }} // namespace std::experimental
+
+#endif // !defined(GENERATING_DOCUMENTATION)
 
 #include <boost/asio/detail/pop_options.hpp>
 
