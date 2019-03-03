@@ -1338,9 +1338,9 @@
 #   if (__GNUC__ >= 3)
 #    define BOOST_ASIO_HAS_HANDLER_HOOKS 1
 #   endif // (__GNUC__ >= 3)
-#  elif !defined(__BORLANDC__)
+#  elif !defined(__BORLANDC__) || defined(__clang__)
 #   define BOOST_ASIO_HAS_HANDLER_HOOKS 1
-#  endif // !defined(__BORLANDC__)
+#  endif // !defined(__BORLANDC__) || defined(__clang__)
 # endif // !defined(BOOST_ASIO_DISABLE_HANDLER_HOOKS)
 #endif // !defined(BOOST_ASIO_HAS_HANDLER_HOOKS)
 

@@ -72,7 +72,7 @@ public:
   boost::array<boost::asio::mutable_buffer, 1> to_buffers()
   {
     boost::array<boost::asio::mutable_buffer, 1> buffers
-      = { { boost::asio::buffer(data_) } };
+      = { boost::asio::buffer(data_) };
     return buffers;
   }
 
@@ -137,7 +137,7 @@ public:
   boost::array<boost::asio::mutable_buffer, 1> to_buffers()
   {
     boost::array<boost::asio::mutable_buffer, 1> buffers
-      = { { boost::asio::buffer(data_) } };
+      = { boost::asio::buffer(data_) };
     return buffers;
   }
 
