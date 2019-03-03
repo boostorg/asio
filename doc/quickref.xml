@@ -48,7 +48,7 @@
         <entry valign="top">
           <bridgehead renderas="sect3">Free Functions</bridgehead>
           <simplelist type="vert" columns="1">
-            <member><link linkend="boost_asio.reference.add_service">add_service</link></member>
+            <member><link linkend="boost_asio.reference.execution_context.add_service">add_service</link></member>
             <member><link linkend="boost_asio.reference.asio_handler_allocate">asio_handler_allocate</link></member>
             <member><link linkend="boost_asio.reference.asio_handler_deallocate">asio_handler_deallocate</link></member>
             <member><link linkend="boost_asio.reference.asio_handler_invoke">asio_handler_invoke</link></member>
@@ -58,11 +58,12 @@
             <member><link linkend="boost_asio.reference.defer">defer</link></member>
             <member><link linkend="boost_asio.reference.get_associated_allocator">get_associated_allocator</link></member>
             <member><link linkend="boost_asio.reference.get_associated_executor">get_associated_executor</link></member>
-            <member><link linkend="boost_asio.reference.has_service">has_service</link></member>
+            <member><link linkend="boost_asio.reference.execution_context.has_service">has_service</link></member>
+            <member><link linkend="boost_asio.reference.make_strand">make_strand</link></member>
             <member><link linkend="boost_asio.reference.make_work_guard">make_work_guard</link></member>
             <member><link linkend="boost_asio.reference.post">post</link></member>
             <member><link linkend="boost_asio.reference.spawn">spawn</link></member>
-            <member><link linkend="boost_asio.reference.use_service">use_service</link></member>
+            <member><link linkend="boost_asio.reference.execution_context.use_service">use_service</link></member>
           </simplelist>
         </entry>
         <entry valign="top">
@@ -104,7 +105,6 @@
             <member><link linkend="boost_asio.reference.associated_allocator">associated_allocator</link></member>
             <member><link linkend="boost_asio.reference.associated_executor">associated_executor</link></member>
             <member><link linkend="boost_asio.reference.async_result">async_result</link></member>
-            <member><link linkend="boost_asio.reference.handler_type">handler_type </link> (deprecated)</member>
             <member><link linkend="boost_asio.reference.is_executor">is_executor</link></member>
             <member><link linkend="boost_asio.reference.uses_executor">uses_executor</link></member>
           </simplelist>
@@ -201,7 +201,8 @@
             <member><link linkend="boost_asio.reference.AsyncWriteStream">AsyncWriteStream</link></member>
             <member><link linkend="boost_asio.reference.CompletionCondition">CompletionCondition</link></member>
             <member><link linkend="boost_asio.reference.ConstBufferSequence">ConstBufferSequence</link></member>
-            <member><link linkend="boost_asio.reference.DynamicBuffer">DynamicBuffer</link></member>
+            <member><link linkend="boost_asio.reference.DynamicBuffer_v1">DynamicBuffer_v1</link></member>
+            <member><link linkend="boost_asio.reference.DynamicBuffer_v2">DynamicBuffer_v2</link></member>
             <member><link linkend="boost_asio.reference.MutableBufferSequence">MutableBufferSequence</link></member>
             <member><link linkend="boost_asio.reference.ReadHandler">ReadHandler</link></member>
             <member><link linkend="boost_asio.reference.SyncRandomAccessReadDevice">SyncRandomAccessReadDevice</link></member>

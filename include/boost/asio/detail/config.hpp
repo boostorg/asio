@@ -450,7 +450,13 @@
 #    if __has_include(<atomic>)
 #     define BOOST_ASIO_HAS_STD_ATOMIC 1
 #    endif // __has_include(<atomic>)
-#   endif // (__cplusplus >= 201103)
+#   elif defined(__apple_build_version__) && defined(_LIBCPP_VERSION)
+#    if (__clang_major__ >= 10)
+#     if __has_include(<atomic>)
+#      define BOOST_ASIO_HAS_STD_ATOMIC 1
+#     endif // __has_include(<atomic>)
+#    endif // (__clang_major__ >= 10)
+#   endif /// defined(__apple_build_version__) && defined(_LIBCPP_VERSION)
 #  endif // defined(__clang__)
 #  if defined(__GNUC__)
 #   if ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 7)) || (__GNUC__ > 4)
