@@ -82,6 +82,8 @@ test-suite "asio" :
   [ link co_spawn.cpp : $(USE_SELECT) : co_spawn_select ]
   [ link completion_condition.cpp ]
   [ link completion_condition.cpp : $(USE_SELECT) : completion_condition_select ]
+  [ run compose.cpp ]
+  [ run compose.cpp : : : $(USE_SELECT) : compose_select ]
   [ link connect.cpp ]
   [ link connect.cpp : $(USE_SELECT) : connect_select ]
   [ link coroutine.cpp ]

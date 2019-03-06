@@ -46,6 +46,7 @@
 #include <boost/asio/buffers_iterator.hpp>
 #include <boost/asio/co_spawn.hpp>
 #include <boost/asio/completion_condition.hpp>
+#include <boost/asio/compose.hpp>
 #include <boost/asio/connect.hpp>
 #include <boost/asio/coroutine.hpp>
 #include <boost/asio/deadline_timer.hpp>
