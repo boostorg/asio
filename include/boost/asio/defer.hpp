@@ -32,6 +32,11 @@ namespace asio {
  * executor. The function object is queued for execution, and is never called
  * from the current thread prior to returning from <tt>defer()</tt>.
  *
+ * The use of @c defer(), rather than @ref post(), indicates the caller's
+ * preference that the executor defer the queueing of the function object. This
+ * may allow the executor to optimise queueing for cases when the function
+ * object represents a continuation of the current call context.
+ *
  * This function has the following effects:
  *
  * @li Constructs a function object handler of type @c Handler, initialized
@@ -59,6 +64,11 @@ BOOST_ASIO_INITFN_RESULT_TYPE(CompletionToken, void()) defer(
  * This function submits an object for execution using the specified executor.
  * The function object is queued for execution, and is never called from the
  * current thread prior to returning from <tt>defer()</tt>.
+ *
+ * The use of @c defer(), rather than @ref post(), indicates the caller's
+ * preference that the executor defer the queueing of the function object. This
+ * may allow the executor to optimise queueing for cases when the function
+ * object represents a continuation of the current call context.
  *
  * This function has the following effects:
  *
