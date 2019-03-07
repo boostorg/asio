@@ -32,6 +32,7 @@ template <typename Stream, typename Operation>
 std::size_t io(Stream& next_layer, stream_core& core,
     const Operation& op, boost::system::error_code& ec)
 {
+  boost::system::error_code io_ec;
   std::size_t bytes_transferred = 0;
   do switch (op(core.engine_, ec, bytes_transferred))
   {
@@ -40,8 +41,12 @@ std::size_t io(Stream& next_layer, stream_core& core,
     // If the input buffer is empty then we need to read some more data from
     // the underlying transport.
     if (core.input_.size() == 0)
+    {
       core.input_ = boost::asio::buffer(core.input_buffer_,
-          next_layer.read_some(core.input_buffer_, ec));
+          next_layer.read_some(core.input_buffer_, io_ec));
+      if (!ec)
+        ec = io_ec;
+    }
 
     // Pass the new input data to the engine.
     core.input_ = core.engine_.put_input(core.input_);
@@ -54,7 +59,9 @@ std::size_t io(Stream& next_layer, stream_core& core,
     // Get output data from the engine and write it to the underlying
     // transport.
     boost::asio::write(next_layer,
-        core.engine_.get_output(core.output_buffer_), ec);
+        core.engine_.get_output(core.output_buffer_), io_ec);
+    if (!ec)
+      ec = io_ec;
 
     // Try the operation again.
     continue;
@@ -64,7 +71,9 @@ std::size_t io(Stream& next_layer, stream_core& core,
     // Get output data from the engine and write it to the underlying
     // transport.
     boost::asio::write(next_layer,
-        core.engine_.get_output(core.output_buffer_), ec);
+        core.engine_.get_output(core.output_buffer_), io_ec);
+    if (!ec)
+      ec = io_ec;
 
     // Operation is complete. Return result to caller.
     core.engine_.map_error_code(ec);
