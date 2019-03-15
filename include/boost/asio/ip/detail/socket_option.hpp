@@ -148,6 +148,17 @@ public:
     }
     else
     {
+#ifdef __VXWORKS__
+      /*
+       * In VxWorks, the stack sets the *optlen value to 1 byte
+       * for IP_MULTICAST_LOOP.
+       */
+      if (s == 1)
+      {
+          ipv4_value_ = *reinterpret_cast<char*>(&ipv4_value_) ? 1 : 0;
+      }
+      else
+#endif
       if (s != sizeof(ipv4_value_))
       {
         std::length_error ex("multicast_enable_loopback socket option resize");
