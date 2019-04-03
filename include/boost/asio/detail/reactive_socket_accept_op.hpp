@@ -152,8 +152,10 @@ private:
 template <typename Protocol, typename PeerIoExecutor,
     typename Handler, typename IoExecutor>
 class reactive_socket_move_accept_op :
-  private Protocol::socket,
-  public reactive_socket_accept_op_base<typename Protocol::socket, Protocol>
+  private Protocol::socket::template rebind_executor<PeerIoExecutor>::other,
+  public reactive_socket_accept_op_base<
+    typename Protocol::socket::template rebind_executor<PeerIoExecutor>::other,
+    Protocol>
 {
 public:
   BOOST_ASIO_DEFINE_HANDLER_PTR(reactive_socket_move_accept_op);
@@ -162,8 +164,8 @@ public:
       socket_type socket, socket_ops::state_type state,
       const Protocol& protocol, typename Protocol::endpoint* peer_endpoint,
       Handler& handler, const IoExecutor& io_ex)
-    : Protocol::socket(peer_io_ex),
-      reactive_socket_accept_op_base<typename Protocol::socket, Protocol>(
+    : peer_socket_type(peer_io_ex),
+      reactive_socket_accept_op_base<peer_socket_type, Protocol>(
         socket, state, *this, protocol, peer_endpoint,
         &reactive_socket_move_accept_op::do_complete),
       handler_(BOOST_ASIO_MOVE_CAST(Handler)(handler)),
@@ -195,9 +197,9 @@ public:
     // to ensure that any owning sub-object remains valid until after we have
     // deallocated the memory here.
     detail::move_binder2<Handler,
-      boost::system::error_code, typename Protocol::socket>
+      boost::system::error_code, peer_socket_type>
         handler(0, BOOST_ASIO_MOVE_CAST(Handler)(o->handler_), o->ec_,
-          BOOST_ASIO_MOVE_CAST(typename Protocol::socket)(*o));
+          BOOST_ASIO_MOVE_CAST(peer_socket_type)(*o));
     p.h = boost::asio::detail::addressof(handler.handler_);
     p.reset();
 
@@ -212,6 +214,9 @@ public:
   }
 
 private:
+  typedef typename Protocol::socket::template
+    rebind_executor<PeerIoExecutor>::other peer_socket_type;
+
   Handler handler_;
   IoExecutor io_executor_;
 };

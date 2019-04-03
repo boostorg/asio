@@ -61,7 +61,7 @@ private:
 
     auto self(shared_from_this());
     boost::asio::async_write(socket_, buffer,
-        [this, self](boost::system::error_code /*ec*/, std::size_t /*length*/)
+        [self](boost::system::error_code /*ec*/, std::size_t /*length*/)
         {
         });
   }

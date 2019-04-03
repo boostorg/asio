@@ -374,10 +374,14 @@ void test()
     socket1.native_non_blocking(false, ec);
 
     ip::tcp::endpoint endpoint1 = socket1.local_endpoint();
+    (void)endpoint1;
     ip::tcp::endpoint endpoint2 = socket1.local_endpoint(ec);
+    (void)endpoint2;
 
     ip::tcp::endpoint endpoint3 = socket1.remote_endpoint();
+    (void)endpoint3;
     ip::tcp::endpoint endpoint4 = socket1.remote_endpoint(ec);
+    (void)endpoint4;
 
     socket1.shutdown(socket_base::shutdown_both);
     socket1.shutdown(socket_base::shutdown_both, ec);
@@ -725,6 +729,17 @@ struct move_accept_handler
 private:
   move_accept_handler(const move_accept_handler&) {}
 };
+
+struct move_accept_ioc_handler
+{
+  move_accept_ioc_handler() {}
+  void operator()(const boost::system::error_code&,
+      boost::asio::basic_stream_socket<boost::asio::ip::tcp,
+        boost::asio::io_context::executor_type>) {}
+  move_accept_ioc_handler(move_accept_handler&&) {}
+private:
+  move_accept_ioc_handler(const move_accept_handler&) {}
+};
 #endif // defined(BOOST_ASIO_HAS_MOVE)
 
 void test()
@@ -855,7 +870,9 @@ void test()
     acceptor1.native_non_blocking(false, ec);
 
     ip::tcp::endpoint endpoint1 = acceptor1.local_endpoint();
+    (void)endpoint1;
     ip::tcp::endpoint endpoint2 = acceptor1.local_endpoint(ec);
+    (void)endpoint2;
 
     acceptor1.wait(socket_base::wait_read);
     acceptor1.wait(socket_base::wait_write, ec);
@@ -907,8 +924,12 @@ void test()
 #if defined(BOOST_ASIO_HAS_MOVE)
     acceptor1.async_accept(move_accept_handler());
     acceptor1.async_accept(ioc, move_accept_handler());
+    acceptor1.async_accept(ioc_ex, move_accept_handler());
+    acceptor1.async_accept(ioc_ex, move_accept_ioc_handler());
     acceptor1.async_accept(peer_endpoint, move_accept_handler());
     acceptor1.async_accept(ioc, peer_endpoint, move_accept_handler());
+    acceptor1.async_accept(ioc_ex, peer_endpoint, move_accept_handler());
+    acceptor1.async_accept(ioc_ex, peer_endpoint, move_accept_ioc_handler());
 #endif // defined(BOOST_ASIO_HAS_MOVE)
   }
   catch (std::exception&)
