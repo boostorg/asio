@@ -88,12 +88,11 @@ boost::system::error_code win_iocp_serial_port_service::open(
   dcb.ByteSize = 8; // 8 bit bytes
   dcb.fOutxCtsFlow = FALSE; // No flow control
   dcb.fOutxDsrFlow = FALSE;
-  dcb.fTXContinueOnXoff = TRUE;
-  dcb.fDtrControl = DTR_CONTROL_ENABLE;
+  dcb.fDtrControl = DTR_CONTROL_DISABLE;
   dcb.fDsrSensitivity = FALSE;
   dcb.fOutX = FALSE;
   dcb.fInX = FALSE;
-  dcb.fRtsControl = RTS_CONTROL_ENABLE;
+  dcb.fRtsControl = DTR_CONTROL_DISABLE;
   dcb.fParity = FALSE; // No parity
   dcb.Parity = NOPARITY;
   dcb.StopBits = ONESTOPBIT; // One stop bit
