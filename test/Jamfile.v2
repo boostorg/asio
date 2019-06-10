@@ -233,3 +233,7 @@ test-suite "asio" :
   [ run write_at.cpp ]
   [ run write_at.cpp : : : $(USE_SELECT) : write_at_select ]
   ;
+
+test-suite "asio-is_buffer_sequence" :
+  [ run is_buffer_sequence.cpp ]
+  ;
