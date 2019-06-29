@@ -109,9 +109,29 @@ void run()
 
 } // namespace case2
 
+namespace case3 {
+
+void run()
+{
+    BOOST_ASIO_CHECK(is_mutable_buffer_sequence<void>::value == 0);
+    BOOST_ASIO_CHECK(is_const_buffer_sequence<void>::value == 0);
+
+    BOOST_ASIO_CHECK(is_mutable_buffer_sequence<int>::value == 0);
+    BOOST_ASIO_CHECK(is_const_buffer_sequence<int>::value == 0);
+
+    BOOST_ASIO_CHECK(is_mutable_buffer_sequence<mutable_buffer>::value == 1);
+    BOOST_ASIO_CHECK(is_const_buffer_sequence<mutable_buffer>::value == 1);
+
+    BOOST_ASIO_CHECK(is_mutable_buffer_sequence<const_buffer>::value == 0);
+    BOOST_ASIO_CHECK(is_const_buffer_sequence<const_buffer>::value == 1);
+}
+
+} // namespace case3
+
 BOOST_ASIO_TEST_SUITE
 (
   "is_buffer_sequence",
   BOOST_ASIO_TEST_CASE(case1::run)
   BOOST_ASIO_TEST_CASE(case2::run)
+  BOOST_ASIO_TEST_CASE(case3::run)
 )
