@@ -554,7 +554,7 @@ public:
    * boost::asio::serial_port_base::character_size
    */
   template <typename GettableSerialPortOption>
-  void get_option(GettableSerialPortOption& option)
+  void get_option(GettableSerialPortOption& option) const
   {
     boost::system::error_code ec;
     impl_.get_service().get_option(impl_.get_implementation(), option, ec);
@@ -579,7 +579,7 @@ public:
    */
   template <typename GettableSerialPortOption>
   BOOST_ASIO_SYNC_OP_VOID get_option(GettableSerialPortOption& option,
-      boost::system::error_code& ec)
+      boost::system::error_code& ec) const
   {
     impl_.get_service().get_option(impl_.get_implementation(), option, ec);
     BOOST_ASIO_SYNC_OP_VOID_RETURN(ec);
