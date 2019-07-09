@@ -17,6 +17,9 @@
 
 #include <boost/asio/detail/config.hpp>
 #include <boost/asio/detail/socket_types.hpp>
+#if defined(BOOST_ASIO_USE_WOLFSSL)
+# include <wolfssl/options.h>
+#endif // defined(BOOST_ASIO_USE_WOLFSSL)
 #include <openssl/conf.h>
 #include <openssl/ssl.h>
 #if !defined(OPENSSL_NO_ENGINE)
