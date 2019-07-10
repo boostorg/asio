@@ -179,6 +179,14 @@ public:
     return endpoint;
   }
 
+  // Disable sends or receives on the socket.
+  boost::system::error_code shutdown(implementation_type&,
+      socket_base::shutdown_type, boost::system::error_code& ec)
+  {
+    ec = boost::asio::error::operation_not_supported;
+    return ec;
+  }
+
   // Set a socket option.
   template <typename Option>
   boost::system::error_code set_option(implementation_type& impl,

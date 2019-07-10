@@ -169,14 +169,6 @@ public:
     return ec;
   }
 
-  // Disable sends or receives on the socket.
-  boost::system::error_code shutdown(base_implementation_type&,
-      socket_base::shutdown_type, boost::system::error_code& ec)
-  {
-    ec = boost::asio::error::operation_not_supported;
-    return ec;
-  }
-
   // Send the given data to the peer.
   template <typename ConstBufferSequence>
   std::size_t send(base_implementation_type& impl,
