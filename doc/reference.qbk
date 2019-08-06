@@ -27827,14 +27827,14 @@ Get an option from the serial port.
   template<
       typename ``[link boost_asio.reference.GettableSerialPortOption GettableSerialPortOption]``>
   void ``[link boost_asio.reference.basic_serial_port.get_option.overload1 get_option]``(
-      GettableSerialPortOption & option);
+      GettableSerialPortOption & option) const;
   ``  [''''&raquo;''' [link boost_asio.reference.basic_serial_port.get_option.overload1 more...]]``
 
   template<
       typename ``[link boost_asio.reference.GettableSerialPortOption GettableSerialPortOption]``>
   void ``[link boost_asio.reference.basic_serial_port.get_option.overload2 get_option]``(
       GettableSerialPortOption & option,
-      boost::system::error_code & ec);
+      boost::system::error_code & ec) const;
   ``  [''''&raquo;''' [link boost_asio.reference.basic_serial_port.get_option.overload2 more...]]``
 
 
@@ -27847,7 +27847,7 @@ Get an option from the serial port.
   template<
       typename ``[link boost_asio.reference.GettableSerialPortOption GettableSerialPortOption]``>
   void get_option(
-      GettableSerialPortOption & option);
+      GettableSerialPortOption & option) const;
 
 
 This function is used to get the current value of an option on the serial port.
@@ -27890,7 +27890,7 @@ Get an option from the serial port.
       typename ``[link boost_asio.reference.GettableSerialPortOption GettableSerialPortOption]``>
   void get_option(
       GettableSerialPortOption & option,
-      boost::system::error_code & ec);
+      boost::system::error_code & ec) const;
 
 
 This function is used to get the current value of an option on the serial port.
@@ -88495,7 +88495,7 @@ Trait to determine whether a type satisfies the DynamicBuffer requirements.
   struct is_dynamic_buffer
 
 
-If `BOOST_ASIO_NO_DYNAMIC_BUFFER_V1` is not defined, determines whether the type satisfies the DynamicBuffer\_v1 requirements. Otherwise, if `BOOST_ASIO_NO_DYNAMIC_BUFFER_V1` is defined, determines whether the type satisfies the DynamicBuffer\_v1 requirements. 
+If `BOOST_ASIO_NO_DYNAMIC_BUFFER_V1` is not defined, determines whether the type satisfies the DynamicBuffer\_v1 requirements. Otherwise, if `BOOST_ASIO_NO_DYNAMIC_BUFFER_V1` is defined, determines whether the type satisfies the DynamicBuffer\_v2 requirements. 
 
 [heading Requirements]
 
