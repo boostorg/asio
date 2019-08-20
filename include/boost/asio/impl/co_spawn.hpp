@@ -116,7 +116,7 @@ co_spawn(const Executor& ex, F&& f, CompletionToken&& token,
     >::type*)
 {
   return async_initiate<CompletionToken,
-    typename detail::awaitable_signature<typename result_of<F()>::type>>(
+    typename detail::awaitable_signature<typename result_of<F()>::type>::type>(
       detail::initiate_co_spawn(), token, ex, std::forward<F>(f));
 }
 
