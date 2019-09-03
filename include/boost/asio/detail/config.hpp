@@ -314,6 +314,19 @@
 # endif // !defined(BOOST_ASIO_DISABLE_ALIAS_TEMPLATES)
 #endif // !defined(BOOST_ASIO_HAS_ALIAS_TEMPLATES)
 
+// Support return type deduction on compilers known to allow it.
+#if !defined(BOOST_ASIO_HAS_RETURN_TYPE_DEDUCTION)
+# if !defined(BOOST_ASIO_DISABLE_RETURN_TYPE_DEDUCTION)
+#  if defined(__clang__)
+#   if __has_feature(__cxx_return_type_deduction__)
+#    define BOOST_ASIO_HAS_RETURN_TYPE_DEDUCTION 1
+#   endif // __has_feature(__cxx_alias_templates__)
+#  elif (__cplusplus >= 201402)
+#   define BOOST_ASIO_HAS_RETURN_TYPE_DEDUCTION 1
+#  endif // (__cplusplus >= 201402)
+# endif // !defined(BOOST_ASIO_DISABLE_RETURN_TYPE_DEDUCTION)
+#endif // !defined(BOOST_ASIO_HAS_RETURN_TYPE_DEDUCTION)
+
 // Standard library support for system errors.
 # if !defined(BOOST_ASIO_DISABLE_STD_SYSTEM_ERROR)
 #  if defined(__clang__)
