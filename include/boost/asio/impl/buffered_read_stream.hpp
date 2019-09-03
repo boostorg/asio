@@ -194,7 +194,9 @@ struct associated_executor<
 #endif // !defined(GENERATING_DOCUMENTATION)
 
 template <typename Stream>
-template <typename ReadHandler>
+template <
+    BOOST_ASIO_COMPLETION_TOKEN_FOR(void (boost::system::error_code,
+      std::size_t)) ReadHandler>
 BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(ReadHandler,
     void (boost::system::error_code, std::size_t))
 buffered_read_stream<Stream>::async_fill(
@@ -408,7 +410,9 @@ struct associated_executor<
 #endif // !defined(GENERATING_DOCUMENTATION)
 
 template <typename Stream>
-template <typename MutableBufferSequence, typename ReadHandler>
+template <typename MutableBufferSequence,
+    BOOST_ASIO_COMPLETION_TOKEN_FOR(void (boost::system::error_code,
+      std::size_t)) ReadHandler>
 BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(ReadHandler,
     void (boost::system::error_code, std::size_t))
 buffered_read_stream<Stream>::async_read_some(

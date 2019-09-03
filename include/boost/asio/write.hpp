@@ -755,7 +755,8 @@ std::size_t write(SyncWriteStream& s, DynamicBuffer_v2 buffers,
  * std::vector.
  */
 template <typename AsyncWriteStream, typename ConstBufferSequence,
-    typename WriteHandler>
+    BOOST_ASIO_COMPLETION_TOKEN_FOR(void (boost::system::error_code,
+      std::size_t)) WriteHandler>
 BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(WriteHandler,
     void (boost::system::error_code, std::size_t))
 async_write(AsyncWriteStream& s, const ConstBufferSequence& buffers,
@@ -831,8 +832,10 @@ async_write(AsyncWriteStream& s, const ConstBufferSequence& buffers,
  * buffers in one go, and how to use it with arrays, boost::array or
  * std::vector.
  */
-template <typename AsyncWriteStream, typename ConstBufferSequence,
-    typename CompletionCondition, typename WriteHandler>
+template <typename AsyncWriteStream,
+    typename ConstBufferSequence, typename CompletionCondition,
+    BOOST_ASIO_COMPLETION_TOKEN_FOR(void (boost::system::error_code,
+      std::size_t)) WriteHandler>
 BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(WriteHandler,
     void (boost::system::error_code, std::size_t))
 async_write(AsyncWriteStream& s, const ConstBufferSequence& buffers,
@@ -887,8 +890,9 @@ async_write(AsyncWriteStream& s, const ConstBufferSequence& buffers,
  * immediate completion, invocation of the handler will be performed in a
  * manner equivalent to using boost::asio::post().
  */
-template <typename AsyncWriteStream,
-    typename DynamicBuffer_v1, typename WriteHandler>
+template <typename AsyncWriteStream, typename DynamicBuffer_v1,
+    BOOST_ASIO_COMPLETION_TOKEN_FOR(void (boost::system::error_code,
+      std::size_t)) WriteHandler>
 BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(WriteHandler,
     void (boost::system::error_code, std::size_t))
 async_write(AsyncWriteStream& s,
@@ -956,8 +960,10 @@ async_write(AsyncWriteStream& s,
  * immediate completion, invocation of the handler will be performed in a
  * manner equivalent to using boost::asio::post().
  */
-template <typename AsyncWriteStream, typename DynamicBuffer_v1,
-    typename CompletionCondition, typename WriteHandler>
+template <typename AsyncWriteStream,
+    typename DynamicBuffer_v1, typename CompletionCondition,
+    BOOST_ASIO_COMPLETION_TOKEN_FOR(void (boost::system::error_code,
+      std::size_t)) WriteHandler>
 BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(WriteHandler,
     void (boost::system::error_code, std::size_t))
 async_write(AsyncWriteStream& s,
@@ -1013,7 +1019,9 @@ async_write(AsyncWriteStream& s,
  * immediate completion, invocation of the handler will be performed in a
  * manner equivalent to using boost::asio::post().
  */
-template <typename AsyncWriteStream, typename Allocator, typename WriteHandler>
+template <typename AsyncWriteStream, typename Allocator,
+    BOOST_ASIO_COMPLETION_TOKEN_FOR(void (boost::system::error_code,
+      std::size_t)) WriteHandler>
 BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(WriteHandler,
     void (boost::system::error_code, std::size_t))
 async_write(AsyncWriteStream& s, basic_streambuf<Allocator>& b,
@@ -1074,8 +1082,10 @@ async_write(AsyncWriteStream& s, basic_streambuf<Allocator>& b,
  * immediate completion, invocation of the handler will be performed in a
  * manner equivalent to using boost::asio::post().
  */
-template <typename AsyncWriteStream, typename Allocator,
-    typename CompletionCondition, typename WriteHandler>
+template <typename AsyncWriteStream,
+    typename Allocator, typename CompletionCondition,
+    BOOST_ASIO_COMPLETION_TOKEN_FOR(void (boost::system::error_code,
+      std::size_t)) WriteHandler>
 BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(WriteHandler,
     void (boost::system::error_code, std::size_t))
 async_write(AsyncWriteStream& s, basic_streambuf<Allocator>& b,
@@ -1129,8 +1139,9 @@ async_write(AsyncWriteStream& s, basic_streambuf<Allocator>& b,
  * immediate completion, invocation of the handler will be performed in a
  * manner equivalent to using boost::asio::post().
  */
-template <typename AsyncWriteStream,
-    typename DynamicBuffer_v2, typename WriteHandler>
+template <typename AsyncWriteStream, typename DynamicBuffer_v2,
+    BOOST_ASIO_COMPLETION_TOKEN_FOR(void (boost::system::error_code,
+      std::size_t)) WriteHandler>
 BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(WriteHandler,
     void (boost::system::error_code, std::size_t))
 async_write(AsyncWriteStream& s, DynamicBuffer_v2 buffers,
@@ -1196,8 +1207,10 @@ async_write(AsyncWriteStream& s, DynamicBuffer_v2 buffers,
  * immediate completion, invocation of the handler will be performed in a
  * manner equivalent to using boost::asio::post().
  */
-template <typename AsyncWriteStream, typename DynamicBuffer_v2,
-    typename CompletionCondition, typename WriteHandler>
+template <typename AsyncWriteStream,
+    typename DynamicBuffer_v2, typename CompletionCondition,
+    BOOST_ASIO_COMPLETION_TOKEN_FOR(void (boost::system::error_code,
+      std::size_t)) WriteHandler>
 BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(WriteHandler,
     void (boost::system::error_code, std::size_t))
 async_write(AsyncWriteStream& s, DynamicBuffer_v2 buffers,

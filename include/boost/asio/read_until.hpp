@@ -1599,8 +1599,9 @@ std::size_t read_until(SyncReadStream& s, DynamicBuffer_v2 buffers,
  * This data may be the start of a new line, to be extracted by a subsequent
  * @c async_read_until operation.
  */
-template <typename AsyncReadStream,
-    typename DynamicBuffer_v1, typename ReadHandler>
+template <typename AsyncReadStream, typename DynamicBuffer_v1,
+    BOOST_ASIO_COMPLETION_TOKEN_FOR(void (boost::system::error_code,
+      std::size_t)) ReadHandler>
 BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(ReadHandler,
     void (boost::system::error_code, std::size_t))
 async_read_until(AsyncReadStream& s,
@@ -1693,8 +1694,9 @@ async_read_until(AsyncReadStream& s,
  * This data may be the start of a new line, to be extracted by a subsequent
  * @c async_read_until operation.
  */
-template <typename AsyncReadStream,
-    typename DynamicBuffer_v1, typename ReadHandler>
+template <typename AsyncReadStream, typename DynamicBuffer_v1,
+    BOOST_ASIO_COMPLETION_TOKEN_FOR(void (boost::system::error_code,
+      std::size_t)) ReadHandler>
 BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(ReadHandler,
     void (boost::system::error_code, std::size_t))
 async_read_until(AsyncReadStream& s,
@@ -1795,8 +1797,9 @@ async_read_until(AsyncReadStream& s,
  * This data may be the start of a new line, to be extracted by a subsequent
  * @c async_read_until operation.
  */
-template <typename AsyncReadStream,
-    typename DynamicBuffer_v1, typename ReadHandler>
+template <typename AsyncReadStream, typename DynamicBuffer_v1,
+    BOOST_ASIO_COMPLETION_TOKEN_FOR(void (boost::system::error_code,
+      std::size_t)) ReadHandler>
 BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(ReadHandler,
     void (boost::system::error_code, std::size_t))
 async_read_until(AsyncReadStream& s,
@@ -1939,8 +1942,10 @@ async_read_until(AsyncReadStream& s,
  * boost::asio::async_read_until(s, data, match_char('a'), handler);
  * @endcode
  */
-template <typename AsyncReadStream, typename DynamicBuffer_v1,
-    typename MatchCondition, typename ReadHandler>
+template <typename AsyncReadStream,
+    typename DynamicBuffer_v1, typename MatchCondition,
+    BOOST_ASIO_COMPLETION_TOKEN_FOR(void (boost::system::error_code,
+      std::size_t)) ReadHandler>
 BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(ReadHandler,
     void (boost::system::error_code, std::size_t))
 async_read_until(AsyncReadStream& s,
@@ -2032,7 +2037,9 @@ async_read_until(AsyncReadStream& s,
  * This data may be the start of a new line, to be extracted by a subsequent
  * @c async_read_until operation.
  */
-template <typename AsyncReadStream, typename Allocator, typename ReadHandler>
+template <typename AsyncReadStream, typename Allocator,
+    BOOST_ASIO_COMPLETION_TOKEN_FOR(void (boost::system::error_code,
+      std::size_t)) ReadHandler>
 BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(ReadHandler,
     void (boost::system::error_code, std::size_t))
 async_read_until(AsyncReadStream& s,
@@ -2117,7 +2124,9 @@ async_read_until(AsyncReadStream& s,
  * This data may be the start of a new line, to be extracted by a subsequent
  * @c async_read_until operation.
  */
-template <typename AsyncReadStream, typename Allocator, typename ReadHandler>
+template <typename AsyncReadStream, typename Allocator,
+    BOOST_ASIO_COMPLETION_TOKEN_FOR(void (boost::system::error_code,
+      std::size_t)) ReadHandler>
 BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(ReadHandler,
     void (boost::system::error_code, std::size_t))
 async_read_until(AsyncReadStream& s,
@@ -2210,7 +2219,9 @@ async_read_until(AsyncReadStream& s,
  * This data may be the start of a new line, to be extracted by a subsequent
  * @c async_read_until operation.
  */
-template <typename AsyncReadStream, typename Allocator, typename ReadHandler>
+template <typename AsyncReadStream, typename Allocator,
+    BOOST_ASIO_COMPLETION_TOKEN_FOR(void (boost::system::error_code,
+      std::size_t)) ReadHandler>
 BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(ReadHandler,
     void (boost::system::error_code, std::size_t))
 async_read_until(AsyncReadStream& s,
@@ -2343,8 +2354,9 @@ async_read_until(AsyncReadStream& s,
  * boost::asio::async_read_until(s, b, match_char('a'), handler);
  * @endcode
  */
-template <typename AsyncReadStream, typename Allocator,
-    typename MatchCondition, typename ReadHandler>
+template <typename AsyncReadStream, typename Allocator, typename MatchCondition,
+    BOOST_ASIO_COMPLETION_TOKEN_FOR(void (boost::system::error_code,
+      std::size_t)) ReadHandler>
 BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(ReadHandler,
     void (boost::system::error_code, std::size_t))
 async_read_until(AsyncReadStream& s,
@@ -2438,8 +2450,9 @@ async_read_until(AsyncReadStream& s,
  * This data may be the start of a new line, to be extracted by a subsequent
  * @c async_read_until operation.
  */
-template <typename AsyncReadStream,
-    typename DynamicBuffer_v2, typename ReadHandler>
+template <typename AsyncReadStream, typename DynamicBuffer_v2,
+    BOOST_ASIO_COMPLETION_TOKEN_FOR(void (boost::system::error_code,
+      std::size_t)) ReadHandler>
 BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(ReadHandler,
     void (boost::system::error_code, std::size_t))
 async_read_until(AsyncReadStream& s, DynamicBuffer_v2 buffers,
@@ -2530,8 +2543,9 @@ async_read_until(AsyncReadStream& s, DynamicBuffer_v2 buffers,
  * This data may be the start of a new line, to be extracted by a subsequent
  * @c async_read_until operation.
  */
-template <typename AsyncReadStream,
-    typename DynamicBuffer_v2, typename ReadHandler>
+template <typename AsyncReadStream, typename DynamicBuffer_v2,
+    BOOST_ASIO_COMPLETION_TOKEN_FOR(void (boost::system::error_code,
+      std::size_t)) ReadHandler>
 BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(ReadHandler,
     void (boost::system::error_code, std::size_t))
 async_read_until(AsyncReadStream& s, DynamicBuffer_v2 buffers,
@@ -2630,8 +2644,9 @@ async_read_until(AsyncReadStream& s, DynamicBuffer_v2 buffers,
  * This data may be the start of a new line, to be extracted by a subsequent
  * @c async_read_until operation.
  */
-template <typename AsyncReadStream,
-    typename DynamicBuffer_v2, typename ReadHandler>
+template <typename AsyncReadStream, typename DynamicBuffer_v2,
+    BOOST_ASIO_COMPLETION_TOKEN_FOR(void (boost::system::error_code,
+      std::size_t)) ReadHandler>
 BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(ReadHandler,
     void (boost::system::error_code, std::size_t))
 async_read_until(AsyncReadStream& s, DynamicBuffer_v2 buffers,
@@ -2772,8 +2787,10 @@ async_read_until(AsyncReadStream& s, DynamicBuffer_v2 buffers,
  * boost::asio::async_read_until(s, data, match_char('a'), handler);
  * @endcode
  */
-template <typename AsyncReadStream, typename DynamicBuffer_v2,
-    typename MatchCondition, typename ReadHandler>
+template <typename AsyncReadStream,
+    typename DynamicBuffer_v2, typename MatchCondition,
+    BOOST_ASIO_COMPLETION_TOKEN_FOR(void (boost::system::error_code,
+      std::size_t)) ReadHandler>
 BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(ReadHandler,
     void (boost::system::error_code, std::size_t))
 async_read_until(AsyncReadStream& s, DynamicBuffer_v2 buffers,

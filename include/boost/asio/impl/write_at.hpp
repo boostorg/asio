@@ -372,8 +372,10 @@ struct associated_executor<
 
 #endif // !defined(GENERATING_DOCUMENTATION)
 
-template <typename AsyncRandomAccessWriteDevice, typename ConstBufferSequence,
-    typename CompletionCondition, typename WriteHandler>
+template <typename AsyncRandomAccessWriteDevice,
+    typename ConstBufferSequence, typename CompletionCondition,
+    BOOST_ASIO_COMPLETION_TOKEN_FOR(void (boost::system::error_code,
+      std::size_t)) WriteHandler>
 inline BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(WriteHandler,
     void (boost::system::error_code, std::size_t))
 async_write_at(AsyncRandomAccessWriteDevice& d,
@@ -388,7 +390,8 @@ async_write_at(AsyncRandomAccessWriteDevice& d,
 }
 
 template <typename AsyncRandomAccessWriteDevice, typename ConstBufferSequence,
-    typename WriteHandler>
+    BOOST_ASIO_COMPLETION_TOKEN_FOR(void (boost::system::error_code,
+      std::size_t)) WriteHandler>
 inline BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(WriteHandler,
     void (boost::system::error_code, std::size_t))
 async_write_at(AsyncRandomAccessWriteDevice& d,
@@ -540,8 +543,10 @@ struct associated_executor<
 
 #endif // !defined(GENERATING_DOCUMENTATION)
 
-template <typename AsyncRandomAccessWriteDevice, typename Allocator,
-    typename CompletionCondition, typename WriteHandler>
+template <typename AsyncRandomAccessWriteDevice,
+    typename Allocator, typename CompletionCondition,
+    BOOST_ASIO_COMPLETION_TOKEN_FOR(void (boost::system::error_code,
+      std::size_t)) WriteHandler>
 inline BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(WriteHandler,
     void (boost::system::error_code, std::size_t))
 async_write_at(AsyncRandomAccessWriteDevice& d,
@@ -556,7 +561,8 @@ async_write_at(AsyncRandomAccessWriteDevice& d,
 }
 
 template <typename AsyncRandomAccessWriteDevice, typename Allocator,
-    typename WriteHandler>
+    BOOST_ASIO_COMPLETION_TOKEN_FOR(void (boost::system::error_code,
+      std::size_t)) WriteHandler>
 inline BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(WriteHandler,
     void (boost::system::error_code, std::size_t))
 async_write_at(AsyncRandomAccessWriteDevice& d,

@@ -761,7 +761,8 @@ std::size_t read(SyncReadStream& s, DynamicBuffer_v2 buffers,
  *     handler); @endcode
  */
 template <typename AsyncReadStream, typename MutableBufferSequence,
-    typename ReadHandler>
+    BOOST_ASIO_COMPLETION_TOKEN_FOR(void (boost::system::error_code,
+      std::size_t)) ReadHandler>
 BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(ReadHandler,
     void (boost::system::error_code, std::size_t))
 async_read(AsyncReadStream& s, const MutableBufferSequence& buffers,
@@ -833,8 +834,10 @@ async_read(AsyncReadStream& s, const MutableBufferSequence& buffers,
  * buffers in one go, and how to use it with arrays, boost::array or
  * std::vector.
  */
-template <typename AsyncReadStream, typename MutableBufferSequence,
-    typename CompletionCondition, typename ReadHandler>
+template <typename AsyncReadStream,
+    typename MutableBufferSequence, typename CompletionCondition,
+    BOOST_ASIO_COMPLETION_TOKEN_FOR(void (boost::system::error_code,
+      std::size_t)) ReadHandler>
 BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(ReadHandler,
     void (boost::system::error_code, std::size_t))
 async_read(AsyncReadStream& s, const MutableBufferSequence& buffers,
@@ -896,8 +899,9 @@ async_read(AsyncReadStream& s, const MutableBufferSequence& buffers,
  *     boost::asio::transfer_all(),
  *     handler); @endcode
  */
-template <typename AsyncReadStream,
-    typename DynamicBuffer_v1, typename ReadHandler>
+template <typename AsyncReadStream, typename DynamicBuffer_v1,
+    BOOST_ASIO_COMPLETION_TOKEN_FOR(void (boost::system::error_code,
+      std::size_t)) ReadHandler>
 BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(ReadHandler,
     void (boost::system::error_code, std::size_t))
 async_read(AsyncReadStream& s,
@@ -966,8 +970,10 @@ async_read(AsyncReadStream& s,
  * immediate completion, invocation of the handler will be performed in a
  * manner equivalent to using boost::asio::post().
  */
-template <typename AsyncReadStream, typename DynamicBuffer_v1,
-    typename CompletionCondition, typename ReadHandler>
+template <typename AsyncReadStream,
+    typename DynamicBuffer_v1, typename CompletionCondition,
+    BOOST_ASIO_COMPLETION_TOKEN_FOR(void (boost::system::error_code,
+      std::size_t)) ReadHandler>
 BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(ReadHandler,
     void (boost::system::error_code, std::size_t))
 async_read(AsyncReadStream& s,
@@ -1030,7 +1036,9 @@ async_read(AsyncReadStream& s,
  *     boost::asio::transfer_all(),
  *     handler); @endcode
  */
-template <typename AsyncReadStream, typename Allocator, typename ReadHandler>
+template <typename AsyncReadStream, typename Allocator,
+    BOOST_ASIO_COMPLETION_TOKEN_FOR(void (boost::system::error_code,
+      std::size_t)) ReadHandler>
 BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(ReadHandler,
     void (boost::system::error_code, std::size_t))
 async_read(AsyncReadStream& s, basic_streambuf<Allocator>& b,
@@ -1092,8 +1100,10 @@ async_read(AsyncReadStream& s, basic_streambuf<Allocator>& b,
  * immediate completion, invocation of the handler will be performed in a
  * manner equivalent to using boost::asio::post().
  */
-template <typename AsyncReadStream, typename Allocator,
-    typename CompletionCondition, typename ReadHandler>
+template <typename AsyncReadStream,
+    typename Allocator, typename CompletionCondition,
+    BOOST_ASIO_COMPLETION_TOKEN_FOR(void (boost::system::error_code,
+      std::size_t)) ReadHandler>
 BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(ReadHandler,
     void (boost::system::error_code, std::size_t))
 async_read(AsyncReadStream& s, basic_streambuf<Allocator>& b,
@@ -1154,8 +1164,9 @@ async_read(AsyncReadStream& s, basic_streambuf<Allocator>& b,
  *     boost::asio::transfer_all(),
  *     handler); @endcode
  */
-template <typename AsyncReadStream,
-    typename DynamicBuffer_v2, typename ReadHandler>
+template <typename AsyncReadStream, typename DynamicBuffer_v2,
+    BOOST_ASIO_COMPLETION_TOKEN_FOR(void (boost::system::error_code,
+      std::size_t)) ReadHandler>
 BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(ReadHandler,
     void (boost::system::error_code, std::size_t))
 async_read(AsyncReadStream& s, DynamicBuffer_v2 buffers,
@@ -1222,8 +1233,10 @@ async_read(AsyncReadStream& s, DynamicBuffer_v2 buffers,
  * immediate completion, invocation of the handler will be performed in a
  * manner equivalent to using boost::asio::post().
  */
-template <typename AsyncReadStream, typename DynamicBuffer_v2,
-    typename CompletionCondition, typename ReadHandler>
+template <typename AsyncReadStream,
+    typename DynamicBuffer_v2, typename CompletionCondition,
+    BOOST_ASIO_COMPLETION_TOKEN_FOR(void (boost::system::error_code,
+      std::size_t)) ReadHandler>
 BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(ReadHandler,
     void (boost::system::error_code, std::size_t))
 async_read(AsyncReadStream& s, DynamicBuffer_v2 buffers,

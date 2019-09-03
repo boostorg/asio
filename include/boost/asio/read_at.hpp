@@ -460,7 +460,8 @@ std::size_t read_at(SyncRandomAccessReadDevice& d,
  *     handler); @endcode
  */
 template <typename AsyncRandomAccessReadDevice, typename MutableBufferSequence,
-    typename ReadHandler>
+    BOOST_ASIO_COMPLETION_TOKEN_FOR(void (boost::system::error_code,
+      std::size_t)) ReadHandler>
 BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(ReadHandler,
     void (boost::system::error_code, std::size_t))
 async_read_at(AsyncRandomAccessReadDevice& d, uint64_t offset,
@@ -532,8 +533,10 @@ async_read_at(AsyncRandomAccessReadDevice& d, uint64_t offset,
  * buffers in one go, and how to use it with arrays, boost::array or
  * std::vector.
  */
-template <typename AsyncRandomAccessReadDevice, typename MutableBufferSequence,
-    typename CompletionCondition, typename ReadHandler>
+template <typename AsyncRandomAccessReadDevice,
+    typename MutableBufferSequence, typename CompletionCondition,
+    BOOST_ASIO_COMPLETION_TOKEN_FOR(void (boost::system::error_code,
+      std::size_t)) ReadHandler>
 BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(ReadHandler,
     void (boost::system::error_code, std::size_t))
 async_read_at(AsyncRandomAccessReadDevice& d,
@@ -590,7 +593,8 @@ async_read_at(AsyncRandomAccessReadDevice& d,
  *     handler); @endcode
  */
 template <typename AsyncRandomAccessReadDevice, typename Allocator,
-    typename ReadHandler>
+    BOOST_ASIO_COMPLETION_TOKEN_FOR(void (boost::system::error_code,
+      std::size_t)) ReadHandler>
 BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(ReadHandler,
     void (boost::system::error_code, std::size_t))
 async_read_at(AsyncRandomAccessReadDevice& d, uint64_t offset,
@@ -649,8 +653,10 @@ async_read_at(AsyncRandomAccessReadDevice& d, uint64_t offset,
  * immediate completion, invocation of the handler will be performed in a
  * manner equivalent to using boost::asio::post().
  */
-template <typename AsyncRandomAccessReadDevice, typename Allocator,
-    typename CompletionCondition, typename ReadHandler>
+template <typename AsyncRandomAccessReadDevice,
+    typename Allocator, typename CompletionCondition,
+    BOOST_ASIO_COMPLETION_TOKEN_FOR(void (boost::system::error_code,
+      std::size_t)) ReadHandler>
 BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(ReadHandler,
     void (boost::system::error_code, std::size_t))
 async_read_at(AsyncRandomAccessReadDevice& d,

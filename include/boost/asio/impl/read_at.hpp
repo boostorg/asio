@@ -387,8 +387,10 @@ struct associated_executor<
 
 #endif // !defined(GENERATING_DOCUMENTATION)
 
-template <typename AsyncRandomAccessReadDevice, typename MutableBufferSequence,
-    typename CompletionCondition, typename ReadHandler>
+template <typename AsyncRandomAccessReadDevice,
+    typename MutableBufferSequence, typename CompletionCondition,
+    BOOST_ASIO_COMPLETION_TOKEN_FOR(void (boost::system::error_code,
+      std::size_t)) ReadHandler>
 inline BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(ReadHandler,
     void (boost::system::error_code, std::size_t))
 async_read_at(AsyncRandomAccessReadDevice& d,
@@ -403,7 +405,8 @@ async_read_at(AsyncRandomAccessReadDevice& d,
 }
 
 template <typename AsyncRandomAccessReadDevice, typename MutableBufferSequence,
-    typename ReadHandler>
+    BOOST_ASIO_COMPLETION_TOKEN_FOR(void (boost::system::error_code,
+      std::size_t)) ReadHandler>
 inline BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(ReadHandler,
     void (boost::system::error_code, std::size_t))
 async_read_at(AsyncRandomAccessReadDevice& d,
@@ -617,8 +620,10 @@ struct associated_executor<
 
 #endif // !defined(GENERATING_DOCUMENTATION)
 
-template <typename AsyncRandomAccessReadDevice, typename Allocator,
-    typename CompletionCondition, typename ReadHandler>
+template <typename AsyncRandomAccessReadDevice,
+    typename Allocator, typename CompletionCondition,
+    BOOST_ASIO_COMPLETION_TOKEN_FOR(void (boost::system::error_code,
+      std::size_t)) ReadHandler>
 inline BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(ReadHandler,
     void (boost::system::error_code, std::size_t))
 async_read_at(AsyncRandomAccessReadDevice& d,
@@ -633,7 +638,8 @@ async_read_at(AsyncRandomAccessReadDevice& d,
 }
 
 template <typename AsyncRandomAccessReadDevice, typename Allocator,
-    typename ReadHandler>
+    BOOST_ASIO_COMPLETION_TOKEN_FOR(void (boost::system::error_code,
+      std::size_t)) ReadHandler>
 inline BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(ReadHandler,
     void (boost::system::error_code, std::size_t))
 async_read_at(AsyncRandomAccessReadDevice& d,

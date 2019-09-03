@@ -129,7 +129,9 @@ public:
   std::size_t flush(boost::system::error_code& ec);
 
   /// Start an asynchronous flush.
-  template <typename WriteHandler>
+  template <
+      BOOST_ASIO_COMPLETION_TOKEN_FOR(void (boost::system::error_code,
+        std::size_t)) WriteHandler>
   BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(WriteHandler,
       void (boost::system::error_code, std::size_t))
   async_flush(BOOST_ASIO_MOVE_ARG(WriteHandler) handler);
@@ -147,7 +149,9 @@ public:
 
   /// Start an asynchronous write. The data being written must be valid for the
   /// lifetime of the asynchronous operation.
-  template <typename ConstBufferSequence, typename WriteHandler>
+  template <typename ConstBufferSequence,
+      BOOST_ASIO_COMPLETION_TOKEN_FOR(void (boost::system::error_code,
+        std::size_t)) WriteHandler>
   BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(WriteHandler,
       void (boost::system::error_code, std::size_t))
   async_write_some(const ConstBufferSequence& buffers,
@@ -172,7 +176,9 @@ public:
 
   /// Start an asynchronous read. The buffer into which the data will be read
   /// must be valid for the lifetime of the asynchronous operation.
-  template <typename MutableBufferSequence, typename ReadHandler>
+  template <typename MutableBufferSequence,
+      BOOST_ASIO_COMPLETION_TOKEN_FOR(void (boost::system::error_code,
+        std::size_t)) ReadHandler>
   BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(ReadHandler,
       void (boost::system::error_code, std::size_t))
   async_read_some(const MutableBufferSequence& buffers,
