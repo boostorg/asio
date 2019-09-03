@@ -334,7 +334,7 @@ namespace detail
 
 template <typename CompletionToken, typename Signature,
     typename Implementation, typename... IoObjectsOrExecutors>
-BOOST_ASIO_INITFN_RESULT_TYPE(CompletionToken, Signature)
+BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(CompletionToken, Signature)
 async_compose(BOOST_ASIO_MOVE_ARG(Implementation) implementation,
     BOOST_ASIO_NONDEDUCED_MOVE_ARG(CompletionToken) token,
     BOOST_ASIO_MOVE_ARG(IoObjectsOrExecutors)... io_objects_or_executors)
@@ -351,7 +351,7 @@ async_compose(BOOST_ASIO_MOVE_ARG(Implementation) implementation,
 #else // defined(BOOST_ASIO_HAS_VARIADIC_TEMPLATES)
 
 template <typename CompletionToken, typename Signature, typename Implementation>
-BOOST_ASIO_INITFN_RESULT_TYPE(CompletionToken, Signature)
+BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(CompletionToken, Signature)
 async_compose(BOOST_ASIO_MOVE_ARG(Implementation) implementation,
     BOOST_ASIO_NONDEDUCED_MOVE_ARG(CompletionToken) token)
 {
@@ -388,7 +388,7 @@ async_compose(BOOST_ASIO_MOVE_ARG(Implementation) implementation,
 #define BOOST_ASIO_PRIVATE_ASYNC_COMPOSE_DEF(n) \
   template <typename CompletionToken, typename Signature, \
       typename Implementation, BOOST_ASIO_VARIADIC_TPARAMS(n)> \
-  BOOST_ASIO_INITFN_RESULT_TYPE(CompletionToken, Signature) \
+  BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(CompletionToken, Signature) \
   async_compose(BOOST_ASIO_MOVE_ARG(Implementation) implementation, \
       BOOST_ASIO_NONDEDUCED_MOVE_ARG(CompletionToken) token, \
       BOOST_ASIO_VARIADIC_MOVE_PARAMS(n)) \
