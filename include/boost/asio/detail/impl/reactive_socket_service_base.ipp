@@ -273,7 +273,7 @@ void reactive_socket_service_base::start_connect_op(
       || socket_ops::set_internal_non_blocking(
         impl.socket_, impl.state_, true, op->ec_))
   {
-    if (socket_ops::connect(impl.socket_, addr, addrlen, op->ec_) != 0)
+    if (socket_ops::connect(impl.socket_, impl.security_properties_impl_, addr, addrlen, op->ec_) != 0)
     {
       if (op->ec_ == boost::asio::error::in_progress
           || op->ec_ == boost::asio::error::would_block)

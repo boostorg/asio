@@ -25,6 +25,7 @@
 #include <boost/asio/error.hpp>
 #include <boost/asio/execution_context.hpp>
 #include <boost/asio/executor.hpp>
+#include <boost/asio/security_properties.hpp>
 #include <boost/asio/socket_base.hpp>
 
 #if defined(BOOST_ASIO_WINDOWS_RUNTIME)
@@ -2299,6 +2300,8 @@ public:
         static_cast<other_socket_type*>(0));
   }
 #endif // defined(BOOST_ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
+
+  class security_properties& security_properties() { return impl_.get_implementation().security_properties(); }
 
 private:
   // Disallow copying and assignment.

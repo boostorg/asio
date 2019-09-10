@@ -69,6 +69,8 @@ public:
     {
     }
 
+    class security_properties& security_properties() { return security_properties_; }
+
     // The protocol associated with the socket.
     protocol_type protocol_;
   };
@@ -396,7 +398,7 @@ public:
     }
 
     std::size_t addr_len = peer_endpoint ? peer_endpoint->capacity() : 0;
-    socket_holder new_socket(socket_ops::sync_accept(impl.socket_,
+    socket_holder new_socket(socket_ops::sync_accept(impl.socket_, impl.security_properties_impl_,
           impl.state_, peer_endpoint ? peer_endpoint->data() : 0,
           peer_endpoint ? &addr_len : 0, ec));
 
@@ -406,6 +408,8 @@ public:
       if (peer_endpoint)
         peer_endpoint->resize(addr_len);
       peer.assign(impl.protocol_, new_socket.get(), ec);
+      peer.security_properties().impl_.ssl_ = std::move(impl.security_properties_impl_.ssl_);
+      peer.security_properties().impl_.security_disabled_ = impl.security_properties_impl_.security_disabled_;
       if (!ec)
         new_socket.release();
     }
@@ -467,7 +471,7 @@ public:
   boost::system::error_code connect(implementation_type& impl,
       const endpoint_type& peer_endpoint, boost::system::error_code& ec)
   {
-    socket_ops::sync_connect(impl.socket_,
+    socket_ops::sync_connect(impl.socket_, impl.security_properties_impl_,
         peer_endpoint.data(), peer_endpoint.size(), ec);
     return ec;
   }

@@ -26,6 +26,7 @@
 #include <boost/asio/execution_context.hpp>
 #include <boost/asio/executor.hpp>
 #include <boost/asio/post.hpp>
+#include <boost/asio/security_properties.hpp>
 #include <boost/asio/socket_base.hpp>
 
 #if defined(BOOST_ASIO_WINDOWS_RUNTIME)
@@ -1778,6 +1779,8 @@ public:
     return async_initiate<WaitHandler, void (boost::system::error_code)>(
         initiate_async_wait(), handler, this, w);
   }
+
+  class security_properties& security_properties() { return impl_.get_implementation().security_properties(); }
 
 protected:
   /// Protected destructor to prevent deletion through this type.

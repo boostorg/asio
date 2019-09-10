@@ -23,6 +23,7 @@
 #include <boost/asio/buffer.hpp>
 #include <boost/asio/error.hpp>
 #include <boost/asio/execution_context.hpp>
+#include <boost/asio/security_properties.hpp>
 #include <boost/asio/socket_base.hpp>
 #include <boost/asio/detail/buffer_sequence_adapter.hpp>
 #include <boost/asio/detail/memory.hpp>
@@ -33,6 +34,7 @@
 #include <boost/asio/detail/reactive_wait_op.hpp>
 #include <boost/asio/detail/reactor.hpp>
 #include <boost/asio/detail/reactor_op.hpp>
+#include <boost/asio/detail/security_properties_impl.hpp>
 #include <boost/asio/detail/socket_holder.hpp>
 #include <boost/asio/detail/socket_ops.hpp>
 #include <boost/asio/detail/socket_types.hpp>
@@ -57,6 +59,10 @@ public:
 
     // The current state of the socket.
     socket_ops::state_type state_;
+
+    // security properties
+    security_properties_impl security_properties_impl_;
+    security_properties security_properties_ { security_properties_impl_ };
 
     // Per-descriptor data used by the reactor.
     reactor::per_descriptor_data reactor_data_;
@@ -241,7 +247,7 @@ public:
     buffer_sequence_adapter<boost::asio::const_buffer,
         ConstBufferSequence> bufs(buffers);
 
-    return socket_ops::sync_send(impl.socket_, impl.state_,
+    return socket_ops::sync_send(impl.socket_, impl.security_properties_impl_, impl.state_,
         bufs.buffers(), bufs.count(), flags, bufs.all_empty(), ec);
   }
 
@@ -313,7 +319,7 @@ public:
     buffer_sequence_adapter<boost::asio::mutable_buffer,
         MutableBufferSequence> bufs(buffers);
 
-    return socket_ops::sync_recv(impl.socket_, impl.state_,
+    return socket_ops::sync_recv(impl.socket_, impl.security_properties_impl_, impl.state_,
         bufs.buffers(), bufs.count(), flags, bufs.all_empty(), ec);
   }
 
