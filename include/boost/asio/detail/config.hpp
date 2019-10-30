@@ -327,6 +327,15 @@
 # endif // !defined(BOOST_ASIO_DISABLE_RETURN_TYPE_DEDUCTION)
 #endif // !defined(BOOST_ASIO_HAS_RETURN_TYPE_DEDUCTION)
 
+// Support default function template arguments on compilers known to allow it.
+#if !defined(BOOST_ASIO_HAS_DEFAULT_FUNCTION_TEMPLATE_ARGUMENTS)
+# if !defined(BOOST_ASIO_DISABLE_DEFAULT_FUNCTION_TEMPLATE_ARGUMENTS)
+#  if (__cplusplus >= 201103)
+#   define BOOST_ASIO_HAS_DEFAULT_FUNCTION_TEMPLATE_ARGUMENTS 1
+#  endif // (__cplusplus >= 201103)
+# endif // !defined(BOOST_ASIO_DISABLE_DEFAULT_FUNCTION_TEMPLATE_ARGUMENTS)
+#endif // !defined(BOOST_ASIO_HAS_DEFAULT_FUNCTION_TEMPLATE_ARGUMENTS)
+
 // Support concepts on compilers known to allow them.
 #if !defined(BOOST_ASIO_HAS_CONCEPTS)
 # if !defined(BOOST_ASIO_DISABLE_CONCEPTS)

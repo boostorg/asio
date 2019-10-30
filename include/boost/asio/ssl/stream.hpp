@@ -433,11 +433,13 @@ public:
    */
   template <
       BOOST_ASIO_COMPLETION_TOKEN_FOR(void (boost::system::error_code))
-        HandshakeHandler>
+        HandshakeHandler
+          BOOST_ASIO_DEFAULT_COMPLETION_TOKEN_TYPE(executor_type)>
   BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(HandshakeHandler,
       void (boost::system::error_code))
   async_handshake(handshake_type type,
-      BOOST_ASIO_MOVE_ARG(HandshakeHandler) handler)
+      BOOST_ASIO_MOVE_ARG(HandshakeHandler) handler
+        BOOST_ASIO_DEFAULT_COMPLETION_TOKEN(executor_type))
   {
     return async_initiate<HandshakeHandler,
       void (boost::system::error_code)>(
@@ -467,11 +469,13 @@ public:
    */
   template <typename ConstBufferSequence,
       BOOST_ASIO_COMPLETION_TOKEN_FOR(void (boost::system::error_code,
-        std::size_t)) BufferedHandshakeHandler>
+        std::size_t)) BufferedHandshakeHandler
+          BOOST_ASIO_DEFAULT_COMPLETION_TOKEN_TYPE(executor_type)>
   BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(BufferedHandshakeHandler,
       void (boost::system::error_code, std::size_t))
   async_handshake(handshake_type type, const ConstBufferSequence& buffers,
-      BOOST_ASIO_MOVE_ARG(BufferedHandshakeHandler) handler)
+      BOOST_ASIO_MOVE_ARG(BufferedHandshakeHandler) handler
+        BOOST_ASIO_DEFAULT_COMPLETION_TOKEN(executor_type))
   {
     return async_initiate<BufferedHandshakeHandler,
       void (boost::system::error_code, std::size_t)>(
@@ -519,10 +523,13 @@ public:
    */
   template <
       BOOST_ASIO_COMPLETION_TOKEN_FOR(void (boost::system::error_code))
-        ShutdownHandler>
+        ShutdownHandler
+          BOOST_ASIO_DEFAULT_COMPLETION_TOKEN_TYPE(executor_type)>
   BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(ShutdownHandler,
       void (boost::system::error_code))
-  async_shutdown(BOOST_ASIO_MOVE_ARG(ShutdownHandler) handler)
+  async_shutdown(
+      BOOST_ASIO_MOVE_ARG(ShutdownHandler) handler
+        BOOST_ASIO_DEFAULT_COMPLETION_TOKEN(executor_type))
   {
     return async_initiate<ShutdownHandler,
       void (boost::system::error_code)>(
@@ -603,11 +610,13 @@ public:
    */
   template <typename ConstBufferSequence,
       BOOST_ASIO_COMPLETION_TOKEN_FOR(void (boost::system::error_code,
-        std::size_t)) WriteHandler>
+        std::size_t)) WriteHandler
+          BOOST_ASIO_DEFAULT_COMPLETION_TOKEN_TYPE(executor_type)>
   BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(WriteHandler,
       void (boost::system::error_code, std::size_t))
   async_write_some(const ConstBufferSequence& buffers,
-      BOOST_ASIO_MOVE_ARG(WriteHandler) handler)
+      BOOST_ASIO_MOVE_ARG(WriteHandler) handler
+        BOOST_ASIO_DEFAULT_COMPLETION_TOKEN(executor_type))
   {
     return async_initiate<WriteHandler,
       void (boost::system::error_code, std::size_t)>(
@@ -688,11 +697,13 @@ public:
    */
   template <typename MutableBufferSequence,
       BOOST_ASIO_COMPLETION_TOKEN_FOR(void (boost::system::error_code,
-        std::size_t)) ReadHandler>
+        std::size_t)) ReadHandler
+          BOOST_ASIO_DEFAULT_COMPLETION_TOKEN_TYPE(executor_type)>
   BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(ReadHandler,
       void (boost::system::error_code, std::size_t))
   async_read_some(const MutableBufferSequence& buffers,
-      BOOST_ASIO_MOVE_ARG(ReadHandler) handler)
+      BOOST_ASIO_MOVE_ARG(ReadHandler) handler
+        BOOST_ASIO_DEFAULT_COMPLETION_TOKEN(executor_type))
   {
     return async_initiate<ReadHandler,
       void (boost::system::error_code, std::size_t)>(

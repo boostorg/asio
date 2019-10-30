@@ -623,11 +623,13 @@ public:
    */
   template <
       BOOST_ASIO_COMPLETION_TOKEN_FOR(void (boost::system::error_code,
-        results_type)) ResolveHandler>
+        results_type)) ResolveHandler
+          BOOST_ASIO_DEFAULT_COMPLETION_TOKEN_TYPE(executor_type)>
   BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(ResolveHandler,
       void (boost::system::error_code, results_type))
   async_resolve(const query& q,
-      BOOST_ASIO_MOVE_ARG(ResolveHandler) handler)
+      BOOST_ASIO_MOVE_ARG(ResolveHandler) handler
+        BOOST_ASIO_DEFAULT_COMPLETION_TOKEN(executor_type))
   {
     return boost::asio::async_initiate<ResolveHandler,
       void (boost::system::error_code, results_type)>(
@@ -679,12 +681,14 @@ public:
    */
   template <
       BOOST_ASIO_COMPLETION_TOKEN_FOR(void (boost::system::error_code,
-        results_type)) ResolveHandler>
+        results_type)) ResolveHandler
+          BOOST_ASIO_DEFAULT_COMPLETION_TOKEN_TYPE(executor_type)>
   BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(ResolveHandler,
       void (boost::system::error_code, results_type))
   async_resolve(BOOST_ASIO_STRING_VIEW_PARAM host,
       BOOST_ASIO_STRING_VIEW_PARAM service,
-      BOOST_ASIO_MOVE_ARG(ResolveHandler) handler)
+      BOOST_ASIO_MOVE_ARG(ResolveHandler) handler
+        BOOST_ASIO_DEFAULT_COMPLETION_TOKEN(executor_type))
   {
     return async_resolve(host, service, resolver_base::flags(),
         BOOST_ASIO_MOVE_CAST(ResolveHandler)(handler));
@@ -739,13 +743,15 @@ public:
    */
   template <
       BOOST_ASIO_COMPLETION_TOKEN_FOR(void (boost::system::error_code,
-        results_type)) ResolveHandler>
+        results_type)) ResolveHandler
+          BOOST_ASIO_DEFAULT_COMPLETION_TOKEN_TYPE(executor_type)>
   BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(ResolveHandler,
       void (boost::system::error_code, results_type))
   async_resolve(BOOST_ASIO_STRING_VIEW_PARAM host,
       BOOST_ASIO_STRING_VIEW_PARAM service,
       resolver_base::flags resolve_flags,
-      BOOST_ASIO_MOVE_ARG(ResolveHandler) handler)
+      BOOST_ASIO_MOVE_ARG(ResolveHandler) handler
+        BOOST_ASIO_DEFAULT_COMPLETION_TOKEN(executor_type))
   {
     basic_resolver_query<protocol_type> q(static_cast<std::string>(host),
         static_cast<std::string>(service), resolve_flags);
@@ -802,12 +808,14 @@ public:
    */
   template <
       BOOST_ASIO_COMPLETION_TOKEN_FOR(void (boost::system::error_code,
-        results_type)) ResolveHandler>
+        results_type)) ResolveHandler
+          BOOST_ASIO_DEFAULT_COMPLETION_TOKEN_TYPE(executor_type)>
   BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(ResolveHandler,
       void (boost::system::error_code, results_type))
   async_resolve(const protocol_type& protocol,
       BOOST_ASIO_STRING_VIEW_PARAM host, BOOST_ASIO_STRING_VIEW_PARAM service,
-      BOOST_ASIO_MOVE_ARG(ResolveHandler) handler)
+      BOOST_ASIO_MOVE_ARG(ResolveHandler) handler
+        BOOST_ASIO_DEFAULT_COMPLETION_TOKEN(executor_type))
   {
     return async_resolve(protocol, host, service, resolver_base::flags(),
         BOOST_ASIO_MOVE_CAST(ResolveHandler)(handler));
@@ -865,13 +873,15 @@ public:
    */
   template <
       BOOST_ASIO_COMPLETION_TOKEN_FOR(void (boost::system::error_code,
-        results_type)) ResolveHandler>
+        results_type)) ResolveHandler
+          BOOST_ASIO_DEFAULT_COMPLETION_TOKEN_TYPE(executor_type)>
   BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(ResolveHandler,
       void (boost::system::error_code, results_type))
   async_resolve(const protocol_type& protocol,
       BOOST_ASIO_STRING_VIEW_PARAM host, BOOST_ASIO_STRING_VIEW_PARAM service,
       resolver_base::flags resolve_flags,
-      BOOST_ASIO_MOVE_ARG(ResolveHandler) handler)
+      BOOST_ASIO_MOVE_ARG(ResolveHandler) handler
+        BOOST_ASIO_DEFAULT_COMPLETION_TOKEN(executor_type))
   {
     basic_resolver_query<protocol_type> q(
         protocol, static_cast<std::string>(host),
@@ -950,11 +960,13 @@ public:
    */
   template <
       BOOST_ASIO_COMPLETION_TOKEN_FOR(void (boost::system::error_code,
-        results_type)) ResolveHandler>
+        results_type)) ResolveHandler
+          BOOST_ASIO_DEFAULT_COMPLETION_TOKEN_TYPE(executor_type)>
   BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(ResolveHandler,
       void (boost::system::error_code, results_type))
   async_resolve(const endpoint_type& e,
-      BOOST_ASIO_MOVE_ARG(ResolveHandler) handler)
+      BOOST_ASIO_MOVE_ARG(ResolveHandler) handler
+        BOOST_ASIO_DEFAULT_COMPLETION_TOKEN(executor_type))
   {
     return boost::asio::async_initiate<ResolveHandler,
       void (boost::system::error_code, results_type)>(
