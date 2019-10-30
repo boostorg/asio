@@ -327,6 +327,16 @@
 # endif // !defined(BOOST_ASIO_DISABLE_RETURN_TYPE_DEDUCTION)
 #endif // !defined(BOOST_ASIO_HAS_RETURN_TYPE_DEDUCTION)
 
+// Support concepts on compilers known to allow them.
+#if !defined(BOOST_ASIO_HAS_CONCEPTS)
+# if !defined(BOOST_ASIO_DISABLE_CONCEPTS)
+#  if __cpp_concepts
+#   define BOOST_ASIO_HAS_CONCEPTS 1
+#   define BOOST_ASIO_CONCEPT concept bool
+#  endif // __cpp_concepts
+# endif // !defined(BOOST_ASIO_DISABLE_CONCEPTS)
+#endif // !defined(BOOST_ASIO_HAS_CONCEPTS)
+
 // Standard library support for system errors.
 # if !defined(BOOST_ASIO_DISABLE_STD_SYSTEM_ERROR)
 #  if defined(__clang__)
