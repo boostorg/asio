@@ -708,7 +708,7 @@ public:
   async_wait(BOOST_ASIO_MOVE_ARG(WaitHandler) handler)
   {
     return async_initiate<WaitHandler, void (boost::system::error_code)>(
-        initiate_async_wait(), handler, this);
+        initiate_async_wait(this), handler);
   }
 
 private:
@@ -717,21 +717,36 @@ private:
   basic_waitable_timer& operator=(
       const basic_waitable_timer&) BOOST_ASIO_DELETED;
 
-  struct initiate_async_wait
+  class initiate_async_wait
   {
+  public:
+    typedef Executor executor_type;
+
+    explicit initiate_async_wait(basic_waitable_timer* self)
+      : self_(self)
+    {
+    }
+
+    executor_type get_executor() const BOOST_ASIO_NOEXCEPT
+    {
+      return self_->get_executor();
+    }
+
     template <typename WaitHandler>
-    void operator()(BOOST_ASIO_MOVE_ARG(WaitHandler) handler,
-        basic_waitable_timer* self) const
+    void operator()(BOOST_ASIO_MOVE_ARG(WaitHandler) handler) const
     {
       // If you get an error on the following line it means that your handler
       // does not meet the documented type requirements for a WaitHandler.
       BOOST_ASIO_WAIT_HANDLER_CHECK(WaitHandler, handler) type_check;
 
       detail::non_const_lvalue<WaitHandler> handler2(handler);
-      self->impl_.get_service().async_wait(
-          self->impl_.get_implementation(), handler2.value,
-          self->impl_.get_implementation_executor());
+      self_->impl_.get_service().async_wait(
+          self_->impl_.get_implementation(), handler2.value,
+          self_->impl_.get_implementation_executor());
     }
+
+  private:
+    basic_waitable_timer* self_;
   };
 
   detail::io_object_impl<

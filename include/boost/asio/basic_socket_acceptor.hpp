@@ -1227,7 +1227,7 @@ public:
   async_wait(wait_type w, BOOST_ASIO_MOVE_ARG(WaitHandler) handler)
   {
     return async_initiate<WaitHandler, void (boost::system::error_code)>(
-        initiate_async_wait(), handler, this, w);
+        initiate_async_wait(this), handler, w);
   }
 
 #if !defined(BOOST_ASIO_NO_EXTENSIONS)
@@ -1346,7 +1346,7 @@ public:
       >::type* = 0)
   {
     return async_initiate<AcceptHandler, void (boost::system::error_code)>(
-        initiate_async_accept(), handler, this,
+        initiate_async_accept(this), handler,
         &peer, static_cast<endpoint_type*>(0));
   }
 
@@ -1455,7 +1455,7 @@ public:
       endpoint_type& peer_endpoint, BOOST_ASIO_MOVE_ARG(AcceptHandler) handler)
   {
     return async_initiate<AcceptHandler, void (boost::system::error_code)>(
-        initiate_async_accept(), handler, this, &peer, &peer_endpoint);
+        initiate_async_accept(this), handler, &peer, &peer_endpoint);
   }
 #endif // !defined(BOOST_ASIO_NO_EXTENSIONS)
 
@@ -1568,7 +1568,7 @@ public:
   {
     return async_initiate<MoveAcceptHandler,
       void (boost::system::error_code, typename Protocol::socket)>(
-        initiate_async_move_accept(), handler, this,
+        initiate_async_move_accept(this), handler,
         impl_.get_executor(), static_cast<endpoint_type*>(0),
         static_cast<typename Protocol::socket*>(0));
   }
@@ -1794,7 +1794,7 @@ public:
 
     return async_initiate<MoveAcceptHandler,
       void (boost::system::error_code, other_socket_type)>(
-        initiate_async_move_accept(), handler, this,
+        initiate_async_move_accept(this), handler,
         ex, static_cast<endpoint_type*>(0),
         static_cast<other_socket_type*>(0));
   }
@@ -1861,7 +1861,7 @@ public:
 
     return async_initiate<MoveAcceptHandler,
       void (boost::system::error_code, other_socket_type)>(
-        initiate_async_move_accept(), handler, this,
+        initiate_async_move_accept(this), handler,
         context.get_executor(), static_cast<endpoint_type*>(0),
         static_cast<other_socket_type*>(0));
   }
@@ -1992,7 +1992,7 @@ public:
   {
     return async_initiate<MoveAcceptHandler,
       void (boost::system::error_code, typename Protocol::socket)>(
-        initiate_async_move_accept(), handler, this,
+        initiate_async_move_accept(this), handler,
         impl_.get_executor(), &peer_endpoint,
         static_cast<typename Protocol::socket*>(0));
   }
@@ -2250,7 +2250,7 @@ public:
 
     return async_initiate<MoveAcceptHandler,
       void (boost::system::error_code, other_socket_type)>(
-        initiate_async_move_accept(), handler, this,
+        initiate_async_move_accept(this), handler,
         ex, &peer_endpoint,
         static_cast<other_socket_type*>(0));
   }
@@ -2324,7 +2324,7 @@ public:
 
     return async_initiate<MoveAcceptHandler,
       void (boost::system::error_code, other_socket_type)>(
-        initiate_async_move_accept(), handler, this,
+        initiate_async_move_accept(this), handler,
         context.get_executor(), &peer_endpoint,
         static_cast<other_socket_type*>(0));
   }
@@ -2336,28 +2336,56 @@ private:
   basic_socket_acceptor& operator=(
       const basic_socket_acceptor&) BOOST_ASIO_DELETED;
 
-  struct initiate_async_wait
+  class initiate_async_wait
   {
+  public:
+    typedef Executor executor_type;
+
+    explicit initiate_async_wait(basic_socket_acceptor* self)
+      : self_(self)
+    {
+    }
+
+    executor_type get_executor() const BOOST_ASIO_NOEXCEPT
+    {
+      return self_->get_executor();
+    }
+
     template <typename WaitHandler>
-    void operator()(BOOST_ASIO_MOVE_ARG(WaitHandler) handler,
-        basic_socket_acceptor* self, wait_type w) const
+    void operator()(BOOST_ASIO_MOVE_ARG(WaitHandler) handler, wait_type w) const
     {
       // If you get an error on the following line it means that your handler
       // does not meet the documented type requirements for a WaitHandler.
       BOOST_ASIO_WAIT_HANDLER_CHECK(WaitHandler, handler) type_check;
 
       detail::non_const_lvalue<WaitHandler> handler2(handler);
-      self->impl_.get_service().async_wait(
-          self->impl_.get_implementation(), w, handler2.value,
-          self->impl_.get_implementation_executor());
+      self_->impl_.get_service().async_wait(
+          self_->impl_.get_implementation(), w, handler2.value,
+          self_->impl_.get_implementation_executor());
     }
+
+  private:
+    basic_socket_acceptor* self_;
   };
 
-  struct initiate_async_accept
+  class initiate_async_accept
   {
+  public:
+    typedef Executor executor_type;
+
+    explicit initiate_async_accept(basic_socket_acceptor* self)
+      : self_(self)
+    {
+    }
+
+    executor_type get_executor() const BOOST_ASIO_NOEXCEPT
+    {
+      return self_->get_executor();
+    }
+
     template <typename AcceptHandler, typename Protocol1, typename Executor1>
     void operator()(BOOST_ASIO_MOVE_ARG(AcceptHandler) handler,
-        basic_socket_acceptor* self, basic_socket<Protocol1, Executor1>* peer,
+        basic_socket<Protocol1, Executor1>* peer,
         endpoint_type* peer_endpoint) const
     {
       // If you get an error on the following line it means that your handler
@@ -2365,18 +2393,33 @@ private:
       BOOST_ASIO_ACCEPT_HANDLER_CHECK(AcceptHandler, handler) type_check;
 
       detail::non_const_lvalue<AcceptHandler> handler2(handler);
-      self->impl_.get_service().async_accept(
-          self->impl_.get_implementation(), *peer, peer_endpoint,
-          handler2.value, self->impl_.get_implementation_executor());
+      self_->impl_.get_service().async_accept(
+          self_->impl_.get_implementation(), *peer, peer_endpoint,
+          handler2.value, self_->impl_.get_implementation_executor());
     }
+
+  private:
+    basic_socket_acceptor* self_;
   };
 
-  struct initiate_async_move_accept
+  class initiate_async_move_accept
   {
+  public:
+    typedef Executor executor_type;
+
+    explicit initiate_async_move_accept(basic_socket_acceptor* self)
+      : self_(self)
+    {
+    }
+
+    executor_type get_executor() const BOOST_ASIO_NOEXCEPT
+    {
+      return self_->get_executor();
+    }
+
     template <typename MoveAcceptHandler, typename Executor1, typename Socket>
     void operator()(BOOST_ASIO_MOVE_ARG(MoveAcceptHandler) handler,
-        basic_socket_acceptor* self, const Executor1& peer_ex,
-        endpoint_type* peer_endpoint, Socket*) const
+        const Executor1& peer_ex, endpoint_type* peer_endpoint, Socket*) const
     {
       // If you get an error on the following line it means that your handler
       // does not meet the documented type requirements for a MoveAcceptHandler.
@@ -2384,10 +2427,13 @@ private:
           MoveAcceptHandler, handler, Socket) type_check;
 
       detail::non_const_lvalue<MoveAcceptHandler> handler2(handler);
-      self->impl_.get_service().async_move_accept(
-          self->impl_.get_implementation(), peer_ex, peer_endpoint,
-          handler2.value, self->impl_.get_implementation_executor());
+      self_->impl_.get_service().async_move_accept(
+          self_->impl_.get_implementation(), peer_ex, peer_endpoint,
+          handler2.value, self_->impl_.get_implementation_executor());
     }
+
+  private:
+    basic_socket_acceptor* self_;
   };
 
 #if defined(BOOST_ASIO_WINDOWS_RUNTIME)

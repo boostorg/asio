@@ -453,12 +453,26 @@ namespace detail
           boost::system::error_code(), 0, 1);
   }
 
-  struct initiate_async_read_buffer_sequence
+  template <typename AsyncReadStream>
+  class initiate_async_read_buffer_sequence
   {
-    template <typename ReadHandler, typename AsyncReadStream,
-        typename MutableBufferSequence, typename CompletionCondition>
+  public:
+    typedef typename AsyncReadStream::executor_type executor_type;
+
+    explicit initiate_async_read_buffer_sequence(AsyncReadStream& stream)
+      : stream_(stream)
+    {
+    }
+
+    executor_type get_executor() const BOOST_ASIO_NOEXCEPT
+    {
+      return stream_.get_executor();
+    }
+
+    template <typename ReadHandler, typename MutableBufferSequence,
+        typename CompletionCondition>
     void operator()(BOOST_ASIO_MOVE_ARG(ReadHandler) handler,
-        AsyncReadStream* s, const MutableBufferSequence& buffers,
+        const MutableBufferSequence& buffers,
         BOOST_ASIO_MOVE_ARG(CompletionCondition) completion_cond) const
     {
       // If you get an error on the following line it means that your handler
@@ -467,10 +481,13 @@ namespace detail
 
       non_const_lvalue<ReadHandler> handler2(handler);
       non_const_lvalue<CompletionCondition> completion_cond2(completion_cond);
-      start_read_buffer_sequence_op(*s, buffers,
+      start_read_buffer_sequence_op(stream_, buffers,
           boost::asio::buffer_sequence_begin(buffers),
           completion_cond2.value, handler2.value);
     }
+
+  private:
+    AsyncReadStream& stream_;
   };
 } // namespace detail
 
@@ -531,8 +548,8 @@ async_read(AsyncReadStream& s, const MutableBufferSequence& buffers,
 {
   return async_initiate<ReadHandler,
     void (boost::system::error_code, std::size_t)>(
-      detail::initiate_async_read_buffer_sequence(), handler, &s, buffers,
-      BOOST_ASIO_MOVE_CAST(CompletionCondition)(completion_condition));
+      detail::initiate_async_read_buffer_sequence<AsyncReadStream>(s), handler,
+      buffers, BOOST_ASIO_MOVE_CAST(CompletionCondition)(completion_condition));
 }
 
 template <typename AsyncReadStream, typename MutableBufferSequence,
@@ -548,8 +565,8 @@ async_read(AsyncReadStream& s, const MutableBufferSequence& buffers,
 {
   return async_initiate<ReadHandler,
     void (boost::system::error_code, std::size_t)>(
-      detail::initiate_async_read_buffer_sequence(),
-      handler, &s, buffers, transfer_all());
+      detail::initiate_async_read_buffer_sequence<AsyncReadStream>(s),
+      handler, buffers, transfer_all());
 }
 
 #if !defined(BOOST_ASIO_NO_DYNAMIC_BUFFER_V1)
@@ -695,12 +712,26 @@ namespace detail
         function, this_handler->handler_);
   }
 
-  struct initiate_async_read_dynbuf_v1
+  template <typename AsyncReadStream>
+  class initiate_async_read_dynbuf_v1
   {
-    template <typename ReadHandler, typename AsyncReadStream,
-        typename DynamicBuffer_v1, typename CompletionCondition>
+  public:
+    typedef typename AsyncReadStream::executor_type executor_type;
+
+    explicit initiate_async_read_dynbuf_v1(AsyncReadStream& stream)
+      : stream_(stream)
+    {
+    }
+
+    executor_type get_executor() const BOOST_ASIO_NOEXCEPT
+    {
+      return stream_.get_executor();
+    }
+
+    template <typename ReadHandler, typename DynamicBuffer_v1,
+        typename CompletionCondition>
     void operator()(BOOST_ASIO_MOVE_ARG(ReadHandler) handler,
-        AsyncReadStream* s, BOOST_ASIO_MOVE_ARG(DynamicBuffer_v1) buffers,
+        BOOST_ASIO_MOVE_ARG(DynamicBuffer_v1) buffers,
         BOOST_ASIO_MOVE_ARG(CompletionCondition) completion_cond) const
     {
       // If you get an error on the following line it means that your handler
@@ -711,10 +742,13 @@ namespace detail
       non_const_lvalue<CompletionCondition> completion_cond2(completion_cond);
       read_dynbuf_v1_op<AsyncReadStream, typename decay<DynamicBuffer_v1>::type,
         CompletionCondition, typename decay<ReadHandler>::type>(
-          *s, BOOST_ASIO_MOVE_CAST(DynamicBuffer_v1)(buffers),
+          stream_, BOOST_ASIO_MOVE_CAST(DynamicBuffer_v1)(buffers),
             completion_cond2.value, handler2.value)(
               boost::system::error_code(), 0, 1);
     }
+
+  private:
+    AsyncReadStream& stream_;
   };
 } // namespace detail
 
@@ -797,8 +831,8 @@ async_read(AsyncReadStream& s,
 
   return async_initiate<ReadHandler,
     void (boost::system::error_code, std::size_t)>(
-      detail::initiate_async_read_dynbuf_v1(), handler, &s,
-      BOOST_ASIO_MOVE_CAST(DynamicBuffer_v1)(buffers),
+      detail::initiate_async_read_dynbuf_v1<AsyncReadStream>(s),
+      handler, BOOST_ASIO_MOVE_CAST(DynamicBuffer_v1)(buffers),
       BOOST_ASIO_MOVE_CAST(CompletionCondition)(completion_condition));
 }
 
@@ -983,12 +1017,26 @@ namespace detail
         function, this_handler->handler_);
   }
 
-  struct initiate_async_read_dynbuf_v2
+  template <typename AsyncReadStream>
+  class initiate_async_read_dynbuf_v2
   {
-    template <typename ReadHandler, typename AsyncReadStream,
-        typename DynamicBuffer_v2, typename CompletionCondition>
+  public:
+    typedef typename AsyncReadStream::executor_type executor_type;
+
+    explicit initiate_async_read_dynbuf_v2(AsyncReadStream& stream)
+      : stream_(stream)
+    {
+    }
+
+    executor_type get_executor() const BOOST_ASIO_NOEXCEPT
+    {
+      return stream_.get_executor();
+    }
+
+    template <typename ReadHandler, typename DynamicBuffer_v2,
+        typename CompletionCondition>
     void operator()(BOOST_ASIO_MOVE_ARG(ReadHandler) handler,
-        AsyncReadStream* s, BOOST_ASIO_MOVE_ARG(DynamicBuffer_v2) buffers,
+        BOOST_ASIO_MOVE_ARG(DynamicBuffer_v2) buffers,
         BOOST_ASIO_MOVE_ARG(CompletionCondition) completion_cond) const
     {
       // If you get an error on the following line it means that your handler
@@ -999,10 +1047,13 @@ namespace detail
       non_const_lvalue<CompletionCondition> completion_cond2(completion_cond);
       read_dynbuf_v2_op<AsyncReadStream, typename decay<DynamicBuffer_v2>::type,
         CompletionCondition, typename decay<ReadHandler>::type>(
-          *s, BOOST_ASIO_MOVE_CAST(DynamicBuffer_v2)(buffers),
+          stream_, BOOST_ASIO_MOVE_CAST(DynamicBuffer_v2)(buffers),
             completion_cond2.value, handler2.value)(
               boost::system::error_code(), 0, 1);
     }
+
+  private:
+    AsyncReadStream& stream_;
   };
 } // namespace detail
 
@@ -1081,8 +1132,8 @@ async_read(AsyncReadStream& s, DynamicBuffer_v2 buffers,
 
   return async_initiate<ReadHandler,
     void (boost::system::error_code, std::size_t)>(
-      detail::initiate_async_read_dynbuf_v2(), handler, &s,
-      BOOST_ASIO_MOVE_CAST(DynamicBuffer_v2)(buffers),
+      detail::initiate_async_read_dynbuf_v2<AsyncReadStream>(s),
+      handler, BOOST_ASIO_MOVE_CAST(DynamicBuffer_v2)(buffers),
       BOOST_ASIO_MOVE_CAST(CompletionCondition)(completion_condition));
 }
 

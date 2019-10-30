@@ -321,13 +321,27 @@ namespace detail
           boost::system::error_code(), 0, 1);
   }
 
-  struct initiate_async_read_at_buffer_sequence
+  template <typename AsyncRandomAccessReadDevice>
+  class initiate_async_read_at_buffer_sequence
   {
-    template <typename ReadHandler, typename AsyncRandomAccessReadDevice,
-        typename MutableBufferSequence, typename CompletionCondition>
+  public:
+    typedef typename AsyncRandomAccessReadDevice::executor_type executor_type;
+
+    explicit initiate_async_read_at_buffer_sequence(
+        AsyncRandomAccessReadDevice& device)
+      : device_(device)
+    {
+    }
+
+    executor_type get_executor() const BOOST_ASIO_NOEXCEPT
+    {
+      return device_.get_executor();
+    }
+
+    template <typename ReadHandler, typename MutableBufferSequence,
+        typename CompletionCondition>
     void operator()(BOOST_ASIO_MOVE_ARG(ReadHandler) handler,
-        AsyncRandomAccessReadDevice* d, uint64_t offset,
-        const MutableBufferSequence& buffers,
+        uint64_t offset, const MutableBufferSequence& buffers,
         BOOST_ASIO_MOVE_ARG(CompletionCondition) completion_cond) const
     {
       // If you get an error on the following line it means that your handler
@@ -336,10 +350,13 @@ namespace detail
 
       non_const_lvalue<ReadHandler> handler2(handler);
       non_const_lvalue<CompletionCondition> completion_cond2(completion_cond);
-      start_read_at_buffer_sequence_op(*d, offset, buffers,
+      start_read_at_buffer_sequence_op(device_, offset, buffers,
           boost::asio::buffer_sequence_begin(buffers),
           completion_cond2.value, handler2.value);
     }
+
+  private:
+    AsyncRandomAccessReadDevice& device_;
   };
 } // namespace detail
 
@@ -400,8 +417,10 @@ async_read_at(AsyncRandomAccessReadDevice& d,
 {
   return async_initiate<ReadHandler,
     void (boost::system::error_code, std::size_t)>(
-      detail::initiate_async_read_at_buffer_sequence(), handler, &d, offset,
-      buffers, BOOST_ASIO_MOVE_CAST(CompletionCondition)(completion_condition));
+      detail::initiate_async_read_at_buffer_sequence<
+        AsyncRandomAccessReadDevice>(d),
+      handler, offset, buffers,
+      BOOST_ASIO_MOVE_CAST(CompletionCondition)(completion_condition));
 }
 
 template <typename AsyncRandomAccessReadDevice, typename MutableBufferSequence,
@@ -415,8 +434,9 @@ async_read_at(AsyncRandomAccessReadDevice& d,
 {
   return async_initiate<ReadHandler,
     void (boost::system::error_code, std::size_t)>(
-      detail::initiate_async_read_at_buffer_sequence(),
-      handler, &d, offset, buffers, transfer_all());
+      detail::initiate_async_read_at_buffer_sequence<
+        AsyncRandomAccessReadDevice>(d),
+      handler, offset, buffers, transfer_all());
 }
 
 #if !defined(BOOST_ASIO_NO_EXTENSIONS)
@@ -557,13 +577,27 @@ namespace detail
         function, this_handler->handler_);
   }
 
-  struct initiate_async_read_at_streambuf
+  template <typename AsyncRandomAccessReadDevice>
+  class initiate_async_read_at_streambuf
   {
-    template <typename ReadHandler, typename AsyncRandomAccessReadDevice,
+  public:
+    typedef typename AsyncRandomAccessReadDevice::executor_type executor_type;
+
+    explicit initiate_async_read_at_streambuf(
+        AsyncRandomAccessReadDevice& device)
+      : device_(device)
+    {
+    }
+
+    executor_type get_executor() const BOOST_ASIO_NOEXCEPT
+    {
+      return device_.get_executor();
+    }
+
+    template <typename ReadHandler,
         typename Allocator, typename CompletionCondition>
     void operator()(BOOST_ASIO_MOVE_ARG(ReadHandler) handler,
-        AsyncRandomAccessReadDevice* d, uint64_t offset,
-        basic_streambuf<Allocator>* b,
+        uint64_t offset, basic_streambuf<Allocator>* b,
         BOOST_ASIO_MOVE_ARG(CompletionCondition) completion_cond) const
     {
       // If you get an error on the following line it means that your handler
@@ -574,9 +608,12 @@ namespace detail
       non_const_lvalue<CompletionCondition> completion_cond2(completion_cond);
       read_at_streambuf_op<AsyncRandomAccessReadDevice, Allocator,
         CompletionCondition, typename decay<ReadHandler>::type>(
-          *d, offset, *b, completion_cond2.value, handler2.value)(
+          device_, offset, *b, completion_cond2.value, handler2.value)(
             boost::system::error_code(), 0, 1);
     }
+
+  private:
+    AsyncRandomAccessReadDevice& device_;
   };
 } // namespace detail
 
@@ -633,8 +670,9 @@ async_read_at(AsyncRandomAccessReadDevice& d,
 {
   return async_initiate<ReadHandler,
     void (boost::system::error_code, std::size_t)>(
-      detail::initiate_async_read_at_streambuf(), handler, &d, offset,
-      &b, BOOST_ASIO_MOVE_CAST(CompletionCondition)(completion_condition));
+      detail::initiate_async_read_at_streambuf<AsyncRandomAccessReadDevice>(d),
+      handler, offset, &b,
+      BOOST_ASIO_MOVE_CAST(CompletionCondition)(completion_condition));
 }
 
 template <typename AsyncRandomAccessReadDevice, typename Allocator,
@@ -648,8 +686,8 @@ async_read_at(AsyncRandomAccessReadDevice& d,
 {
   return async_initiate<ReadHandler,
     void (boost::system::error_code, std::size_t)>(
-      detail::initiate_async_read_at_streambuf(),
-      handler, &d, offset, &b, transfer_all());
+      detail::initiate_async_read_at_streambuf<AsyncRandomAccessReadDevice>(d),
+      handler, offset, &b, transfer_all());
 }
 
 #endif // !defined(BOOST_ASIO_NO_IOSTREAM)

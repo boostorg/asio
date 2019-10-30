@@ -450,7 +450,7 @@ public:
   {
     return async_initiate<WriteHandler,
       void (boost::system::error_code, std::size_t)>(
-        initiate_async_send(), handler, this,
+        initiate_async_send(this), handler,
         buffers, socket_base::message_flags(0));
   }
 
@@ -493,7 +493,7 @@ public:
   {
     return async_initiate<WriteHandler,
       void (boost::system::error_code, std::size_t)>(
-        initiate_async_send(), handler, this, buffers, flags);
+        initiate_async_send(this), handler, buffers, flags);
   }
 
   /// Send raw data to the specified endpoint.
@@ -632,7 +632,7 @@ public:
   {
     return async_initiate<WriteHandler,
       void (boost::system::error_code, std::size_t)>(
-        initiate_async_send_to(), handler, this, buffers,
+        initiate_async_send_to(this), handler, buffers,
         destination, socket_base::message_flags(0));
   }
 
@@ -674,7 +674,7 @@ public:
   {
     return async_initiate<WriteHandler,
       void (boost::system::error_code, std::size_t)>(
-        initiate_async_send_to(), handler, this, buffers, destination, flags);
+        initiate_async_send_to(this), handler, buffers, destination, flags);
   }
 
   /// Receive some data on a connected socket.
@@ -812,7 +812,7 @@ public:
   {
     return async_initiate<ReadHandler,
       void (boost::system::error_code, std::size_t)>(
-        initiate_async_receive(), handler, this,
+        initiate_async_receive(this), handler,
         buffers, socket_base::message_flags(0));
   }
 
@@ -855,7 +855,7 @@ public:
   {
     return async_initiate<ReadHandler,
       void (boost::system::error_code, std::size_t)>(
-        initiate_async_receive(), handler, this, buffers, flags);
+        initiate_async_receive(this), handler, buffers, flags);
   }
 
   /// Receive raw data with the endpoint of the sender.
@@ -994,7 +994,7 @@ public:
   {
     return async_initiate<ReadHandler,
       void (boost::system::error_code, std::size_t)>(
-        initiate_async_receive_from(), handler, this, buffers,
+        initiate_async_receive_from(this), handler, buffers,
         &sender_endpoint, socket_base::message_flags(0));
   }
 
@@ -1038,16 +1038,29 @@ public:
   {
     return async_initiate<ReadHandler,
       void (boost::system::error_code, std::size_t)>(
-        initiate_async_receive_from(), handler,
-        this, buffers, &sender_endpoint, flags);
+        initiate_async_receive_from(this), handler,
+        buffers, &sender_endpoint, flags);
   }
 
 private:
-  struct initiate_async_send
+  class initiate_async_send
   {
+  public:
+    typedef Executor executor_type;
+
+    explicit initiate_async_send(basic_raw_socket* self)
+      : self_(self)
+    {
+    }
+
+    executor_type get_executor() const BOOST_ASIO_NOEXCEPT
+    {
+      return self_->get_executor();
+    }
+
     template <typename WriteHandler, typename ConstBufferSequence>
     void operator()(BOOST_ASIO_MOVE_ARG(WriteHandler) handler,
-        basic_raw_socket* self, const ConstBufferSequence& buffers,
+        const ConstBufferSequence& buffers,
         socket_base::message_flags flags) const
     {
       // If you get an error on the following line it means that your handler
@@ -1055,18 +1068,33 @@ private:
       BOOST_ASIO_WRITE_HANDLER_CHECK(WriteHandler, handler) type_check;
 
       detail::non_const_lvalue<WriteHandler> handler2(handler);
-      self->impl_.get_service().async_send(
-          self->impl_.get_implementation(), buffers, flags,
-          handler2.value, self->impl_.get_implementation_executor());
+      self_->impl_.get_service().async_send(
+          self_->impl_.get_implementation(), buffers, flags,
+          handler2.value, self_->impl_.get_implementation_executor());
     }
+
+  private:
+    basic_raw_socket* self_;
   };
 
-  struct initiate_async_send_to
+  class initiate_async_send_to
   {
+  public:
+    typedef Executor executor_type;
+
+    explicit initiate_async_send_to(basic_raw_socket* self)
+      : self_(self)
+    {
+    }
+
+    executor_type get_executor() const BOOST_ASIO_NOEXCEPT
+    {
+      return self_->get_executor();
+    }
+
     template <typename WriteHandler, typename ConstBufferSequence>
     void operator()(BOOST_ASIO_MOVE_ARG(WriteHandler) handler,
-        basic_raw_socket* self, const ConstBufferSequence& buffers,
-        const endpoint_type& destination,
+        const ConstBufferSequence& buffers, const endpoint_type& destination,
         socket_base::message_flags flags) const
     {
       // If you get an error on the following line it means that your handler
@@ -1074,17 +1102,33 @@ private:
       BOOST_ASIO_WRITE_HANDLER_CHECK(WriteHandler, handler) type_check;
 
       detail::non_const_lvalue<WriteHandler> handler2(handler);
-      self->impl_.get_service().async_send_to(
-          self->impl_.get_implementation(), buffers, destination, flags,
-          handler2.value, self->impl_.get_implementation_executor());
+      self_->impl_.get_service().async_send_to(
+          self_->impl_.get_implementation(), buffers, destination, flags,
+          handler2.value, self_->impl_.get_implementation_executor());
     }
+
+  private:
+    basic_raw_socket* self_;
   };
 
-  struct initiate_async_receive
+  class initiate_async_receive
   {
+  public:
+    typedef Executor executor_type;
+
+    explicit initiate_async_receive(basic_raw_socket* self)
+      : self_(self)
+    {
+    }
+
+    executor_type get_executor() const BOOST_ASIO_NOEXCEPT
+    {
+      return self_->get_executor();
+    }
+
     template <typename ReadHandler, typename MutableBufferSequence>
     void operator()(BOOST_ASIO_MOVE_ARG(ReadHandler) handler,
-        basic_raw_socket* self, const MutableBufferSequence& buffers,
+        const MutableBufferSequence& buffers,
         socket_base::message_flags flags) const
     {
       // If you get an error on the following line it means that your handler
@@ -1092,28 +1136,47 @@ private:
       BOOST_ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
 
       detail::non_const_lvalue<ReadHandler> handler2(handler);
-      self->impl_.get_service().async_receive(
-          self->impl_.get_implementation(), buffers, flags,
-          handler2.value, self->impl_.get_implementation_executor());
+      self_->impl_.get_service().async_receive(
+          self_->impl_.get_implementation(), buffers, flags,
+          handler2.value, self_->impl_.get_implementation_executor());
     }
+
+  private:
+    basic_raw_socket* self_;
   };
 
-  struct initiate_async_receive_from
+  class initiate_async_receive_from
   {
+  public:
+    typedef Executor executor_type;
+
+    explicit initiate_async_receive_from(basic_raw_socket* self)
+      : self_(self)
+    {
+    }
+
+    executor_type get_executor() const BOOST_ASIO_NOEXCEPT
+    {
+      return self_->get_executor();
+    }
+
     template <typename ReadHandler, typename MutableBufferSequence>
     void operator()(BOOST_ASIO_MOVE_ARG(ReadHandler) handler,
-        basic_raw_socket* self, const MutableBufferSequence& buffers,
-        endpoint_type* sender_endpoint, socket_base::message_flags flags) const
+        const MutableBufferSequence& buffers, endpoint_type* sender_endpoint,
+        socket_base::message_flags flags) const
     {
       // If you get an error on the following line it means that your handler
       // does not meet the documented type requirements for a ReadHandler.
       BOOST_ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
 
       detail::non_const_lvalue<ReadHandler> handler2(handler);
-      self->impl_.get_service().async_receive_from(
-          self->impl_.get_implementation(), buffers, *sender_endpoint, flags,
-          handler2.value, self->impl_.get_implementation_executor());
+      self_->impl_.get_service().async_receive_from(
+          self_->impl_.get_implementation(), buffers, *sender_endpoint, flags,
+          handler2.value, self_->impl_.get_implementation_executor());
     }
+
+  private:
+    basic_raw_socket* self_;
   };
 };
 
