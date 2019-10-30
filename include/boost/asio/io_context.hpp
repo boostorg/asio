@@ -533,7 +533,7 @@ public:
    * throws an exception.
    */
   template <typename LegacyCompletionHandler>
-  BOOST_ASIO_INITFN_RESULT_TYPE(LegacyCompletionHandler, void ())
+  BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(LegacyCompletionHandler, void ())
   dispatch(BOOST_ASIO_MOVE_ARG(LegacyCompletionHandler) handler);
 
   /// (Deprecated: Use boost::asio::post().) Request the io_context to invoke
@@ -560,7 +560,7 @@ public:
    * throws an exception.
    */
   template <typename LegacyCompletionHandler>
-  BOOST_ASIO_INITFN_RESULT_TYPE(LegacyCompletionHandler, void ())
+  BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(LegacyCompletionHandler, void ())
   post(BOOST_ASIO_MOVE_ARG(LegacyCompletionHandler) handler);
 
   /// (Deprecated: Use boost::asio::bind_executor().) Create a new handler that

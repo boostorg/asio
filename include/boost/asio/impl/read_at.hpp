@@ -389,7 +389,7 @@ struct associated_executor<
 
 template <typename AsyncRandomAccessReadDevice, typename MutableBufferSequence,
     typename CompletionCondition, typename ReadHandler>
-inline BOOST_ASIO_INITFN_RESULT_TYPE(ReadHandler,
+inline BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(ReadHandler,
     void (boost::system::error_code, std::size_t))
 async_read_at(AsyncRandomAccessReadDevice& d,
     uint64_t offset, const MutableBufferSequence& buffers,
@@ -404,7 +404,7 @@ async_read_at(AsyncRandomAccessReadDevice& d,
 
 template <typename AsyncRandomAccessReadDevice, typename MutableBufferSequence,
     typename ReadHandler>
-inline BOOST_ASIO_INITFN_RESULT_TYPE(ReadHandler,
+inline BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(ReadHandler,
     void (boost::system::error_code, std::size_t))
 async_read_at(AsyncRandomAccessReadDevice& d,
     uint64_t offset, const MutableBufferSequence& buffers,
@@ -619,7 +619,7 @@ struct associated_executor<
 
 template <typename AsyncRandomAccessReadDevice, typename Allocator,
     typename CompletionCondition, typename ReadHandler>
-inline BOOST_ASIO_INITFN_RESULT_TYPE(ReadHandler,
+inline BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(ReadHandler,
     void (boost::system::error_code, std::size_t))
 async_read_at(AsyncRandomAccessReadDevice& d,
     uint64_t offset, boost::asio::basic_streambuf<Allocator>& b,
@@ -634,7 +634,7 @@ async_read_at(AsyncRandomAccessReadDevice& d,
 
 template <typename AsyncRandomAccessReadDevice, typename Allocator,
     typename ReadHandler>
-inline BOOST_ASIO_INITFN_RESULT_TYPE(ReadHandler,
+inline BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(ReadHandler,
     void (boost::system::error_code, std::size_t))
 async_read_at(AsyncRandomAccessReadDevice& d,
     uint64_t offset, boost::asio::basic_streambuf<Allocator>& b,

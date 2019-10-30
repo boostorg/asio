@@ -432,7 +432,7 @@ public:
    * ); @endcode
    */
   template <typename HandshakeHandler>
-  BOOST_ASIO_INITFN_RESULT_TYPE(HandshakeHandler,
+  BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(HandshakeHandler,
       void (boost::system::error_code))
   async_handshake(handshake_type type,
       BOOST_ASIO_MOVE_ARG(HandshakeHandler) handler)
@@ -464,7 +464,7 @@ public:
    * ); @endcode
    */
   template <typename ConstBufferSequence, typename BufferedHandshakeHandler>
-  BOOST_ASIO_INITFN_RESULT_TYPE(BufferedHandshakeHandler,
+  BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(BufferedHandshakeHandler,
       void (boost::system::error_code, std::size_t))
   async_handshake(handshake_type type, const ConstBufferSequence& buffers,
       BOOST_ASIO_MOVE_ARG(BufferedHandshakeHandler) handler)
@@ -514,7 +514,7 @@ public:
    * ); @endcode
    */
   template <typename ShutdownHandler>
-  BOOST_ASIO_INITFN_RESULT_TYPE(ShutdownHandler,
+  BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(ShutdownHandler,
       void (boost::system::error_code))
   async_shutdown(BOOST_ASIO_MOVE_ARG(ShutdownHandler) handler)
   {
@@ -596,7 +596,7 @@ public:
    * completes.
    */
   template <typename ConstBufferSequence, typename WriteHandler>
-  BOOST_ASIO_INITFN_RESULT_TYPE(WriteHandler,
+  BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(WriteHandler,
       void (boost::system::error_code, std::size_t))
   async_write_some(const ConstBufferSequence& buffers,
       BOOST_ASIO_MOVE_ARG(WriteHandler) handler)
@@ -679,7 +679,7 @@ public:
    * operation completes.
    */
   template <typename MutableBufferSequence, typename ReadHandler>
-  BOOST_ASIO_INITFN_RESULT_TYPE(ReadHandler,
+  BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(ReadHandler,
       void (boost::system::error_code, std::size_t))
   async_read_some(const MutableBufferSequence& buffers,
       BOOST_ASIO_MOVE_ARG(ReadHandler) handler)

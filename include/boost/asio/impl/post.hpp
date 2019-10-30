@@ -59,7 +59,7 @@ struct initiate_post
 } // namespace detail
 
 template <typename CompletionToken>
-BOOST_ASIO_INITFN_RESULT_TYPE(CompletionToken, void()) post(
+BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(CompletionToken, void()) post(
     BOOST_ASIO_MOVE_ARG(CompletionToken) token)
 {
   return async_initiate<CompletionToken, void()>(
@@ -67,7 +67,7 @@ BOOST_ASIO_INITFN_RESULT_TYPE(CompletionToken, void()) post(
 }
 
 template <typename Executor, typename CompletionToken>
-BOOST_ASIO_INITFN_RESULT_TYPE(CompletionToken, void()) post(
+BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(CompletionToken, void()) post(
     const Executor& ex, BOOST_ASIO_MOVE_ARG(CompletionToken) token,
     typename enable_if<is_executor<Executor>::value>::type*)
 {
@@ -76,7 +76,7 @@ BOOST_ASIO_INITFN_RESULT_TYPE(CompletionToken, void()) post(
 }
 
 template <typename ExecutionContext, typename CompletionToken>
-inline BOOST_ASIO_INITFN_RESULT_TYPE(CompletionToken, void()) post(
+inline BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(CompletionToken, void()) post(
     ExecutionContext& ctx, BOOST_ASIO_MOVE_ARG(CompletionToken) token,
     typename enable_if<is_convertible<
       ExecutionContext&, execution_context&>::value>::type*)

@@ -732,7 +732,7 @@ struct associated_executor<
 
 template <typename Protocol, typename Executor,
     typename EndpointSequence, typename RangeConnectHandler>
-inline BOOST_ASIO_INITFN_RESULT_TYPE(RangeConnectHandler,
+inline BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(RangeConnectHandler,
     void (boost::system::error_code, typename Protocol::endpoint))
 async_connect(basic_socket<Protocol, Executor>& s,
     const EndpointSequence& endpoints,
@@ -749,7 +749,7 @@ async_connect(basic_socket<Protocol, Executor>& s,
 #if !defined(BOOST_ASIO_NO_DEPRECATED)
 template <typename Protocol, typename Executor,
     typename Iterator, typename IteratorConnectHandler>
-inline BOOST_ASIO_INITFN_RESULT_TYPE(IteratorConnectHandler,
+inline BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(IteratorConnectHandler,
     void (boost::system::error_code, Iterator))
 async_connect(basic_socket<Protocol, Executor>& s, Iterator begin,
     BOOST_ASIO_MOVE_ARG(IteratorConnectHandler) handler,
@@ -764,7 +764,7 @@ async_connect(basic_socket<Protocol, Executor>& s, Iterator begin,
 
 template <typename Protocol, typename Executor,
     typename Iterator, typename IteratorConnectHandler>
-inline BOOST_ASIO_INITFN_RESULT_TYPE(IteratorConnectHandler,
+inline BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(IteratorConnectHandler,
     void (boost::system::error_code, Iterator))
 async_connect(basic_socket<Protocol, Executor>& s, Iterator begin, Iterator end,
     BOOST_ASIO_MOVE_ARG(IteratorConnectHandler) handler)
@@ -777,7 +777,7 @@ async_connect(basic_socket<Protocol, Executor>& s, Iterator begin, Iterator end,
 
 template <typename Protocol, typename Executor, typename EndpointSequence,
     typename ConnectCondition, typename RangeConnectHandler>
-inline BOOST_ASIO_INITFN_RESULT_TYPE(RangeConnectHandler,
+inline BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(RangeConnectHandler,
     void (boost::system::error_code, typename Protocol::endpoint))
 async_connect(basic_socket<Protocol, Executor>& s,
     const EndpointSequence& endpoints, ConnectCondition connect_condition,
@@ -794,7 +794,7 @@ async_connect(basic_socket<Protocol, Executor>& s,
 #if !defined(BOOST_ASIO_NO_DEPRECATED)
 template <typename Protocol, typename Executor, typename Iterator,
     typename ConnectCondition, typename IteratorConnectHandler>
-inline BOOST_ASIO_INITFN_RESULT_TYPE(IteratorConnectHandler,
+inline BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(IteratorConnectHandler,
     void (boost::system::error_code, Iterator))
 async_connect(basic_socket<Protocol, Executor>& s, Iterator begin,
     ConnectCondition connect_condition,
@@ -810,7 +810,7 @@ async_connect(basic_socket<Protocol, Executor>& s, Iterator begin,
 
 template <typename Protocol, typename Executor, typename Iterator,
     typename ConnectCondition, typename IteratorConnectHandler>
-inline BOOST_ASIO_INITFN_RESULT_TYPE(IteratorConnectHandler,
+inline BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(IteratorConnectHandler,
     void (boost::system::error_code, Iterator))
 async_connect(basic_socket<Protocol, Executor>& s, Iterator begin,
     Iterator end, ConnectCondition connect_condition,

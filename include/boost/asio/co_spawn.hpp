@@ -55,7 +55,7 @@ struct awaitable_signature<awaitable<void, Executor>>
  * where @c E is convertible from @c Executor.
  */
 template <typename Executor, typename F, typename CompletionToken>
-BOOST_ASIO_INITFN_RESULT_TYPE(CompletionToken,
+BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(CompletionToken,
     typename detail::awaitable_signature<typename result_of<F()>::type>::type)
 co_spawn(const Executor& ex, F&& f, CompletionToken&& token,
     typename enable_if<
@@ -71,7 +71,7 @@ co_spawn(const Executor& ex, F&& f, CompletionToken&& token,
  * where @c E is convertible from @c ExecutionContext::executor_type.
  */
 template <typename ExecutionContext, typename F, typename CompletionToken>
-BOOST_ASIO_INITFN_RESULT_TYPE(CompletionToken,
+BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(CompletionToken,
     typename detail::awaitable_signature<typename result_of<F()>::type>::type)
 co_spawn(ExecutionContext& ctx, F&& f, CompletionToken&& token,
     typename enable_if<
