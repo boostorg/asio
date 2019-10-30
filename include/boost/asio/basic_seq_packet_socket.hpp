@@ -429,7 +429,9 @@ public:
    * buffers in one go, and how to use it with arrays, boost::array or
    * std::vector.
    */
-  template <typename ConstBufferSequence, typename WriteHandler>
+  template <typename ConstBufferSequence,
+      BOOST_ASIO_COMPLETION_TOKEN_FOR(void (boost::system::error_code,
+        std::size_t)) WriteHandler>
   BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(WriteHandler,
       void (boost::system::error_code, std::size_t))
   async_send(const ConstBufferSequence& buffers,
@@ -598,7 +600,9 @@ public:
    * multiple buffers in one go, and how to use it with arrays, boost::array or
    * std::vector.
    */
-  template <typename MutableBufferSequence, typename ReadHandler>
+  template <typename MutableBufferSequence,
+      BOOST_ASIO_COMPLETION_TOKEN_FOR(void (boost::system::error_code,
+        std::size_t)) ReadHandler>
   BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(ReadHandler,
       void (boost::system::error_code, std::size_t))
   async_receive(const MutableBufferSequence& buffers,
@@ -653,7 +657,9 @@ public:
    * multiple buffers in one go, and how to use it with arrays, boost::array or
    * std::vector.
    */
-  template <typename MutableBufferSequence, typename ReadHandler>
+  template <typename MutableBufferSequence,
+      BOOST_ASIO_COMPLETION_TOKEN_FOR(void (boost::system::error_code,
+        std::size_t)) ReadHandler>
   BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(ReadHandler,
       void (boost::system::error_code, std::size_t))
   async_receive(const MutableBufferSequence& buffers,

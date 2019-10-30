@@ -363,7 +363,9 @@ public:
    * immediate completion, invocation of the handler will be performed in a
    * manner equivalent to using boost::asio::post().
    */
-  template <typename WaitHandler>
+  template <
+      BOOST_ASIO_COMPLETION_TOKEN_FOR(void (boost::system::error_code))
+        WaitHandler>
   BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(WaitHandler,
       void (boost::system::error_code))
   async_wait(BOOST_ASIO_MOVE_ARG(WaitHandler) handler)

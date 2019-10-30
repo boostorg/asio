@@ -175,7 +175,9 @@ struct associated_executor<
 #endif // !defined(GENERATING_DOCUMENTATION)
 
 template <typename Stream>
-template <typename WriteHandler>
+template <
+    BOOST_ASIO_COMPLETION_TOKEN_FOR(void (boost::system::error_code,
+      std::size_t)) WriteHandler>
 BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(WriteHandler,
     void (boost::system::error_code, std::size_t))
 buffered_write_stream<Stream>::async_flush(
@@ -396,7 +398,9 @@ struct associated_executor<
 #endif // !defined(GENERATING_DOCUMENTATION)
 
 template <typename Stream>
-template <typename ConstBufferSequence, typename WriteHandler>
+template <typename ConstBufferSequence,
+    BOOST_ASIO_COMPLETION_TOKEN_FOR(void (boost::system::error_code,
+      std::size_t)) WriteHandler>
 BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(WriteHandler,
     void (boost::system::error_code, std::size_t))
 buffered_write_stream<Stream>::async_write_some(

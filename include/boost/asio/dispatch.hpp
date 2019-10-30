@@ -50,7 +50,7 @@ namespace asio {
  *
  * @li Returns <tt>result.get()</tt>.
  */
-template <typename CompletionToken>
+template <BOOST_ASIO_COMPLETION_TOKEN_FOR(void()) CompletionToken>
 BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(CompletionToken, void()) dispatch(
     BOOST_ASIO_MOVE_ARG(CompletionToken) token);
 
@@ -84,7 +84,8 @@ BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(CompletionToken, void()) dispatch(
  *
  * @li Returns <tt>result.get()</tt>.
  */
-template <typename Executor, typename CompletionToken>
+template <typename Executor,
+    BOOST_ASIO_COMPLETION_TOKEN_FOR(void()) CompletionToken>
 BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(CompletionToken, void()) dispatch(
     const Executor& ex, BOOST_ASIO_MOVE_ARG(CompletionToken) token,
     typename enable_if<is_executor<Executor>::value>::type* = 0);
@@ -94,7 +95,8 @@ BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(CompletionToken, void()) dispatch(
  * @returns <tt>dispatch(ctx.get_executor(),
  * forward<CompletionToken>(token))</tt>.
  */
-template <typename ExecutionContext, typename CompletionToken>
+template <typename ExecutionContext,
+    BOOST_ASIO_COMPLETION_TOKEN_FOR(void()) CompletionToken>
 BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(CompletionToken, void()) dispatch(
     ExecutionContext& ctx, BOOST_ASIO_MOVE_ARG(CompletionToken) token,
     typename enable_if<is_convertible<

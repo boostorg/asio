@@ -431,7 +431,9 @@ public:
    *   const boost::system::error_code& error // Result of operation.
    * ); @endcode
    */
-  template <typename HandshakeHandler>
+  template <
+      BOOST_ASIO_COMPLETION_TOKEN_FOR(void (boost::system::error_code))
+        HandshakeHandler>
   BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(HandshakeHandler,
       void (boost::system::error_code))
   async_handshake(handshake_type type,
@@ -463,7 +465,9 @@ public:
    *   std::size_t bytes_transferred // Amount of buffers used in handshake.
    * ); @endcode
    */
-  template <typename ConstBufferSequence, typename BufferedHandshakeHandler>
+  template <typename ConstBufferSequence,
+      BOOST_ASIO_COMPLETION_TOKEN_FOR(void (boost::system::error_code,
+        std::size_t)) BufferedHandshakeHandler>
   BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(BufferedHandshakeHandler,
       void (boost::system::error_code, std::size_t))
   async_handshake(handshake_type type, const ConstBufferSequence& buffers,
@@ -513,7 +517,9 @@ public:
    *   const boost::system::error_code& error // Result of operation.
    * ); @endcode
    */
-  template <typename ShutdownHandler>
+  template <
+      BOOST_ASIO_COMPLETION_TOKEN_FOR(void (boost::system::error_code))
+        ShutdownHandler>
   BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(ShutdownHandler,
       void (boost::system::error_code))
   async_shutdown(BOOST_ASIO_MOVE_ARG(ShutdownHandler) handler)
@@ -595,7 +601,9 @@ public:
    * ensure that all data is written before the asynchronous operation
    * completes.
    */
-  template <typename ConstBufferSequence, typename WriteHandler>
+  template <typename ConstBufferSequence,
+      BOOST_ASIO_COMPLETION_TOKEN_FOR(void (boost::system::error_code,
+        std::size_t)) WriteHandler>
   BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(WriteHandler,
       void (boost::system::error_code, std::size_t))
   async_write_some(const ConstBufferSequence& buffers,
@@ -678,7 +686,9 @@ public:
    * ensure that the requested amount of data is read before the asynchronous
    * operation completes.
    */
-  template <typename MutableBufferSequence, typename ReadHandler>
+  template <typename MutableBufferSequence,
+      BOOST_ASIO_COMPLETION_TOKEN_FOR(void (boost::system::error_code,
+        std::size_t)) ReadHandler>
   BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(ReadHandler,
       void (boost::system::error_code, std::size_t))
   async_read_some(const MutableBufferSequence& buffers,

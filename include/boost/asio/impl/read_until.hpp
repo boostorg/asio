@@ -1014,8 +1014,9 @@ struct associated_executor<
 
 #endif // !defined(GENERATING_DOCUMENTATION)
 
-template <typename AsyncReadStream,
-    typename DynamicBuffer_v1, typename ReadHandler>
+template <typename AsyncReadStream, typename DynamicBuffer_v1,
+    BOOST_ASIO_COMPLETION_TOKEN_FOR(void (boost::system::error_code,
+      std::size_t)) ReadHandler>
 BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(ReadHandler,
     void (boost::system::error_code, std::size_t))
 async_read_until(AsyncReadStream& s,
@@ -1281,8 +1282,9 @@ struct associated_executor<
 
 #endif // !defined(GENERATING_DOCUMENTATION)
 
-template <typename AsyncReadStream,
-    typename DynamicBuffer_v1, typename ReadHandler>
+template <typename AsyncReadStream, typename DynamicBuffer_v1,
+    BOOST_ASIO_COMPLETION_TOKEN_FOR(void (boost::system::error_code,
+      std::size_t)) ReadHandler>
 BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(ReadHandler,
     void (boost::system::error_code, std::size_t))
 async_read_until(AsyncReadStream& s,
@@ -1556,8 +1558,9 @@ struct associated_executor<
 
 #endif // !defined(GENERATING_DOCUMENTATION)
 
-template <typename AsyncReadStream,
-    typename DynamicBuffer_v1, typename ReadHandler>
+template <typename AsyncReadStream, typename DynamicBuffer_v1,
+    BOOST_ASIO_COMPLETION_TOKEN_FOR(void (boost::system::error_code,
+      std::size_t)) ReadHandler>
 BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(ReadHandler,
     void (boost::system::error_code, std::size_t))
 async_read_until(AsyncReadStream& s,
@@ -1827,8 +1830,10 @@ struct associated_executor<
 
 #endif // !defined(GENERATING_DOCUMENTATION)
 
-template <typename AsyncReadStream, typename DynamicBuffer_v1,
-    typename MatchCondition, typename ReadHandler>
+template <typename AsyncReadStream,
+    typename DynamicBuffer_v1, typename MatchCondition,
+    BOOST_ASIO_COMPLETION_TOKEN_FOR(void (boost::system::error_code,
+      std::size_t)) ReadHandler>
 BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(ReadHandler,
     void (boost::system::error_code, std::size_t))
 async_read_until(AsyncReadStream& s,
@@ -1848,7 +1853,9 @@ async_read_until(AsyncReadStream& s,
 
 #if !defined(BOOST_ASIO_NO_IOSTREAM)
 
-template <typename AsyncReadStream, typename Allocator, typename ReadHandler>
+template <typename AsyncReadStream, typename Allocator,
+    BOOST_ASIO_COMPLETION_TOKEN_FOR(void (boost::system::error_code,
+      std::size_t)) ReadHandler>
 inline BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(ReadHandler,
     void (boost::system::error_code, std::size_t))
 async_read_until(AsyncReadStream& s,
@@ -1859,7 +1866,9 @@ async_read_until(AsyncReadStream& s,
       delim, BOOST_ASIO_MOVE_CAST(ReadHandler)(handler));
 }
 
-template <typename AsyncReadStream, typename Allocator, typename ReadHandler>
+template <typename AsyncReadStream, typename Allocator,
+    BOOST_ASIO_COMPLETION_TOKEN_FOR(void (boost::system::error_code,
+      std::size_t)) ReadHandler>
 inline BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(ReadHandler,
     void (boost::system::error_code, std::size_t))
 async_read_until(AsyncReadStream& s,
@@ -1873,7 +1882,9 @@ async_read_until(AsyncReadStream& s,
 
 #if defined(BOOST_ASIO_HAS_BOOST_REGEX)
 
-template <typename AsyncReadStream, typename Allocator, typename ReadHandler>
+template <typename AsyncReadStream, typename Allocator,
+    BOOST_ASIO_COMPLETION_TOKEN_FOR(void (boost::system::error_code,
+      std::size_t)) ReadHandler>
 inline BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(ReadHandler,
     void (boost::system::error_code, std::size_t))
 async_read_until(AsyncReadStream& s,
@@ -1886,8 +1897,9 @@ async_read_until(AsyncReadStream& s,
 
 #endif // defined(BOOST_ASIO_HAS_BOOST_REGEX)
 
-template <typename AsyncReadStream, typename Allocator,
-    typename MatchCondition, typename ReadHandler>
+template <typename AsyncReadStream, typename Allocator, typename MatchCondition,
+    BOOST_ASIO_COMPLETION_TOKEN_FOR(void (boost::system::error_code,
+      std::size_t)) ReadHandler>
 inline BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(ReadHandler,
     void (boost::system::error_code, std::size_t))
 async_read_until(AsyncReadStream& s,
@@ -2149,8 +2161,9 @@ struct associated_executor<
 
 #endif // !defined(GENERATING_DOCUMENTATION)
 
-template <typename AsyncReadStream,
-    typename DynamicBuffer_v2, typename ReadHandler>
+template <typename AsyncReadStream, typename DynamicBuffer_v2,
+    BOOST_ASIO_COMPLETION_TOKEN_FOR(void (boost::system::error_code,
+      std::size_t)) ReadHandler>
 BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(ReadHandler,
     void (boost::system::error_code, std::size_t))
 async_read_until(AsyncReadStream& s, DynamicBuffer_v2 buffers,
@@ -2423,7 +2436,9 @@ struct associated_executor<
 #endif // !defined(GENERATING_DOCUMENTATION)
 
 template <typename AsyncReadStream,
-    typename DynamicBuffer_v2, typename ReadHandler>
+    typename DynamicBuffer_v2,
+    BOOST_ASIO_COMPLETION_TOKEN_FOR(void (boost::system::error_code,
+      std::size_t)) ReadHandler>
 BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(ReadHandler,
     void (boost::system::error_code, std::size_t))
 async_read_until(AsyncReadStream& s,
@@ -2703,8 +2718,9 @@ struct associated_executor<
 
 #endif // !defined(GENERATING_DOCUMENTATION)
 
-template <typename AsyncReadStream,
-    typename DynamicBuffer_v2, typename ReadHandler>
+template <typename AsyncReadStream, typename DynamicBuffer_v2,
+    BOOST_ASIO_COMPLETION_TOKEN_FOR(void (boost::system::error_code,
+      std::size_t)) ReadHandler>
 BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(ReadHandler,
     void (boost::system::error_code, std::size_t))
 async_read_until(AsyncReadStream& s, DynamicBuffer_v2 buffers,
@@ -2979,8 +2995,10 @@ struct associated_executor<
 
 #endif // !defined(GENERATING_DOCUMENTATION)
 
-template <typename AsyncReadStream, typename DynamicBuffer_v2,
-    typename MatchCondition, typename ReadHandler>
+template <typename AsyncReadStream,
+    typename DynamicBuffer_v2, typename MatchCondition,
+    BOOST_ASIO_COMPLETION_TOKEN_FOR(void (boost::system::error_code,
+      std::size_t)) ReadHandler>
 BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(ReadHandler,
     void (boost::system::error_code, std::size_t))
 async_read_until(AsyncReadStream& s, DynamicBuffer_v2 buffers,

@@ -457,7 +457,8 @@ std::size_t write_at(SyncRandomAccessWriteDevice& d, uint64_t offset,
  * std::vector.
  */
 template <typename AsyncRandomAccessWriteDevice, typename ConstBufferSequence,
-    typename WriteHandler>
+    BOOST_ASIO_COMPLETION_TOKEN_FOR(void (boost::system::error_code,
+      std::size_t)) WriteHandler>
 BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(WriteHandler,
     void (boost::system::error_code, std::size_t))
 async_write_at(AsyncRandomAccessWriteDevice& d, uint64_t offset,
@@ -535,8 +536,10 @@ async_write_at(AsyncRandomAccessWriteDevice& d, uint64_t offset,
  * buffers in one go, and how to use it with arrays, boost::array or
  * std::vector.
  */
-template <typename AsyncRandomAccessWriteDevice, typename ConstBufferSequence,
-    typename CompletionCondition, typename WriteHandler>
+template <typename AsyncRandomAccessWriteDevice,
+    typename ConstBufferSequence, typename CompletionCondition,
+    BOOST_ASIO_COMPLETION_TOKEN_FOR(void (boost::system::error_code,
+      std::size_t)) WriteHandler>
 BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(WriteHandler,
     void (boost::system::error_code, std::size_t))
 async_write_at(AsyncRandomAccessWriteDevice& d,
@@ -593,7 +596,8 @@ async_write_at(AsyncRandomAccessWriteDevice& d,
  * manner equivalent to using boost::asio::post().
  */
 template <typename AsyncRandomAccessWriteDevice, typename Allocator,
-    typename WriteHandler>
+    BOOST_ASIO_COMPLETION_TOKEN_FOR(void (boost::system::error_code,
+      std::size_t)) WriteHandler>
 BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(WriteHandler,
     void (boost::system::error_code, std::size_t))
 async_write_at(AsyncRandomAccessWriteDevice& d, uint64_t offset,
@@ -658,8 +662,10 @@ async_write_at(AsyncRandomAccessWriteDevice& d, uint64_t offset,
  * immediate completion, invocation of the handler will be performed in a
  * manner equivalent to using boost::asio::post().
  */
-template <typename AsyncRandomAccessWriteDevice, typename Allocator,
-    typename CompletionCondition, typename WriteHandler>
+template <typename AsyncRandomAccessWriteDevice,
+    typename Allocator, typename CompletionCondition,
+    BOOST_ASIO_COMPLETION_TOKEN_FOR(void (boost::system::error_code,
+      std::size_t)) WriteHandler>
 BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(WriteHandler,
     void (boost::system::error_code, std::size_t))
 async_write_at(AsyncRandomAccessWriteDevice& d, uint64_t offset,

@@ -503,7 +503,9 @@ public:
    * immediate completion, invocation of the handler will be performed in a
    * manner equivalent to using boost::asio::post().
    */
-  template <typename SignalHandler>
+  template <
+    BOOST_ASIO_COMPLETION_TOKEN_FOR(void (boost::system::error_code,
+      int)) SignalHandler>
   BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(SignalHandler,
       void (boost::system::error_code, int))
   async_wait(BOOST_ASIO_MOVE_ARG(SignalHandler) handler)
