@@ -1485,10 +1485,12 @@ public:
    * boost::asio::ip::tcp::socket socket(acceptor.accept());
    * @endcode
    */
-  typename Protocol::socket accept()
+  typename Protocol::socket::template rebind_executor<executor_type>::other
+  accept()
   {
     boost::system::error_code ec;
-    typename Protocol::socket peer(impl_.get_executor());
+    typename Protocol::socket::template rebind_executor<
+      executor_type>::other peer(impl_.get_executor());
     impl_.get_service().accept(impl_.get_implementation(), peer, 0, ec);
     boost::asio::detail::throw_error(ec, "accept");
     return peer;
@@ -1519,9 +1521,11 @@ public:
    * }
    * @endcode
    */
-  typename Protocol::socket accept(boost::system::error_code& ec)
+  typename Protocol::socket::template rebind_executor<executor_type>::other
+  accept(boost::system::error_code& ec)
   {
-    typename Protocol::socket peer(impl_.get_executor());
+    typename Protocol::socket::template rebind_executor<
+      executor_type>::other peer(impl_.get_executor());
     impl_.get_service().accept(impl_.get_implementation(), peer, 0, ec);
     return peer;
   }
@@ -1538,8 +1542,11 @@ public:
    * completes. Copies will be made of the handler as required. The function
    * signature of the handler must be:
    * @code void handler(
-   *   const boost::system::error_code& error, // Result of operation.
-   *   typename Protocol::socket peer // On success, the newly accepted socket.
+   *   // Result of operation.
+   *   const boost::system::error_code& error,
+   *   // On success, the newly accepted socket.
+   *   typename Protocol::socket::template
+   *     rebind_executor<executor_type>::other peer
    * ); @endcode
    * Regardless of whether the asynchronous operation completes immediately or
    * not, the handler will not be invoked from within this function. On
@@ -1566,19 +1573,24 @@ public:
    */
   template <
       BOOST_ASIO_COMPLETION_TOKEN_FOR(void (boost::system::error_code,
-        typename Protocol::socket)) MoveAcceptHandler
-          BOOST_ASIO_DEFAULT_COMPLETION_TOKEN_TYPE(executor_type)>
+        typename Protocol::socket::template rebind_executor<
+          executor_type>::other)) MoveAcceptHandler
+            BOOST_ASIO_DEFAULT_COMPLETION_TOKEN_TYPE(executor_type)>
   BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(MoveAcceptHandler,
-      void (boost::system::error_code, typename Protocol::socket))
+      void (boost::system::error_code,
+        typename Protocol::socket::template
+          rebind_executor<executor_type>::other))
   async_accept(
       BOOST_ASIO_MOVE_ARG(MoveAcceptHandler) handler
         BOOST_ASIO_DEFAULT_COMPLETION_TOKEN(executor_type))
   {
     return async_initiate<MoveAcceptHandler,
-      void (boost::system::error_code, typename Protocol::socket)>(
-        initiate_async_move_accept(this), handler,
-        impl_.get_executor(), static_cast<endpoint_type*>(0),
-        static_cast<typename Protocol::socket*>(0));
+      void (boost::system::error_code, typename Protocol::socket::template
+        rebind_executor<executor_type>::other)>(
+          initiate_async_move_accept(this), handler,
+          impl_.get_executor(), static_cast<endpoint_type*>(0),
+          static_cast<typename Protocol::socket::template
+            rebind_executor<executor_type>::other*>(0));
   }
 
   /// Accept a new connection.
@@ -1902,10 +1914,12 @@ public:
    * boost::asio::ip::tcp::socket socket(acceptor.accept(endpoint));
    * @endcode
    */
-  typename Protocol::socket accept(endpoint_type& peer_endpoint)
+  typename Protocol::socket::template rebind_executor<executor_type>::other
+  accept(endpoint_type& peer_endpoint)
   {
     boost::system::error_code ec;
-    typename Protocol::socket peer(impl_.get_executor());
+    typename Protocol::socket::template rebind_executor<
+      executor_type>::other peer(impl_.get_executor());
     impl_.get_service().accept(impl_.get_implementation(),
         peer, &peer_endpoint, ec);
     boost::asio::detail::throw_error(ec, "accept");
@@ -1941,10 +1955,11 @@ public:
    * }
    * @endcode
    */
-  typename Protocol::socket accept(
-      endpoint_type& peer_endpoint, boost::system::error_code& ec)
+  typename Protocol::socket::template rebind_executor<executor_type>::other
+  accept(endpoint_type& peer_endpoint, boost::system::error_code& ec)
   {
-    typename Protocol::socket peer(impl_.get_executor());
+    typename Protocol::socket::template rebind_executor<
+      executor_type>::other peer(impl_.get_executor());
     impl_.get_service().accept(impl_.get_implementation(),
         peer, &peer_endpoint, ec);
     return peer;
@@ -1967,8 +1982,11 @@ public:
    * completes. Copies will be made of the handler as required. The function
    * signature of the handler must be:
    * @code void handler(
-   *   const boost::system::error_code& error, // Result of operation.
-   *   typename Protocol::socket peer // On success, the newly accepted socket.
+   *   // Result of operation.
+   *   const boost::system::error_code& error,
+   *   // On success, the newly accepted socket.
+   *   typename Protocol::socket::template
+   *     rebind_executor<executor_type>::other peer
    * ); @endcode
    * Regardless of whether the asynchronous operation completes immediately or
    * not, the handler will not be invoked from within this function. On
@@ -1996,19 +2014,24 @@ public:
    */
   template <
       BOOST_ASIO_COMPLETION_TOKEN_FOR(void (boost::system::error_code,
-        typename Protocol::socket)) MoveAcceptHandler
-          BOOST_ASIO_DEFAULT_COMPLETION_TOKEN_TYPE(executor_type)>
+        typename Protocol::socket::template rebind_executor<
+          executor_type>::other)) MoveAcceptHandler
+            BOOST_ASIO_DEFAULT_COMPLETION_TOKEN_TYPE(executor_type)>
   BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(MoveAcceptHandler,
-      void (boost::system::error_code, typename Protocol::socket))
+      void (boost::system::error_code,
+        typename Protocol::socket::template
+          rebind_executor<executor_type>::other))
   async_accept(endpoint_type& peer_endpoint,
       BOOST_ASIO_MOVE_ARG(MoveAcceptHandler) handler
         BOOST_ASIO_DEFAULT_COMPLETION_TOKEN(executor_type))
   {
     return async_initiate<MoveAcceptHandler,
-      void (boost::system::error_code, typename Protocol::socket)>(
-        initiate_async_move_accept(this), handler,
-        impl_.get_executor(), &peer_endpoint,
-        static_cast<typename Protocol::socket*>(0));
+      void (boost::system::error_code, typename Protocol::socket::template
+        rebind_executor<executor_type>::other)>(
+          initiate_async_move_accept(this), handler,
+          impl_.get_executor(), &peer_endpoint,
+          static_cast<typename Protocol::socket::template
+            rebind_executor<executor_type>::other*>(0));
   }
 
   /// Accept a new connection.
