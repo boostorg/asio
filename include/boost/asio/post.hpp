@@ -53,8 +53,8 @@ namespace asio {
  *
  * @li Returns <tt>result.get()</tt>.
  */
-template <typename CompletionToken>
-BOOST_ASIO_INITFN_RESULT_TYPE(CompletionToken, void()) post(
+template <BOOST_ASIO_COMPLETION_TOKEN_FOR(void()) CompletionToken>
+BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(CompletionToken, void()) post(
     BOOST_ASIO_MOVE_ARG(CompletionToken) token);
 
 /// Submits a completion token or function object for execution.
@@ -90,18 +90,28 @@ BOOST_ASIO_INITFN_RESULT_TYPE(CompletionToken, void()) post(
  *
  * @li Returns <tt>result.get()</tt>.
  */
-template <typename Executor, typename CompletionToken>
-BOOST_ASIO_INITFN_RESULT_TYPE(CompletionToken, void()) post(
-    const Executor& ex, BOOST_ASIO_MOVE_ARG(CompletionToken) token,
+template <typename Executor,
+    BOOST_ASIO_COMPLETION_TOKEN_FOR(void()) CompletionToken
+      BOOST_ASIO_DEFAULT_COMPLETION_TOKEN_TYPE(Executor)>
+BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(CompletionToken, void()) post(
+    const Executor& ex,
+    BOOST_ASIO_MOVE_ARG(CompletionToken) token
+      BOOST_ASIO_DEFAULT_COMPLETION_TOKEN(Executor),
     typename enable_if<is_executor<Executor>::value>::type* = 0);
 
 /// Submits a completion token or function object for execution.
 /**
  * @returns <tt>post(ctx.get_executor(), forward<CompletionToken>(token))</tt>.
  */
-template <typename ExecutionContext, typename CompletionToken>
-BOOST_ASIO_INITFN_RESULT_TYPE(CompletionToken, void()) post(
-    ExecutionContext& ctx, BOOST_ASIO_MOVE_ARG(CompletionToken) token,
+template <typename ExecutionContext,
+    BOOST_ASIO_COMPLETION_TOKEN_FOR(void()) CompletionToken
+      BOOST_ASIO_DEFAULT_COMPLETION_TOKEN_TYPE(
+        typename ExecutionContext::executor_type)>
+BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(CompletionToken, void()) post(
+    ExecutionContext& ctx,
+    BOOST_ASIO_MOVE_ARG(CompletionToken) token
+      BOOST_ASIO_DEFAULT_COMPLETION_TOKEN(
+        typename ExecutionContext::executor_type),
     typename enable_if<is_convertible<
       ExecutionContext&, execution_context&>::value>::type* = 0);
 

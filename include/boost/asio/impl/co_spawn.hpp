@@ -90,25 +90,43 @@ awaitable<void, Executor> co_spawn_entry_point(
       });
 }
 
-struct initiate_co_spawn
+template <typename Executor>
+class initiate_co_spawn
 {
-  template <typename Handler, typename Executor, typename F>
-  void operator()(Handler&& handler, const Executor& ex, F&& f) const
+public:
+  typedef Executor executor_type;
+
+  template <typename OtherExecutor>
+  explicit initiate_co_spawn(const OtherExecutor& ex)
+    : ex_(ex)
+  {
+  }
+
+  executor_type get_executor() const BOOST_ASIO_NOEXCEPT
+  {
+    return ex_;
+  }
+
+  template <typename Handler, typename F>
+  void operator()(Handler&& handler, F&& f) const
   {
     typedef typename result_of<F()>::type awaitable_type;
-    typedef typename awaitable_type::executor_type executor_type;
 
-    executor_type ex2(ex);
     auto a = (co_spawn_entry_point)(static_cast<awaitable_type*>(nullptr),
-        ex2, std::forward<F>(f), std::forward<Handler>(handler));
-    awaitable_handler<executor_type, void>(std::move(a), ex2).launch();
+        ex_, std::forward<F>(f), std::forward<Handler>(handler));
+    awaitable_handler<executor_type, void>(std::move(a), ex_).launch();
   }
+
+private:
+  Executor ex_;
 };
 
 } // namespace detail
 
-template <typename Executor, typename F, typename CompletionToken>
-inline BOOST_ASIO_INITFN_RESULT_TYPE(CompletionToken,
+template <typename Executor, typename F,
+    BOOST_ASIO_COMPLETION_TOKEN_FOR(typename detail::awaitable_signature<
+      typename result_of<F()>::type>::type) CompletionToken>
+inline BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(CompletionToken,
     typename detail::awaitable_signature<typename result_of<F()>::type>::type)
 co_spawn(const Executor& ex, F&& f, CompletionToken&& token,
     typename enable_if<
@@ -117,11 +135,15 @@ co_spawn(const Executor& ex, F&& f, CompletionToken&& token,
 {
   return async_initiate<CompletionToken,
     typename detail::awaitable_signature<typename result_of<F()>::type>>(
-      detail::initiate_co_spawn(), token, ex, std::forward<F>(f));
+      detail::initiate_co_spawn<
+        typename result_of<F()>::type::executor_type>(ex),
+      token, std::forward<F>(f));
 }
 
-template <typename ExecutionContext, typename F, typename CompletionToken>
-inline BOOST_ASIO_INITFN_RESULT_TYPE(CompletionToken,
+template <typename ExecutionContext, typename F,
+    BOOST_ASIO_COMPLETION_TOKEN_FOR(typename detail::awaitable_signature<
+      typename result_of<F()>::type>::type) CompletionToken>
+inline BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(CompletionToken,
     typename detail::awaitable_signature<typename result_of<F()>::type>::type)
 co_spawn(ExecutionContext& ctx, F&& f, CompletionToken&& token,
     typename enable_if<
