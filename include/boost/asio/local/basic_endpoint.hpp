@@ -61,7 +61,7 @@ public:
 #endif
 
   /// Default constructor.
-  basic_endpoint()
+  basic_endpoint() BOOST_ASIO_NOEXCEPT
   {
   }
 
