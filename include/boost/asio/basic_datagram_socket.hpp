@@ -249,7 +249,7 @@ public:
    * constructed using the @c basic_datagram_socket(const executor_type&)
    * constructor.
    */
-  basic_datagram_socket(basic_datagram_socket&& other)
+  basic_datagram_socket(basic_datagram_socket&& other) BOOST_ASIO_NOEXCEPT
     : basic_socket<Protocol, Executor>(std::move(other))
   {
   }
