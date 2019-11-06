@@ -256,7 +256,7 @@ public:
    * constructed using the @c basic_seq_packet_socket(const executor_type&)
    * constructor.
    */
-  basic_seq_packet_socket(basic_seq_packet_socket&& other)
+  basic_seq_packet_socket(basic_seq_packet_socket&& other) BOOST_ASIO_NOEXCEPT
     : basic_socket<Protocol, Executor>(std::move(other))
   {
   }

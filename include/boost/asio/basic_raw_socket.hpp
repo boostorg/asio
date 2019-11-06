@@ -247,7 +247,7 @@ public:
    * constructed using the @c basic_raw_socket(const executor_type&)
    * constructor.
    */
-  basic_raw_socket(basic_raw_socket&& other)
+  basic_raw_socket(basic_raw_socket&& other) BOOST_ASIO_NOEXCEPT
     : basic_socket<Protocol, Executor>(std::move(other))
   {
   }

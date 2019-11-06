@@ -73,19 +73,19 @@ public:
   }
 
   /// Obtain an identifier for the type of the protocol.
-  int type() const
+  int type() const BOOST_ASIO_NOEXCEPT
   {
     return BOOST_ASIO_OS_DEF(SOCK_SEQPACKET);
   }
 
   /// Obtain an identifier for the protocol.
-  int protocol() const
+  int protocol() const BOOST_ASIO_NOEXCEPT
   {
     return protocol_;
   }
 
   /// Obtain an identifier for the protocol family.
-  int family() const
+  int family() const BOOST_ASIO_NOEXCEPT
   {
     return family_;
   }

@@ -782,7 +782,7 @@ private:
   class initiate_async_shutdown
   {
   public:
-    typedef stream::executor_type executor_type;
+    typedef typename stream::executor_type executor_type;
 
     explicit initiate_async_shutdown(stream* self)
       : self_(self)
@@ -813,7 +813,7 @@ private:
   class initiate_async_write_some
   {
   public:
-    typedef stream::executor_type executor_type;
+    typedef typename stream::executor_type executor_type;
 
     explicit initiate_async_write_some(stream* self)
       : self_(self)
@@ -845,7 +845,7 @@ private:
   class initiate_async_read_some
   {
   public:
-    typedef stream::executor_type executor_type;
+    typedef typename stream::executor_type executor_type;
 
     explicit initiate_async_read_some(stream* self)
       : self_(self)
