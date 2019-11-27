@@ -97,6 +97,9 @@ public:
   BOOST_ASIO_DECL boost::asio::mutable_buffer get_output(
       const boost::asio::mutable_buffer& data);
 
+  // Get 0-copy access to the underlying output buffer that should be written to the transport.
+  BOOST_ASIO_DECL boost::asio::const_buffer get_output0(boost::system::error_code& ec);
+
   // Put input data that was read from the transport.
   BOOST_ASIO_DECL boost::asio::const_buffer put_input(
       const boost::asio::const_buffer& data);

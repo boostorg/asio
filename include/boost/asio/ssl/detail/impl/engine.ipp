@@ -178,6 +178,22 @@ boost::asio::mutable_buffer engine::get_output(
       length > 0 ? static_cast<std::size_t>(length) : 0);
 }
 
+boost::asio::const_buffer engine::get_output0(boost::system::error_code& ec) {
+  char* ptr = NULL;
+
+  int res = ::BIO_nread(ext_bio_, &ptr, OSSL_SSIZE_MAX);
+  if (res < 0)
+  {
+    unsigned long sys_error = ::ERR_get_error();
+    ec = boost::system::error_code(sys_error,
+        boost::asio::error::get_ssl_category());
+
+    return boost::asio::const_buffer();
+  }
+
+  return boost::asio::const_buffer(ptr, res);
+}
+
 boost::asio::const_buffer engine::put_input(
     const boost::asio::const_buffer& data)
 {
