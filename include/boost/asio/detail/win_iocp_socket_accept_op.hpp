@@ -100,6 +100,7 @@ public:
       if (ec == boost::asio::error::connection_aborted
           && !o->enable_connection_aborted_)
       {
+        handler_work<Handler, IoExecutor>::start(o->handler_, o->io_executor_);
         o->reset();
         o->socket_service_.restart_accept_op(o->socket_,
             o->new_socket_, o->protocol_.family(),
@@ -229,6 +230,7 @@ public:
       if (ec == boost::asio::error::connection_aborted
           && !o->enable_connection_aborted_)
       {
+        handler_work<Handler, IoExecutor>::start(o->handler_, o->io_executor_);
         o->reset();
         o->socket_service_.restart_accept_op(o->socket_,
             o->new_socket_, o->protocol_.family(),
