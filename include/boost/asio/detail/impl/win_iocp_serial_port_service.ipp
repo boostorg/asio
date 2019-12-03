@@ -92,7 +92,7 @@ boost::system::error_code win_iocp_serial_port_service::open(
   dcb.fDsrSensitivity = FALSE;
   dcb.fOutX = FALSE;
   dcb.fInX = FALSE;
-  dcb.fRtsControl = DTR_CONTROL_DISABLE;
+  dcb.fRtsControl = RTS_CONTROL_DISABLE;
   dcb.fParity = FALSE; // No parity
   dcb.Parity = NOPARITY;
   dcb.StopBits = ONESTOPBIT; // One stop bit
