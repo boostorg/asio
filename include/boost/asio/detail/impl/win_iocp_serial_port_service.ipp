@@ -84,7 +84,7 @@ boost::system::error_code win_iocp_serial_port_service::open(
   dcb.fBinary = TRUE; // Win32 only supports binary mode.
   dcb.fNull = FALSE; // Do not ignore NULL characters.
   dcb.fAbortOnError = FALSE; // Ignore serial framing errors.
-  dcb.BaudRate = 0; // 0 baud by default
+  dcb.BaudRate = CBR_9600; // 9600 baud by default
   dcb.ByteSize = 8; // 8 bit bytes
   dcb.fOutxCtsFlow = FALSE; // No flow control
   dcb.fOutxDsrFlow = FALSE;
@@ -92,7 +92,7 @@ boost::system::error_code win_iocp_serial_port_service::open(
   dcb.fDsrSensitivity = FALSE;
   dcb.fOutX = FALSE;
   dcb.fInX = FALSE;
-  dcb.fRtsControl = DTR_CONTROL_DISABLE;
+  dcb.fRtsControl = RTS_CONTROL_DISABLE;
   dcb.fParity = FALSE; // No parity
   dcb.Parity = NOPARITY;
   dcb.StopBits = ONESTOPBIT; // One stop bit

@@ -1548,6 +1548,9 @@
         <xsl:when test="declname = 'Initiation'">
           <xsl:value-of select="declname"/>
         </xsl:when>
+        <xsl:when test="declname = 'InnerExecutor'">
+          <xsl:value-of select="concat('``[link boost_asio.reference.Executor1 ', declname, ']``')"/>
+        </xsl:when>
         <xsl:when test="declname = 'IoObjectsOrExecutors'">
           <xsl:value-of select="declname"/>
         </xsl:when>
@@ -1647,8 +1650,13 @@
           <xsl:value-of select="concat('``[link boost_asio.reference.', declname, ' ', declname, ']``')"/>
         </xsl:otherwise>
       </xsl:choose>
-      <xsl:if test="count(defval) > 0"> = <xsl:value-of
-        select="defval"/></xsl:if><xsl:if test="not(position() = last())">,</xsl:if>
+      <xsl:if test="count(defval) > 0"> = <xsl:choose>
+        <xsl:when test="defval = 'default_token'">
+          <xsl:text>``[link boost_asio.reference.asynchronous_operations.default_completion_tokens ['DEFAULT]]``</xsl:text>
+        </xsl:when>
+        <xsl:otherwise><xsl:value-of select="defval"/></xsl:otherwise>
+        </xsl:choose></xsl:if>
+      <xsl:if test="not(position() = last())">,</xsl:if>
 </xsl:template>
 
 
@@ -1669,7 +1677,12 @@
       <xsl:value-of select="declname"/>
     </xsl:otherwise>
   </xsl:choose>
-  <xsl:if test="count(defval) > 0"> = <xsl:value-of select="defval"/></xsl:if>
+  <xsl:if test="count(defval) > 0"> = <xsl:choose>
+    <xsl:when test="defval = 'default_token'">
+      <xsl:text>``[link boost_asio.reference.asynchronous_operations.default_completion_tokens ['DEFAULT]]``</xsl:text>
+    </xsl:when>
+    <xsl:otherwise><xsl:value-of select="defval"/></xsl:otherwise>
+  </xsl:choose></xsl:if>
   <xsl:if test="not(position() = last())">,</xsl:if>
 </xsl:template>
 
