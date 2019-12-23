@@ -200,6 +200,8 @@ typedef in6_addr in6_addr_type;
 typedef ipv6_mreq in6_mreq_type;
 typedef sockaddr_in6 sockaddr_in6_type;
 typedef sockaddr_storage sockaddr_storage_type;
+struct sockaddr_un_type { u_short sun_family;
+  char sun_path[108]; }; /* copy from afunix.h */
 typedef addrinfo addrinfo_type;
 # endif
 typedef ::linger linger_type;
