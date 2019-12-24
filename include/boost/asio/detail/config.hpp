@@ -1188,6 +1188,13 @@
 # endif // !defined(BOOST_ASIO_DISABLE_LOCAL_SOCKETS)
 #endif // !defined(BOOST_ASIO_HAS_LOCAL_SOCKETS)
 
+// Bluetooth sockets.
+#if !defined(BOOST_ASIO_HAS_BLUETOOTH_SOCKETS)
+# if !defined(BOOST_ASIO_DISABLE_BLUETOOTH_SOCKETS)
+#  define BOOST_ASIO_HAS_BLUETOOTH_SOCKETS 1
+# endif // !defined(BOOST_ASIO_DISABLE_BLUETOOTH_SOCKETS)
+#endif // !defined(BOOST_ASIO_HAS_BLUETOOTH_SOCKETS)
+
 // Can use sigaction() instead of signal().
 #if !defined(BOOST_ASIO_HAS_SIGACTION)
 # if !defined(BOOST_ASIO_DISABLE_SIGACTION)

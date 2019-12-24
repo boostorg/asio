@@ -77,5 +77,7 @@
 #include <boost/asio/ip/impl/network_v6.ipp>
 #include <boost/asio/ip/detail/impl/endpoint.ipp>
 #include <boost/asio/local/detail/impl/endpoint.ipp>
+#include <boost/asio/bluetooth/detail/impl/address.ipp>
+#include <boost/asio/bluetooth/detail/impl/endpoint.ipp>
 
 #endif // BOOST_ASIO_IMPL_SRC_HPP
