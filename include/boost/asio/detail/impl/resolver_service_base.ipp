@@ -81,12 +81,12 @@ void resolver_service_base::base_notify_fork(
       work_thread_->join();
       work_thread_.reset();
     }
-    else
-    {
-      work_scheduler_->restart();
-      work_thread_.reset(new boost::asio::detail::thread(
-            work_scheduler_runner(*work_scheduler_)));
-    }
+  }
+  else if (fork_ev != execution_context::fork_prepare)
+  {
+    work_scheduler_->restart();
+    work_thread_.reset(new boost::asio::detail::thread(
+          work_scheduler_runner(*work_scheduler_)));
   }
 }
 
