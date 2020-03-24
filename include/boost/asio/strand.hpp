@@ -28,6 +28,8 @@ namespace asio {
 template <typename Executor>
 class strand
 {
+template <typename OtherExecutor>
+friend class strand<OtherExecutor>;
 public:
   /// The type of the underlying executor.
   typedef Executor inner_executor_type;
@@ -109,7 +111,7 @@ public:
    */
   template <class OtherExecutor>
   strand(strand<OtherExecutor>&& other) BOOST_ASIO_NOEXCEPT
-    : executor_(BOOST_ASIO_MOVE_CAST(OtherExecutor)(other)),
+    : executor_(BOOST_ASIO_MOVE_CAST(OtherExecutor)(other.executor_)),
       impl_(BOOST_ASIO_MOVE_CAST(implementation_type)(other.impl_))
   {
   }
