@@ -43,7 +43,7 @@ public:
   // Constructor for a full fenced block.
   explicit win_fenced_block(full_t)
   {
-#if defined(__BORLANDC__)
+#if defined(__BORLANDC__) && !defined(__clang__)
     LONG barrier = 0;
     ::InterlockedExchange(&barrier, 1);
 #elif defined(BOOST_ASIO_MSVC) \
@@ -63,7 +63,7 @@ public:
   // Destructor.
   ~win_fenced_block()
   {
-#if defined(__BORLANDC__)
+#if defined(__BORLANDC__) && !defined(__clang__)
     LONG barrier = 0;
     ::InterlockedExchange(&barrier, 1);
 #elif defined(BOOST_ASIO_MSVC) \
