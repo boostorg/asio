@@ -23,13 +23,13 @@
 # if defined(_WINSOCKAPI_) && !defined(_WINSOCK2API_)
 #  error WinSock.h has already been included
 # endif // defined(_WINSOCKAPI_) && !defined(_WINSOCK2API_)
-# if defined(__BORLANDC__)
+# if defined(__BORLANDC__) && !defined(__clang__)
 #  include <stdlib.h> // Needed for __errno
 #  if !defined(_WSPIAPI_H_)
 #   define _WSPIAPI_H_
 #   define BOOST_ASIO_WSPIAPI_H_DEFINED
 #  endif // !defined(_WSPIAPI_H_)
-# endif // defined(__BORLANDC__)
+# endif // defined(__BORLANDC__) && !defined(__clang__)
 # include <winsock2.h>
 # include <ws2tcpip.h>
 # if defined(WINAPI_FAMILY)
@@ -47,12 +47,12 @@
 # if !defined(BOOST_ASIO_NO_DEFAULT_LINKED_LIBS)
 #  if defined(UNDER_CE)
 #   pragma comment(lib, "ws2.lib")
-#  elif defined(_MSC_VER) || defined(__BORLANDC__)
+#  elif defined(_MSC_VER) || defined(__BORLANDC__) && !defined(__clang__)
 #   pragma comment(lib, "ws2_32.lib")
 #   if !defined(BOOST_ASIO_WINDOWS_APP)
 #    pragma comment(lib, "mswsock.lib")
 #   endif // !defined(BOOST_ASIO_WINDOWS_APP)
-#  endif // defined(_MSC_VER) || defined(__BORLANDC__)
+#  endif // defined(_MSC_VER) || defined(__BORLANDC__) && !defined(__clang__)
 # endif // !defined(BOOST_ASIO_NO_DEFAULT_LINKED_LIBS)
 # include <boost/asio/detail/old_win_sdk_compat.hpp>
 #else
