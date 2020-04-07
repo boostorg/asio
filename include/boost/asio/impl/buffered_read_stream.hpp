@@ -148,7 +148,8 @@ namespace detail
     typedef typename remove_reference<
       Stream>::type::lowest_layer_type::executor_type executor_type;
 
-    explicit initiate_async_buffered_fill(Stream& next_layer)
+    explicit initiate_async_buffered_fill(
+        typename remove_reference<Stream>::type& next_layer)
       : next_layer_(next_layer)
     {
     }
@@ -178,7 +179,7 @@ namespace detail
     }
 
   private:
-    Stream& next_layer_;
+    typename remove_reference<Stream>::type& next_layer_;
   };
 } // namespace detail
 
@@ -365,7 +366,8 @@ namespace detail
     typedef typename remove_reference<
       Stream>::type::lowest_layer_type::executor_type executor_type;
 
-    explicit initiate_async_buffered_read_some(Stream& next_layer)
+    explicit initiate_async_buffered_read_some(
+        typename remove_reference<Stream>::type& next_layer)
       : next_layer_(next_layer)
     {
     }
@@ -404,7 +406,7 @@ namespace detail
     }
 
   private:
-    Stream& next_layer_;
+    typename remove_reference<Stream>::type& next_layer_;
   };
 } // namespace detail
 
