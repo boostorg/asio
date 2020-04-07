@@ -140,12 +140,8 @@ boost::system::error_code winrt_ssocket_service_base::close(
     winrt_ssocket_service_base::base_implementation_type& impl,
     boost::system::error_code& ec)
 {
-  if (impl.socket_)
-  {
-    delete impl.socket_;
-    impl.socket_ = nullptr;
-  }
-
+  delete impl.socket_;
+  impl.socket_ = nullptr;
   ec = boost::system::error_code();
   return ec;
 }
