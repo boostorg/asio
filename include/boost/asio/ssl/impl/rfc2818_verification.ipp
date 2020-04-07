@@ -17,6 +17,8 @@
 
 #include <boost/asio/detail/config.hpp>
 
+#if !defined(BOOST_ASIO_NO_DEPRECATED)
+
 #include <cctype>
 #include <cstring>
 #include <boost/asio/ip/address.hpp>
@@ -158,5 +160,7 @@ bool rfc2818_verification::match_pattern(const char* pattern,
 } // namespace boost
 
 #include <boost/asio/detail/pop_options.hpp>
+
+#endif // !defined(BOOST_ASIO_NO_DEPRECATED)
 
 #endif // BOOST_ASIO_SSL_IMPL_RFC2818_VERIFICATION_IPP
