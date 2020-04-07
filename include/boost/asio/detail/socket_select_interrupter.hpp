@@ -46,7 +46,7 @@ public:
   // Interrupt the select call.
   BOOST_ASIO_DECL void interrupt();
 
-  // Reset the select interrupt. Returns true if the call was interrupted.
+  // Reset the select interrupter. Returns true if the reset was successful.
   BOOST_ASIO_DECL bool reset();
 
   // Get the read descriptor to be passed to select.
