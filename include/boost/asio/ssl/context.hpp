@@ -44,6 +44,9 @@ public:
   /// Constructor.
   BOOST_ASIO_DECL explicit context(method m);
 
+  /// Construct to take ownership of a native handle.
+  BOOST_ASIO_DECL explicit context(native_handle_type native_handle);
+
 #if defined(BOOST_ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
   /// Move-construct a context from another.
   /**
