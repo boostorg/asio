@@ -132,6 +132,7 @@ void win_iocp_io_context::shutdown()
 
   if (thread_.get())
   {
+    stop();
     thread_->join();
     thread_.reset();
     ::InterlockedDecrement(&outstanding_work_);
