@@ -17,6 +17,7 @@
 #include <boost/asio/strand.hpp>
 
 #include <sstream>
+#include <boost/asio/executor.hpp>
 #include <boost/asio/io_context.hpp>
 #include <boost/asio/dispatch.hpp>
 #include <boost/asio/post.hpp>
@@ -238,8 +239,25 @@ void strand_test()
   BOOST_ASIO_CHECK(count == 0);
 }
 
+void strand_conversion_test()
+{
+  io_context ioc;
+  strand<io_context::executor_type> s1 = make_strand(ioc);
+
+  // Converting constructors.
+
+  strand<executor> s2(s1);
+  strand<executor> s3 = strand<io_context::executor_type>(s1);
+
+  // Converting assignment.
+
+  s3 = s1;
+  s3 = strand<io_context::executor_type>(s1);
+}
+
 BOOST_ASIO_TEST_SUITE
 (
   "strand",
   BOOST_ASIO_TEST_CASE(strand_test)
+  BOOST_ASIO_COMPILE_TEST_CASE(strand_conversion_test)
 )
