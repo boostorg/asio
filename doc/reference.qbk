@@ -64977,6 +64977,8 @@ Indicate that the work is no longer outstanding.
   void reset();
 
 
+Unless the object has already been reset, or is in a moved-from state, calls `on_work_finished()` on the stored executor. 
+
 
 [endsect]
 
@@ -106354,6 +106356,8 @@ This function is used to launch a new coroutine.
     [[link boost_asio.reference.ssl__context.context [*context]]]
     [Constructor. 
      [hr]
+     Construct to take ownership of a native handle. 
+     [hr]
      Move-construct a context from another. ]
   ]
   
@@ -106821,15 +106825,23 @@ Constructor.
   ``  [''''&raquo;''' [link boost_asio.reference.ssl__context.context.overload1 more...]]``
 
 
-Move-construct a context from another. 
+Construct to take ownership of a native handle. 
 
 
-  ``[link boost_asio.reference.ssl__context.context.overload2 context]``(
-      context && other);
+  explicit ``[link boost_asio.reference.ssl__context.context.overload2 context]``(
+      native_handle_type native_handle);
   ``  [''''&raquo;''' [link boost_asio.reference.ssl__context.context.overload2 more...]]``
 
 
-[section:overload1 ssl::context::context (1 of 2 overloads)]
+Move-construct a context from another. 
+
+
+  ``[link boost_asio.reference.ssl__context.context.overload3 context]``(
+      context && other);
+  ``  [''''&raquo;''' [link boost_asio.reference.ssl__context.context.overload3 more...]]``
+
+
+[section:overload1 ssl::context::context (1 of 3 overloads)]
 
 
 Constructor. 
@@ -106844,7 +106856,22 @@ Constructor.
 
 
 
-[section:overload2 ssl::context::context (2 of 2 overloads)]
+[section:overload2 ssl::context::context (2 of 3 overloads)]
+
+
+Construct to take ownership of a native handle. 
+
+
+  context(
+      native_handle_type native_handle);
+
+
+
+[endsect]
+
+
+
+[section:overload3 ssl::context::context (3 of 3 overloads)]
 
 
 Move-construct a context from another. 
@@ -109694,10 +109721,142 @@ Protected destructor to prevent deletion through this type.
 [endsect]
 
 
+[section:ssl__host_name_verification ssl::host_name_verification]
+
+
+Verifies a certificate against a host\_name according to the rules described in RFC 6125. 
+
+
+  class host_name_verification
+
+
+[heading Types]
+[table
+  [[Name][Description]]
+
+  [
+
+    [[link boost_asio.reference.ssl__host_name_verification.result_type [*result_type]]]
+    [The type of the function object's result. ]
+  
+  ]
+
+]
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link boost_asio.reference.ssl__host_name_verification.host_name_verification [*host_name_verification]]]
+    [Constructor. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.ssl__host_name_verification.operator_lp__rp_ [*operator()]]]
+    [Perform certificate verification. ]
+  ]
+  
+]
+
+
+[heading Example]
+  
+The following example shows how to synchronously open a secure connection to a given host name: 
+
+   using boost::asio::ip::tcp;
+   namespace ssl = boost::asio::ssl;
+   typedef ssl::stream<tcp::socket> ssl_socket;
+
+   // Create a context that uses the default paths for finding CA certificates.
+   ssl::context ctx(ssl::context::sslv23);
+   ctx.set_default_verify_paths();
+
+   // Open a socket and connect it to the remote host.
+   boost::asio::io_context io_context;
+   ssl_socket sock(io_context, ctx);
+   tcp::resolver resolver(io_context);
+   tcp::resolver::query query("host.name", "https");
+   boost::asio::connect(sock.lowest_layer(), resolver.resolve(query));
+   sock.lowest_layer().set_option(tcp::no_delay(true));
+
+   // Perform SSL handshake and verify the remote host's certificate.
+   sock.set_verify_mode(ssl::verify_peer);
+   sock.set_verify_callback(ssl::host_name_verification("host.name"));
+   sock.handshake(ssl_socket::client);
+
+   // ... read and write as normal ...
+
+
+
+
+
+
+[heading Requirements]
+
+['Header: ][^boost/asio/ssl/host_name_verification.hpp]
+
+['Convenience header: ][^boost/asio/ssl.hpp]
+
+
+[section:host_name_verification ssl::host_name_verification::host_name_verification]
+
+[indexterm2 boost_asio.indexterm.ssl__host_name_verification.host_name_verification..host_name_verification..ssl::host_name_verification] 
+Constructor. 
+
+
+  host_name_verification(
+      const std::string & host);
+
+
+
+[endsect]
+
+
+
+[section:operator_lp__rp_ ssl::host_name_verification::operator()]
+
+[indexterm2 boost_asio.indexterm.ssl__host_name_verification.operator_lp__rp_..operator()..ssl::host_name_verification] 
+Perform certificate verification. 
+
+
+  bool operator()(
+      bool preverified,
+      verify_context & ctx) const;
+
+
+
+[endsect]
+
+
+
+[section:result_type ssl::host_name_verification::result_type]
+
+[indexterm2 boost_asio.indexterm.ssl__host_name_verification.result_type..result_type..ssl::host_name_verification] 
+The type of the function object's result. 
+
+
+  typedef bool result_type;
+
+
+
+[heading Requirements]
+
+['Header: ][^boost/asio/ssl/host_name_verification.hpp]
+
+['Convenience header: ][^boost/asio/ssl.hpp]
+
+
+[endsect]
+
+
+
+[endsect]
+
 [section:ssl__rfc2818_verification ssl::rfc2818_verification]
 
 
-Verifies a certificate against a hostname according to the rules described in RFC 2818. 
+(Deprecated. Use [link boost_asio.reference.ssl__host_name_verification `ssl::host_name_verification`].) Verifies a certificate against a hostname according to the rules described in RFC 2818. 
 
 
   class rfc2818_verification
@@ -112355,7 +112514,7 @@ Converting move assignment operator.
   template<
       class ``[link boost_asio.reference.Executor1 OtherExecutor]``>
   strand & ``[link boost_asio.reference.strand.operator_eq_.overload4 operator=]``(
-      const strand< OtherExecutor > && other);
+      strand< OtherExecutor > && other);
   ``  [''''&raquo;''' [link boost_asio.reference.strand.operator_eq_.overload4 more...]]``
 
 
@@ -112417,7 +112576,7 @@ Converting move assignment operator.
   template<
       class ``[link boost_asio.reference.Executor1 OtherExecutor]``>
   strand & operator=(
-      const strand< OtherExecutor > && other);
+      strand< OtherExecutor > && other);
 
 
 This assignment operator is only valid if the `OtherExecutor` type is convertible to `Executor`. 
