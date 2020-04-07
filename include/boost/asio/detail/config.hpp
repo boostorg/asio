@@ -343,10 +343,14 @@
 // Support concepts on compilers known to allow them.
 #if !defined(BOOST_ASIO_HAS_CONCEPTS)
 # if !defined(BOOST_ASIO_DISABLE_CONCEPTS)
-#  if __cpp_concepts
+#  if defined(__cpp_concepts)
 #   define BOOST_ASIO_HAS_CONCEPTS 1
-#   define BOOST_ASIO_CONCEPT concept bool
-#  endif // __cpp_concepts
+#   if (__cpp_concepts >= 201707)
+#    define BOOST_ASIO_CONCEPT concept
+#   else // (__cpp_concepts >= 201707)
+#    define BOOST_ASIO_CONCEPT concept bool
+#   endif // (__cpp_concepts >= 201707)
+#  endif // defined(__cpp_concepts)
 # endif // !defined(BOOST_ASIO_DISABLE_CONCEPTS)
 #endif // !defined(BOOST_ASIO_HAS_CONCEPTS)
 
