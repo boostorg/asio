@@ -1645,7 +1645,6 @@ Wait for a client to initiate contact with us. The remote\_endpoint object will 
   ``''''''``    {
   ``''''''``      boost::array<char, 1> recv_buf;
   ``''''''``      udp::endpoint remote_endpoint;
-  ``''''''``      boost::system::error_code error;
   ``''''''``      socket.receive_from(boost::asio::buffer(recv_buf), remote_endpoint);
 
 
@@ -1733,7 +1732,6 @@ Next: [link boost_asio.tutorial.tutdaytime6 Daytime.6 - An asynchronous UDP dayt
   ``''''''``    {
   ``''''''``      boost::array<char, 1> recv_buf;
   ``''''''``      udp::endpoint remote_endpoint;
-  ``''''''``      boost::system::error_code error;
   ``''''''``      socket.receive_from(boost::asio::buffer(recv_buf), remote_endpoint);
 
   ``''''''``      std::string message = make_daytime_string();
