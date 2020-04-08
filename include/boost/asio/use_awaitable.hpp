@@ -2,7 +2,7 @@
 // use_awaitable.hpp
 // ~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2019 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2020 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -79,13 +79,14 @@ struct use_awaitable_t
   /// Function helper to adapt an I/O object to use @c use_awaitable_t as its
   /// default completion token type.
   template <typename T>
-  static typename T::template rebind_executor<
-      executor_with_default<typename T::executor_type>
+  static typename decay<T>::type::template rebind_executor<
+      executor_with_default<typename decay<T>::type::executor_type>
     >::other
   as_default_on(BOOST_ASIO_MOVE_ARG(T) object)
   {
-    return typename as_default_on_t<typename decay<T>::type>::type(
-        BOOST_ASIO_MOVE_CAST(T)(object));
+    return typename decay<T>::type::template rebind_executor<
+        executor_with_default<typename decay<T>::type::executor_type>
+      >::other(BOOST_ASIO_MOVE_CAST(T)(object));
   }
 };
 

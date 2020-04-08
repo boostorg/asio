@@ -2,7 +2,7 @@
 // strand.cpp
 // ~~~~~~~~~~
 //
-// Copyright (c) 2003-2019 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2020 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -17,6 +17,7 @@
 #include <boost/asio/strand.hpp>
 
 #include <sstream>
+#include <boost/asio/executor.hpp>
 #include <boost/asio/io_context.hpp>
 #include <boost/asio/dispatch.hpp>
 #include <boost/asio/post.hpp>
@@ -30,7 +31,7 @@
 #endif // defined(BOOST_ASIO_HAS_BOOST_DATE_TIME)
 
 #if defined(BOOST_ASIO_HAS_BOOST_BIND)
-# include <boost/bind.hpp>
+# include <boost/bind/bind.hpp>
 #else // defined(BOOST_ASIO_HAS_BOOST_BIND)
 # include <functional>
 #endif // defined(BOOST_ASIO_HAS_BOOST_BIND)
@@ -238,8 +239,25 @@ void strand_test()
   BOOST_ASIO_CHECK(count == 0);
 }
 
+void strand_conversion_test()
+{
+  io_context ioc;
+  strand<io_context::executor_type> s1 = make_strand(ioc);
+
+  // Converting constructors.
+
+  strand<executor> s2(s1);
+  strand<executor> s3 = strand<io_context::executor_type>(s1);
+
+  // Converting assignment.
+
+  s3 = s1;
+  s3 = strand<io_context::executor_type>(s1);
+}
+
 BOOST_ASIO_TEST_SUITE
 (
   "strand",
   BOOST_ASIO_TEST_CASE(strand_test)
+  BOOST_ASIO_COMPILE_TEST_CASE(strand_conversion_test)
 )

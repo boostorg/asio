@@ -2,7 +2,7 @@
 // async_result.hpp
 // ~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2019 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2020 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -66,9 +66,10 @@ BOOST_ASIO_CONCEPT completion_signature =
 #define BOOST_ASIO_COMPLETION_SIGNATURE \
   ::boost::asio::completion_signature
 
-template <typename T, completion_signature Signature>
+template <typename T, typename Signature>
 BOOST_ASIO_CONCEPT completion_handler_for =
-  detail::is_completion_handler_for<T, Signature>::value;
+  detail::is_completion_signature<Signature>::value
+    && detail::is_completion_handler_for<T, Signature>::value;
 
 #define BOOST_ASIO_COMPLETION_HANDLER_FOR(s) \
   ::boost::asio::completion_handler_for<s>
@@ -488,11 +489,14 @@ struct initiation_archetype
 
 } // namespace detail
 
-template <typename T, completion_signature Signature>
-BOOST_ASIO_CONCEPT completion_token_for = requires(T&& t)
-{
-  async_initiate<T, Signature>(detail::initiation_archetype<Signature>{}, t);
-};
+template <typename T, typename Signature>
+BOOST_ASIO_CONCEPT completion_token_for =
+  detail::is_completion_signature<Signature>::value
+  &&
+  requires(T&& t)
+  {
+    async_initiate<T, Signature>(detail::initiation_archetype<Signature>{}, t);
+  };
 
 #define BOOST_ASIO_COMPLETION_TOKEN_FOR(s) \
   ::boost::asio::completion_token_for<s>

@@ -1,5 +1,5 @@
 [/
- / Copyright (c) 2003-2019 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+ / Copyright (c) 2003-2020 Christopher M. Kohlhoff (chris at kohlhoff dot com)
  /
  / Distributed under the Boost Software License, Version 1.0. (See accompanying
  / file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -135,7 +135,7 @@ Next: [link boost_asio.tutorial.tuttimer2 Timer.2 - Using a timer asynchronously
   ``''''''``// timer.cpp
   ``''''''``// ~~~~~~~~~
   ``''''''``//
-  ``''''''``// Copyright (c) 2003-2019 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+  ``''''''``// Copyright (c) 2003-2020 Christopher M. Kohlhoff (chris at kohlhoff dot com)
   ``''''''``//
   ``''''''``// Distributed under the Boost Software License, Version 1.0. (See accompanying
   ``''''''``// file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -233,7 +233,7 @@ Next: [link boost_asio.tutorial.tuttimer3 Timer.3 - Binding arguments to a handl
   ``''''''``// timer.cpp
   ``''''''``// ~~~~~~~~~
   ``''''''``//
-  ``''''''``// Copyright (c) 2003-2019 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+  ``''''''``// Copyright (c) 2003-2020 Christopher M. Kohlhoff (chris at kohlhoff dot com)
   ``''''''``//
   ``''''''``// Distributed under the Boost Software License, Version 1.0. (See accompanying
   ``''''''``// file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -276,7 +276,7 @@ In this tutorial we will modify the program from tutorial Timer.2 so that the ti
 
   ``''''''``#include <iostream>
   ``''''''``#include <boost/asio.hpp>
-  ``''''''``#include <boost/bind.hpp>
+  ``''''''``#include <boost/bind/bind.hpp>
 
 
 
@@ -379,7 +379,7 @@ Next: [link boost_asio.tutorial.tuttimer4 Timer.4 - Using a member function as a
   ``''''''``// timer.cpp
   ``''''''``// ~~~~~~~~~
   ``''''''``//
-  ``''''''``// Copyright (c) 2003-2019 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+  ``''''''``// Copyright (c) 2003-2020 Christopher M. Kohlhoff (chris at kohlhoff dot com)
   ``''''''``//
   ``''''''``// Distributed under the Boost Software License, Version 1.0. (See accompanying
   ``''''''``// file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -387,7 +387,7 @@ Next: [link boost_asio.tutorial.tuttimer4 Timer.4 - Using a member function as a
 
   ``''''''``#include <iostream>
   ``''''''``#include <boost/asio.hpp>
-  ``''''''``#include <boost/bind.hpp>
+  ``''''''``#include <boost/bind/bind.hpp>
 
   ``''''''``void print(const boost::system::error_code& /*e*/,
   ``''''''``    boost::asio::steady_timer* t, int* count)
@@ -436,7 +436,7 @@ In this tutorial we will see how to use a class member function as a callback ha
 
   ``''''''``#include <iostream>
   ``''''''``#include <boost/asio.hpp>
-  ``''''''``#include <boost/bind.hpp>
+  ``''''''``#include <boost/bind/bind.hpp>
 
 
 
@@ -538,7 +538,7 @@ Next: [link boost_asio.tutorial.tuttimer5 Timer.5 - Synchronising handlers in mu
   ``''''''``// timer.cpp
   ``''''''``// ~~~~~~~~~
   ``''''''``//
-  ``''''''``// Copyright (c) 2003-2019 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+  ``''''''``// Copyright (c) 2003-2020 Christopher M. Kohlhoff (chris at kohlhoff dot com)
   ``''''''``//
   ``''''''``// Distributed under the Boost Software License, Version 1.0. (See accompanying
   ``''''''``// file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -546,7 +546,7 @@ Next: [link boost_asio.tutorial.tuttimer5 Timer.5 - Synchronising handlers in mu
 
   ``''''''``#include <iostream>
   ``''''''``#include <boost/asio.hpp>
-  ``''''''``#include <boost/bind.hpp>
+  ``''''''``#include <boost/bind/bind.hpp>
 
   ``''''''``class printer
   ``''''''``{
@@ -622,7 +622,7 @@ If you find yourself running into these limitations, an alternative approach is 
   ``''''''``#include <iostream>
   ``''''''``#include <boost/asio.hpp>
   ``''''''``#include <boost/thread/thread.hpp>
-  ``''''''``#include <boost/bind.hpp>
+  ``''''''``#include <boost/bind/bind.hpp>
 
 
 
@@ -749,7 +749,7 @@ Previous: [link boost_asio.tutorial.tuttimer4 Timer.4 - Using a member function 
   ``''''''``// timer.cpp
   ``''''''``// ~~~~~~~~~
   ``''''''``//
-  ``''''''``// Copyright (c) 2003-2019 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+  ``''''''``// Copyright (c) 2003-2020 Christopher M. Kohlhoff (chris at kohlhoff dot com)
   ``''''''``//
   ``''''''``// Distributed under the Boost Software License, Version 1.0. (See accompanying
   ``''''''``// file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -758,7 +758,7 @@ Previous: [link boost_asio.tutorial.tuttimer4 Timer.4 - Using a member function 
   ``''''''``#include <iostream>
   ``''''''``#include <boost/asio.hpp>
   ``''''''``#include <boost/thread/thread.hpp>
-  ``''''''``#include <boost/bind.hpp>
+  ``''''''``#include <boost/bind/bind.hpp>
 
   ``''''''``class printer
   ``''''''``{
@@ -938,7 +938,7 @@ Next: [link boost_asio.tutorial.tutdaytime2 Daytime.2 - A synchronous TCP daytim
   ``''''''``// client.cpp
   ``''''''``// ~~~~~~~~~~
   ``''''''``//
-  ``''''''``// Copyright (c) 2003-2019 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+  ``''''''``// Copyright (c) 2003-2020 Christopher M. Kohlhoff (chris at kohlhoff dot com)
   ``''''''``//
   ``''''''``// Distributed under the Boost Software License, Version 1.0. (See accompanying
   ``''''''``// file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -1097,7 +1097,7 @@ Next: [link boost_asio.tutorial.tutdaytime3 Daytime.3 - An asynchronous TCP dayt
   ``''''''``// server.cpp
   ``''''''``// ~~~~~~~~~~
   ``''''''``//
-  ``''''''``// Copyright (c) 2003-2019 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+  ``''''''``// Copyright (c) 2003-2020 Christopher M. Kohlhoff (chris at kohlhoff dot com)
   ``''''''``//
   ``''''''``// Distributed under the Boost Software License, Version 1.0. (See accompanying
   ``''''''``// file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -1350,7 +1350,7 @@ Next: [link boost_asio.tutorial.tutdaytime4 Daytime.4 - A synchronous UDP daytim
   ``''''''``// server.cpp
   ``''''''``// ~~~~~~~~~~
   ``''''''``//
-  ``''''''``// Copyright (c) 2003-2019 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+  ``''''''``// Copyright (c) 2003-2020 Christopher M. Kohlhoff (chris at kohlhoff dot com)
   ``''''''``//
   ``''''''``// Distributed under the Boost Software License, Version 1.0. (See accompanying
   ``''''''``// file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -1359,7 +1359,7 @@ Next: [link boost_asio.tutorial.tutdaytime4 Daytime.4 - A synchronous UDP daytim
   ``''''''``#include <ctime>
   ``''''''``#include <iostream>
   ``''''''``#include <string>
-  ``''''''``#include <boost/bind.hpp>
+  ``''''''``#include <boost/bind/bind.hpp>
   ``''''''``#include <boost/shared_ptr.hpp>
   ``''''''``#include <boost/enable_shared_from_this.hpp>
   ``''''''``#include <boost/asio.hpp>
@@ -1561,7 +1561,7 @@ Next: [link boost_asio.tutorial.tutdaytime5 Daytime.5 - A synchronous UDP daytim
   ``''''''``// client.cpp
   ``''''''``// ~~~~~~~~~~
   ``''''''``//
-  ``''''''``// Copyright (c) 2003-2019 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+  ``''''''``// Copyright (c) 2003-2020 Christopher M. Kohlhoff (chris at kohlhoff dot com)
   ``''''''``//
   ``''''''``// Distributed under the Boost Software License, Version 1.0. (See accompanying
   ``''''''``// file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -1645,7 +1645,6 @@ Wait for a client to initiate contact with us. The remote\_endpoint object will 
   ``''''''``    {
   ``''''''``      boost::array<char, 1> recv_buf;
   ``''''''``      udp::endpoint remote_endpoint;
-  ``''''''``      boost::system::error_code error;
   ``''''''``      socket.receive_from(boost::asio::buffer(recv_buf), remote_endpoint);
 
 
@@ -1700,7 +1699,7 @@ Next: [link boost_asio.tutorial.tutdaytime6 Daytime.6 - An asynchronous UDP dayt
   ``''''''``// server.cpp
   ``''''''``// ~~~~~~~~~~
   ``''''''``//
-  ``''''''``// Copyright (c) 2003-2019 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+  ``''''''``// Copyright (c) 2003-2020 Christopher M. Kohlhoff (chris at kohlhoff dot com)
   ``''''''``//
   ``''''''``// Distributed under the Boost Software License, Version 1.0. (See accompanying
   ``''''''``// file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -1733,7 +1732,6 @@ Next: [link boost_asio.tutorial.tutdaytime6 Daytime.6 - An asynchronous UDP dayt
   ``''''''``    {
   ``''''''``      boost::array<char, 1> recv_buf;
   ``''''''``      udp::endpoint remote_endpoint;
-  ``''''''``      boost::system::error_code error;
   ``''''''``      socket.receive_from(boost::asio::buffer(recv_buf), remote_endpoint);
 
   ``''''''``      std::string message = make_daytime_string();
@@ -1914,7 +1912,7 @@ Next: [link boost_asio.tutorial.tutdaytime7 Daytime.7 - A combined TCP/UDP async
   ``''''''``// server.cpp
   ``''''''``// ~~~~~~~~~~
   ``''''''``//
-  ``''''''``// Copyright (c) 2003-2019 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+  ``''''''``// Copyright (c) 2003-2020 Christopher M. Kohlhoff (chris at kohlhoff dot com)
   ``''''''``//
   ``''''''``// Distributed under the Boost Software License, Version 1.0. (See accompanying
   ``''''''``// file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -1924,7 +1922,7 @@ Next: [link boost_asio.tutorial.tutdaytime7 Daytime.7 - A combined TCP/UDP async
   ``''''''``#include <iostream>
   ``''''''``#include <string>
   ``''''''``#include <boost/array.hpp>
-  ``''''''``#include <boost/bind.hpp>
+  ``''''''``#include <boost/bind/bind.hpp>
   ``''''''``#include <boost/shared_ptr.hpp>
   ``''''''``#include <boost/asio.hpp>
 
@@ -2195,7 +2193,7 @@ Previous: [link boost_asio.tutorial.tutdaytime6 Daytime.6 - An asynchronous UDP 
   ``''''''``// server.cpp
   ``''''''``// ~~~~~~~~~~
   ``''''''``//
-  ``''''''``// Copyright (c) 2003-2019 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+  ``''''''``// Copyright (c) 2003-2020 Christopher M. Kohlhoff (chris at kohlhoff dot com)
   ``''''''``//
   ``''''''``// Distributed under the Boost Software License, Version 1.0. (See accompanying
   ``''''''``// file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -2205,7 +2203,7 @@ Previous: [link boost_asio.tutorial.tutdaytime6 Daytime.6 - An asynchronous UDP 
   ``''''''``#include <iostream>
   ``''''''``#include <string>
   ``''''''``#include <boost/array.hpp>
-  ``''''''``#include <boost/bind.hpp>
+  ``''''''``#include <boost/bind/bind.hpp>
   ``''''''``#include <boost/shared_ptr.hpp>
   ``''''''``#include <boost/enable_shared_from_this.hpp>
   ``''''''``#include <boost/asio.hpp>
