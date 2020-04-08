@@ -20,7 +20,7 @@
 
 #if defined(BOOST_ASIO_HAS_BOOST_DATE_TIME)
 
-#include <boost/bind.hpp>
+#include <boost/bind/bind.hpp>
 #include "archetypes/async_result.hpp"
 #include <boost/asio/executor_work_guard.hpp>
 #include <boost/asio/io_context.hpp>

@@ -10,7 +10,7 @@
 
 #include <cstdlib>
 #include <iostream>
-#include <boost/bind.hpp>
+#include <boost/bind/bind.hpp>
 #include <boost/asio.hpp>
 #include <boost/asio/ssl.hpp>
 
@@ -26,7 +26,8 @@ public:
   {
     socket_.set_verify_mode(boost::asio::ssl::verify_peer);
     socket_.set_verify_callback(
-        boost::bind(&client::verify_certificate, this, _1, _2));
+        boost::bind(&client::verify_certificate, this,
+          boost::placeholders::_1, boost::placeholders::_2));
 
     boost::asio::async_connect(socket_.lowest_layer(), endpoints,
         boost::bind(&client::handle_connect, this,

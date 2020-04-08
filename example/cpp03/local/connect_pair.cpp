@@ -14,7 +14,7 @@
 #include <boost/asio.hpp>
 #include <boost/thread/thread.hpp>
 #include <boost/array.hpp>
-#include <boost/bind.hpp>
+#include <boost/bind/bind.hpp>
 
 #if defined(BOOST_ASIO_HAS_LOCAL_SOCKETS)
 

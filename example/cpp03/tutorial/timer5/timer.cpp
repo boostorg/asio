@@ -11,7 +11,7 @@
 #include <iostream>
 #include <boost/asio.hpp>
 #include <boost/thread/thread.hpp>
-#include <boost/bind.hpp>
+#include <boost/bind/bind.hpp>
 
 class printer
 {

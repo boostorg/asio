@@ -12,7 +12,7 @@
 #include <cstring>
 #include <iostream>
 #include <boost/array.hpp>
-#include <boost/bind.hpp>
+#include <boost/bind/bind.hpp>
 #include <boost/asio.hpp>
 #include "chat_message.hpp"
 

@@ -11,7 +11,7 @@
 #include <cstdlib>
 #include <deque>
 #include <iostream>
-#include <boost/bind.hpp>
+#include <boost/bind/bind.hpp>
 #include <boost/asio.hpp>
 #include <boost/thread/thread.hpp>
 #include "chat_message.hpp"

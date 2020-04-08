@@ -276,7 +276,7 @@ In this tutorial we will modify the program from tutorial Timer.2 so that the ti
 
   ``''''''``#include <iostream>
   ``''''''``#include <boost/asio.hpp>
-  ``''''''``#include <boost/bind.hpp>
+  ``''''''``#include <boost/bind/bind.hpp>
 
 
 
@@ -387,7 +387,7 @@ Next: [link boost_asio.tutorial.tuttimer4 Timer.4 - Using a member function as a
 
   ``''''''``#include <iostream>
   ``''''''``#include <boost/asio.hpp>
-  ``''''''``#include <boost/bind.hpp>
+  ``''''''``#include <boost/bind/bind.hpp>
 
   ``''''''``void print(const boost::system::error_code& /*e*/,
   ``''''''``    boost::asio::steady_timer* t, int* count)
@@ -436,7 +436,7 @@ In this tutorial we will see how to use a class member function as a callback ha
 
   ``''''''``#include <iostream>
   ``''''''``#include <boost/asio.hpp>
-  ``''''''``#include <boost/bind.hpp>
+  ``''''''``#include <boost/bind/bind.hpp>
 
 
 
@@ -546,7 +546,7 @@ Next: [link boost_asio.tutorial.tuttimer5 Timer.5 - Synchronising handlers in mu
 
   ``''''''``#include <iostream>
   ``''''''``#include <boost/asio.hpp>
-  ``''''''``#include <boost/bind.hpp>
+  ``''''''``#include <boost/bind/bind.hpp>
 
   ``''''''``class printer
   ``''''''``{
@@ -622,7 +622,7 @@ If you find yourself running into these limitations, an alternative approach is 
   ``''''''``#include <iostream>
   ``''''''``#include <boost/asio.hpp>
   ``''''''``#include <boost/thread/thread.hpp>
-  ``''''''``#include <boost/bind.hpp>
+  ``''''''``#include <boost/bind/bind.hpp>
 
 
 
@@ -758,7 +758,7 @@ Previous: [link boost_asio.tutorial.tuttimer4 Timer.4 - Using a member function 
   ``''''''``#include <iostream>
   ``''''''``#include <boost/asio.hpp>
   ``''''''``#include <boost/thread/thread.hpp>
-  ``''''''``#include <boost/bind.hpp>
+  ``''''''``#include <boost/bind/bind.hpp>
 
   ``''''''``class printer
   ``''''''``{
@@ -1359,7 +1359,7 @@ Next: [link boost_asio.tutorial.tutdaytime4 Daytime.4 - A synchronous UDP daytim
   ``''''''``#include <ctime>
   ``''''''``#include <iostream>
   ``''''''``#include <string>
-  ``''''''``#include <boost/bind.hpp>
+  ``''''''``#include <boost/bind/bind.hpp>
   ``''''''``#include <boost/shared_ptr.hpp>
   ``''''''``#include <boost/enable_shared_from_this.hpp>
   ``''''''``#include <boost/asio.hpp>
@@ -1924,7 +1924,7 @@ Next: [link boost_asio.tutorial.tutdaytime7 Daytime.7 - A combined TCP/UDP async
   ``''''''``#include <iostream>
   ``''''''``#include <string>
   ``''''''``#include <boost/array.hpp>
-  ``''''''``#include <boost/bind.hpp>
+  ``''''''``#include <boost/bind/bind.hpp>
   ``''''''``#include <boost/shared_ptr.hpp>
   ``''''''``#include <boost/asio.hpp>
 
@@ -2205,7 +2205,7 @@ Previous: [link boost_asio.tutorial.tutdaytime6 Daytime.6 - An asynchronous UDP 
   ``''''''``#include <iostream>
   ``''''''``#include <string>
   ``''''''``#include <boost/array.hpp>
-  ``''''''``#include <boost/bind.hpp>
+  ``''''''``#include <boost/bind/bind.hpp>
   ``''''''``#include <boost/shared_ptr.hpp>
   ``''''''``#include <boost/enable_shared_from_this.hpp>
   ``''''''``#include <boost/asio.hpp>
