@@ -80,6 +80,7 @@ private:
         {
           if (!error)
           {
+            receive_response(10);   //Set a default packet length for test
             send_request();
           }
           else
@@ -101,7 +102,8 @@ private:
         {
           if (!error)
           {
-            receive_response(length);
+            //receive_response(length);
+            send_request();
           }
           else
           {
@@ -121,6 +123,7 @@ private:
             std::cout << "Reply: ";
             std::cout.write(reply_, length);
             std::cout << "\n";
+            receive_response(10);
           }
           else
           {
