@@ -42,7 +42,7 @@
 #if defined(BOOST_ASIO_HEADER_ONLY)
 # define BOOST_ASIO_DECL inline
 #else // defined(BOOST_ASIO_HEADER_ONLY)
-# if defined(_MSC_VER) || ((defined(__BORLANDC__) || defined(__CODEGEARC__)) && !defined(__clang__))
+# if defined(_MSC_VER) || defined(__BORLANDC__) || defined(__CODEGEARC__)
 // We need to import/export our code only if the user has specifically asked
 // for it by defining BOOST_ASIO_DYN_LINK.
 #  if defined(BOOST_ASIO_DYN_LINK)
@@ -53,7 +53,7 @@
 #    define BOOST_ASIO_DECL __declspec(dllimport)
 #   endif // defined(BOOST_ASIO_SOURCE)
 #  endif // defined(BOOST_ASIO_DYN_LINK)
-# endif // defined(_MSC_VER) || ((defined(__BORLANDC__) || defined(__CODEGEARC__)) && !defined(__clang__))
+# endif // defined(_MSC_VER) || defined(__BORLANDC__) || defined(__CODEGEARC__)
 #endif // defined(BOOST_ASIO_HEADER_ONLY)
 
 // If BOOST_ASIO_DECL isn't defined yet define it now.
@@ -987,7 +987,7 @@
 #   endif // !defined(_WINSOCK2API_)
 #  endif // defined(_WIN32) && !defined(WIN32)
 # endif // defined(_MSC_VER)
-# if defined(__BORLANDC__) && !defined(__clang__)
+# if defined(__BORLANDC__)
 #  if defined(__WIN32__) && !defined(WIN32)
 #   if !defined(_WINSOCK2API_)
 #    define WIN32 // Needed for correct types in winsock2.h
@@ -995,7 +995,7 @@
 #    error Please define the macro WIN32 in your compiler options
 #   endif // !defined(_WINSOCK2API_)
 #  endif // defined(__WIN32__) && !defined(WIN32)
-# endif // defined(__BORLANDC__) && !defined(__clang__)
+# endif // defined(__BORLANDC__)
 # if defined(__CYGWIN__)
 #  if !defined(__USE_W32_SOCKETS)
 #   error You must add -D__USE_W32_SOCKETS to your compiler options.
