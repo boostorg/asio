@@ -2,7 +2,7 @@
 // posix/basic_stream_descriptor.hpp
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2019 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2020 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -145,7 +145,7 @@ public:
    * constructed using the @c basic_stream_descriptor(const executor_type&)
    * constructor.
    */
-  basic_stream_descriptor(basic_stream_descriptor&& other)
+  basic_stream_descriptor(basic_stream_descriptor&& other) BOOST_ASIO_NOEXCEPT
     : descriptor(std::move(other))
   {
   }

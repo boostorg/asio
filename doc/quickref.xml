@@ -2,7 +2,7 @@
 <!DOCTYPE library PUBLIC "-//Boost//DTD BoostBook XML V1.0//EN" "../../../tools/boostbook/dtd/boostbook.dtd">
 
 <!--
-  Copyright (c) 2003-2019 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+  Copyright (c) 2003-2020 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 
   Distributed under the Boost Software License, Version 1.0. (See accompanying
   file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -430,7 +430,8 @@
           <simplelist type="vert" columns="1">
             <member><link linkend="boost_asio.reference.ssl__context">ssl::context</link></member>
             <member><link linkend="boost_asio.reference.ssl__context_base">ssl::context_base</link></member>
-            <member><link linkend="boost_asio.reference.ssl__rfc2818_verification">ssl::rfc2818_verification</link></member>
+            <member><link linkend="boost_asio.reference.ssl__host_name_verification">ssl::host_name_verification</link></member>
+            <member><link linkend="boost_asio.reference.ssl__rfc2818_verification">ssl::rfc2818_verification</link> (deprecated)</member>
             <member><link linkend="boost_asio.reference.ssl__stream_base">ssl::stream_base</link></member>
             <member><link linkend="boost_asio.reference.ssl__verify_context">ssl::verify_context</link></member>
           </simplelist>

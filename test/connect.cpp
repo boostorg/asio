@@ -2,7 +2,7 @@
 // connect.cpp
 // ~~~~~~~~~~~
 //
-// Copyright (c) 2003-2019 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2020 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -21,7 +21,7 @@
 #include <boost/asio/ip/tcp.hpp>
 
 #if defined(BOOST_ASIO_HAS_BOOST_BIND)
-# include <boost/bind.hpp>
+# include <boost/bind/bind.hpp>
 #else // defined(BOOST_ASIO_HAS_BOOST_BIND)
 # include <functional>
 #endif // defined(BOOST_ASIO_HAS_BOOST_BIND)
@@ -32,9 +32,9 @@
 namespace bindns = boost;
 #else // defined(BOOST_ASIO_HAS_BOOST_BIND)
 namespace bindns = std;
-using std::placeholders::_1;
-using std::placeholders::_2;
 #endif // defined(BOOST_ASIO_HAS_BOOST_BIND)
+using bindns::placeholders::_1;
+using bindns::placeholders::_2;
 
 class connection_sink
 {
