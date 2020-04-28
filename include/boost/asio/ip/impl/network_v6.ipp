@@ -102,7 +102,7 @@ std::string network_v6::to_string(boost::system::error_code& ec) const
 #if defined(BOOST_ASIO_HAS_SECURE_RTL)
   sprintf_s(prefix_len, sizeof(prefix_len), "/%u", prefix_length_);
 #else // defined(BOOST_ASIO_HAS_SECURE_RTL)
-  sprintf(prefix_len, "/%u", prefix_length_);
+  std::sprintf(prefix_len, "/%u", prefix_length_);
 #endif // defined(BOOST_ASIO_HAS_SECURE_RTL)
   return address_.to_string() + prefix_len;
 }

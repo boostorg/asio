@@ -887,6 +887,13 @@
 # endif // !defined(BOOST_ASIO_DISABLE_STD_EXPERIMENTAL_STRING_VIEW)
 #endif // !defined(BOOST_ASIO_HAS_STD_EXPERIMENTAL_STRING_VIEW)
 
+#if defined(__VXWORKS__)
+// gcc 8 provides the headers but they are not used in VxWorks
+// clang does not provide them.
+#undef BOOST_ASIO_HAS_STD_STRING_VIEW
+#undef BOOST_ASIO_HAS_STD_EXPERIMENTAL_STRING_VIEW
+#endif
+
 // Standard library has a string_view that we can use.
 #if !defined(BOOST_ASIO_HAS_STRING_VIEW)
 # if !defined(BOOST_ASIO_DISABLE_STRING_VIEW)
@@ -1172,7 +1179,8 @@
 # if !defined(BOOST_ASIO_DISABLE_POSIX_STREAM_DESCRIPTOR)
 #  if !defined(BOOST_ASIO_WINDOWS) \
   && !defined(BOOST_ASIO_WINDOWS_RUNTIME) \
-  && !defined(__CYGWIN__)
+  && !defined(__CYGWIN__) \
+  && (defined(BOOST_ASIO_HAS_DEV_POLL) || defined(BOOST_ASIO_HAS_DEV_EPOLL))
 #   define BOOST_ASIO_HAS_POSIX_STREAM_DESCRIPTOR 1
 #  endif // !defined(BOOST_ASIO_WINDOWS)
          //   && !defined(BOOST_ASIO_WINDOWS_RUNTIME)

@@ -141,8 +141,10 @@ public:
       boost::system::error_code& ec)
   {
     errno = 0;
+#ifndef __VXWORKS__
     descriptor_ops::error_wrapper(::tcsendbreak(
           descriptor_service_.native_handle(impl), 0), ec);
+#endif
     return ec;
   }
 

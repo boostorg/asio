@@ -21,7 +21,7 @@
 #if defined(BOOST_ASIO_HAS_SERIAL_PORT) \
   || defined(GENERATING_DOCUMENTATION)
 
-#if !defined(BOOST_ASIO_WINDOWS) && !defined(__CYGWIN__)
+#if !defined(BOOST_ASIO_WINDOWS) && !defined(__CYGWIN__) && !defined(__VXWORKS__)
 # include <termios.h>
 #endif // !defined(BOOST_ASIO_WINDOWS) && !defined(__CYGWIN__)
 
@@ -34,6 +34,14 @@
 # define BOOST_ASIO_OPTION_STORAGE DCB
 #else
 # define BOOST_ASIO_OPTION_STORAGE termios
+#ifdef __VXWORKS__
+struct termios
+      {
+       unsigned int c_cflag;
+       unsigned int tty_iflag;
+       unsigned int BaudRate;
+      };
+#endif
 #endif
 
 #include <boost/asio/detail/push_options.hpp>

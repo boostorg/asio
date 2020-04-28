@@ -33,6 +33,11 @@
 # define BOOST_ASIO_OPTION_STORAGE termios
 #endif
 
+#ifdef __VXWORKS__
+#include <sioLib.h>
+#define CSTOPB  STOPB
+#endif
+
 #include <boost/asio/detail/push_options.hpp>
 
 namespace boost {
@@ -41,7 +46,7 @@ namespace asio {
 BOOST_ASIO_SYNC_OP_VOID serial_port_base::baud_rate::store(
     BOOST_ASIO_OPTION_STORAGE& storage, boost::system::error_code& ec) const
 {
-#if defined(BOOST_ASIO_WINDOWS) || defined(__CYGWIN__)
+#if defined(BOOST_ASIO_WINDOWS) || defined(__CYGWIN__) || defined (__VXWORKS__)
   storage.BaudRate = value_;
 #else
   speed_t baud;
@@ -128,8 +133,8 @@ BOOST_ASIO_SYNC_OP_VOID serial_port_base::baud_rate::store(
 BOOST_ASIO_SYNC_OP_VOID serial_port_base::baud_rate::load(
     const BOOST_ASIO_OPTION_STORAGE& storage, boost::system::error_code& ec)
 {
-#if defined(BOOST_ASIO_WINDOWS) || defined(__CYGWIN__)
-  value_ = storage.BaudRate;
+#if defined(BOOST_ASIO_WINDOWS) || defined(__CYGWIN__) || defined (__VXWORKS__)
+    value_ = storage.BaudRate;
 #else
   speed_t baud = ::cfgetospeed(&storage);
   switch (baud)
@@ -245,6 +250,24 @@ BOOST_ASIO_SYNC_OP_VOID serial_port_base::flow_control::store(
   default:
     break;
   }
+#elif defined(__VXWORKS__)
+  switch (value_)
+  {
+  case none:
+      storage.c_cflag &= ~(CLOCAL);
+      storage.tty_iflag &= ~(OPT_TANDEM);
+    break;
+  case software:
+    storage.c_cflag &= ~(CLOCAL);
+    storage.tty_iflag |= OPT_TANDEM;
+    break;
+  case hardware:
+    storage.c_cflag &= CLOCAL;
+    storage.tty_iflag &= ~(OPT_TANDEM);
+    break;
+  default:
+    break;
+  }
 #else
   switch (value_)
   {
@@ -294,6 +317,19 @@ BOOST_ASIO_SYNC_OP_VOID serial_port_base::flow_control::load(
     value_ = software;
   }
   else if (storage.fOutxCtsFlow && storage.fRtsControl == RTS_CONTROL_HANDSHAKE)
+  {
+    value_ = hardware;
+  }
+  else
+  {
+    value_ = none;
+  }
+#elif  defined(__VXWORKS__)
+  if (storage.tty_iflag & OPT_TANDEM)
+  {
+    value_ = software;
+  }
+  else if (storage.c_cflag & CLOCAL)
   {
     value_ = hardware;
   }
@@ -353,6 +389,22 @@ BOOST_ASIO_SYNC_OP_VOID serial_port_base::parity::store(
   case even:
     storage.fParity = TRUE;
     storage.Parity = EVENPARITY;
+    break;
+  default:
+    break;
+  }
+#elif  defined(__VXWORKS__)
+  switch (value_)
+  {
+  case none:
+    storage.c_cflag &= ~(PARENB | PARODD);
+    break;
+  case even:
+    storage.c_cflag |= PARENB;
+    storage.c_cflag &= ~PARODD;
+    break;
+  case odd:
+    storage.c_cflag |= (PARENB | PARODD);
     break;
   default:
     break;
