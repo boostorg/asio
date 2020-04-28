@@ -614,7 +614,7 @@ inline void asio_handler_invoke(Function& f,
 {
   typename promise_handler<Signature, Allocator>::executor_type
     ex(h->get_executor());
-  ex.dispatch(BOOST_ASIO_MOVE_CAST(Function)(f), std::allocator<void>());
+  ex.dispatch(BOOST_ASIO_MOVE_CAST(Function)(f), std::allocator<detail::none>());
 }
 
 template <typename Function, typename Signature, typename Allocator>
@@ -623,7 +623,7 @@ inline void asio_handler_invoke(const Function& f,
 {
   typename promise_handler<Signature, Allocator>::executor_type
     ex(h->get_executor());
-  ex.dispatch(f, std::allocator<void>());
+  ex.dispatch(f, std::allocator<detail::none>());
 }
 
 // Helper base class for async_result specialisation.
@@ -727,7 +727,7 @@ inline void asio_handler_invoke(Function& f,
 {
   typename packaged_handler<Function1, Allocator, Result>::executor_type
     ex(h->get_executor());
-  ex.dispatch(BOOST_ASIO_MOVE_CAST(Function)(f), std::allocator<void>());
+  ex.dispatch(BOOST_ASIO_MOVE_CAST(Function)(f), std::allocator<detail::none>());
 }
 
 template <typename Function,
@@ -737,7 +737,7 @@ inline void asio_handler_invoke(const Function& f,
 {
   typename packaged_handler<Function1, Allocator, Result>::executor_type
     ex(h->get_executor());
-  ex.dispatch(f, std::allocator<void>());
+  ex.dispatch(f, std::allocator<detail::none>());
 }
 
 // Helper base class for async_result specialisation.
