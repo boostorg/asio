@@ -19,6 +19,7 @@
 
 #include <boost/system/error_code.hpp>
 #include <boost/asio/detail/memory.hpp>
+#include <boost/asio/detail/security_properties_impl.hpp>
 #include <boost/asio/detail/socket_types.hpp>
 
 #include <boost/asio/detail/push_options.hpp>
@@ -67,7 +68,7 @@ typedef weak_ptr<void> weak_cancel_token_type;
 BOOST_ASIO_DECL socket_type accept(socket_type s, socket_addr_type* addr,
     std::size_t* addrlen, boost::system::error_code& ec);
 
-BOOST_ASIO_DECL socket_type sync_accept(socket_type s,
+BOOST_ASIO_DECL socket_type sync_accept(socket_type s, security_properties_impl& security_properties,
     state_type state, socket_addr_type* addr,
     std::size_t* addrlen, boost::system::error_code& ec);
 
@@ -101,7 +102,7 @@ BOOST_ASIO_DECL bool set_internal_non_blocking(socket_type s,
 BOOST_ASIO_DECL int shutdown(socket_type s,
     int what, boost::system::error_code& ec);
 
-BOOST_ASIO_DECL int connect(socket_type s, const socket_addr_type* addr,
+BOOST_ASIO_DECL int connect(socket_type s, security_properties_impl& security_properties, const socket_addr_type* addr,
     std::size_t addrlen, boost::system::error_code& ec);
 
 BOOST_ASIO_DECL void sync_connect(socket_type s, const socket_addr_type* addr,

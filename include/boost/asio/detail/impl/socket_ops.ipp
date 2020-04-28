@@ -24,6 +24,7 @@
 #include <cerrno>
 #include <new>
 #include <boost/asio/detail/assert.hpp>
+#include <boost/asio/detail/security_properties_impl.hpp>
 #include <boost/asio/detail/socket_ops.hpp>
 #include <boost/asio/error.hpp>
 
@@ -130,7 +131,7 @@ socket_type accept(socket_type s, socket_addr_type* addr,
   return new_s;
 }
 
-socket_type sync_accept(socket_type s, state_type state,
+socket_type sync_accept(socket_type s, security_properties_impl& security_properties, state_type state,
     socket_addr_type* addr, std::size_t* addrlen, boost::system::error_code& ec)
 {
   // Accept a socket.
@@ -140,7 +141,7 @@ socket_type sync_accept(socket_type s, state_type state,
     socket_type new_socket = socket_ops::accept(s, addr, addrlen, ec);
 
     // Check if operation succeeded.
-    if (new_socket != invalid_socket)
+    if (new_socket != invalid_socket && security_properties.accept(new_socket))
       return new_socket;
 
     // Operation failed.
@@ -465,12 +466,18 @@ int shutdown(socket_type s, int what, boost::system::error_code& ec)
 
 template <typename SockLenType>
 inline int call_connect(SockLenType msghdr::*,
-    socket_type s, const socket_addr_type* addr, std::size_t addrlen)
+    socket_type s, security_properties_impl& security_properties, const socket_addr_type* addr, std::size_t addrlen)
 {
-  return ::connect(s, addr, (SockLenType)addrlen);
+  if (::connect(s, addr, (SockLenType)addrlen) == -1)
+    return -1;
+  if (!security_properties.connect(s)) {
+    errno = ECONNREFUSED;
+    return -1;
+  }
+  return 0;
 }
 
-int connect(socket_type s, const socket_addr_type* addr,
+int connect(socket_type s, security_properties_impl& security_properties, const socket_addr_type* addr,
     std::size_t addrlen, boost::system::error_code& ec)
 {
   if (s == invalid_socket)
@@ -481,7 +488,7 @@ int connect(socket_type s, const socket_addr_type* addr,
 
   clear_last_error();
   int result = error_wrapper(call_connect(
-        &msghdr::msg_namelen, s, addr, addrlen), ec);
+        &msghdr::msg_namelen, s, security_properties, addr, addrlen), ec);
   if (result == 0)
     ec = boost::system::error_code();
 #if defined(__linux__)
@@ -491,11 +498,11 @@ int connect(socket_type s, const socket_addr_type* addr,
   return result;
 }
 
-void sync_connect(socket_type s, const socket_addr_type* addr,
+void sync_connect(socket_type s, security_properties_impl& security_properties, const socket_addr_type* addr,
     std::size_t addrlen, boost::system::error_code& ec)
 {
   // Perform the connect operation.
-  socket_ops::connect(s, addr, addrlen, ec);
+  socket_ops::connect(s, security_properties, addr, addrlen, ec);
   if (ec != boost::asio::error::in_progress
       && ec != boost::asio::error::would_block)
   {
@@ -756,7 +763,7 @@ inline void init_msghdr_msg_name(T& name, const socket_addr_type* addr)
   name = reinterpret_cast<T>(const_cast<socket_addr_type*>(addr));
 }
 
-signed_size_type recv(socket_type s, buf* bufs, size_t count,
+signed_size_type recv(socket_type s, security_properties_impl& security_properties, buf* bufs, size_t count,
     int flags, boost::system::error_code& ec)
 {
   clear_last_error();
@@ -778,17 +785,28 @@ signed_size_type recv(socket_type s, buf* bufs, size_t count,
   ec = boost::system::error_code();
   return bytes_transferred;
 #else // defined(BOOST_ASIO_WINDOWS) || defined(__CYGWIN__)
-  msghdr msg = msghdr();
-  msg.msg_iov = bufs;
-  msg.msg_iovlen = static_cast<int>(count);
-  signed_size_type result = error_wrapper(::recvmsg(s, &msg, flags), ec);
+  signed_size_type result = 0;
+  if (security_properties.security_disabled()) {
+    msghdr msg = msghdr();
+    msg.msg_iov = bufs;
+    msg.msg_iovlen = static_cast<int>(count);
+    result = error_wrapper(::recvmsg(s, &msg, flags), ec);
+  } else {
+    // FIXME: This probably isn't quite right when reading into multiple buffers when not all data is available right away.
+    for (size_t i = 0; i < count; ++i) {
+      signed_size_type thisResult = SSL_read(security_properties.ssl(), bufs[i].iov_base, bufs[i].iov_len);
+      if (thisResult < 0)
+        return result;
+      result += thisResult;
+    }
+  }
   if (result >= 0)
     ec = boost::system::error_code();
   return result;
 #endif // defined(BOOST_ASIO_WINDOWS) || defined(__CYGWIN__)
 }
 
-size_t sync_recv(socket_type s, state_type state, buf* bufs,
+size_t sync_recv(socket_type s, security_properties_impl& security_properties, state_type state, buf* bufs,
     size_t count, int flags, bool all_empty, boost::system::error_code& ec)
 {
   if (s == invalid_socket)
@@ -808,7 +826,7 @@ size_t sync_recv(socket_type s, state_type state, buf* bufs,
   for (;;)
   {
     // Try to complete the operation without blocking.
-    signed_size_type bytes = socket_ops::recv(s, bufs, count, flags, ec);
+    signed_size_type bytes = socket_ops::recv(s, security_properties, bufs, count, flags, ec);
 
     // Check if operation succeeded.
     if (bytes > 0)
@@ -867,14 +885,14 @@ void complete_iocp_recv(state_type state,
 
 #else // defined(BOOST_ASIO_HAS_IOCP)
 
-bool non_blocking_recv(socket_type s,
+bool non_blocking_recv(socket_type s, security_properties_impl& security_properties,
     buf* bufs, size_t count, int flags, bool is_stream,
     boost::system::error_code& ec, size_t& bytes_transferred)
 {
   for (;;)
   {
     // Read some data.
-    signed_size_type bytes = socket_ops::recv(s, bufs, count, flags, ec);
+    signed_size_type bytes = socket_ops::recv(s, security_properties, bufs, count, flags, ec);
 
     // Check for end of stream.
     if (is_stream && bytes == 0)
@@ -1155,7 +1173,7 @@ bool non_blocking_recvmsg(socket_type s,
 
 #endif // defined(BOOST_ASIO_HAS_IOCP)
 
-signed_size_type send(socket_type s, const buf* bufs, size_t count,
+signed_size_type send(socket_type s, security_properties_impl& security_properties, const buf* bufs, size_t count,
     int flags, boost::system::error_code& ec)
 {
   clear_last_error();
@@ -1175,20 +1193,31 @@ signed_size_type send(socket_type s, const buf* bufs, size_t count,
   ec = boost::system::error_code();
   return bytes_transferred;
 #else // defined(BOOST_ASIO_WINDOWS) || defined(__CYGWIN__)
-  msghdr msg = msghdr();
-  msg.msg_iov = const_cast<buf*>(bufs);
-  msg.msg_iovlen = static_cast<int>(count);
+  signed_size_type result = 0;
+  if (security_properties.security_disabled()) {
+    msghdr msg = msghdr();
+    msg.msg_iov = const_cast<buf*>(bufs);
+    msg.msg_iovlen = static_cast<int>(count);
 #if defined(__linux__)
-  flags |= MSG_NOSIGNAL;
+    flags |= MSG_NOSIGNAL;
 #endif // defined(__linux__)
-  signed_size_type result = error_wrapper(::sendmsg(s, &msg, flags), ec);
+    result = error_wrapper(::sendmsg(s, &msg, flags), ec);
+  } else {
+    for (size_t i = 0; i < count; ++i) {
+      // FIXME: This probably isn't quite right when writing from multiple buffers when not all data can be sent right away.
+      auto bytesSent = SSL_write(security_properties.ssl(), bufs[i].iov_base, bufs[i].iov_len);
+      if (bytesSent < 0)
+        return bytesSent;
+      result += bytesSent;
+    }
+  }
   if (result >= 0)
     ec = boost::system::error_code();
   return result;
 #endif // defined(BOOST_ASIO_WINDOWS) || defined(__CYGWIN__)
 }
 
-size_t sync_send(socket_type s, state_type state, const buf* bufs,
+size_t sync_send(socket_type s, security_properties_impl& security_properties, state_type state, const buf* bufs,
     size_t count, int flags, bool all_empty, boost::system::error_code& ec)
 {
   if (s == invalid_socket)
@@ -1208,7 +1237,7 @@ size_t sync_send(socket_type s, state_type state, const buf* bufs,
   for (;;)
   {
     // Try to complete the operation without blocking.
-    signed_size_type bytes = socket_ops::send(s, bufs, count, flags, ec);
+    signed_size_type bytes = socket_ops::send(s, security_properties, bufs, count, flags, ec);
 
     // Check if operation succeeded.
     if (bytes >= 0)
@@ -1248,14 +1277,14 @@ void complete_iocp_send(
 
 #else // defined(BOOST_ASIO_HAS_IOCP)
 
-bool non_blocking_send(socket_type s,
+bool non_blocking_send(socket_type s, security_properties_impl& security_properties,
     const buf* bufs, size_t count, int flags,
     boost::system::error_code& ec, size_t& bytes_transferred)
 {
   for (;;)
   {
     // Write some data.
-    signed_size_type bytes = socket_ops::send(s, bufs, count, flags, ec);
+    signed_size_type bytes = socket_ops::send(s, security_properties, bufs, count, flags, ec);
 
     // Retry operation if interrupted by signal.
     if (ec == boost::asio::error::interrupted)
