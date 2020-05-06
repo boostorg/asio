@@ -32,12 +32,12 @@ namespace detail {
 class netdb_category : public boost::system::error_category
 {
 public:
-  const char* name() const BOOST_ASIO_ERROR_CATEGORY_NOEXCEPT
+  const char* name() const BOOST_ASIO_ERROR_CATEGORY_NOEXCEPT BOOST_OVERRIDE
   {
     return "asio.netdb";
   }
 
-  std::string message(int value) const
+  std::string message(int value) const BOOST_OVERRIDE
   {
     if (value == error::host_not_found)
       return "Host not found (authoritative)";
@@ -64,12 +64,12 @@ namespace detail {
 class addrinfo_category : public boost::system::error_category
 {
 public:
-  const char* name() const BOOST_ASIO_ERROR_CATEGORY_NOEXCEPT
+  const char* name() const BOOST_ASIO_ERROR_CATEGORY_NOEXCEPT BOOST_OVERRIDE
   {
     return "asio.addrinfo";
   }
 
-  std::string message(int value) const
+  std::string message(int value) const BOOST_OVERRIDE
   {
     if (value == error::service_not_found)
       return "Service not found";
@@ -94,12 +94,12 @@ namespace detail {
 class misc_category : public boost::system::error_category
 {
 public:
-  const char* name() const BOOST_ASIO_ERROR_CATEGORY_NOEXCEPT
+  const char* name() const BOOST_ASIO_ERROR_CATEGORY_NOEXCEPT BOOST_OVERRIDE
   {
     return "asio.misc";
   }
 
-  std::string message(int value) const
+  std::string message(int value) const BOOST_OVERRIDE
   {
     if (value == error::already_open)
       return "Already open";

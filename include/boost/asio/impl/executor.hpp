@@ -147,13 +147,13 @@ public:
   {
   }
 
-  impl_base* clone() const BOOST_ASIO_NOEXCEPT
+  impl_base* clone() const BOOST_ASIO_NOEXCEPT BOOST_OVERRIDE
   {
     ++ref_count_;
     return const_cast<impl_base*>(static_cast<const impl_base*>(this));
   }
 
-  void destroy() BOOST_ASIO_NOEXCEPT
+  void destroy() BOOST_ASIO_NOEXCEPT BOOST_OVERRIDE
   {
     if (--ref_count_ == 0)
     {
@@ -164,52 +164,52 @@ public:
     }
   }
 
-  void on_work_started() BOOST_ASIO_NOEXCEPT
+  void on_work_started() BOOST_ASIO_NOEXCEPT BOOST_OVERRIDE
   {
     executor_.on_work_started();
   }
 
-  void on_work_finished() BOOST_ASIO_NOEXCEPT
+  void on_work_finished() BOOST_ASIO_NOEXCEPT BOOST_OVERRIDE
   {
     executor_.on_work_finished();
   }
 
-  execution_context& context() BOOST_ASIO_NOEXCEPT
+  execution_context& context() BOOST_ASIO_NOEXCEPT BOOST_OVERRIDE
   {
     return executor_.context();
   }
 
-  void dispatch(BOOST_ASIO_MOVE_ARG(function) f)
+  void dispatch(BOOST_ASIO_MOVE_ARG(function) f) BOOST_OVERRIDE
   {
     executor_.dispatch(BOOST_ASIO_MOVE_CAST(function)(f), allocator_);
   }
 
-  void post(BOOST_ASIO_MOVE_ARG(function) f)
+  void post(BOOST_ASIO_MOVE_ARG(function) f) BOOST_OVERRIDE
   {
     executor_.post(BOOST_ASIO_MOVE_CAST(function)(f), allocator_);
   }
 
-  void defer(BOOST_ASIO_MOVE_ARG(function) f)
+  void defer(BOOST_ASIO_MOVE_ARG(function) f) BOOST_OVERRIDE
   {
     executor_.defer(BOOST_ASIO_MOVE_CAST(function)(f), allocator_);
   }
 
-  type_id_result_type target_type() const BOOST_ASIO_NOEXCEPT
+  type_id_result_type target_type() const BOOST_ASIO_NOEXCEPT BOOST_OVERRIDE
   {
     return type_id<Executor>();
   }
 
-  void* target() BOOST_ASIO_NOEXCEPT
+  void* target() BOOST_ASIO_NOEXCEPT BOOST_OVERRIDE
   {
     return &executor_;
   }
 
-  const void* target() const BOOST_ASIO_NOEXCEPT
+  const void* target() const BOOST_ASIO_NOEXCEPT BOOST_OVERRIDE
   {
     return &executor_;
   }
 
-  bool equals(const impl_base* e) const BOOST_ASIO_NOEXCEPT
+  bool equals(const impl_base* e) const BOOST_ASIO_NOEXCEPT BOOST_OVERRIDE
   {
     if (this == e)
       return true;
@@ -247,7 +247,7 @@ private:
   };
 };
 
-// Polymorphic allocator specialisation for system_executor.
+// Polymorphic allocator specialization for system_executor.
 template <typename Allocator>
 class executor::impl<system_executor, Allocator>
   : public executor::impl_base
@@ -264,61 +264,61 @@ public:
   {
   }
 
-  impl_base* clone() const BOOST_ASIO_NOEXCEPT
+  impl_base* clone() const BOOST_ASIO_NOEXCEPT BOOST_OVERRIDE
   {
     return const_cast<impl_base*>(static_cast<const impl_base*>(this));
   }
 
-  void destroy() BOOST_ASIO_NOEXCEPT
+  void destroy() BOOST_ASIO_NOEXCEPT BOOST_OVERRIDE
   {
   }
 
-  void on_work_started() BOOST_ASIO_NOEXCEPT
+  void on_work_started() BOOST_ASIO_NOEXCEPT BOOST_OVERRIDE
   {
     executor_.on_work_started();
   }
 
-  void on_work_finished() BOOST_ASIO_NOEXCEPT
+  void on_work_finished() BOOST_ASIO_NOEXCEPT BOOST_OVERRIDE
   {
     executor_.on_work_finished();
   }
 
-  execution_context& context() BOOST_ASIO_NOEXCEPT
+  execution_context& context() BOOST_ASIO_NOEXCEPT BOOST_OVERRIDE
   {
     return executor_.context();
   }
 
-  void dispatch(BOOST_ASIO_MOVE_ARG(function) f)
+  void dispatch(BOOST_ASIO_MOVE_ARG(function) f) BOOST_OVERRIDE
   {
     executor_.dispatch(BOOST_ASIO_MOVE_CAST(function)(f), allocator_);
   }
 
-  void post(BOOST_ASIO_MOVE_ARG(function) f)
+  void post(BOOST_ASIO_MOVE_ARG(function) f) BOOST_OVERRIDE
   {
     executor_.post(BOOST_ASIO_MOVE_CAST(function)(f), allocator_);
   }
 
-  void defer(BOOST_ASIO_MOVE_ARG(function) f)
+  void defer(BOOST_ASIO_MOVE_ARG(function) f) BOOST_OVERRIDE
   {
     executor_.defer(BOOST_ASIO_MOVE_CAST(function)(f), allocator_);
   }
 
-  type_id_result_type target_type() const BOOST_ASIO_NOEXCEPT
+  type_id_result_type target_type() const BOOST_ASIO_NOEXCEPT BOOST_OVERRIDE
   {
     return type_id<system_executor>();
   }
 
-  void* target() BOOST_ASIO_NOEXCEPT
+  void* target() BOOST_ASIO_NOEXCEPT BOOST_OVERRIDE
   {
     return &executor_;
   }
 
-  const void* target() const BOOST_ASIO_NOEXCEPT
+  const void* target() const BOOST_ASIO_NOEXCEPT BOOST_OVERRIDE
   {
     return &executor_;
   }
 
-  bool equals(const impl_base* e) const BOOST_ASIO_NOEXCEPT
+  bool equals(const impl_base* e) const BOOST_ASIO_NOEXCEPT BOOST_OVERRIDE
   {
     return this == e;
   }

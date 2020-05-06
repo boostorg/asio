@@ -49,10 +49,10 @@ public:
       int concurrency_hint = 0, bool own_thread = true);
 
   // Destructor.
-  BOOST_ASIO_DECL ~scheduler();
+  BOOST_ASIO_DECL ~scheduler() BOOST_OVERRIDE;
 
   // Destroy all user-defined handler objects owned by the service.
-  BOOST_ASIO_DECL void shutdown();
+  BOOST_ASIO_DECL void shutdown() BOOST_OVERRIDE;
 
   // Initialise the task, if required.
   BOOST_ASIO_DECL void init_task();

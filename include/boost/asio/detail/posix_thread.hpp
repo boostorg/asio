@@ -81,7 +81,7 @@ private:
     {
     }
 
-    virtual void run()
+    void run() BOOST_OVERRIDE
     {
       f_();
     }

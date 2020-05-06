@@ -60,13 +60,13 @@ public:
   }
 
   // Destroy all user-defined handler objects owned by the service.
-  void shutdown()
+  void shutdown() BOOST_OVERRIDE
   {
     this->base_shutdown();
   }
 
   // Perform any fork-related housekeeping.
-  void notify_fork(execution_context::fork_event fork_ev)
+  void notify_fork(execution_context::fork_event fork_ev) BOOST_OVERRIDE
   {
     this->base_notify_fork(fork_ev);
   }
