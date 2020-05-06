@@ -272,7 +272,7 @@ public:
    * @note Calling the run() function from a thread that is currently calling
    * one of run(), run_one(), run_for(), run_until(), poll() or poll_one() on
    * the same io_context object may introduce the potential for deadlock. It is
-   * the caller's reponsibility to avoid this.
+   * the caller's responsibility to avoid this.
    *
    * The poll() function may also be used to dispatch ready handlers, but
    * without blocking.
@@ -303,7 +303,7 @@ public:
    * @note Calling the run() function from a thread that is currently calling
    * one of run(), run_one(), run_for(), run_until(), poll() or poll_one() on
    * the same io_context object may introduce the potential for deadlock. It is
-   * the caller's reponsibility to avoid this.
+   * the caller's responsibility to avoid this.
    *
    * The poll() function may also be used to dispatch ready handlers, but
    * without blocking.
@@ -355,12 +355,12 @@ public:
    * @note Calling the run_one() function from a thread that is currently
    * calling one of run(), run_one(), run_for(), run_until(), poll() or
    * poll_one() on the same io_context object may introduce the potential for
-   * deadlock. It is the caller's reponsibility to avoid this.
+   * deadlock. It is the caller's responsibility to avoid this.
    */
   BOOST_ASIO_DECL count_type run_one();
 
 #if !defined(BOOST_ASIO_NO_DEPRECATED)
-  /// (Deprecated: Use non-error_code overlaod.) Run the io_context object's
+  /// (Deprecated: Use non-error_code overload.) Run the io_context object's
   /// event processing loop to execute at most one handler.
   /**
    * The run_one() function blocks until one handler has been dispatched, or
@@ -377,7 +377,7 @@ public:
    * @note Calling the run_one() function from a thread that is currently
    * calling one of run(), run_one(), run_for(), run_until(), poll() or
    * poll_one() on the same io_context object may introduce the potential for
-   * deadlock. It is the caller's reponsibility to avoid this.
+   * deadlock. It is the caller's responsibility to avoid this.
    */
   BOOST_ASIO_DECL count_type run_one(boost::system::error_code& ec);
 #endif // !defined(BOOST_ASIO_NO_DEPRECATED)
@@ -793,7 +793,7 @@ public:
 
 private:
   /// Destroy all user-defined handler objects owned by the service.
-  BOOST_ASIO_DECL virtual void shutdown();
+  BOOST_ASIO_DECL void shutdown() BOOST_OVERRIDE;
 
 #if !defined(BOOST_ASIO_NO_DEPRECATED)
   /// (Deprecated: Use shutdown().) Destroy all user-defined handler objects
@@ -807,8 +807,8 @@ private:
    * This function is not a pure virtual so that services only have to
    * implement it if necessary. The default implementation does nothing.
    */
-  BOOST_ASIO_DECL virtual void notify_fork(
-      execution_context::fork_event event);
+  BOOST_ASIO_DECL void notify_fork(
+      execution_context::fork_event event) BOOST_OVERRIDE;
 
 #if !defined(BOOST_ASIO_NO_DEPRECATED)
   /// (Deprecated: Use notify_fork().) Handle notification of a fork-related
@@ -829,7 +829,7 @@ protected:
   BOOST_ASIO_DECL service(boost::asio::io_context& owner);
 
   /// Destructor.
-  BOOST_ASIO_DECL virtual ~service();
+  BOOST_ASIO_DECL ~service() BOOST_OVERRIDE;
 };
 
 namespace detail {

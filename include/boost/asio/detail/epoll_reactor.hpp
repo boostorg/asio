@@ -86,14 +86,14 @@ public:
   BOOST_ASIO_DECL epoll_reactor(boost::asio::execution_context& ctx);
 
   // Destructor.
-  BOOST_ASIO_DECL ~epoll_reactor();
+  BOOST_ASIO_DECL ~epoll_reactor() BOOST_OVERRIDE;
 
   // Destroy all user-defined handler objects owned by the service.
-  BOOST_ASIO_DECL void shutdown();
+  BOOST_ASIO_DECL void shutdown() BOOST_OVERRIDE;
 
   // Recreate internal descriptors following a fork.
   BOOST_ASIO_DECL void notify_fork(
-      boost::asio::execution_context::fork_event fork_ev);
+      boost::asio::execution_context::fork_event fork_ev) BOOST_OVERRIDE;
 
   // Initialise the task.
   BOOST_ASIO_DECL void init_task();

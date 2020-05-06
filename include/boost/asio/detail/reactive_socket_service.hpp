@@ -82,7 +82,7 @@ public:
   }
 
   // Destroy all user-defined handler objects owned by the service.
-  void shutdown()
+  void shutdown() BOOST_OVERRIDE
   {
     this->base_shutdown();
   }

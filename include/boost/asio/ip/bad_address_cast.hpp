@@ -37,10 +37,10 @@ public:
   bad_address_cast() {}
 
   /// Destructor.
-  virtual ~bad_address_cast() BOOST_ASIO_NOEXCEPT_OR_NOTHROW {}
+  ~bad_address_cast() BOOST_ASIO_NOEXCEPT_OR_NOTHROW BOOST_OVERRIDE {}
 
   /// Get the message associated with the exception.
-  virtual const char* what() const BOOST_ASIO_NOEXCEPT_OR_NOTHROW
+  const char* what() const BOOST_ASIO_NOEXCEPT_OR_NOTHROW BOOST_OVERRIDE
   {
     return "bad address cast";
   }
