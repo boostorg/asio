@@ -42,7 +42,7 @@
 #if defined(BOOST_ASIO_HEADER_ONLY)
 # define BOOST_ASIO_DECL inline
 #else // defined(BOOST_ASIO_HEADER_ONLY)
-# if defined(_MSC_VER) || defined(__BORLANDC__) || defined(__CODEGEARC__)
+# if defined(_MSC_VER) || ((defined(__BORLANDC__) || defined(__CODEGEARC__)) && !defined(__clang__))
 // We need to import/export our code only if the user has specifically asked
 // for it by defining BOOST_ASIO_DYN_LINK.
 #  if defined(BOOST_ASIO_DYN_LINK)
@@ -53,7 +53,7 @@
 #    define BOOST_ASIO_DECL __declspec(dllimport)
 #   endif // defined(BOOST_ASIO_SOURCE)
 #  endif // defined(BOOST_ASIO_DYN_LINK)
-# endif // defined(_MSC_VER) || defined(__BORLANDC__) || defined(__CODEGEARC__)
+# endif // defined(_MSC_VER) || ((defined(__BORLANDC__) || defined(__CODEGEARC__)) && !defined(__clang__))
 #endif // defined(BOOST_ASIO_HEADER_ONLY)
 
 // If BOOST_ASIO_DECL isn't defined yet define it now.
@@ -970,17 +970,17 @@
 // Windows: target OS version.
 #if defined(BOOST_ASIO_WINDOWS) || defined(__CYGWIN__)
 # if !defined(_WIN32_WINNT) && !defined(_WIN32_WINDOWS)
-#  if defined(_MSC_VER) || defined(__BORLANDC__)
+#  if defined(_MSC_VER) || defined(__BORLANDC__) && !defined(__clang__)
 #   pragma message( \
   "Please define _WIN32_WINNT or _WIN32_WINDOWS appropriately. For example:\n"\
   "- add -D_WIN32_WINNT=0x0601 to the compiler command line; or\n"\
   "- add _WIN32_WINNT=0x0601 to your project's Preprocessor Definitions.\n"\
   "Assuming _WIN32_WINNT=0x0601 (i.e. Windows 7 target).")
-#  else // defined(_MSC_VER) || defined(__BORLANDC__)
+#  else // defined(_MSC_VER) || defined(__BORLANDC__) && !defined(__clang__)
 #   warning Please define _WIN32_WINNT or _WIN32_WINDOWS appropriately.
 #   warning For example, add -D_WIN32_WINNT=0x0601 to the compiler command line.
 #   warning Assuming _WIN32_WINNT=0x0601 (i.e. Windows 7 target).
-#  endif // defined(_MSC_VER) || defined(__BORLANDC__)
+#  endif // defined(_MSC_VER) || defined(__BORLANDC__) && !defined(__clang__)
 #  define _WIN32_WINNT 0x0601
 # endif // !defined(_WIN32_WINNT) && !defined(_WIN32_WINDOWS)
 # if defined(_MSC_VER)
@@ -992,7 +992,7 @@
 #   endif // !defined(_WINSOCK2API_)
 #  endif // defined(_WIN32) && !defined(WIN32)
 # endif // defined(_MSC_VER)
-# if defined(__BORLANDC__)
+# if defined(__BORLANDC__) && !defined(__clang__)
 #  if defined(__WIN32__) && !defined(WIN32)
 #   if !defined(_WINSOCK2API_)
 #    define WIN32 // Needed for correct types in winsock2.h
@@ -1000,7 +1000,7 @@
 #    error Please define the macro WIN32 in your compiler options
 #   endif // !defined(_WINSOCK2API_)
 #  endif // defined(__WIN32__) && !defined(WIN32)
-# endif // defined(__BORLANDC__)
+# endif // defined(__BORLANDC__) && !defined(__clang__)
 # if defined(__CYGWIN__)
 #  if !defined(__USE_W32_SOCKETS)
 #   error You must add -D__USE_W32_SOCKETS to your compiler options.
@@ -1379,9 +1379,9 @@
 #   if (__GNUC__ >= 3)
 #    define BOOST_ASIO_HAS_HANDLER_HOOKS 1
 #   endif // (__GNUC__ >= 3)
-#  elif !defined(__BORLANDC__)
+#  elif !defined(__BORLANDC__) || defined(__clang__)
 #   define BOOST_ASIO_HAS_HANDLER_HOOKS 1
-#  endif // !defined(__BORLANDC__)
+#  endif // !defined(__BORLANDC__) || defined(__clang__)
 # endif // !defined(BOOST_ASIO_DISABLE_HANDLER_HOOKS)
 #endif // !defined(BOOST_ASIO_HAS_HANDLER_HOOKS)
 
