@@ -60,7 +60,7 @@ unspecified endpoint;
 unspecified signal_number;
 
 #elif defined(BOOST_ASIO_HAS_BOOST_BIND)
-# if defined(__BORLANDC__) && !defined(__clang__) || defined(__GNUC__)
+# if defined(__BORLANDC__) || defined(__GNUC__)
 
 inline boost::arg<1> error()
 {
