@@ -104,12 +104,14 @@ void test()
   sock.set_option(no_delay1, ec);
   BOOST_ASIO_CHECK(!ec);
 
+#if !defined(BOOST_ASIO_HAS_APPLE_NETWORK_FRAMEWORK)
   ip::tcp::no_delay no_delay2;
   sock.get_option(no_delay2, ec);
   BOOST_ASIO_CHECK(!ec);
   BOOST_ASIO_CHECK(no_delay2.value());
   BOOST_ASIO_CHECK(static_cast<bool>(no_delay2));
   BOOST_ASIO_CHECK(!!no_delay2);
+#endif // !defined(BOOST_ASIO_HAS_APPLE_NETWORK_FRAMEWORK)
 
   ip::tcp::no_delay no_delay3(false);
   BOOST_ASIO_CHECK(!no_delay3.value());
@@ -118,12 +120,14 @@ void test()
   sock.set_option(no_delay3, ec);
   BOOST_ASIO_CHECK(!ec);
 
+#if !defined(BOOST_ASIO_HAS_APPLE_NETWORK_FRAMEWORK)
   ip::tcp::no_delay no_delay4;
   sock.get_option(no_delay4, ec);
   BOOST_ASIO_CHECK(!ec);
   BOOST_ASIO_CHECK(!no_delay4.value());
   BOOST_ASIO_CHECK(!static_cast<bool>(no_delay4));
   BOOST_ASIO_CHECK(!no_delay4);
+#endif // !defined(BOOST_ASIO_HAS_APPLE_NETWORK_FRAMEWORK)
 }
 
 } // namespace ip_tcp_runtime
@@ -244,22 +248,26 @@ void test()
     ip::tcp::socket socket3(ioc, ip::tcp::v6());
     ip::tcp::socket socket4(ioc, ip::tcp::endpoint(ip::tcp::v4(), 0));
     ip::tcp::socket socket5(ioc, ip::tcp::endpoint(ip::tcp::v6(), 0));
-#if !defined(BOOST_ASIO_WINDOWS_RUNTIME)
+#if !defined(BOOST_ASIO_WINDOWS_RUNTIME) \
+  && !defined(BOOST_ASIO_HAS_APPLE_NETWORK_FRAMEWORK)
     ip::tcp::socket::native_handle_type native_socket1
       = ::socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
     ip::tcp::socket socket6(ioc, ip::tcp::v4(), native_socket1);
 #endif // !defined(BOOST_ASIO_WINDOWS_RUNTIME)
+       //   && !defined(BOOST_ASIO_HAS_APPLE_NETWORK_FRAMEWORK)
 
     ip::tcp::socket socket7(ioc_ex);
     ip::tcp::socket socket8(ioc_ex, ip::tcp::v4());
     ip::tcp::socket socket9(ioc_ex, ip::tcp::v6());
     ip::tcp::socket socket10(ioc_ex, ip::tcp::endpoint(ip::tcp::v4(), 0));
     ip::tcp::socket socket11(ioc_ex, ip::tcp::endpoint(ip::tcp::v6(), 0));
-#if !defined(BOOST_ASIO_WINDOWS_RUNTIME)
+#if !defined(BOOST_ASIO_WINDOWS_RUNTIME) \
+  && !defined(BOOST_ASIO_HAS_APPLE_NETWORK_FRAMEWORK)
     ip::tcp::socket::native_handle_type native_socket2
       = ::socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
     ip::tcp::socket socket12(ioc_ex, ip::tcp::v4(), native_socket2);
 #endif // !defined(BOOST_ASIO_WINDOWS_RUNTIME)
+       //   && !defined(BOOST_ASIO_HAS_APPLE_NETWORK_FRAMEWORK)
 
 #if defined(BOOST_ASIO_HAS_MOVE)
     ip::tcp::socket socket13(std::move(socket5));
@@ -292,7 +300,8 @@ void test()
     socket1.open(ip::tcp::v4(), ec);
     socket1.open(ip::tcp::v6(), ec);
 
-#if !defined(BOOST_ASIO_WINDOWS_RUNTIME)
+#if !defined(BOOST_ASIO_WINDOWS_RUNTIME) \
+  && !defined(BOOST_ASIO_HAS_APPLE_NETWORK_FRAMEWORK)
     ip::tcp::socket::native_handle_type native_socket3
       = ::socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
     socket1.assign(ip::tcp::v4(), native_socket3);
@@ -300,6 +309,7 @@ void test()
       = ::socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
     socket1.assign(ip::tcp::v4(), native_socket4, ec);
 #endif // !defined(BOOST_ASIO_WINDOWS_RUNTIME)
+       //   && !defined(BOOST_ASIO_HAS_APPLE_NETWORK_FRAMEWORK)
 
     bool is_open = socket1.is_open();
     (void)is_open;
@@ -665,11 +675,13 @@ void test()
   ioc.poll();
   BOOST_ASIO_CHECK(!read_cancel_completed);
 
+#if !defined(BOOST_ASIO_HAS_APPLE_NETWORK_FRAMEWORK)
   server_side_socket.cancel();
 
   ioc.restart();
   ioc.run();
   BOOST_ASIO_CHECK(read_cancel_completed);
+#endif // !defined(BOOST_ASIO_HAS_APPLE_NETWORK_FRAMEWORK)
 
   // A read when the peer closes socket should fail with eof.
 
@@ -772,22 +784,26 @@ void test()
     ip::tcp::acceptor acceptor3(ioc, ip::tcp::v6());
     ip::tcp::acceptor acceptor4(ioc, ip::tcp::endpoint(ip::tcp::v4(), 0));
     ip::tcp::acceptor acceptor5(ioc, ip::tcp::endpoint(ip::tcp::v6(), 0));
-#if !defined(BOOST_ASIO_WINDOWS_RUNTIME)
+#if !defined(BOOST_ASIO_WINDOWS_RUNTIME) \
+  && !defined(BOOST_ASIO_HAS_APPLE_NETWORK_FRAMEWORK)
     ip::tcp::acceptor::native_handle_type native_acceptor1
       = ::socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
     ip::tcp::acceptor acceptor6(ioc, ip::tcp::v4(), native_acceptor1);
 #endif // !defined(BOOST_ASIO_WINDOWS_RUNTIME)
+       //   && !defined(BOOST_ASIO_HAS_APPLE_NETWORK_FRAMEWORK)
 
     ip::tcp::acceptor acceptor7(ioc_ex);
     ip::tcp::acceptor acceptor8(ioc_ex, ip::tcp::v4());
     ip::tcp::acceptor acceptor9(ioc_ex, ip::tcp::v6());
     ip::tcp::acceptor acceptor10(ioc_ex, ip::tcp::endpoint(ip::tcp::v4(), 0));
     ip::tcp::acceptor acceptor11(ioc_ex, ip::tcp::endpoint(ip::tcp::v6(), 0));
-#if !defined(BOOST_ASIO_WINDOWS_RUNTIME)
+#if !defined(BOOST_ASIO_WINDOWS_RUNTIME) \
+  && !defined(BOOST_ASIO_HAS_APPLE_NETWORK_FRAMEWORK)
     ip::tcp::acceptor::native_handle_type native_acceptor2
       = ::socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
     ip::tcp::acceptor acceptor12(ioc_ex, ip::tcp::v4(), native_acceptor2);
 #endif // !defined(BOOST_ASIO_WINDOWS_RUNTIME)
+       //   && !defined(BOOST_ASIO_HAS_APPLE_NETWORK_FRAMEWORK)
 
 #if defined(BOOST_ASIO_HAS_MOVE)
     ip::tcp::acceptor acceptor13(std::move(acceptor5));
@@ -812,7 +828,8 @@ void test()
     acceptor1.open(ip::tcp::v4(), ec);
     acceptor1.open(ip::tcp::v6(), ec);
 
-#if !defined(BOOST_ASIO_WINDOWS_RUNTIME)
+#if !defined(BOOST_ASIO_WINDOWS_RUNTIME) \
+  && !defined(BOOST_ASIO_HAS_APPLE_NETWORK_FRAMEWORK)
     ip::tcp::acceptor::native_handle_type native_acceptor3
       = ::socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
     acceptor1.assign(ip::tcp::v4(), native_acceptor3);
@@ -820,6 +837,7 @@ void test()
       = ::socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
     acceptor1.assign(ip::tcp::v4(), native_acceptor4, ec);
 #endif // !defined(BOOST_ASIO_WINDOWS_RUNTIME)
+       //   && !defined(BOOST_ASIO_HAS_APPLE_NETWORK_FRAMEWORK)
 
     bool is_open = acceptor1.is_open();
     (void)is_open;
@@ -1262,7 +1280,8 @@ namespace ip_tcp_iostream_compile {
 
 void test()
 {
-#if !defined(BOOST_ASIO_NO_IOSTREAM)
+#if !defined(BOOST_ASIO_NO_IOSTREAM) \
+  && !defined(BOOST_ASIO_HAS_APPLE_NETWORK_FRAMEWORK)
   using namespace boost::asio;
   namespace ip = boost::asio::ip;
 
@@ -1324,6 +1343,7 @@ void test()
   ios1 >> i;
   ios1 << i;
 #endif // !defined(BOOST_ASIO_NO_IOSTREAM)
+       //   && !defined(BOOST_ASIO_HAS_APPLE_NETWORK_FRAMEWORK)
 }
 
 } // namespace ip_tcp_iostream_compile
@@ -1333,14 +1353,14 @@ void test()
 BOOST_ASIO_TEST_SUITE
 (
   "ip/tcp",
-  BOOST_ASIO_TEST_CASE(ip_tcp_compile::test)
+  BOOST_ASIO_COMPILE_TEST_CASE(ip_tcp_compile::test)
   BOOST_ASIO_TEST_CASE(ip_tcp_runtime::test)
-  BOOST_ASIO_TEST_CASE(ip_tcp_socket_compile::test)
+  BOOST_ASIO_COMPILE_TEST_CASE(ip_tcp_socket_compile::test)
   BOOST_ASIO_TEST_CASE(ip_tcp_socket_runtime::test)
-  BOOST_ASIO_TEST_CASE(ip_tcp_acceptor_compile::test)
+  BOOST_ASIO_COMPILE_TEST_CASE(ip_tcp_acceptor_compile::test)
   BOOST_ASIO_TEST_CASE(ip_tcp_acceptor_runtime::test)
-  BOOST_ASIO_TEST_CASE(ip_tcp_resolver_compile::test)
-  BOOST_ASIO_TEST_CASE(ip_tcp_resolver_entry_compile::test)
-  BOOST_ASIO_TEST_CASE(ip_tcp_resolver_entry_compile::test)
+  BOOST_ASIO_COMPILE_TEST_CASE(ip_tcp_resolver_compile::test)
+  BOOST_ASIO_COMPILE_TEST_CASE(ip_tcp_resolver_entry_compile::test)
+  BOOST_ASIO_COMPILE_TEST_CASE(ip_tcp_resolver_entry_compile::test)
   BOOST_ASIO_COMPILE_TEST_CASE(ip_tcp_iostream_compile::test)
 )

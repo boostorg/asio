@@ -59,6 +59,7 @@
 #include <boost/asio/executor_work_guard.hpp>
 #include <boost/asio/generic/basic_endpoint.hpp>
 #include <boost/asio/generic/datagram_protocol.hpp>
+#include <boost/asio/generic/host.hpp>
 #include <boost/asio/generic/raw_protocol.hpp>
 #include <boost/asio/generic/seq_packet_protocol.hpp>
 #include <boost/asio/generic/stream_protocol.hpp>
@@ -91,6 +92,7 @@
 #include <boost/asio/ip/resolver_base.hpp>
 #include <boost/asio/ip/resolver_query_base.hpp>
 #include <boost/asio/ip/tcp.hpp>
+#include <boost/asio/ip/tls_tcp.hpp>
 #include <boost/asio/ip/udp.hpp>
 #include <boost/asio/ip/unicast.hpp>
 #include <boost/asio/ip/v6_only.hpp>

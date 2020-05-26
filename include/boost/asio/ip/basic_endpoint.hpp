@@ -23,6 +23,11 @@
 # include <iosfwd>
 #endif // !defined(BOOST_ASIO_NO_IOSTREAM)
 
+#if defined(BOOST_ASIO_HAS_APPLE_NETWORK_FRAMEWORK)
+# include <boost/asio/detail/apple_nw_ptr.hpp>
+# include <Network/Network.h>
+#endif // defined(BOOST_ASIO_HAS_APPLE_NETWORK_FRAMEWORK)
+
 #include <boost/asio/detail/push_options.hpp>
 
 namespace boost {
@@ -160,6 +165,32 @@ public:
   {
     return impl_.capacity();
   }
+
+#if defined(BOOST_ASIO_HAS_APPLE_NETWORK_FRAMEWORK)
+  // The following functions comprise the extensible interface for the Endpoint
+  // concept when targeting the Apple Network Framework.
+
+  // Create a new native object corresponding to the endpoint.
+  boost::asio::detail::apple_nw_ptr<nw_endpoint_t>
+  apple_nw_create_endpoint() const
+  {
+    return impl_.apple_nw_create_endpoint();
+  }
+
+  // Set the endpoint from the native object.
+  void apple_nw_set_endpoint(
+      boost::asio::detail::apple_nw_ptr<nw_endpoint_t> new_ep)
+  {
+    impl_.apple_nw_set_endpoint(BOOST_ASIO_MOVE_CAST(
+          boost::asio::detail::apple_nw_ptr<nw_endpoint_t>)(new_ep));
+  }
+
+  // Set the protocol.
+  void apple_nw_set_protocol(protocol_type)
+  {
+    // No-op.
+  }
+#endif // defined(BOOST_ASIO_HAS_APPLE_NETWORK_FRAMEWORK)
 
   /// Get the port associated with the endpoint. The port number is always in
   /// the host's byte order.

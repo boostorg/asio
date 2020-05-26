@@ -29,6 +29,11 @@ namespace detail {
 class shutdown_op
 {
 public:
+  static BOOST_ASIO_CONSTEXPR const char* tracking_name()
+  {
+    return "ssl::stream<>::async_shutdown";
+  }
+
   engine::want operator()(engine& eng,
       boost::system::error_code& ec,
       std::size_t& bytes_transferred) const

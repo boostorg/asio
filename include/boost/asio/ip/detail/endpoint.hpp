@@ -22,6 +22,11 @@
 #include <boost/system/error_code.hpp>
 #include <boost/asio/ip/address.hpp>
 
+#if defined(BOOST_ASIO_HAS_APPLE_NETWORK_FRAMEWORK)
+# include <boost/asio/detail/apple_nw_ptr.hpp>
+# include <Network/Network.h>
+#endif // defined(BOOST_ASIO_HAS_APPLE_NETWORK_FRAMEWORK)
+
 #include <boost/asio/detail/push_options.hpp>
 
 namespace boost {
@@ -86,6 +91,16 @@ public:
   {
     return sizeof(data_);
   }
+
+#if defined(BOOST_ASIO_HAS_APPLE_NETWORK_FRAMEWORK)
+  // Create a new native object corresponding to the endpoint.
+  BOOST_ASIO_DECL boost::asio::detail::apple_nw_ptr<nw_endpoint_t>
+  apple_nw_create_endpoint() const;
+
+  // Set the endpoint from the native object.
+  BOOST_ASIO_DECL void apple_nw_set_endpoint(
+      boost::asio::detail::apple_nw_ptr<nw_endpoint_t> new_ep);
+#endif // defined(BOOST_ASIO_HAS_APPLE_NETWORK_FRAMEWORK)
 
   // Get the port associated with the endpoint.
   BOOST_ASIO_DECL unsigned short port() const BOOST_ASIO_NOEXCEPT;

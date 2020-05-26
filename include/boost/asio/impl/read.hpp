@@ -28,6 +28,7 @@
 #include <boost/asio/detail/handler_alloc_helpers.hpp>
 #include <boost/asio/detail/handler_cont_helpers.hpp>
 #include <boost/asio/detail/handler_invoke_helpers.hpp>
+#include <boost/asio/detail/handler_tracking.hpp>
 #include <boost/asio/detail/handler_type_requirements.hpp>
 #include <boost/asio/detail/non_const_lvalue.hpp>
 #include <boost/asio/detail/throw_error.hpp>
@@ -361,8 +362,11 @@ namespace detail
         max_size = this->check_for_completion(ec, buffers_.total_consumed());
         do
         {
-          stream_.async_read_some(buffers_.prepare(max_size),
-              BOOST_ASIO_MOVE_CAST(read_op)(*this));
+          {
+            BOOST_ASIO_HANDLER_LOCATION((__FILE__, __LINE__, "async_read"));
+            stream_.async_read_some(buffers_.prepare(max_size),
+                BOOST_ASIO_MOVE_CAST(read_op)(*this));
+          }
           return; default:
           buffers_.consume(bytes_transferred);
           if ((!ec && bytes_transferred == 0) || buffers_.empty())
@@ -632,8 +636,11 @@ namespace detail
                 buffers_.max_size() - buffers_.size()));
         for (;;)
         {
-          stream_.async_read_some(buffers_.prepare(bytes_available),
-              BOOST_ASIO_MOVE_CAST(read_dynbuf_v1_op)(*this));
+          {
+            BOOST_ASIO_HANDLER_LOCATION((__FILE__, __LINE__, "async_read"));
+            stream_.async_read_some(buffers_.prepare(bytes_available),
+                BOOST_ASIO_MOVE_CAST(read_dynbuf_v1_op)(*this));
+          }
           return; default:
           total_transferred_ += bytes_transferred;
           buffers_.commit(bytes_transferred);
@@ -932,8 +939,11 @@ namespace detail
         {
           pos = buffers_.size();
           buffers_.grow(bytes_available_);
-          stream_.async_read_some(buffers_.data(pos, bytes_available_),
-              BOOST_ASIO_MOVE_CAST(read_dynbuf_v2_op)(*this));
+          {
+            BOOST_ASIO_HANDLER_LOCATION((__FILE__, __LINE__, "async_read"));
+            stream_.async_read_some(buffers_.data(pos, bytes_available_),
+                BOOST_ASIO_MOVE_CAST(read_dynbuf_v2_op)(*this));
+          }
           return; default:
           total_transferred_ += bytes_transferred;
           buffers_.shrink(bytes_available_ - bytes_transferred);

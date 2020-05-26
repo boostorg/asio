@@ -23,6 +23,11 @@
 #include <boost/asio/ip/basic_resolver_iterator.hpp>
 #include <boost/asio/ip/basic_resolver_query.hpp>
 
+#if defined(BOOST_ASIO_HAS_APPLE_NETWORK_FRAMEWORK)
+# include <boost/asio/detail/apple_nw_ptr.hpp>
+# include <Network/Network.h>
+#endif // defined(BOOST_ASIO_HAS_APPLE_NETWORK_FRAMEWORK)
+
 #include <boost/asio/detail/push_options.hpp>
 
 namespace boost {
@@ -58,6 +63,12 @@ public:
     return udp(BOOST_ASIO_OS_DEF(AF_INET6));
   }
 
+  /// Construct to represent an unspecified TCP protocol.
+  static udp any() BOOST_ASIO_NOEXCEPT
+  {
+    return udp(BOOST_ASIO_OS_DEF(AF_UNSPEC));
+  }
+
   /// Obtain an identifier for the type of the protocol.
   int type() const BOOST_ASIO_NOEXCEPT
   {
@@ -75,6 +86,21 @@ public:
   {
     return family_;
   }
+
+#if defined(BOOST_ASIO_HAS_APPLE_NETWORK_FRAMEWORK)
+  // The following functions comprise the extensible interface for the Protocol
+  // concept when targeting the Apple Network Framework.
+
+  // Obtain parameters to be used when creating a new connection or listener.
+  BOOST_ASIO_DECL boost::asio::detail::apple_nw_ptr<nw_parameters_t>
+  apple_nw_create_parameters() const;
+
+  // Obtain the override value for the maximum receive size.
+  std::size_t apple_nw_max_receive_size() const BOOST_ASIO_NOEXCEPT
+  {
+    return 65535;
+  }
+#endif // defined(BOOST_ASIO_HAS_APPLE_NETWORK_FRAMEWORK)
 
   /// The UDP socket type.
   typedef basic_datagram_socket<udp> socket;
@@ -109,5 +135,9 @@ private:
 } // namespace boost
 
 #include <boost/asio/detail/pop_options.hpp>
+
+#if defined(BOOST_ASIO_HEADER_ONLY)
+# include <boost/asio/ip/impl/udp.ipp>
+#endif // defined(BOOST_ASIO_HEADER_ONLY)
 
 #endif // BOOST_ASIO_IP_UDP_HPP

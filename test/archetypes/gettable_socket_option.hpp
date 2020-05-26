@@ -47,6 +47,18 @@ public:
   void resize(const Protocol&, std::size_t)
   {
   }
+
+#if defined(BOOST_ASIO_HAS_APPLE_NETWORK_FRAMEWORK)
+  static void apple_nw_get(void*, nw_parameters_t,
+      nw_connection_t, boost::system::error_code&)
+  {
+  }
+
+  static void apple_nw_get(void*, nw_parameters_t,
+      nw_listener_t, boost::system::error_code&)
+  {
+  }
+#endif // defined(BOOST_ASIO_HAS_APPLE_NETWORK_FRAMEWORK)
 };
 
 } // namespace archetypes

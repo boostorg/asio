@@ -167,6 +167,9 @@ enum basic_errors
   /// Operation not supported.
   operation_not_supported = BOOST_ASIO_SOCKET_ERROR(EOPNOTSUPP),
 
+  /// Protocol not supported.
+  protocol_not_supported = BOOST_ASIO_SOCKET_ERROR(EPROTONOSUPPORT),
+
   /// Cannot send after transport endpoint shutdown.
   shut_down = BOOST_ASIO_SOCKET_ERROR(ESHUTDOWN),
 
@@ -179,7 +182,10 @@ enum basic_errors
       BOOST_ASIO_NATIVE_ERROR(EAGAIN)),
 
   /// The socket is marked non-blocking and the requested operation would block.
-  would_block = BOOST_ASIO_SOCKET_ERROR(EWOULDBLOCK)
+  would_block = BOOST_ASIO_SOCKET_ERROR(EWOULDBLOCK),
+
+  /// Wrong protocol type.
+  wrong_protocol_type = BOOST_ASIO_SOCKET_ERROR(EPROTOTYPE)
 };
 
 enum netdb_errors

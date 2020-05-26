@@ -55,7 +55,7 @@ template <typename, typename...>
 class awaitable_handler;
 
 template <typename Executor>
-class awaitable_handler<Executor, void>
+class awaitable_handler<Executor>
   : public awaitable_handler_base<Executor, void>
 {
 public:
@@ -252,10 +252,13 @@ public:
 
   template <typename Initiation, typename... InitArgs>
   static return_type initiate(Initiation initiation,
-      use_awaitable_t<Executor>, InitArgs... args)
+      use_awaitable_t<Executor> u, InitArgs... args)
   {
+    (void)u;
+
     co_await [&](auto* frame)
       {
+        BOOST_ASIO_HANDLER_LOCATION((u.file_name_, u.line_, u.function_name_));
         handler_type handler(frame->detach_thread());
         std::move(initiation)(std::move(handler), std::move(args)...);
         return static_cast<handler_type*>(nullptr);

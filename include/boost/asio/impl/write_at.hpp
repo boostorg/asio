@@ -27,6 +27,7 @@
 #include <boost/asio/detail/handler_alloc_helpers.hpp>
 #include <boost/asio/detail/handler_cont_helpers.hpp>
 #include <boost/asio/detail/handler_invoke_helpers.hpp>
+#include <boost/asio/detail/handler_tracking.hpp>
 #include <boost/asio/detail/handler_type_requirements.hpp>
 #include <boost/asio/detail/non_const_lvalue.hpp>
 #include <boost/asio/detail/throw_error.hpp>
@@ -211,9 +212,12 @@ namespace detail
         max_size = this->check_for_completion(ec, buffers_.total_consumed());
         do
         {
-          device_.async_write_some_at(
-              offset_ + buffers_.total_consumed(), buffers_.prepare(max_size),
-              BOOST_ASIO_MOVE_CAST(write_at_op)(*this));
+          {
+            BOOST_ASIO_HANDLER_LOCATION((__FILE__, __LINE__, "async_write_at"));
+            device_.async_write_some_at(
+                offset_ + buffers_.total_consumed(), buffers_.prepare(max_size),
+                BOOST_ASIO_MOVE_CAST(write_at_op)(*this));
+          }
           return; default:
           buffers_.consume(bytes_transferred);
           if ((!ec && bytes_transferred == 0) || buffers_.empty())

@@ -25,8 +25,10 @@
 #include <boost/asio/impl/handler_alloc_hook.ipp>
 #include <boost/asio/impl/io_context.ipp>
 #include <boost/asio/impl/serial_port_base.ipp>
+#include <boost/asio/impl/socket_base.ipp>
 #include <boost/asio/impl/system_context.ipp>
 #include <boost/asio/impl/thread_pool.ipp>
+#include <boost/asio/detail/impl/apple_nw_socket_service_base.ipp>
 #include <boost/asio/detail/impl/buffer_sequence_adapter.ipp>
 #include <boost/asio/detail/impl/descriptor_ops.ipp>
 #include <boost/asio/detail/impl/dev_poll_reactor.ipp>
@@ -75,6 +77,9 @@
 #include <boost/asio/ip/impl/host_name.ipp>
 #include <boost/asio/ip/impl/network_v4.ipp>
 #include <boost/asio/ip/impl/network_v6.ipp>
+#include <boost/asio/ip/impl/tcp.ipp>
+#include <boost/asio/ip/impl/tls_tcp.ipp>
+#include <boost/asio/ip/impl/udp.ipp>
 #include <boost/asio/ip/detail/impl/endpoint.ipp>
 #include <boost/asio/local/detail/impl/endpoint.ipp>
 

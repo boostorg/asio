@@ -26,6 +26,11 @@
 #include <boost/asio/ip/basic_resolver_iterator.hpp>
 #include <boost/asio/ip/basic_resolver_query.hpp>
 
+#if defined(BOOST_ASIO_HAS_APPLE_NETWORK_FRAMEWORK)
+# include <boost/asio/detail/apple_nw_ptr.hpp>
+# include <Network/Network.h>
+#endif // defined(BOOST_ASIO_HAS_APPLE_NETWORK_FRAMEWORK)
+
 #include <boost/asio/detail/push_options.hpp>
 
 namespace boost {
@@ -61,6 +66,12 @@ public:
     return tcp(BOOST_ASIO_OS_DEF(AF_INET6));
   }
 
+  /// Construct to represent an unspecified TCP protocol.
+  static tcp any() BOOST_ASIO_NOEXCEPT
+  {
+    return tcp(BOOST_ASIO_OS_DEF(AF_UNSPEC));
+  }
+
   /// Obtain an identifier for the type of the protocol.
   int type() const BOOST_ASIO_NOEXCEPT
   {
@@ -79,6 +90,21 @@ public:
     return family_;
   }
 
+#if defined(BOOST_ASIO_HAS_APPLE_NETWORK_FRAMEWORK)
+  // The following functions comprise the extensible interface for the Protocol
+  // concept when targeting the Apple Network Framework.
+
+  // Obtain parameters to be used when creating a new connection or listener.
+  BOOST_ASIO_DECL boost::asio::detail::apple_nw_ptr<nw_parameters_t>
+  apple_nw_create_parameters() const;
+
+  // Obtain the override value for the maximum receive size.
+  std::size_t apple_nw_max_receive_size() const BOOST_ASIO_NOEXCEPT
+  {
+    return 0;
+  }
+#endif // defined(BOOST_ASIO_HAS_APPLE_NETWORK_FRAMEWORK)
+
   /// The TCP socket type.
   typedef basic_stream_socket<tcp> socket;
 
@@ -88,10 +114,12 @@ public:
   /// The TCP resolver type.
   typedef basic_resolver<tcp> resolver;
 
-#if !defined(BOOST_ASIO_NO_IOSTREAM)
+#if !defined(BOOST_ASIO_NO_IOSTREAM) \
+  && !defined(BOOST_ASIO_HAS_APPLE_NETWORK_FRAMEWORK)
   /// The TCP iostream type.
   typedef basic_socket_iostream<tcp> iostream;
 #endif // !defined(BOOST_ASIO_NO_IOSTREAM)
+       //   && !defined(BOOST_ASIO_HAS_APPLE_NETWORK_FRAMEWORK)
 
   /// Socket option for disabling the Nagle algorithm.
   /**
@@ -122,8 +150,55 @@ public:
 #if defined(GENERATING_DOCUMENTATION)
   typedef implementation_defined no_delay;
 #else
-  typedef boost::asio::detail::socket_option::boolean<
-    BOOST_ASIO_OS_DEF(IPPROTO_TCP), BOOST_ASIO_OS_DEF(TCP_NODELAY)> no_delay;
+  class no_delay :
+    public boost::asio::detail::socket_option::boolean<
+      BOOST_ASIO_OS_DEF(IPPROTO_TCP), BOOST_ASIO_OS_DEF(TCP_NODELAY)>
+  {
+  public:
+    no_delay()
+    {
+    }
+
+    explicit no_delay(bool b)
+      : boost::asio::detail::socket_option::boolean<
+          BOOST_ASIO_OS_DEF(IPPROTO_TCP), BOOST_ASIO_OS_DEF(TCP_NODELAY)>(b)
+    {
+    }
+
+    no_delay& operator=(bool b)
+    {
+      boost::asio::detail::socket_option::boolean<
+          BOOST_ASIO_OS_DEF(IPPROTO_TCP),
+          BOOST_ASIO_OS_DEF(TCP_NODELAY)>::operator=(b);
+      return *this;
+    }
+
+#if defined(BOOST_ASIO_HAS_APPLE_NETWORK_FRAMEWORK)
+  // The following functions comprise the extensible interface for the
+  // SettableSocketOption and GettableSocketOption concepts when targeting the
+  // Apple Network Framework.
+
+  // Set the socket option on the specified connection.
+  BOOST_ASIO_DECL static void apple_nw_set(const void* self,
+      nw_parameters_t parameters, nw_connection_t connection,
+      boost::system::error_code& ec);
+
+  // Set the socket option on the specified connection.
+  BOOST_ASIO_DECL static void apple_nw_set(const void* self,
+      nw_parameters_t parameters, nw_listener_t listener,
+      boost::system::error_code& ec);
+
+  // Get the socket option from the specified connection.
+  BOOST_ASIO_DECL static void apple_nw_get(void* self,
+      nw_parameters_t parameters, nw_connection_t connection,
+      boost::system::error_code& ec);
+
+  // Get the socket option from the specified connection.
+  BOOST_ASIO_DECL static void apple_nw_get(void* self,
+      nw_parameters_t parameters, nw_listener_t listener,
+      boost::system::error_code& ec);
+#endif // defined(BOOST_ASIO_HAS_APPLE_NETWORK_FRAMEWORK)
+  };
 #endif
 
   /// Compare two protocols for equality.
@@ -153,5 +228,9 @@ private:
 } // namespace boost
 
 #include <boost/asio/detail/pop_options.hpp>
+
+#if defined(BOOST_ASIO_HEADER_ONLY)
+# include <boost/asio/ip/impl/tcp.ipp>
+#endif // defined(BOOST_ASIO_HEADER_ONLY)
 
 #endif // BOOST_ASIO_IP_TCP_HPP

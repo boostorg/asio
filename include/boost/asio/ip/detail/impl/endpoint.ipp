@@ -46,6 +46,9 @@ endpoint::endpoint(int family, unsigned short port_num) BOOST_ASIO_NOEXCEPT
   using namespace std; // For memcpy.
   if (family == BOOST_ASIO_OS_DEF(AF_INET))
   {
+#if defined(BOOST_ASIO_HAS_APPLE_NETWORK_FRAMEWORK)
+    data_.v4.sin_len = sizeof(data_.v4);
+#endif // defined(BOOST_ASIO_HAS_APPLE_NETWORK_FRAMEWORK)
     data_.v4.sin_family = BOOST_ASIO_OS_DEF(AF_INET);
     data_.v4.sin_port =
       boost::asio::detail::socket_ops::host_to_network_short(port_num);
@@ -53,6 +56,9 @@ endpoint::endpoint(int family, unsigned short port_num) BOOST_ASIO_NOEXCEPT
   }
   else
   {
+#if defined(BOOST_ASIO_HAS_APPLE_NETWORK_FRAMEWORK)
+    data_.v6.sin6_len = sizeof(data_.v6);
+#endif // defined(BOOST_ASIO_HAS_APPLE_NETWORK_FRAMEWORK)
     data_.v6.sin6_family = BOOST_ASIO_OS_DEF(AF_INET6);
     data_.v6.sin6_port =
       boost::asio::detail::socket_ops::host_to_network_short(port_num);
@@ -76,6 +82,9 @@ endpoint::endpoint(const boost::asio::ip::address& addr,
   using namespace std; // For memcpy.
   if (addr.is_v4())
   {
+#if defined(BOOST_ASIO_HAS_APPLE_NETWORK_FRAMEWORK)
+    data_.v4.sin_len = sizeof(data_.v4);
+#endif // defined(BOOST_ASIO_HAS_APPLE_NETWORK_FRAMEWORK)
     data_.v4.sin_family = BOOST_ASIO_OS_DEF(AF_INET);
     data_.v4.sin_port =
       boost::asio::detail::socket_ops::host_to_network_short(port_num);
@@ -85,6 +94,9 @@ endpoint::endpoint(const boost::asio::ip::address& addr,
   }
   else
   {
+#if defined(BOOST_ASIO_HAS_APPLE_NETWORK_FRAMEWORK)
+    data_.v6.sin6_len = sizeof(data_.v6);
+#endif // defined(BOOST_ASIO_HAS_APPLE_NETWORK_FRAMEWORK)
     data_.v6.sin6_family = BOOST_ASIO_OS_DEF(AF_INET6);
     data_.v6.sin6_port =
       boost::asio::detail::socket_ops::host_to_network_short(port_num);
@@ -106,6 +118,44 @@ void endpoint::resize(std::size_t new_size)
     boost::asio::detail::throw_error(ec);
   }
 }
+
+#if defined(BOOST_ASIO_HAS_APPLE_NETWORK_FRAMEWORK)
+boost::asio::detail::apple_nw_ptr<nw_endpoint_t>
+endpoint::apple_nw_create_endpoint() const
+{
+  return boost::asio::detail::apple_nw_ptr<nw_endpoint_t>(
+      nw_endpoint_create_address(&data_.base));
+}
+
+void endpoint::apple_nw_set_endpoint(
+    boost::asio::detail::apple_nw_ptr<nw_endpoint_t> new_ep)
+{
+  using namespace std; // For memcpy.
+
+  if (nw_endpoint_get_type(new_ep) != nw_endpoint_type_address)
+  {
+    boost::system::error_code ec(boost::asio::error::invalid_argument);
+    boost::asio::detail::throw_error(ec);
+  }
+
+  const boost::asio::detail::socket_addr_type* addr =
+    nw_endpoint_get_address(new_ep);
+
+  switch (addr->sa_family)
+  {
+  case BOOST_ASIO_OS_DEF(AF_INET):
+    memcpy(&data_.v4, addr, sizeof(data_.v4));
+    break;
+  case BOOST_ASIO_OS_DEF(AF_INET6):
+    memcpy(&data_.v6, addr, sizeof(data_.v6));
+    break;
+  default:
+    boost::system::error_code ec(boost::asio::error::invalid_argument);
+    boost::asio::detail::throw_error(ec);
+    break;
+  }
+}
+#endif // defined(BOOST_ASIO_HAS_APPLE_NETWORK_FRAMEWORK)
 
 unsigned short endpoint::port() const BOOST_ASIO_NOEXCEPT
 {

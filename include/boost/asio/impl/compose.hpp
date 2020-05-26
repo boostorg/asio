@@ -249,12 +249,13 @@ namespace detail
 #endif // defined(BOOST_ASIO_HAS_VARIADIC_TEMPLATES)
   {
   public:
-    composed_op(BOOST_ASIO_MOVE_ARG(Impl) impl,
-        BOOST_ASIO_MOVE_ARG(Work) work,
-        BOOST_ASIO_MOVE_ARG(Handler) handler)
-      : impl_(BOOST_ASIO_MOVE_CAST(Impl)(impl)),
-        work_(BOOST_ASIO_MOVE_CAST(Work)(work)),
-        handler_(BOOST_ASIO_MOVE_CAST(Handler)(handler)),
+    template <typename I, typename W, typename H>
+    composed_op(BOOST_ASIO_MOVE_ARG(I) impl,
+        BOOST_ASIO_MOVE_ARG(W) work,
+        BOOST_ASIO_MOVE_ARG(H) handler)
+      : impl_(BOOST_ASIO_MOVE_CAST(I)(impl)),
+        work_(BOOST_ASIO_MOVE_CAST(W)(work)),
+        handler_(BOOST_ASIO_MOVE_CAST(H)(handler)),
         invocations_(0)
     {
     }

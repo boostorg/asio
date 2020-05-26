@@ -20,6 +20,10 @@
 #include <boost/asio/detail/socket_option.hpp>
 #include <boost/asio/detail/socket_types.hpp>
 
+#if defined(BOOST_ASIO_HAS_APPLE_NETWORK_FRAMEWORK)
+# include <Network/Network.h>
+#endif // defined(BOOST_ASIO_HAS_APPLE_NETWORK_FRAMEWORK)
+
 #include <boost/asio/detail/push_options.hpp>
 
 namespace boost {
@@ -222,8 +226,55 @@ public:
 #if defined(GENERATING_DOCUMENTATION)
   typedef implementation_defined keep_alive;
 #else
-  typedef boost::asio::detail::socket_option::boolean<
-    BOOST_ASIO_OS_DEF(SOL_SOCKET), BOOST_ASIO_OS_DEF(SO_KEEPALIVE)> keep_alive;
+  class keep_alive :
+    public boost::asio::detail::socket_option::boolean<
+      BOOST_ASIO_OS_DEF(SOL_SOCKET), BOOST_ASIO_OS_DEF(SO_KEEPALIVE)>
+  {
+  public:
+    keep_alive()
+    {
+    }
+
+    explicit keep_alive(bool b)
+      : boost::asio::detail::socket_option::boolean<
+          BOOST_ASIO_OS_DEF(SOL_SOCKET), BOOST_ASIO_OS_DEF(SO_KEEPALIVE)>(b)
+    {
+    }
+
+    keep_alive& operator=(bool b)
+    {
+      boost::asio::detail::socket_option::boolean<
+          BOOST_ASIO_OS_DEF(SOL_SOCKET),
+          BOOST_ASIO_OS_DEF(SO_KEEPALIVE)>::operator=(b);
+      return *this;
+    }
+
+#if defined(BOOST_ASIO_HAS_APPLE_NETWORK_FRAMEWORK)
+  // The following functions comprise the extensible interface for the
+  // SettableSocketOption and GettableSocketOption concepts when targeting the
+  // Apple Network Framework.
+
+  // Set the socket option on the specified connection.
+  BOOST_ASIO_DECL static void apple_nw_set(const void* self,
+      nw_parameters_t parameters, nw_connection_t connection,
+      boost::system::error_code& ec);
+
+  // Set the socket option on the specified connection.
+  BOOST_ASIO_DECL static void apple_nw_set(const void* self,
+      nw_parameters_t parameters, nw_listener_t listener,
+      boost::system::error_code& ec);
+
+  // Get the socket option from the specified connection.
+  BOOST_ASIO_DECL static void apple_nw_get(void* self,
+      nw_parameters_t parameters, nw_connection_t connection,
+      boost::system::error_code& ec);
+
+  // Get the socket option from the specified connection.
+  BOOST_ASIO_DECL static void apple_nw_get(void* self,
+      nw_parameters_t parameters, nw_listener_t listener,
+      boost::system::error_code& ec);
+#endif // defined(BOOST_ASIO_HAS_APPLE_NETWORK_FRAMEWORK)
+  };
 #endif
 
   /// Socket option for the send buffer size of a socket.
@@ -392,9 +443,55 @@ public:
 #if defined(GENERATING_DOCUMENTATION)
   typedef implementation_defined reuse_address;
 #else
-  typedef boost::asio::detail::socket_option::boolean<
-    BOOST_ASIO_OS_DEF(SOL_SOCKET), BOOST_ASIO_OS_DEF(SO_REUSEADDR)>
-      reuse_address;
+  class reuse_address :
+    public boost::asio::detail::socket_option::boolean<
+      BOOST_ASIO_OS_DEF(SOL_SOCKET), BOOST_ASIO_OS_DEF(SO_REUSEADDR)>
+  {
+  public:
+    reuse_address()
+    {
+    }
+
+    explicit reuse_address(bool b)
+      : boost::asio::detail::socket_option::boolean<
+          BOOST_ASIO_OS_DEF(SOL_SOCKET), BOOST_ASIO_OS_DEF(SO_REUSEADDR)>(b)
+    {
+    }
+
+    reuse_address& operator=(bool b)
+    {
+      boost::asio::detail::socket_option::boolean<
+          BOOST_ASIO_OS_DEF(SOL_SOCKET),
+          BOOST_ASIO_OS_DEF(SO_REUSEADDR)>::operator=(b);
+      return *this;
+    }
+
+#if defined(BOOST_ASIO_HAS_APPLE_NETWORK_FRAMEWORK)
+  // The following functions comprise the extensible interface for the
+  // SettableSocketOption and GettableSocketOption concepts when targeting the
+  // Apple Network Framework.
+
+  // Set the socket option on the specified connection.
+  BOOST_ASIO_DECL static void apple_nw_set(const void* self,
+      nw_parameters_t parameters, nw_connection_t connection,
+      boost::system::error_code& ec);
+
+  // Set the socket option on the specified connection.
+  BOOST_ASIO_DECL static void apple_nw_set(const void* self,
+      nw_parameters_t parameters, nw_listener_t listener,
+      boost::system::error_code& ec);
+
+  // Get the socket option from the specified connection.
+  BOOST_ASIO_DECL static void apple_nw_get(void* self,
+      nw_parameters_t parameters, nw_connection_t connection,
+      boost::system::error_code& ec);
+
+  // Get the socket option from the specified connection.
+  BOOST_ASIO_DECL static void apple_nw_get(void* self,
+      nw_parameters_t parameters, nw_listener_t listener,
+      boost::system::error_code& ec);
+#endif // defined(BOOST_ASIO_HAS_APPLE_NETWORK_FRAMEWORK)
+  };
 #endif
 
   /// Socket option to specify whether the socket lingers on close if unsent
@@ -557,5 +654,9 @@ protected:
 } // namespace boost
 
 #include <boost/asio/detail/pop_options.hpp>
+
+#if defined(BOOST_ASIO_HEADER_ONLY)
+# include <boost/asio/impl/socket_base.ipp>
+#endif // defined(BOOST_ASIO_HEADER_ONLY)
 
 #endif // BOOST_ASIO_SOCKET_BASE_HPP

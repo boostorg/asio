@@ -19,7 +19,12 @@
 
 #if defined(BOOST_ASIO_HAS_CO_AWAIT) || defined(GENERATING_DOCUMENTATION)
 
-#include <experimental/coroutine>
+#if defined(BOOST_ASIO_HAS_STD_COROUTINE)
+# include <coroutine>
+#else // defined(BOOST_ASIO_HAS_STD_COROUTINE)
+# include <experimental/coroutine>
+#endif // defined(BOOST_ASIO_HAS_STD_COROUTINE)
+
 #include <boost/asio/executor.hpp>
 
 #include <boost/asio/detail/push_options.hpp>
@@ -28,8 +33,13 @@ namespace boost {
 namespace asio {
 namespace detail {
 
+#if defined(BOOST_ASIO_HAS_STD_COROUTINE)
+using std::coroutine_handle;
+using std::suspend_always;
+#else // defined(BOOST_ASIO_HAS_STD_COROUTINE)
 using std::experimental::coroutine_handle;
 using std::experimental::suspend_always;
+#endif // defined(BOOST_ASIO_HAS_STD_COROUTINE)
 
 template <typename> class awaitable_thread;
 template <typename, typename> class awaitable_frame;
