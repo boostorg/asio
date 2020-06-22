@@ -19,7 +19,9 @@
 #include <tuple>
 #include <boost/asio/async_result.hpp>
 #include <boost/asio/detail/memory.hpp>
+#include <boost/asio/dispatch.hpp>
 #include <boost/system/error_code.hpp>
+#include <boost/asio/execution.hpp>
 #include <boost/asio/packaged_task.hpp>
 #include <boost/system/system_error.hpp>
 #include <boost/asio/system_executor.hpp>
@@ -201,7 +203,7 @@ private:
 
 // An executor that adapts the system_executor to capture any exeption thrown
 // by a submitted function object and save it into a promise.
-template <typename T>
+template <typename T, typename Blocking = execution::blocking_t::possibly_t>
 class promise_executor
 {
 public:
@@ -210,6 +212,32 @@ public:
   {
   }
 
+  static BOOST_ASIO_CONSTEXPR Blocking query(execution::blocking_t)
+  {
+    return Blocking();
+  }
+
+  promise_executor<T, execution::blocking_t::possibly_t>
+  require(execution::blocking_t::possibly_t) const
+  {
+    return promise_executor<T, execution::blocking_t::possibly_t>(p_);
+  }
+
+  promise_executor<T, execution::blocking_t::never_t>
+  require(execution::blocking_t::never_t) const
+  {
+    return promise_executor<T, execution::blocking_t::never_t>(p_);
+  }
+
+  template <typename F>
+  void execute(BOOST_ASIO_MOVE_ARG(F) f) const
+  {
+    execution::execute(
+        boost::asio::require(system_executor(), Blocking()),
+        promise_invoker<T, F>(p_, BOOST_ASIO_MOVE_CAST(F)(f)));
+  }
+
+#if !defined(BOOST_ASIO_NO_TS_EXECUTORS)
   execution_context& context() const BOOST_ASIO_NOEXCEPT
   {
     return system_executor().context();
@@ -237,6 +265,7 @@ public:
     system_executor().defer(
         promise_invoker<T, F>(p_, BOOST_ASIO_MOVE_CAST(F)(f)), a);
   }
+#endif // !defined(BOOST_ASIO_NO_TS_EXECUTORS)
 
   friend bool operator==(const promise_executor& a,
       const promise_executor& b) BOOST_ASIO_NOEXCEPT
@@ -608,6 +637,27 @@ private:
   Allocator allocator_;
 };
 
+template <typename Function>
+struct promise_function_wrapper
+{
+  explicit promise_function_wrapper(Function& f)
+    : function_(BOOST_ASIO_MOVE_CAST(Function)(f))
+  {
+  }
+
+  explicit promise_function_wrapper(const Function& f)
+    : function_(f)
+  {
+  }
+
+  void operator()()
+  {
+    function_();
+  }
+
+  Function function_;
+};
+
 #if !defined(BOOST_ASIO_NO_DEPRECATED)
 
 template <typename Function, typename Signature, typename Allocator>
@@ -616,7 +666,7 @@ inline void asio_handler_invoke(Function& f,
 {
   typename promise_handler<Signature, Allocator>::executor_type
     ex(h->get_executor());
-  ex.dispatch(BOOST_ASIO_MOVE_CAST(Function)(f), std::allocator<void>());
+  boost::asio::dispatch(ex, promise_function_wrapper<Function>(f));
 }
 
 template <typename Function, typename Signature, typename Allocator>
@@ -625,7 +675,7 @@ inline void asio_handler_invoke(const Function& f,
 {
   typename promise_handler<Signature, Allocator>::executor_type
     ex(h->get_executor());
-  ex.dispatch(f, std::allocator<void>());
+  boost::asio::dispatch(ex, promise_function_wrapper<Function>(f));
 }
 
 #endif // !defined(BOOST_ASIO_NO_DEPRECATED)
@@ -733,7 +783,7 @@ inline void asio_handler_invoke(Function& f,
 {
   typename packaged_handler<Function1, Allocator, Result>::executor_type
     ex(h->get_executor());
-  ex.dispatch(BOOST_ASIO_MOVE_CAST(Function)(f), std::allocator<void>());
+  boost::asio::dispatch(ex, promise_function_wrapper<Function>(f));
 }
 
 template <typename Function,
@@ -743,7 +793,7 @@ inline void asio_handler_invoke(const Function& f,
 {
   typename packaged_handler<Function1, Allocator, Result>::executor_type
     ex(h->get_executor());
-  ex.dispatch(f, std::allocator<void>());
+  boost::asio::dispatch(ex, promise_function_wrapper<Function>(f));
 }
 
 #endif // !defined(BOOST_ASIO_NO_DEPRECATED)
@@ -886,6 +936,90 @@ public:
 #undef BOOST_ASIO_PRIVATE_ASYNC_RESULT_DEF
 
 #endif // defined(BOOST_ASIO_HAS_VARIADIC_TEMPLATES)
+
+namespace execution {
+
+#if !defined(BOOST_ASIO_HAS_DEDUCED_EXECUTION_IS_EXECUTOR_TRAIT)
+
+template <typename T, typename Blocking>
+struct is_executor<
+    boost::asio::detail::promise_executor<T, Blocking> > : true_type
+{
+};
+
+#endif // !defined(BOOST_ASIO_HAS_DEDUCED_EXECUTION_IS_EXECUTOR_TRAIT)
+
+} // namespace execution
+namespace traits {
+
+#if !defined(BOOST_ASIO_HAS_DEDUCED_EXECUTE_MEMBER_TRAIT)
+
+template <typename T, typename Blocking, typename Function>
+struct execute_member<
+    boost::asio::detail::promise_executor<T, Blocking>, Function>
+{
+  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
+  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_noexcept = false);
+  typedef void result_type;
+};
+
+#endif // !defined(BOOST_ASIO_HAS_DEDUCED_EXECUTE_MEMBER_TRAIT)
+
+#if !defined(BOOST_ASIO_HAS_DEDUCED_QUERY_STATIC_CONSTEXPR_TRAIT)
+
+template <typename T, typename Blocking, typename Property>
+struct query_static_constexpr_member<
+    boost::asio::detail::promise_executor<T, Blocking>,
+    Property,
+    typename boost::asio::enable_if<
+      boost::asio::is_convertible<
+        Property,
+        boost::asio::execution::blocking_t
+      >::value
+    >::type
+  >
+{
+  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
+  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_noexcept = true);
+  typedef Blocking result_type;
+
+  static BOOST_ASIO_CONSTEXPR result_type value() BOOST_ASIO_NOEXCEPT
+  {
+    return Blocking();
+  }
+};
+
+#endif // !defined(BOOST_ASIO_HAS_DEDUCED_QUERY_STATIC_CONSTEXPR_TRAIT)
+
+#if !defined(BOOST_ASIO_HAS_DEDUCED_REQUIRE_MEMBER_TRAIT)
+
+template <typename T, typename Blocking>
+struct require_member<
+    boost::asio::detail::promise_executor<T, Blocking>,
+    execution::blocking_t::possibly_t
+  >
+{
+  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
+  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_noexcept = true);
+  typedef boost::asio::detail::promise_executor<T,
+      execution::blocking_t::possibly_t> result_type;
+};
+
+template <typename T, typename Blocking>
+struct require_member<
+    boost::asio::detail::promise_executor<T, Blocking>,
+    execution::blocking_t::never_t
+  >
+{
+  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
+  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_noexcept = true);
+  typedef boost::asio::detail::promise_executor<T,
+      execution::blocking_t::never_t> result_type;
+};
+
+#endif // !defined(BOOST_ASIO_HAS_DEDUCED_REQUIRE_MEMBER_TRAIT)
+
+} // namespace traits
 
 #endif // !defined(GENERATING_DOCUMENTATION)
 
