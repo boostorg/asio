@@ -356,6 +356,19 @@ boost::asio::system_timer make_timer(boost::asio::io_context& ioc, int* count)
   t.async_wait(bindns::bind(increment, count));
   return t;
 }
+
+typedef boost::asio::basic_waitable_timer<
+    boost::asio::system_timer::clock_type,
+    boost::asio::system_timer::traits_type,
+    boost::asio::io_context::executor_type> io_context_system_timer;
+
+io_context_system_timer make_convertible_timer(boost::asio::io_context& ioc, int* count)
+{
+  io_context_system_timer t(ioc);
+  t.expires_after(boost::asio::chrono::seconds(1));
+  t.async_wait(bindns::bind(increment, count));
+  return t;
+}
 #endif
 
 void system_timer_move_test()
@@ -378,6 +391,22 @@ void system_timer_move_test()
   io_context1.run();
 
   BOOST_ASIO_CHECK(count == 2);
+
+  boost::asio::system_timer t4 = make_convertible_timer(io_context1, &count);
+  boost::asio::system_timer t5 = make_convertible_timer(io_context2, &count);
+  boost::asio::system_timer t6 = std::move(t4);
+
+  t2 = std::move(t4);
+
+  io_context2.restart();
+  io_context2.run();
+
+  BOOST_ASIO_CHECK(count == 3);
+
+  io_context1.restart();
+  io_context1.run();
+
+  BOOST_ASIO_CHECK(count == 4);
 #endif // defined(BOOST_ASIO_HAS_MOVE)
 }
 
