@@ -60,6 +60,7 @@
 #include <boost/asio/execution/blocking_adaptation.hpp>
 #include <boost/asio/execution/bulk_guarantee.hpp>
 #include <boost/asio/execution/context.hpp>
+#include <boost/asio/execution/context_as.hpp>
 #include <boost/asio/execution/execute.hpp>
 #include <boost/asio/execution/executor.hpp>
 #include <boost/asio/execution/invocable_archetype.hpp>
