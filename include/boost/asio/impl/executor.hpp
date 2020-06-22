@@ -123,7 +123,7 @@ private:
 
 #endif // defined(BOOST_ASIO_HAS_MOVE)
 
-// Default polymorphic allocator implementation.
+// Default polymorphic executor implementation.
 template <typename Executor, typename Allocator>
 class executor::impl
   : public executor::impl_base
@@ -247,7 +247,7 @@ private:
   };
 };
 
-// Polymorphic allocator specialisation for system_executor.
+// Polymorphic executor specialisation for system_executor.
 template <typename Allocator>
 class executor::impl<system_executor, Allocator>
   : public executor::impl_base
@@ -290,17 +290,20 @@ public:
 
   void dispatch(BOOST_ASIO_MOVE_ARG(function) f)
   {
-    executor_.dispatch(BOOST_ASIO_MOVE_CAST(function)(f), allocator_);
+    executor_.dispatch(BOOST_ASIO_MOVE_CAST(function)(f),
+        std::allocator<void>());
   }
 
   void post(BOOST_ASIO_MOVE_ARG(function) f)
   {
-    executor_.post(BOOST_ASIO_MOVE_CAST(function)(f), allocator_);
+    executor_.post(BOOST_ASIO_MOVE_CAST(function)(f),
+        std::allocator<void>());
   }
 
   void defer(BOOST_ASIO_MOVE_ARG(function) f)
   {
-    executor_.defer(BOOST_ASIO_MOVE_CAST(function)(f), allocator_);
+    executor_.defer(BOOST_ASIO_MOVE_CAST(function)(f),
+        std::allocator<void>());
   }
 
   type_id_result_type target_type() const BOOST_ASIO_NOEXCEPT
@@ -325,7 +328,6 @@ public:
 
 private:
   system_executor executor_;
-  Allocator allocator_;
 };
 
 template <typename Executor>
