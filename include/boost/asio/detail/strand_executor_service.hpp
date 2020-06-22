@@ -23,6 +23,8 @@
 #include <boost/asio/detail/op_queue.hpp>
 #include <boost/asio/detail/scheduler_operation.hpp>
 #include <boost/asio/detail/scoped_ptr.hpp>
+#include <boost/asio/detail/type_traits.hpp>
+#include <boost/asio/execution.hpp>
 #include <boost/asio/execution_context.hpp>
 
 #include <boost/asio/detail/push_options.hpp>
@@ -87,6 +89,27 @@ public:
   BOOST_ASIO_DECL implementation_type create_implementation();
 
   // Request invocation of the given function.
+  template <typename Executor, typename Function>
+  static void execute(const implementation_type& impl, Executor& ex,
+      BOOST_ASIO_MOVE_ARG(Function) function,
+      typename enable_if<
+        can_query<Executor, execution::allocator_t<void> >::value
+      >::type* = 0);
+
+  // Request invocation of the given function.
+  template <typename Executor, typename Function>
+  static void execute(const implementation_type& impl, Executor& ex,
+      BOOST_ASIO_MOVE_ARG(Function) function,
+      typename enable_if<
+        !can_query<Executor, execution::allocator_t<void> >::value
+      >::type* = 0);
+
+  // Request invocation of the given function.
+  template <typename Executor, typename Function, typename Allocator>
+  static void execute(const implementation_type& impl, Executor& ex,
+      BOOST_ASIO_MOVE_ARG(Function) function, const Allocator& a);
+
+  // Request invocation of the given function.
   template <typename Executor, typename Function, typename Allocator>
   static void dispatch(const implementation_type& impl, Executor& ex,
       BOOST_ASIO_MOVE_ARG(Function) function, const Allocator& a);
@@ -107,7 +130,8 @@ public:
 
 private:
   friend class strand_impl;
-  template <typename Executor> class invoker;
+  template <typename F, typename Allocator> class allocator_binder;
+  template <typename Executor, typename = void> class invoker;
 
   // Adds a function to the strand. Returns true if it acquires the lock.
   BOOST_ASIO_DECL static bool enqueue(const implementation_type& impl,

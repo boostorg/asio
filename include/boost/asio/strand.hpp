@@ -18,6 +18,8 @@
 #include <boost/asio/detail/config.hpp>
 #include <boost/asio/detail/strand_executor_service.hpp>
 #include <boost/asio/detail/type_traits.hpp>
+#include <boost/asio/execution/executor.hpp>
+#include <boost/asio/is_executor.hpp>
 
 #include <boost/asio/detail/push_options.hpp>
 
@@ -39,16 +41,14 @@ public:
    */
   strand()
     : executor_(),
-      impl_(use_service<detail::strand_executor_service>(
-            executor_.context()).create_implementation())
+      impl_(strand::create_implementation(executor_))
   {
   }
 
   /// Construct a strand for the specified executor.
   explicit strand(const Executor& e)
     : executor_(e),
-      impl_(use_service<detail::strand_executor_service>(
-            executor_.context()).create_implementation())
+      impl_(strand::create_implementation(executor_))
   {
   }
 
@@ -147,6 +147,51 @@ public:
     return executor_;
   }
 
+  /// Forward a query to the underlying executor.
+  template <typename Property>
+  typename enable_if<
+    can_query<const Executor&, Property>::value,
+    typename query_result_type<const Executor&, Property>::type
+  >::type query(const Property& p) const
+    BOOST_ASIO_NOEXCEPT_IF((
+      is_nothrow_query<const Executor&, Property>::value))
+  {
+    return boost::asio::query(executor_, p);
+  }
+
+  /// Forward a requirement to the underlying executor.
+  template <typename Property>
+  typename enable_if<
+    can_require<const Executor&, Property>::value,
+    strand<typename decay<
+      typename require_result_type<const Executor&, Property>::type
+    >::type>
+  >::type require(const Property& p) const
+    BOOST_ASIO_NOEXCEPT_IF((
+      is_nothrow_require<const Executor&, Property>::value))
+  {
+    return strand<typename decay<
+      typename require_result_type<const Executor&, Property>::type
+        >::type>(boost::asio::require(executor_, p), impl_);
+  }
+
+  /// Forward a preference to the underlying executor.
+  template <typename Property>
+  typename enable_if<
+    can_prefer<const Executor&, Property>::value,
+    strand<typename decay<
+      typename prefer_result_type<const Executor&, Property>::type
+    >::type>
+  >::type prefer(const Property& p) const
+    BOOST_ASIO_NOEXCEPT_IF((
+      is_nothrow_prefer<const Executor&, Property>::value))
+  {
+    return strand<typename decay<
+      typename prefer_result_type<const Executor&, Property>::type
+        >::type>(boost::asio::prefer(executor_, p), impl_);
+  }
+
+#if !defined(BOOST_ASIO_NO_TS_EXECUTORS)
   /// Obtain the underlying execution context.
   execution_context& context() const BOOST_ASIO_NOEXCEPT
   {
@@ -170,7 +215,28 @@ public:
   {
     executor_.on_work_finished();
   }
+#endif // !defined(BOOST_ASIO_NO_TS_EXECUTORS)
 
+  /// Request the strand to invoke the given function object.
+  /**
+   * This function is used to ask the strand to execute the given function
+   * object on its underlying executor. The function object will be executed
+   * according to the properties of the underlying executor.
+   *
+   * @param f The function object to be called. The executor will make
+   * a copy of the handler object as required. The function signature of the
+   * function object must be: @code void function(); @endcode
+   */
+  template <typename Function>
+  typename enable_if<
+    execution::can_execute<const Executor&, Function>::value
+  >::type execute(BOOST_ASIO_MOVE_ARG(Function) f) const
+  {
+    detail::strand_executor_service::execute(impl_,
+        executor_, BOOST_ASIO_MOVE_CAST(Function)(f));
+  }
+
+#if !defined(BOOST_ASIO_NO_TS_EXECUTORS)
   /// Request the strand to invoke the given function object.
   /**
    * This function is used to ask the strand to execute the given function
@@ -232,6 +298,7 @@ public:
     detail::strand_executor_service::defer(impl_,
         executor_, BOOST_ASIO_MOVE_CAST(Function)(f), a);
   }
+#endif // !defined(BOOST_ASIO_NO_TS_EXECUTORS)
 
   /// Determine whether the strand is running in the current thread.
   /**
@@ -267,9 +334,36 @@ public:
 #if defined(GENERATING_DOCUMENTATION)
 private:
 #endif // defined(GENERATING_DOCUMENTATION)
-  Executor executor_;
   typedef detail::strand_executor_service::implementation_type
     implementation_type;
+
+  template <typename InnerExecutor>
+  static implementation_type create_implementation(const InnerExecutor& ex,
+      typename enable_if<
+        can_query<InnerExecutor, execution::context_t>::value
+      >::type* = 0)
+  {
+    return use_service<detail::strand_executor_service>(
+        boost::asio::query(ex, execution::context)).create_implementation();
+  }
+
+  template <typename InnerExecutor>
+  static implementation_type create_implementation(const InnerExecutor& ex,
+      typename enable_if<
+        !can_query<InnerExecutor, execution::context_t>::value
+      >::type* = 0)
+  {
+    return use_service<detail::strand_executor_service>(
+        ex.context()).create_implementation();
+  }
+
+  strand(const Executor& ex, const implementation_type& impl)
+    : executor_(ex),
+      impl_(impl)
+  {
+  }
+
+  Executor executor_;
   implementation_type impl_;
 };
 
@@ -283,7 +377,9 @@ private:
 /// Create a @ref strand object for an executor.
 template <typename Executor>
 inline strand<Executor> make_strand(const Executor& ex,
-    typename enable_if<is_executor<Executor>::value>::type* = 0)
+    typename enable_if<
+      is_executor<Executor>::value || execution::is_executor<Executor>::value
+    >::type* = 0)
 {
   return strand<Executor>(ex);
 }
@@ -293,12 +389,97 @@ template <typename ExecutionContext>
 inline strand<typename ExecutionContext::executor_type>
 make_strand(ExecutionContext& ctx,
     typename enable_if<
-      is_convertible<ExecutionContext&, execution_context&>::value>::type* = 0)
+      is_convertible<ExecutionContext&, execution_context&>::value
+    >::type* = 0)
 {
   return strand<typename ExecutionContext::executor_type>(ctx.get_executor());
 }
 
 /*@}*/
+
+#if !defined(GENERATING_DOCUMENTATION)
+
+namespace execution {
+
+#if !defined(BOOST_ASIO_HAS_DEDUCED_EXECUTION_IS_EXECUTOR_TRAIT)
+
+template <typename Executor>
+struct is_executor<strand<Executor> > : true_type
+{
+};
+
+#endif // !defined(BOOST_ASIO_HAS_DEDUCED_EXECUTION_IS_EXECUTOR_TRAIT)
+
+} // namespace execution
+namespace traits {
+
+#if !defined(BOOST_ASIO_HAS_DEDUCED_EXECUTE_MEMBER_TRAIT)
+
+template <typename Executor, typename Function>
+struct execute_member<strand<Executor>, Function>
+{
+  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
+  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_noexcept = false);
+  typedef void result_type;
+};
+
+#endif // !defined(BOOST_ASIO_HAS_DEDUCED_EXECUTE_MEMBER_TRAIT)
+
+#if !defined(BOOST_ASIO_HAS_DEDUCED_QUERY_MEMBER_TRAIT)
+
+template <typename Executor, typename Property>
+struct query_member<strand<Executor>, Property,
+    typename enable_if<
+      can_query<const Executor&, Property>::value
+    >::type>
+{
+  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
+  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_noexcept =
+      (is_nothrow_query<Executor, Property>::value));
+  typedef typename query_result_type<Executor, Property>::type result_type;
+};
+
+#endif // !defined(BOOST_ASIO_HAS_DEDUCED_QUERY_MEMBER_TRAIT)
+
+#if !defined(BOOST_ASIO_HAS_DEDUCED_REQUIRE_MEMBER_TRAIT)
+
+template <typename Executor, typename Property>
+struct require_member<strand<Executor>, Property,
+    typename enable_if<
+      can_require<const Executor&, Property>::value
+    >::type>
+{
+  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
+  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_noexcept =
+      (is_nothrow_require<Executor, Property>::value));
+  typedef strand<typename decay<
+    typename require_result_type<Executor, Property>::type
+      >::type> result_type;
+};
+
+#endif // !defined(BOOST_ASIO_HAS_DEDUCED_REQUIRE_MEMBER_TRAIT)
+
+#if !defined(BOOST_ASIO_HAS_DEDUCED_PREFER_MEMBER_TRAIT)
+
+template <typename Executor, typename Property>
+struct prefer_member<strand<Executor>, Property,
+    typename enable_if<
+      can_prefer<const Executor&, Property>::value
+    >::type>
+{
+  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
+  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_noexcept =
+      (is_nothrow_prefer<Executor, Property>::value));
+  typedef strand<typename decay<
+    typename prefer_result_type<Executor, Property>::type
+      >::type> result_type;
+};
+
+#endif // !defined(BOOST_ASIO_HAS_DEDUCED_PREFER_MEMBER_TRAIT)
+
+} // namespace traits
+
+#endif // !defined(GENERATING_DOCUMENTATION)
 
 } // namespace asio
 } // namespace boost

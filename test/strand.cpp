@@ -255,9 +255,222 @@ void strand_conversion_test()
   s3 = strand<io_context::executor_type>(s1);
 }
 
+void strand_query_test()
+{
+  io_context ioc;
+  strand<io_context::executor_type> s1 = make_strand(ioc);
+
+  BOOST_ASIO_CHECK(
+      &boost::asio::query(s1, boost::asio::execution::context)
+        == &ioc);
+
+  BOOST_ASIO_CHECK(
+      boost::asio::query(s1, boost::asio::execution::blocking)
+        == boost::asio::execution::blocking.possibly);
+
+  BOOST_ASIO_CHECK(
+      boost::asio::query(s1, boost::asio::execution::blocking.possibly)
+        == boost::asio::execution::blocking.possibly);
+
+  BOOST_ASIO_CHECK(
+      boost::asio::query(s1, boost::asio::execution::outstanding_work)
+        == boost::asio::execution::outstanding_work.untracked);
+
+  BOOST_ASIO_CHECK(
+      boost::asio::query(s1, boost::asio::execution::outstanding_work.untracked)
+        == boost::asio::execution::outstanding_work.untracked);
+
+  BOOST_ASIO_CHECK(
+      boost::asio::query(s1, boost::asio::execution::relationship)
+        == boost::asio::execution::relationship.fork);
+
+  BOOST_ASIO_CHECK(
+      boost::asio::query(s1, boost::asio::execution::relationship.fork)
+        == boost::asio::execution::relationship.fork);
+
+  BOOST_ASIO_CHECK(
+      boost::asio::query(s1, boost::asio::execution::mapping)
+        == boost::asio::execution::mapping.thread);
+
+  BOOST_ASIO_CHECK(
+      boost::asio::query(s1, boost::asio::execution::allocator)
+        == std::allocator<void>());
+}
+
+void strand_execute_test()
+{
+  io_context ioc;
+  strand<io_context::executor_type> s1 = make_strand(ioc);
+  int count = 0;
+
+  boost::asio::execution::execute(s1, bindns::bind(increment, &count));
+
+  // No handlers can be called until run() is called.
+  BOOST_ASIO_CHECK(!ioc.stopped());
+  BOOST_ASIO_CHECK(count == 0);
+
+  ioc.run();
+
+  // The run() call will not return until all work has finished.
+  BOOST_ASIO_CHECK(ioc.stopped());
+  BOOST_ASIO_CHECK(count == 1);
+
+  count = 0;
+  ioc.restart();
+  boost::asio::execution::execute(
+      boost::asio::require(s1, boost::asio::execution::blocking.possibly),
+      bindns::bind(increment, &count));
+
+  // No handlers can be called until run() is called.
+  BOOST_ASIO_CHECK(!ioc.stopped());
+  BOOST_ASIO_CHECK(count == 0);
+
+  ioc.run();
+
+  // The run() call will not return until all work has finished.
+  BOOST_ASIO_CHECK(ioc.stopped());
+  BOOST_ASIO_CHECK(count == 1);
+
+  count = 0;
+  ioc.restart();
+  boost::asio::execution::execute(
+      boost::asio::require(s1, boost::asio::execution::blocking.never),
+      bindns::bind(increment, &count));
+
+  // No handlers can be called until run() is called.
+  BOOST_ASIO_CHECK(!ioc.stopped());
+  BOOST_ASIO_CHECK(count == 0);
+
+  ioc.run();
+
+  // The run() call will not return until all work has finished.
+  BOOST_ASIO_CHECK(ioc.stopped());
+  BOOST_ASIO_CHECK(count == 1);
+
+  count = 0;
+  ioc.restart();
+  BOOST_ASIO_CHECK(!ioc.stopped());
+
+  boost::asio::execution::execute(
+      boost::asio::require(s1,
+        boost::asio::execution::blocking.never,
+        boost::asio::execution::outstanding_work.tracked),
+      bindns::bind(increment, &count));
+
+  // No handlers can be called until run() is called.
+  BOOST_ASIO_CHECK(!ioc.stopped());
+  BOOST_ASIO_CHECK(count == 0);
+
+  ioc.run();
+
+  // The run() call will not return until all work has finished.
+  BOOST_ASIO_CHECK(ioc.stopped());
+  BOOST_ASIO_CHECK(count == 1);
+
+  count = 0;
+  ioc.restart();
+  boost::asio::execution::execute(
+      boost::asio::require(s1,
+        boost::asio::execution::blocking.never,
+        boost::asio::execution::outstanding_work.untracked),
+      bindns::bind(increment, &count));
+
+  // No handlers can be called until run() is called.
+  BOOST_ASIO_CHECK(!ioc.stopped());
+  BOOST_ASIO_CHECK(count == 0);
+
+  ioc.run();
+
+  // The run() call will not return until all work has finished.
+  BOOST_ASIO_CHECK(ioc.stopped());
+  BOOST_ASIO_CHECK(count == 1);
+
+  count = 0;
+  ioc.restart();
+  boost::asio::execution::execute(
+      boost::asio::require(s1,
+        boost::asio::execution::blocking.never,
+        boost::asio::execution::outstanding_work.untracked,
+        boost::asio::execution::relationship.fork),
+      bindns::bind(increment, &count));
+
+  // No handlers can be called until run() is called.
+  BOOST_ASIO_CHECK(!ioc.stopped());
+  BOOST_ASIO_CHECK(count == 0);
+
+  ioc.run();
+
+  // The run() call will not return until all work has finished.
+  BOOST_ASIO_CHECK(ioc.stopped());
+  BOOST_ASIO_CHECK(count == 1);
+
+  count = 0;
+  ioc.restart();
+  boost::asio::execution::execute(
+      boost::asio::require(s1,
+        boost::asio::execution::blocking.never,
+        boost::asio::execution::outstanding_work.untracked,
+        boost::asio::execution::relationship.continuation),
+      bindns::bind(increment, &count));
+
+  // No handlers can be called until run() is called.
+  BOOST_ASIO_CHECK(!ioc.stopped());
+  BOOST_ASIO_CHECK(count == 0);
+
+  ioc.run();
+
+  // The run() call will not return until all work has finished.
+  BOOST_ASIO_CHECK(ioc.stopped());
+  BOOST_ASIO_CHECK(count == 1);
+
+  count = 0;
+  ioc.restart();
+  boost::asio::execution::execute(
+      boost::asio::prefer(
+        boost::asio::require(s1,
+          boost::asio::execution::blocking.never,
+          boost::asio::execution::outstanding_work.untracked,
+          boost::asio::execution::relationship.continuation),
+        boost::asio::execution::allocator(std::allocator<void>())),
+      bindns::bind(increment, &count));
+
+  // No handlers can be called until run() is called.
+  BOOST_ASIO_CHECK(!ioc.stopped());
+  BOOST_ASIO_CHECK(count == 0);
+
+  ioc.run();
+
+  // The run() call will not return until all work has finished.
+  BOOST_ASIO_CHECK(ioc.stopped());
+  BOOST_ASIO_CHECK(count == 1);
+
+  count = 0;
+  ioc.restart();
+  boost::asio::execution::execute(
+      boost::asio::prefer(
+        boost::asio::require(s1,
+          boost::asio::execution::blocking.never,
+          boost::asio::execution::outstanding_work.untracked,
+          boost::asio::execution::relationship.continuation),
+        boost::asio::execution::allocator),
+      bindns::bind(increment, &count));
+
+  // No handlers can be called until run() is called.
+  BOOST_ASIO_CHECK(!ioc.stopped());
+  BOOST_ASIO_CHECK(count == 0);
+
+  ioc.run();
+
+  // The run() call will not return until all work has finished.
+  BOOST_ASIO_CHECK(ioc.stopped());
+  BOOST_ASIO_CHECK(count == 1);
+}
+
 BOOST_ASIO_TEST_SUITE
 (
   "strand",
   BOOST_ASIO_TEST_CASE(strand_test)
   BOOST_ASIO_COMPILE_TEST_CASE(strand_conversion_test)
+  BOOST_ASIO_TEST_CASE(strand_query_test)
+  BOOST_ASIO_TEST_CASE(strand_execute_test)
 )
