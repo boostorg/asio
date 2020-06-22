@@ -149,13 +149,13 @@ public:
 
   impl_base* clone() const BOOST_ASIO_NOEXCEPT
   {
-    ++ref_count_;
+    detail::ref_count_up(ref_count_);
     return const_cast<impl_base*>(static_cast<const impl_base*>(this));
   }
 
   void destroy() BOOST_ASIO_NOEXCEPT
   {
-    if (--ref_count_ == 0)
+    if (detail::ref_count_down(ref_count_))
     {
       allocator_type alloc(allocator_);
       impl* p = this;
