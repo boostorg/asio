@@ -17,6 +17,7 @@
 
 #include <boost/asio/detail/config.hpp>
 #include <boost/asio/detail/type_traits.hpp>
+#include <boost/asio/execution/executor.hpp>
 #include <boost/asio/is_executor.hpp>
 #include <boost/asio/system_executor.hpp>
 
@@ -114,8 +115,9 @@ get_associated_executor(const T& t) BOOST_ASIO_NOEXCEPT
 template <typename T, typename Executor>
 inline typename associated_executor<T, Executor>::type
 get_associated_executor(const T& t, const Executor& ex,
-    typename enable_if<is_executor<
-      Executor>::value>::type* = 0) BOOST_ASIO_NOEXCEPT
+    typename enable_if<
+      is_executor<Executor>::value || execution::is_executor<Executor>::value
+    >::type* = 0) BOOST_ASIO_NOEXCEPT
 {
   return associated_executor<T, Executor>::get(t, ex);
 }
