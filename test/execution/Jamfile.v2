@@ -43,6 +43,7 @@ project
 test-suite "asio" :
   [ run blocking.cpp ]
   [ run blocking_adaptation.cpp ]
+  [ run bulk_guarantee.cpp ]
   [ run execute.cpp ]
   [ run invocable_archetype.cpp ]
   [ run mapping.cpp ]
