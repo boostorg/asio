@@ -19,8 +19,8 @@ using boost::asio::ip::tcp;
 class session : public std::enable_shared_from_this<session>
 {
 public:
-  session(tcp::socket socket, boost::asio::ssl::context& context)
-    : socket_(std::move(socket), context)
+  session(boost::asio::ssl::stream<tcp::socket> socket)
+    : socket_(std::move(socket))
   {
   }
 
@@ -106,7 +106,9 @@ private:
         {
           if (!error)
           {
-            std::make_shared<session>(std::move(socket), context_)->start();
+            std::make_shared<session>(
+                boost::asio::ssl::stream<tcp::socket>(
+                  std::move(socket), context_))->start();
           }
 
           do_accept();
