@@ -82,15 +82,28 @@ typedef iovec buf;
 BOOST_ASIO_DECL std::size_t sync_read(int d, state_type state, buf* bufs,
     std::size_t count, bool all_empty, boost::system::error_code& ec);
 
+BOOST_ASIO_DECL std::size_t sync_read1(int d, state_type state, void* data,
+    std::size_t size, boost::system::error_code& ec);
+
 BOOST_ASIO_DECL bool non_blocking_read(int d, buf* bufs, std::size_t count,
+    boost::system::error_code& ec, std::size_t& bytes_transferred);
+
+BOOST_ASIO_DECL bool non_blocking_read1(int d, void* data, std::size_t size,
     boost::system::error_code& ec, std::size_t& bytes_transferred);
 
 BOOST_ASIO_DECL std::size_t sync_write(int d, state_type state,
     const buf* bufs, std::size_t count, bool all_empty,
     boost::system::error_code& ec);
 
+BOOST_ASIO_DECL std::size_t sync_write1(int d, state_type state,
+    const void* data, std::size_t size, boost::system::error_code& ec);
+
 BOOST_ASIO_DECL bool non_blocking_write(int d,
     const buf* bufs, std::size_t count,
+    boost::system::error_code& ec, std::size_t& bytes_transferred);
+
+BOOST_ASIO_DECL bool non_blocking_write1(int d,
+    const void* data, std::size_t size,
     boost::system::error_code& ec, std::size_t& bytes_transferred);
 
 BOOST_ASIO_DECL int ioctl(int d, state_type& state, long cmd,
