@@ -118,6 +118,7 @@
 #include <boost/asio/local/connect_pair.hpp>
 #include <boost/asio/local/datagram_protocol.hpp>
 #include <boost/asio/local/stream_protocol.hpp>
+#include <boost/asio/multiple_exceptions.hpp>
 #include <boost/asio/packaged_task.hpp>
 #include <boost/asio/placeholders.hpp>
 #include <boost/asio/posix/basic_descriptor.hpp>

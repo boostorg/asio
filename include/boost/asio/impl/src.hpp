@@ -24,6 +24,7 @@
 #include <boost/asio/impl/executor.ipp>
 #include <boost/asio/impl/handler_alloc_hook.ipp>
 #include <boost/asio/impl/io_context.ipp>
+#include <boost/asio/impl/multiple_exceptions.ipp>
 #include <boost/asio/impl/serial_port_base.ipp>
 #include <boost/asio/impl/system_context.ipp>
 #include <boost/asio/impl/thread_pool.ipp>
