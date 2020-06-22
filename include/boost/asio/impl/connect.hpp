@@ -439,23 +439,31 @@ namespace detail
   template <typename Function, typename Executor, typename Protocol,
       typename EndpointSequence, typename ConnectCondition,
       typename RangeConnectHandler>
-  inline void asio_handler_invoke(Function& function,
+  inline asio_handler_invoke_is_deprecated
+  asio_handler_invoke(Function& function,
       range_connect_op<Protocol, Executor, EndpointSequence,
         ConnectCondition, RangeConnectHandler>* this_handler)
   {
     boost_asio_handler_invoke_helpers::invoke(
         function, this_handler->handler_);
+#if defined(BOOST_ASIO_NO_DEPRECATED)
+    return asio_handler_invoke_is_no_longer_used();
+#endif // defined(BOOST_ASIO_NO_DEPRECATED)
   }
 
   template <typename Function, typename Executor, typename Protocol,
       typename EndpointSequence, typename ConnectCondition,
       typename RangeConnectHandler>
-  inline void asio_handler_invoke(const Function& function,
+  inline asio_handler_invoke_is_deprecated
+  asio_handler_invoke(const Function& function,
       range_connect_op<Protocol, Executor, EndpointSequence,
         ConnectCondition, RangeConnectHandler>* this_handler)
   {
     boost_asio_handler_invoke_helpers::invoke(
         function, this_handler->handler_);
+#if defined(BOOST_ASIO_NO_DEPRECATED)
+    return asio_handler_invoke_is_no_longer_used();
+#endif // defined(BOOST_ASIO_NO_DEPRECATED)
   }
 
   template <typename Protocol, typename Executor>
@@ -627,23 +635,31 @@ namespace detail
   template <typename Function, typename Executor, typename Protocol,
       typename Iterator, typename ConnectCondition,
       typename IteratorConnectHandler>
-  inline void asio_handler_invoke(Function& function,
+  inline asio_handler_invoke_is_deprecated
+  asio_handler_invoke(Function& function,
       iterator_connect_op<Protocol, Executor, Iterator,
         ConnectCondition, IteratorConnectHandler>* this_handler)
   {
     boost_asio_handler_invoke_helpers::invoke(
         function, this_handler->handler_);
+#if defined(BOOST_ASIO_NO_DEPRECATED)
+    return asio_handler_invoke_is_no_longer_used();
+#endif // defined(BOOST_ASIO_NO_DEPRECATED)
   }
 
   template <typename Function, typename Executor, typename Protocol,
       typename Iterator, typename ConnectCondition,
       typename IteratorConnectHandler>
-  inline void asio_handler_invoke(const Function& function,
+  inline asio_handler_invoke_is_deprecated
+  asio_handler_invoke(const Function& function,
       iterator_connect_op<Protocol, Executor, Iterator,
         ConnectCondition, IteratorConnectHandler>* this_handler)
   {
     boost_asio_handler_invoke_helpers::invoke(
         function, this_handler->handler_);
+#if defined(BOOST_ASIO_NO_DEPRECATED)
+    return asio_handler_invoke_is_no_longer_used();
+#endif // defined(BOOST_ASIO_NO_DEPRECATED)
   }
 
   template <typename Protocol, typename Executor>

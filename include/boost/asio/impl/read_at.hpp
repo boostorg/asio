@@ -292,23 +292,31 @@ namespace detail
   template <typename Function, typename AsyncRandomAccessReadDevice,
       typename MutableBufferSequence, typename MutableBufferIterator,
       typename CompletionCondition, typename ReadHandler>
-  inline void asio_handler_invoke(Function& function,
+  inline asio_handler_invoke_is_deprecated
+  asio_handler_invoke(Function& function,
       read_at_op<AsyncRandomAccessReadDevice, MutableBufferSequence,
         MutableBufferIterator, CompletionCondition, ReadHandler>* this_handler)
   {
     boost_asio_handler_invoke_helpers::invoke(
         function, this_handler->handler_);
+#if defined(BOOST_ASIO_NO_DEPRECATED)
+    return asio_handler_invoke_is_no_longer_used();
+#endif // defined(BOOST_ASIO_NO_DEPRECATED)
   }
 
   template <typename Function, typename AsyncRandomAccessReadDevice,
       typename MutableBufferSequence, typename MutableBufferIterator,
       typename CompletionCondition, typename ReadHandler>
-  inline void asio_handler_invoke(const Function& function,
+  inline asio_handler_invoke_is_deprecated
+  asio_handler_invoke(const Function& function,
       read_at_op<AsyncRandomAccessReadDevice, MutableBufferSequence,
         MutableBufferIterator, CompletionCondition, ReadHandler>* this_handler)
   {
     boost_asio_handler_invoke_helpers::invoke(
         function, this_handler->handler_);
+#if defined(BOOST_ASIO_NO_DEPRECATED)
+    return asio_handler_invoke_is_no_longer_used();
+#endif // defined(BOOST_ASIO_NO_DEPRECATED)
   }
 
   template <typename AsyncRandomAccessReadDevice,
@@ -566,22 +574,30 @@ namespace detail
 
   template <typename Function, typename AsyncRandomAccessReadDevice,
       typename Allocator, typename CompletionCondition, typename ReadHandler>
-  inline void asio_handler_invoke(Function& function,
+  inline asio_handler_invoke_is_deprecated
+  asio_handler_invoke(Function& function,
       read_at_streambuf_op<AsyncRandomAccessReadDevice, Allocator,
         CompletionCondition, ReadHandler>* this_handler)
   {
     boost_asio_handler_invoke_helpers::invoke(
         function, this_handler->handler_);
+#if defined(BOOST_ASIO_NO_DEPRECATED)
+    return asio_handler_invoke_is_no_longer_used();
+#endif // defined(BOOST_ASIO_NO_DEPRECATED)
   }
 
   template <typename Function, typename AsyncRandomAccessReadDevice,
       typename Allocator, typename CompletionCondition, typename ReadHandler>
-  inline void asio_handler_invoke(const Function& function,
+  inline asio_handler_invoke_is_deprecated
+  asio_handler_invoke(const Function& function,
       read_at_streambuf_op<AsyncRandomAccessReadDevice, Allocator,
         CompletionCondition, ReadHandler>* this_handler)
   {
     boost_asio_handler_invoke_helpers::invoke(
         function, this_handler->handler_);
+#if defined(BOOST_ASIO_NO_DEPRECATED)
+    return asio_handler_invoke_is_no_longer_used();
+#endif // defined(BOOST_ASIO_NO_DEPRECATED)
   }
 
   template <typename AsyncRandomAccessReadDevice>

@@ -608,6 +608,8 @@ private:
   Allocator allocator_;
 };
 
+#if !defined(BOOST_ASIO_NO_DEPRECATED)
+
 template <typename Function, typename Signature, typename Allocator>
 inline void asio_handler_invoke(Function& f,
     promise_handler<Signature, Allocator>* h)
@@ -625,6 +627,8 @@ inline void asio_handler_invoke(const Function& f,
     ex(h->get_executor());
   ex.dispatch(f, std::allocator<void>());
 }
+
+#endif // !defined(BOOST_ASIO_NO_DEPRECATED)
 
 // Helper base class for async_result specialisation.
 template <typename Signature, typename Allocator>
@@ -720,6 +724,8 @@ private:
   Allocator allocator_;
 };
 
+#if !defined(BOOST_ASIO_NO_DEPRECATED)
+
 template <typename Function,
     typename Function1, typename Allocator, typename Result>
 inline void asio_handler_invoke(Function& f,
@@ -739,6 +745,8 @@ inline void asio_handler_invoke(const Function& f,
     ex(h->get_executor());
   ex.dispatch(f, std::allocator<void>());
 }
+
+#endif // !defined(BOOST_ASIO_NO_DEPRECATED)
 
 // Helper base class for async_result specialisation.
 template <typename Function, typename Allocator, typename Result>
