@@ -36,7 +36,7 @@ namespace windows {
  * @e Distinct @e objects: Safe.@n
  * @e Shared @e objects: Unsafe.
  */
-template <typename Executor = executor>
+template <typename Executor = any_io_executor>
 class basic_random_access_handle
   : public basic_overlapped_handle<Executor>
 {

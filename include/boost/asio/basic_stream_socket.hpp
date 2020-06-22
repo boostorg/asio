@@ -33,7 +33,7 @@ namespace asio {
 #define BOOST_ASIO_BASIC_STREAM_SOCKET_FWD_DECL
 
 // Forward declaration with defaulted arguments.
-template <typename Protocol, typename Executor = executor>
+template <typename Protocol, typename Executor = any_io_executor>
 class basic_stream_socket;
 
 #endif // !defined(BOOST_ASIO_BASIC_STREAM_SOCKET_FWD_DECL)

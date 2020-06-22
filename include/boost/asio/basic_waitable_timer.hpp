@@ -17,6 +17,7 @@
 
 #include <boost/asio/detail/config.hpp>
 #include <cstddef>
+#include <boost/asio/any_io_executor.hpp>
 #include <boost/asio/detail/chrono_time_traits.hpp>
 #include <boost/asio/detail/deadline_timer_service.hpp>
 #include <boost/asio/detail/handler_type_requirements.hpp>
@@ -24,7 +25,6 @@
 #include <boost/asio/detail/non_const_lvalue.hpp>
 #include <boost/asio/detail/throw_error.hpp>
 #include <boost/asio/error.hpp>
-#include <boost/asio/executor.hpp>
 #include <boost/asio/wait_traits.hpp>
 
 #if defined(BOOST_ASIO_HAS_MOVE)
@@ -42,7 +42,7 @@ namespace asio {
 // Forward declaration with defaulted arguments.
 template <typename Clock,
     typename WaitTraits = boost::asio::wait_traits<Clock>,
-    typename Executor = executor>
+    typename Executor = any_io_executor>
 class basic_waitable_timer;
 
 #endif // !defined(BOOST_ASIO_BASIC_WAITABLE_TIMER_FWD_DECL)

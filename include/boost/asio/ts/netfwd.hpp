@@ -48,7 +48,11 @@ class executor_work_guard;
 template <typename Blocking, typename Relationship, typename Allocator>
 class basic_system_executor;
 
+#if defined(BOOST_ASIO_USE_TS_EXECUTOR_AS_DEFAULT)
+
 class executor;
+
+#endif // defined(BOOST_ASIO_USE_TS_EXECUTOR_AS_DEFAULT)
 
 template <typename Executor>
 class strand;
@@ -65,6 +69,8 @@ struct time_traits;
 
 #endif // defined(BOOST_ASIO_HAS_BOOST_DATE_TIME)
 
+#if defined(BOOST_ASIO_USE_TS_EXECUTOR_AS_DEFAULT)
+
 #if !defined(BOOST_ASIO_BASIC_WAITABLE_TIMER_FWD_DECL)
 #define BOOST_ASIO_BASIC_WAITABLE_TIMER_FWD_DECL
 
@@ -75,8 +81,6 @@ class basic_waitable_timer;
 
 #endif // !defined(BOOST_ASIO_BASIC_WAITABLE_TIMER_FWD_DECL)
 
-#if defined(BOOST_ASIO_HAS_CHRONO)
-
 typedef basic_waitable_timer<chrono::system_clock> system_timer;
 
 typedef basic_waitable_timer<chrono::steady_clock> steady_timer;
@@ -84,7 +88,18 @@ typedef basic_waitable_timer<chrono::steady_clock> steady_timer;
 typedef basic_waitable_timer<chrono::high_resolution_clock>
   high_resolution_timer;
 
+#else // defined(BOOST_ASIO_USE_TS_EXECUTOR_AS_DEFAULT)
+
+template <typename Clock, typename WaitTraits, typename Executor>
+class basic_waitable_timer;
+
+#endif // defined(BOOST_ASIO_USE_TS_EXECUTOR_AS_DEFAULT)
+
+#if defined(BOOST_ASIO_HAS_CHRONO)
+
 #endif // defined(BOOST_ASIO_HAS_CHRONO)
+
+#if defined(BOOST_ASIO_USE_TS_EXECUTOR_AS_DEFAULT)
 
 #if !defined(BOOST_ASIO_BASIC_SOCKET_FWD_DECL)
 #define BOOST_ASIO_BASIC_SOCKET_FWD_DECL
@@ -118,6 +133,23 @@ template <typename Protocol, typename Executor = executor>
 class basic_socket_acceptor;
 
 #endif // !defined(BOOST_ASIO_BASIC_SOCKET_ACCEPTOR_FWD_DECL)
+
+#else // defined(BOOST_ASIO_USE_TS_EXECUTOR_AS_DEFAULT)
+
+template <typename Protocol, typename Executor>
+class basic_socket;
+
+template <typename Protocol, typename Executor>
+class basic_datagram_socket;
+
+// Forward declaration with defaulted arguments.
+template <typename Protocol, typename Executor>
+class basic_stream_socket;
+
+template <typename Protocol, typename Executor>
+class basic_socket_acceptor;
+
+#endif // defined(BOOST_ASIO_USE_TS_EXECUTOR_AS_DEFAULT)
 
 #if !defined(BOOST_ASIO_BASIC_SOCKET_STREAMBUF_FWD_DECL)
 #define BOOST_ASIO_BASIC_SOCKET_STREAMBUF_FWD_DECL
@@ -188,6 +220,8 @@ class basic_resolver_entry;
 template <typename InternetProtocol>
 class basic_resolver_results;
 
+#if defined(BOOST_ASIO_USE_TS_EXECUTOR_AS_DEFAULT)
+
 #if !defined(BOOST_ASIO_IP_BASIC_RESOLVER_FWD_DECL)
 #define BOOST_ASIO_IP_BASIC_RESOLVER_FWD_DECL
 
@@ -195,6 +229,13 @@ template <typename InternetProtocol, typename Executor = executor>
 class basic_resolver;
 
 #endif // !defined(BOOST_ASIO_IP_BASIC_RESOLVER_FWD_DECL)
+
+#else // defined(BOOST_ASIO_USE_TS_EXECUTOR_AS_DEFAULT)
+
+template <typename InternetProtocol, typename Executor>
+class basic_resolver;
+
+#endif // defined(BOOST_ASIO_USE_TS_EXECUTOR_AS_DEFAULT)
 
 class tcp;
 

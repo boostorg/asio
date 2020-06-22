@@ -21,6 +21,7 @@
   || defined(GENERATING_DOCUMENTATION)
 
 #include <cstddef>
+#include <boost/asio/any_io_executor.hpp>
 #include <boost/asio/detail/deadline_timer_service.hpp>
 #include <boost/asio/detail/handler_type_requirements.hpp>
 #include <boost/asio/detail/io_object_impl.hpp>
@@ -28,7 +29,6 @@
 #include <boost/asio/detail/throw_error.hpp>
 #include <boost/asio/error.hpp>
 #include <boost/asio/execution_context.hpp>
-#include <boost/asio/executor.hpp>
 #include <boost/asio/time_traits.hpp>
 
 #include <boost/asio/detail/push_options.hpp>
@@ -126,7 +126,7 @@ namespace asio {
  */
 template <typename Time,
     typename TimeTraits = boost::asio::time_traits<Time>,
-    typename Executor = executor>
+    typename Executor = any_io_executor>
 class basic_deadline_timer
 {
 public:
