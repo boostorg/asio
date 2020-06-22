@@ -1460,7 +1460,7 @@
 # define BOOST_ASIO_UNUSED_VARIABLE
 #endif // !defined(BOOST_ASIO_UNUSED_VARIABLE)
 
-// Support co_await on compilers known to allow it.
+// Support the co_await keyword on compilers known to allow it.
 #if !defined(BOOST_ASIO_HAS_CO_AWAIT)
 # if !defined(BOOST_ASIO_DISABLE_CO_AWAIT)
 #  if defined(BOOST_ASIO_MSVC)
@@ -1470,14 +1470,33 @@
 #    endif // defined(_RESUMABLE_FUNCTIONS_SUPPORTED)
 #   endif // (_MSC_FULL_VER >= 190023506)
 #  endif // defined(BOOST_ASIO_MSVC)
+#  if defined(__clang__)
+#   if (__cplusplus >= 201703) && (__cpp_coroutines >= 201703)
+#    if __has_include(<experimental/coroutine>)
+#     define BOOST_ASIO_HAS_CO_AWAIT 1
+#    endif // __has_include(<experimental/coroutine>)
+#   endif // (__cplusplus >= 201703) && (__cpp_coroutines >= 201703)
+#  elif defined(__GNUC__)
+#   if (__cplusplus >= 201709) && (__cpp_impl_coroutine >= 201902)
+#    if __has_include(<coroutine>)
+#     define BOOST_ASIO_HAS_CO_AWAIT 1
+#    endif // __has_include(<coroutine>)
+#   endif // (__cplusplus >= 201709) && (__cpp_impl_coroutine >= 201902)
+#  endif // defined(__GNUC__)
 # endif // !defined(BOOST_ASIO_DISABLE_CO_AWAIT)
-# if defined(__clang__)
-#  if (__cplusplus >= 201703) && (__cpp_coroutines >= 201703)
-#   if __has_include(<experimental/coroutine>)
-#    define BOOST_ASIO_HAS_CO_AWAIT 1
-#   endif // __has_include(<experimental/coroutine>)
-#  endif // (__cplusplus >= 201703) && (__cpp_coroutines >= 201703)
-# endif // defined(__clang__)
 #endif // !defined(BOOST_ASIO_HAS_CO_AWAIT)
+
+// Standard library support for coroutines.
+#if !defined(BOOST_ASIO_HAS_STD_COROUTINE)
+# if !defined(BOOST_ASIO_DISABLE_STD_COROUTINE)
+#  if defined(__GNUC__)
+#   if (__cplusplus >= 201709) && (__cpp_impl_coroutine >= 201902)
+#    if __has_include(<coroutine>)
+#     define BOOST_ASIO_HAS_STD_COROUTINE 1
+#    endif // __has_include(<coroutine>)
+#   endif // (__cplusplus >= 201709) && (__cpp_impl_coroutine >= 201902)
+#  endif // defined(__GNUC__)
+# endif // !defined(BOOST_ASIO_DISABLE_STD_COROUTINE)
+#endif // !defined(BOOST_ASIO_HAS_STD_COROUTINE)
 
 #endif // BOOST_ASIO_DETAIL_CONFIG_HPP
