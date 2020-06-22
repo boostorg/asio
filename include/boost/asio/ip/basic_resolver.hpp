@@ -1004,8 +1004,8 @@ private:
 
       boost::asio::detail::non_const_lvalue<ResolveHandler> handler2(handler);
       self_->impl_.get_service().async_resolve(
-          self_->impl_.get_implementation(), q, handler2.value,
-          self_->impl_.get_implementation_executor());
+          self_->impl_.get_implementation(), q,
+          handler2.value, self_->impl_.get_executor());
     }
 
   private:
