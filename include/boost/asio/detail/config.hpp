@@ -1001,17 +1001,17 @@
 // Windows: target OS version.
 #if defined(BOOST_ASIO_WINDOWS) || defined(__CYGWIN__)
 # if !defined(_WIN32_WINNT) && !defined(_WIN32_WINDOWS)
-#  if defined(_MSC_VER) || defined(__BORLANDC__)
+#  if defined(_MSC_VER) || (defined(__BORLANDC__) && !defined(__clang__))
 #   pragma message( \
   "Please define _WIN32_WINNT or _WIN32_WINDOWS appropriately. For example:\n"\
   "- add -D_WIN32_WINNT=0x0601 to the compiler command line; or\n"\
   "- add _WIN32_WINNT=0x0601 to your project's Preprocessor Definitions.\n"\
   "Assuming _WIN32_WINNT=0x0601 (i.e. Windows 7 target).")
-#  else // defined(_MSC_VER) || defined(__BORLANDC__)
+#  else // defined(_MSC_VER) || (defined(__BORLANDC__) && !defined(__clang__))
 #   warning Please define _WIN32_WINNT or _WIN32_WINDOWS appropriately.
 #   warning For example, add -D_WIN32_WINNT=0x0601 to the compiler command line.
 #   warning Assuming _WIN32_WINNT=0x0601 (i.e. Windows 7 target).
-#  endif // defined(_MSC_VER) || defined(__BORLANDC__)
+#  endif // defined(_MSC_VER) || (defined(__BORLANDC__) && !defined(__clang__))
 #  define _WIN32_WINNT 0x0601
 # endif // !defined(_WIN32_WINNT) && !defined(_WIN32_WINDOWS)
 # if defined(_MSC_VER)
@@ -1410,9 +1410,9 @@
 #   if (__GNUC__ >= 3)
 #    define BOOST_ASIO_HAS_HANDLER_HOOKS 1
 #   endif // (__GNUC__ >= 3)
-#  elif !defined(__BORLANDC__)
+#  elif !defined(__BORLANDC__) || defined(__clang__)
 #   define BOOST_ASIO_HAS_HANDLER_HOOKS 1
-#  endif // !defined(__BORLANDC__)
+#  endif // !defined(__BORLANDC__) || defined(__clang__)
 # endif // !defined(BOOST_ASIO_DISABLE_HANDLER_HOOKS)
 #endif // !defined(BOOST_ASIO_HAS_HANDLER_HOOKS)
 
