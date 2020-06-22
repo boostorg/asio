@@ -49,5 +49,6 @@ test-suite "asio" :
   [ run invocable_archetype.cpp ]
   [ run mapping.cpp ]
   [ run outstanding_work.cpp ]
+  [ run prefer_only.cpp ]
   [ run relationship.cpp ]
   ;
