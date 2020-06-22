@@ -16,6 +16,9 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include <boost/asio/detail/config.hpp>
+
+#if !defined(BOOST_ASIO_NO_TS_EXECUTORS)
+
 #include <typeinfo>
 #include <boost/asio/detail/cstddef.hpp>
 #include <boost/asio/detail/executor_function.hpp>
@@ -340,5 +343,7 @@ BOOST_ASIO_USES_ALLOCATOR(boost::asio::executor)
 #if defined(BOOST_ASIO_HEADER_ONLY)
 # include <boost/asio/impl/executor.ipp>
 #endif // defined(BOOST_ASIO_HEADER_ONLY)
+
+#endif // !defined(BOOST_ASIO_NO_TS_EXECUTORS)
 
 #endif // BOOST_ASIO_EXECUTOR_HPP

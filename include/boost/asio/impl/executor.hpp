@@ -16,6 +16,9 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include <boost/asio/detail/config.hpp>
+
+#if !defined(BOOST_ASIO_NO_TS_EXECUTORS)
+
 #include <boost/asio/detail/atomic_count.hpp>
 #include <boost/asio/detail/global.hpp>
 #include <boost/asio/detail/memory.hpp>
@@ -294,5 +297,7 @@ const Executor* executor::target() const BOOST_ASIO_NOEXCEPT
 } // namespace boost
 
 #include <boost/asio/detail/pop_options.hpp>
+
+#endif // !defined(BOOST_ASIO_NO_TS_EXECUTORS)
 
 #endif // BOOST_ASIO_IMPL_EXECUTOR_HPP
