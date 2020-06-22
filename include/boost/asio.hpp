@@ -94,6 +94,7 @@
 #include <boost/asio/ip/udp.hpp>
 #include <boost/asio/ip/unicast.hpp>
 #include <boost/asio/ip/v6_only.hpp>
+#include <boost/asio/is_applicable_property.hpp>
 #include <boost/asio/is_executor.hpp>
 #include <boost/asio/is_read_buffered.hpp>
 #include <boost/asio/is_write_buffered.hpp>
@@ -109,10 +110,14 @@
 #include <boost/asio/posix/descriptor_base.hpp>
 #include <boost/asio/posix/stream_descriptor.hpp>
 #include <boost/asio/post.hpp>
+#include <boost/asio/prefer.hpp>
+#include <boost/asio/query.hpp>
 #include <boost/asio/read.hpp>
 #include <boost/asio/read_at.hpp>
 #include <boost/asio/read_until.hpp>
 #include <boost/asio/redirect_error.hpp>
+#include <boost/asio/require.hpp>
+#include <boost/asio/require_concept.hpp>
 #include <boost/asio/serial_port.hpp>
 #include <boost/asio/serial_port_base.hpp>
 #include <boost/asio/signal_set.hpp>
