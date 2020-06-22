@@ -33,10 +33,12 @@ template <typename MutableBufferSequence>
 class reactive_socket_recv_op_base : public reactor_op
 {
 public:
-  reactive_socket_recv_op_base(socket_type socket,
-      socket_ops::state_type state, const MutableBufferSequence& buffers,
+  reactive_socket_recv_op_base(const boost::system::error_code& success_ec,
+      socket_type socket, socket_ops::state_type state,
+      const MutableBufferSequence& buffers,
       socket_base::message_flags flags, func_type complete_func)
-    : reactor_op(&reactive_socket_recv_op_base::do_perform, complete_func),
+    : reactor_op(success_ec,
+        &reactive_socket_recv_op_base::do_perform, complete_func),
       socket_(socket),
       state_(state),
       buffers_(buffers),
@@ -95,11 +97,12 @@ class reactive_socket_recv_op :
 public:
   BOOST_ASIO_DEFINE_HANDLER_PTR(reactive_socket_recv_op);
 
-  reactive_socket_recv_op(socket_type socket, socket_ops::state_type state,
+  reactive_socket_recv_op(const boost::system::error_code& success_ec,
+      socket_type socket, socket_ops::state_type state,
       const MutableBufferSequence& buffers, socket_base::message_flags flags,
       Handler& handler, const IoExecutor& io_ex)
-    : reactive_socket_recv_op_base<MutableBufferSequence>(socket, state,
-        buffers, flags, &reactive_socket_recv_op::do_complete),
+    : reactive_socket_recv_op_base<MutableBufferSequence>(success_ec, socket,
+        state, buffers, flags, &reactive_socket_recv_op::do_complete),
       handler_(BOOST_ASIO_MOVE_CAST(Handler)(handler)),
       io_executor_(io_ex)
   {

@@ -37,9 +37,11 @@ template <typename ConstBufferSequence>
 class descriptor_write_op_base : public reactor_op
 {
 public:
-  descriptor_write_op_base(int descriptor,
-      const ConstBufferSequence& buffers, func_type complete_func)
-    : reactor_op(&descriptor_write_op_base::do_perform, complete_func),
+  descriptor_write_op_base(const boost::system::error_code& success_ec,
+      int descriptor, const ConstBufferSequence& buffers,
+      func_type complete_func)
+    : reactor_op(success_ec,
+        &descriptor_write_op_base::do_perform, complete_func),
       descriptor_(descriptor),
       buffers_(buffers)
   {
@@ -74,9 +76,10 @@ class descriptor_write_op
 public:
   BOOST_ASIO_DEFINE_HANDLER_PTR(descriptor_write_op);
 
-  descriptor_write_op(int descriptor, const ConstBufferSequence& buffers,
+  descriptor_write_op(const boost::system::error_code& success_ec,
+      int descriptor, const ConstBufferSequence& buffers,
       Handler& handler, const IoExecutor& io_ex)
-    : descriptor_write_op_base<ConstBufferSequence>(
+    : descriptor_write_op_base<ConstBufferSequence>(success_ec,
         descriptor, buffers, &descriptor_write_op::do_complete),
       handler_(BOOST_ASIO_MOVE_CAST(Handler)(handler)),
       io_executor_(io_ex)

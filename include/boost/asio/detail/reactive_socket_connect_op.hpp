@@ -32,8 +32,10 @@ namespace detail {
 class reactive_socket_connect_op_base : public reactor_op
 {
 public:
-  reactive_socket_connect_op_base(socket_type socket, func_type complete_func)
-    : reactor_op(&reactive_socket_connect_op_base::do_perform, complete_func),
+  reactive_socket_connect_op_base(const boost::system::error_code& success_ec,
+      socket_type socket, func_type complete_func)
+    : reactor_op(success_ec,
+        &reactive_socket_connect_op_base::do_perform, complete_func),
       socket_(socket)
   {
   }
@@ -61,9 +63,9 @@ class reactive_socket_connect_op : public reactive_socket_connect_op_base
 public:
   BOOST_ASIO_DEFINE_HANDLER_PTR(reactive_socket_connect_op);
 
-  reactive_socket_connect_op(socket_type socket,
-      Handler& handler, const IoExecutor& io_ex)
-    : reactive_socket_connect_op_base(socket,
+  reactive_socket_connect_op(const boost::system::error_code& success_ec,
+      socket_type socket, Handler& handler, const IoExecutor& io_ex)
+    : reactive_socket_connect_op_base(success_ec, socket,
         &reactive_socket_connect_op::do_complete),
       handler_(BOOST_ASIO_MOVE_CAST(Handler)(handler)),
       io_executor_(io_ex)

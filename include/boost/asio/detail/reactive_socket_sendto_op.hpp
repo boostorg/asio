@@ -33,10 +33,12 @@ template <typename ConstBufferSequence, typename Endpoint>
 class reactive_socket_sendto_op_base : public reactor_op
 {
 public:
-  reactive_socket_sendto_op_base(socket_type socket,
-      const ConstBufferSequence& buffers, const Endpoint& endpoint,
-      socket_base::message_flags flags, func_type complete_func)
-    : reactor_op(&reactive_socket_sendto_op_base::do_perform, complete_func),
+  reactive_socket_sendto_op_base(const boost::system::error_code& success_ec,
+      socket_type socket, const ConstBufferSequence& buffers,
+      const Endpoint& endpoint, socket_base::message_flags flags,
+      func_type complete_func)
+    : reactor_op(success_ec,
+        &reactive_socket_sendto_op_base::do_perform, complete_func),
       socket_(socket),
       buffers_(buffers),
       destination_(endpoint),
@@ -78,12 +80,13 @@ class reactive_socket_sendto_op :
 public:
   BOOST_ASIO_DEFINE_HANDLER_PTR(reactive_socket_sendto_op);
 
-  reactive_socket_sendto_op(socket_type socket,
-      const ConstBufferSequence& buffers, const Endpoint& endpoint,
-      socket_base::message_flags flags, Handler& handler,
-      const IoExecutor& io_ex)
-    : reactive_socket_sendto_op_base<ConstBufferSequence, Endpoint>(socket,
-        buffers, endpoint, flags, &reactive_socket_sendto_op::do_complete),
+  reactive_socket_sendto_op(const boost::system::error_code& success_ec,
+      socket_type socket, const ConstBufferSequence& buffers,
+      const Endpoint& endpoint, socket_base::message_flags flags,
+      Handler& handler, const IoExecutor& io_ex)
+    : reactive_socket_sendto_op_base<ConstBufferSequence, Endpoint>(
+        success_ec, socket, buffers, endpoint, flags,
+        &reactive_socket_sendto_op::do_complete),
       handler_(BOOST_ASIO_MOVE_CAST(Handler)(handler)),
       io_executor_(io_ex)
   {

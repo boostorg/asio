@@ -37,9 +37,11 @@ template <typename MutableBufferSequence>
 class descriptor_read_op_base : public reactor_op
 {
 public:
-  descriptor_read_op_base(int descriptor,
-      const MutableBufferSequence& buffers, func_type complete_func)
-    : reactor_op(&descriptor_read_op_base::do_perform, complete_func),
+  descriptor_read_op_base(const boost::system::error_code& success_ec,
+      int descriptor, const MutableBufferSequence& buffers,
+      func_type complete_func)
+    : reactor_op(success_ec,
+        &descriptor_read_op_base::do_perform, complete_func),
       descriptor_(descriptor),
       buffers_(buffers)
   {
@@ -74,9 +76,10 @@ class descriptor_read_op
 public:
   BOOST_ASIO_DEFINE_HANDLER_PTR(descriptor_read_op);
 
-  descriptor_read_op(int descriptor, const MutableBufferSequence& buffers,
+  descriptor_read_op(const boost::system::error_code& success_ec,
+      int descriptor, const MutableBufferSequence& buffers,
       Handler& handler, const IoExecutor& io_ex)
-    : descriptor_read_op_base<MutableBufferSequence>(
+    : descriptor_read_op_base<MutableBufferSequence>(success_ec,
         descriptor, buffers, &descriptor_read_op::do_complete),
       handler_(BOOST_ASIO_MOVE_CAST(Handler)(handler)),
       io_executor_(io_ex)

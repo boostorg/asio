@@ -255,8 +255,8 @@ public:
         endpoint_type, Handler, IoExecutor> op;
     typename op::ptr p = { boost::asio::detail::addressof(handler),
       op::ptr::allocate(handler), 0 };
-    p.p = new (p.v) op(impl.socket_, buffers,
-        destination, flags, handler, io_ex);
+    p.p = new (p.v) op(success_ec_, impl.socket_,
+        buffers, destination, flags, handler, io_ex);
 
     BOOST_ASIO_HANDLER_CREATION((reactor_.context(), *p.p, "socket",
           &impl, impl.socket_, "async_send_to"));
@@ -278,7 +278,7 @@ public:
     typedef reactive_null_buffers_op<Handler, IoExecutor> op;
     typename op::ptr p = { boost::asio::detail::addressof(handler),
       op::ptr::allocate(handler), 0 };
-    p.p = new (p.v) op(handler, io_ex);
+    p.p = new (p.v) op(success_ec_, handler, io_ex);
 
     BOOST_ASIO_HANDLER_CREATION((reactor_.context(), *p.p, "socket",
           &impl, impl.socket_, "async_send_to(null_buffers)"));
@@ -342,8 +342,8 @@ public:
     typename op::ptr p = { boost::asio::detail::addressof(handler),
       op::ptr::allocate(handler), 0 };
     int protocol = impl.protocol_.type();
-    p.p = new (p.v) op(impl.socket_, protocol, buffers,
-        sender_endpoint, flags, handler, io_ex);
+    p.p = new (p.v) op(success_ec_, impl.socket_, protocol,
+        buffers, sender_endpoint, flags, handler, io_ex);
 
     BOOST_ASIO_HANDLER_CREATION((reactor_.context(), *p.p, "socket",
           &impl, impl.socket_, "async_receive_from"));
@@ -368,7 +368,7 @@ public:
     typedef reactive_null_buffers_op<Handler, IoExecutor> op;
     typename op::ptr p = { boost::asio::detail::addressof(handler),
       op::ptr::allocate(handler), 0 };
-    p.p = new (p.v) op(handler, io_ex);
+    p.p = new (p.v) op(success_ec_, handler, io_ex);
 
     BOOST_ASIO_HANDLER_CREATION((reactor_.context(), *p.p, "socket",
           &impl, impl.socket_, "async_receive_from(null_buffers)"));
@@ -426,8 +426,8 @@ public:
     typedef reactive_socket_accept_op<Socket, Protocol, Handler, IoExecutor> op;
     typename op::ptr p = { boost::asio::detail::addressof(handler),
       op::ptr::allocate(handler), 0 };
-    p.p = new (p.v) op(impl.socket_, impl.state_, peer,
-        impl.protocol_, peer_endpoint, handler, io_ex);
+    p.p = new (p.v) op(success_ec_, impl.socket_, impl.state_,
+        peer, impl.protocol_, peer_endpoint, handler, io_ex);
 
     BOOST_ASIO_HANDLER_CREATION((reactor_.context(), *p.p, "socket",
           &impl, impl.socket_, "async_accept"));
@@ -452,8 +452,8 @@ public:
         PeerIoExecutor, Handler, IoExecutor> op;
     typename op::ptr p = { boost::asio::detail::addressof(handler),
       op::ptr::allocate(handler), 0 };
-    p.p = new (p.v) op(peer_io_ex, impl.socket_, impl.state_,
-        impl.protocol_, peer_endpoint, handler, io_ex);
+    p.p = new (p.v) op(success_ec_, peer_io_ex, impl.socket_,
+        impl.state_, impl.protocol_, peer_endpoint, handler, io_ex);
 
     BOOST_ASIO_HANDLER_CREATION((reactor_.context(), *p.p, "socket",
           &impl, impl.socket_, "async_accept"));
@@ -485,7 +485,7 @@ public:
     typedef reactive_socket_connect_op<Handler, IoExecutor> op;
     typename op::ptr p = { boost::asio::detail::addressof(handler),
       op::ptr::allocate(handler), 0 };
-    p.p = new (p.v) op(impl.socket_, handler, io_ex);
+    p.p = new (p.v) op(success_ec_, impl.socket_, handler, io_ex);
 
     BOOST_ASIO_HANDLER_CREATION((reactor_.context(), *p.p, "socket",
           &impl, impl.socket_, "async_connect"));

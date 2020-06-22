@@ -90,7 +90,8 @@ class signal_set_service::pipe_read_op : public reactor_op
 {
 public:
   pipe_read_op()
-    : reactor_op(&pipe_read_op::do_perform, pipe_read_op::do_complete)
+    : reactor_op(boost::system::error_code(),
+        &pipe_read_op::do_perform, pipe_read_op::do_complete)
   {
   }
 
