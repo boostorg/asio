@@ -154,6 +154,21 @@ void throw_exception(const T& t)
 #define BOOST_ASIO_TEST_CASE(test) \
   boost::asio::detail::run_test<&test>(#test);
 
+#define BOOST_ASIO_TEST_CASE2(test1, test2) \
+  boost::asio::detail::run_test<&test1, test2>(#test1 "," #test2);
+
+#define BOOST_ASIO_TEST_CASE3(test1, test2, test3) \
+  boost::asio::detail::run_test<&test1, test2, test3>( \
+    #test1 "," #test2 "," #test3);
+
+#define BOOST_ASIO_TEST_CASE4(test1, test2, test3, test4) \
+  boost::asio::detail::run_test<&test1, test2, test3, test4>( \
+    #test1 "," #test2 "," #test3 "," #test4);
+
+#define BOOST_ASIO_TEST_CASE5(test1, test2, test3, test4, test5) \
+  boost::asio::detail::run_test<&test1, test2, test3, test4, test5>( \
+    #test1 "," #test2 "," #test3 "," #test4 "," #test5);
+
 #define BOOST_ASIO_COMPILE_TEST_CASE(test) \
   boost::asio::detail::compile_test<&test>(#test);
 
