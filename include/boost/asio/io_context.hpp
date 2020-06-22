@@ -229,9 +229,11 @@ public:
 
   class service;
 
-#if !defined(BOOST_ASIO_NO_EXTENSIONS)
+#if !defined(BOOST_ASIO_NO_EXTENSIONS) \
+  && !defined(BOOST_ASIO_NO_TS_EXECUTORS)
   class strand;
 #endif // !defined(BOOST_ASIO_NO_EXTENSIONS)
+       //   && !defined(BOOST_ASIO_NO_TS_EXECUTORS)
 
   /// The type used to count the number of handlers executed by the context.
   typedef std::size_t count_type;

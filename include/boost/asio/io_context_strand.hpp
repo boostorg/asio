@@ -17,7 +17,8 @@
 
 #include <boost/asio/detail/config.hpp>
 
-#if !defined(BOOST_ASIO_NO_EXTENSIONS)
+#if !defined(BOOST_ASIO_NO_EXTENSIONS) \
+  && !defined(BOOST_ASIO_NO_TS_EXECUTORS)
 
 #include <boost/asio/async_result.hpp>
 #include <boost/asio/detail/handler_type_requirements.hpp>
@@ -372,5 +373,6 @@ private:
 #include <boost/asio/detail/pop_options.hpp>
 
 #endif // !defined(BOOST_ASIO_NO_EXTENSIONS)
+       //   && !defined(BOOST_ASIO_NO_TS_EXECUTORS)
 
 #endif // BOOST_ASIO_IO_CONTEXT_STRAND_HPP
