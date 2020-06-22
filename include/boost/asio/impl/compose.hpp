@@ -564,6 +564,30 @@ async_compose(BOOST_ASIO_MOVE_ARG(Implementation) implementation,
   detail::get_composed_io_executor(BOOST_ASIO_MOVE_CAST(T3)(x3)), \
   detail::get_composed_io_executor(BOOST_ASIO_MOVE_CAST(T4)(x4)), \
   detail::get_composed_io_executor(BOOST_ASIO_MOVE_CAST(T5)(x5))
+# define BOOST_ASIO_PRIVATE_GET_COMPOSED_IO_EXECUTOR_6 \
+  detail::get_composed_io_executor(BOOST_ASIO_MOVE_CAST(T1)(x1)), \
+  detail::get_composed_io_executor(BOOST_ASIO_MOVE_CAST(T2)(x2)), \
+  detail::get_composed_io_executor(BOOST_ASIO_MOVE_CAST(T3)(x3)), \
+  detail::get_composed_io_executor(BOOST_ASIO_MOVE_CAST(T4)(x4)), \
+  detail::get_composed_io_executor(BOOST_ASIO_MOVE_CAST(T5)(x5)), \
+  detail::get_composed_io_executor(BOOST_ASIO_MOVE_CAST(T6)(x6))
+# define BOOST_ASIO_PRIVATE_GET_COMPOSED_IO_EXECUTOR_7 \
+  detail::get_composed_io_executor(BOOST_ASIO_MOVE_CAST(T1)(x1)), \
+  detail::get_composed_io_executor(BOOST_ASIO_MOVE_CAST(T2)(x2)), \
+  detail::get_composed_io_executor(BOOST_ASIO_MOVE_CAST(T3)(x3)), \
+  detail::get_composed_io_executor(BOOST_ASIO_MOVE_CAST(T4)(x4)), \
+  detail::get_composed_io_executor(BOOST_ASIO_MOVE_CAST(T5)(x5)), \
+  detail::get_composed_io_executor(BOOST_ASIO_MOVE_CAST(T6)(x6)), \
+  detail::get_composed_io_executor(BOOST_ASIO_MOVE_CAST(T7)(x7))
+# define BOOST_ASIO_PRIVATE_GET_COMPOSED_IO_EXECUTOR_8 \
+  detail::get_composed_io_executor(BOOST_ASIO_MOVE_CAST(T1)(x1)), \
+  detail::get_composed_io_executor(BOOST_ASIO_MOVE_CAST(T2)(x2)), \
+  detail::get_composed_io_executor(BOOST_ASIO_MOVE_CAST(T3)(x3)), \
+  detail::get_composed_io_executor(BOOST_ASIO_MOVE_CAST(T4)(x4)), \
+  detail::get_composed_io_executor(BOOST_ASIO_MOVE_CAST(T5)(x5)), \
+  detail::get_composed_io_executor(BOOST_ASIO_MOVE_CAST(T6)(x6)), \
+  detail::get_composed_io_executor(BOOST_ASIO_MOVE_CAST(T7)(x7)), \
+  detail::get_composed_io_executor(BOOST_ASIO_MOVE_CAST(T8)(x8))
 
 #define BOOST_ASIO_PRIVATE_ASYNC_COMPOSE_DEF(n) \
   template <typename CompletionToken, typename Signature, \
@@ -589,6 +613,9 @@ async_compose(BOOST_ASIO_MOVE_ARG(Implementation) implementation,
 #undef BOOST_ASIO_PRIVATE_GET_COMPOSED_IO_EXECUTOR_3
 #undef BOOST_ASIO_PRIVATE_GET_COMPOSED_IO_EXECUTOR_4
 #undef BOOST_ASIO_PRIVATE_GET_COMPOSED_IO_EXECUTOR_5
+#undef BOOST_ASIO_PRIVATE_GET_COMPOSED_IO_EXECUTOR_6
+#undef BOOST_ASIO_PRIVATE_GET_COMPOSED_IO_EXECUTOR_7
+#undef BOOST_ASIO_PRIVATE_GET_COMPOSED_IO_EXECUTOR_8
 
 #endif // defined(BOOST_ASIO_HAS_VARIADIC_TEMPLATES)
 #endif // !defined(GENERATING_DOCUMENTATION)
