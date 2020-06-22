@@ -51,13 +51,18 @@ enum
 
 typedef unsigned char state_type;
 
-template <typename ReturnType>
-inline ReturnType error_wrapper(ReturnType return_value,
-    boost::system::error_code& ec)
+inline void get_last_error(
+    boost::system::error_code& ec, bool is_error_condition)
 {
-  ec = boost::system::error_code(errno,
-      boost::asio::error::get_system_category());
-  return return_value;
+  if (!is_error_condition)
+  {
+    ec = boost::system::error_code();
+  }
+  else
+  {
+    ec = boost::system::error_code(errno,
+        boost::asio::error::get_system_category());
+  }
 }
 
 BOOST_ASIO_DECL int open(const char* path, int flags,
