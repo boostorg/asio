@@ -250,6 +250,25 @@
     static const type assignment
 # endif // defined(BOOST_ASIO_HAS_CONSTEXPR)
 #endif // !defined(BOOST_ASIO_STATIC_CONSTEXPR)
+#if !defined(BOOST_ASIO_STATIC_CONSTEXPR_DEFAULT_INIT)
+# if defined(BOOST_ASIO_HAS_CONSTEXPR)
+#  if defined(__GNUC__)
+#   if (__GNUC__ >= 8)
+#    define BOOST_ASIO_STATIC_CONSTEXPR_DEFAULT_INIT(type, name) \
+      static constexpr const type name{}
+#   else // (__GNUC__ >= 8)
+#    define BOOST_ASIO_STATIC_CONSTEXPR_DEFAULT_INIT(type, name) \
+      static const type name
+#   endif // (__GNUC__ >= 8)
+#  else // defined(__GNUC__)
+#   define BOOST_ASIO_STATIC_CONSTEXPR_DEFAULT_INIT(type, name) \
+     static constexpr const type name{}
+#  endif // defined(__GNUC__)
+# else // defined(BOOST_ASIO_HAS_CONSTEXPR)
+#  define BOOST_ASIO_STATIC_CONSTEXPR_DEFAULT_INIT(type, name) \
+    static const type name
+# endif // defined(BOOST_ASIO_HAS_CONSTEXPR)
+#endif // !defined(BOOST_ASIO_STATIC_CONSTEXPR_DEFAULT_INIT)
 
 // Support noexcept on compilers known to allow it.
 #if !defined(BOOST_ASIO_HAS_NOEXCEPT)
@@ -439,6 +458,29 @@
 #  endif // defined(BOOST_ASIO_MSVC)
 # endif // !defined(BOOST_ASIO_DISABLE_SFINAE_VARIABLE_TEMPLATES)
 #endif // !defined(BOOST_ASIO_HAS_SFINAE_VARIABLE_TEMPLATES)
+
+// Support SFINAE use of constant expressions on compilers known to allow it.
+#if !defined(BOOST_ASIO_HAS_CONSTANT_EXPRESSION_SFINAE)
+# if !defined(BOOST_ASIO_DISABLE_CONSTANT_EXPRESSION_SFINAE)
+#  if defined(__clang__)
+#   if (__cplusplus >= 201402)
+#    define BOOST_ASIO_HAS_CONSTANT_EXPRESSION_SFINAE 1
+#   endif // (__cplusplus >= 201703)
+#  endif // defined(__clang__)
+#  if defined(__GNUC__)
+#   if (__GNUC__ >= 7)
+#    if (__cplusplus >= 201402)
+#     define BOOST_ASIO_HAS_CONSTANT_EXPRESSION_SFINAE 1
+#    endif // (__cplusplus >= 201402)
+#   endif // (__GNUC__ >= 7)
+#  endif // defined(__GNUC__)
+#  if defined(BOOST_ASIO_MSVC)
+#   if (_MSC_VER >= 1901)
+#    define BOOST_ASIO_HAS_CONSTANT_EXPRESSION_SFINAE 1
+#   endif // (_MSC_VER >= 1901)
+#  endif // defined(BOOST_ASIO_MSVC)
+# endif // !defined(BOOST_ASIO_DISABLE_CONSTANT_EXPRESSION_SFINAE)
+#endif // !defined(BOOST_ASIO_HAS_CONSTANT_EXPRESSION_SFINAE)
 
 // Enable workarounds for lack of working expression SFINAE.
 #if !defined(BOOST_ASIO_HAS_WORKING_EXPRESSION_SFINAE)
