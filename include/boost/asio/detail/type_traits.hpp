@@ -21,6 +21,8 @@
 # include <type_traits>
 #else // defined(BOOST_ASIO_HAS_STD_TYPE_TRAITS)
 # include <boost/type_traits/add_const.hpp>
+# include <boost/type_traits/aligned_storage.hpp>
+# include <boost/type_traits/alignment_of.hpp>
 # include <boost/type_traits/conditional.hpp>
 # include <boost/type_traits/decay.hpp>
 # include <boost/type_traits/has_nothrow_copy.hpp>
@@ -46,6 +48,8 @@ namespace asio {
 
 #if defined(BOOST_ASIO_HAS_STD_TYPE_TRAITS)
 using std::add_const;
+using std::aligned_storage;
+using std::alignment_of;
 using std::conditional;
 using std::decay;
 using std::declval;
@@ -62,6 +66,7 @@ using std::is_function;
 using std::is_nothrow_copy_constructible;
 using std::is_nothrow_destructible;
 using std::is_same;
+using std::is_scalar;
 using std::remove_pointer;
 using std::remove_reference;
 #if defined(BOOST_ASIO_HAS_STD_INVOKE_RESULT)
@@ -74,6 +79,8 @@ using std::result_of;
 using std::true_type;
 #else // defined(BOOST_ASIO_HAS_STD_TYPE_TRAITS)
 using boost::add_const;
+using boost::aligned_storage;
+using boost::alignment_of;
 template <bool Condition, typename Type = void>
 struct enable_if : boost::enable_if_c<Condition, Type> {};
 using boost::conditional;
@@ -93,6 +100,7 @@ struct is_nothrow_copy_constructible : boost::has_nothrow_copy<T> {};
 template <typename T>
 struct is_nothrow_destructible : boost::has_nothrow_destructor<T> {};
 using boost::is_same;
+using boost::is_scalar;
 using boost::remove_pointer;
 using boost::remove_reference;
 using boost::result_of;

@@ -493,6 +493,29 @@
 # endif // !defined(BOOST_ASIO_DISABLE_WORKING_EXPRESSION_SFINAE)
 #endif // !defined(BOOST_ASIO_HAS_WORKING_EXPRESSION_SFINAE)
 
+// Support static_assert on compilers known to allow it.
+#if !defined(BOOST_ASIO_HAS_STATIC_ASSERT)
+# if !defined(BOOST_ASIO_DISABLE_STATIC_ASSERT)
+#  if defined(__clang__)
+#   if __has_feature(__cxx_static_assert__)
+#    define BOOST_ASIO_HAS_STATIC_ASSERT 1
+#   endif // __has_feature(__cxx_static_assert__)
+#  endif // defined(__clang__)
+#  if defined(__GNUC__)
+#   if ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 5)) || (__GNUC__ > 4)
+#    if (__cplusplus >= 201103) || defined(__GXX_EXPERIMENTAL_CXX0X__)
+#     define BOOST_ASIO_HAS_STATIC_ASSERT 1
+#    endif // (__cplusplus >= 201103) || defined(__GXX_EXPERIMENTAL_CXX0X__)
+#   endif // ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 5)) || (__GNUC__ > 4)
+#  endif // defined(__GNUC__)
+#  if defined(BOOST_ASIO_MSVC)
+#   if (_MSC_VER >= 1900)
+#    define BOOST_ASIO_HAS_STATIC_ASSERT 1
+#   endif // (_MSC_VER >= 1900)
+#  endif // defined(BOOST_ASIO_MSVC)
+# endif // !defined(BOOST_ASIO_DISABLE_STATIC_ASSERT)
+#endif // !defined(BOOST_ASIO_HAS_STATIC_ASSERT)
+
 // Standard library support for system errors.
 # if !defined(BOOST_ASIO_DISABLE_STD_SYSTEM_ERROR)
 #  if defined(__clang__)

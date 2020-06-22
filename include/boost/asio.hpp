@@ -55,6 +55,7 @@
 #include <boost/asio/dispatch.hpp>
 #include <boost/asio/error.hpp>
 #include <boost/asio/execution/allocator.hpp>
+#include <boost/asio/execution/any_executor.hpp>
 #include <boost/asio/execution/blocking.hpp>
 #include <boost/asio/execution/blocking_adaptation.hpp>
 #include <boost/asio/execution/bulk_guarantee.hpp>

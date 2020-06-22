@@ -18,6 +18,7 @@
 #include <boost/asio/detail/config.hpp>
 #include <typeinfo>
 #include <boost/asio/detail/cstddef.hpp>
+#include <boost/asio/detail/executor_function.hpp>
 #include <boost/asio/detail/memory.hpp>
 #include <boost/asio/detail/throw_exception.hpp>
 #include <boost/asio/execution_context.hpp>
@@ -254,7 +255,7 @@ public:
 
 private:
 #if !defined(GENERATING_DOCUMENTATION)
-  class function;
+  typedef detail::executor_function function;
   template <typename, typename> class impl;
 
 #if !defined(BOOST_ASIO_NO_TYPEID)
