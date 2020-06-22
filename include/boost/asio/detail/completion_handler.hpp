@@ -28,16 +28,16 @@ namespace boost {
 namespace asio {
 namespace detail {
 
-template <typename Handler>
+template <typename Handler, typename IoExecutor>
 class completion_handler : public operation
 {
 public:
   BOOST_ASIO_DEFINE_HANDLER_PTR(completion_handler);
 
-  completion_handler(Handler& h)
+  completion_handler(Handler& h, const IoExecutor& io_ex)
     : operation(&completion_handler::do_complete),
       handler_(BOOST_ASIO_MOVE_CAST(Handler)(h)),
-      work_(handler_)
+      work_(handler_, io_ex)
   {
   }
 
@@ -52,8 +52,9 @@ public:
     BOOST_ASIO_HANDLER_COMPLETION((*h));
 
     // Take ownership of the operation's outstanding work.
-    handler_work<Handler> w(
-        BOOST_ASIO_MOVE_CAST(handler_work<Handler>)(h->work_));
+    handler_work<Handler, IoExecutor> w(
+        BOOST_ASIO_MOVE_CAST2(handler_work<Handler, IoExecutor>)(
+          h->work_));
 
     // Make a copy of the handler so that the memory can be deallocated before
     // the upcall is made. Even if we're not about to make an upcall, a
@@ -77,7 +78,7 @@ public:
 
 private:
   Handler handler_;
-  handler_work<Handler> work_;
+  handler_work<Handler, IoExecutor> work_;
 };
 
 } // namespace detail
