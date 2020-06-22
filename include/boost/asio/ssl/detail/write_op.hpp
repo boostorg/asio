@@ -40,9 +40,13 @@ public:
       boost::system::error_code& ec,
       std::size_t& bytes_transferred) const
   {
+    unsigned char storage[
+      boost::asio::detail::buffer_sequence_adapter<boost::asio::const_buffer,
+        ConstBufferSequence>::linearisation_storage_size];
+
     boost::asio::const_buffer buffer =
       boost::asio::detail::buffer_sequence_adapter<boost::asio::const_buffer,
-        ConstBufferSequence>::first(buffers_);
+        ConstBufferSequence>::linearise(buffers_, boost::asio::buffer(storage));
 
     return eng.write(buffer, ec, bytes_transferred);
   }
