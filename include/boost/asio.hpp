@@ -60,6 +60,7 @@
 #include <boost/asio/execution/invocable_archetype.hpp>
 #include <boost/asio/execution/mapping.hpp>
 #include <boost/asio/execution/outstanding_work.hpp>
+#include <boost/asio/execution/relationship.hpp>
 #include <boost/asio/execution_context.hpp>
 #include <boost/asio/executor.hpp>
 #include <boost/asio/executor_work_guard.hpp>
