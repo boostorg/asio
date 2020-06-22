@@ -44,4 +44,5 @@ test-suite "asio" :
   [ run blocking.cpp ]
   [ run execute.cpp ]
   [ run invocable_archetype.cpp ]
+  [ run outstanding_work.cpp ]
   ;
