@@ -80,7 +80,7 @@ void thread_pool_test()
   int count3 = 10;
   boost::asio::post(pool, bindns::bind(nested_decrement_to_zero, &pool, &count3));
 
-  pool.join();
+  pool.wait();
 
   BOOST_ASIO_CHECK(count1 == 1);
   BOOST_ASIO_CHECK(count2 == 0);
@@ -158,9 +158,143 @@ void thread_pool_service_test()
   BOOST_ASIO_CHECK(!boost::asio::has_service<test_service>(pool3));
 }
 
+void thread_pool_executor_query_test()
+{
+  thread_pool pool(1);
+
+  BOOST_ASIO_CHECK(
+      &boost::asio::query(pool.executor(),
+        boost::asio::execution::context)
+      == &pool);
+
+  BOOST_ASIO_CHECK(
+      boost::asio::query(pool.executor(),
+        boost::asio::execution::blocking)
+      == boost::asio::execution::blocking.possibly);
+
+  BOOST_ASIO_CHECK(
+      boost::asio::query(pool.executor(),
+        boost::asio::execution::blocking.possibly)
+      == boost::asio::execution::blocking.possibly);
+
+  BOOST_ASIO_CHECK(
+      boost::asio::query(pool.executor(),
+        boost::asio::execution::outstanding_work)
+      == boost::asio::execution::outstanding_work.untracked);
+
+  BOOST_ASIO_CHECK(
+      boost::asio::query(pool.executor(),
+        boost::asio::execution::outstanding_work.untracked)
+      == boost::asio::execution::outstanding_work.untracked);
+
+  BOOST_ASIO_CHECK(
+      boost::asio::query(pool.executor(),
+        boost::asio::execution::relationship)
+      == boost::asio::execution::relationship.fork);
+
+  BOOST_ASIO_CHECK(
+      boost::asio::query(pool.executor(),
+        boost::asio::execution::relationship.fork)
+      == boost::asio::execution::relationship.fork);
+
+  BOOST_ASIO_CHECK(
+      boost::asio::query(pool.executor(),
+        boost::asio::execution::bulk_guarantee)
+      == boost::asio::execution::bulk_guarantee.parallel);
+
+  BOOST_ASIO_CHECK(
+      boost::asio::query(pool.executor(),
+        boost::asio::execution::mapping)
+      == boost::asio::execution::mapping.thread);
+
+  BOOST_ASIO_CHECK(
+      boost::asio::query(pool.executor(),
+        boost::asio::execution::allocator)
+      == std::allocator<void>());
+
+  BOOST_ASIO_CHECK(
+      boost::asio::query(pool.executor(),
+        boost::asio::execution::occupancy)
+      == 1);
+}
+
+void thread_pool_executor_execute_test()
+{
+  int count = 0;
+  thread_pool pool(1);
+
+  boost::asio::execution::execute(pool.executor(),
+      bindns::bind(increment, &count));
+
+  boost::asio::execution::execute(
+      boost::asio::require(pool.executor(),
+        boost::asio::execution::blocking.possibly),
+      bindns::bind(increment, &count));
+
+  boost::asio::execution::execute(
+      boost::asio::require(pool.executor(),
+        boost::asio::execution::blocking.always),
+      bindns::bind(increment, &count));
+
+  boost::asio::execution::execute(
+      boost::asio::require(pool.executor(),
+        boost::asio::execution::blocking.never),
+      bindns::bind(increment, &count));
+
+  boost::asio::execution::execute(
+      boost::asio::require(pool.executor(),
+        boost::asio::execution::blocking.never,
+        boost::asio::execution::outstanding_work.tracked),
+      bindns::bind(increment, &count));
+
+  boost::asio::execution::execute(
+      boost::asio::require(pool.executor(),
+        boost::asio::execution::blocking.never,
+        boost::asio::execution::outstanding_work.untracked),
+      bindns::bind(increment, &count));
+
+  boost::asio::execution::execute(
+      boost::asio::require(pool.executor(),
+        boost::asio::execution::blocking.never,
+        boost::asio::execution::outstanding_work.untracked,
+        boost::asio::execution::relationship.fork),
+      bindns::bind(increment, &count));
+
+  boost::asio::execution::execute(
+      boost::asio::require(pool.executor(),
+        boost::asio::execution::blocking.never,
+        boost::asio::execution::outstanding_work.untracked,
+        boost::asio::execution::relationship.continuation),
+      bindns::bind(increment, &count));
+
+  boost::asio::execution::execute(
+      boost::asio::prefer(
+        boost::asio::require(pool.executor(),
+          boost::asio::execution::blocking.never,
+          boost::asio::execution::outstanding_work.untracked,
+          boost::asio::execution::relationship.continuation),
+        boost::asio::execution::allocator(std::allocator<void>())),
+      bindns::bind(increment, &count));
+
+  boost::asio::execution::execute(
+      boost::asio::prefer(
+        boost::asio::require(pool.executor(),
+          boost::asio::execution::blocking.never,
+          boost::asio::execution::outstanding_work.untracked,
+          boost::asio::execution::relationship.continuation),
+        boost::asio::execution::allocator),
+      bindns::bind(increment, &count));
+
+  pool.wait();
+
+  BOOST_ASIO_CHECK(count == 10);
+}
+
 BOOST_ASIO_TEST_SUITE
 (
   "thread_pool",
   BOOST_ASIO_TEST_CASE(thread_pool_test)
   BOOST_ASIO_TEST_CASE(thread_pool_service_test)
+  BOOST_ASIO_TEST_CASE(thread_pool_executor_query_test)
+  BOOST_ASIO_TEST_CASE(thread_pool_executor_execute_test)
 )

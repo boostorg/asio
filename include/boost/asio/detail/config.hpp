@@ -61,6 +61,9 @@
 # define BOOST_ASIO_DECL
 #endif // !defined(BOOST_ASIO_DECL)
 
+// Helper macro for documentation.
+#define BOOST_ASIO_UNSPECIFIED(e) e
+
 // Microsoft Visual C++ detection.
 #if !defined(BOOST_ASIO_MSVC)
 # if defined(BOOST_ASIO_HAS_BOOST_CONFIG) && defined(BOOST_MSVC)

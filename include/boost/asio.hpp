@@ -138,6 +138,7 @@
 #include <boost/asio/serial_port_base.hpp>
 #include <boost/asio/signal_set.hpp>
 #include <boost/asio/socket_base.hpp>
+#include <boost/asio/static_thread_pool.hpp>
 #include <boost/asio/steady_timer.hpp>
 #include <boost/asio/strand.hpp>
 #include <boost/asio/streambuf.hpp>
