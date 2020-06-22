@@ -23,6 +23,11 @@ using boost::asio::detached;
 using boost::asio::use_awaitable;
 namespace this_coro = boost::asio::this_coro;
 
+#if defined(BOOST_ASIO_ENABLE_HANDLER_TRACKING)
+# define use_awaitable \
+  boost::asio::use_awaitable_t(__FILE__, __LINE__, __PRETTY_FUNCTION__)
+#endif
+
 awaitable<void> echo(tcp::socket socket)
 {
   try

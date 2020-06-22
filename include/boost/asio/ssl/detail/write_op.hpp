@@ -31,6 +31,11 @@ template <typename ConstBufferSequence>
 class write_op
 {
 public:
+  static BOOST_ASIO_CONSTEXPR const char* tracking_name()
+  {
+    return "ssl::stream<>::async_write_some";
+  }
+
   write_op(const ConstBufferSequence& buffers)
     : buffers_(buffers)
   {

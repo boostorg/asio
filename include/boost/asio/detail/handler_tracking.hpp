@@ -90,6 +90,28 @@ public:
   // Initialise the tracking system.
   BOOST_ASIO_DECL static void init();
 
+  class location
+  {
+  public:
+    // Constructor adds a location to the stack.
+    BOOST_ASIO_DECL explicit location(const char* file,
+        int line, const char* func);
+
+    // Destructor removes a location from the stack.
+    BOOST_ASIO_DECL ~location();
+
+  private:
+    // Disallow copying and assignment.
+    location(const location&) BOOST_ASIO_DELETED;
+    location& operator=(const location&) BOOST_ASIO_DELETED;
+
+    friend class handler_tracking;
+    const char* file_;
+    int line_;
+    const char* func_;
+    location* next_;
+  };
+
   // Record the creation of a tracked handler.
   BOOST_ASIO_DECL static void creation(
       execution_context& context, tracked_handler& h,
@@ -178,6 +200,9 @@ private:
 # define BOOST_ASIO_HANDLER_TRACKING_INIT \
   boost::asio::detail::handler_tracking::init()
 
+# define BOOST_ASIO_HANDLER_LOCATION(args) \
+  boost::asio::detail::handler_tracking::location tracked_location args
+
 # define BOOST_ASIO_HANDLER_CREATION(args) \
   boost::asio::detail::handler_tracking::creation args
 
@@ -214,6 +239,7 @@ private:
 # define BOOST_ASIO_INHERIT_TRACKED_HANDLER
 # define BOOST_ASIO_ALSO_INHERIT_TRACKED_HANDLER
 # define BOOST_ASIO_HANDLER_TRACKING_INIT (void)0
+# define BOOST_ASIO_HANDLER_LOCATION(loc) (void)0
 # define BOOST_ASIO_HANDLER_CREATION(args) (void)0
 # define BOOST_ASIO_HANDLER_COMPLETION(args) (void)0
 # define BOOST_ASIO_HANDLER_INVOCATION_BEGIN(args) (void)0

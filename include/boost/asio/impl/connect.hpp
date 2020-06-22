@@ -358,6 +358,7 @@ namespace detail
           if (iter != end)
           {
             socket_.close(ec);
+            BOOST_ASIO_HANDLER_LOCATION((__FILE__, __LINE__, "async_connect"));
             socket_.async_connect(*iter,
                 BOOST_ASIO_MOVE_CAST(range_connect_op)(*this));
             return;
@@ -366,6 +367,7 @@ namespace detail
           if (start)
           {
             ec = boost::asio::error::not_found;
+            BOOST_ASIO_HANDLER_LOCATION((__FILE__, __LINE__, "async_connect"));
             boost::asio::post(socket_.get_executor(),
                 detail::bind_handler(
                   BOOST_ASIO_MOVE_CAST(range_connect_op)(*this), ec));
@@ -545,6 +547,7 @@ namespace detail
           if (iter_ != end_)
           {
             socket_.close(ec);
+            BOOST_ASIO_HANDLER_LOCATION((__FILE__, __LINE__, "async_connect"));
             socket_.async_connect(*iter_,
                 BOOST_ASIO_MOVE_CAST(iterator_connect_op)(*this));
             return;
@@ -553,6 +556,7 @@ namespace detail
           if (start)
           {
             ec = boost::asio::error::not_found;
+            BOOST_ASIO_HANDLER_LOCATION((__FILE__, __LINE__, "async_connect"));
             boost::asio::post(socket_.get_executor(),
                 detail::bind_handler(
                   BOOST_ASIO_MOVE_CAST(iterator_connect_op)(*this), ec));

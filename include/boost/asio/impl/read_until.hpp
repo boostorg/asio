@@ -872,8 +872,12 @@ namespace detail
             break;
 
           // Start a new asynchronous read op_v1eration to obtain more data.
-          stream_.async_read_some(buffers_.prepare(bytes_to_read),
-              BOOST_ASIO_MOVE_CAST(read_until_delim_op_v1)(*this));
+          {
+            BOOST_ASIO_HANDLER_LOCATION((
+                  __FILE__, __LINE__, "async_read_until"));
+            stream_.async_read_some(buffers_.prepare(bytes_to_read),
+                BOOST_ASIO_MOVE_CAST(read_until_delim_op_v1)(*this));
+          }
           return; default:
           buffers_.commit(bytes_transferred);
           if (ec || bytes_transferred == 0)
@@ -1156,8 +1160,12 @@ namespace detail
             break;
 
           // Start a new asynchronous read op_v1eration to obtain more data.
-          stream_.async_read_some(buffers_.prepare(bytes_to_read),
-              BOOST_ASIO_MOVE_CAST(read_until_delim_string_op_v1)(*this));
+          {
+            BOOST_ASIO_HANDLER_LOCATION((
+                  __FILE__, __LINE__, "async_read_until"));
+            stream_.async_read_some(buffers_.prepare(bytes_to_read),
+                BOOST_ASIO_MOVE_CAST(read_until_delim_string_op_v1)(*this));
+          }
           return; default:
           buffers_.commit(bytes_transferred);
           if (ec || bytes_transferred == 0)
@@ -1448,8 +1456,12 @@ namespace detail
             break;
 
           // Start a new asynchronous read op_v1eration to obtain more data.
-          stream_.async_read_some(buffers_.prepare(bytes_to_read),
-              BOOST_ASIO_MOVE_CAST(read_until_expr_op_v1)(*this));
+          {
+            BOOST_ASIO_HANDLER_LOCATION((
+                  __FILE__, __LINE__, "async_read_until"));
+            stream_.async_read_some(buffers_.prepare(bytes_to_read),
+                BOOST_ASIO_MOVE_CAST(read_until_expr_op_v1)(*this));
+          }
           return; default:
           buffers_.commit(bytes_transferred);
           if (ec || bytes_transferred == 0)
@@ -1733,8 +1745,12 @@ namespace detail
             break;
 
           // Start a new asynchronous read op_v1eration to obtain more data.
-          stream_.async_read_some(buffers_.prepare(bytes_to_read),
-              BOOST_ASIO_MOVE_CAST(read_until_match_op_v1)(*this));
+          {
+            BOOST_ASIO_HANDLER_LOCATION((
+                  __FILE__, __LINE__, "async_read_until"));
+            stream_.async_read_some(buffers_.prepare(bytes_to_read),
+                BOOST_ASIO_MOVE_CAST(read_until_match_op_v1)(*this));
+          }
           return; default:
           buffers_.commit(bytes_transferred);
           if (ec || bytes_transferred == 0)
@@ -2082,8 +2098,12 @@ namespace detail
           // Start a new asynchronous read op_v2eration to obtain more data.
           pos = buffers_.size();
           buffers_.grow(bytes_to_read_);
-          stream_.async_read_some(buffers_.data(pos, bytes_to_read_),
-              BOOST_ASIO_MOVE_CAST(read_until_delim_op_v2)(*this));
+          {
+            BOOST_ASIO_HANDLER_LOCATION((
+                  __FILE__, __LINE__, "async_read_until"));
+            stream_.async_read_some(buffers_.data(pos, bytes_to_read_),
+                BOOST_ASIO_MOVE_CAST(read_until_delim_op_v2)(*this));
+          }
           return; default:
           buffers_.shrink(bytes_to_read_ - bytes_transferred);
           if (ec || bytes_transferred == 0)
@@ -2371,8 +2391,12 @@ namespace detail
           // Start a new asynchronous read op_v2eration to obtain more data.
           pos = buffers_.size();
           buffers_.grow(bytes_to_read_);
-          stream_.async_read_some(buffers_.data(pos, bytes_to_read_),
-              BOOST_ASIO_MOVE_CAST(read_until_delim_string_op_v2)(*this));
+          {
+            BOOST_ASIO_HANDLER_LOCATION((
+                  __FILE__, __LINE__, "async_read_until"));
+            stream_.async_read_some(buffers_.data(pos, bytes_to_read_),
+                BOOST_ASIO_MOVE_CAST(read_until_delim_string_op_v2)(*this));
+          }
           return; default:
           buffers_.shrink(bytes_to_read_ - bytes_transferred);
           if (ec || bytes_transferred == 0)
@@ -2670,8 +2694,12 @@ namespace detail
           // Start a new asynchronous read op_v2eration to obtain more data.
           pos = buffers_.size();
           buffers_.grow(bytes_to_read_);
-          stream_.async_read_some(buffers_.data(pos, bytes_to_read_),
-              BOOST_ASIO_MOVE_CAST(read_until_expr_op_v2)(*this));
+          {
+            BOOST_ASIO_HANDLER_LOCATION((
+                  __FILE__, __LINE__, "async_read_until"));
+            stream_.async_read_some(buffers_.data(pos, bytes_to_read_),
+                BOOST_ASIO_MOVE_CAST(read_until_expr_op_v2)(*this));
+          }
           return; default:
           buffers_.shrink(bytes_to_read_ - bytes_transferred);
           if (ec || bytes_transferred == 0)
@@ -2961,8 +2989,12 @@ namespace detail
           // Start a new asynchronous read op_v2eration to obtain more data.
           pos = buffers_.size();
           buffers_.grow(bytes_to_read_);
-          stream_.async_read_some(buffers_.data(pos, bytes_to_read_),
-              BOOST_ASIO_MOVE_CAST(read_until_match_op_v2)(*this));
+          {
+            BOOST_ASIO_HANDLER_LOCATION((
+                  __FILE__, __LINE__, "async_read_until"));
+            stream_.async_read_some(buffers_.data(pos, bytes_to_read_),
+                BOOST_ASIO_MOVE_CAST(read_until_match_op_v2)(*this));
+          }
           return; default:
           buffers_.shrink(bytes_to_read_ - bytes_transferred);
           if (ec || bytes_transferred == 0)

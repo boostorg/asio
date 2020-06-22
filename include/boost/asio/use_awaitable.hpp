@@ -20,6 +20,13 @@
 #if defined(BOOST_ASIO_HAS_CO_AWAIT) || defined(GENERATING_DOCUMENTATION)
 
 #include <boost/asio/awaitable.hpp>
+#include <boost/asio/detail/handler_tracking.hpp>
+
+#if defined(BOOST_ASIO_ENABLE_HANDLER_TRACKING)
+# if defined(BOOST_ASIO_HAS_SOURCE_LOCATION)
+#  include <boost/asio/detail/source_location.hpp>
+# endif // defined(BOOST_ASIO_HAS_SOURCE_LOCATION)
+#endif // defined(BOOST_ASIO_ENABLE_HANDLER_TRACKING)
 
 #include <boost/asio/detail/push_options.hpp>
 
@@ -47,8 +54,41 @@ template <typename Executor = executor>
 struct use_awaitable_t
 {
   /// Default constructor.
-  BOOST_ASIO_CONSTEXPR use_awaitable_t()
+  BOOST_ASIO_CONSTEXPR use_awaitable_t(
+#if defined(BOOST_ASIO_ENABLE_HANDLER_TRACKING)
+# if defined(BOOST_ASIO_HAS_SOURCE_LOCATION)
+      detail::source_location location = detail::source_location::current()
+# endif // defined(BOOST_ASIO_HAS_SOURCE_LOCATION)
+#endif // defined(BOOST_ASIO_ENABLE_HANDLER_TRACKING)
+    )
+#if defined(BOOST_ASIO_ENABLE_HANDLER_TRACKING)
+# if defined(BOOST_ASIO_HAS_SOURCE_LOCATION)
+    : file_name_(location.file_name()),
+      line_(location.line()),
+      function_name_(location.function_name())
+# else // defined(BOOST_ASIO_HAS_SOURCE_LOCATION)
+    : file_name_(0),
+      line_(0),
+      function_name_(0)
+# endif // defined(BOOST_ASIO_HAS_SOURCE_LOCATION)
+#endif // defined(BOOST_ASIO_ENABLE_HANDLER_TRACKING)
   {
+  }
+
+  /// Constructor used to specify file name, line, and function name.
+  BOOST_ASIO_CONSTEXPR use_awaitable_t(const char* file_name,
+      int line, const char* function_name)
+#if defined(BOOST_ASIO_ENABLE_HANDLER_TRACKING)
+    : file_name_(file_name),
+      line_(line),
+      function_name_(function_name)
+#endif // defined(BOOST_ASIO_ENABLE_HANDLER_TRACKING)
+  {
+#if !defined(BOOST_ASIO_ENABLE_HANDLER_TRACKING)
+    (void)file_name;
+    (void)line;
+    (void)function_name;
+#endif // !defined(BOOST_ASIO_ENABLE_HANDLER_TRACKING)
   }
 
   /// Adapts an executor to add the @c use_awaitable_t completion token as the
@@ -88,16 +128,24 @@ struct use_awaitable_t
         executor_with_default<typename decay<T>::type::executor_type>
       >::other(BOOST_ASIO_MOVE_CAST(T)(object));
   }
+
+#if defined(BOOST_ASIO_ENABLE_HANDLER_TRACKING)
+  const char* file_name_;
+  int line_;
+  const char* function_name_;
+#endif // defined(BOOST_ASIO_ENABLE_HANDLER_TRACKING)
 };
 
 /// A completion token object that represents the currently executing coroutine.
 /**
  * See the documentation for boost::asio::use_awaitable_t for a usage example.
  */
-#if defined(BOOST_ASIO_HAS_CONSTEXPR) || defined(GENERATING_DOCUMENTATION)
+#if defined(GENERATING_DOCUMENTATION)
 constexpr use_awaitable_t<> use_awaitable;
+#elif defined(BOOST_ASIO_HAS_CONSTEXPR)
+constexpr use_awaitable_t<> use_awaitable(0, 0, 0);
 #elif defined(BOOST_ASIO_MSVC)
-__declspec(selectany) use_awaitable_t<> use_awaitable;
+__declspec(selectany) use_awaitable_t<> use_awaitable(0, 0, 0);
 #endif
 
 } // namespace asio
