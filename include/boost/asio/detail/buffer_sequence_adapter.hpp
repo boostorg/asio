@@ -105,6 +105,8 @@ class buffer_sequence_adapter
   : buffer_sequence_adapter_base
 {
 public:
+  enum { is_single_buffer = false };
+
   explicit buffer_sequence_adapter(const Buffers& buffer_sequence)
     : count_(0), total_buffer_size_(0)
   {
@@ -246,6 +248,8 @@ class buffer_sequence_adapter<Buffer, boost::asio::mutable_buffer>
   : buffer_sequence_adapter_base
 {
 public:
+  enum { is_single_buffer = true };
+
   explicit buffer_sequence_adapter(
       const boost::asio::mutable_buffer& buffer_sequence)
   {
@@ -306,6 +310,8 @@ class buffer_sequence_adapter<Buffer, boost::asio::const_buffer>
   : buffer_sequence_adapter_base
 {
 public:
+  enum { is_single_buffer = true };
+
   explicit buffer_sequence_adapter(
       const boost::asio::const_buffer& buffer_sequence)
   {
@@ -368,6 +374,8 @@ class buffer_sequence_adapter<Buffer, boost::asio::mutable_buffers_1>
   : buffer_sequence_adapter_base
 {
 public:
+  enum { is_single_buffer = true };
+
   explicit buffer_sequence_adapter(
       const boost::asio::mutable_buffers_1& buffer_sequence)
   {
@@ -428,6 +436,8 @@ class buffer_sequence_adapter<Buffer, boost::asio::const_buffers_1>
   : buffer_sequence_adapter_base
 {
 public:
+  enum { is_single_buffer = true };
+
   explicit buffer_sequence_adapter(
       const boost::asio::const_buffers_1& buffer_sequence)
   {
@@ -490,6 +500,8 @@ class buffer_sequence_adapter<Buffer, boost::array<Elem, 2> >
   : buffer_sequence_adapter_base
 {
 public:
+  enum { is_single_buffer = false };
+
   explicit buffer_sequence_adapter(
       const boost::array<Elem, 2>& buffer_sequence)
   {
@@ -560,6 +572,8 @@ class buffer_sequence_adapter<Buffer, std::array<Elem, 2> >
   : buffer_sequence_adapter_base
 {
 public:
+  enum { is_single_buffer = false };
+
   explicit buffer_sequence_adapter(
       const std::array<Elem, 2>& buffer_sequence)
   {

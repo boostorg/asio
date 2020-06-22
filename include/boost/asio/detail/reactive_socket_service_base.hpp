@@ -238,11 +238,21 @@ public:
       const ConstBufferSequence& buffers,
       socket_base::message_flags flags, boost::system::error_code& ec)
   {
-    buffer_sequence_adapter<boost::asio::const_buffer,
-        ConstBufferSequence> bufs(buffers);
+    typedef buffer_sequence_adapter<boost::asio::const_buffer,
+        ConstBufferSequence> bufs_type;
 
-    return socket_ops::sync_send(impl.socket_, impl.state_,
-        bufs.buffers(), bufs.count(), flags, bufs.all_empty(), ec);
+    if (bufs_type::is_single_buffer)
+    {
+      return socket_ops::sync_send1(impl.socket_,
+          impl.state_, bufs_type::first(buffers).data(),
+          bufs_type::first(buffers).size(), flags, ec);
+    }
+    else
+    {
+      bufs_type bufs(buffers);
+      return socket_ops::sync_send(impl.socket_, impl.state_,
+          bufs.buffers(), bufs.count(), flags, bufs.all_empty(), ec);
+    }
   }
 
   // Wait until data can be sent without blocking.
@@ -310,11 +320,21 @@ public:
       const MutableBufferSequence& buffers,
       socket_base::message_flags flags, boost::system::error_code& ec)
   {
-    buffer_sequence_adapter<boost::asio::mutable_buffer,
-        MutableBufferSequence> bufs(buffers);
+    typedef buffer_sequence_adapter<boost::asio::mutable_buffer,
+        MutableBufferSequence> bufs_type;
 
-    return socket_ops::sync_recv(impl.socket_, impl.state_,
-        bufs.buffers(), bufs.count(), flags, bufs.all_empty(), ec);
+    if (bufs_type::is_single_buffer)
+    {
+      return socket_ops::sync_recv1(impl.socket_,
+          impl.state_, bufs_type::first(buffers).data(),
+          bufs_type::first(buffers).size(), flags, ec);
+    }
+    else
+    {
+      bufs_type bufs(buffers);
+      return socket_ops::sync_recv(impl.socket_, impl.state_,
+          bufs.buffers(), bufs.count(), flags, bufs.all_empty(), ec);
+    }
   }
 
   // Wait until data can be received without blocking.
