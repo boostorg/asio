@@ -291,7 +291,7 @@ namespace detail
     template<typename... T>
     void operator()(BOOST_ASIO_MOVE_ARG(T)... t)
     {
-      if (invocations_ < ~unsigned(0))
+      if (invocations_ < ~0u)
         ++invocations_;
       impl_(*this, BOOST_ASIO_MOVE_CAST(T)(t)...);
     }
@@ -306,7 +306,7 @@ namespace detail
 
     void operator()()
     {
-      if (invocations_ < ~unsigned(0))
+      if (invocations_ < ~0u)
         ++invocations_;
       impl_(*this);
     }
@@ -321,7 +321,7 @@ namespace detail
     template<BOOST_ASIO_VARIADIC_TPARAMS(n)> \
     void operator()(BOOST_ASIO_VARIADIC_MOVE_PARAMS(n)) \
     { \
-      if (invocations_ < ~unsigned(0)) \
+      if (invocations_ < ~0u) \
         ++invocations_; \
       impl_(*this, BOOST_ASIO_VARIADIC_MOVE_ARGS(n)); \
     } \
