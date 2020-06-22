@@ -55,6 +55,7 @@
 #include <boost/asio/dispatch.hpp>
 #include <boost/asio/error.hpp>
 #include <boost/asio/execution/blocking.hpp>
+#include <boost/asio/execution/blocking_adaptation.hpp>
 #include <boost/asio/execution/execute.hpp>
 #include <boost/asio/execution/executor.hpp>
 #include <boost/asio/execution/invocable_archetype.hpp>
