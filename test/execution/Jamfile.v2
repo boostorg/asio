@@ -41,5 +41,6 @@ project
   ;
 
 test-suite "asio" :
+  [ run execute.cpp ]
   [ run invocable_archetype.cpp ]
   ;
