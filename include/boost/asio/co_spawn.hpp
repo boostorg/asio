@@ -20,6 +20,7 @@
 #if defined(BOOST_ASIO_HAS_CO_AWAIT) || defined(GENERATING_DOCUMENTATION)
 
 #include <boost/asio/awaitable.hpp>
+#include <boost/asio/execution/executor.hpp>
 #include <boost/asio/execution_context.hpp>
 #include <boost/asio/is_executor.hpp>
 
@@ -106,7 +107,7 @@ co_spawn(const Executor& ex, awaitable<T, AwaitableExecutor> a,
     CompletionToken&& token
       BOOST_ASIO_DEFAULT_COMPLETION_TOKEN(Executor),
     typename enable_if<
-      is_executor<Executor>::value
+      (is_executor<Executor>::value || execution::is_executor<Executor>::value)
         && is_convertible<Executor, AwaitableExecutor>::value
     >::type* = 0);
 
@@ -162,7 +163,7 @@ co_spawn(const Executor& ex, awaitable<void, AwaitableExecutor> a,
     CompletionToken&& token
       BOOST_ASIO_DEFAULT_COMPLETION_TOKEN(Executor),
     typename enable_if<
-      is_executor<Executor>::value
+      (is_executor<Executor>::value || execution::is_executor<Executor>::value)
         && is_convertible<Executor, AwaitableExecutor>::value
     >::type* = 0);
 
@@ -372,7 +373,7 @@ co_spawn(const Executor& ex, F&& f,
     CompletionToken&& token
       BOOST_ASIO_DEFAULT_COMPLETION_TOKEN(Executor),
     typename enable_if<
-      is_executor<Executor>::value
+      is_executor<Executor>::value || execution::is_executor<Executor>::value
     >::type* = 0);
 
 /// Spawn a new coroutined-based thread of execution.
