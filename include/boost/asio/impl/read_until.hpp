@@ -871,7 +871,7 @@ namespace detail
           if (!start && bytes_to_read == 0)
             break;
 
-          // Start a new asynchronous read op_v1eration to obtain more data.
+          // Start a new asynchronous read operation to obtain more data.
           {
             BOOST_ASIO_HANDLER_LOCATION((
                   __FILE__, __LINE__, "async_read_until"));
@@ -1159,7 +1159,7 @@ namespace detail
           if (!start && bytes_to_read == 0)
             break;
 
-          // Start a new asynchronous read op_v1eration to obtain more data.
+          // Start a new asynchronous read operation to obtain more data.
           {
             BOOST_ASIO_HANDLER_LOCATION((
                   __FILE__, __LINE__, "async_read_until"));
@@ -1455,7 +1455,7 @@ namespace detail
           if (!start && bytes_to_read == 0)
             break;
 
-          // Start a new asynchronous read op_v1eration to obtain more data.
+          // Start a new asynchronous read operation to obtain more data.
           {
             BOOST_ASIO_HANDLER_LOCATION((
                   __FILE__, __LINE__, "async_read_until"));
@@ -1744,7 +1744,7 @@ namespace detail
           if (!start && bytes_to_read == 0)
             break;
 
-          // Start a new asynchronous read op_v1eration to obtain more data.
+          // Start a new asynchronous read operation to obtain more data.
           {
             BOOST_ASIO_HANDLER_LOCATION((
                   __FILE__, __LINE__, "async_read_until"));
@@ -2095,7 +2095,7 @@ namespace detail
           if (!start && bytes_to_read_ == 0)
             break;
 
-          // Start a new asynchronous read op_v2eration to obtain more data.
+          // Start a new asynchronous read operation to obtain more data.
           pos = buffers_.size();
           buffers_.grow(bytes_to_read_);
           {
@@ -2388,7 +2388,7 @@ namespace detail
           if (!start && bytes_to_read_ == 0)
             break;
 
-          // Start a new asynchronous read op_v2eration to obtain more data.
+          // Start a new asynchronous read operation to obtain more data.
           pos = buffers_.size();
           buffers_.grow(bytes_to_read_);
           {
@@ -2691,7 +2691,7 @@ namespace detail
           if (!start && bytes_to_read_ == 0)
             break;
 
-          // Start a new asynchronous read op_v2eration to obtain more data.
+          // Start a new asynchronous read operation to obtain more data.
           pos = buffers_.size();
           buffers_.grow(bytes_to_read_);
           {
@@ -2986,7 +2986,7 @@ namespace detail
           if (!start && bytes_to_read_ == 0)
             break;
 
-          // Start a new asynchronous read op_v2eration to obtain more data.
+          // Start a new asynchronous read operation to obtain more data.
           pos = buffers_.size();
           buffers_.grow(bytes_to_read_);
           {
