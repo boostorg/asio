@@ -19,6 +19,11 @@
 #include <boost/asio/associated_allocator.hpp>
 #include <boost/asio/associated_executor.hpp>
 #include <boost/asio/detail/work_dispatcher.hpp>
+#include <boost/asio/execution/allocator.hpp>
+#include <boost/asio/execution/blocking.hpp>
+#include <boost/asio/execution/relationship.hpp>
+#include <boost/asio/prefer.hpp>
+#include <boost/asio/require.hpp>
 
 #include <boost/asio/detail/push_options.hpp>
 
@@ -30,14 +35,47 @@ class initiate_defer
 {
 public:
   template <typename CompletionHandler>
-  void operator()(BOOST_ASIO_MOVE_ARG(CompletionHandler) handler) const
+  void operator()(BOOST_ASIO_MOVE_ARG(CompletionHandler) handler,
+      typename enable_if<
+        execution::is_executor<
+          typename associated_executor<
+            typename decay<CompletionHandler>::type
+          >::type
+        >::value
+      >::type* = 0) const
   {
-    typedef typename decay<CompletionHandler>::type DecayedHandler;
+    typedef typename decay<CompletionHandler>::type handler_t;
 
-    typename associated_executor<DecayedHandler>::type ex(
+    typename associated_executor<handler_t>::type ex(
         (get_associated_executor)(handler));
 
-    typename associated_allocator<DecayedHandler>::type alloc(
+    typename associated_allocator<handler_t>::type alloc(
+        (get_associated_allocator)(handler));
+
+    execution::execute(
+        boost::asio::prefer(
+          boost::asio::require(ex, execution::blocking.never),
+          execution::relationship.continuation,
+          execution::allocator(alloc)),
+        BOOST_ASIO_MOVE_CAST(CompletionHandler)(handler));
+  }
+
+  template <typename CompletionHandler>
+  void operator()(BOOST_ASIO_MOVE_ARG(CompletionHandler) handler,
+      typename enable_if<
+        !execution::is_executor<
+          typename associated_executor<
+            typename decay<CompletionHandler>::type
+          >::type
+        >::value
+      >::type* = 0) const
+  {
+    typedef typename decay<CompletionHandler>::type handler_t;
+
+    typename associated_executor<handler_t>::type ex(
+        (get_associated_executor)(handler));
+
+    typename associated_allocator<handler_t>::type alloc(
         (get_associated_allocator)(handler));
 
     ex.defer(BOOST_ASIO_MOVE_CAST(CompletionHandler)(handler), alloc);
@@ -61,18 +99,85 @@ public:
   }
 
   template <typename CompletionHandler>
-  void operator()(BOOST_ASIO_MOVE_ARG(CompletionHandler) handler) const
+  void operator()(BOOST_ASIO_MOVE_ARG(CompletionHandler) handler,
+      typename enable_if<
+        execution::is_executor<
+          typename conditional<true, executor_type, CompletionHandler>::type
+        >::value
+      >::type* = 0) const
   {
-    typedef typename decay<CompletionHandler>::type DecayedHandler;
+    typedef typename decay<CompletionHandler>::type handler_t;
 
-    typename associated_allocator<DecayedHandler>::type alloc(
+    typedef typename associated_executor<
+      handler_t, Executor>::type handler_ex_t;
+    handler_ex_t handler_ex((get_associated_executor)(handler, ex_));
+
+    typename associated_allocator<handler_t>::type alloc(
         (get_associated_allocator)(handler));
 
-    ex_.defer(detail::work_dispatcher<DecayedHandler>(
-          BOOST_ASIO_MOVE_CAST(CompletionHandler)(handler)), alloc);
+    if (this->is_same_executor(ex_, handler_ex))
+    {
+      execution::execute(
+          boost::asio::prefer(
+            boost::asio::require(ex_, execution::blocking.never),
+            execution::relationship.continuation,
+            execution::allocator(alloc)),
+          BOOST_ASIO_MOVE_CAST(CompletionHandler)(handler));
+    }
+    else
+    {
+      execution::execute(
+          boost::asio::prefer(
+            boost::asio::require(ex_, execution::blocking.never),
+            execution::relationship.continuation,
+            execution::allocator(alloc)),
+          detail::work_dispatcher<handler_t, handler_ex_t>(
+            BOOST_ASIO_MOVE_CAST(CompletionHandler)(handler), handler_ex));
+    }
+  }
+
+  template <typename CompletionHandler>
+  void operator()(BOOST_ASIO_MOVE_ARG(CompletionHandler) handler,
+      typename enable_if<
+        !execution::is_executor<
+          typename conditional<true, executor_type, CompletionHandler>::type
+        >::value
+      >::type* = 0) const
+  {
+    typedef typename decay<CompletionHandler>::type handler_t;
+
+    typedef typename associated_executor<
+      handler_t, Executor>::type handler_ex_t;
+    handler_ex_t handler_ex((get_associated_executor)(handler, ex_));
+
+    typename associated_allocator<handler_t>::type alloc(
+        (get_associated_allocator)(handler));
+
+    if (this->is_same_executor(ex_, handler_ex))
+    {
+      ex_.defer(BOOST_ASIO_MOVE_CAST(CompletionHandler)(handler), alloc);
+    }
+    else
+    {
+      ex_.defer(detail::work_dispatcher<handler_t, handler_ex_t>(
+            BOOST_ASIO_MOVE_CAST(CompletionHandler)(handler),
+            handler_ex), alloc);
+    }
   }
 
 private:
+  template <typename T, typename U>
+  bool is_same_executor(const T&, const U&) const BOOST_ASIO_NOEXCEPT
+  {
+    return false;
+  }
+
+  template <typename T>
+  bool is_same_executor(const T& a, const T& b) const BOOST_ASIO_NOEXCEPT
+  {
+    return a == b;
+  }
+
   Executor ex_;
 };
 
@@ -90,7 +195,9 @@ template <typename Executor,
     BOOST_ASIO_COMPLETION_TOKEN_FOR(void()) CompletionToken>
 BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(CompletionToken, void()) defer(
     const Executor& ex, BOOST_ASIO_MOVE_ARG(CompletionToken) token,
-    typename enable_if<is_executor<Executor>::value>::type*)
+    typename enable_if<
+      execution::is_executor<Executor>::value || is_executor<Executor>::value
+    >::type*)
 {
   return async_initiate<CompletionToken, void()>(
       detail::initiate_defer_with_executor<Executor>(ex), token);
@@ -103,8 +210,10 @@ inline BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(CompletionToken, void()) defer(
     typename enable_if<is_convertible<
       ExecutionContext&, execution_context&>::value>::type*)
 {
-  return (defer)(ctx.get_executor(),
-      BOOST_ASIO_MOVE_CAST(CompletionToken)(token));
+  return async_initiate<CompletionToken, void()>(
+      detail::initiate_defer_with_executor<
+        typename ExecutionContext::executor_type>(
+          ctx.get_executor()), token);
 }
 
 } // namespace asio
