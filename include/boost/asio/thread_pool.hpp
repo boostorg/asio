@@ -16,7 +16,6 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include <boost/asio/detail/config.hpp>
-#include <boost/asio/detail/noncopyable.hpp>
 #include <boost/asio/detail/scheduler.hpp>
 #include <boost/asio/detail/thread_group.hpp>
 #include <boost/asio/execution_context.hpp>
@@ -98,6 +97,9 @@ public:
   BOOST_ASIO_DECL void join();
 
 private:
+  thread_pool(const thread_pool&) BOOST_ASIO_DELETED;
+  thread_pool& operator=(const thread_pool&) BOOST_ASIO_DELETED;
+
   friend class executor_type;
   struct thread_function;
 

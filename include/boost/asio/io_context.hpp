@@ -20,7 +20,6 @@
 #include <stdexcept>
 #include <typeinfo>
 #include <boost/asio/async_result.hpp>
-#include <boost/asio/detail/noncopyable.hpp>
 #include <boost/asio/detail/wrapped_handler.hpp>
 #include <boost/system/error_code.hpp>
 #include <boost/asio/execution_context.hpp>
@@ -595,6 +594,9 @@ public:
 #endif // !defined(BOOST_ASIO_NO_DEPRECATED)
 
 private:
+  io_context(const io_context&) BOOST_ASIO_DELETED;
+  io_context& operator=(const io_context&) BOOST_ASIO_DELETED;
+
 #if !defined(BOOST_ASIO_NO_DEPRECATED)
   struct initiate_dispatch;
   struct initiate_post;
