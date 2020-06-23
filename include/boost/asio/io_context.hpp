@@ -199,6 +199,7 @@ public:
   template <typename Allocator, unsigned int Bits>
   friend class basic_executor_type;
 
+  /// Executor used to submit functions to an io_context.
   typedef basic_executor_type<std::allocator<void>, 0> executor_type;
 
 #if !defined(BOOST_ASIO_NO_DEPRECATED)
@@ -638,6 +639,7 @@ namespace detail {
 
 } // namespace detail
 
+/// Executor implementation type used to submit functions to an io_context.
 template <typename Allocator, unsigned int Bits>
 class io_context::basic_executor_type : detail::io_context_bits
 {
