@@ -82,6 +82,7 @@ public:
   template <typename Allocator, unsigned int Bits>
   friend class basic_executor_type;
 
+  /// Executor used to submit functions to a thread pool.
   typedef basic_executor_type<std::allocator<void>, 0> executor_type;
 
 #if !defined(BOOST_ASIO_NO_TS_EXECUTORS)
@@ -154,6 +155,7 @@ private:
   detail::atomic_count num_threads_;
 };
 
+/// Executor implementation type used to submit functions to a thread pool.
 template <typename Allocator, unsigned int Bits>
 class thread_pool::basic_executor_type : detail::thread_pool_bits
 {
@@ -505,7 +507,7 @@ private:
   // The allocator used for execution functions.
   Allocator allocator_;
 
-  // The runtime-switched properties of the io_context executor.
+  // The runtime-switched properties of the thread pool executor.
   unsigned int bits_;
 };
 
