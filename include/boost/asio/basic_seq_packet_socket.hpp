@@ -31,7 +31,7 @@ namespace asio {
 #define BOOST_ASIO_BASIC_SEQ_PACKET_SOCKET_FWD_DECL
 
 // Forward declaration with defaulted arguments.
-template <typename Protocol, typename Executor = executor>
+template <typename Protocol, typename Executor = any_io_executor>
 class basic_seq_packet_socket;
 
 #endif // !defined(BOOST_ASIO_BASIC_SEQ_PACKET_SOCKET_FWD_DECL)
@@ -707,7 +707,7 @@ private:
       detail::non_const_lvalue<WriteHandler> handler2(handler);
       self_->impl_.get_service().async_send(
           self_->impl_.get_implementation(), buffers, flags,
-          handler2.value, self_->impl_.get_implementation_executor());
+          handler2.value, self_->impl_.get_executor());
     }
 
   private:
@@ -741,8 +741,8 @@ private:
 
       detail::non_const_lvalue<ReadHandler> handler2(handler);
       self_->impl_.get_service().async_receive_with_flags(
-          self_->impl_.get_implementation(), buffers, in_flags, *out_flags,
-          handler2.value, self_->impl_.get_implementation_executor());
+          self_->impl_.get_implementation(), buffers, in_flags,
+          *out_flags, handler2.value, self_->impl_.get_executor());
     }
 
   private:

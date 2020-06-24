@@ -30,6 +30,11 @@ template <typename ConstBufferSequence>
 class buffered_handshake_op
 {
 public:
+  static BOOST_ASIO_CONSTEXPR const char* tracking_name()
+  {
+    return "ssl::stream<>::async_buffered_handshake";
+  }
+
   buffered_handshake_op(stream_base::handshake_type type,
       const ConstBufferSequence& buffers)
     : type_(type),

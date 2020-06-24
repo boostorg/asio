@@ -59,6 +59,11 @@ public:
   // Construct a new engine for the specified context.
   BOOST_ASIO_DECL explicit engine(SSL_CTX* context);
 
+#if defined(BOOST_ASIO_HAS_MOVE)
+  // Move construct from another engine.
+  BOOST_ASIO_DECL engine(engine&& other) BOOST_ASIO_NOEXCEPT;
+#endif // defined(BOOST_ASIO_HAS_MOVE)
+
   // Destructor.
   BOOST_ASIO_DECL ~engine();
 

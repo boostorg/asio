@@ -270,21 +270,77 @@ struct custom_allocation_timer_handler
   custom_allocation_timer_handler(int* count) : count_(count) {}
   void operator()(const boost::system::error_code&) {}
   int* count_;
+
+  template <typename T>
+  struct allocator
+  {
+    typedef size_t size_type;
+    typedef ptrdiff_t difference_type;
+    typedef T* pointer;
+    typedef const T* const_pointer;
+    typedef T& reference;
+    typedef const T& const_reference;
+    typedef T value_type;
+
+    template <typename U>
+    struct rebind
+    {
+      typedef allocator<U> other;
+    };
+
+    explicit allocator(int* count) BOOST_ASIO_NOEXCEPT
+      : count_(count)
+    {
+    }
+
+    allocator(const allocator& other) BOOST_ASIO_NOEXCEPT
+      : count_(other.count_)
+    {
+    }
+
+    template <typename U>
+    allocator(const allocator<U>& other) BOOST_ASIO_NOEXCEPT
+      : count_(other.count_)
+    {
+    }
+
+    pointer allocate(size_type n, const void* = 0)
+    {
+      ++(*count_);
+      return static_cast<T*>(::operator new(sizeof(T) * n));
+    }
+
+    void deallocate(pointer p, size_type)
+    {
+      --(*count_);
+      ::operator delete(p);
+    }
+
+    size_type max_size() const
+    {
+      return ~size_type(0);
+    }
+
+    void construct(pointer p, const T& v)
+    {
+      new (p) T(v);
+    }
+
+    void destroy(pointer p)
+    {
+      p->~T();
+    }
+
+    int* count_;
+  };
+
+  typedef allocator<int> allocator_type;
+
+  allocator_type get_allocator() const BOOST_ASIO_NOEXCEPT
+  {
+    return allocator_type(count_);
+  }
 };
-
-void* asio_handler_allocate(std::size_t size,
-    custom_allocation_timer_handler* handler)
-{
-  ++(*handler->count_);
-  return ::operator new(size);
-}
-
-void asio_handler_deallocate(void* pointer, std::size_t,
-    custom_allocation_timer_handler* handler)
-{
-  --(*handler->count_);
-  ::operator delete(pointer);
-}
 
 void system_timer_custom_allocation_test()
 {
@@ -356,6 +412,19 @@ boost::asio::system_timer make_timer(boost::asio::io_context& ioc, int* count)
   t.async_wait(bindns::bind(increment, count));
   return t;
 }
+
+typedef boost::asio::basic_waitable_timer<
+    boost::asio::system_timer::clock_type,
+    boost::asio::system_timer::traits_type,
+    boost::asio::io_context::executor_type> io_context_system_timer;
+
+io_context_system_timer make_convertible_timer(boost::asio::io_context& ioc, int* count)
+{
+  io_context_system_timer t(ioc);
+  t.expires_after(boost::asio::chrono::seconds(1));
+  t.async_wait(bindns::bind(increment, count));
+  return t;
+}
 #endif
 
 void system_timer_move_test()
@@ -378,6 +447,22 @@ void system_timer_move_test()
   io_context1.run();
 
   BOOST_ASIO_CHECK(count == 2);
+
+  boost::asio::system_timer t4 = make_convertible_timer(io_context1, &count);
+  boost::asio::system_timer t5 = make_convertible_timer(io_context2, &count);
+  boost::asio::system_timer t6 = std::move(t4);
+
+  t2 = std::move(t4);
+
+  io_context2.restart();
+  io_context2.run();
+
+  BOOST_ASIO_CHECK(count == 3);
+
+  io_context1.restart();
+  io_context1.run();
+
+  BOOST_ASIO_CHECK(count == 4);
 #endif // defined(BOOST_ASIO_HAS_MOVE)
 }
 

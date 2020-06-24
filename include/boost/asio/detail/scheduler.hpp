@@ -105,6 +105,9 @@ public:
     return thread_call_stack::contains(this) != 0;
   }
 
+  /// Capture the current exception so it can be rethrown from a run function.
+  BOOST_ASIO_DECL void capture_current_exception();
+
   // Request invocation of the given operation and return immediately. Assumes
   // that work_started() has not yet been called for the operation.
   BOOST_ASIO_DECL void post_immediate_completion(

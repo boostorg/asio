@@ -31,6 +31,11 @@ template <typename MutableBufferSequence>
 class read_op
 {
 public:
+  static BOOST_ASIO_CONSTEXPR const char* tracking_name()
+  {
+    return "ssl::stream<>::async_read_some";
+  }
+
   read_op(const MutableBufferSequence& buffers)
     : buffers_(buffers)
   {

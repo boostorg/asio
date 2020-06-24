@@ -98,7 +98,8 @@ public:
   // use this function to run the io_context until the operation is complete.
   return_type get()
   {
-    boost::asio::io_context& io_context = socket_.get_executor().context();
+    boost::asio::io_context& io_context = boost::asio::query(
+        socket_.get_executor(), boost::asio::execution::context);
 
     // Restart the io_context, as it may have been left in the "stopped" state
     // by a previous operation.

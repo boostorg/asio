@@ -17,6 +17,7 @@
 
 #include <boost/asio/detail/config.hpp>
 #include <string>
+#include <boost/asio/any_io_executor.hpp>
 #include <boost/asio/async_result.hpp>
 #include <boost/asio/detail/handler_type_requirements.hpp>
 #include <boost/asio/detail/io_object_impl.hpp>
@@ -25,7 +26,6 @@
 #include <boost/asio/detail/throw_error.hpp>
 #include <boost/asio/error.hpp>
 #include <boost/asio/execution_context.hpp>
-#include <boost/asio/executor.hpp>
 #include <boost/asio/ip/basic_resolver_iterator.hpp>
 #include <boost/asio/ip/basic_resolver_query.hpp>
 #include <boost/asio/ip/basic_resolver_results.hpp>
@@ -50,7 +50,7 @@ namespace ip {
 #define BOOST_ASIO_IP_BASIC_RESOLVER_FWD_DECL
 
 // Forward declaration with defaulted arguments.
-template <typename InternetProtocol, typename Executor = executor>
+template <typename InternetProtocol, typename Executor = any_io_executor>
 class basic_resolver;
 
 #endif // !defined(BOOST_ASIO_IP_BASIC_RESOLVER_FWD_DECL)
@@ -1004,8 +1004,8 @@ private:
 
       boost::asio::detail::non_const_lvalue<ResolveHandler> handler2(handler);
       self_->impl_.get_service().async_resolve(
-          self_->impl_.get_implementation(), q, handler2.value,
-          self_->impl_.get_implementation_executor());
+          self_->impl_.get_implementation(), q,
+          handler2.value, self_->impl_.get_executor());
     }
 
   private:

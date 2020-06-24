@@ -1,11 +1,9 @@
-#include <boost/asio/post.hpp>
-#include <boost/asio/thread_pool.hpp>
-#include <boost/asio/use_future.hpp>
+#include <boost/asio/execution.hpp>
+#include <boost/asio/static_thread_pool.hpp>
 #include <iostream>
 
-using boost::asio::post;
-using boost::asio::thread_pool;
-using boost::asio::use_future;
+using boost::asio::static_thread_pool;
+namespace execution = boost::asio::execution;
 
 // Traditional active object pattern.
 // Member functions block until operation is finished.
@@ -13,35 +11,43 @@ using boost::asio::use_future;
 class bank_account
 {
   int balance_ = 0;
-  mutable thread_pool pool_{1};
+  mutable static_thread_pool pool_{1};
 
 public:
   void deposit(int amount)
   {
-    post(pool_,
-      use_future([=]
+    execution::execute(
+        boost::asio::require(pool_.executor(),
+          execution::blocking.always),
+        [this, amount]
         {
           balance_ += amount;
-        })).get();
+        });
   }
 
   void withdraw(int amount)
   {
-    post(pool_,
-      use_future([=]
+    execution::execute(
+        boost::asio::require(pool_.executor(),
+          execution::blocking.always),
+        [this, amount]
         {
           if (balance_ >= amount)
             balance_ -= amount;
-        })).get();
+        });
   }
 
   int balance() const
   {
-    return post(pool_,
-      use_future([=]
+    int result = 0;
+    execution::execute(
+        boost::asio::require(pool_.executor(),
+          execution::blocking.always),
+        [this, &result]
         {
-          return balance_;
-        })).get();
+          result = balance_;
+        });
+    return result;
   }
 };
 

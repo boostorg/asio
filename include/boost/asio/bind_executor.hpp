@@ -21,6 +21,7 @@
 #include <boost/asio/associated_executor.hpp>
 #include <boost/asio/associated_allocator.hpp>
 #include <boost/asio/async_result.hpp>
+#include <boost/asio/execution/executor.hpp>
 #include <boost/asio/execution_context.hpp>
 #include <boost/asio/is_executor.hpp>
 #include <boost/asio/uses_executor.hpp>
@@ -155,16 +156,14 @@ struct executor_binder_argument_type<R(&)(A1, A2)>
   typedef A2 second_argument_type;
 };
 
-// Helper to:
-// - Apply the empty base optimisation to the executor.
-// - Perform uses_executor construction of the target type, if required.
+// Helper to perform uses_executor construction of the target type, if
+// required.
 
 template <typename T, typename Executor, bool UsesExecutor>
 class executor_binder_base;
 
 template <typename T, typename Executor>
 class executor_binder_base<T, Executor, true>
-  : protected Executor
 {
 protected:
   template <typename E, typename U>
@@ -496,7 +495,9 @@ private:
 template <typename Executor, typename T>
 inline executor_binder<typename decay<T>::type, Executor>
 bind_executor(const Executor& ex, BOOST_ASIO_MOVE_ARG(T) t,
-    typename enable_if<is_executor<Executor>::value>::type* = 0)
+    typename enable_if<
+      is_executor<Executor>::value || execution::is_executor<Executor>::value
+    >::type* = 0)
 {
   return executor_binder<typename decay<T>::type, Executor>(
       executor_arg_t(), ex, BOOST_ASIO_MOVE_CAST(T)(t));
