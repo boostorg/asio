@@ -177,6 +177,9 @@ bool operator!=(const any_executor<SupportableProperties...>& a,
 
 namespace execution {
 
+#if !defined(BOOST_ASIO_EXECUTION_ANY_EXECUTOR_FWD_DECL)
+#define EXECUTION_ANY_EXECUTOR_FWD_DECL
+
 #if defined(BOOST_ASIO_HAS_VARIADIC_TEMPLATES)
 
 template <typename... SupportableProperties>
@@ -190,6 +193,8 @@ template <typename = void, typename = void, typename = void,
 class any_executor;
 
 #endif // defined(BOOST_ASIO_HAS_VARIADIC_TEMPLATES)
+
+#endif // !defined(BOOST_ASIO_EXECUTION_ANY_EXECUTOR_FWD_DECL)
 
 template <typename U>
 struct context_as_t;
@@ -432,17 +437,16 @@ public:
   any_executor_base() BOOST_ASIO_NOEXCEPT
     : object_fns_(object_fns_table<void>()),
       target_(0),
-      target_fns_(target_fns_table<void>()),
-      blocking_()
+      target_fns_(target_fns_table<void>())
   {
   }
 
   template <BOOST_ASIO_EXECUTION_EXECUTOR Executor>
   any_executor_base(Executor ex, false_type)
-    : target_fns_(target_fns_table<Executor>()),
-      blocking_(
-          any_executor_base::query_blocking(
-            ex, can_query<const Executor&, const execution::blocking_t&>()))
+    : target_fns_(target_fns_table<Executor>(
+          any_executor_base::query_blocking(ex,
+            can_query<const Executor&, const execution::blocking_t&>())
+          == execution::blocking.always))
   {
     any_executor_base::construct_object(ex,
         integral_constant<bool,
@@ -454,8 +458,7 @@ public:
   template <BOOST_ASIO_EXECUTION_EXECUTOR Executor>
   any_executor_base(Executor other, true_type)
     : object_fns_(object_fns_table<boost::asio::detail::shared_ptr<void> >()),
-      target_fns_(other.target_fns_),
-      blocking_(other.blocking_)
+      target_fns_(other.target_fns_)
   {
     boost::asio::detail::shared_ptr<Executor> p =
       boost::asio::detail::make_shared<Executor>(
@@ -467,8 +470,7 @@ public:
 
   any_executor_base(const any_executor_base& other) BOOST_ASIO_NOEXCEPT
     : object_fns_(other.object_fns_),
-      target_fns_(other.target_fns_),
-      blocking_(other.blocking_)
+      target_fns_(other.target_fns_)
   {
     object_fns_->copy(*this, other);
   }
@@ -486,7 +488,6 @@ public:
       object_fns_->destroy(*this);
       object_fns_ = other.object_fns_;
       target_fns_ = other.target_fns_;
-      blocking_ = other.blocking_;
       object_fns_->copy(*this, other);
     }
     return *this;
@@ -496,12 +497,10 @@ public:
 
   any_executor_base(any_executor_base&& other) BOOST_ASIO_NOEXCEPT
     : object_fns_(other.object_fns_),
-      target_fns_(other.target_fns_),
-      blocking_(other.blocking_)
+      target_fns_(other.target_fns_)
   {
     other.object_fns_ = object_fns_table<void>();
     other.target_fns_ = target_fns_table<void>();
-    other.blocking_ = execution::blocking_t();
     object_fns_->move(*this, other);
     other.target_ = 0;
   }
@@ -516,8 +515,6 @@ public:
       other.object_fns_ = object_fns_table<void>();
       target_fns_ = other.target_fns_;
       other.target_fns_ = target_fns_table<void>();
-      blocking_ = other.blocking_;
-      other.blocking_ = execution::blocking_t();
       object_fns_->move(*this, other);
       other.target_ = 0;
     }
@@ -529,7 +526,7 @@ public:
   template <typename F>
   void execute(BOOST_ASIO_MOVE_ARG(F) f) const
   {
-    if (blocking_ == execution::blocking.always)
+    if (target_fns_->blocking_execute != 0)
     {
       boost::asio::detail::non_const_lvalue<F> f2(f);
       target_fns_->blocking_execute(*this, function_view(f2.value));
@@ -803,19 +800,28 @@ protected:
   }
 
   template <typename Ex>
-  static const target_fns* target_fns_table(
+  static const target_fns* target_fns_table(bool is_always_blocking,
       typename enable_if<
         !is_same<Ex, void>::value
       >::type* = 0)
   {
-    static const target_fns fns =
+    static const target_fns fns_with_execute =
     {
       &any_executor_base::target_type_ex<Ex>,
       &any_executor_base::equal_ex<Ex>,
       &any_executor_base::execute_ex<Ex>,
+      0
+    };
+
+    static const target_fns fns_with_blocking_execute =
+    {
+      &any_executor_base::target_type_ex<Ex>,
+      &any_executor_base::equal_ex<Ex>,
+      0,
       &any_executor_base::blocking_execute_ex<Ex>
     };
-    return &fns;
+
+    return is_always_blocking ? &fns_with_blocking_execute : &fns_with_execute;
   }
 
 #if defined(BOOST_ASIO_MSVC)
@@ -1062,7 +1068,6 @@ private:
   const object_fns* object_fns_;
   void* target_;
   const target_fns* target_fns_;
-  execution::blocking_t blocking_;
 };
 
 template <typename Derived, typename Property, typename = void>

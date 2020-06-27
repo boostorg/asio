@@ -237,3 +237,5 @@ test-suite "asio" :
   [ run write_at.cpp ]
   [ run write_at.cpp : : : $(USE_SELECT) : write_at_select ]
   ;
+
+build-project execution ;

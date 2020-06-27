@@ -290,6 +290,8 @@ void spawn(const strand<Executor>& ex,
     const boost::coroutines::attributes& attributes
       = boost::coroutines::attributes());
 
+#if !defined(BOOST_ASIO_NO_TS_EXECUTORS)
+
 /// Start a new stackful coroutine that executes in the context of a strand.
 /**
  * This function is used to launch a new coroutine.
@@ -308,6 +310,8 @@ void spawn(const boost::asio::io_context::strand& s,
     BOOST_ASIO_MOVE_ARG(Function) function,
     const boost::coroutines::attributes& attributes
       = boost::coroutines::attributes());
+
+#endif // !defined(BOOST_ASIO_NO_TS_EXECUTORS)
 
 /// Start a new stackful coroutine that executes on a given execution context.
 /**
