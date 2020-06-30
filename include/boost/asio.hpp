@@ -74,6 +74,7 @@
 #include <boost/asio/execution/set_done.hpp>
 #include <boost/asio/execution/set_error.hpp>
 #include <boost/asio/execution/set_value.hpp>
+#include <boost/asio/execution/start.hpp>
 #include <boost/asio/execution_context.hpp>
 #include <boost/asio/executor.hpp>
 #include <boost/asio/executor_work_guard.hpp>

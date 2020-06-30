@@ -35,5 +35,6 @@
 #include <boost/asio/execution/set_done.hpp>
 #include <boost/asio/execution/set_error.hpp>
 #include <boost/asio/execution/set_value.hpp>
+#include <boost/asio/execution/start.hpp>
 
 #endif // BOOST_ASIO_EXECUTION_HPP
