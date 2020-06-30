@@ -32,6 +32,69 @@ struct sender_using_base :
   }
 };
 
+struct executor
+{
+  executor()
+  {
+  }
+
+  executor(const executor&) BOOST_ASIO_NOEXCEPT
+  {
+  }
+
+#if defined(BOOST_ASIO_HAS_MOVE)
+  executor(executor&&) BOOST_ASIO_NOEXCEPT
+  {
+  }
+#endif // defined(BOOST_ASIO_HAS_MOVE)
+
+  template <typename F>
+  void execute(BOOST_ASIO_MOVE_ARG(F) f) const BOOST_ASIO_NOEXCEPT
+  {
+    (void)f;
+  }
+
+  bool operator==(const executor&) const BOOST_ASIO_NOEXCEPT
+  {
+    return true;
+  }
+
+  bool operator!=(const executor&) const BOOST_ASIO_NOEXCEPT
+  {
+    return false;
+  }
+};
+
+namespace boost {
+namespace asio {
+namespace traits {
+
+#if !defined(BOOST_ASIO_HAS_DEDUCED_EXECUTE_MEMBER_TRAIT)
+
+template <typename F>
+struct execute_member<executor, F>
+{
+  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
+  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_noexcept = true);
+  typedef void result_type;
+};
+
+#endif // !defined(BOOST_ASIO_HAS_DEDUCED_SET_ERROR_MEMBER_TRAIT)
+#if !defined(BOOST_ASIO_HAS_DEDUCED_EQUALITY_COMPARABLE_TRAIT)
+
+template <>
+struct equality_comparable<executor>
+{
+  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
+  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_noexcept = true);
+};
+
+#endif // !defined(BOOST_ASIO_HAS_DEDUCED_EQUALITY_COMPARABLE_TRAIT)
+
+} // namespace traits
+} // namespace asio
+} // namespace boost
+
 template <typename T>
 bool is_unspecialised(T*, ...)
 {
@@ -55,12 +118,16 @@ void test_sender_traits()
 
   sender_using_base s2;
   BOOST_ASIO_CHECK(!is_unspecialised(&s2, static_cast<void*>(0)));
+
+  executor s3;
+  BOOST_ASIO_CHECK(!is_unspecialised(&s3, static_cast<void*>(0)));
 }
 
 void test_is_sender()
 {
   BOOST_ASIO_CHECK(!exec::is_sender<not_a_sender>::value);
   BOOST_ASIO_CHECK(exec::is_sender<sender_using_base>::value);
+  BOOST_ASIO_CHECK(exec::is_sender<executor>::value);
 }
 
 BOOST_ASIO_TEST_SUITE
