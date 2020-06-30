@@ -31,5 +31,6 @@
 #include <boost/asio/execution/outstanding_work.hpp>
 #include <boost/asio/execution/prefer_only.hpp>
 #include <boost/asio/execution/relationship.hpp>
+#include <boost/asio/execution/set_error.hpp>
 
 #endif // BOOST_ASIO_EXECUTION_HPP

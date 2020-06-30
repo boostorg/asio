@@ -52,4 +52,5 @@ test-suite "asio" :
   [ run outstanding_work.cpp ]
   [ run prefer_only.cpp ]
   [ run relationship.cpp ]
+  [ run set_error.cpp ]
   ;
