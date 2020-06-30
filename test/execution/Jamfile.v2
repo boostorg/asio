@@ -54,4 +54,5 @@ test-suite "asio" :
   [ run relationship.cpp ]
   [ run set_done.cpp ]
   [ run set_error.cpp ]
+  [ run set_value.cpp ]
   ;
