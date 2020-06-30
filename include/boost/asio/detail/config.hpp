@@ -133,6 +133,7 @@
 # define BOOST_ASIO_NONDEDUCED_MOVE_ARG(type) type&
 # define BOOST_ASIO_MOVE_CAST(type) static_cast<type&&>
 # define BOOST_ASIO_MOVE_CAST2(type1, type2) static_cast<type1, type2&&>
+# define BOOST_ASIO_MOVE_OR_LVALUE(type) static_cast<type&&>
 #endif // defined(BOOST_ASIO_HAS_MOVE) && !defined(BOOST_ASIO_MOVE_CAST)
 
 // If BOOST_ASIO_MOVE_CAST still isn't defined, default to a C++03-compatible
@@ -159,6 +160,7 @@
 # define BOOST_ASIO_NONDEDUCED_MOVE_ARG(type) const type&
 # define BOOST_ASIO_MOVE_CAST(type) static_cast<const type&>
 # define BOOST_ASIO_MOVE_CAST2(type1, type2) static_cast<const type1, type2&>
+# define BOOST_ASIO_MOVE_OR_LVALUE(type)
 #endif // !defined(BOOST_ASIO_MOVE_CAST)
 
 // Support variadic templates on compilers known to allow it.
@@ -518,6 +520,44 @@
 #  endif // defined(BOOST_ASIO_MSVC)
 # endif // !defined(BOOST_ASIO_DISABLE_STATIC_ASSERT)
 #endif // !defined(BOOST_ASIO_HAS_STATIC_ASSERT)
+
+// Support ref-qualified functions on compilers known to allow it.
+#if !defined(BOOST_ASIO_HAS_REF_QUALIFIED_FUNCTIONS)
+# if !defined(BOOST_ASIO_DISABLE_REF_QUALIFIED_FUNCTIONS)
+#  if defined(__clang__)
+#   if __has_feature(__cxx_reference_qualified_functions__)
+#    define BOOST_ASIO_HAS_REF_QUALIFIED_FUNCTIONS 1
+#   endif // __has_feature(__cxx_reference_qualified_functions__)
+#  endif // defined(__clang__)
+#  if defined(__GNUC__)
+#   if ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 9)) || (__GNUC__ > 4)
+#    if (__cplusplus >= 201103) || defined(__GXX_EXPERIMENTAL_CXX0X__)
+#     define BOOST_ASIO_HAS_REF_QUALIFIED_FUNCTIONS 1
+#    endif // (__cplusplus >= 201103) || defined(__GXX_EXPERIMENTAL_CXX0X__)
+#   endif // ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 9)) || (__GNUC__ > 4)
+#  endif // defined(__GNUC__)
+#  if defined(BOOST_ASIO_MSVC)
+#   if (_MSC_VER >= 1900)
+#    define BOOST_ASIO_HAS_REF_QUALIFIED_FUNCTIONS 1
+#   endif // (_MSC_VER >= 1900)
+#  endif // defined(BOOST_ASIO_MSVC)
+# endif // !defined(BOOST_ASIO_DISABLE_REF_QUALIFIED_FUNCTIONS)
+#endif // !defined(BOOST_ASIO_HAS_REF_QUALIFIED_FUNCTIONS)
+#if defined(BOOST_ASIO_HAS_REF_QUALIFIED_FUNCTIONS)
+# if !defined(BOOST_ASIO_LVALUE_REF_QUAL)
+#  define BOOST_ASIO_LVALUE_REF_QUAL &
+# endif // !defined(BOOST_ASIO_LVALUE_REF_QUAL)
+# if !defined(BOOST_ASIO_RVALUE_REF_QUAL)
+#  define BOOST_ASIO_RVALUE_REF_QUAL &&
+# endif // !defined(BOOST_ASIO_LVALUE_REF_QUAL)
+#else // defined(BOOST_ASIO_HAS_REF_QUALIFIED_FUNCTIONS)
+# if !defined(BOOST_ASIO_LVALUE_REF_QUAL)
+#  define BOOST_ASIO_LVALUE_REF_QUAL
+# endif // !defined(BOOST_ASIO_LVALUE_REF_QUAL)
+# if !defined(BOOST_ASIO_RVALUE_REF_QUAL)
+#  define BOOST_ASIO_RVALUE_REF_QUAL
+# endif // !defined(BOOST_ASIO_LVALUE_REF_QUAL)
+#endif // defined(BOOST_ASIO_HAS_REF_QUALIFIED_FUNCTIONS)
 
 // Standard library support for system errors.
 # if !defined(BOOST_ASIO_DISABLE_STD_SYSTEM_ERROR)
