@@ -70,6 +70,7 @@
 #include <boost/asio/execution/outstanding_work.hpp>
 #include <boost/asio/execution/prefer_only.hpp>
 #include <boost/asio/execution/relationship.hpp>
+#include <boost/asio/execution/set_done.hpp>
 #include <boost/asio/execution/set_error.hpp>
 #include <boost/asio/execution_context.hpp>
 #include <boost/asio/executor.hpp>
