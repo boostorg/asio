@@ -67,6 +67,7 @@
 #include <boost/asio/execution/invocable_archetype.hpp>
 #include <boost/asio/execution/mapping.hpp>
 #include <boost/asio/execution/occupancy.hpp>
+#include <boost/asio/execution/operation_state.hpp>
 #include <boost/asio/execution/outstanding_work.hpp>
 #include <boost/asio/execution/prefer_only.hpp>
 #include <boost/asio/execution/receiver.hpp>

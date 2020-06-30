@@ -50,6 +50,7 @@ test-suite "asio" :
   [ run executor.cpp ]
   [ run invocable_archetype.cpp ]
   [ run mapping.cpp ]
+  [ run operation_state.cpp ]
   [ run outstanding_work.cpp ]
   [ run prefer_only.cpp ]
   [ run receiver.cpp ]
