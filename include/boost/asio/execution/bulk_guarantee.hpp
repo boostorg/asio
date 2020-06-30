@@ -18,6 +18,8 @@
 #include <boost/asio/detail/config.hpp>
 #include <boost/asio/detail/type_traits.hpp>
 #include <boost/asio/execution/executor.hpp>
+#include <boost/asio/execution/scheduler.hpp>
+#include <boost/asio/execution/sender.hpp>
 #include <boost/asio/is_applicable_property.hpp>
 #include <boost/asio/query.hpp>
 #include <boost/asio/traits/query_free.hpp>
@@ -39,9 +41,11 @@ namespace execution {
 /// execution agents associated with the bulk execution.
 struct bulk_guarantee_t
 {
-  /// The bulk_guarantee_t property applies to executors.
+  /// The bulk_guarantee_t property applies to executors, senders, and
+  /// schedulers.
   template <typename T>
-  static constexpr bool is_applicable_property_v = is_executor_v<T>;
+  static constexpr bool is_applicable_property_v =
+    is_executor_v<T> || is_sender_v<T> || is_scheduler_v<T>;
 
   /// The top-level bulk_guarantee_t property cannot be required.
   static constexpr bool is_requirable = false;
@@ -56,9 +60,11 @@ struct bulk_guarantee_t
   /// execution may be parallelised and vectorised.
   struct unsequenced_t
   {
-    /// The bulk_guarantee_t::unsequenced_t property applies to executors.
+    /// The bulk_guarantee_t::unsequenced_t property applies to executors,
+    /// senders, and schedulers.
     template <typename T>
-    static constexpr bool is_applicable_property_v = is_executor_v<T>;
+    static constexpr bool is_applicable_property_v =
+      is_executor_v<T> || is_sender_v<T> || is_scheduler_v<T>;
 
     /// The bulk_guarantee_t::unsequenced_t property can be required.
     static constexpr bool is_requirable = true;
@@ -83,9 +89,11 @@ struct bulk_guarantee_t
   /// execution may not be parallelised and vectorised.
   struct sequenced_t
   {
-    /// The bulk_guarantee_t::sequenced_t property applies to executors.
+    /// The bulk_guarantee_t::sequenced_t property applies to executors,
+    /// senders, and schedulers.
     template <typename T>
-    static constexpr bool is_applicable_property_v = is_executor_v<T>;
+    static constexpr bool is_applicable_property_v =
+      is_executor_v<T> || is_sender_v<T> || is_scheduler_v<T>;
 
     /// The bulk_guarantee_t::sequenced_t property can be required.
     static constexpr bool is_requirable = true;
@@ -110,9 +118,11 @@ struct bulk_guarantee_t
   /// execution may be parallelised.
   struct parallel_t
   {
-    /// The bulk_guarantee_t::parallel_t property applies to executors.
+    /// The bulk_guarantee_t::parallel_t property applies to executors,
+    /// senders, and schedulers.
     template <typename T>
-    static constexpr bool is_applicable_property_v = is_executor_v<T>;
+    static constexpr bool is_applicable_property_v =
+      is_executor_v<T> || is_sender_v<T> || is_scheduler_v<T>;
 
     /// The bulk_guarantee_t::parallel_t property can be required.
     static constexpr bool is_requirable = true;
@@ -189,7 +199,8 @@ struct bulk_guarantee_t
 #if defined(BOOST_ASIO_HAS_VARIABLE_TEMPLATES)
   template <typename T>
   BOOST_ASIO_STATIC_CONSTEXPR(bool,
-    is_applicable_property_v = is_executor<T>::value);
+    is_applicable_property_v = is_executor<T>::value
+      || is_sender<T>::value || is_scheduler<T>::value);
 #endif // defined(BOOST_ASIO_HAS_VARIABLE_TEMPLATES)
 
   BOOST_ASIO_STATIC_CONSTEXPR(bool, is_requirable = false);
@@ -399,7 +410,8 @@ struct unsequenced_t
 #if defined(BOOST_ASIO_HAS_VARIABLE_TEMPLATES)
   template <typename T>
   BOOST_ASIO_STATIC_CONSTEXPR(bool,
-    is_applicable_property_v = is_executor<T>::value);
+    is_applicable_property_v = is_executor<T>::value
+      || is_sender<T>::value || is_scheduler<T>::value);
 #endif // defined(BOOST_ASIO_HAS_VARIABLE_TEMPLATES)
 
   BOOST_ASIO_STATIC_CONSTEXPR(bool, is_requirable = true);
@@ -496,7 +508,8 @@ struct sequenced_t
 #if defined(BOOST_ASIO_HAS_VARIABLE_TEMPLATES)
   template <typename T>
   BOOST_ASIO_STATIC_CONSTEXPR(bool,
-    is_applicable_property_v = is_executor<T>::value);
+    is_applicable_property_v = is_executor<T>::value
+      || is_sender<T>::value || is_scheduler<T>::value);
 #endif // defined(BOOST_ASIO_HAS_VARIABLE_TEMPLATES)
 
   BOOST_ASIO_STATIC_CONSTEXPR(bool, is_requirable = true);
@@ -580,7 +593,8 @@ struct parallel_t
 #if defined(BOOST_ASIO_HAS_VARIABLE_TEMPLATES)
   template <typename T>
   BOOST_ASIO_STATIC_CONSTEXPR(bool,
-    is_applicable_property_v = is_executor<T>::value);
+    is_applicable_property_v = is_executor<T>::value
+      || is_sender<T>::value || is_scheduler<T>::value);
 #endif // defined(BOOST_ASIO_HAS_VARIABLE_TEMPLATES)
 
   BOOST_ASIO_STATIC_CONSTEXPR(bool, is_requirable = true);
@@ -676,25 +690,37 @@ namespace { static const bulk_guarantee_t&
 
 template <typename T>
 struct is_applicable_property<T, execution::bulk_guarantee_t>
-  : execution::is_executor<T>
+  : integral_constant<bool,
+      execution::is_executor<T>::value
+        || execution::is_sender<T>::value
+        || execution::is_scheduler<T>::value>
 {
 };
 
 template <typename T>
 struct is_applicable_property<T, execution::bulk_guarantee_t::unsequenced_t>
-  : execution::is_executor<T>
+  : integral_constant<bool,
+      execution::is_executor<T>::value
+        || execution::is_sender<T>::value
+        || execution::is_scheduler<T>::value>
 {
 };
 
 template <typename T>
 struct is_applicable_property<T, execution::bulk_guarantee_t::sequenced_t>
-  : execution::is_executor<T>
+  : integral_constant<bool,
+      execution::is_executor<T>::value
+        || execution::is_sender<T>::value
+        || execution::is_scheduler<T>::value>
 {
 };
 
 template <typename T>
 struct is_applicable_property<T, execution::bulk_guarantee_t::parallel_t>
-  : execution::is_executor<T>
+  : integral_constant<bool,
+      execution::is_executor<T>::value
+        || execution::is_sender<T>::value
+        || execution::is_scheduler<T>::value>
 {
 };
 
