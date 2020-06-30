@@ -40,6 +40,12 @@ thread_pool::executor() BOOST_ASIO_NOEXCEPT
   return executor_type(*this);
 }
 
+inline thread_pool::scheduler_type
+thread_pool::scheduler() BOOST_ASIO_NOEXCEPT
+{
+  return scheduler_type(*this);
+}
+
 template <typename Allocator, unsigned int Bits>
 thread_pool::basic_executor_type<Allocator, Bits>&
 thread_pool::basic_executor_type<Allocator, Bits>::operator=(
