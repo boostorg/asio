@@ -17,6 +17,7 @@
 
 #include <boost/asio/detail/config.hpp>
 #include <boost/asio/detail/type_traits.hpp>
+#include <boost/asio/execution/receiver.hpp>
 
 #include <boost/asio/detail/push_options.hpp>
 
@@ -121,10 +122,58 @@ BOOST_ASIO_CONCEPT sender = is_sender<T>::value;
 
 #endif // defined(BOOST_ASIO_HAS_CONCEPTS)
 
+template <typename S, typename R>
+struct can_connect;
+
+/// The is_sender_to trait detects whether a type T satisfies the
+/// execution::sender_to concept for some receiver.
+/**
+ * Class template @c is_sender_to is a type trait that is derived from @c
+ * true_type if the type @c T meets the concept definition for a sender
+ * for some receiver type R, otherwise @c false.
+ */
+template <typename T, typename R>
+struct is_sender_to :
+#if defined(GENERATING_DOCUMENTATION)
+  integral_constant<bool, automatically_determined>
+#else // defined(GENERATING_DOCUMENTATION)
+  integral_constant<bool,
+    is_sender<T>::value
+      && is_receiver<R>::value
+      && can_connect<T, R>::value
+  >
+#endif // defined(GENERATING_DOCUMENTATION)
+{
+};
+
+#if defined(BOOST_ASIO_HAS_VARIABLE_TEMPLATES)
+
+template <typename T, typename R>
+BOOST_ASIO_CONSTEXPR const bool is_sender_to_v =
+  is_sender_to<T, R>::value;
+
+#endif // defined(BOOST_ASIO_HAS_VARIABLE_TEMPLATES)
+
+#if defined(BOOST_ASIO_HAS_CONCEPTS)
+
+template <typename T, typename R>
+BOOST_ASIO_CONCEPT sender_to = is_sender_to<T, R>::value;
+
+#define BOOST_ASIO_EXECUTION_SENDER_TO(r) \
+  ::boost::asio::execution::sender_to<r>
+
+#else // defined(BOOST_ASIO_HAS_CONCEPTS)
+
+#define BOOST_ASIO_EXECUTION_SENDER_TO(r) typename
+
+#endif // defined(BOOST_ASIO_HAS_CONCEPTS)
+
 } // namespace execution
 } // namespace asio
 } // namespace boost
 
 #include <boost/asio/detail/pop_options.hpp>
+
+#include <boost/asio/execution/connect.hpp>
 
 #endif // BOOST_ASIO_EXECUTION_SENDER_HPP
