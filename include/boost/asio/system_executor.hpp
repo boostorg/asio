@@ -288,21 +288,20 @@ typedef basic_system_executor<execution::blocking_t::possibly_t,
 
 #if !defined(GENERATING_DOCUMENTATION)
 
-namespace execution {
+namespace traits {
 
-#if !defined(BOOST_ASIO_HAS_DEDUCED_EXECUTION_IS_EXECUTOR_TRAIT)
+#if !defined(BOOST_ASIO_HAS_DEDUCED_EQUALITY_COMPARABLE_TRAIT)
 
 template <typename Blocking, typename Relationship, typename Allocator>
-struct is_executor<
+struct equality_comparable<
     boost::asio::basic_system_executor<Blocking, Relationship, Allocator>
-  > : true_type
+  >
 {
+  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
+  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_noexcept = true);
 };
 
-#endif // !defined(BOOST_ASIO_HAS_DEDUCED_EXECUTION_IS_EXECUTOR_TRAIT)
-
-} // namespace execution
-namespace traits {
+#endif // !defined(BOOST_ASIO_HAS_DEDUCED_EQUALITY_COMPARABLE_TRAIT)
 
 #if !defined(BOOST_ASIO_HAS_DEDUCED_EXECUTE_MEMBER_TRAIT)
 
