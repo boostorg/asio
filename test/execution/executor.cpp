@@ -135,10 +135,41 @@ void executor_shape_test()
       >::value));
 }
 
+struct executor_with_other_index_type
+{
+  typedef unsigned char index_type;
+};
+
+void executor_index_test()
+{
+  BOOST_ASIO_CHECK((
+      boost::asio::is_same<
+        boost::asio::execution::executor_index<executor>::type,
+        std::size_t
+      >::value));
+
+  BOOST_ASIO_CHECK((
+      boost::asio::is_same<
+        boost::asio::execution::executor_index<
+          executor_with_other_shape_type
+        >::type,
+        double
+      >::value));
+
+  BOOST_ASIO_CHECK((
+      boost::asio::is_same<
+        boost::asio::execution::executor_index<
+          executor_with_other_index_type
+        >::type,
+        unsigned char
+      >::value));
+}
+
 BOOST_ASIO_TEST_SUITE
 (
   "executor",
   BOOST_ASIO_TEST_CASE(is_executor_test)
   BOOST_ASIO_TEST_CASE(is_executor_of_test)
   BOOST_ASIO_TEST_CASE(executor_shape_test)
+  BOOST_ASIO_TEST_CASE(executor_index_test)
 )
