@@ -36,6 +36,7 @@
 #include <boost/asio/execution/receiver_invocation_error.hpp>
 #include <boost/asio/execution/relationship.hpp>
 #include <boost/asio/execution/schedule.hpp>
+#include <boost/asio/execution/scheduler.hpp>
 #include <boost/asio/execution/sender.hpp>
 #include <boost/asio/execution/set_done.hpp>
 #include <boost/asio/execution/set_error.hpp>
