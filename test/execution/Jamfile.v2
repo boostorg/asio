@@ -56,6 +56,7 @@ test-suite "asio" :
   [ run prefer_only.cpp ]
   [ run receiver.cpp ]
   [ run relationship.cpp ]
+  [ run schedule.cpp ]
   [ run sender.cpp ]
   [ run set_done.cpp ]
   [ run set_error.cpp ]
