@@ -61,4 +61,5 @@ test-suite "asio" :
   [ run set_error.cpp ]
   [ run set_value.cpp ]
   [ run start.cpp ]
+  [ run submit.cpp ]
   ;
