@@ -16,6 +16,7 @@
 // Test that header file is self-contained.
 #include <boost/asio/execution/sender.hpp>
 
+#include <boost/system/error_code.hpp>
 #include "../unit_test.hpp"
 
 namespace exec = boost::asio::execution;
@@ -95,6 +96,81 @@ struct equality_comparable<executor>
 } // namespace asio
 } // namespace boost
 
+#if defined(BOOST_ASIO_HAS_DEDUCED_EXECUTION_IS_TYPED_SENDER_TRAIT)
+
+struct operation_state
+{
+  void start() BOOST_ASIO_NOEXCEPT
+  {
+  }
+};
+
+namespace boost {
+namespace asio {
+namespace traits {
+
+#if !defined(BOOST_ASIO_HAS_DEDUCED_START_MEMBER_TRAIT)
+
+template <>
+struct start_member<operation_state>
+{
+  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
+  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_noexcept = true);
+  typedef void result_type;
+};
+
+#endif // !defined(BOOST_ASIO_HAS_DEDUCED_START_MEMBER_TRAIT)
+
+} // namespace traits
+} // namespace asio
+} // namespace boost
+
+struct typed_sender
+{
+  template <
+      template <typename...> class Tuple,
+      template <typename...> class Variant>
+  using value_types = Variant<Tuple<int>>;
+
+  template <template <typename...> class Variant>
+  using error_types = Variant<boost::system::error_code>;
+
+  BOOST_ASIO_STATIC_CONSTEXPR(bool, sends_done = true);
+
+  typed_sender()
+  {
+  }
+
+  template <typename R>
+  operation_state connect(BOOST_ASIO_MOVE_ARG(R) r) const
+  {
+    (void)r;
+    return operation_state();
+  }
+};
+
+namespace boost {
+namespace asio {
+namespace traits {
+
+#if !defined(BOOST_ASIO_HAS_DEDUCED_CONNECT_MEMBER_TRAIT)
+
+template <typename R>
+struct connect_member<const typed_sender, R>
+{
+  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
+  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_noexcept = false);
+  typedef operation_state result_type;
+};
+
+#endif // !defined(BOOST_ASIO_HAS_DEDUCED_CONNECT_MEMBER_TRAIT)
+
+} // namespace traits
+} // namespace asio
+} // namespace boost
+
+#endif // defined(BOOST_ASIO_HAS_DEDUCED_EXECUTION_IS_TYPED_SENDER_TRAIT)
+
 template <typename T>
 bool is_unspecialised(T*, ...)
 {
@@ -121,6 +197,11 @@ void test_sender_traits()
 
   executor s3;
   BOOST_ASIO_CHECK(!is_unspecialised(&s3, static_cast<void*>(0)));
+
+#if defined(BOOST_ASIO_HAS_DEDUCED_EXECUTION_IS_TYPED_SENDER_TRAIT)
+  typed_sender s4;
+  BOOST_ASIO_CHECK(!is_unspecialised(&s4, static_cast<void*>(0)));
+#endif // defined(BOOST_ASIO_HAS_DEDUCED_EXECUTION_IS_TYPED_SENDER_TRAIT)
 }
 
 void test_is_sender()
@@ -128,6 +209,21 @@ void test_is_sender()
   BOOST_ASIO_CHECK(!exec::is_sender<not_a_sender>::value);
   BOOST_ASIO_CHECK(exec::is_sender<sender_using_base>::value);
   BOOST_ASIO_CHECK(exec::is_sender<executor>::value);
+
+#if defined(BOOST_ASIO_HAS_DEDUCED_EXECUTION_IS_TYPED_SENDER_TRAIT)
+  BOOST_ASIO_CHECK(exec::is_sender<typed_sender>::value);
+#endif // defined(BOOST_ASIO_HAS_DEDUCED_EXECUTION_IS_TYPED_SENDER_TRAIT)
+}
+
+void test_is_typed_sender()
+{
+  BOOST_ASIO_CHECK(!exec::is_typed_sender<not_a_sender>::value);
+  BOOST_ASIO_CHECK(!exec::is_typed_sender<sender_using_base>::value);
+
+#if defined(BOOST_ASIO_HAS_DEDUCED_EXECUTION_IS_TYPED_SENDER_TRAIT)
+  BOOST_ASIO_CHECK(exec::is_typed_sender<executor>::value);
+  BOOST_ASIO_CHECK(exec::is_typed_sender<typed_sender>::value);
+#endif // defined(BOOST_ASIO_HAS_DEDUCED_EXECUTION_IS_TYPED_SENDER_TRAIT)
 }
 
 BOOST_ASIO_TEST_SUITE
@@ -135,4 +231,5 @@ BOOST_ASIO_TEST_SUITE
   "sender",
   BOOST_ASIO_TEST_CASE(test_sender_traits)
   BOOST_ASIO_TEST_CASE(test_is_sender)
+  BOOST_ASIO_TEST_CASE(test_is_typed_sender)
 )

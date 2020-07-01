@@ -24,6 +24,16 @@
 
 #include <boost/asio/detail/push_options.hpp>
 
+#if defined(BOOST_ASIO_HAS_ALIAS_TEMPLATES) \
+  && defined(BOOST_ASIO_HAS_VARIADIC_TEMPLATES) \
+  && defined(BOOST_ASIO_HAS_DECLTYPE) \
+  && !defined(BOOST_ASIO_MSVC) || (_MSC_VER >= 1910)
+# define BOOST_ASIO_HAS_DEDUCED_EXECUTION_IS_TYPED_SENDER_TRAIT 1
+#endif // defined(BOOST_ASIO_HAS_ALIAS_TEMPLATES)
+       //   && defined(BOOST_ASIO_HAS_VARIADIC_TEMPLATES)
+       //   && defined(BOOST_ASIO_HAS_DECLTYPE)
+       //   && !defined(BOOST_ASIO_MSVC) || (_MSC_VER >= 1910)
+
 namespace boost {
 namespace asio {
 namespace execution {
@@ -45,12 +55,82 @@ struct sender_traits_base<S,
 {
 };
 
+template <typename S, typename = void, typename = void, typename = void>
+struct has_sender_types : false_type
+{
+};
+
+#if defined(BOOST_ASIO_HAS_DEDUCED_EXECUTION_IS_TYPED_SENDER_TRAIT)
+
+template <
+    template <
+      template <typename...> class Tuple,
+      template <typename...> class Variant
+    > class>
+struct has_value_types
+{
+  typedef void type;
+};
+
+template <
+  template <
+    template <typename...> class Variant
+  > class>
+struct has_error_types
+{
+  typedef void type;
+};
+
+template <typename S>
+struct has_sender_types<S,
+    typename has_value_types<S::template value_types>::type,
+    typename has_error_types<S::template error_types>::type,
+    typename conditional<S::sends_done, void, void>::type> : true_type
+{
+};
+
 template <typename S>
 struct sender_traits_base<S,
     typename enable_if<
-      detail::is_executor_of_impl<S, as_invocable<void_receiver, S> >::value
+      has_sender_types<S>::value
     >::type>
 {
+  template <
+      template <typename...> class Tuple,
+      template <typename...> class Variant>
+  using value_types = typename S::template value_types<Tuple, Variant>;
+
+  template <template <typename...> class Variant>
+  using error_types = typename S::template error_types<Variant>;
+
+  BOOST_ASIO_STATIC_CONSTEXPR(bool, sends_done = S::sends_done);
+};
+
+#endif // defined(BOOST_ASIO_HAS_DEDUCED_EXECUTION_IS_TYPED_SENDER_TRAIT)
+
+template <typename S>
+struct sender_traits_base<S,
+    typename enable_if<
+      !has_sender_types<S>::value
+        && detail::is_executor_of_impl<S,
+          as_invocable<void_receiver, S> >::value
+    >::type>
+{
+#if defined(BOOST_ASIO_HAS_DEDUCED_EXECUTION_IS_TYPED_SENDER_TRAIT) \
+  && defined(BOOST_ASIO_HAS_STD_EXCEPTION_PTR)
+
+  template <
+      template <typename...> class Tuple,
+      template <typename...> class Variant>
+  using value_types = Variant<Tuple<>>;
+
+  template <template <typename...> class Variant>
+  using error_types = Variant<std::exception_ptr>;
+
+  BOOST_ASIO_STATIC_CONSTEXPR(bool, sends_done = true);
+
+#endif // defined(BOOST_ASIO_HAS_DEDUCED_EXECUTION_IS_TYPED_SENDER_TRAIT)
+       //   && defined(BOOST_ASIO_HAS_STD_EXCEPTION_PTR)
 };
 
 } // namespace detail
@@ -176,6 +256,48 @@ BOOST_ASIO_CONCEPT sender_to = is_sender_to<T, R>::value;
 #else // defined(BOOST_ASIO_HAS_CONCEPTS)
 
 #define BOOST_ASIO_EXECUTION_SENDER_TO(r) typename
+
+#endif // defined(BOOST_ASIO_HAS_CONCEPTS)
+
+/// The is_typed_sender trait detects whether a type T satisfies the
+/// execution::typed_sender concept.
+/**
+ * Class template @c is_typed_sender is a type trait that is derived from @c
+ * true_type if the type @c T meets the concept definition for a typed sender,
+ * otherwise @c false.
+ */
+template <typename T>
+struct is_typed_sender :
+#if defined(GENERATING_DOCUMENTATION)
+  integral_constant<bool, automatically_determined>
+#else // defined(GENERATING_DOCUMENTATION)
+  integral_constant<bool,
+    is_sender<T>::value
+      && detail::has_sender_types<
+        sender_traits<typename remove_cvref<T>::type> >::value
+  >
+#endif // defined(GENERATING_DOCUMENTATION)
+{
+};
+
+#if defined(BOOST_ASIO_HAS_VARIABLE_TEMPLATES)
+
+template <typename T>
+BOOST_ASIO_CONSTEXPR const bool is_typed_sender_v = is_typed_sender<T>::value;
+
+#endif // defined(BOOST_ASIO_HAS_VARIABLE_TEMPLATES)
+
+#if defined(BOOST_ASIO_HAS_CONCEPTS)
+
+template <typename T>
+BOOST_ASIO_CONCEPT typed_sender = is_typed_sender<T>::value;
+
+#define BOOST_ASIO_EXECUTION_TYPED_SENDER \
+  ::boost::asio::execution::typed_sender
+
+#else // defined(BOOST_ASIO_HAS_CONCEPTS)
+
+#define BOOST_ASIO_EXECUTION_TYPED_SENDER typename
 
 #endif // defined(BOOST_ASIO_HAS_CONCEPTS)
 
