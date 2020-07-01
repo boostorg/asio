@@ -24,6 +24,10 @@
 #include <boost/asio/traits/query_static_constexpr_member.hpp>
 #include <boost/asio/traits/static_query.hpp>
 
+#if defined(BOOST_ASIO_HAS_STD_ANY)
+# include <any>
+#endif // defined(BOOST_ASIO_HAS_STD_ANY)
+
 #include <boost/asio/detail/push_options.hpp>
 
 namespace boost {
@@ -47,6 +51,9 @@ struct context_t
 
   /// The context_t property cannot be preferred.
   static constexpr bool is_preferable = false;
+
+  /// The type returned by queries against an @c any_executor.
+  typedef std::any polymorphic_query_result_type;
 };
 
 /// A special value used for accessing the context_t property.
@@ -71,6 +78,10 @@ struct context_t
 
   BOOST_ASIO_STATIC_CONSTEXPR(bool, is_requirable = false);
   BOOST_ASIO_STATIC_CONSTEXPR(bool, is_preferable = false);
+
+#if defined(BOOST_ASIO_HAS_STD_ANY)
+  typedef std::any polymorphic_query_result_type;
+#endif // defined(BOOST_ASIO_HAS_STD_ANY)
 
   BOOST_ASIO_CONSTEXPR context_t()
   {
