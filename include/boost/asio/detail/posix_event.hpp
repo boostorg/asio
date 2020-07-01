@@ -19,6 +19,7 @@
 
 #if defined(BOOST_ASIO_HAS_PTHREADS)
 
+#include <cstddef>
 #include <pthread.h>
 #include <boost/asio/detail/assert.hpp>
 #include <boost/asio/detail/noncopyable.hpp>
