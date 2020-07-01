@@ -1059,6 +1059,10 @@ public:
   }
 
 private:
+  // Disallow copying and assignment.
+  basic_raw_socket(const basic_raw_socket&) BOOST_ASIO_DELETED;
+  basic_raw_socket& operator=(const basic_raw_socket&) BOOST_ASIO_DELETED;
+
   class initiate_async_send
   {
   public:

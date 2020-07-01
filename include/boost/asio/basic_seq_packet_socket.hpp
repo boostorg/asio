@@ -680,6 +680,11 @@ public:
   }
 
 private:
+  // Disallow copying and assignment.
+  basic_seq_packet_socket(const basic_seq_packet_socket&) BOOST_ASIO_DELETED;
+  basic_seq_packet_socket& operator=(
+      const basic_seq_packet_socket&) BOOST_ASIO_DELETED;
+
   class initiate_async_send
   {
   public:
