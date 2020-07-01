@@ -19,6 +19,7 @@
 
 #if defined(BOOST_ASIO_WINDOWS)
 
+#include <cstddef>
 #include <boost/asio/detail/assert.hpp>
 #include <boost/asio/detail/noncopyable.hpp>
 #include <boost/asio/detail/socket_types.hpp>

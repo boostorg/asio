@@ -178,7 +178,7 @@ bool operator!=(const any_executor<SupportableProperties...>& a,
 namespace execution {
 
 #if !defined(BOOST_ASIO_EXECUTION_ANY_EXECUTOR_FWD_DECL)
-#define EXECUTION_ANY_EXECUTOR_FWD_DECL
+#define BOOST_ASIO_EXECUTION_ANY_EXECUTOR_FWD_DECL
 
 #if defined(BOOST_ASIO_HAS_VARIADIC_TEMPLATES)
 
@@ -1434,11 +1434,6 @@ inline bool operator!=(const any_executor<SupportableProperties...>& a,
   return !a.equality_helper(b);
 }
 
-template <typename... SupportableProperties>
-struct is_executor<any_executor<SupportableProperties...> > : true_type
-{
-};
-
 #else // defined(BOOST_ASIO_HAS_VARIADIC_TEMPLATES)
 
 #define BOOST_ASIO_PRIVATE_ANY_EXECUTOR_PROP_FNS(n) \
@@ -1778,11 +1773,6 @@ struct is_executor<any_executor<SupportableProperties...> > : true_type
   { \
     return !a.equality_helper(b); \
   } \
-  \
-  template <BOOST_ASIO_VARIADIC_TPARAMS(n)> \
-  struct is_executor<any_executor<BOOST_ASIO_VARIADIC_TARGS(n)> > : true_type \
-  { \
-  }; \
   /**/
   BOOST_ASIO_VARIADIC_GENERATE(BOOST_ASIO_PRIVATE_ANY_EXECUTOR_DEF)
 #undef BOOST_ASIO_PRIVATE_ANY_EXECUTOR_DEF
@@ -1801,6 +1791,41 @@ struct is_executor<any_executor<SupportableProperties...> > : true_type
 
 } // namespace execution
 namespace traits {
+
+#if !defined(BOOST_ASIO_HAS_DEDUCED_EQUALITY_COMPARABLE_TRAIT)
+#if defined(BOOST_ASIO_HAS_VARIADIC_TEMPLATES)
+
+template <typename... SupportableProperties>
+struct equality_comparable<execution::any_executor<SupportableProperties...> >
+{
+  static const bool is_valid = true;
+  static const bool is_noexcept = true;
+};
+
+#else // defined(BOOST_ASIO_HAS_VARIADIC_TEMPLATES)
+
+template <>
+struct equality_comparable<execution::any_executor<> >
+{
+  static const bool is_valid = true;
+  static const bool is_noexcept = true;
+};
+
+#define BOOST_ASIO_PRIVATE_ANY_EXECUTOR_EQUALITY_COMPARABLE_DEF(n) \
+  template <BOOST_ASIO_VARIADIC_TPARAMS(n)> \
+  struct equality_comparable< \
+      execution::any_executor<BOOST_ASIO_VARIADIC_TARGS(n)> > \
+  { \
+    static const bool is_valid = true; \
+    static const bool is_noexcept = true; \
+  }; \
+  /**/
+  BOOST_ASIO_VARIADIC_GENERATE(
+      BOOST_ASIO_PRIVATE_ANY_EXECUTOR_EQUALITY_COMPARABLE_DEF)
+#undef BOOST_ASIO_PRIVATE_ANY_EXECUTOR_EQUALITY_COMPARABLE_DEF
+
+#endif // defined(BOOST_ASIO_HAS_VARIADIC_TEMPLATES)
+#endif // !defined(BOOST_ASIO_HAS_DEDUCED_EQUALITY_COMPARABLE_TRAIT)
 
 #if !defined(BOOST_ASIO_HAS_DEDUCED_EXECUTE_MEMBER_TRAIT)
 #if defined(BOOST_ASIO_HAS_VARIADIC_TEMPLATES)

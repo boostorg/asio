@@ -85,6 +85,9 @@ public:
   /// Executor used to submit functions to a thread pool.
   typedef basic_executor_type<std::allocator<void>, 0> executor_type;
 
+  /// Scheduler used to schedule receivers on a thread pool.
+  typedef basic_executor_type<std::allocator<void>, 0> scheduler_type;
+
 #if !defined(BOOST_ASIO_NO_TS_EXECUTORS)
   /// Constructs a pool with an automatically determined number of threads.
   BOOST_ASIO_DECL thread_pool();
@@ -104,6 +107,9 @@ public:
 
   /// Obtains the executor associated with the pool.
   executor_type executor() BOOST_ASIO_NOEXCEPT;
+
+  /// Obtains the scheduler associated with the pool.
+  scheduler_type scheduler() BOOST_ASIO_NOEXCEPT;
 
   /// Stops the threads.
   /**
@@ -160,6 +166,9 @@ template <typename Allocator, unsigned int Bits>
 class thread_pool::basic_executor_type : detail::thread_pool_bits
 {
 public:
+  /// The sender type, when this type is used as a scheduler.
+  typedef basic_executor_type sender_type;
+
   /// Copy construtor.
   basic_executor_type(
       const basic_executor_type& other) BOOST_ASIO_NOEXCEPT
@@ -390,6 +399,20 @@ public:
         integral_constant<bool, (Bits & blocking_always) != 0>());
   }
 
+  /// Bulk execution function.
+  template <typename Function>
+  void bulk_execute(BOOST_ASIO_MOVE_ARG(Function) f, std::size_t n) const
+  {
+    this->do_bulk_execute(BOOST_ASIO_MOVE_CAST(Function)(f), n,
+        integral_constant<bool, (Bits & blocking_always) != 0>());
+  }
+
+  /// Schedule function.
+  sender_type schedule() const BOOST_ASIO_NOEXCEPT
+  {
+    return *this;
+  }
+
 #if !defined(BOOST_ASIO_NO_TS_EXECUTORS)
   /// Obtain the underlying execution context.
   thread_pool& context() const BOOST_ASIO_NOEXCEPT;
@@ -501,6 +524,16 @@ private:
   template <typename Function>
   void do_execute(BOOST_ASIO_MOVE_ARG(Function) f, true_type) const;
 
+  /// Bulk execution helper implementation for possibly and never blocking.
+  template <typename Function>
+  void do_bulk_execute(BOOST_ASIO_MOVE_ARG(Function) f,
+      std::size_t n, false_type) const;
+
+  /// Bulk execution helper implementation for always blocking.
+  template <typename Function>
+  void do_bulk_execute(BOOST_ASIO_MOVE_ARG(Function) f,
+      std::size_t n, true_type) const;
+
   // The underlying thread pool.
   thread_pool* pool_;
 
@@ -513,21 +546,20 @@ private:
 
 #if !defined(GENERATING_DOCUMENTATION)
 
-namespace execution {
+namespace traits {
 
-#if !defined(BOOST_ASIO_HAS_DEDUCED_EXECUTION_IS_EXECUTOR_TRAIT)
+#if !defined(BOOST_ASIO_HAS_DEDUCED_EQUALITY_COMPARABLE_TRAIT)
 
 template <typename Allocator, unsigned int Bits>
-struct is_executor<
+struct equality_comparable<
     boost::asio::thread_pool::basic_executor_type<Allocator, Bits>
-  > : true_type
+  >
 {
+  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
+  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_noexcept = true);
 };
 
-#endif // !defined(BOOST_ASIO_HAS_DEDUCED_EXECUTION_IS_EXECUTOR_TRAIT)
-
-} // namespace execution
-namespace traits {
+#endif // !defined(BOOST_ASIO_HAS_DEDUCED_EQUALITY_COMPARABLE_TRAIT)
 
 #if !defined(BOOST_ASIO_HAS_DEDUCED_EXECUTE_MEMBER_TRAIT)
 
@@ -543,6 +575,21 @@ struct execute_member<
 };
 
 #endif // !defined(BOOST_ASIO_HAS_DEDUCED_EXECUTE_MEMBER_TRAIT)
+
+#if !defined(BOOST_ASIO_HAS_DEDUCED_SCHEDULE_MEMBER_TRAIT)
+
+template <typename Allocator, unsigned int Bits>
+struct schedule_member<
+    const boost::asio::thread_pool::basic_executor_type<Allocator, Bits>
+  >
+{
+  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
+  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_noexcept = false);
+  typedef boost::asio::thread_pool::basic_executor_type<
+      Allocator, Bits> result_type;
+};
+
+#endif // !defined(BOOST_ASIO_HAS_DEDUCED_SCHEDULE_MEMBER_TRAIT)
 
 #if !defined(BOOST_ASIO_HAS_DEDUCED_REQUIRE_MEMBER_TRAIT)
 

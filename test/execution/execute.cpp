@@ -15,6 +15,8 @@
 
 // Test that header file is self-contained.
 #include <boost/asio/execution/execute.hpp>
+#include <boost/asio/execution/sender.hpp>
+#include <boost/asio/execution/submit.hpp>
 
 #include <boost/asio/execution/invocable_archetype.hpp>
 #include "../unit_test.hpp"
@@ -193,6 +195,85 @@ struct execute_free<const free_execute_non_const_executor&, F>
 
 #endif // defined(BOOST_ASIO_HAS_MOVE)
 
+struct operation_state
+{
+  void start() BOOST_ASIO_NOEXCEPT
+  {
+  }
+};
+
+namespace boost {
+namespace asio {
+namespace traits {
+
+#if !defined(BOOST_ASIO_HAS_DEDUCED_START_MEMBER_TRAIT)
+
+template <>
+struct start_member<operation_state>
+{
+  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
+  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_noexcept = true);
+  typedef void result_type;
+};
+
+#endif // !defined(BOOST_ASIO_HAS_DEDUCED_START_MEMBER_TRAIT)
+
+} // namespace traits
+} // namespace asio
+} // namespace boost
+
+struct sender : exec::sender_base
+{
+  sender()
+  {
+  }
+
+  template <typename R>
+  operation_state connect(BOOST_ASIO_MOVE_ARG(R) r) const
+  {
+    (void)r;
+    return operation_state();
+  }
+
+  template <typename R>
+  void submit(BOOST_ASIO_MOVE_ARG(R) r) const
+  {
+    exec::set_value(BOOST_ASIO_MOVE_CAST(R)(r));
+  }
+};
+
+namespace boost {
+namespace asio {
+namespace traits {
+
+#if !defined(BOOST_ASIO_HAS_DEDUCED_CONNECT_MEMBER_TRAIT)
+
+template <typename R>
+struct connect_member<const sender, R>
+{
+  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
+  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_noexcept = false);
+  typedef operation_state result_type;
+};
+
+#endif // !defined(BOOST_ASIO_HAS_DEDUCED_CONNECT_MEMBER_TRAIT)
+
+#if !defined(BOOST_ASIO_HAS_DEDUCED_SUBMIT_MEMBER_TRAIT)
+
+template <typename R>
+struct submit_member<const sender, R>
+{
+  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
+  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_noexcept = false);
+  typedef void result_type;
+};
+
+#endif // !defined(BOOST_ASIO_HAS_DEDUCED_SUBMIT_MEMBER_TRAIT)
+
+} // namespace traits
+} // namespace asio
+} // namespace boost
+
 void test_can_execute()
 {
   BOOST_ASIO_CONSTEXPR bool b1 = exec::can_execute<
@@ -236,6 +317,14 @@ void test_can_execute()
       const free_execute_non_const_executor&, exec::invocable_archetype>::value;
   BOOST_ASIO_CHECK(b10 == false);
 #endif // defined(BOOST_ASIO_HAS_MOVE)
+
+  BOOST_ASIO_CONSTEXPR bool b11 = exec::can_execute<
+      sender&, exec::invocable_archetype>::value;
+  BOOST_ASIO_CHECK(b11 == true);
+
+  BOOST_ASIO_CONSTEXPR bool b12 = exec::can_execute<
+      const sender&, exec::invocable_archetype>::value;
+  BOOST_ASIO_CHECK(b12 == true);
 }
 
 void increment(int* count)
@@ -291,6 +380,16 @@ void test_execute()
   exec::execute(ex6, bindns::bind(&increment, &count));
   BOOST_ASIO_CHECK(count == 1);
 #endif // defined(BOOST_ASIO_HAS_MOVE)
+
+  count = 0;
+  sender ex7;
+  exec::execute(ex3, bindns::bind(&increment, &count));
+  BOOST_ASIO_CHECK(count == 1);
+
+  count = 0;
+  const sender ex8;
+  exec::execute(ex4, bindns::bind(&increment, &count));
+  BOOST_ASIO_CHECK(count == 1);
 }
 
 BOOST_ASIO_TEST_SUITE
