@@ -445,6 +445,69 @@ void thread_pool_scheduler_test()
   BOOST_ASIO_CHECK(count == 10);
 }
 
+void thread_pool_executor_bulk_execute_test()
+{
+  int count = 0;
+  thread_pool pool(1);
+
+  pool.executor().bulk_execute(
+      bindns::bind(increment, &count), 2);
+
+  boost::asio::require(pool.executor(),
+    boost::asio::execution::blocking.possibly).bulk_execute(
+      bindns::bind(increment, &count), 2);
+
+  boost::asio::require(pool.executor(),
+    boost::asio::execution::blocking.always).bulk_execute(
+      bindns::bind(increment, &count), 2);
+
+  boost::asio::require(pool.executor(),
+    boost::asio::execution::blocking.never).bulk_execute(
+      bindns::bind(increment, &count), 2);
+
+  boost::asio::require(pool.executor(),
+    boost::asio::execution::blocking.never,
+    boost::asio::execution::outstanding_work.tracked).bulk_execute(
+      bindns::bind(increment, &count), 2);
+
+  boost::asio::require(pool.executor(),
+    boost::asio::execution::blocking.never,
+    boost::asio::execution::outstanding_work.untracked).bulk_execute(
+      bindns::bind(increment, &count), 2);
+
+  boost::asio::require(pool.executor(),
+    boost::asio::execution::blocking.never,
+    boost::asio::execution::outstanding_work.untracked,
+    boost::asio::execution::relationship.fork).bulk_execute(
+      bindns::bind(increment, &count), 2);
+
+  boost::asio::require(pool.executor(),
+    boost::asio::execution::blocking.never,
+    boost::asio::execution::outstanding_work.untracked,
+    boost::asio::execution::relationship.continuation).bulk_execute(
+      bindns::bind(increment, &count), 2);
+
+  boost::asio::prefer(
+    boost::asio::require(pool.executor(),
+      boost::asio::execution::blocking.never,
+      boost::asio::execution::outstanding_work.untracked,
+      boost::asio::execution::relationship.continuation),
+    boost::asio::execution::allocator(std::allocator<void>())).bulk_execute(
+      bindns::bind(increment, &count), 2);
+
+  boost::asio::prefer(
+    boost::asio::require(pool.executor(),
+      boost::asio::execution::blocking.never,
+      boost::asio::execution::outstanding_work.untracked,
+      boost::asio::execution::relationship.continuation),
+    boost::asio::execution::allocator).bulk_execute(
+      bindns::bind(increment, &count), 2);
+
+  pool.wait();
+
+  BOOST_ASIO_CHECK(count == 20);
+}
+
 BOOST_ASIO_TEST_SUITE
 (
   "thread_pool",
@@ -452,5 +515,6 @@ BOOST_ASIO_TEST_SUITE
   BOOST_ASIO_TEST_CASE(thread_pool_service_test)
   BOOST_ASIO_TEST_CASE(thread_pool_executor_query_test)
   BOOST_ASIO_TEST_CASE(thread_pool_executor_execute_test)
+  BOOST_ASIO_TEST_CASE(thread_pool_executor_bulk_execute_test)
   BOOST_ASIO_TEST_CASE(thread_pool_scheduler_test)
 )
