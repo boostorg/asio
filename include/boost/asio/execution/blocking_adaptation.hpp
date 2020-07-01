@@ -17,14 +17,19 @@
 
 #include <boost/asio/detail/config.hpp>
 #include <boost/asio/detail/type_traits.hpp>
+#include <boost/asio/execution/execute.hpp>
 #include <boost/asio/execution/executor.hpp>
 #include <boost/asio/execution/scheduler.hpp>
 #include <boost/asio/execution/sender.hpp>
 #include <boost/asio/is_applicable_property.hpp>
+#include <boost/asio/prefer.hpp>
 #include <boost/asio/query.hpp>
+#include <boost/asio/require.hpp>
+#include <boost/asio/traits/prefer_member.hpp>
 #include <boost/asio/traits/query_free.hpp>
 #include <boost/asio/traits/query_member.hpp>
 #include <boost/asio/traits/query_static_constexpr_member.hpp>
+#include <boost/asio/traits/require_member.hpp>
 #include <boost/asio/traits/static_query.hpp>
 #include <boost/asio/traits/static_require.hpp>
 
@@ -97,7 +102,7 @@ struct blocking_adaptation_t
     static constexpr bool is_requirable = true;
 
     /// The blocking_adaptation_t::allowed_t property can be preferred.
-    static constexpr bool is_preferable = true;
+    static constexpr bool is_preferable = false;
 
     /// The type returned by queries against an @c any_executor.
     typedef blocking_adaptation_t polymorphic_query_result_type;
@@ -401,6 +406,117 @@ const T disallowed_t<I>::static_query_v;
 #endif // defined(BOOST_ASIO_HAS_DEDUCED_STATIC_QUERY_TRAIT)
        //   && defined(BOOST_ASIO_HAS_SFINAE_VARIABLE_TEMPLATES)
 
+template <typename Executor>
+class adapter
+{
+public:
+  explicit adapter(const Executor& e) BOOST_ASIO_NOEXCEPT
+    : executor_(e)
+  {
+  }
+
+  adapter(const adapter& other) BOOST_ASIO_NOEXCEPT
+    : executor_(other.executor_)
+  {
+  }
+
+#if defined(BOOST_ASIO_HAS_MOVE)
+  adapter(adapter&& other) BOOST_ASIO_NOEXCEPT
+    : executor_(BOOST_ASIO_MOVE_CAST(Executor)(other.executor_))
+  {
+  }
+#endif // defined(BOOST_ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
+
+  template <int I>
+  static BOOST_ASIO_CONSTEXPR allowed_t<I> query(
+      blocking_adaptation_t<I>) BOOST_ASIO_NOEXCEPT
+  {
+    return allowed_t<I>();
+  }
+
+  template <int I>
+  static BOOST_ASIO_CONSTEXPR allowed_t<I> query(
+      allowed_t<I>) BOOST_ASIO_NOEXCEPT
+  {
+    return allowed_t<I>();
+  }
+
+  template <int I>
+  static BOOST_ASIO_CONSTEXPR allowed_t<I> query(
+      disallowed_t<I>) BOOST_ASIO_NOEXCEPT
+  {
+    return allowed_t<I>();
+  }
+
+  template <typename Property>
+  typename enable_if<
+    can_query<const Executor&, Property>::value,
+    typename query_result_type<const Executor&, Property>::type
+  >::type query(const Property& p) const
+    BOOST_ASIO_NOEXCEPT_IF((
+      is_nothrow_query<const Executor&, Property>::value))
+  {
+    return boost::asio::query(executor_, p);
+  }
+
+  template <int I>
+  Executor require(disallowed_t<I>) const BOOST_ASIO_NOEXCEPT
+  {
+    return executor_;
+  }
+
+  template <typename Property>
+  typename enable_if<
+    can_require<const Executor&, Property>::value,
+    adapter<typename decay<
+      typename require_result_type<const Executor&, Property>::type
+    >::type>
+  >::type require(const Property& p) const
+    BOOST_ASIO_NOEXCEPT_IF((
+      is_nothrow_require<const Executor&, Property>::value))
+  {
+    return adapter<typename decay<
+      typename require_result_type<const Executor&, Property>::type
+        >::type>(boost::asio::require(executor_, p));
+  }
+
+  template <typename Property>
+  typename enable_if<
+    can_prefer<const Executor&, Property>::value,
+    adapter<typename decay<
+      typename prefer_result_type<const Executor&, Property>::type
+    >::type>
+  >::type prefer(const Property& p) const
+    BOOST_ASIO_NOEXCEPT_IF((
+      is_nothrow_prefer<const Executor&, Property>::value))
+  {
+    return adapter<typename decay<
+      typename prefer_result_type<const Executor&, Property>::type
+        >::type>(boost::asio::prefer(executor_, p));
+  }
+
+  template <typename Function>
+  typename enable_if<
+    execution::can_execute<const Executor&, Function>::value
+  >::type execute(BOOST_ASIO_MOVE_ARG(Function) f) const
+  {
+    execution::execute(executor_, BOOST_ASIO_MOVE_CAST(Function)(f));
+  }
+
+  friend bool operator==(const adapter& a, const adapter& b) BOOST_ASIO_NOEXCEPT
+  {
+    return a.executor_ == b.executor_;
+  }
+
+  friend bool operator!=(const adapter& a, const adapter& b) BOOST_ASIO_NOEXCEPT
+  {
+    return a.executor_ != b.executor_;
+  }
+
+private:
+  Executor executor_;
+};
+
 template <int I = 0>
 struct allowed_t
 {
@@ -412,7 +528,7 @@ struct allowed_t
 #endif // defined(BOOST_ASIO_HAS_VARIABLE_TEMPLATES)
 
   BOOST_ASIO_STATIC_CONSTEXPR(bool, is_requirable = true);
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_preferable = true);
+  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_preferable = false);
   typedef blocking_adaptation_t<I> polymorphic_query_result_type;
 
   BOOST_ASIO_CONSTEXPR allowed_t()
@@ -452,6 +568,16 @@ struct allowed_t
       const allowed_t&, const allowed_t&)
   {
     return false;
+  }
+
+  template <typename Executor>
+  friend adapter<Executor> require(
+      const Executor& e, const allowed_t&,
+      typename enable_if<
+        is_executor<Executor>::value
+      >::type* = 0)
+  {
+    return adapter<Executor>(e);
   }
 };
 
@@ -706,6 +832,161 @@ struct static_require<T, execution::blocking_adaptation_t::allowed_t,
 };
 
 #endif // !defined(BOOST_ASIO_HAS_DEDUCED_STATIC_REQUIRE_TRAIT)
+
+#if !defined(BOOST_ASIO_HAS_DEDUCED_REQUIRE_FREE_TRAIT)
+
+template <typename T>
+struct require_free_default<T, execution::blocking_adaptation_t::allowed_t,
+  typename enable_if<
+    is_same<T, typename decay<T>::type>::value
+      && execution::is_executor<T>::value
+  >::type>
+{
+  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
+  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_noexcept = false);
+  typedef execution::detail::blocking_adaptation::adapter<T> result_type;
+};
+
+#endif // !defined(BOOST_ASIO_HAS_DEDUCED_REQUIRE_FREE_TRAIT)
+
+#if !defined(BOOST_ASIO_HAS_DEDUCED_EQUALITY_COMPARABLE_TRAIT)
+
+template <typename Executor>
+struct equality_comparable<
+  execution::detail::blocking_adaptation::adapter<Executor> >
+{
+  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
+  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_noexcept = true);
+};
+
+#endif // !defined(BOOST_ASIO_HAS_DEDUCED_EQUALITY_COMPARABLE_TRAIT)
+
+#if !defined(BOOST_ASIO_HAS_DEDUCED_EXECUTE_MEMBER_TRAIT)
+
+template <typename Executor, typename Function>
+struct execute_member<
+  execution::detail::blocking_adaptation::adapter<Executor>, Function>
+{
+  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
+  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_noexcept = false);
+  typedef void result_type;
+};
+
+#endif // !defined(BOOST_ASIO_HAS_DEDUCED_EXECUTE_MEMBER_TRAIT)
+
+#if !defined(BOOST_ASIO_HAS_DEDUCED_QUERY_STATIC_CONSTEXPR_MEMBER_TRAIT)
+
+template <typename Executor, int I>
+struct query_static_constexpr_member<
+  execution::detail::blocking_adaptation::adapter<Executor>,
+  execution::detail::blocking_adaptation_t<I> >
+{
+  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
+  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_noexcept = true);
+  typedef execution::blocking_adaptation_t::allowed_t result_type;
+
+  static BOOST_ASIO_CONSTEXPR result_type value() BOOST_ASIO_NOEXCEPT
+  {
+    return result_type();
+  }
+};
+
+template <typename Executor, int I>
+struct query_static_constexpr_member<
+  execution::detail::blocking_adaptation::adapter<Executor>,
+  execution::detail::blocking_adaptation::allowed_t<I> >
+{
+  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
+  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_noexcept = true);
+  typedef execution::blocking_adaptation_t::allowed_t result_type;
+
+  static BOOST_ASIO_CONSTEXPR result_type value() BOOST_ASIO_NOEXCEPT
+  {
+    return result_type();
+  }
+};
+
+template <typename Executor, int I>
+struct query_static_constexpr_member<
+  execution::detail::blocking_adaptation::adapter<Executor>,
+  execution::detail::blocking_adaptation::disallowed_t<I> >
+{
+  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
+  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_noexcept = true);
+  typedef execution::blocking_adaptation_t::allowed_t result_type;
+
+  static BOOST_ASIO_CONSTEXPR result_type value() BOOST_ASIO_NOEXCEPT
+  {
+    return result_type();
+  }
+};
+
+#endif // !defined(BOOST_ASIO_HAS_DEDUCED_QUERY_STATIC_CONSTEXPR_MEMBER_TRAIT)
+
+#if !defined(BOOST_ASIO_HAS_DEDUCED_QUERY_MEMBER_TRAIT)
+
+template <typename Executor, typename Property>
+struct query_member<
+  execution::detail::blocking_adaptation::adapter<Executor>, Property,
+  typename enable_if<
+    can_query<const Executor&, Property>::value
+  >::type>
+{
+  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
+  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_noexcept =
+      (is_nothrow_query<Executor, Property>::value));
+  typedef typename query_result_type<Executor, Property>::type result_type;
+};
+
+#endif // !defined(BOOST_ASIO_HAS_DEDUCED_QUERY_MEMBER_TRAIT)
+
+#if !defined(BOOST_ASIO_HAS_DEDUCED_REQUIRE_MEMBER_TRAIT)
+
+template <typename Executor, int I>
+struct require_member<
+  execution::detail::blocking_adaptation::adapter<Executor>,
+  execution::detail::blocking_adaptation::disallowed_t<I> >
+{
+  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
+  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_noexcept = true);
+  typedef Executor result_type;
+};
+
+template <typename Executor, typename Property>
+struct require_member<
+  execution::detail::blocking_adaptation::adapter<Executor>, Property,
+  typename enable_if<
+    can_require<const Executor&, Property>::value
+  >::type>
+{
+  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
+  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_noexcept =
+      (is_nothrow_require<Executor, Property>::value));
+  typedef execution::detail::blocking_adaptation::adapter<typename decay<
+    typename require_result_type<Executor, Property>::type
+      >::type> result_type;
+};
+
+#endif // !defined(BOOST_ASIO_HAS_DEDUCED_REQUIRE_MEMBER_TRAIT)
+
+#if !defined(BOOST_ASIO_HAS_DEDUCED_PREFER_MEMBER_TRAIT)
+
+template <typename Executor, typename Property>
+struct prefer_member<
+  execution::detail::blocking_adaptation::adapter<Executor>, Property,
+  typename enable_if<
+    can_prefer<const Executor&, Property>::value
+  >::type>
+{
+  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
+  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_noexcept =
+      (is_nothrow_prefer<Executor, Property>::value));
+  typedef execution::detail::blocking_adaptation::adapter<typename decay<
+    typename prefer_result_type<Executor, Property>::type
+      >::type> result_type;
+};
+
+#endif // !defined(BOOST_ASIO_HAS_DEDUCED_PREFER_MEMBER_TRAIT)
 
 } // namespace traits
 

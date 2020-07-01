@@ -45,22 +45,37 @@ struct ex_nq_nr
   }
 };
 
-#if !defined(BOOST_ASIO_HAS_DEDUCED_EXECUTION_IS_EXECUTOR_TRAIT)
-
 namespace boost {
 namespace asio {
-namespace execution {
+namespace traits {
+
+#if !defined(BOOST_ASIO_HAS_DEDUCED_EQUALITY_COMPARABLE_TRAIT)
 
 template <>
-struct is_executor<ex_nq_nr> : boost::asio::true_type
+struct equality_comparable<ex_nq_nr>
 {
+  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
+  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_noexcept = true);
 };
 
-} // namespace execution
+#endif // !defined(BOOST_ASIO_HAS_DEDUCED_EQUALITY_COMPARABLE_TRAIT)
+
+#if !defined(BOOST_ASIO_HAS_DEDUCED_EXECUTE_MEMBER_TRAIT)
+
+template <typename Function>
+struct execute_member<ex_nq_nr, Function>
+{
+  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
+  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_noexcept = false);
+
+  typedef void result_type;
+};
+
+#endif // !defined(BOOST_ASIO_HAS_DEDUCED_EXECUTE_MEMBER_TRAIT)
+
+} // namespace traits
 } // namespace asio
 } // namespace boost
-
-#endif // !defined(BOOST_ASIO_HAS_DEDUCED_EXECUTION_IS_EXECUTOR_TRAIT)
 
 template <typename ResultType, typename ParamType, typename Result>
 struct ex_cq_nr
@@ -86,27 +101,34 @@ struct ex_cq_nr
   }
 };
 
-#if !defined(BOOST_ASIO_HAS_DEDUCED_EXECUTION_IS_EXECUTOR_TRAIT)
-
-namespace boost {
-namespace asio {
-namespace execution {
-
-template <typename ResultType, typename ParamType, typename Result>
-struct is_executor<ex_cq_nr<ResultType, ParamType, Result> >
-  : boost::asio::true_type
-{
-};
-
-} // namespace execution
-} // namespace asio
-} // namespace boost
-
-#endif // !defined(BOOST_ASIO_HAS_DEDUCED_EXECUTION_IS_EXECUTOR_TRAIT)
-
 namespace boost {
 namespace asio {
 namespace traits {
+
+#if !defined(BOOST_ASIO_HAS_DEDUCED_EQUALITY_COMPARABLE_TRAIT)
+
+template <typename ResultType, typename ParamType, typename Result>
+struct equality_comparable<ex_cq_nr<ResultType, ParamType, Result> >
+{
+  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
+  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_noexcept = true);
+};
+
+#endif // !defined(BOOST_ASIO_HAS_DEDUCED_EQUALITY_COMPARABLE_TRAIT)
+
+#if !defined(BOOST_ASIO_HAS_DEDUCED_EXECUTE_MEMBER_TRAIT)
+
+template <typename ResultType, typename ParamType,
+    typename Result, typename Function>
+struct execute_member<ex_cq_nr<ResultType, ParamType, Result>, Function>
+{
+  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
+  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_noexcept = false);
+
+  typedef void result_type;
+};
+
+#endif // !defined(BOOST_ASIO_HAS_DEDUCED_EXECUTE_MEMBER_TRAIT)
 
 #if !defined(BOOST_ASIO_HAS_DEDUCED_QUERY_STATIC_CONSTEXPR_MEMBER_TRAIT)
 
@@ -159,27 +181,34 @@ struct ex_mq_nr
   }
 };
 
-#if !defined(BOOST_ASIO_HAS_DEDUCED_EXECUTION_IS_EXECUTOR_TRAIT)
-
-namespace boost {
-namespace asio {
-namespace execution {
-
-template <typename ResultType, typename ParamType, typename Result>
-struct is_executor<ex_mq_nr<ResultType, ParamType, Result> >
-  : boost::asio::true_type
-{
-};
-
-} // namespace execution
-} // namespace asio
-} // namespace boost
-
-#endif // !defined(BOOST_ASIO_HAS_DEDUCED_EXECUTION_IS_EXECUTOR_TRAIT)
-
 namespace boost {
 namespace asio {
 namespace traits {
+
+#if !defined(BOOST_ASIO_HAS_DEDUCED_EQUALITY_COMPARABLE_TRAIT)
+
+template <typename ResultType, typename ParamType, typename Result>
+struct equality_comparable<ex_mq_nr<ResultType, ParamType, Result> >
+{
+  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
+  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_noexcept = true);
+};
+
+#endif // !defined(BOOST_ASIO_HAS_DEDUCED_EQUALITY_COMPARABLE_TRAIT)
+
+#if !defined(BOOST_ASIO_HAS_DEDUCED_EXECUTE_MEMBER_TRAIT)
+
+template <typename ResultType, typename ParamType,
+    typename Result, typename Function>
+struct execute_member<ex_mq_nr<ResultType, ParamType, Result>, Function>
+{
+  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
+  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_noexcept = false);
+
+  typedef void result_type;
+};
+
+#endif // !defined(BOOST_ASIO_HAS_DEDUCED_EXECUTE_MEMBER_TRAIT)
 
 #if !defined(BOOST_ASIO_HAS_DEDUCED_QUERY_MEMBER_TRAIT)
 
@@ -227,27 +256,34 @@ struct ex_fq_nr
   }
 };
 
-#if !defined(BOOST_ASIO_HAS_DEDUCED_EXECUTION_IS_EXECUTOR_TRAIT)
-
-namespace boost {
-namespace asio {
-namespace execution {
-
-template <typename ResultType, typename ParamType, typename Result>
-struct is_executor<ex_fq_nr<ResultType, ParamType, Result> >
-  : boost::asio::true_type
-{
-};
-
-} // namespace execution
-} // namespace asio
-} // namespace boost
-
-#endif // !defined(BOOST_ASIO_HAS_DEDUCED_EXECUTION_IS_EXECUTOR_TRAIT)
-
 namespace boost {
 namespace asio {
 namespace traits {
+
+#if !defined(BOOST_ASIO_HAS_DEDUCED_EQUALITY_COMPARABLE_TRAIT)
+
+template <typename ResultType, typename ParamType, typename Result>
+struct equality_comparable<ex_fq_nr<ResultType, ParamType, Result> >
+{
+  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
+  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_noexcept = true);
+};
+
+#endif // !defined(BOOST_ASIO_HAS_DEDUCED_EQUALITY_COMPARABLE_TRAIT)
+
+#if !defined(BOOST_ASIO_HAS_DEDUCED_EXECUTE_MEMBER_TRAIT)
+
+template <typename ResultType, typename ParamType,
+    typename Result, typename Function>
+struct execute_member<ex_fq_nr<ResultType, ParamType, Result>, Function>
+{
+  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
+  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_noexcept = false);
+
+  typedef void result_type;
+};
+
+#endif // !defined(BOOST_ASIO_HAS_DEDUCED_EXECUTE_MEMBER_TRAIT)
 
 #if !defined(BOOST_ASIO_HAS_DEDUCED_QUERY_FREE_TRAIT)
 
@@ -342,27 +378,33 @@ struct ex_mq_mr<CurrentType, CurrentType>
   }
 };
 
-#if !defined(BOOST_ASIO_HAS_DEDUCED_EXECUTION_IS_EXECUTOR_TRAIT)
-
-namespace boost {
-namespace asio {
-namespace execution {
-
-template <typename CurrentType, typename OtherType>
-struct is_executor<ex_mq_mr<CurrentType, OtherType> >
-  : boost::asio::true_type
-{
-};
-
-} // namespace execution
-} // namespace asio
-} // namespace boost
-
-#endif // !defined(BOOST_ASIO_HAS_DEDUCED_EXECUTION_IS_EXECUTOR_TRAIT)
-
 namespace boost {
 namespace asio {
 namespace traits {
+
+#if !defined(BOOST_ASIO_HAS_DEDUCED_EQUALITY_COMPARABLE_TRAIT)
+
+template <typename CurrentType, typename OtherType>
+struct equality_comparable<ex_mq_mr<CurrentType, OtherType> >
+{
+  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
+  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_noexcept = true);
+};
+
+#endif // !defined(BOOST_ASIO_HAS_DEDUCED_EQUALITY_COMPARABLE_TRAIT)
+
+#if !defined(BOOST_ASIO_HAS_DEDUCED_EXECUTE_MEMBER_TRAIT)
+
+template <typename CurrentType, typename OtherType, typename Function>
+struct execute_member<ex_mq_mr<CurrentType, OtherType>, Function>
+{
+  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
+  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_noexcept = false);
+
+  typedef void result_type;
+};
+
+#endif // !defined(BOOST_ASIO_HAS_DEDUCED_EXECUTE_MEMBER_TRAIT)
 
 #if !defined(BOOST_ASIO_HAS_DEDUCED_QUERY_MEMBER_TRAIT)
 
@@ -506,27 +548,33 @@ struct ex_fq_fr<CurrentType, CurrentType>
   }
 };
 
-#if !defined(BOOST_ASIO_HAS_DEDUCED_EXECUTION_IS_EXECUTOR_TRAIT)
-
-namespace boost {
-namespace asio {
-namespace execution {
-
-template <typename CurrentType, typename OtherType>
-struct is_executor<ex_fq_fr<CurrentType, OtherType> >
-  : boost::asio::true_type
-{
-};
-
-} // namespace execution
-} // namespace asio
-} // namespace boost
-
-#endif // !defined(BOOST_ASIO_HAS_DEDUCED_EXECUTION_IS_EXECUTOR_TRAIT)
-
 namespace boost {
 namespace asio {
 namespace traits {
+
+#if !defined(BOOST_ASIO_HAS_DEDUCED_EQUALITY_COMPARABLE_TRAIT)
+
+template <typename CurrentType, typename OtherType>
+struct equality_comparable<ex_fq_fr<CurrentType, OtherType> >
+{
+  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
+  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_noexcept = true);
+};
+
+#endif // !defined(BOOST_ASIO_HAS_DEDUCED_EQUALITY_COMPARABLE_TRAIT)
+
+#if !defined(BOOST_ASIO_HAS_DEDUCED_EXECUTE_MEMBER_TRAIT)
+
+template <typename CurrentType, typename OtherType, typename Function>
+struct execute_member<ex_fq_fr<CurrentType, OtherType>, Function>
+{
+  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
+  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_noexcept = false);
+
+  typedef void result_type;
+};
+
+#endif // !defined(BOOST_ASIO_HAS_DEDUCED_EXECUTE_MEMBER_TRAIT)
 
 #if !defined(BOOST_ASIO_HAS_DEDUCED_QUERY_FREE_TRAIT)
 
@@ -677,6 +725,10 @@ void test_can_require()
   BOOST_ASIO_CHECK(b4 == ExpectedResult);
 }
 
+void do_nothing()
+{
+}
+
 template <typename Executor, typename Param, typename ExpectedResult>
 void test_require()
 {
@@ -686,16 +738,32 @@ void test_require()
         Param()) == ExpectedResult());
 
   Executor ex1 = {};
+
   BOOST_ASIO_CHECK(
       boost::asio::query(
         boost::asio::require(ex1, Param()),
         Param()) == ExpectedResult());
 
+  BOOST_ASIO_CHECK((
+      boost::asio::execution::is_executor<
+        typename boost::asio::decay<
+          typename boost::asio::require_result_type<Executor&, Param>::type
+        >::type
+      >::value));
+
   const Executor ex2 = {};
+
   BOOST_ASIO_CHECK(
       boost::asio::query(
         boost::asio::require(ex2, Param()),
         Param()) == ExpectedResult());
+
+  BOOST_ASIO_CHECK((
+      boost::asio::execution::is_executor<
+        typename boost::asio::decay<
+          typename boost::asio::require_result_type<const Executor&, Param>::type
+        >::type
+      >::value));
 }
 
 template <typename Executor, typename Param, bool ExpectedResult>
@@ -762,16 +830,16 @@ BOOST_ASIO_TEST_SUITE
 
   BOOST_ASIO_TEST_CASE3(test_can_require<ex_nq_nr, s, false>)
   BOOST_ASIO_TEST_CASE3(test_can_require<ex_nq_nr, n1, true>)
-  BOOST_ASIO_TEST_CASE3(test_can_require<ex_nq_nr, n2, false>)
+  BOOST_ASIO_TEST_CASE3(test_can_require<ex_nq_nr, n2, true>)
 
   BOOST_ASIO_TEST_CASE3(test_require<ex_nq_nr, n1, n1>)
+  BOOST_ASIO_TEST_CASE3(test_require<ex_nq_nr, n2, n2>)
 
   BOOST_ASIO_TEST_CASE3(test_can_prefer<ex_nq_nr, s, false>)
   BOOST_ASIO_TEST_CASE3(test_can_prefer<ex_nq_nr, n1, true>)
-  BOOST_ASIO_TEST_CASE3(test_can_prefer<ex_nq_nr, n2, true>)
+  BOOST_ASIO_TEST_CASE3(test_can_prefer<ex_nq_nr, n2, false>)
 
   BOOST_ASIO_TEST_CASE3(test_prefer<ex_nq_nr, n1, n1>)
-  BOOST_ASIO_TEST_CASE3(test_prefer<ex_nq_nr, n2, n1>)
 
   BOOST_ASIO_TEST_CASE5(test_can_query<ex_cq_nr<s, s, n1>, s, true>)
   BOOST_ASIO_TEST_CASE5(test_can_query<ex_cq_nr<s, s, n1>, n1, true>)
@@ -842,77 +910,74 @@ BOOST_ASIO_TEST_SUITE
 
   BOOST_ASIO_TEST_CASE5(test_can_require<ex_cq_nr<s, s, n1>, s, false>)
   BOOST_ASIO_TEST_CASE5(test_can_require<ex_cq_nr<s, s, n1>, n1, true>)
-  BOOST_ASIO_TEST_CASE5(test_can_require<ex_cq_nr<s, s, n1>, n2, false>)
+  BOOST_ASIO_TEST_CASE5(test_can_require<ex_cq_nr<s, s, n1>, n2, true>)
   BOOST_ASIO_TEST_CASE5(test_can_require<ex_cq_nr<s, s, n2>, s, false>)
   BOOST_ASIO_TEST_CASE5(test_can_require<ex_cq_nr<s, s, n2>, n1, false>)
   BOOST_ASIO_TEST_CASE5(test_can_require<ex_cq_nr<s, s, n2>, n2, true>)
   BOOST_ASIO_TEST_CASE5(test_can_require<ex_cq_nr<s, n1, n1>, s, false>)
   BOOST_ASIO_TEST_CASE5(test_can_require<ex_cq_nr<s, n1, n1>, n1, true>)
-  BOOST_ASIO_TEST_CASE5(test_can_require<ex_cq_nr<s, n1, n1>, n2, false>)
+  BOOST_ASIO_TEST_CASE5(test_can_require<ex_cq_nr<s, n1, n1>, n2, true>)
   BOOST_ASIO_TEST_CASE5(test_can_require<ex_cq_nr<s, n1, n2>, s, false>)
   BOOST_ASIO_TEST_CASE5(test_can_require<ex_cq_nr<s, n1, n2>, n1, false>)
-  BOOST_ASIO_TEST_CASE5(test_can_require<ex_cq_nr<s, n1, n2>, n2, false>)
+  BOOST_ASIO_TEST_CASE5(test_can_require<ex_cq_nr<s, n1, n2>, n2, true>)
   BOOST_ASIO_TEST_CASE5(test_can_require<ex_cq_nr<s, n2, n1>, s, false>)
   BOOST_ASIO_TEST_CASE5(test_can_require<ex_cq_nr<s, n2, n1>, n1, false>)
-  BOOST_ASIO_TEST_CASE5(test_can_require<ex_cq_nr<s, n2, n1>, n2, false>)
+  BOOST_ASIO_TEST_CASE5(test_can_require<ex_cq_nr<s, n2, n1>, n2, true>)
   BOOST_ASIO_TEST_CASE5(test_can_require<ex_cq_nr<s, n2, n2>, s, false>)
   BOOST_ASIO_TEST_CASE5(test_can_require<ex_cq_nr<s, n2, n2>, n1, false>)
   BOOST_ASIO_TEST_CASE5(test_can_require<ex_cq_nr<s, n2, n2>, n2, true>)
   BOOST_ASIO_TEST_CASE5(test_can_require<ex_cq_nr<n1, s, n1>, s, false>)
   BOOST_ASIO_TEST_CASE5(test_can_require<ex_cq_nr<n1, s, n1>, n1, true>)
-  BOOST_ASIO_TEST_CASE5(test_can_require<ex_cq_nr<n1, s, n1>, n2, false>)
+  BOOST_ASIO_TEST_CASE5(test_can_require<ex_cq_nr<n1, s, n1>, n2, true>)
   BOOST_ASIO_TEST_CASE5(test_can_require<ex_cq_nr<n2, s, n2>, s, false>)
   BOOST_ASIO_TEST_CASE5(test_can_require<ex_cq_nr<n2, s, n2>, n1, false>)
   BOOST_ASIO_TEST_CASE5(test_can_require<ex_cq_nr<n2, s, n2>, n2, true>)
 
   BOOST_ASIO_TEST_CASE5(test_require<ex_cq_nr<s, s, n1>, n1, n1>)
+  BOOST_ASIO_TEST_CASE5(test_require<ex_cq_nr<s, s, n1>, n2, n2>)
   BOOST_ASIO_TEST_CASE5(test_require<ex_cq_nr<s, s, n2>, n2, n2>)
   BOOST_ASIO_TEST_CASE5(test_require<ex_cq_nr<s, n1, n1>, n1, n1>)
+  BOOST_ASIO_TEST_CASE5(test_require<ex_cq_nr<s, n1, n1>, n2, n2>)
+  BOOST_ASIO_TEST_CASE5(test_require<ex_cq_nr<s, n1, n2>, n2, n2>)
+  BOOST_ASIO_TEST_CASE5(test_require<ex_cq_nr<s, n2, n1>, n2, n2>)
   BOOST_ASIO_TEST_CASE5(test_require<ex_cq_nr<s, n2, n2>, n2, n2>)
   BOOST_ASIO_TEST_CASE5(test_require<ex_cq_nr<n1, s, n1>, n1, n1>)
+  BOOST_ASIO_TEST_CASE5(test_require<ex_cq_nr<n1, s, n1>, n2, n2>)
   BOOST_ASIO_TEST_CASE5(test_require<ex_cq_nr<n2, s, n2>, n2, n2>)
 
   BOOST_ASIO_TEST_CASE5(test_can_prefer<ex_cq_nr<s, s, n1>, s, false>)
   BOOST_ASIO_TEST_CASE5(test_can_prefer<ex_cq_nr<s, s, n1>, n1, true>)
-  BOOST_ASIO_TEST_CASE5(test_can_prefer<ex_cq_nr<s, s, n1>, n2, true>)
+  BOOST_ASIO_TEST_CASE5(test_can_prefer<ex_cq_nr<s, s, n1>, n2, false>)
   BOOST_ASIO_TEST_CASE5(test_can_prefer<ex_cq_nr<s, s, n2>, s, false>)
   BOOST_ASIO_TEST_CASE5(test_can_prefer<ex_cq_nr<s, s, n2>, n1, true>)
-  BOOST_ASIO_TEST_CASE5(test_can_prefer<ex_cq_nr<s, s, n2>, n2, true>)
+  BOOST_ASIO_TEST_CASE5(test_can_prefer<ex_cq_nr<s, s, n2>, n2, false>)
   BOOST_ASIO_TEST_CASE5(test_can_prefer<ex_cq_nr<s, n1, n1>, s, false>)
   BOOST_ASIO_TEST_CASE5(test_can_prefer<ex_cq_nr<s, n1, n1>, n1, true>)
-  BOOST_ASIO_TEST_CASE5(test_can_prefer<ex_cq_nr<s, n1, n1>, n2, true>)
+  BOOST_ASIO_TEST_CASE5(test_can_prefer<ex_cq_nr<s, n1, n1>, n2, false>)
   BOOST_ASIO_TEST_CASE5(test_can_prefer<ex_cq_nr<s, n1, n2>, s, false>)
   BOOST_ASIO_TEST_CASE5(test_can_prefer<ex_cq_nr<s, n1, n2>, n1, true>)
-  BOOST_ASIO_TEST_CASE5(test_can_prefer<ex_cq_nr<s, n1, n2>, n2, true>)
+  BOOST_ASIO_TEST_CASE5(test_can_prefer<ex_cq_nr<s, n1, n2>, n2, false>)
   BOOST_ASIO_TEST_CASE5(test_can_prefer<ex_cq_nr<s, n2, n1>, s, false>)
   BOOST_ASIO_TEST_CASE5(test_can_prefer<ex_cq_nr<s, n2, n1>, n1, true>)
-  BOOST_ASIO_TEST_CASE5(test_can_prefer<ex_cq_nr<s, n2, n1>, n2, true>)
+  BOOST_ASIO_TEST_CASE5(test_can_prefer<ex_cq_nr<s, n2, n1>, n2, false>)
   BOOST_ASIO_TEST_CASE5(test_can_prefer<ex_cq_nr<s, n2, n2>, s, false>)
   BOOST_ASIO_TEST_CASE5(test_can_prefer<ex_cq_nr<s, n2, n2>, n1, true>)
-  BOOST_ASIO_TEST_CASE5(test_can_prefer<ex_cq_nr<s, n2, n2>, n2, true>)
+  BOOST_ASIO_TEST_CASE5(test_can_prefer<ex_cq_nr<s, n2, n2>, n2, false>)
   BOOST_ASIO_TEST_CASE5(test_can_prefer<ex_cq_nr<n1, s, n1>, s, false>)
   BOOST_ASIO_TEST_CASE5(test_can_prefer<ex_cq_nr<n1, s, n1>, n1, true>)
-  BOOST_ASIO_TEST_CASE5(test_can_prefer<ex_cq_nr<n1, s, n1>, n2, true>)
+  BOOST_ASIO_TEST_CASE5(test_can_prefer<ex_cq_nr<n1, s, n1>, n2, false>)
   BOOST_ASIO_TEST_CASE5(test_can_prefer<ex_cq_nr<n2, s, n2>, s, false>)
   BOOST_ASIO_TEST_CASE5(test_can_prefer<ex_cq_nr<n2, s, n2>, n1, true>)
-  BOOST_ASIO_TEST_CASE5(test_can_prefer<ex_cq_nr<n2, s, n2>, n2, true>)
+  BOOST_ASIO_TEST_CASE5(test_can_prefer<ex_cq_nr<n2, s, n2>, n2, false>)
 
   BOOST_ASIO_TEST_CASE5(test_prefer<ex_cq_nr<s, s, n1>, n1, n1>)
-  BOOST_ASIO_TEST_CASE5(test_prefer<ex_cq_nr<s, s, n1>, n2, n1>)
   BOOST_ASIO_TEST_CASE5(test_prefer<ex_cq_nr<s, s, n2>, n1, n2>)
-  BOOST_ASIO_TEST_CASE5(test_prefer<ex_cq_nr<s, s, n2>, n2, n2>)
   BOOST_ASIO_TEST_CASE5(test_prefer<ex_cq_nr<s, n1, n1>, n1, n1>)
-  BOOST_ASIO_TEST_CASE5(test_prefer<ex_cq_nr<s, n1, n1>, n2, n1>)
   BOOST_ASIO_TEST_CASE5(test_prefer<ex_cq_nr<s, n1, n2>, n1, n2>)
-  BOOST_ASIO_TEST_CASE5(test_prefer<ex_cq_nr<s, n1, n2>, n2, n2>)
   BOOST_ASIO_TEST_CASE5(test_prefer<ex_cq_nr<s, n2, n1>, n1, n1>)
-  BOOST_ASIO_TEST_CASE5(test_prefer<ex_cq_nr<s, n2, n1>, n2, n1>)
   BOOST_ASIO_TEST_CASE5(test_prefer<ex_cq_nr<s, n2, n2>, n1, n2>)
-  BOOST_ASIO_TEST_CASE5(test_prefer<ex_cq_nr<s, n2, n2>, n2, n2>)
   BOOST_ASIO_TEST_CASE5(test_prefer<ex_cq_nr<n1, s, n1>, n1, n1>)
-  BOOST_ASIO_TEST_CASE5(test_prefer<ex_cq_nr<n1, s, n1>, n2, n1>)
   BOOST_ASIO_TEST_CASE5(test_prefer<ex_cq_nr<n2, s, n2>, n1, n2>)
-  BOOST_ASIO_TEST_CASE5(test_prefer<ex_cq_nr<n2, s, n2>, n2, n2>)
 
   BOOST_ASIO_TEST_CASE5(test_can_query<ex_mq_nr<s, s, n1>, s, true>)
   BOOST_ASIO_TEST_CASE5(test_can_query<ex_mq_nr<s, s, n1>, n1, true>)
@@ -962,70 +1027,71 @@ BOOST_ASIO_TEST_SUITE
 
   BOOST_ASIO_TEST_CASE5(test_can_require<ex_mq_nr<s, s, n1>, s, false>)
   BOOST_ASIO_TEST_CASE5(test_can_require<ex_mq_nr<s, s, n1>, n1, false>)
-  BOOST_ASIO_TEST_CASE5(test_can_require<ex_mq_nr<s, s, n1>, n2, false>)
+  BOOST_ASIO_TEST_CASE5(test_can_require<ex_mq_nr<s, s, n1>, n2, true>)
   BOOST_ASIO_TEST_CASE5(test_can_require<ex_mq_nr<s, s, n2>, s, false>)
   BOOST_ASIO_TEST_CASE5(test_can_require<ex_mq_nr<s, s, n2>, n1, false>)
-  BOOST_ASIO_TEST_CASE5(test_can_require<ex_mq_nr<s, s, n2>, n2, false>)
+  BOOST_ASIO_TEST_CASE5(test_can_require<ex_mq_nr<s, s, n2>, n2, true>)
   BOOST_ASIO_TEST_CASE5(test_can_require<ex_mq_nr<s, n1, n1>, s, false>)
   BOOST_ASIO_TEST_CASE5(test_can_require<ex_mq_nr<s, n1, n1>, n1, false>)
-  BOOST_ASIO_TEST_CASE5(test_can_require<ex_mq_nr<s, n1, n1>, n2, false>)
+  BOOST_ASIO_TEST_CASE5(test_can_require<ex_mq_nr<s, n1, n1>, n2, true>)
   BOOST_ASIO_TEST_CASE5(test_can_require<ex_mq_nr<s, n1, n2>, s, false>)
   BOOST_ASIO_TEST_CASE5(test_can_require<ex_mq_nr<s, n1, n2>, n1, false>)
-  BOOST_ASIO_TEST_CASE5(test_can_require<ex_mq_nr<s, n1, n2>, n2, false>)
+  BOOST_ASIO_TEST_CASE5(test_can_require<ex_mq_nr<s, n1, n2>, n2, true>)
   BOOST_ASIO_TEST_CASE5(test_can_require<ex_mq_nr<s, n2, n1>, s, false>)
   BOOST_ASIO_TEST_CASE5(test_can_require<ex_mq_nr<s, n2, n1>, n1, false>)
-  BOOST_ASIO_TEST_CASE5(test_can_require<ex_mq_nr<s, n2, n1>, n2, false>)
+  BOOST_ASIO_TEST_CASE5(test_can_require<ex_mq_nr<s, n2, n1>, n2, true>)
   BOOST_ASIO_TEST_CASE5(test_can_require<ex_mq_nr<s, n2, n2>, s, false>)
   BOOST_ASIO_TEST_CASE5(test_can_require<ex_mq_nr<s, n2, n2>, n1, false>)
-  BOOST_ASIO_TEST_CASE5(test_can_require<ex_mq_nr<s, n2, n2>, n2, false>)
+  BOOST_ASIO_TEST_CASE5(test_can_require<ex_mq_nr<s, n2, n2>, n2, true>)
   BOOST_ASIO_TEST_CASE5(test_can_require<ex_mq_nr<n1, s, n1>, s, false>)
   BOOST_ASIO_TEST_CASE5(test_can_require<ex_mq_nr<n1, s, n1>, n1, false>)
-  BOOST_ASIO_TEST_CASE5(test_can_require<ex_mq_nr<n1, s, n1>, n2, false>)
+  BOOST_ASIO_TEST_CASE5(test_can_require<ex_mq_nr<n1, s, n1>, n2, true>)
   BOOST_ASIO_TEST_CASE5(test_can_require<ex_mq_nr<n2, s, n2>, s, false>)
   BOOST_ASIO_TEST_CASE5(test_can_require<ex_mq_nr<n2, s, n2>, n1, false>)
-  BOOST_ASIO_TEST_CASE5(test_can_require<ex_mq_nr<n2, s, n2>, n2, false>)
+  BOOST_ASIO_TEST_CASE5(test_can_require<ex_mq_nr<n2, s, n2>, n2, true>)
+
+  BOOST_ASIO_TEST_CASE5(test_require<ex_mq_nr<s, s, n1>, n2, n2>)
+  BOOST_ASIO_TEST_CASE5(test_require<ex_mq_nr<s, s, n2>, n2, n2>)
+  BOOST_ASIO_TEST_CASE5(test_require<ex_mq_nr<s, n1, n1>, n2, n2>)
+  BOOST_ASIO_TEST_CASE5(test_require<ex_mq_nr<s, n1, n2>, n2, n2>)
+  BOOST_ASIO_TEST_CASE5(test_require<ex_mq_nr<s, n2, n1>, n2, n2>)
+  BOOST_ASIO_TEST_CASE5(test_require<ex_mq_nr<s, n2, n2>, n2, n2>)
+  BOOST_ASIO_TEST_CASE5(test_require<ex_mq_nr<n1, s, n1>, n2, n2>)
+  BOOST_ASIO_TEST_CASE5(test_require<ex_mq_nr<n2, s, n2>, n2, n2>)
 
   BOOST_ASIO_TEST_CASE5(test_can_prefer<ex_mq_nr<s, s, n1>, s, false>)
   BOOST_ASIO_TEST_CASE5(test_can_prefer<ex_mq_nr<s, s, n1>, n1, true>)
-  BOOST_ASIO_TEST_CASE5(test_can_prefer<ex_mq_nr<s, s, n1>, n2, true>)
+  BOOST_ASIO_TEST_CASE5(test_can_prefer<ex_mq_nr<s, s, n1>, n2, false>)
   BOOST_ASIO_TEST_CASE5(test_can_prefer<ex_mq_nr<s, s, n2>, s, false>)
   BOOST_ASIO_TEST_CASE5(test_can_prefer<ex_mq_nr<s, s, n2>, n1, true>)
-  BOOST_ASIO_TEST_CASE5(test_can_prefer<ex_mq_nr<s, s, n2>, n2, true>)
+  BOOST_ASIO_TEST_CASE5(test_can_prefer<ex_mq_nr<s, s, n2>, n2, false>)
   BOOST_ASIO_TEST_CASE5(test_can_prefer<ex_mq_nr<s, n1, n1>, s, false>)
   BOOST_ASIO_TEST_CASE5(test_can_prefer<ex_mq_nr<s, n1, n1>, n1, true>)
-  BOOST_ASIO_TEST_CASE5(test_can_prefer<ex_mq_nr<s, n1, n1>, n2, true>)
+  BOOST_ASIO_TEST_CASE5(test_can_prefer<ex_mq_nr<s, n1, n1>, n2, false>)
   BOOST_ASIO_TEST_CASE5(test_can_prefer<ex_mq_nr<s, n1, n2>, s, false>)
   BOOST_ASIO_TEST_CASE5(test_can_prefer<ex_mq_nr<s, n1, n2>, n1, true>)
-  BOOST_ASIO_TEST_CASE5(test_can_prefer<ex_mq_nr<s, n1, n2>, n2, true>)
+  BOOST_ASIO_TEST_CASE5(test_can_prefer<ex_mq_nr<s, n1, n2>, n2, false>)
   BOOST_ASIO_TEST_CASE5(test_can_prefer<ex_mq_nr<s, n2, n1>, s, false>)
   BOOST_ASIO_TEST_CASE5(test_can_prefer<ex_mq_nr<s, n2, n1>, n1, true>)
-  BOOST_ASIO_TEST_CASE5(test_can_prefer<ex_mq_nr<s, n2, n1>, n2, true>)
+  BOOST_ASIO_TEST_CASE5(test_can_prefer<ex_mq_nr<s, n2, n1>, n2, false>)
   BOOST_ASIO_TEST_CASE5(test_can_prefer<ex_mq_nr<s, n2, n2>, s, false>)
   BOOST_ASIO_TEST_CASE5(test_can_prefer<ex_mq_nr<s, n2, n2>, n1, true>)
-  BOOST_ASIO_TEST_CASE5(test_can_prefer<ex_mq_nr<s, n2, n2>, n2, true>)
+  BOOST_ASIO_TEST_CASE5(test_can_prefer<ex_mq_nr<s, n2, n2>, n2, false>)
   BOOST_ASIO_TEST_CASE5(test_can_prefer<ex_mq_nr<n1, s, n1>, s, false>)
   BOOST_ASIO_TEST_CASE5(test_can_prefer<ex_mq_nr<n1, s, n1>, n1, true>)
-  BOOST_ASIO_TEST_CASE5(test_can_prefer<ex_mq_nr<n1, s, n1>, n2, true>)
+  BOOST_ASIO_TEST_CASE5(test_can_prefer<ex_mq_nr<n1, s, n1>, n2, false>)
   BOOST_ASIO_TEST_CASE5(test_can_prefer<ex_mq_nr<n2, s, n2>, s, false>)
   BOOST_ASIO_TEST_CASE5(test_can_prefer<ex_mq_nr<n2, s, n2>, n1, true>)
-  BOOST_ASIO_TEST_CASE5(test_can_prefer<ex_mq_nr<n2, s, n2>, n2, true>)
+  BOOST_ASIO_TEST_CASE5(test_can_prefer<ex_mq_nr<n2, s, n2>, n2, false>)
 
   BOOST_ASIO_TEST_CASE5(test_prefer<ex_mq_nr<s, s, n1>, n1, n1>)
-  BOOST_ASIO_TEST_CASE5(test_prefer<ex_mq_nr<s, s, n1>, n2, n1>)
   BOOST_ASIO_TEST_CASE5(test_prefer<ex_mq_nr<s, s, n2>, n1, n2>)
-  BOOST_ASIO_TEST_CASE5(test_prefer<ex_mq_nr<s, s, n2>, n2, n2>)
   BOOST_ASIO_TEST_CASE5(test_prefer<ex_mq_nr<s, n1, n1>, n1, n1>)
-  BOOST_ASIO_TEST_CASE5(test_prefer<ex_mq_nr<s, n1, n1>, n2, n1>)
   BOOST_ASIO_TEST_CASE5(test_prefer<ex_mq_nr<s, n1, n2>, n1, n2>)
-  BOOST_ASIO_TEST_CASE5(test_prefer<ex_mq_nr<s, n1, n2>, n2, n2>)
   BOOST_ASIO_TEST_CASE5(test_prefer<ex_mq_nr<s, n2, n1>, n1, n1>)
-  BOOST_ASIO_TEST_CASE5(test_prefer<ex_mq_nr<s, n2, n1>, n2, n1>)
   BOOST_ASIO_TEST_CASE5(test_prefer<ex_mq_nr<s, n2, n2>, n1, n2>)
-  BOOST_ASIO_TEST_CASE5(test_prefer<ex_mq_nr<s, n2, n2>, n2, n2>)
   BOOST_ASIO_TEST_CASE5(test_prefer<ex_mq_nr<n1, s, n1>, n1, n1>)
-  BOOST_ASIO_TEST_CASE5(test_prefer<ex_mq_nr<n1, s, n1>, n2, n1>)
   BOOST_ASIO_TEST_CASE5(test_prefer<ex_mq_nr<n2, s, n2>, n1, n2>)
-  BOOST_ASIO_TEST_CASE5(test_prefer<ex_mq_nr<n2, s, n2>, n2, n2>)
 
   BOOST_ASIO_TEST_CASE5(test_can_query<ex_fq_nr<s, s, n1>, s, true>)
   BOOST_ASIO_TEST_CASE5(test_can_query<ex_fq_nr<s, s, n1>, n1, true>)
@@ -1075,70 +1141,71 @@ BOOST_ASIO_TEST_SUITE
 
   BOOST_ASIO_TEST_CASE5(test_can_require<ex_fq_nr<s, s, n1>, s, false>)
   BOOST_ASIO_TEST_CASE5(test_can_require<ex_fq_nr<s, s, n1>, n1, false>)
-  BOOST_ASIO_TEST_CASE5(test_can_require<ex_fq_nr<s, s, n1>, n2, false>)
+  BOOST_ASIO_TEST_CASE5(test_can_require<ex_fq_nr<s, s, n1>, n2, true>)
   BOOST_ASIO_TEST_CASE5(test_can_require<ex_fq_nr<s, s, n2>, s, false>)
   BOOST_ASIO_TEST_CASE5(test_can_require<ex_fq_nr<s, s, n2>, n1, false>)
-  BOOST_ASIO_TEST_CASE5(test_can_require<ex_fq_nr<s, s, n2>, n2, false>)
+  BOOST_ASIO_TEST_CASE5(test_can_require<ex_fq_nr<s, s, n2>, n2, true>)
   BOOST_ASIO_TEST_CASE5(test_can_require<ex_fq_nr<s, n1, n1>, s, false>)
   BOOST_ASIO_TEST_CASE5(test_can_require<ex_fq_nr<s, n1, n1>, n1, false>)
-  BOOST_ASIO_TEST_CASE5(test_can_require<ex_fq_nr<s, n1, n1>, n2, false>)
+  BOOST_ASIO_TEST_CASE5(test_can_require<ex_fq_nr<s, n1, n1>, n2, true>)
   BOOST_ASIO_TEST_CASE5(test_can_require<ex_fq_nr<s, n1, n2>, s, false>)
   BOOST_ASIO_TEST_CASE5(test_can_require<ex_fq_nr<s, n1, n2>, n1, false>)
-  BOOST_ASIO_TEST_CASE5(test_can_require<ex_fq_nr<s, n1, n2>, n2, false>)
+  BOOST_ASIO_TEST_CASE5(test_can_require<ex_fq_nr<s, n1, n2>, n2, true>)
   BOOST_ASIO_TEST_CASE5(test_can_require<ex_fq_nr<s, n2, n1>, s, false>)
   BOOST_ASIO_TEST_CASE5(test_can_require<ex_fq_nr<s, n2, n1>, n1, false>)
-  BOOST_ASIO_TEST_CASE5(test_can_require<ex_fq_nr<s, n2, n1>, n2, false>)
+  BOOST_ASIO_TEST_CASE5(test_can_require<ex_fq_nr<s, n2, n1>, n2, true>)
   BOOST_ASIO_TEST_CASE5(test_can_require<ex_fq_nr<s, n2, n2>, s, false>)
   BOOST_ASIO_TEST_CASE5(test_can_require<ex_fq_nr<s, n2, n2>, n1, false>)
-  BOOST_ASIO_TEST_CASE5(test_can_require<ex_fq_nr<s, n2, n2>, n2, false>)
+  BOOST_ASIO_TEST_CASE5(test_can_require<ex_fq_nr<s, n2, n2>, n2, true>)
   BOOST_ASIO_TEST_CASE5(test_can_require<ex_fq_nr<n1, s, n1>, s, false>)
   BOOST_ASIO_TEST_CASE5(test_can_require<ex_fq_nr<n1, s, n1>, n1, false>)
-  BOOST_ASIO_TEST_CASE5(test_can_require<ex_fq_nr<n1, s, n1>, n2, false>)
+  BOOST_ASIO_TEST_CASE5(test_can_require<ex_fq_nr<n1, s, n1>, n2, true>)
   BOOST_ASIO_TEST_CASE5(test_can_require<ex_fq_nr<n2, s, n2>, s, false>)
   BOOST_ASIO_TEST_CASE5(test_can_require<ex_fq_nr<n2, s, n2>, n1, false>)
-  BOOST_ASIO_TEST_CASE5(test_can_require<ex_fq_nr<n2, s, n2>, n2, false>)
+  BOOST_ASIO_TEST_CASE5(test_can_require<ex_fq_nr<n2, s, n2>, n2, true>)
+
+  BOOST_ASIO_TEST_CASE5(test_require<ex_fq_nr<s, s, n1>, n2, n2>)
+  BOOST_ASIO_TEST_CASE5(test_require<ex_fq_nr<s, s, n2>, n2, n2>)
+  BOOST_ASIO_TEST_CASE5(test_require<ex_fq_nr<s, n1, n1>, n2, n2>)
+  BOOST_ASIO_TEST_CASE5(test_require<ex_fq_nr<s, n1, n2>, n2, n2>)
+  BOOST_ASIO_TEST_CASE5(test_require<ex_fq_nr<s, n2, n1>, n2, n2>)
+  BOOST_ASIO_TEST_CASE5(test_require<ex_fq_nr<s, n2, n2>, n2, n2>)
+  BOOST_ASIO_TEST_CASE5(test_require<ex_fq_nr<n1, s, n1>, n2, n2>)
+  BOOST_ASIO_TEST_CASE5(test_require<ex_fq_nr<n2, s, n2>, n2, n2>)
 
   BOOST_ASIO_TEST_CASE5(test_can_prefer<ex_fq_nr<s, s, n1>, s, false>)
   BOOST_ASIO_TEST_CASE5(test_can_prefer<ex_fq_nr<s, s, n1>, n1, true>)
-  BOOST_ASIO_TEST_CASE5(test_can_prefer<ex_fq_nr<s, s, n1>, n2, true>)
+  BOOST_ASIO_TEST_CASE5(test_can_prefer<ex_fq_nr<s, s, n1>, n2, false>)
   BOOST_ASIO_TEST_CASE5(test_can_prefer<ex_fq_nr<s, s, n2>, s, false>)
   BOOST_ASIO_TEST_CASE5(test_can_prefer<ex_fq_nr<s, s, n2>, n1, true>)
-  BOOST_ASIO_TEST_CASE5(test_can_prefer<ex_fq_nr<s, s, n2>, n2, true>)
+  BOOST_ASIO_TEST_CASE5(test_can_prefer<ex_fq_nr<s, s, n2>, n2, false>)
   BOOST_ASIO_TEST_CASE5(test_can_prefer<ex_fq_nr<s, n1, n1>, s, false>)
   BOOST_ASIO_TEST_CASE5(test_can_prefer<ex_fq_nr<s, n1, n1>, n1, true>)
-  BOOST_ASIO_TEST_CASE5(test_can_prefer<ex_fq_nr<s, n1, n1>, n2, true>)
+  BOOST_ASIO_TEST_CASE5(test_can_prefer<ex_fq_nr<s, n1, n1>, n2, false>)
   BOOST_ASIO_TEST_CASE5(test_can_prefer<ex_fq_nr<s, n1, n2>, s, false>)
   BOOST_ASIO_TEST_CASE5(test_can_prefer<ex_fq_nr<s, n1, n2>, n1, true>)
-  BOOST_ASIO_TEST_CASE5(test_can_prefer<ex_fq_nr<s, n1, n2>, n2, true>)
+  BOOST_ASIO_TEST_CASE5(test_can_prefer<ex_fq_nr<s, n1, n2>, n2, false>)
   BOOST_ASIO_TEST_CASE5(test_can_prefer<ex_fq_nr<s, n2, n1>, s, false>)
   BOOST_ASIO_TEST_CASE5(test_can_prefer<ex_fq_nr<s, n2, n1>, n1, true>)
-  BOOST_ASIO_TEST_CASE5(test_can_prefer<ex_fq_nr<s, n2, n1>, n2, true>)
+  BOOST_ASIO_TEST_CASE5(test_can_prefer<ex_fq_nr<s, n2, n1>, n2, false>)
   BOOST_ASIO_TEST_CASE5(test_can_prefer<ex_fq_nr<s, n2, n2>, s, false>)
   BOOST_ASIO_TEST_CASE5(test_can_prefer<ex_fq_nr<s, n2, n2>, n1, true>)
-  BOOST_ASIO_TEST_CASE5(test_can_prefer<ex_fq_nr<s, n2, n2>, n2, true>)
+  BOOST_ASIO_TEST_CASE5(test_can_prefer<ex_fq_nr<s, n2, n2>, n2, false>)
   BOOST_ASIO_TEST_CASE5(test_can_prefer<ex_fq_nr<n1, s, n1>, s, false>)
   BOOST_ASIO_TEST_CASE5(test_can_prefer<ex_fq_nr<n1, s, n1>, n1, true>)
-  BOOST_ASIO_TEST_CASE5(test_can_prefer<ex_fq_nr<n1, s, n1>, n2, true>)
+  BOOST_ASIO_TEST_CASE5(test_can_prefer<ex_fq_nr<n1, s, n1>, n2, false>)
   BOOST_ASIO_TEST_CASE5(test_can_prefer<ex_fq_nr<n2, s, n2>, s, false>)
   BOOST_ASIO_TEST_CASE5(test_can_prefer<ex_fq_nr<n2, s, n2>, n1, true>)
-  BOOST_ASIO_TEST_CASE5(test_can_prefer<ex_fq_nr<n2, s, n2>, n2, true>)
+  BOOST_ASIO_TEST_CASE5(test_can_prefer<ex_fq_nr<n2, s, n2>, n2, false>)
 
   BOOST_ASIO_TEST_CASE5(test_prefer<ex_fq_nr<s, s, n1>, n1, n1>)
-  BOOST_ASIO_TEST_CASE5(test_prefer<ex_fq_nr<s, s, n1>, n2, n1>)
   BOOST_ASIO_TEST_CASE5(test_prefer<ex_fq_nr<s, s, n2>, n1, n2>)
-  BOOST_ASIO_TEST_CASE5(test_prefer<ex_fq_nr<s, s, n2>, n2, n2>)
   BOOST_ASIO_TEST_CASE5(test_prefer<ex_fq_nr<s, n1, n1>, n1, n1>)
-  BOOST_ASIO_TEST_CASE5(test_prefer<ex_fq_nr<s, n1, n1>, n2, n1>)
   BOOST_ASIO_TEST_CASE5(test_prefer<ex_fq_nr<s, n1, n2>, n1, n2>)
-  BOOST_ASIO_TEST_CASE5(test_prefer<ex_fq_nr<s, n1, n2>, n2, n2>)
   BOOST_ASIO_TEST_CASE5(test_prefer<ex_fq_nr<s, n2, n1>, n1, n1>)
-  BOOST_ASIO_TEST_CASE5(test_prefer<ex_fq_nr<s, n2, n1>, n2, n1>)
   BOOST_ASIO_TEST_CASE5(test_prefer<ex_fq_nr<s, n2, n2>, n1, n2>)
-  BOOST_ASIO_TEST_CASE5(test_prefer<ex_fq_nr<s, n2, n2>, n2, n2>)
   BOOST_ASIO_TEST_CASE5(test_prefer<ex_fq_nr<n1, s, n1>, n1, n1>)
-  BOOST_ASIO_TEST_CASE5(test_prefer<ex_fq_nr<n1, s, n1>, n2, n1>)
   BOOST_ASIO_TEST_CASE5(test_prefer<ex_fq_nr<n2, s, n2>, n1, n2>)
-  BOOST_ASIO_TEST_CASE5(test_prefer<ex_fq_nr<n2, s, n2>, n2, n2>)
 
   BOOST_ASIO_TEST_CASE4(test_can_query<ex_mq_mr<n1, n1>, s, true>)
   BOOST_ASIO_TEST_CASE4(test_can_query<ex_mq_mr<n1, n1>, n1, true>)
@@ -1164,7 +1231,7 @@ BOOST_ASIO_TEST_SUITE
 
   BOOST_ASIO_TEST_CASE4(test_can_require<ex_mq_mr<n1, n1>, s, false>)
   BOOST_ASIO_TEST_CASE4(test_can_require<ex_mq_mr<n1, n1>, n1, true>)
-  BOOST_ASIO_TEST_CASE4(test_can_require<ex_mq_mr<n1, n1>, n2, false>)
+  BOOST_ASIO_TEST_CASE4(test_can_require<ex_mq_mr<n1, n1>, n2, true>)
   BOOST_ASIO_TEST_CASE4(test_can_require<ex_mq_mr<n1, n2>, s, false>)
   BOOST_ASIO_TEST_CASE4(test_can_require<ex_mq_mr<n1, n2>, n1, true>)
   BOOST_ASIO_TEST_CASE4(test_can_require<ex_mq_mr<n1, n2>, n2, true>)
@@ -1176,6 +1243,7 @@ BOOST_ASIO_TEST_SUITE
   BOOST_ASIO_TEST_CASE4(test_can_require<ex_mq_mr<n2, n2>, n2, true>)
 
   BOOST_ASIO_TEST_CASE4(test_require<ex_mq_mr<n1, n1>, n1, n1>)
+  BOOST_ASIO_TEST_CASE4(test_require<ex_mq_mr<n1, n1>, n2, n2>)
   BOOST_ASIO_TEST_CASE4(test_require<ex_mq_mr<n1, n2>, n1, n1>)
   BOOST_ASIO_TEST_CASE4(test_require<ex_mq_mr<n1, n2>, n2, n2>)
   BOOST_ASIO_TEST_CASE4(test_require<ex_mq_mr<n2, n1>, n1, n1>)
@@ -1184,25 +1252,21 @@ BOOST_ASIO_TEST_SUITE
 
   BOOST_ASIO_TEST_CASE4(test_can_prefer<ex_mq_mr<n1, n1>, s, false>)
   BOOST_ASIO_TEST_CASE4(test_can_prefer<ex_mq_mr<n1, n1>, n1, true>)
-  BOOST_ASIO_TEST_CASE4(test_can_prefer<ex_mq_mr<n1, n1>, n2, true>)
+  BOOST_ASIO_TEST_CASE4(test_can_prefer<ex_mq_mr<n1, n1>, n2, false>)
   BOOST_ASIO_TEST_CASE4(test_can_prefer<ex_mq_mr<n1, n2>, s, false>)
   BOOST_ASIO_TEST_CASE4(test_can_prefer<ex_mq_mr<n1, n2>, n1, true>)
-  BOOST_ASIO_TEST_CASE4(test_can_prefer<ex_mq_mr<n1, n2>, n2, true>)
+  BOOST_ASIO_TEST_CASE4(test_can_prefer<ex_mq_mr<n1, n2>, n2, false>)
   BOOST_ASIO_TEST_CASE4(test_can_prefer<ex_mq_mr<n2, n1>, s, false>)
   BOOST_ASIO_TEST_CASE4(test_can_prefer<ex_mq_mr<n2, n1>, n1, true>)
-  BOOST_ASIO_TEST_CASE4(test_can_prefer<ex_mq_mr<n2, n1>, n2, true>)
+  BOOST_ASIO_TEST_CASE4(test_can_prefer<ex_mq_mr<n2, n1>, n2, false>)
   BOOST_ASIO_TEST_CASE4(test_can_prefer<ex_mq_mr<n2, n2>, s, false>)
   BOOST_ASIO_TEST_CASE4(test_can_prefer<ex_mq_mr<n2, n2>, n1, true>)
-  BOOST_ASIO_TEST_CASE4(test_can_prefer<ex_mq_mr<n2, n2>, n2, true>)
+  BOOST_ASIO_TEST_CASE4(test_can_prefer<ex_mq_mr<n2, n2>, n2, false>)
 
   BOOST_ASIO_TEST_CASE4(test_prefer<ex_mq_mr<n1, n1>, n1, n1>)
-  BOOST_ASIO_TEST_CASE4(test_prefer<ex_mq_mr<n1, n1>, n2, n1>)
   BOOST_ASIO_TEST_CASE4(test_prefer<ex_mq_mr<n1, n2>, n1, n1>)
-  BOOST_ASIO_TEST_CASE4(test_prefer<ex_mq_mr<n1, n2>, n2, n2>)
   BOOST_ASIO_TEST_CASE4(test_prefer<ex_mq_mr<n2, n1>, n1, n1>)
-  BOOST_ASIO_TEST_CASE4(test_prefer<ex_mq_mr<n2, n1>, n2, n2>)
   BOOST_ASIO_TEST_CASE4(test_prefer<ex_mq_mr<n2, n2>, n1, n2>)
-  BOOST_ASIO_TEST_CASE4(test_prefer<ex_mq_mr<n2, n2>, n2, n2>)
 
   BOOST_ASIO_TEST_CASE4(test_can_query<ex_fq_fr<n1, n1>, s, true>)
   BOOST_ASIO_TEST_CASE4(test_can_query<ex_fq_fr<n1, n1>, n1, true>)
@@ -1228,7 +1292,7 @@ BOOST_ASIO_TEST_SUITE
 
   BOOST_ASIO_TEST_CASE4(test_can_require<ex_fq_fr<n1, n1>, s, false>)
   BOOST_ASIO_TEST_CASE4(test_can_require<ex_fq_fr<n1, n1>, n1, true>)
-  BOOST_ASIO_TEST_CASE4(test_can_require<ex_fq_fr<n1, n1>, n2, false>)
+  BOOST_ASIO_TEST_CASE4(test_can_require<ex_fq_fr<n1, n1>, n2, true>)
   BOOST_ASIO_TEST_CASE4(test_can_require<ex_fq_fr<n1, n2>, s, false>)
   BOOST_ASIO_TEST_CASE4(test_can_require<ex_fq_fr<n1, n2>, n1, true>)
   BOOST_ASIO_TEST_CASE4(test_can_require<ex_fq_fr<n1, n2>, n2, true>)
@@ -1240,6 +1304,7 @@ BOOST_ASIO_TEST_SUITE
   BOOST_ASIO_TEST_CASE4(test_can_require<ex_fq_fr<n2, n2>, n2, true>)
 
   BOOST_ASIO_TEST_CASE4(test_require<ex_fq_fr<n1, n1>, n1, n1>)
+  BOOST_ASIO_TEST_CASE4(test_require<ex_fq_fr<n1, n1>, n2, n2>)
   BOOST_ASIO_TEST_CASE4(test_require<ex_fq_fr<n1, n2>, n1, n1>)
   BOOST_ASIO_TEST_CASE4(test_require<ex_fq_fr<n1, n2>, n2, n2>)
   BOOST_ASIO_TEST_CASE4(test_require<ex_fq_fr<n2, n1>, n1, n1>)
@@ -1248,25 +1313,21 @@ BOOST_ASIO_TEST_SUITE
 
   BOOST_ASIO_TEST_CASE4(test_can_prefer<ex_fq_fr<n1, n1>, s, false>)
   BOOST_ASIO_TEST_CASE4(test_can_prefer<ex_fq_fr<n1, n1>, n1, true>)
-  BOOST_ASIO_TEST_CASE4(test_can_prefer<ex_fq_fr<n1, n1>, n2, true>)
+  BOOST_ASIO_TEST_CASE4(test_can_prefer<ex_fq_fr<n1, n1>, n2, false>)
   BOOST_ASIO_TEST_CASE4(test_can_prefer<ex_fq_fr<n1, n2>, s, false>)
   BOOST_ASIO_TEST_CASE4(test_can_prefer<ex_fq_fr<n1, n2>, n1, true>)
-  BOOST_ASIO_TEST_CASE4(test_can_prefer<ex_fq_fr<n1, n2>, n2, true>)
+  BOOST_ASIO_TEST_CASE4(test_can_prefer<ex_fq_fr<n1, n2>, n2, false>)
   BOOST_ASIO_TEST_CASE4(test_can_prefer<ex_fq_fr<n2, n1>, s, false>)
   BOOST_ASIO_TEST_CASE4(test_can_prefer<ex_fq_fr<n2, n1>, n1, true>)
-  BOOST_ASIO_TEST_CASE4(test_can_prefer<ex_fq_fr<n2, n1>, n2, true>)
+  BOOST_ASIO_TEST_CASE4(test_can_prefer<ex_fq_fr<n2, n1>, n2, false>)
   BOOST_ASIO_TEST_CASE4(test_can_prefer<ex_fq_fr<n2, n2>, s, false>)
   BOOST_ASIO_TEST_CASE4(test_can_prefer<ex_fq_fr<n2, n2>, n1, true>)
-  BOOST_ASIO_TEST_CASE4(test_can_prefer<ex_fq_fr<n2, n2>, n2, true>)
+  BOOST_ASIO_TEST_CASE4(test_can_prefer<ex_fq_fr<n2, n2>, n2, false>)
 
   BOOST_ASIO_TEST_CASE4(test_prefer<ex_fq_fr<n1, n1>, n1, n1>)
-  BOOST_ASIO_TEST_CASE4(test_prefer<ex_fq_fr<n1, n1>, n2, n1>)
   BOOST_ASIO_TEST_CASE4(test_prefer<ex_fq_fr<n1, n2>, n1, n1>)
-  BOOST_ASIO_TEST_CASE4(test_prefer<ex_fq_fr<n1, n2>, n2, n2>)
   BOOST_ASIO_TEST_CASE4(test_prefer<ex_fq_fr<n2, n1>, n1, n1>)
-  BOOST_ASIO_TEST_CASE4(test_prefer<ex_fq_fr<n2, n1>, n2, n2>)
   BOOST_ASIO_TEST_CASE4(test_prefer<ex_fq_fr<n2, n2>, n1, n2>)
-  BOOST_ASIO_TEST_CASE4(test_prefer<ex_fq_fr<n2, n2>, n2, n2>)
 
   BOOST_ASIO_TEST_CASE(test_vars)
 )
