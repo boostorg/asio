@@ -44,6 +44,7 @@ test-suite "asio" :
   [ run any_executor.cpp ]
   [ run blocking.cpp ]
   [ run blocking_adaptation.cpp ]
+  [ run bulk_execute.cpp ]
   [ run bulk_guarantee.cpp ]
   [ run connect.cpp : : : : execution_connect ]
   [ run context_as.cpp ]

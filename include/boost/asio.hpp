@@ -59,6 +59,7 @@
 #include <boost/asio/execution/any_executor.hpp>
 #include <boost/asio/execution/blocking.hpp>
 #include <boost/asio/execution/blocking_adaptation.hpp>
+#include <boost/asio/execution/bulk_execute.hpp>
 #include <boost/asio/execution/bulk_guarantee.hpp>
 #include <boost/asio/execution/connect.hpp>
 #include <boost/asio/execution/context.hpp>
