@@ -63,8 +63,8 @@ struct as_invocable
 #endif // !defined(BOOST_ASIO_NO_EXCEPTIONS)
       execution::set_value(BOOST_ASIO_MOVE_CAST(Receiver)(*receiver_));
       receiver_ = 0;
-    }
 #if !defined(BOOST_ASIO_NO_EXCEPTIONS)
+    }
     catch (...)
     {
 #if defined(BOOST_ASIO_HAS_STD_EXCEPTION_PTR)
