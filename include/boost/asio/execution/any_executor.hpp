@@ -829,21 +829,16 @@ protected:
 # pragma warning (disable:4702)
 #endif // defined(BOOST_ASIO_MSVC)
 
-  template <typename Ex, class Prop>
-  static void query_fn_impl(void*, const void*, const void*,
-      typename enable_if<
-        is_same<Ex, void>::value
-      >::type*)
+  static void query_fn_void(void*, const void*, const void*)
   {
     bad_executor ex;
     boost::asio::detail::throw_exception(ex);
   }
 
   template <typename Ex, class Prop>
-  static void query_fn_impl(void*, const void* ex, const void* prop,
+  static void query_fn_non_void(void*, const void* ex, const void* prop,
       typename enable_if<
-        !is_same<Ex, void>::value
-          && boost::asio::can_query<const Ex&, const Prop&>::value
+        boost::asio::can_query<const Ex&, const Prop&>::value
           && is_same<typename Prop::polymorphic_query_result_type, void>::value
       >::type*)
   {
@@ -852,20 +847,18 @@ protected:
   }
 
   template <typename Ex, class Prop>
-  static void query_fn_impl(void*, const void*, const void*,
+  static void query_fn_non_void(void*, const void*, const void*,
       typename enable_if<
-        !is_same<Ex, void>::value
-          && !boost::asio::can_query<const Ex&, const Prop&>::value
+        !boost::asio::can_query<const Ex&, const Prop&>::value
           && is_same<typename Prop::polymorphic_query_result_type, void>::value
       >::type*)
   {
   }
 
   template <typename Ex, class Prop>
-  static void query_fn_impl(void* result, const void* ex, const void* prop,
+  static void query_fn_non_void(void* result, const void* ex, const void* prop,
       typename enable_if<
-        !is_same<Ex, void>::value
-          && boost::asio::can_query<const Ex&, const Prop&>::value
+        boost::asio::can_query<const Ex&, const Prop&>::value
           && !is_same<typename Prop::polymorphic_query_result_type, void>::value
           && is_reference<typename Prop::polymorphic_query_result_type>::value
       >::type*)
@@ -878,10 +871,9 @@ protected:
   }
 
   template <typename Ex, class Prop>
-  static void query_fn_impl(void*, const void*, const void*,
+  static void query_fn_non_void(void*, const void*, const void*,
       typename enable_if<
-        !is_same<Ex, void>::value
-          && !boost::asio::can_query<const Ex&, const Prop&>::value
+        !boost::asio::can_query<const Ex&, const Prop&>::value
           && !is_same<typename Prop::polymorphic_query_result_type, void>::value
           && is_reference<typename Prop::polymorphic_query_result_type>::value
       >::type*)
@@ -890,10 +882,9 @@ protected:
   }
 
   template <typename Ex, class Prop>
-  static void query_fn_impl(void* result, const void* ex, const void* prop,
+  static void query_fn_non_void(void* result, const void* ex, const void* prop,
       typename enable_if<
-        !is_same<Ex, void>::value
-          && boost::asio::can_query<const Ex&, const Prop&>::value
+        boost::asio::can_query<const Ex&, const Prop&>::value
           && !is_same<typename Prop::polymorphic_query_result_type, void>::value
           && is_scalar<typename Prop::polymorphic_query_result_type>::value
       >::type*)
@@ -905,10 +896,9 @@ protected:
   }
 
   template <typename Ex, class Prop>
-  static void query_fn_impl(void* result, const void*, const void*,
+  static void query_fn_non_void(void* result, const void*, const void*,
       typename enable_if<
-        !is_same<Ex, void>::value
-          && !boost::asio::can_query<const Ex&, const Prop&>::value
+        !boost::asio::can_query<const Ex&, const Prop&>::value
           && !is_same<typename Prop::polymorphic_query_result_type, void>::value
           && is_scalar<typename Prop::polymorphic_query_result_type>::value
       >::type*)
@@ -918,10 +908,9 @@ protected:
   }
 
   template <typename Ex, class Prop>
-  static void query_fn_impl(void* result, const void* ex, const void* prop,
+  static void query_fn_non_void(void* result, const void* ex, const void* prop,
       typename enable_if<
-        !is_same<Ex, void>::value
-          && boost::asio::can_query<const Ex&, const Prop&>::value
+        boost::asio::can_query<const Ex&, const Prop&>::value
           && !is_same<typename Prop::polymorphic_query_result_type, void>::value
           && !is_reference<typename Prop::polymorphic_query_result_type>::value
           && !is_scalar<typename Prop::polymorphic_query_result_type>::value
@@ -934,10 +923,28 @@ protected:
   }
 
   template <typename Ex, class Prop>
-  static void query_fn_impl(void* result, const void*, const void*, ...)
+  static void query_fn_non_void(void* result, const void*, const void*, ...)
   {
     *static_cast<typename Prop::polymorphic_query_result_type**>(result)
       = new typename Prop::polymorphic_query_result_type();
+  }
+
+  template <typename Ex, class Prop>
+  static void query_fn_impl(void* result, const void* ex, const void* prop,
+      typename enable_if<
+        is_same<Ex, void>::value
+      >::type*)
+  {
+    query_fn_void(result, ex, prop);
+  }
+
+  template <typename Ex, class Prop>
+  static void query_fn_impl(void* result, const void* ex, const void* prop,
+      typename enable_if<
+        !is_same<Ex, void>::value
+      >::type*)
+  {
+    query_fn_non_void<Ex, Prop>(result, ex, prop, 0);
   }
 
   template <typename Ex, class Prop>
