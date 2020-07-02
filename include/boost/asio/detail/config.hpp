@@ -265,10 +265,13 @@
 #    define BOOST_ASIO_STATIC_CONSTEXPR_DEFAULT_INIT(type, name) \
       static const type name
 #   endif // (__GNUC__ >= 8)
-#  else // defined(__GNUC__)
+#  elif defined(BOOST_ASIO_MSVC)
+#   define BOOST_ASIO_STATIC_CONSTEXPR_DEFAULT_INIT(type, name) \
+     static const type name
+#  else // defined(BOOST_ASIO_MSVC)
 #   define BOOST_ASIO_STATIC_CONSTEXPR_DEFAULT_INIT(type, name) \
      static constexpr const type name{}
-#  endif // defined(__GNUC__)
+#  endif // defined(BOOST_ASIO_MSVC)
 # else // defined(BOOST_ASIO_HAS_CONSTEXPR)
 #  define BOOST_ASIO_STATIC_CONSTEXPR_DEFAULT_INIT(type, name) \
     static const type name
