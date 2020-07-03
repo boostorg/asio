@@ -19,6 +19,7 @@
 #include <new>
 #include <typeinfo>
 #include <boost/asio/detail/assert.hpp>
+#include <boost/asio/detail/cstddef.hpp>
 #include <boost/asio/detail/executor_function.hpp>
 #include <boost/asio/detail/memory.hpp>
 #include <boost/asio/detail/non_const_lvalue.hpp>
@@ -50,6 +51,9 @@ public:
   /// Default constructor.
   any_executor() noexcept;
 
+  /// Construct in an empty state. Equivalent effects to default constructor.
+  any_executor(nullptr_t) noexcept;
+
   /// Copy constructor.
   any_executor(const any_executor& e) noexcept;
 
@@ -69,6 +73,9 @@ public:
 
   /// Move assignment operator.
   any_executor& operator=(any_executor&& e) noexcept;
+
+  /// Assignment operator that sets the polymorphic wrapper to the empty state.
+  any_executor& operator=(nullptr_t);
 
   /// Assignment operator to create a polymorphic wrapper for the specified
   /// executor.
@@ -490,6 +497,15 @@ public:
       target_fns_ = other.target_fns_;
       object_fns_->copy(*this, other);
     }
+    return *this;
+  }
+
+  any_executor_base& operator=(nullptr_t) BOOST_ASIO_NOEXCEPT
+  {
+    object_fns_->destroy(*this);
+    target_ = 0;
+    object_fns_ = object_fns_table<void>();
+    target_fns_ = target_fns_table<void>();
     return *this;
   }
 
@@ -1109,6 +1125,11 @@ public:
   {
   }
 
+  any_executor(nullptr_t) BOOST_ASIO_NOEXCEPT
+    : detail::any_executor_base()
+  {
+  }
+
   template <typename Executor>
   any_executor(Executor ex)
     : detail::any_executor_base(
@@ -1146,6 +1167,22 @@ public:
   {
   }
 
+  any_executor& operator=(const any_executor& other) BOOST_ASIO_NOEXCEPT
+  {
+    if (this != &other)
+    {
+      detail::any_executor_base::operator=(
+          static_cast<const detail::any_executor_base&>(other));
+    }
+    return *this;
+  }
+
+  any_executor& operator=(nullptr_t p) BOOST_ASIO_NOEXCEPT
+  {
+    detail::any_executor_base::operator=(p);
+    return *this;
+  }
+
 #if defined(BOOST_ASIO_HAS_MOVE)
 
   any_executor(any_executor&& other) BOOST_ASIO_NOEXCEPT
@@ -1155,9 +1192,19 @@ public:
   {
   }
 
+  any_executor& operator=(any_executor&& other) BOOST_ASIO_NOEXCEPT
+  {
+    if (this != &other)
+    {
+      detail::any_executor_base::operator=(
+          static_cast<detail::any_executor_base&&>(
+            static_cast<detail::any_executor_base&>(other)));
+    }
+    return *this;
+  }
+
 #endif // defined(BOOST_ASIO_HAS_MOVE)
 
-  using detail::any_executor_base::operator=;
   using detail::any_executor_base::execute;
   using detail::any_executor_base::target;
   using detail::any_executor_base::target_type;
@@ -1194,6 +1241,12 @@ class any_executor :
 {
 public:
   any_executor() BOOST_ASIO_NOEXCEPT
+    : detail::any_executor_base(),
+      prop_fns_(prop_fns_table<void>())
+  {
+  }
+
+  any_executor(nullptr_t) BOOST_ASIO_NOEXCEPT
     : detail::any_executor_base(),
       prop_fns_(prop_fns_table<void>())
   {
@@ -1246,6 +1299,13 @@ public:
       detail::any_executor_base::operator=(
           static_cast<const detail::any_executor_base&>(other));
     }
+    return *this;
+  }
+
+  any_executor& operator=(nullptr_t p) BOOST_ASIO_NOEXCEPT
+  {
+    prop_fns_ = prop_fns_table<void>();
+    detail::any_executor_base::operator=(p);
     return *this;
   }
 
@@ -1550,6 +1610,12 @@ inline bool operator!=(const any_executor<SupportableProperties...>& a,
     { \
     } \
     \
+    any_executor(nullptr_t) BOOST_ASIO_NOEXCEPT \
+      : detail::any_executor_base(), \
+        prop_fns_(prop_fns_table<void>()) \
+    { \
+    } \
+    \
     template <BOOST_ASIO_EXECUTION_EXECUTOR Executor> \
     any_executor(Executor ex, \
         typename enable_if< \
@@ -1602,7 +1668,7 @@ inline bool operator!=(const any_executor<SupportableProperties...>& a,
     { \
       BOOST_ASIO_STATIC_ASSERT( \
           OtherAnyExecutor::supportable_properties_type::template \
-            is_valid_target<any_executor<OtherAnyExecutor> >::value, \
+            is_valid_target<OtherAnyExecutor>::value, \
           any_executor_target_must_support_listed_properties, \
           "any_executor target must support listed properties"); \
     } \
@@ -1615,6 +1681,13 @@ inline bool operator!=(const any_executor<SupportableProperties...>& a,
         detail::any_executor_base::operator=( \
             static_cast<const detail::any_executor_base&>(other)); \
       } \
+      return *this; \
+    } \
+    \
+    any_executor& operator=(nullptr_t p) BOOST_ASIO_NOEXCEPT \
+    { \
+      prop_fns_ = prop_fns_table<void>(); \
+      detail::any_executor_base::operator=(p); \
       return *this; \
     } \
     \

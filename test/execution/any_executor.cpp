@@ -38,7 +38,313 @@ void increment(int* count)
   ++(*count);
 }
 
-void any_executor_executor_query_test()
+void any_executor_construction_test()
+{
+  typedef execution::any_executor<> ex_no_props_t;
+
+  typedef execution::any_executor<
+      execution::blocking_t
+    > ex_one_prop_t;
+
+  typedef execution::any_executor<
+      execution::blocking_t,
+      execution::occupancy_t
+    > ex_two_props_t;
+
+  thread_pool pool(1);
+  boost::asio::nullptr_t null_ptr = boost::asio::nullptr_t();
+
+  ex_two_props_t ex_two_props_1;
+
+  BOOST_ASIO_CHECK(ex_two_props_1.target<void>() == 0);
+
+  ex_two_props_t ex_two_props_2(null_ptr);
+
+  BOOST_ASIO_CHECK(ex_two_props_2.target<void>() == 0);
+  BOOST_ASIO_CHECK(ex_two_props_2 == ex_two_props_1);
+
+  ex_two_props_t ex_two_props_3(pool.executor());
+
+  BOOST_ASIO_CHECK(ex_two_props_3.target<void>() != 0);
+  BOOST_ASIO_CHECK(ex_two_props_3 != ex_two_props_1);
+
+  ex_two_props_t ex_two_props_4(ex_two_props_1);
+
+  BOOST_ASIO_CHECK(ex_two_props_4.target<void>() == 0);
+  BOOST_ASIO_CHECK(ex_two_props_4 == ex_two_props_1);
+
+  ex_two_props_t ex_two_props_5(ex_two_props_3);
+
+  BOOST_ASIO_CHECK(ex_two_props_5.target<void>() != 0);
+  BOOST_ASIO_CHECK(ex_two_props_5 == ex_two_props_3);
+
+#if defined(BOOST_ASIO_HAS_MOVE)
+  ex_two_props_t ex_two_props_6(std::move(ex_two_props_1));
+
+  BOOST_ASIO_CHECK(ex_two_props_6.target<void>() == 0);
+  BOOST_ASIO_CHECK(ex_two_props_1.target<void>() == 0);
+
+  ex_two_props_t ex_two_props_7(std::move(ex_two_props_3));
+
+  BOOST_ASIO_CHECK(ex_two_props_7.target<void>() != 0);
+  BOOST_ASIO_CHECK(ex_two_props_3.target<void>() == 0);
+  BOOST_ASIO_CHECK(ex_two_props_7 == ex_two_props_5);
+#endif // defined(BOOST_ASIO_HAS_MOVE)
+
+  ex_one_prop_t ex_one_prop_1;
+
+  BOOST_ASIO_CHECK(ex_one_prop_1.target<void>() == 0);
+
+  ex_one_prop_t ex_one_prop_2(null_ptr);
+
+  BOOST_ASIO_CHECK(ex_one_prop_2.target<void>() == 0);
+  BOOST_ASIO_CHECK(ex_one_prop_2 == ex_one_prop_1);
+
+  ex_one_prop_t ex_one_prop_3(pool.executor());
+
+  BOOST_ASIO_CHECK(ex_one_prop_3.target<void>() != 0);
+  BOOST_ASIO_CHECK(ex_one_prop_3 != ex_one_prop_1);
+
+  ex_one_prop_t ex_one_prop_4(ex_one_prop_1);
+
+  BOOST_ASIO_CHECK(ex_one_prop_4.target<void>() == 0);
+  BOOST_ASIO_CHECK(ex_one_prop_4 == ex_one_prop_1);
+
+  ex_one_prop_t ex_one_prop_5(ex_one_prop_3);
+
+  BOOST_ASIO_CHECK(ex_one_prop_5.target<void>() != 0);
+  BOOST_ASIO_CHECK(ex_one_prop_5 == ex_one_prop_3);
+
+#if defined(BOOST_ASIO_HAS_MOVE)
+  ex_one_prop_t ex_one_prop_6(std::move(ex_one_prop_1));
+
+  BOOST_ASIO_CHECK(ex_one_prop_6.target<void>() == 0);
+  BOOST_ASIO_CHECK(ex_one_prop_1.target<void>() == 0);
+
+  ex_one_prop_t ex_one_prop_7(std::move(ex_one_prop_3));
+
+  BOOST_ASIO_CHECK(ex_one_prop_7.target<void>() != 0);
+  BOOST_ASIO_CHECK(ex_one_prop_3.target<void>() == 0);
+  BOOST_ASIO_CHECK(ex_one_prop_7 == ex_one_prop_5);
+#endif // defined(BOOST_ASIO_HAS_MOVE)
+
+  ex_one_prop_t ex_one_prop_8(ex_two_props_1);
+
+  BOOST_ASIO_CHECK(ex_one_prop_8.target<void>() == 0);
+
+  ex_one_prop_t ex_one_prop_9(ex_two_props_5);
+
+  BOOST_ASIO_CHECK(ex_one_prop_9.target<void>() != 0);
+
+  ex_no_props_t ex_no_props_1;
+
+  BOOST_ASIO_CHECK(ex_no_props_1.target<void>() == 0);
+
+  ex_no_props_t ex_no_props_2(null_ptr);
+
+  BOOST_ASIO_CHECK(ex_no_props_2.target<void>() == 0);
+  BOOST_ASIO_CHECK(ex_no_props_2 == ex_no_props_1);
+
+  ex_no_props_t ex_no_props_3(pool.executor());
+
+  BOOST_ASIO_CHECK(ex_no_props_3.target<void>() != 0);
+  BOOST_ASIO_CHECK(ex_no_props_3 != ex_no_props_1);
+
+  ex_no_props_t ex_no_props_4(ex_no_props_1);
+
+  BOOST_ASIO_CHECK(ex_no_props_4.target<void>() == 0);
+  BOOST_ASIO_CHECK(ex_no_props_4 == ex_no_props_1);
+
+  ex_no_props_t ex_no_props_5(ex_no_props_3);
+
+  BOOST_ASIO_CHECK(ex_no_props_5.target<void>() != 0);
+  BOOST_ASIO_CHECK(ex_no_props_5 == ex_no_props_3);
+
+#if defined(BOOST_ASIO_HAS_MOVE)
+  ex_no_props_t ex_no_props_6(std::move(ex_no_props_1));
+
+  BOOST_ASIO_CHECK(ex_no_props_6.target<void>() == 0);
+  BOOST_ASIO_CHECK(ex_no_props_1.target<void>() == 0);
+
+  ex_no_props_t ex_no_props_7(std::move(ex_no_props_3));
+
+  BOOST_ASIO_CHECK(ex_no_props_7.target<void>() != 0);
+  BOOST_ASIO_CHECK(ex_no_props_3.target<void>() == 0);
+  BOOST_ASIO_CHECK(ex_no_props_7 == ex_no_props_5);
+#endif // defined(BOOST_ASIO_HAS_MOVE)
+
+  ex_no_props_t ex_no_props_8(ex_two_props_1);
+
+  BOOST_ASIO_CHECK(ex_no_props_8.target<void>() == 0);
+
+  ex_no_props_t ex_no_props_9(ex_two_props_5);
+
+  BOOST_ASIO_CHECK(ex_no_props_9.target<void>() != 0);
+
+  ex_no_props_t ex_no_props_10(ex_one_prop_1);
+
+  BOOST_ASIO_CHECK(ex_no_props_10.target<void>() == 0);
+
+  ex_no_props_t ex_no_props_11(ex_one_prop_5);
+
+  BOOST_ASIO_CHECK(ex_no_props_11.target<void>() != 0);
+}
+
+void any_executor_assignment_test()
+{
+  typedef execution::any_executor<> ex_no_props_t;
+
+  typedef execution::any_executor<
+      execution::blocking_t
+    > ex_one_prop_t;
+
+  typedef execution::any_executor<
+      execution::blocking_t,
+      execution::occupancy_t
+    > ex_two_props_t;
+
+  thread_pool pool(1);
+  boost::asio::nullptr_t null_ptr = boost::asio::nullptr_t();
+
+  ex_two_props_t ex_two_props_1;
+
+  ex_two_props_t ex_two_props_2;
+  ex_two_props_2 = null_ptr;
+
+  BOOST_ASIO_CHECK(ex_two_props_2.target<void>() == 0);
+
+  ex_two_props_t ex_two_props_3;
+  ex_two_props_3 = pool.executor();
+
+  BOOST_ASIO_CHECK(ex_two_props_3.target<void>() != 0);
+
+  ex_two_props_t ex_two_props_4;
+  ex_two_props_4 = ex_two_props_1;
+
+  BOOST_ASIO_CHECK(ex_two_props_4.target<void>() == 0);
+  BOOST_ASIO_CHECK(ex_two_props_4 == ex_two_props_1);
+
+  ex_two_props_4 = ex_two_props_3;
+
+  BOOST_ASIO_CHECK(ex_two_props_4.target<void>() != 0);
+  BOOST_ASIO_CHECK(ex_two_props_4 == ex_two_props_3);
+
+#if defined(BOOST_ASIO_HAS_MOVE)
+  ex_two_props_t ex_two_props_5;
+  ex_two_props_5 = std::move(ex_two_props_1);
+
+  BOOST_ASIO_CHECK(ex_two_props_5.target<void>() == 0);
+  BOOST_ASIO_CHECK(ex_two_props_1.target<void>() == 0);
+
+  ex_two_props_5 = std::move(ex_two_props_3);
+
+  BOOST_ASIO_CHECK(ex_two_props_5.target<void>() != 0);
+  BOOST_ASIO_CHECK(ex_two_props_3.target<void>() == 0);
+  BOOST_ASIO_CHECK(ex_two_props_5 == ex_two_props_4);
+#endif // defined(BOOST_ASIO_HAS_MOVE)
+
+  ex_one_prop_t ex_one_prop_1;
+
+  ex_one_prop_t ex_one_prop_2;
+  ex_one_prop_2 = null_ptr;
+
+  BOOST_ASIO_CHECK(ex_one_prop_2.target<void>() == 0);
+
+  ex_one_prop_t ex_one_prop_3;
+  ex_one_prop_3 = pool.executor();
+
+  BOOST_ASIO_CHECK(ex_one_prop_3.target<void>() != 0);
+
+  ex_one_prop_t ex_one_prop_4;
+  ex_one_prop_4 = ex_one_prop_1;
+
+  BOOST_ASIO_CHECK(ex_one_prop_4.target<void>() == 0);
+  BOOST_ASIO_CHECK(ex_one_prop_4 == ex_one_prop_1);
+
+  ex_one_prop_4 = ex_one_prop_3;
+
+  BOOST_ASIO_CHECK(ex_one_prop_4.target<void>() != 0);
+  BOOST_ASIO_CHECK(ex_one_prop_4 == ex_one_prop_3);
+
+#if defined(BOOST_ASIO_HAS_MOVE)
+  ex_one_prop_t ex_one_prop_5;
+  ex_one_prop_5 = std::move(ex_one_prop_1);
+
+  BOOST_ASIO_CHECK(ex_one_prop_5.target<void>() == 0);
+  BOOST_ASIO_CHECK(ex_one_prop_1.target<void>() == 0);
+
+  ex_one_prop_5 = std::move(ex_one_prop_3);
+
+  BOOST_ASIO_CHECK(ex_one_prop_5.target<void>() != 0);
+  BOOST_ASIO_CHECK(ex_one_prop_3.target<void>() == 0);
+  BOOST_ASIO_CHECK(ex_one_prop_5 == ex_one_prop_4);
+#endif // defined(BOOST_ASIO_HAS_MOVE)
+
+  ex_one_prop_t ex_one_prop_6;
+  ex_one_prop_6 = ex_two_props_1;
+
+  BOOST_ASIO_CHECK(ex_one_prop_6.target<void>() == 0);
+
+  ex_one_prop_6 = ex_two_props_4;
+
+  BOOST_ASIO_CHECK(ex_one_prop_6.target<void>() != 0);
+
+  ex_no_props_t ex_no_props_1;
+
+  ex_no_props_t ex_no_props_2;
+  ex_no_props_2 = null_ptr;
+
+  BOOST_ASIO_CHECK(ex_no_props_2.target<void>() == 0);
+
+  ex_no_props_t ex_no_props_3;
+  ex_no_props_3 = pool.executor();
+
+  BOOST_ASIO_CHECK(ex_no_props_3.target<void>() != 0);
+
+  ex_no_props_t ex_no_props_4;
+  ex_no_props_4 = ex_no_props_1;
+
+  BOOST_ASIO_CHECK(ex_no_props_4.target<void>() == 0);
+  BOOST_ASIO_CHECK(ex_no_props_4 == ex_no_props_1);
+
+  ex_no_props_4 = ex_no_props_3;
+
+  BOOST_ASIO_CHECK(ex_no_props_4.target<void>() != 0);
+  BOOST_ASIO_CHECK(ex_no_props_4 == ex_no_props_3);
+
+#if defined(BOOST_ASIO_HAS_MOVE)
+  ex_no_props_t ex_no_props_5;
+  ex_no_props_5 = std::move(ex_no_props_1);
+
+  BOOST_ASIO_CHECK(ex_no_props_5.target<void>() == 0);
+  BOOST_ASIO_CHECK(ex_no_props_1.target<void>() == 0);
+
+  ex_no_props_5 = std::move(ex_no_props_3);
+
+  BOOST_ASIO_CHECK(ex_no_props_5.target<void>() != 0);
+  BOOST_ASIO_CHECK(ex_no_props_3.target<void>() == 0);
+  BOOST_ASIO_CHECK(ex_no_props_5 == ex_no_props_4);
+#endif // defined(BOOST_ASIO_HAS_MOVE)
+
+  ex_no_props_t ex_no_props_6;
+  ex_no_props_6 = ex_two_props_1;
+
+  BOOST_ASIO_CHECK(ex_no_props_6.target<void>() == 0);
+
+  ex_no_props_6 = ex_two_props_4;
+
+  BOOST_ASIO_CHECK(ex_no_props_6.target<void>() != 0);
+
+  ex_no_props_6 = ex_one_prop_1;
+
+  BOOST_ASIO_CHECK(ex_no_props_6.target<void>() == 0);
+
+  ex_no_props_6 = ex_one_prop_4;
+
+  BOOST_ASIO_CHECK(ex_no_props_6.target<void>() != 0);
+}
+
+void any_executor_query_test()
 {
   thread_pool pool(1);
   execution::any_executor<
@@ -82,7 +388,7 @@ void any_executor_executor_query_test()
         == 1);
 }
 
-void any_executor_executor_execute_test()
+void any_executor_execute_test()
 {
   int count = 0;
   thread_pool pool(1);
@@ -134,6 +440,8 @@ void any_executor_executor_execute_test()
 BOOST_ASIO_TEST_SUITE
 (
   "any_executor",
-  BOOST_ASIO_TEST_CASE(any_executor_executor_query_test)
-  BOOST_ASIO_TEST_CASE(any_executor_executor_execute_test)
+  BOOST_ASIO_TEST_CASE(any_executor_construction_test)
+  BOOST_ASIO_TEST_CASE(any_executor_assignment_test)
+  BOOST_ASIO_TEST_CASE(any_executor_query_test)
+  BOOST_ASIO_TEST_CASE(any_executor_execute_test)
 )
