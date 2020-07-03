@@ -34,7 +34,7 @@ struct as_receiver
   Function f_;
 
   template <typename F>
-  explicit as_receiver(BOOST_ASIO_MOVE_ARG(F) f)
+  explicit as_receiver(BOOST_ASIO_MOVE_ARG(F) f, int)
     : f_(BOOST_ASIO_MOVE_CAST(F)(f))
   {
   }

@@ -220,7 +220,7 @@ struct impl
     return boost::asio::execution::detail::submit_helper(
         BOOST_ASIO_MOVE_CAST(T)(t),
         as_receiver<typename decay<F>::type, T>(
-          BOOST_ASIO_MOVE_CAST(F)(f)));
+          BOOST_ASIO_MOVE_CAST(F)(f), 0));
   }
 };
 

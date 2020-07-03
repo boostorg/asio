@@ -134,6 +134,7 @@
 # define BOOST_ASIO_MOVE_CAST(type) static_cast<type&&>
 # define BOOST_ASIO_MOVE_CAST2(type1, type2) static_cast<type1, type2&&>
 # define BOOST_ASIO_MOVE_OR_LVALUE(type) static_cast<type&&>
+# define BOOST_ASIO_MOVE_OR_LVALUE_TYPE(type) type
 #endif // defined(BOOST_ASIO_HAS_MOVE) && !defined(BOOST_ASIO_MOVE_CAST)
 
 // If BOOST_ASIO_MOVE_CAST still isn't defined, default to a C++03-compatible
@@ -161,6 +162,7 @@
 # define BOOST_ASIO_MOVE_CAST(type) static_cast<const type&>
 # define BOOST_ASIO_MOVE_CAST2(type1, type2) static_cast<const type1, type2&>
 # define BOOST_ASIO_MOVE_OR_LVALUE(type)
+# define BOOST_ASIO_MOVE_OR_LVALUE_TYPE(type) type&
 #endif // !defined(BOOST_ASIO_MOVE_CAST)
 
 // Support variadic templates on compilers known to allow it.
