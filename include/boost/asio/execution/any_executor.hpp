@@ -85,7 +85,8 @@ public:
   /// Destructor.
   ~any_executor();
 
-  //void swap(any_executor& other) noexcept;
+  /// Swap targets with another polymorphic wrapper.
+  void swap(any_executor& other) noexcept;
 
   /// Obtain a polymorphic wrapper with the specified property.
   /**
@@ -570,6 +571,16 @@ public:
   }
 
 #endif // defined(BOOST_ASIO_HAS_MOVE)
+
+  void swap(any_executor_base& other) BOOST_ASIO_NOEXCEPT
+  {
+    if (this != &other)
+    {
+      any_executor_base tmp(BOOST_ASIO_MOVE_CAST(any_executor_base)(other));
+      other = BOOST_ASIO_MOVE_CAST(any_executor_base)(*this);
+      *this = BOOST_ASIO_MOVE_CAST(any_executor_base)(tmp);
+    }
+  }
 
   template <typename F>
   void execute(BOOST_ASIO_MOVE_ARG(F) f) const
@@ -1237,6 +1248,12 @@ public:
 
 #endif // defined(BOOST_ASIO_HAS_MOVE)
 
+  void swap(any_executor& other) BOOST_ASIO_NOEXCEPT
+  {
+    detail::any_executor_base::swap(
+        static_cast<detail::any_executor_base&>(other));
+  }
+
   using detail::any_executor_base::execute;
   using detail::any_executor_base::target;
   using detail::any_executor_base::target_type;
@@ -1279,6 +1296,11 @@ inline bool operator!=(const any_executor<>& a, nullptr_t) BOOST_ASIO_NOEXCEPT
 inline bool operator!=(nullptr_t, const any_executor<>& b) BOOST_ASIO_NOEXCEPT
 {
   return !!b;
+}
+
+inline void swap(any_executor<>& a, any_executor<>& b) BOOST_ASIO_NOEXCEPT
+{
+  return a.swap(b);
 }
 
 #if defined(BOOST_ASIO_HAS_VARIADIC_TEMPLATES)
@@ -1385,6 +1407,18 @@ public:
   }
 
 #endif // defined(BOOST_ASIO_HAS_MOVE)
+
+  void swap(any_executor& other) BOOST_ASIO_NOEXCEPT
+  {
+    if (this != &other)
+    {
+      detail::any_executor_base::swap(
+          static_cast<detail::any_executor_base&>(other));
+      const prop_fns<any_executor>* tmp_prop_fns = other.prop_fns_;
+      other.prop_fns_ = prop_fns_;
+      prop_fns_ = tmp_prop_fns;
+    }
+  }
 
   using detail::any_executor_base::execute;
   using detail::any_executor_base::target;
@@ -1583,6 +1617,13 @@ inline bool operator!=(nullptr_t,
   return !!b;
 }
 
+template <typename... SupportableProperties>
+inline void swap(any_executor<SupportableProperties...>& a,
+    any_executor<SupportableProperties...>& b) BOOST_ASIO_NOEXCEPT
+{
+  return a.swap(b);
+}
+
 #else // defined(BOOST_ASIO_HAS_VARIADIC_TEMPLATES)
 
 #define BOOST_ASIO_PRIVATE_ANY_EXECUTOR_PROP_FNS(n) \
@@ -1773,6 +1814,18 @@ inline bool operator!=(nullptr_t,
     \
     BOOST_ASIO_PRIVATE_ANY_EXECUTOR_MOVE_OPS \
     \
+    void swap(any_executor& other) BOOST_ASIO_NOEXCEPT \
+    { \
+      if (this != &other) \
+      { \
+        detail::any_executor_base::swap( \
+            static_cast<detail::any_executor_base&>(other)); \
+        const prop_fns<any_executor>* tmp_prop_fns = other.prop_fns_; \
+        other.prop_fns_ = prop_fns_; \
+        prop_fns_ = tmp_prop_fns; \
+      } \
+    } \
+    \
     using detail::any_executor_base::execute; \
     using detail::any_executor_base::target; \
     using detail::any_executor_base::target_type; \
@@ -1962,6 +2015,13 @@ inline bool operator!=(nullptr_t,
       const any_executor<BOOST_ASIO_VARIADIC_TARGS(n)>& b) BOOST_ASIO_NOEXCEPT \
   { \
     return !!b; \
+  } \
+  \
+  template <BOOST_ASIO_VARIADIC_TPARAMS(n)> \
+  inline void swap(any_executor<BOOST_ASIO_VARIADIC_TARGS(n)>& a, \
+      any_executor<BOOST_ASIO_VARIADIC_TARGS(n)>& b) BOOST_ASIO_NOEXCEPT \
+  { \
+    return a.swap(b); \
   } \
   /**/
   BOOST_ASIO_VARIADIC_GENERATE(BOOST_ASIO_PRIVATE_ANY_EXECUTOR_DEF)
