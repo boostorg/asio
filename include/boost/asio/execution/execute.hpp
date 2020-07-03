@@ -82,7 +82,7 @@ struct is_sender_to;
 namespace detail {
 
 template <typename S, typename R>
-void submit(BOOST_ASIO_MOVE_ARG(S) s, BOOST_ASIO_MOVE_ARG(R) r);
+void submit_helper(BOOST_ASIO_MOVE_ARG(S) s, BOOST_ASIO_MOVE_ARG(R) r);
 
 } // namespace detail
 } // namespace execution
@@ -168,10 +168,12 @@ struct call_traits<T, void(F),
         false_type
       >::type::value
     )
-  >::type> :
-  execute_free<T, F>
+  >::type>
 {
   BOOST_ASIO_STATIC_CONSTEXPR(overload_type, overload = adapter);
+  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
+  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_noexcept = false);
+  typedef void result_type;
 };
 
 struct impl
@@ -215,7 +217,7 @@ struct impl
     BOOST_ASIO_NOEXCEPT_IF((
       call_traits<T, void(F)>::is_noexcept))
   {
-    return boost::asio::execution::detail::submit(
+    return boost::asio::execution::detail::submit_helper(
         BOOST_ASIO_MOVE_CAST(T)(t),
         as_receiver<typename decay<F>::type, T>(
           BOOST_ASIO_MOVE_CAST(F)(f)));
