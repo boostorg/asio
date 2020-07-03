@@ -170,12 +170,44 @@ template <typename... SupportableProperties>
 bool operator==(const any_executor<SupportableProperties...>& a,
     const any_executor<SupportableProperties...>& b) noexcept;
 
+/// Equality operator.
+/**
+ * @relates any_executor
+ */
+template <typename... SupportableProperties>
+bool operator==(const any_executor<SupportableProperties...>& a,
+    nullptr_t) noexcept;
+
+/// Equality operator.
+/**
+ * @relates any_executor
+ */
+template <typename... SupportableProperties>
+bool operator==(nullptr_t,
+    const any_executor<SupportableProperties...>& b) noexcept;
+
 /// Inequality operator.
 /**
  * @relates any_executor
  */
 template <typename... SupportableProperties>
 bool operator!=(const any_executor<SupportableProperties...>& a,
+    const any_executor<SupportableProperties...>& b) noexcept;
+
+/// Inequality operator.
+/**
+ * @relates any_executor
+ */
+template <typename... SupportableProperties>
+bool operator!=(const any_executor<SupportableProperties...>& a,
+    nullptr_t) noexcept;
+
+/// Inequality operator.
+/**
+ * @relates any_executor
+ */
+template <typename... SupportableProperties>
+bool operator!=(nullptr_t,
     const any_executor<SupportableProperties...>& b) noexcept;
 
 } // namespace execution
@@ -1223,10 +1255,30 @@ inline bool operator==(const any_executor<>& a,
   return a.equality_helper(b);
 }
 
+inline bool operator==(const any_executor<>& a, nullptr_t) BOOST_ASIO_NOEXCEPT
+{
+  return !a;
+}
+
+inline bool operator==(nullptr_t, const any_executor<>& b) BOOST_ASIO_NOEXCEPT
+{
+  return !b;
+}
+
 inline bool operator!=(const any_executor<>& a,
     const any_executor<>& b) BOOST_ASIO_NOEXCEPT
 {
   return !a.equality_helper(b);
+}
+
+inline bool operator!=(const any_executor<>& a, nullptr_t) BOOST_ASIO_NOEXCEPT
+{
+  return !!a;
+}
+
+inline bool operator!=(nullptr_t, const any_executor<>& b) BOOST_ASIO_NOEXCEPT
+{
+  return !!b;
 }
 
 #if defined(BOOST_ASIO_HAS_VARIADIC_TEMPLATES)
@@ -1497,10 +1549,38 @@ inline bool operator==(const any_executor<SupportableProperties...>& a,
 }
 
 template <typename... SupportableProperties>
+inline bool operator==(const any_executor<SupportableProperties...>& a,
+    nullptr_t) BOOST_ASIO_NOEXCEPT
+{
+  return !a;
+}
+
+template <typename... SupportableProperties>
+inline bool operator==(nullptr_t,
+    const any_executor<SupportableProperties...>& b) BOOST_ASIO_NOEXCEPT
+{
+  return !b;
+}
+
+template <typename... SupportableProperties>
 inline bool operator!=(const any_executor<SupportableProperties...>& a,
     const any_executor<SupportableProperties...>& b) BOOST_ASIO_NOEXCEPT
 {
   return !a.equality_helper(b);
+}
+
+template <typename... SupportableProperties>
+inline bool operator!=(const any_executor<SupportableProperties...>& a,
+    nullptr_t) BOOST_ASIO_NOEXCEPT
+{
+  return !!a;
+}
+
+template <typename... SupportableProperties>
+inline bool operator!=(nullptr_t,
+    const any_executor<SupportableProperties...>& b) BOOST_ASIO_NOEXCEPT
+{
+  return !!b;
 }
 
 #else // defined(BOOST_ASIO_HAS_VARIADIC_TEMPLATES)
@@ -1850,10 +1930,38 @@ inline bool operator!=(const any_executor<SupportableProperties...>& a,
   } \
   \
   template <BOOST_ASIO_VARIADIC_TPARAMS(n)> \
+  inline bool operator==(const any_executor<BOOST_ASIO_VARIADIC_TARGS(n)>& a, \
+      nullptr_t) BOOST_ASIO_NOEXCEPT \
+  { \
+    return !a; \
+  } \
+  \
+  template <BOOST_ASIO_VARIADIC_TPARAMS(n)> \
+  inline bool operator==(nullptr_t, \
+      const any_executor<BOOST_ASIO_VARIADIC_TARGS(n)>& b) BOOST_ASIO_NOEXCEPT \
+  { \
+    return !b; \
+  } \
+  \
+  template <BOOST_ASIO_VARIADIC_TPARAMS(n)> \
   inline bool operator!=(const any_executor<BOOST_ASIO_VARIADIC_TARGS(n)>& a, \
       const any_executor<BOOST_ASIO_VARIADIC_TARGS(n)>& b) BOOST_ASIO_NOEXCEPT \
   { \
     return !a.equality_helper(b); \
+  } \
+  \
+  template <BOOST_ASIO_VARIADIC_TPARAMS(n)> \
+  inline bool operator!=(const any_executor<BOOST_ASIO_VARIADIC_TARGS(n)>& a, \
+      nullptr_t) BOOST_ASIO_NOEXCEPT \
+  { \
+    return !!a; \
+  } \
+  \
+  template <BOOST_ASIO_VARIADIC_TPARAMS(n)> \
+  inline bool operator!=(nullptr_t, \
+      const any_executor<BOOST_ASIO_VARIADIC_TARGS(n)>& b) BOOST_ASIO_NOEXCEPT \
+  { \
+    return !!b; \
   } \
   /**/
   BOOST_ASIO_VARIADIC_GENERATE(BOOST_ASIO_PRIVATE_ANY_EXECUTOR_DEF)
