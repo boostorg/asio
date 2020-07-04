@@ -29,6 +29,7 @@
 #include <boost/asio/detail/variadic_templates.hpp>
 #include <boost/asio/execution/bad_executor.hpp>
 #include <boost/asio/execution/blocking.hpp>
+#include <boost/asio/execution/execute.hpp>
 #include <boost/asio/execution/executor.hpp>
 #include <boost/asio/prefer.hpp>
 #include <boost/asio/query.hpp>
@@ -851,13 +852,13 @@ protected:
   static void execute_ex(const any_executor_base& ex,
       BOOST_ASIO_MOVE_ARG(function) f)
   {
-    ex.target<Ex>()->execute(BOOST_ASIO_MOVE_CAST(function)(f));
+    execution::execute(*ex.target<Ex>(), BOOST_ASIO_MOVE_CAST(function)(f));
   }
 
   template <typename Ex>
   static void blocking_execute_ex(const any_executor_base& ex, function_view f)
   {
-    ex.target<Ex>()->execute(f);
+    execution::execute(*ex.target<Ex>(), f);
   }
 
   template <typename Ex>
