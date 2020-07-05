@@ -202,7 +202,7 @@ struct call_traits<T, void(Property),
 struct impl
 {
   template <typename T, typename Property>
-  BOOST_ASIO_CONSTEXPR typename enable_if<
+  BOOST_ASIO_NODISCARD BOOST_ASIO_CONSTEXPR typename enable_if<
     call_traits<T, void(Property)>::overload == identity,
     typename call_traits<T, void(Property)>::result_type
   >::type
@@ -216,7 +216,7 @@ struct impl
   }
 
   template <typename T, typename Property>
-  BOOST_ASIO_CONSTEXPR typename enable_if<
+  BOOST_ASIO_NODISCARD BOOST_ASIO_CONSTEXPR typename enable_if<
     call_traits<T, void(Property)>::overload == call_member,
     typename call_traits<T, void(Property)>::result_type
   >::type
@@ -231,7 +231,7 @@ struct impl
   }
 
   template <typename T, typename Property>
-  BOOST_ASIO_CONSTEXPR typename enable_if<
+  BOOST_ASIO_NODISCARD BOOST_ASIO_CONSTEXPR typename enable_if<
     call_traits<T, void(Property)>::overload == call_free,
     typename call_traits<T, void(Property)>::result_type
   >::type

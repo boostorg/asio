@@ -1812,4 +1812,18 @@
 # endif // !defined(BOOST_ASIO_DISABLE_STD_COROUTINE)
 #endif // !defined(BOOST_ASIO_HAS_STD_COROUTINE)
 
+// Compiler support for the the [[nodiscard]] attribute.
+#if !defined(BOOST_ASIO_NODISCARD)
+# if defined(__has_cpp_attribute)
+#  if __has_cpp_attribute(nodiscard)
+#   if !defined(__clang__) || (__cplusplus >= 201703)
+#    define BOOST_ASIO_NODISCARD [[nodiscard]]
+#   endif // !defined(__clang__) || (__cplusplus >= 201703)
+#  endif // __has_cpp_attribute(nodiscard)
+# endif // defined(__has_cpp_attribute)
+#endif // !defined(BOOST_ASIO_NODISCARD)
+#if !defined(BOOST_ASIO_NODISCARD)
+# define BOOST_ASIO_NODISCARD
+#endif // !defined(BOOST_ASIO_NODISCARD)
+
 #endif // BOOST_ASIO_DETAIL_CONFIG_HPP

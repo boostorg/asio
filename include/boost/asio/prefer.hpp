@@ -372,7 +372,7 @@ struct call_traits<T, void(P0, P1, PN BOOST_ASIO_ELLIPSIS),
 struct impl
 {
   template <typename T, typename Property>
-  BOOST_ASIO_CONSTEXPR typename enable_if<
+  BOOST_ASIO_NODISCARD BOOST_ASIO_CONSTEXPR typename enable_if<
     call_traits<T, void(Property)>::overload == identity,
     typename call_traits<T, void(Property)>::result_type
   >::type
@@ -386,7 +386,7 @@ struct impl
   }
 
   template <typename T, typename Property>
-  BOOST_ASIO_CONSTEXPR typename enable_if<
+  BOOST_ASIO_NODISCARD BOOST_ASIO_CONSTEXPR typename enable_if<
     call_traits<T, void(Property)>::overload == call_require_member,
     typename call_traits<T, void(Property)>::result_type
   >::type
@@ -401,7 +401,7 @@ struct impl
   }
 
   template <typename T, typename Property>
-  BOOST_ASIO_CONSTEXPR typename enable_if<
+  BOOST_ASIO_NODISCARD BOOST_ASIO_CONSTEXPR typename enable_if<
     call_traits<T, void(Property)>::overload == call_require_free,
     typename call_traits<T, void(Property)>::result_type
   >::type
@@ -417,7 +417,7 @@ struct impl
   }
 
   template <typename T, typename Property>
-  BOOST_ASIO_CONSTEXPR typename enable_if<
+  BOOST_ASIO_NODISCARD BOOST_ASIO_CONSTEXPR typename enable_if<
     call_traits<T, void(Property)>::overload == call_prefer_member,
     typename call_traits<T, void(Property)>::result_type
   >::type
@@ -432,7 +432,7 @@ struct impl
   }
 
   template <typename T, typename Property>
-  BOOST_ASIO_CONSTEXPR typename enable_if<
+  BOOST_ASIO_NODISCARD BOOST_ASIO_CONSTEXPR typename enable_if<
     call_traits<T, void(Property)>::overload == call_prefer_free,
     typename call_traits<T, void(Property)>::result_type
   >::type
@@ -448,7 +448,7 @@ struct impl
   }
 
   template <typename T, typename P0, typename P1>
-  BOOST_ASIO_CONSTEXPR typename enable_if<
+  BOOST_ASIO_NODISCARD BOOST_ASIO_CONSTEXPR typename enable_if<
     call_traits<T, void(P0, P1)>::overload == two_props,
     typename call_traits<T, void(P0, P1)>::result_type
   >::type
@@ -468,7 +468,7 @@ struct impl
 
   template <typename T, typename P0, typename P1,
     typename BOOST_ASIO_ELLIPSIS PN>
-  BOOST_ASIO_CONSTEXPR typename enable_if<
+  BOOST_ASIO_NODISCARD BOOST_ASIO_CONSTEXPR typename enable_if<
     call_traits<T, void(P0, P1, PN BOOST_ASIO_ELLIPSIS)>::overload == n_props,
     typename call_traits<T, void(P0, P1, PN BOOST_ASIO_ELLIPSIS)>::result_type
   >::type
