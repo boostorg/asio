@@ -39,6 +39,13 @@ struct as_receiver
   {
   }
 
+#if defined(BOOST_ASIO_MSVC) && defined(BOOST_ASIO_HAS_MOVE)
+  as_receiver(as_receiver&& other)
+    : f_(BOOST_ASIO_MOVE_CAST(Function)(other.f_))
+  {
+  }
+#endif // defined(BOOST_ASIO_MSVC) && defined(BOOST_ASIO_HAS_MOVE)
+
   void set_value()
     BOOST_ASIO_NOEXCEPT_IF(noexcept(declval<Function&>()()))
   {
