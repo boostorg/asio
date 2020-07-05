@@ -541,6 +541,7 @@ struct associated_executor<
     detail::read_op<AsyncReadStream, MutableBufferSequence,
       MutableBufferIterator, CompletionCondition, ReadHandler>,
     Executor>
+  : detail::associated_executor_forwarding_base<ReadHandler, Executor>
 {
   typedef typename associated_executor<ReadHandler, Executor>::type type;
 
@@ -821,6 +822,7 @@ struct associated_executor<
     detail::read_dynbuf_v1_op<AsyncReadStream,
       DynamicBuffer_v1, CompletionCondition, ReadHandler>,
     Executor>
+  : detail::associated_executor_forwarding_base<ReadHandler, Executor>
 {
   typedef typename associated_executor<ReadHandler, Executor>::type type;
 
@@ -1143,6 +1145,7 @@ struct associated_executor<
     detail::read_dynbuf_v2_op<AsyncReadStream,
       DynamicBuffer_v2, CompletionCondition, ReadHandler>,
     Executor>
+  : detail::associated_executor_forwarding_base<ReadHandler, Executor>
 {
   typedef typename associated_executor<ReadHandler, Executor>::type type;
 

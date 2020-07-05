@@ -27,18 +27,14 @@ namespace boost {
 namespace asio {
 namespace detail {
 
-template <typename>
-struct associated_executor_check
-{
-  typedef void type;
-};
-
 template <typename T, typename E, typename = void>
 struct associated_executor_impl
 {
+  typedef void asio_associated_executor_is_unspecialised;
+
   typedef E type;
 
-  static type get(const T&, const E& e) BOOST_ASIO_NOEXCEPT
+  static type get(const T&, const E& e = E()) BOOST_ASIO_NOEXCEPT
   {
     return e;
   }
@@ -46,11 +42,11 @@ struct associated_executor_impl
 
 template <typename T, typename E>
 struct associated_executor_impl<T, E,
-  typename associated_executor_check<typename T::executor_type>::type>
+  typename void_type<typename T::executor_type>::type>
 {
   typedef typename T::executor_type type;
 
-  static type get(const T& t, const E&) BOOST_ASIO_NOEXCEPT
+  static type get(const T& t, const E& = E()) BOOST_ASIO_NOEXCEPT
   {
     return t.get_executor();
   }
@@ -79,22 +75,20 @@ struct associated_executor_impl<T, E,
  */
 template <typename T, typename Executor = system_executor>
 struct associated_executor
+#if !defined(GENERATING_DOCUMENTATION)
+  : detail::associated_executor_impl<T, Executor>
+#endif // !defined(GENERATING_DOCUMENTATION)
 {
+#if defined(GENERATING_DOCUMENTATION)
   /// If @c T has a nested type @c executor_type, <tt>T::executor_type</tt>.
   /// Otherwise @c Executor.
-#if defined(GENERATING_DOCUMENTATION)
   typedef see_below type;
-#else // defined(GENERATING_DOCUMENTATION)
-  typedef typename detail::associated_executor_impl<T, Executor>::type type;
-#endif // defined(GENERATING_DOCUMENTATION)
 
   /// If @c T has a nested type @c executor_type, returns
   /// <tt>t.get_executor()</tt>. Otherwise returns @c ex.
   static type get(const T& t,
-      const Executor& ex = Executor()) BOOST_ASIO_NOEXCEPT
-  {
-    return detail::associated_executor_impl<T, Executor>::get(t, ex);
-  }
+      const Executor& ex = Executor()) BOOST_ASIO_NOEXCEPT;
+#endif // defined(GENERATING_DOCUMENTATION)
 };
 
 /// Helper function to obtain an object's associated executor.
@@ -145,6 +139,27 @@ using associated_executor_t = typename associated_executor<T, Executor>::type;
 
 #endif // defined(BOOST_ASIO_HAS_ALIAS_TEMPLATES)
 
+namespace detail {
+
+template <typename T, typename E, typename = void>
+struct associated_executor_forwarding_base
+{
+};
+
+template <typename T, typename E>
+struct associated_executor_forwarding_base<T, E,
+    typename enable_if<
+      is_same<
+        typename associated_executor<T,
+          E>::asio_associated_executor_is_unspecialised,
+        void
+      >::value
+    >::type>
+{
+  typedef void asio_associated_executor_is_unspecialised;
+};
+
+} // namespace detail
 } // namespace asio
 } // namespace boost
 

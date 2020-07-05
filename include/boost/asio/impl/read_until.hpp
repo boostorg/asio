@@ -1039,6 +1039,7 @@ struct associated_executor<
     detail::read_until_delim_op_v1<AsyncReadStream,
       DynamicBuffer_v1, ReadHandler>,
     Executor>
+  : detail::associated_executor_forwarding_base<ReadHandler, Executor>
 {
   typedef typename associated_executor<ReadHandler, Executor>::type type;
 
@@ -1345,6 +1346,7 @@ struct associated_executor<
     detail::read_until_delim_string_op_v1<AsyncReadStream,
       DynamicBuffer_v1, ReadHandler>,
     Executor>
+  : detail::associated_executor_forwarding_base<ReadHandler, Executor>
 {
   typedef typename associated_executor<ReadHandler, Executor>::type type;
 
@@ -1658,6 +1660,7 @@ struct associated_executor<
     detail::read_until_expr_op_v1<AsyncReadStream,
       DynamicBuffer_v1, RegEx, ReadHandler>,
     Executor>
+  : detail::associated_executor_forwarding_base<ReadHandler, Executor>
 {
   typedef typename associated_executor<ReadHandler, Executor>::type type;
 
@@ -1969,6 +1972,7 @@ struct associated_executor<
     detail::read_until_match_op_v1<AsyncReadStream,
       DynamicBuffer_v1, MatchCondition, ReadHandler>,
     Executor>
+  : detail::associated_executor_forwarding_base<ReadHandler, Executor>
 {
   typedef typename associated_executor<ReadHandler, Executor>::type type;
 
@@ -2337,6 +2341,7 @@ struct associated_executor<
     detail::read_until_delim_op_v2<AsyncReadStream,
       DynamicBuffer_v2, ReadHandler>,
     Executor>
+  : detail::associated_executor_forwarding_base<ReadHandler, Executor>
 {
   typedef typename associated_executor<ReadHandler, Executor>::type type;
 
@@ -2649,6 +2654,7 @@ struct associated_executor<
     detail::read_until_delim_string_op_v2<AsyncReadStream,
       DynamicBuffer_v2, ReadHandler>,
     Executor>
+  : detail::associated_executor_forwarding_base<ReadHandler, Executor>
 {
   typedef typename associated_executor<ReadHandler, Executor>::type type;
 
@@ -2970,6 +2976,7 @@ struct associated_executor<
     detail::read_until_expr_op_v2<AsyncReadStream,
       DynamicBuffer_v2, RegEx, ReadHandler>,
     Executor>
+  : detail::associated_executor_forwarding_base<ReadHandler, Executor>
 {
   typedef typename associated_executor<ReadHandler, Executor>::type type;
 
@@ -3286,6 +3293,7 @@ struct associated_executor<
     detail::read_until_match_op_v2<AsyncReadStream,
       DynamicBuffer_v2, MatchCondition, ReadHandler>,
     Executor>
+  : detail::associated_executor_forwarding_base<ReadHandler, Executor>
 {
   typedef typename associated_executor<ReadHandler, Executor>::type type;
 
