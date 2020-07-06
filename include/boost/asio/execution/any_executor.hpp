@@ -516,7 +516,7 @@ public:
     object_fns_->copy(*this, other);
   }
 
-  ~any_executor_base()
+  ~any_executor_base() BOOST_ASIO_NOEXCEPT
   {
     object_fns_->destroy(*this);
   }

@@ -691,7 +691,7 @@ public:
 #endif // defined(BOOST_ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
 
   /// Destructor.
-  ~basic_executor_type()
+  ~basic_executor_type() BOOST_ASIO_NOEXCEPT
   {
     if (Bits & outstanding_work_tracked)
       if (io_context_)
