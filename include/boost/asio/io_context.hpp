@@ -172,7 +172,7 @@ namespace detail {
  * compute the return type of the require call:
  *
  * @code boost::asio::io_context io_context;
- * typename boost::asio::require_result_type<
+ * typename boost::asio::require_result<
  *     boost::asio::io_context::executor_type,
  *     boost::asio::exeution::outstanding_work_t::tracked_t>
  *   work = boost::asio::require(io_context.get_executor(),

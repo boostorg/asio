@@ -747,7 +747,7 @@ void test_require()
   BOOST_ASIO_CHECK((
       boost::asio::execution::is_executor<
         typename boost::asio::decay<
-          typename boost::asio::require_result_type<Executor&, Param>::type
+          typename boost::asio::require_result<Executor&, Param>::type
         >::type
       >::value));
 
@@ -761,7 +761,7 @@ void test_require()
   BOOST_ASIO_CHECK((
       boost::asio::execution::is_executor<
         typename boost::asio::decay<
-          typename boost::asio::require_result_type<const Executor&, Param>::type
+          typename boost::asio::require_result<const Executor&, Param>::type
         >::type
       >::value));
 }

@@ -111,7 +111,7 @@ struct bulk_sender : sender_base
   }
 
   template <typename Receiver>
-  typename connect_result_type<
+  typename connect_result<
       BOOST_ASIO_MOVE_OR_LVALUE_TYPE(typename remove_cvref<Sender>::type),
       typename bulk_receiver_traits<
         Sender, Receiver, Function, Number
@@ -135,7 +135,7 @@ struct bulk_sender : sender_base
   }
 
   template <typename Receiver>
-  typename connect_result_type<
+  typename connect_result<
       const typename remove_cvref<Sender>::type&,
       typename bulk_receiver_traits<
         Sender, Receiver, Function, Number
@@ -220,7 +220,7 @@ struct connect_member<
 {
   BOOST_ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
   BOOST_ASIO_STATIC_CONSTEXPR(bool, is_noexcept = false);
-  typedef typename execution::connect_result_type<
+  typedef typename execution::connect_result<
       BOOST_ASIO_MOVE_OR_LVALUE_TYPE(typename remove_cvref<Sender>::type),
       typename execution::detail::bulk_receiver_traits<
         Sender, Receiver, Function, Number
@@ -244,7 +244,7 @@ struct connect_member<
 {
   BOOST_ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
   BOOST_ASIO_STATIC_CONSTEXPR(bool, is_noexcept = false);
-  typedef typename execution::connect_result_type<
+  typedef typename execution::connect_result<
       const typename remove_cvref<Sender>::type&,
       typename execution::detail::bulk_receiver_traits<
         Sender, Receiver, Function, Number
