@@ -430,11 +430,11 @@
 #   endif // (__cplusplus >= 201703)
 #  endif // defined(__clang__)
 #  if defined(__GNUC__)
-#   if (__GNUC__ >= 5)
+#   if (__GNUC__ >= 6)
 #    if (__cplusplus >= 201402)
 #     define BOOST_ASIO_HAS_VARIABLE_TEMPLATES 1
 #    endif // (__cplusplus >= 201402)
-#   endif // (__GNUC__ >= 5)
+#   endif // (__GNUC__ >= 6)
 #  endif // defined(__GNUC__)
 #  if defined(BOOST_ASIO_MSVC)
 #   if (_MSC_VER >= 1901)
