@@ -1816,9 +1816,9 @@
 #if !defined(BOOST_ASIO_NODISCARD)
 # if defined(__has_cpp_attribute)
 #  if __has_cpp_attribute(nodiscard)
-#   if !defined(__clang__) || (__cplusplus >= 201703)
+#   if (__cplusplus >= 201703)
 #    define BOOST_ASIO_NODISCARD [[nodiscard]]
-#   endif // !defined(__clang__) || (__cplusplus >= 201703)
+#   endif // (__cplusplus >= 201703)
 #  endif // __has_cpp_attribute(nodiscard)
 # endif // defined(__has_cpp_attribute)
 #endif // !defined(BOOST_ASIO_NODISCARD)
