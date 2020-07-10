@@ -453,7 +453,7 @@ public:
   template <typename Property>
   typename enable_if<
     can_query<const Executor&, Property>::value,
-    typename query_result_type<const Executor&, Property>::type
+    typename query_result<const Executor&, Property>::type
   >::type query(const Property& p) const
     BOOST_ASIO_NOEXCEPT_IF((
       is_nothrow_query<const Executor&, Property>::value))
@@ -471,14 +471,14 @@ public:
   typename enable_if<
     can_require<const Executor&, Property>::value,
     adapter<typename decay<
-      typename require_result_type<const Executor&, Property>::type
+      typename require_result<const Executor&, Property>::type
     >::type>
   >::type require(const Property& p) const
     BOOST_ASIO_NOEXCEPT_IF((
       is_nothrow_require<const Executor&, Property>::value))
   {
     return adapter<typename decay<
-      typename require_result_type<const Executor&, Property>::type
+      typename require_result<const Executor&, Property>::type
         >::type>(boost::asio::require(executor_, p));
   }
 
@@ -486,14 +486,14 @@ public:
   typename enable_if<
     can_prefer<const Executor&, Property>::value,
     adapter<typename decay<
-      typename prefer_result_type<const Executor&, Property>::type
+      typename prefer_result<const Executor&, Property>::type
     >::type>
   >::type prefer(const Property& p) const
     BOOST_ASIO_NOEXCEPT_IF((
       is_nothrow_prefer<const Executor&, Property>::value))
   {
     return adapter<typename decay<
-      typename prefer_result_type<const Executor&, Property>::type
+      typename prefer_result<const Executor&, Property>::type
         >::type>(boost::asio::prefer(executor_, p));
   }
 
@@ -997,7 +997,7 @@ struct query_member<
   BOOST_ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
   BOOST_ASIO_STATIC_CONSTEXPR(bool, is_noexcept =
       (is_nothrow_query<Executor, Property>::value));
-  typedef typename query_result_type<Executor, Property>::type result_type;
+  typedef typename query_result<Executor, Property>::type result_type;
 };
 
 #endif // !defined(BOOST_ASIO_HAS_DEDUCED_QUERY_MEMBER_TRAIT)
@@ -1025,7 +1025,7 @@ struct require_member<
   BOOST_ASIO_STATIC_CONSTEXPR(bool, is_noexcept =
       (is_nothrow_require<Executor, Property>::value));
   typedef execution::detail::blocking_adaptation::adapter<typename decay<
-    typename require_result_type<Executor, Property>::type
+    typename require_result<Executor, Property>::type
       >::type> result_type;
 };
 
@@ -1044,7 +1044,7 @@ struct prefer_member<
   BOOST_ASIO_STATIC_CONSTEXPR(bool, is_noexcept =
       (is_nothrow_prefer<Executor, Property>::value));
   typedef execution::detail::blocking_adaptation::adapter<typename decay<
-    typename prefer_result_type<Executor, Property>::type
+    typename prefer_result<Executor, Property>::type
       >::type> result_type;
 };
 

@@ -134,6 +134,7 @@
 # define BOOST_ASIO_MOVE_CAST(type) static_cast<type&&>
 # define BOOST_ASIO_MOVE_CAST2(type1, type2) static_cast<type1, type2&&>
 # define BOOST_ASIO_MOVE_OR_LVALUE(type) static_cast<type&&>
+# define BOOST_ASIO_MOVE_OR_LVALUE_TYPE(type) type
 #endif // defined(BOOST_ASIO_HAS_MOVE) && !defined(BOOST_ASIO_MOVE_CAST)
 
 // If BOOST_ASIO_MOVE_CAST still isn't defined, default to a C++03-compatible
@@ -161,6 +162,7 @@
 # define BOOST_ASIO_MOVE_CAST(type) static_cast<const type&>
 # define BOOST_ASIO_MOVE_CAST2(type1, type2) static_cast<const type1, type2&>
 # define BOOST_ASIO_MOVE_OR_LVALUE(type)
+# define BOOST_ASIO_MOVE_OR_LVALUE_TYPE(type) type&
 #endif // !defined(BOOST_ASIO_MOVE_CAST)
 
 // Support variadic templates on compilers known to allow it.
@@ -265,10 +267,13 @@
 #    define BOOST_ASIO_STATIC_CONSTEXPR_DEFAULT_INIT(type, name) \
       static const type name
 #   endif // (__GNUC__ >= 8)
-#  else // defined(__GNUC__)
+#  elif defined(BOOST_ASIO_MSVC)
+#   define BOOST_ASIO_STATIC_CONSTEXPR_DEFAULT_INIT(type, name) \
+     static const type name
+#  else // defined(BOOST_ASIO_MSVC)
 #   define BOOST_ASIO_STATIC_CONSTEXPR_DEFAULT_INIT(type, name) \
      static constexpr const type name{}
-#  endif // defined(__GNUC__)
+#  endif // defined(BOOST_ASIO_MSVC)
 # else // defined(BOOST_ASIO_HAS_CONSTEXPR)
 #  define BOOST_ASIO_STATIC_CONSTEXPR_DEFAULT_INIT(type, name) \
     static const type name
@@ -425,11 +430,11 @@
 #   endif // (__cplusplus >= 201703)
 #  endif // defined(__clang__)
 #  if defined(__GNUC__)
-#   if (__GNUC__ >= 5)
+#   if (__GNUC__ >= 6)
 #    if (__cplusplus >= 201402)
 #     define BOOST_ASIO_HAS_VARIABLE_TEMPLATES 1
 #    endif // (__cplusplus >= 201402)
-#   endif // (__GNUC__ >= 5)
+#   endif // (__GNUC__ >= 6)
 #  endif // defined(__GNUC__)
 #  if defined(BOOST_ASIO_MSVC)
 #   if (_MSC_VER >= 1901)
@@ -1806,5 +1811,19 @@
 #  endif // defined(__GNUC__)
 # endif // !defined(BOOST_ASIO_DISABLE_STD_COROUTINE)
 #endif // !defined(BOOST_ASIO_HAS_STD_COROUTINE)
+
+// Compiler support for the the [[nodiscard]] attribute.
+#if !defined(BOOST_ASIO_NODISCARD)
+# if defined(__has_cpp_attribute)
+#  if __has_cpp_attribute(nodiscard)
+#   if (__cplusplus >= 201703)
+#    define BOOST_ASIO_NODISCARD [[nodiscard]]
+#   endif // (__cplusplus >= 201703)
+#  endif // __has_cpp_attribute(nodiscard)
+# endif // defined(__has_cpp_attribute)
+#endif // !defined(BOOST_ASIO_NODISCARD)
+#if !defined(BOOST_ASIO_NODISCARD)
+# define BOOST_ASIO_NODISCARD
+#endif // !defined(BOOST_ASIO_NODISCARD)
 
 #endif // BOOST_ASIO_DETAIL_CONFIG_HPP

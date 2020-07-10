@@ -57,22 +57,36 @@ struct possibly_blocking_executor
   }
 };
 
-#if !defined(BOOST_ASIO_HAS_DEDUCED_EXECUTION_IS_EXECUTOR_TRAIT)
-
 namespace boost {
 namespace asio {
-namespace execution {
+namespace traits {
 
-template <>
-struct is_executor<possibly_blocking_executor> : boost::asio::true_type
+#if !defined(BOOST_ASIO_HAS_DEDUCED_EXECUTE_MEMBER_TRAIT)
+
+template <typename F>
+struct execute_member<possibly_blocking_executor, F>
 {
+  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
+  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_noexcept = true);
+  typedef void result_type;
 };
 
-} // namespace execution
+#endif // !defined(BOOST_ASIO_HAS_DEDUCED_EXECUTE_MEMBER_TRAIT)
+
+#if !defined(BOOST_ASIO_HAS_DEDUCED_EQUALITY_COMPARABLE_TRAIT)
+
+template <>
+struct equality_comparable<possibly_blocking_executor>
+{
+  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
+  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_noexcept = true);
+};
+
+#endif // !defined(BOOST_ASIO_HAS_DEDUCED_EQUALITY_COMPARABLE_TRAIT)
+
+} // namespace traits
 } // namespace asio
 } // namespace boost
-
-#endif // !defined(BOOST_ASIO_HAS_DEDUCED_EXECUTION_IS_EXECUTOR_TRAIT)
 
 struct never_blocking_executor
 {
@@ -101,28 +115,34 @@ struct never_blocking_executor
   }
 };
 
-#if !defined(BOOST_ASIO_HAS_DEDUCED_EXECUTION_IS_EXECUTOR_TRAIT)
-
-namespace boost {
-namespace asio {
-namespace execution {
-
-template <>
-struct is_executor<never_blocking_executor> : boost::asio::true_type
-{
-};
-
-} // namespace execution
-} // namespace asio
-} // namespace boost
-
-#endif // !defined(BOOST_ASIO_HAS_DEDUCED_EXECUTION_IS_EXECUTOR_TRAIT)
-
-#if !defined(BOOST_ASIO_HAS_DEDUCED_QUERY_STATIC_CONSTEXPR_MEMBER_TRAIT)
-
 namespace boost {
 namespace asio {
 namespace traits {
+
+#if !defined(BOOST_ASIO_HAS_DEDUCED_EXECUTE_MEMBER_TRAIT)
+
+template <typename F>
+struct execute_member<never_blocking_executor, F>
+{
+  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
+  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_noexcept = true);
+  typedef void result_type;
+};
+
+#endif // !defined(BOOST_ASIO_HAS_DEDUCED_EXECUTE_MEMBER_TRAIT)
+
+#if !defined(BOOST_ASIO_HAS_DEDUCED_EQUALITY_COMPARABLE_TRAIT)
+
+template <>
+struct equality_comparable<never_blocking_executor>
+{
+  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
+  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_noexcept = true);
+};
+
+#endif // !defined(BOOST_ASIO_HAS_DEDUCED_EQUALITY_COMPARABLE_TRAIT)
+
+#if !defined(BOOST_ASIO_HAS_DEDUCED_QUERY_STATIC_CONSTEXPR_MEMBER_TRAIT)
 
 template <typename Param>
 struct query_static_constexpr_member<
@@ -142,11 +162,11 @@ struct query_static_constexpr_member<
   }
 };
 
+#endif // !defined(BOOST_ASIO_HAS_DEDUCED_QUERY_STATIC_CONSTEXPR_MEMBER_TRAIT)
+
 } // namespace traits
 } // namespace asio
 } // namespace boost
-
-#endif // !defined(BOOST_ASIO_HAS_DEDUCED_QUERY_STATIC_CONSTEXPR_MEMBER_TRAIT)
 
 struct either_blocking_executor
 {
@@ -194,28 +214,34 @@ struct either_blocking_executor
   }
 };
 
-#if !defined(BOOST_ASIO_HAS_DEDUCED_EXECUTION_IS_EXECUTOR_TRAIT)
-
-namespace boost {
-namespace asio {
-namespace execution {
-
-template <>
-struct is_executor<either_blocking_executor> : boost::asio::true_type
-{
-};
-
-} // namespace execution
-} // namespace asio
-} // namespace boost
-
-#endif // !defined(BOOST_ASIO_HAS_DEDUCED_EXECUTION_IS_EXECUTOR_TRAIT)
-
-#if !defined(BOOST_ASIO_HAS_DEDUCED_QUERY_MEMBER_TRAIT)
-
 namespace boost {
 namespace asio {
 namespace traits {
+
+#if !defined(BOOST_ASIO_HAS_DEDUCED_EXECUTE_MEMBER_TRAIT)
+
+template <typename F>
+struct execute_member<either_blocking_executor, F>
+{
+  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
+  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_noexcept = true);
+  typedef void result_type;
+};
+
+#endif // !defined(BOOST_ASIO_HAS_DEDUCED_EXECUTE_MEMBER_TRAIT)
+
+#if !defined(BOOST_ASIO_HAS_DEDUCED_EQUALITY_COMPARABLE_TRAIT)
+
+template <>
+struct equality_comparable<either_blocking_executor>
+{
+  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
+  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_noexcept = true);
+};
+
+#endif // !defined(BOOST_ASIO_HAS_DEDUCED_EQUALITY_COMPARABLE_TRAIT)
+
+#if !defined(BOOST_ASIO_HAS_DEDUCED_QUERY_MEMBER_TRAIT)
 
 template <typename Param>
 struct query_member<
@@ -230,17 +256,9 @@ struct query_member<
   typedef execution::blocking_t result_type;
 };
 
-} // namespace traits
-} // namespace asio
-} // namespace boost
-
-#endif // !defined(BOOST_ASIO_HAS_DEDUCED_QUERY_MEMBER_TRAIT)
-
 #if !defined(BOOST_ASIO_HAS_DEDUCED_REQUIRE_MEMBER_TRAIT)
 
-namespace boost {
-namespace asio {
-namespace traits {
+#endif // !defined(BOOST_ASIO_HAS_DEDUCED_QUERY_MEMBER_TRAIT)
 
 template <typename Param>
 struct require_member<
@@ -255,11 +273,11 @@ struct require_member<
   typedef either_blocking_executor result_type;
 };
 
+#endif // !defined(BOOST_ASIO_HAS_DEDUCED_QUERY_MEMBER_TRAIT)
+
 } // namespace traits
 } // namespace asio
 } // namespace boost
-
-#endif // !defined(BOOST_ASIO_HAS_DEDUCED_REQUIRE_MEMBER_TRAIT)
 
 void prefer_only_executor_query_test()
 {

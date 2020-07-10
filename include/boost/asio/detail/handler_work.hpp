@@ -35,6 +35,20 @@ namespace asio {
 class executor;
 class io_context;
 
+namespace execution {
+
+#if defined(BOOST_ASIO_HAS_VARIADIC_TEMPLATES)
+
+template <typename...> class any_executor;
+
+#else // defined(BOOST_ASIO_HAS_VARIADIC_TEMPLATES)
+
+template <typename, typename, typename, typename, typename,
+    typename, typename, typename, typename> class any_executor;
+
+#endif // defined(BOOST_ASIO_HAS_VARIADIC_TEMPLATES)
+
+} // namespace execution
 namespace detail {
 
 template <typename Executor, typename CandidateExecutor = void,
@@ -84,7 +98,7 @@ public:
 
 private:
   typedef typename decay<
-      typename prefer_result_type<Executor,
+      typename prefer_result<Executor,
         execution::outstanding_work_t::tracked_t
       >::type
     >::type executor_type;
@@ -186,6 +200,15 @@ public:
   {
     return false;
   }
+
+  template <typename Function, typename Handler>
+  void dispatch(Function& function, Handler& handler)
+  {
+    // When using a native implementation, I/O completion handlers are
+    // already dispatched according to the execution context's executor's
+    // rules. We can call the function directly.
+    boost_asio_handler_invoke_helpers::invoke(function, handler);
+  }
 };
 
 template <typename Executor, typename IoContext>
@@ -257,26 +280,108 @@ private:
   Executor executor_;
 };
 
-template <typename Handler, typename IoExecutor,
-    typename HandlerExecutor =
-      typename associated_executor<Handler, IoExecutor>::type>
-class handler_work :
-  handler_work_base<IoExecutor>,
-  handler_work_base<HandlerExecutor, IoExecutor>
+template <
+#if defined(BOOST_ASIO_HAS_VARIADIC_TEMPLATES)
+    typename... SupportableProperties,
+#else // defined(BOOST_ASIO_HAS_VARIADIC_TEMPLATES)
+    typename T1, typename T2, typename T3, typename T4, typename T5,
+    typename T6, typename T7, typename T8, typename T9,
+#endif // defined(BOOST_ASIO_HAS_VARIADIC_TEMPLATES)
+    typename IoContext, typename PolymorphicExecutor>
+class handler_work_base<
+#if defined(BOOST_ASIO_HAS_VARIADIC_TEMPLATES)
+    execution::any_executor<SupportableProperties...>,
+#else // defined(BOOST_ASIO_HAS_VARIADIC_TEMPLATES)
+    execution::any_executor<T1, T2, T3, T4, T5, T6, T7, T8, T9>,
+#endif // defined(BOOST_ASIO_HAS_VARIADIC_TEMPLATES)
+    void, IoContext, PolymorphicExecutor>
 {
 public:
+  typedef
+#if defined(BOOST_ASIO_HAS_VARIADIC_TEMPLATES)
+    execution::any_executor<SupportableProperties...>
+#else // defined(BOOST_ASIO_HAS_VARIADIC_TEMPLATES)
+    execution::any_executor<T1, T2, T3, T4, T5, T6, T7, T8, T9>
+#endif // defined(BOOST_ASIO_HAS_VARIADIC_TEMPLATES)
+    executor_type;
+
+  explicit handler_work_base(const executor_type& ex) BOOST_ASIO_NOEXCEPT
+#if !defined(BOOST_ASIO_NO_TYPEID)
+    : executor_(
+        ex.target_type() == typeid(typename IoContext::executor_type)
+          ? executor_type()
+          : boost::asio::prefer(ex, execution::outstanding_work.tracked))
+#else // !defined(BOOST_ASIO_NO_TYPEID)
+    : executor_(boost::asio::prefer(ex, execution::outstanding_work.tracked))
+#endif // !defined(BOOST_ASIO_NO_TYPEID)
+  {
+  }
+
+  handler_work_base(const executor_type& ex,
+      const executor_type& candidate) BOOST_ASIO_NOEXCEPT
+    : executor_(ex != candidate ? ex : executor_type())
+  {
+  }
+
+  template <typename OtherExecutor>
+  handler_work_base(const executor_type& ex,
+      const OtherExecutor&) BOOST_ASIO_NOEXCEPT
+    : executor_(boost::asio::prefer(ex, execution::outstanding_work.tracked))
+  {
+  }
+
+  handler_work_base(const handler_work_base& other) BOOST_ASIO_NOEXCEPT
+    : executor_(other.executor_)
+  {
+  }
+
+#if defined(BOOST_ASIO_HAS_MOVE)
+  handler_work_base(handler_work_base&& other) BOOST_ASIO_NOEXCEPT
+    : executor_(BOOST_ASIO_MOVE_CAST(executor_type)(other.executor_))
+  {
+  }
+#endif // defined(BOOST_ASIO_HAS_MOVE)
+
+  bool owns_work() const BOOST_ASIO_NOEXCEPT
+  {
+    return !!executor_;
+  }
+
+  template <typename Function, typename Handler>
+  void dispatch(Function& function, Handler& handler)
+  {
+    execution::execute(
+        boost::asio::prefer(executor_,
+          execution::blocking.possibly,
+          execution::allocator((get_associated_allocator)(handler))),
+        BOOST_ASIO_MOVE_CAST(Function)(function));
+  }
+
+private:
+  executor_type executor_;
+};
+
+template <typename Handler, typename IoExecutor, typename = void>
+class handler_work :
+  handler_work_base<IoExecutor>,
+  handler_work_base<typename associated_executor<
+      Handler, IoExecutor>::type, IoExecutor>
+{
+public:
+  typedef handler_work_base<IoExecutor> base1_type;
+  typedef handler_work_base<typename associated_executor<
+    Handler, IoExecutor>::type, IoExecutor> base2_type;
+
   handler_work(Handler& handler, const IoExecutor& io_ex) BOOST_ASIO_NOEXCEPT
-    : handler_work_base<IoExecutor>(io_ex),
-      handler_work_base<HandlerExecutor, IoExecutor>(
-          boost::asio::get_associated_executor(handler, io_ex), io_ex)
+    : base1_type(io_ex),
+      base2_type(boost::asio::get_associated_executor(handler, io_ex), io_ex)
   {
   }
 
   template <typename Function>
   void complete(Function& function, Handler& handler)
   {
-    if (!handler_work_base<IoExecutor>::owns_work()
-        && !handler_work_base<HandlerExecutor, IoExecutor>::owns_work())
+    if (!base1_type::owns_work() && !base2_type::owns_work())
     {
       // When using a native implementation, I/O completion handlers are
       // already dispatched according to the execution context's executor's
@@ -285,8 +390,43 @@ public:
     }
     else
     {
-      handler_work_base<HandlerExecutor,
-          IoExecutor>::dispatch(function, handler);
+      base2_type::dispatch(function, handler);
+    }
+  }
+};
+
+template <typename Handler, typename IoExecutor>
+class handler_work<
+    Handler, IoExecutor,
+    typename enable_if<
+      is_same<
+        typename associated_executor<Handler,
+          IoExecutor>::asio_associated_executor_is_unspecialised,
+        void
+      >::value
+    >::type> : handler_work_base<IoExecutor>
+{
+public:
+  typedef handler_work_base<IoExecutor> base1_type;
+
+  handler_work(Handler&, const IoExecutor& io_ex) BOOST_ASIO_NOEXCEPT
+    : base1_type(io_ex)
+  {
+  }
+
+  template <typename Function>
+  void complete(Function& function, Handler& handler)
+  {
+    if (!base1_type::owns_work())
+    {
+      // When using a native implementation, I/O completion handlers are
+      // already dispatched according to the execution context's executor's
+      // rules. We can call the function directly.
+      boost_asio_handler_invoke_helpers::invoke(function, handler);
+    }
+    else
+    {
+      base1_type::dispatch(function, handler);
     }
   }
 };

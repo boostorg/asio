@@ -34,10 +34,17 @@ struct as_receiver
   Function f_;
 
   template <typename F>
-  explicit as_receiver(BOOST_ASIO_MOVE_ARG(F) f)
+  explicit as_receiver(BOOST_ASIO_MOVE_ARG(F) f, int)
     : f_(BOOST_ASIO_MOVE_CAST(F)(f))
   {
   }
+
+#if defined(BOOST_ASIO_MSVC) && defined(BOOST_ASIO_HAS_MOVE)
+  as_receiver(as_receiver&& other)
+    : f_(BOOST_ASIO_MOVE_CAST(Function)(other.f_))
+  {
+  }
+#endif // defined(BOOST_ASIO_MSVC) && defined(BOOST_ASIO_HAS_MOVE)
 
   void set_value()
     BOOST_ASIO_NOEXCEPT_IF(noexcept(declval<Function&>()()))

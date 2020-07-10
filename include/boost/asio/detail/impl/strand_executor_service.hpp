@@ -144,7 +144,7 @@ public:
 
 private:
   typedef typename decay<
-      typename prefer_result_type<
+      typename prefer_result<
         Executor,
         execution::outstanding_work_t::tracked_t
       >::type
@@ -237,7 +237,7 @@ inline void strand_executor_service::execute(const implementation_type& impl,
       can_query<Executor, execution::allocator_t<void> >::value
     >::type*)
 {
-  return strand_executor_service::execute(impl, ex,
+  return strand_executor_service::do_execute(impl, ex,
       BOOST_ASIO_MOVE_CAST(Function)(function),
       boost::asio::query(ex, execution::allocator));
 }
@@ -249,13 +249,13 @@ inline void strand_executor_service::execute(const implementation_type& impl,
       !can_query<Executor, execution::allocator_t<void> >::value
     >::type*)
 {
-  return strand_executor_service::execute(impl, ex,
+  return strand_executor_service::do_execute(impl, ex,
       BOOST_ASIO_MOVE_CAST(Function)(function),
       std::allocator<void>());
 }
 
 template <typename Executor, typename Function, typename Allocator>
-void strand_executor_service::execute(const implementation_type& impl,
+void strand_executor_service::do_execute(const implementation_type& impl,
     Executor& ex, BOOST_ASIO_MOVE_ARG(Function) function, const Allocator& a)
 {
   typedef typename decay<Function>::type function_type;

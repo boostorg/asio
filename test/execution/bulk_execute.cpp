@@ -16,6 +16,7 @@
 // Test that header file is self-contained.
 #include <boost/asio/execution/bulk_execute.hpp>
 
+#include <boost/asio/execution.hpp>
 #include "../unit_test.hpp"
 
 namespace exec = boost::asio::execution;
@@ -156,6 +157,70 @@ struct bulk_execute_free<const free_bulk_execute, F, N>
 } // namespace asio
 } // namespace boost
 
+struct executor
+{
+  executor()
+  {
+  }
+
+  executor(const executor&) BOOST_ASIO_NOEXCEPT
+  {
+  }
+
+#if defined(BOOST_ASIO_HAS_MOVE)
+  executor(executor&&) BOOST_ASIO_NOEXCEPT
+  {
+  }
+#endif // defined(BOOST_ASIO_HAS_MOVE)
+
+  template <typename F>
+  void execute(BOOST_ASIO_MOVE_ARG(F) f) const BOOST_ASIO_NOEXCEPT
+  {
+    typename boost::asio::decay<F>::type tmp(BOOST_ASIO_MOVE_CAST(F)(f));
+    tmp();
+  }
+
+  bool operator==(const executor&) const BOOST_ASIO_NOEXCEPT
+  {
+    return true;
+  }
+
+  bool operator!=(const executor&) const BOOST_ASIO_NOEXCEPT
+  {
+    return false;
+  }
+};
+
+namespace boost {
+namespace asio {
+namespace traits {
+
+#if !defined(BOOST_ASIO_HAS_DEDUCED_EXECUTE_MEMBER_TRAIT)
+
+template <typename F>
+struct execute_member<executor, F>
+{
+  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
+  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_noexcept = true);
+  typedef void result_type;
+};
+
+#endif // !defined(BOOST_ASIO_HAS_DEDUCED_EXECUTE_MEMBER_TRAIT)
+#if !defined(BOOST_ASIO_HAS_DEDUCED_EQUALITY_COMPARABLE_TRAIT)
+
+template <>
+struct equality_comparable<executor>
+{
+  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
+  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_noexcept = true);
+};
+
+#endif // !defined(BOOST_ASIO_HAS_DEDUCED_EQUALITY_COMPARABLE_TRAIT)
+
+} // namespace traits
+} // namespace asio
+} // namespace boost
+
 void test_can_bulk_execute()
 {
   BOOST_ASIO_CONSTEXPR bool b1 = exec::can_bulk_execute<
@@ -182,10 +247,28 @@ void test_can_bulk_execute()
   BOOST_ASIO_CONSTEXPR bool b6 = exec::can_bulk_execute<
       const free_bulk_execute&, exec::invocable_archetype, std::size_t>::value;
   BOOST_ASIO_CHECK(b6 == true);
+
+  BOOST_ASIO_CONSTEXPR bool b7 = exec::can_bulk_execute<
+      executor&, exec::invocable_archetype, std::size_t>::value;
+  BOOST_ASIO_CHECK(b7 == true);
+
+  BOOST_ASIO_CONSTEXPR bool b8 = exec::can_bulk_execute<
+      const executor&, exec::invocable_archetype, std::size_t>::value;
+  BOOST_ASIO_CHECK(b8 == true);
 }
 
 void handler(std::size_t)
 {
+}
+
+void counting_handler(std::size_t)
+{
+  ++call_count;
+}
+
+void completion_handler()
+{
+  ++call_count;
 }
 
 void test_bulk_execute()
@@ -217,6 +300,26 @@ void test_bulk_execute()
   call_count = 0;
   exec::bulk_execute(free_bulk_execute(), handler, 2);
   BOOST_ASIO_CHECK(call_count == 1);
+
+  call_count = 0;
+  executor ex5;
+  exec::execute(
+      exec::bulk_execute(ex5, counting_handler, 10u),
+      completion_handler);
+  BOOST_ASIO_CHECK(call_count == 11);
+
+  call_count = 0;
+  const executor ex6;
+  exec::execute(
+      exec::bulk_execute(ex6, counting_handler, 10u),
+      completion_handler);
+  BOOST_ASIO_CHECK(call_count == 11);
+
+  call_count = 0;
+  exec::execute(
+      exec::bulk_execute(executor(), counting_handler, 10u),
+      completion_handler);
+  BOOST_ASIO_CHECK(call_count == 11);
 }
 
 BOOST_ASIO_TEST_SUITE

@@ -84,12 +84,12 @@ struct is_nothrow_query :
 
 /// A type trait that determines the result type of a @c query expression.
 /**
- * Class template @c query_result_type is a trait that determines the
- * result type of the expression <tt>boost::asio::query(std::declval<T>(),
+ * Class template @c query_result is a trait that determines the result
+ * type of the expression <tt>boost::asio::query(std::declval<T>(),
  * std::declval<Property>())</tt>.
  */
 template <typename T, typename Property>
-struct query_result_type
+struct query_result
 {
   /// The result of the @c query expression.
   typedef automatically_determined type;
@@ -188,7 +188,7 @@ struct call_traits<T, void(Property),
 struct impl
 {
   template <typename T, typename Property>
-  BOOST_ASIO_CONSTEXPR typename enable_if<
+  BOOST_ASIO_NODISCARD BOOST_ASIO_CONSTEXPR typename enable_if<
     call_traits<T, void(Property)>::overload == static_value,
     typename call_traits<T, void(Property)>::result_type
   >::type
@@ -205,7 +205,7 @@ struct impl
   }
 
   template <typename T, typename Property>
-  BOOST_ASIO_CONSTEXPR typename enable_if<
+  BOOST_ASIO_NODISCARD BOOST_ASIO_CONSTEXPR typename enable_if<
     call_traits<T, void(Property)>::overload == call_member,
     typename call_traits<T, void(Property)>::result_type
   >::type
@@ -219,7 +219,7 @@ struct impl
   }
 
   template <typename T, typename Property>
-  BOOST_ASIO_CONSTEXPR typename enable_if<
+  BOOST_ASIO_NODISCARD BOOST_ASIO_CONSTEXPR typename enable_if<
     call_traits<T, void(Property)>::overload == call_free,
     typename call_traits<T, void(Property)>::result_type
   >::type
@@ -284,7 +284,7 @@ constexpr bool is_nothrow_query_v
 #endif // defined(BOOST_ASIO_HAS_VARIABLE_TEMPLATES)
 
 template <typename T, typename Property>
-struct query_result_type
+struct query_result
 {
   typedef typename asio_query_fn::call_traits<
       T, void(Property)>::result_type type;

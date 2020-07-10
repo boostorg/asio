@@ -16,6 +16,7 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include <boost/asio/detail/config.hpp>
+#include <boost/asio/detail/type_traits.hpp>
 #include <boost/asio/associated_executor.hpp>
 #include <boost/asio/associated_allocator.hpp>
 #include <boost/asio/executor_work_guard.hpp>
@@ -30,6 +31,23 @@
 namespace boost {
 namespace asio {
 namespace detail {
+
+template <typename Handler, typename Executor, typename = void>
+struct is_work_dispatcher_required : true_type
+{
+};
+
+template <typename Handler, typename Executor>
+struct is_work_dispatcher_required<Handler, Executor,
+    typename enable_if<
+      is_same<
+        typename associated_executor<Handler,
+          Executor>::asio_associated_executor_is_unspecialised,
+        void
+      >::value
+    >::type> : false_type
+{
+};
 
 template <typename Handler, typename Executor, typename = void>
 class work_dispatcher
@@ -69,7 +87,7 @@ public:
 
 private:
   typedef typename decay<
-      typename prefer_result_type<const Executor&,
+      typename prefer_result<const Executor&,
         execution::outstanding_work_t::tracked_t
       >::type
     >::type work_executor_type;

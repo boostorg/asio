@@ -90,13 +90,13 @@ struct is_nothrow_require_concept :
 /// A type trait that determines the result type of a @c require_concept
 /// expression.
 /**
- * Class template @c require_concept_result_type is a trait that determines the
+ * Class template @c require_concept_result is a trait that determines the
  * result type of the expression
  * <tt>boost::asio::require_concept(std::declval<T>(),
  * std::declval<Property>())</tt>.
  */
 template <typename T, typename Property>
-struct require_concept_result_type
+struct require_concept_result
 {
   /// The result of the @c require_concept expression.
   typedef automatically_determined type;
@@ -202,7 +202,7 @@ struct call_traits<T, void(Property),
 struct impl
 {
   template <typename T, typename Property>
-  BOOST_ASIO_CONSTEXPR typename enable_if<
+  BOOST_ASIO_NODISCARD BOOST_ASIO_CONSTEXPR typename enable_if<
     call_traits<T, void(Property)>::overload == identity,
     typename call_traits<T, void(Property)>::result_type
   >::type
@@ -216,7 +216,7 @@ struct impl
   }
 
   template <typename T, typename Property>
-  BOOST_ASIO_CONSTEXPR typename enable_if<
+  BOOST_ASIO_NODISCARD BOOST_ASIO_CONSTEXPR typename enable_if<
     call_traits<T, void(Property)>::overload == call_member,
     typename call_traits<T, void(Property)>::result_type
   >::type
@@ -231,7 +231,7 @@ struct impl
   }
 
   template <typename T, typename Property>
-  BOOST_ASIO_CONSTEXPR typename enable_if<
+  BOOST_ASIO_NODISCARD BOOST_ASIO_CONSTEXPR typename enable_if<
     call_traits<T, void(Property)>::overload == call_free,
     typename call_traits<T, void(Property)>::result_type
   >::type
@@ -298,7 +298,7 @@ constexpr bool is_nothrow_require_concept_v
 #endif // defined(BOOST_ASIO_HAS_VARIABLE_TEMPLATES)
 
 template <typename T, typename Property>
-struct require_concept_result_type
+struct require_concept_result
 {
   typedef typename asio_require_concept_fn::call_traits<
       T, void(Property)>::result_type type;

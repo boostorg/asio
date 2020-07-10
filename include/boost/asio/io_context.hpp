@@ -172,7 +172,7 @@ namespace detail {
  * compute the return type of the require call:
  *
  * @code boost::asio::io_context io_context;
- * typename boost::asio::require_result_type<
+ * typename boost::asio::require_result<
  *     boost::asio::io_context::executor_type,
  *     boost::asio::exeution::outstanding_work_t::tracked_t>
  *   work = boost::asio::require(io_context.get_executor(),
@@ -691,7 +691,7 @@ public:
 #endif // defined(BOOST_ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
 
   /// Destructor.
-  ~basic_executor_type()
+  ~basic_executor_type() BOOST_ASIO_NOEXCEPT
   {
     if (Bits & outstanding_work_tracked)
       if (io_context_)

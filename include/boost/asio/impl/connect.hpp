@@ -748,6 +748,7 @@ template <typename Protocol, typename Executor, typename EndpointSequence,
 struct associated_executor<
     detail::range_connect_op<Protocol, Executor, EndpointSequence,
       ConnectCondition, RangeConnectHandler>, Executor1>
+  : detail::associated_executor_forwarding_base<RangeConnectHandler, Executor1>
 {
   typedef typename associated_executor<
       RangeConnectHandler, Executor1>::type type;
@@ -790,6 +791,8 @@ struct associated_executor<
     detail::iterator_connect_op<Protocol, Executor,
       Iterator, ConnectCondition, IteratorConnectHandler>,
     Executor1>
+  : detail::associated_executor_forwarding_base<
+      IteratorConnectHandler, Executor1>
 {
   typedef typename associated_executor<
       IteratorConnectHandler, Executor1>::type type;

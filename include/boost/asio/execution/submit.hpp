@@ -428,7 +428,7 @@ constexpr bool is_nothrow_submit_v
 #endif // defined(BOOST_ASIO_HAS_VARIABLE_TEMPLATES)
 
 template <typename S, typename R>
-struct submit_result_type
+struct submit_result
 {
   typedef typename asio_execution_submit_fn::call_traits<
       S, void(R)>::result_type type;
@@ -437,7 +437,7 @@ struct submit_result_type
 namespace detail {
 
 template <typename S, typename R>
-void submit(BOOST_ASIO_MOVE_ARG(S) s, BOOST_ASIO_MOVE_ARG(R) r)
+void submit_helper(BOOST_ASIO_MOVE_ARG(S) s, BOOST_ASIO_MOVE_ARG(R) r)
 {
   execution::submit(BOOST_ASIO_MOVE_CAST(S)(s), BOOST_ASIO_MOVE_CAST(R)(r));
 }
