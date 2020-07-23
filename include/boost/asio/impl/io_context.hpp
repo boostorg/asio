@@ -27,10 +27,10 @@
 
 #include <boost/asio/detail/push_options.hpp>
 
-#if !defined(GENERATING_DOCUMENTATION)
-
 namespace boost {
 namespace asio {
+
+#if !defined(GENERATING_DOCUMENTATION)
 
 template <typename Service>
 inline Service& use_service(io_context& ioc)
@@ -49,23 +49,7 @@ inline detail::io_context_impl& use_service<detail::io_context_impl>(
   return ioc.impl_;
 }
 
-} // namespace asio
-} // namespace boost
-
 #endif // !defined(GENERATING_DOCUMENTATION)
-
-#include <boost/asio/detail/pop_options.hpp>
-
-#if defined(BOOST_ASIO_HAS_IOCP)
-# include <boost/asio/detail/win_iocp_io_context.hpp>
-#else
-# include <boost/asio/detail/scheduler.hpp>
-#endif
-
-#include <boost/asio/detail/push_options.hpp>
-
-namespace boost {
-namespace asio {
 
 inline io_context::executor_type
 io_context::get_executor() BOOST_ASIO_NOEXCEPT

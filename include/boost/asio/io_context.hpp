@@ -36,6 +36,12 @@
 # include <boost/asio/detail/signal_init.hpp>
 #endif
 
+#if defined(BOOST_ASIO_HAS_IOCP)
+# include <boost/asio/detail/win_iocp_io_context.hpp>
+#else
+# include <boost/asio/detail/scheduler.hpp>
+#endif
+
 #include <boost/asio/detail/push_options.hpp>
 
 namespace boost {
@@ -43,10 +49,10 @@ namespace asio {
 
 namespace detail {
 #if defined(BOOST_ASIO_HAS_IOCP)
-  typedef class win_iocp_io_context io_context_impl;
+  typedef win_iocp_io_context io_context_impl;
   class win_iocp_overlapped_ptr;
 #else
-  typedef class scheduler io_context_impl;
+  typedef scheduler io_context_impl;
 #endif
 
   struct io_context_bits
