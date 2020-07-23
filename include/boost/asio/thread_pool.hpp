@@ -169,6 +169,20 @@ public:
   /// The sender type, when this type is used as a scheduler.
   typedef basic_executor_type sender_type;
 
+#if defined(BOOST_ASIO_HAS_DEDUCED_EXECUTION_IS_TYPED_SENDER_TRAIT) \
+  && defined(BOOST_ASIO_HAS_STD_EXCEPTION_PTR)
+  template <
+      template <typename...> class Tuple,
+      template <typename...> class Variant>
+  using value_types = Variant<Tuple<>>;
+
+  template <template <typename...> class Variant>
+  using error_types = Variant<std::exception_ptr>;
+
+  BOOST_ASIO_STATIC_CONSTEXPR(bool, sends_done = true);
+#endif // defined(BOOST_ASIO_HAS_DEDUCED_EXECUTION_IS_TYPED_SENDER_TRAIT)
+       //   && defined(BOOST_ASIO_HAS_STD_EXCEPTION_PTR)
+
   /// Copy construtor.
   basic_executor_type(
       const basic_executor_type& other) BOOST_ASIO_NOEXCEPT
@@ -407,10 +421,19 @@ public:
         integral_constant<bool, (Bits & blocking_always) != 0>());
   }
 
-  /// Schedule function.
+  /// Schedule function. Returns a sender.
   sender_type schedule() const BOOST_ASIO_NOEXCEPT
   {
     return *this;
+  }
+
+  /// Connect function. Returns operation state.
+  template <BOOST_ASIO_EXECUTION_RECEIVER_OF_0 Receiver>
+  execution::detail::as_operation<basic_executor_type, Receiver>
+  connect(BOOST_ASIO_MOVE_ARG(Receiver) r) const
+  {
+    return execution::detail::as_operation<basic_executor_type, Receiver>(
+        *this, BOOST_ASIO_MOVE_CAST(Receiver)(r));
   }
 
 #if !defined(BOOST_ASIO_NO_TS_EXECUTORS)
@@ -590,6 +613,23 @@ struct schedule_member<
 };
 
 #endif // !defined(BOOST_ASIO_HAS_DEDUCED_SCHEDULE_MEMBER_TRAIT)
+
+#if !defined(BOOST_ASIO_HAS_DEDUCED_CONNECT_MEMBER_TRAIT)
+
+template <typename Allocator, unsigned int Bits, typename Receiver>
+struct connect_member<
+    const boost::asio::thread_pool::basic_executor_type<Allocator, Bits>,
+    Receiver
+  >
+{
+  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
+  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_noexcept = false);
+  typedef boost::asio::execution::detail::as_operation<
+      boost::asio::thread_pool::basic_executor_type<Allocator, Bits>,
+      Receiver> result_type;
+};
+
+#endif // !defined(BOOST_ASIO_HAS_DEDUCED_CONNECT_MEMBER_TRAIT)
 
 #if !defined(BOOST_ASIO_HAS_DEDUCED_REQUIRE_MEMBER_TRAIT)
 
