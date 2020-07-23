@@ -408,8 +408,7 @@ protected:
 #if !defined(GENERATING_DOCUMENTATION)
 # if defined(BOOST_ASIO_HAS_STD_COROUTINE)
 
-namespace boost {
-namespace system {
+namespace std {
 
 template <typename T, typename Executor, typename... Args>
 struct coroutine_traits<boost::asio::awaitable<T, Executor>, Args...>
@@ -417,8 +416,7 @@ struct coroutine_traits<boost::asio::awaitable<T, Executor>, Args...>
   typedef boost::asio::detail::awaitable_frame<T, Executor> promise_type;
 };
 
-} // namespace system
-} // namespace boost
+} // namespace std
 
 # else // defined(BOOST_ASIO_HAS_STD_COROUTINE)
 
