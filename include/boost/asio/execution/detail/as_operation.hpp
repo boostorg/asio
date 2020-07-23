@@ -69,7 +69,7 @@ struct as_operation
     {
 #if defined(BOOST_ASIO_HAS_STD_EXCEPTION_PTR)
       execution::set_error(
-          BOOST_ASIO_MOVE_CAST(
+          BOOST_ASIO_MOVE_OR_LVALUE(
             typename remove_cvref<Receiver>::type)(
               receiver_),
           std::current_exception());
