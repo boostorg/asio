@@ -310,12 +310,14 @@ struct mapping_t
       typename enable_if<
         can_query<const Executor&, thread_t>::value
       >::type* = 0)
-#if defined(_MSC_VER) // Visual C++ wants the type to be qualified.
+#if !defined(__clang__) // Clang crashes if noexcept is used here.
+#if defined(BOOST_ASIO_MSVC) // Visual C++ wants the type to be qualified.
     BOOST_ASIO_NOEXCEPT_IF((
       is_nothrow_query<const Executor&, mapping_t<>::thread_t>::value))
-#elif !defined(__clang__) // Clang crashes if noexcept is used here.
+#else // defined(BOOST_ASIO_MSVC)
     BOOST_ASIO_NOEXCEPT_IF((
       is_nothrow_query<const Executor&, thread_t>::value))
+#endif // defined(BOOST_ASIO_MSVC)
 #endif // !defined(__clang__)
   {
     return boost::asio::query(ex, thread_t());
@@ -328,12 +330,14 @@ struct mapping_t
         !can_query<const Executor&, thread_t>::value
           && can_query<const Executor&, new_thread_t>::value
       >::type* = 0)
-#if defined(_MSC_VER) // Visual C++ wants the type to be qualified.
+#if !defined(__clang__) // Clang crashes if noexcept is used here.
+#if defined(BOOST_ASIO_MSVC) // Visual C++ wants the type to be qualified.
     BOOST_ASIO_NOEXCEPT_IF((
       is_nothrow_query<const Executor&, mapping_t<>::new_thread_t>::value))
-#elif !defined(__clang__) // Clang crashes if noexcept is used here.
+#else // defined(BOOST_ASIO_MSVC)
     BOOST_ASIO_NOEXCEPT_IF((
       is_nothrow_query<const Executor&, new_thread_t>::value))
+#endif // defined(BOOST_ASIO_MSVC)
 #endif // !defined(__clang__)
   {
     return boost::asio::query(ex, new_thread_t());
@@ -347,12 +351,14 @@ struct mapping_t
           && !can_query<const Executor&, new_thread_t>::value
           && can_query<const Executor&, other_t>::value
       >::type* = 0)
-#if defined(_MSC_VER) // Visual C++ wants the type to be qualified.
+#if !defined(__clang__) // Clang crashes if noexcept is used here.
+#if defined(BOOST_ASIO_MSVC) // Visual C++ wants the type to be qualified.
     BOOST_ASIO_NOEXCEPT_IF((
       is_nothrow_query<const Executor&, mapping_t<>::other_t>::value))
-#elif !defined(__clang__) // Clang crashes if noexcept is used here.
+#else // defined(BOOST_ASIO_MSVC)
     BOOST_ASIO_NOEXCEPT_IF((
       is_nothrow_query<const Executor&, other_t>::value))
+#endif // defined(BOOST_ASIO_MSVC)
 #endif // !defined(__clang__)
   {
     return boost::asio::query(ex, other_t());

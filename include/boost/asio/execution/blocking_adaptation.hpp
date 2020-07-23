@@ -271,13 +271,15 @@ struct blocking_adaptation_t
       typename enable_if<
         can_query<const Executor&, disallowed_t>::value
       >::type* = 0)
-#if defined(_MSC_VER) // Visual C++ wants the type to be qualified.
+#if !defined(__clang__) // Clang crashes if noexcept is used here.
+#if defined(BOOST_ASIO_MSVC) // Visual C++ wants the type to be qualified.
     BOOST_ASIO_NOEXCEPT_IF((
       is_nothrow_query<const Executor&,
         blocking_adaptation_t<>::disallowed_t>::value))
-#elif !defined(__clang__) // Clang crashes if noexcept is used here.
+#else // defined(BOOST_ASIO_MSVC)
     BOOST_ASIO_NOEXCEPT_IF((
       is_nothrow_query<const Executor&, disallowed_t>::value))
+#endif // defined(BOOST_ASIO_MSVC)
 #endif // !defined(__clang__)
   {
     return boost::asio::query(ex, disallowed_t());
@@ -290,13 +292,15 @@ struct blocking_adaptation_t
         !can_query<const Executor&, disallowed_t>::value
           && can_query<const Executor&, allowed_t>::value
       >::type* = 0)
-#if defined(_MSC_VER) // Visual C++ wants the type to be qualified.
+#if !defined(__clang__) // Clang crashes if noexcept is used here.
+#if defined(BOOST_ASIO_MSVC) // Visual C++ wants the type to be qualified.
     BOOST_ASIO_NOEXCEPT_IF((
       is_nothrow_query<const Executor&,
         blocking_adaptation_t<>::allowed_t>::value))
-#elif !defined(__clang__) // Clang crashes if noexcept is used here.
+#else // defined(BOOST_ASIO_MSVC)
     BOOST_ASIO_NOEXCEPT_IF((
       is_nothrow_query<const Executor&, allowed_t>::value))
+#endif // defined(BOOST_ASIO_MSVC)
 #endif // !defined(__clang__)
   {
     return boost::asio::query(ex, allowed_t());
