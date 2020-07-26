@@ -715,6 +715,15 @@ public:
 #endif // defined(BOOST_ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
 
   /// Obtain an executor with the @c blocking.possibly property.
+  /**
+   * Do not call this function directly. It is intended for use with the
+   * boost::asio::require customisation point.
+   *
+   * For example:
+   * @code auto ex1 = my_io_context.get_executor();
+   * auto ex2 = boost::asio::require(ex1,
+   *     boost::asio::execution::blocking.possibly); @endcode
+   */
   BOOST_ASIO_CONSTEXPR basic_executor_type require(
       execution::blocking_t::possibly_t) const
   {
@@ -723,6 +732,15 @@ public:
   }
 
   /// Obtain an executor with the @c blocking.never property.
+  /**
+   * Do not call this function directly. It is intended for use with the
+   * boost::asio::require customisation point.
+   *
+   * For example:
+   * @code auto ex1 = my_io_context.get_executor();
+   * auto ex2 = boost::asio::require(ex1,
+   *     boost::asio::execution::blocking.never); @endcode
+   */
   BOOST_ASIO_CONSTEXPR basic_executor_type require(
       execution::blocking_t::never_t) const
   {
@@ -731,6 +749,15 @@ public:
   }
 
   /// Obtain an executor with the @c relationship.fork property.
+  /**
+   * Do not call this function directly. It is intended for use with the
+   * boost::asio::require customisation point.
+   *
+   * For example:
+   * @code auto ex1 = my_io_context.get_executor();
+   * auto ex2 = boost::asio::require(ex1,
+   *     boost::asio::execution::relationship.fork); @endcode
+   */
   BOOST_ASIO_CONSTEXPR basic_executor_type require(
       execution::relationship_t::fork_t) const
   {
@@ -739,6 +766,15 @@ public:
   }
 
   /// Obtain an executor with the @c relationship.continuation property.
+  /**
+   * Do not call this function directly. It is intended for use with the
+   * boost::asio::require customisation point.
+   *
+   * For example:
+   * @code auto ex1 = my_io_context.get_executor();
+   * auto ex2 = boost::asio::require(ex1,
+   *     boost::asio::execution::relationship.continuation); @endcode
+   */
   BOOST_ASIO_CONSTEXPR basic_executor_type require(
       execution::relationship_t::continuation_t) const
   {
@@ -747,6 +783,15 @@ public:
   }
 
   /// Obtain an executor with the @c outstanding_work.tracked property.
+  /**
+   * Do not call this function directly. It is intended for use with the
+   * boost::asio::require customisation point.
+   *
+   * For example:
+   * @code auto ex1 = my_io_context.get_executor();
+   * auto ex2 = boost::asio::require(ex1,
+   *     boost::asio::execution::outstanding_work.tracked); @endcode
+   */
   BOOST_ASIO_CONSTEXPR basic_executor_type<Allocator,
       BOOST_ASIO_UNSPECIFIED(Bits | outstanding_work_tracked)>
   require(execution::outstanding_work_t::tracked_t) const
@@ -756,6 +801,15 @@ public:
   }
 
   /// Obtain an executor with the @c outstanding_work.untracked property.
+  /**
+   * Do not call this function directly. It is intended for use with the
+   * boost::asio::require customisation point.
+   *
+   * For example:
+   * @code auto ex1 = my_io_context.get_executor();
+   * auto ex2 = boost::asio::require(ex1,
+   *     boost::asio::execution::outstanding_work.untracked); @endcode
+   */
   BOOST_ASIO_CONSTEXPR basic_executor_type<Allocator,
       BOOST_ASIO_UNSPECIFIED(Bits & ~outstanding_work_tracked)>
   require(execution::outstanding_work_t::untracked_t) const
@@ -765,6 +819,15 @@ public:
   }
 
   /// Obtain an executor with the specified @c allocator property.
+  /**
+   * Do not call this function directly. It is intended for use with the
+   * boost::asio::require customisation point.
+   *
+   * For example:
+   * @code auto ex1 = my_io_context.get_executor();
+   * auto ex2 = boost::asio::require(ex1,
+   *     boost::asio::execution::allocator(my_allocator)); @endcode
+   */
   template <typename OtherAllocator>
   BOOST_ASIO_CONSTEXPR basic_executor_type<OtherAllocator, Bits>
   require(execution::allocator_t<OtherAllocator> a) const
@@ -774,6 +837,15 @@ public:
   }
 
   /// Obtain an executor with the default @c allocator property.
+  /**
+   * Do not call this function directly. It is intended for use with the
+   * boost::asio::require customisation point.
+   *
+   * For example:
+   * @code auto ex1 = my_io_context.get_executor();
+   * auto ex2 = boost::asio::require(ex1,
+   *     boost::asio::execution::allocator); @endcode
+   */
   BOOST_ASIO_CONSTEXPR basic_executor_type<std::allocator<void>, Bits>
   require(execution::allocator_t<void>) const
   {
@@ -782,6 +854,16 @@ public:
   }
 
   /// Query the current value of the @c mapping property.
+  /**
+   * Do not call this function directly. It is intended for use with the
+   * boost::asio::query customisation point.
+   *
+   * For example:
+   * @code auto ex = my_io_context.get_executor();
+   * if (boost::asio::query(ex, boost::asio::execution::mapping)
+   *       == boost::asio::execution::mapping.thread)
+   *   ... @endcode
+   */
   static BOOST_ASIO_CONSTEXPR execution::mapping_t query(
       execution::mapping_t) BOOST_ASIO_NOEXCEPT
   {
@@ -789,12 +871,31 @@ public:
   }
 
   /// Query the current value of the @c context property.
+  /**
+   * Do not call this function directly. It is intended for use with the
+   * boost::asio::query customisation point.
+   *
+   * For example:
+   * @code auto ex = my_io_context.get_executor();
+   * boost::asio::io_context& ctx = boost::asio::query(
+   *     ex, boost::asio::execution::context); @endcode
+   */
   io_context& query(execution::context_t) const BOOST_ASIO_NOEXCEPT
   {
     return *io_context_;
   }
 
   /// Query the current value of the @c blocking property.
+  /**
+   * Do not call this function directly. It is intended for use with the
+   * boost::asio::query customisation point.
+   *
+   * For example:
+   * @code auto ex = my_io_context.get_executor();
+   * if (boost::asio::query(ex, boost::asio::execution::blocking)
+   *       == boost::asio::execution::blocking.always)
+   *   ... @endcode
+   */
   BOOST_ASIO_CONSTEXPR execution::blocking_t query(
       execution::blocking_t) const BOOST_ASIO_NOEXCEPT
   {
@@ -804,6 +905,16 @@ public:
   }
 
   /// Query the current value of the @c relationship property.
+  /**
+   * Do not call this function directly. It is intended for use with the
+   * boost::asio::query customisation point.
+   *
+   * For example:
+   * @code auto ex = my_io_context.get_executor();
+   * if (boost::asio::query(ex, boost::asio::execution::relationship)
+   *       == boost::asio::execution::relationship.continuation)
+   *   ... @endcode
+   */
   BOOST_ASIO_CONSTEXPR execution::relationship_t query(
       execution::relationship_t) const BOOST_ASIO_NOEXCEPT
   {
@@ -813,6 +924,16 @@ public:
   }
 
   /// Query the current value of the @c outstanding_work property.
+  /**
+   * Do not call this function directly. It is intended for use with the
+   * boost::asio::query customisation point.
+   *
+   * For example:
+   * @code auto ex = my_io_context.get_executor();
+   * if (boost::asio::query(ex, boost::asio::execution::outstanding_work)
+   *       == boost::asio::execution::outstanding_work.tracked)
+   *   ... @endcode
+   */
   static BOOST_ASIO_CONSTEXPR execution::outstanding_work_t query(
       execution::outstanding_work_t) BOOST_ASIO_NOEXCEPT
   {
@@ -822,6 +943,15 @@ public:
   }
 
   /// Query the current value of the @c allocator property.
+  /**
+   * Do not call this function directly. It is intended for use with the
+   * boost::asio::query customisation point.
+   *
+   * For example:
+   * @code auto ex = my_io_context.get_executor();
+   * auto alloc = boost::asio::query(ex,
+   *     boost::asio::execution::allocator); @endcode
+   */
   template <typename OtherAllocator>
   BOOST_ASIO_CONSTEXPR Allocator query(
       execution::allocator_t<OtherAllocator>) const BOOST_ASIO_NOEXCEPT
@@ -830,6 +960,15 @@ public:
   }
 
   /// Query the current value of the @c allocator property.
+  /**
+   * Do not call this function directly. It is intended for use with the
+   * boost::asio::query customisation point.
+   *
+   * For example:
+   * @code auto ex = my_io_context.get_executor();
+   * auto alloc = boost::asio::query(ex,
+   *     boost::asio::execution::allocator); @endcode
+   */
   BOOST_ASIO_CONSTEXPR Allocator query(
       execution::allocator_t<void>) const BOOST_ASIO_NOEXCEPT
   {
@@ -868,6 +1007,14 @@ public:
   }
 
   /// Execution function.
+  /**
+   * Do not call this function directly. It is intended for use with the
+   * execution::execute customisation point.
+   *
+   * For example:
+   * @code auto ex = my_io_context.get_executor();
+   * execution::execute(ex, my_function_object); @endcode
+   */
   template <typename Function>
   void execute(BOOST_ASIO_MOVE_ARG(Function) f) const;
 
