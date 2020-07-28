@@ -6222,17 +6222,6 @@ Provides datagram-oriented socket functionality.
 
 ]
 
-[heading Protected Data Members]
-[table
-  [[Name][Description]]
-
-  [
-    [[link boost_asio.reference.basic_datagram_socket.impl_ [*impl_]]]
-    []
-  ]
-
-]
-
 The [link boost_asio.reference.basic_datagram_socket `basic_datagram_socket`] class template provides asynchronous and blocking datagram-oriented socket functionality.
 
 
@@ -8567,21 +8556,6 @@ Getting the value of the SOL\_SOCKET/SO\_KEEPALIVE option:
 
 [endsect]
 
-
-[section:impl_ basic_datagram_socket::impl_]
-
-
-['Inherited from basic_socket.]
-
-[indexterm2 boost_asio.indexterm.basic_datagram_socket.impl_..impl_..basic_datagram_socket] 
-
-  detail::io_object_impl< detail::reactive_socket_service< Protocol >, Executor > impl_;
-
-
-
-[endsect]
-
-
 [section:io_control basic_datagram_socket::io_control]
 
 [indexterm2 boost_asio.indexterm.basic_datagram_socket.io_control..io_control..basic_datagram_socket] 
@@ -9402,17 +9376,6 @@ A [link boost_asio.reference.basic_socket `basic_socket`] is always the lowest l
   [
     [[link boost_asio.reference.basic_socket.message_peek [*message_peek]] [static]]
     [Peek at incoming data without removing it from the input queue. ]
-  ]
-
-]
-
-[heading Protected Data Members]
-[table
-  [[Name][Description]]
-
-  [
-    [[link boost_asio.reference.basic_socket.impl_ [*impl_]]]
-    []
   ]
 
 ]
@@ -12524,17 +12487,6 @@ The socket type when rebound to the specified executor.
 
 ]
 
-[heading Protected Data Members]
-[table
-  [[Name][Description]]
-
-  [
-    [[link boost_asio.reference.basic_datagram_socket.impl_ [*impl_]]]
-    []
-  ]
-
-]
-
 The [link boost_asio.reference.basic_datagram_socket `basic_datagram_socket`] class template provides asynchronous and blocking datagram-oriented socket functionality.
 
 
@@ -14972,17 +14924,6 @@ Provides raw-oriented socket functionality.
 
 ]
 
-[heading Protected Data Members]
-[table
-  [[Name][Description]]
-
-  [
-    [[link boost_asio.reference.basic_raw_socket.impl_ [*impl_]]]
-    []
-  ]
-
-]
-
 The [link boost_asio.reference.basic_raw_socket `basic_raw_socket`] class template provides asynchronous and blocking raw-oriented socket functionality.
 
 
@@ -17317,21 +17258,6 @@ Getting the value of the SOL\_SOCKET/SO\_KEEPALIVE option:
 
 [endsect]
 
-
-[section:impl_ basic_raw_socket::impl_]
-
-
-['Inherited from basic_socket.]
-
-[indexterm2 boost_asio.indexterm.basic_raw_socket.impl_..impl_..basic_raw_socket] 
-
-  detail::io_object_impl< detail::reactive_socket_service< Protocol >, Executor > impl_;
-
-
-
-[endsect]
-
-
 [section:io_control basic_raw_socket::io_control]
 
 [indexterm2 boost_asio.indexterm.basic_raw_socket.io_control..io_control..basic_raw_socket] 
@@ -18152,17 +18078,6 @@ A [link boost_asio.reference.basic_socket `basic_socket`] is always the lowest l
   [
     [[link boost_asio.reference.basic_socket.message_peek [*message_peek]] [static]]
     [Peek at incoming data without removing it from the input queue. ]
-  ]
-
-]
-
-[heading Protected Data Members]
-[table
-  [[Name][Description]]
-
-  [
-    [[link boost_asio.reference.basic_socket.impl_ [*impl_]]]
-    []
   ]
 
 ]
@@ -21274,17 +21189,6 @@ The socket type when rebound to the specified executor.
 
 ]
 
-[heading Protected Data Members]
-[table
-  [[Name][Description]]
-
-  [
-    [[link boost_asio.reference.basic_raw_socket.impl_ [*impl_]]]
-    []
-  ]
-
-]
-
 The [link boost_asio.reference.basic_raw_socket `basic_raw_socket`] class template provides asynchronous and blocking raw-oriented socket functionality.
 
 
@@ -21696,17 +21600,6 @@ Provides sequenced packet socket functionality.
   [
     [[link boost_asio.reference.basic_seq_packet_socket.message_peek [*message_peek]] [static]]
     [Peek at incoming data without removing it from the input queue. ]
-  ]
-
-]
-
-[heading Protected Data Members]
-[table
-  [[Name][Description]]
-
-  [
-    [[link boost_asio.reference.basic_seq_packet_socket.impl_ [*impl_]]]
-    []
   ]
 
 ]
@@ -23714,21 +23607,6 @@ Getting the value of the SOL\_SOCKET/SO\_KEEPALIVE option:
 
 [endsect]
 
-
-[section:impl_ basic_seq_packet_socket::impl_]
-
-
-['Inherited from basic_socket.]
-
-[indexterm2 boost_asio.indexterm.basic_seq_packet_socket.impl_..impl_..basic_seq_packet_socket] 
-
-  detail::io_object_impl< detail::reactive_socket_service< Protocol >, Executor > impl_;
-
-
-
-[endsect]
-
-
 [section:io_control basic_seq_packet_socket::io_control]
 
 [indexterm2 boost_asio.indexterm.basic_seq_packet_socket.io_control..io_control..basic_seq_packet_socket] 
@@ -24549,17 +24427,6 @@ A [link boost_asio.reference.basic_socket `basic_socket`] is always the lowest l
   [
     [[link boost_asio.reference.basic_socket.message_peek [*message_peek]] [static]]
     [Peek at incoming data without removing it from the input queue. ]
-  ]
-
-]
-
-[heading Protected Data Members]
-[table
-  [[Name][Description]]
-
-  [
-    [[link boost_asio.reference.basic_socket.impl_ [*impl_]]]
-    []
   ]
 
 ]
@@ -27228,17 +27095,6 @@ The socket type when rebound to the specified executor.
   [
     [[link boost_asio.reference.basic_seq_packet_socket.message_peek [*message_peek]] [static]]
     [Peek at incoming data without removing it from the input queue. ]
-  ]
-
-]
-
-[heading Protected Data Members]
-[table
-  [[Name][Description]]
-
-  [
-    [[link boost_asio.reference.basic_seq_packet_socket.impl_ [*impl_]]]
-    []
   ]
 
 ]
@@ -30920,17 +30776,6 @@ Provides socket functionality.
 
 ]
 
-[heading Protected Data Members]
-[table
-  [[Name][Description]]
-
-  [
-    [[link boost_asio.reference.basic_socket.impl_ [*impl_]]]
-    []
-  ]
-
-]
-
 The [link boost_asio.reference.basic_socket `basic_socket`] class template provides functionality that is common to both stream-oriented and datagram-oriented sockets.
 
 
@@ -32680,18 +32525,6 @@ Getting the value of the SOL\_SOCKET/SO\_KEEPALIVE option:
 
 [endsect]
 
-
-[section:impl_ basic_socket::impl_]
-
-[indexterm2 boost_asio.indexterm.basic_socket.impl_..impl_..basic_socket] 
-
-  detail::io_object_impl< detail::reactive_socket_service< Protocol >, Executor > impl_;
-
-
-
-[endsect]
-
-
 [section:io_control basic_socket::io_control]
 
 [indexterm2 boost_asio.indexterm.basic_socket.io_control..io_control..basic_socket] 
@@ -33488,17 +33321,6 @@ A [link boost_asio.reference.basic_socket `basic_socket`] is always the lowest l
   [
     [[link boost_asio.reference.basic_socket.message_peek [*message_peek]] [static]]
     [Peek at incoming data without removing it from the input queue. ]
-  ]
-
-]
-
-[heading Protected Data Members]
-[table
-  [[Name][Description]]
-
-  [
-    [[link boost_asio.reference.basic_socket.impl_ [*impl_]]]
-    []
   ]
 
 ]
@@ -35753,17 +35575,6 @@ The socket type when rebound to the specified executor.
   [
     [[link boost_asio.reference.basic_socket.message_peek [*message_peek]] [static]]
     [Peek at incoming data without removing it from the input queue. ]
-  ]
-
-]
-
-[heading Protected Data Members]
-[table
-  [[Name][Description]]
-
-  [
-    [[link boost_asio.reference.basic_socket.impl_ [*impl_]]]
-    []
   ]
 
 ]
@@ -43403,17 +43214,6 @@ Provides stream-oriented socket functionality.
 
 ]
 
-[heading Protected Data Members]
-[table
-  [[Name][Description]]
-
-  [
-    [[link boost_asio.reference.basic_stream_socket.impl_ [*impl_]]]
-    []
-  ]
-
-]
-
 The [link boost_asio.reference.basic_stream_socket `basic_stream_socket`] class template provides asynchronous and blocking stream-oriented socket functionality.
 
 
@@ -45619,21 +45419,6 @@ Getting the value of the SOL\_SOCKET/SO\_KEEPALIVE option:
 
 [endsect]
 
-
-[section:impl_ basic_stream_socket::impl_]
-
-
-['Inherited from basic_socket.]
-
-[indexterm2 boost_asio.indexterm.basic_stream_socket.impl_..impl_..basic_stream_socket] 
-
-  detail::io_object_impl< detail::reactive_socket_service< Protocol >, Executor > impl_;
-
-
-
-[endsect]
-
-
 [section:io_control basic_stream_socket::io_control]
 
 [indexterm2 boost_asio.indexterm.basic_stream_socket.io_control..io_control..basic_stream_socket] 
@@ -46454,17 +46239,6 @@ A [link boost_asio.reference.basic_socket `basic_socket`] is always the lowest l
   [
     [[link boost_asio.reference.basic_socket.message_peek [*message_peek]] [static]]
     [Peek at incoming data without removing it from the input queue. ]
-  ]
-
-]
-
-[heading Protected Data Members]
-[table
-  [[Name][Description]]
-
-  [
-    [[link boost_asio.reference.basic_socket.impl_ [*impl_]]]
-    []
   ]
 
 ]
@@ -49470,17 +49244,6 @@ The socket type when rebound to the specified executor.
   [
     [[link boost_asio.reference.basic_stream_socket.message_peek [*message_peek]] [static]]
     [Peek at incoming data without removing it from the input queue. ]
-  ]
-
-]
-
-[heading Protected Data Members]
-[table
-  [[Name][Description]]
-
-  [
-    [[link boost_asio.reference.basic_stream_socket.impl_ [*impl_]]]
-    []
   ]
 
 ]
@@ -75426,17 +75189,6 @@ The generic socket type.
 
 ]
 
-[heading Protected Data Members]
-[table
-  [[Name][Description]]
-
-  [
-    [[link boost_asio.reference.basic_datagram_socket.impl_ [*impl_]]]
-    []
-  ]
-
-]
-
 The [link boost_asio.reference.basic_datagram_socket `basic_datagram_socket`] class template provides asynchronous and blocking datagram-oriented socket functionality.
 
 
@@ -76268,17 +76020,6 @@ The generic socket type.
 
 ]
 
-[heading Protected Data Members]
-[table
-  [[Name][Description]]
-
-  [
-    [[link boost_asio.reference.basic_raw_socket.impl_ [*impl_]]]
-    []
-  ]
-
-]
-
 The [link boost_asio.reference.basic_raw_socket `basic_raw_socket`] class template provides asynchronous and blocking raw-oriented socket functionality.
 
 
@@ -77083,17 +76824,6 @@ The generic socket type.
   [
     [[link boost_asio.reference.basic_seq_packet_socket.message_peek [*message_peek]] [static]]
     [Peek at incoming data without removing it from the input queue. ]
-  ]
-
-]
-
-[heading Protected Data Members]
-[table
-  [[Name][Description]]
-
-  [
-    [[link boost_asio.reference.basic_seq_packet_socket.impl_ [*impl_]]]
-    []
   ]
 
 ]
@@ -78013,17 +77743,6 @@ The generic socket type.
   [
     [[link boost_asio.reference.basic_stream_socket.message_peek [*message_peek]] [static]]
     [Peek at incoming data without removing it from the input queue. ]
-  ]
-
-]
-
-[heading Protected Data Members]
-[table
-  [[Name][Description]]
-
-  [
-    [[link boost_asio.reference.basic_stream_socket.impl_ [*impl_]]]
-    []
   ]
 
 ]
@@ -95613,17 +95332,6 @@ The ICMP socket type.
 
 ]
 
-[heading Protected Data Members]
-[table
-  [[Name][Description]]
-
-  [
-    [[link boost_asio.reference.basic_raw_socket.impl_ [*impl_]]]
-    []
-  ]
-
-]
-
 The [link boost_asio.reference.basic_raw_socket `basic_raw_socket`] class template provides asynchronous and blocking raw-oriented socket functionality.
 
 
@@ -99003,17 +98711,6 @@ The TCP socket type.
 
 ]
 
-[heading Protected Data Members]
-[table
-  [[Name][Description]]
-
-  [
-    [[link boost_asio.reference.basic_stream_socket.impl_ [*impl_]]]
-    []
-  ]
-
-]
-
 The [link boost_asio.reference.basic_stream_socket `basic_stream_socket`] class template provides asynchronous and blocking stream-oriented socket functionality.
 
 
@@ -100009,17 +99706,6 @@ The UDP socket type.
   [
     [[link boost_asio.reference.basic_datagram_socket.message_peek [*message_peek]] [static]]
     [Peek at incoming data without removing it from the input queue. ]
-  ]
-
-]
-
-[heading Protected Data Members]
-[table
-  [[Name][Description]]
-
-  [
-    [[link boost_asio.reference.basic_datagram_socket.impl_ [*impl_]]]
-    []
   ]
 
 ]
@@ -102000,17 +101686,6 @@ The UNIX domain socket type.
 
 ]
 
-[heading Protected Data Members]
-[table
-  [[Name][Description]]
-
-  [
-    [[link boost_asio.reference.basic_datagram_socket.impl_ [*impl_]]]
-    []
-  ]
-
-]
-
 The [link boost_asio.reference.basic_datagram_socket `basic_datagram_socket`] class template provides asynchronous and blocking datagram-oriented socket functionality.
 
 
@@ -103237,17 +102912,6 @@ The UNIX domain socket type.
   [
     [[link boost_asio.reference.basic_stream_socket.message_peek [*message_peek]] [static]]
     [Peek at incoming data without removing it from the input queue. ]
-  ]
-
-]
-
-[heading Protected Data Members]
-[table
-  [[Name][Description]]
-
-  [
-    [[link boost_asio.reference.basic_stream_socket.impl_ [*impl_]]]
-    []
   ]
 
 ]
@@ -104651,17 +104315,6 @@ Provides POSIX descriptor functionality.
   
 ]
 
-[heading Protected Data Members]
-[table
-  [[Name][Description]]
-
-  [
-    [[link boost_asio.reference.posix__basic_descriptor.impl_ [*impl_]]]
-    []
-  ]
-
-]
-
 The [link boost_asio.reference.posix__basic_descriptor `posix::basic_descriptor`] class template provides the ability to wrap a POSIX descriptor.
 
 
@@ -105239,18 +104892,6 @@ Get the executor associated with the object.
 [endsect]
 
 
-
-[section:impl_ posix::basic_descriptor::impl_]
-
-[indexterm2 boost_asio.indexterm.posix__basic_descriptor.impl_..impl_..posix::basic_descriptor] 
-
-  detail::io_object_impl< detail::reactive_descriptor_service, Executor > impl_;
-
-
-
-[endsect]
-
-
 [section:io_control posix::basic_descriptor::io_control]
 
 [indexterm2 boost_asio.indexterm.posix__basic_descriptor.io_control..io_control..posix::basic_descriptor] 
@@ -105618,17 +105259,6 @@ A descriptor is always the lowest layer.
     [Protected destructor to prevent deletion through this type. ]
   ]
   
-]
-
-[heading Protected Data Members]
-[table
-  [[Name][Description]]
-
-  [
-    [[link boost_asio.reference.posix__basic_descriptor.impl_ [*impl_]]]
-    []
-  ]
-
 ]
 
 The [link boost_asio.reference.posix__basic_descriptor `posix::basic_descriptor`] class template provides the ability to wrap a POSIX descriptor.
@@ -106347,17 +105977,6 @@ The descriptor type when rebound to the specified executor.
   
 ]
 
-[heading Protected Data Members]
-[table
-  [[Name][Description]]
-
-  [
-    [[link boost_asio.reference.posix__basic_descriptor.impl_ [*impl_]]]
-    []
-  ]
-
-]
-
 The [link boost_asio.reference.posix__basic_descriptor `posix::basic_descriptor`] class template provides the ability to wrap a POSIX descriptor.
 
 
@@ -106552,17 +106171,6 @@ Provides stream-oriented descriptor functionality.
     [Write some data to the descriptor. ]
   ]
   
-]
-
-[heading Protected Data Members]
-[table
-  [[Name][Description]]
-
-  [
-    [[link boost_asio.reference.posix__basic_stream_descriptor.impl_ [*impl_]]]
-    []
-  ]
-
 ]
 
 The [link boost_asio.reference.posix__basic_stream_descriptor `posix::basic_stream_descriptor`] class template provides asynchronous and blocking stream-oriented descriptor functionality.
@@ -107281,21 +106889,6 @@ Get the executor associated with the object.
 [endsect]
 
 
-
-[section:impl_ posix::basic_stream_descriptor::impl_]
-
-
-['Inherited from posix::basic_descriptor.]
-
-[indexterm2 boost_asio.indexterm.posix__basic_stream_descriptor.impl_..impl_..posix::basic_stream_descriptor] 
-
-  detail::io_object_impl< detail::reactive_descriptor_service, Executor > impl_;
-
-
-
-[endsect]
-
-
 [section:io_control posix::basic_stream_descriptor::io_control]
 
 [indexterm2 boost_asio.indexterm.posix__basic_stream_descriptor.io_control..io_control..posix::basic_stream_descriptor] 
@@ -107683,17 +107276,6 @@ A descriptor is always the lowest layer.
   
 ]
 
-[heading Protected Data Members]
-[table
-  [[Name][Description]]
-
-  [
-    [[link boost_asio.reference.posix__basic_descriptor.impl_ [*impl_]]]
-    []
-  ]
-
-]
-
 The [link boost_asio.reference.posix__basic_descriptor `posix::basic_descriptor`] class template provides the ability to wrap a POSIX descriptor.
 
 
@@ -107893,17 +107475,6 @@ The native representation of a descriptor.
     [Protected destructor to prevent deletion through this type. ]
   ]
   
-]
-
-[heading Protected Data Members]
-[table
-  [[Name][Description]]
-
-  [
-    [[link boost_asio.reference.posix__basic_descriptor.impl_ [*impl_]]]
-    []
-  ]
-
 ]
 
 The [link boost_asio.reference.posix__basic_descriptor `posix::basic_descriptor`] class template provides the ability to wrap a POSIX descriptor.
@@ -108857,17 +108428,6 @@ The descriptor type when rebound to the specified executor.
   
 ]
 
-[heading Protected Data Members]
-[table
-  [[Name][Description]]
-
-  [
-    [[link boost_asio.reference.posix__basic_stream_descriptor.impl_ [*impl_]]]
-    []
-  ]
-
-]
-
 The [link boost_asio.reference.posix__basic_stream_descriptor `posix::basic_stream_descriptor`] class template provides asynchronous and blocking stream-oriented descriptor functionality.
 
 
@@ -109052,17 +108612,6 @@ Typedef for the typical usage of [link boost_asio.reference.posix__basic_descrip
     [Protected destructor to prevent deletion through this type. ]
   ]
   
-]
-
-[heading Protected Data Members]
-[table
-  [[Name][Description]]
-
-  [
-    [[link boost_asio.reference.posix__basic_descriptor.impl_ [*impl_]]]
-    []
-  ]
-
 ]
 
 The [link boost_asio.reference.posix__basic_descriptor `posix::basic_descriptor`] class template provides the ability to wrap a POSIX descriptor.
@@ -109397,17 +108946,6 @@ Typedef for the typical usage of a stream-oriented descriptor.
     [Write some data to the descriptor. ]
   ]
   
-]
-
-[heading Protected Data Members]
-[table
-  [[Name][Description]]
-
-  [
-    [[link boost_asio.reference.posix__basic_stream_descriptor.impl_ [*impl_]]]
-    []
-  ]
-
 ]
 
 The [link boost_asio.reference.posix__basic_stream_descriptor `posix::basic_stream_descriptor`] class template provides asynchronous and blocking stream-oriented descriptor functionality.
@@ -129939,17 +129477,6 @@ Provides Windows handle functionality for objects that support overlapped I/O.
   
 ]
 
-[heading Protected Data Members]
-[table
-  [[Name][Description]]
-
-  [
-    [[link boost_asio.reference.windows__basic_overlapped_handle.impl_ [*impl_]]]
-    []
-  ]
-
-]
-
 The [link boost_asio.reference.windows__overlapped_handle `windows::overlapped_handle`] class provides the ability to wrap a Windows handle. The underlying object referred to by the handle must support overlapped I/O.
 
 
@@ -130421,18 +129948,6 @@ Get the executor associated with the object.
 
 
 
-[section:impl_ windows::basic_overlapped_handle::impl_]
-
-[indexterm2 boost_asio.indexterm.windows__basic_overlapped_handle.impl_..impl_..windows::basic_overlapped_handle] 
-
-  boost::asio::detail::io_object_impl< boost::asio::detail::win_iocp_handle_service, Executor > impl_;
-
-
-
-[endsect]
-
-
-
 [section:is_open windows::basic_overlapped_handle::is_open]
 
 [indexterm2 boost_asio.indexterm.windows__basic_overlapped_handle.is_open..is_open..windows::basic_overlapped_handle] 
@@ -130620,17 +130135,6 @@ An overlapped\_handle is always the lowest layer.
     [Protected destructor to prevent deletion through this type. ]
   ]
   
-]
-
-[heading Protected Data Members]
-[table
-  [[Name][Description]]
-
-  [
-    [[link boost_asio.reference.windows__basic_overlapped_handle.impl_ [*impl_]]]
-    []
-  ]
-
 ]
 
 The [link boost_asio.reference.windows__overlapped_handle `windows::overlapped_handle`] class provides the ability to wrap a Windows handle. The underlying object referred to by the handle must support overlapped I/O.
@@ -130887,17 +130391,6 @@ The handle type when rebound to the specified executor.
   
 ]
 
-[heading Protected Data Members]
-[table
-  [[Name][Description]]
-
-  [
-    [[link boost_asio.reference.windows__basic_overlapped_handle.impl_ [*impl_]]]
-    []
-  ]
-
-]
-
 The [link boost_asio.reference.windows__overlapped_handle `windows::overlapped_handle`] class provides the ability to wrap a Windows handle. The underlying object referred to by the handle must support overlapped I/O.
 
 
@@ -131044,17 +130537,6 @@ Provides random-access handle functionality.
     [Write some data to the handle at the specified offset. ]
   ]
   
-]
-
-[heading Protected Data Members]
-[table
-  [[Name][Description]]
-
-  [
-    [[link boost_asio.reference.windows__basic_random_access_handle.impl_ [*impl_]]]
-    []
-  ]
-
 ]
 
 The [link boost_asio.reference.windows__basic_random_access_handle `windows::basic_random_access_handle`] class provides asynchronous and blocking random-access handle functionality.
@@ -131669,21 +131151,6 @@ Get the executor associated with the object.
 
 
 
-[section:impl_ windows::basic_random_access_handle::impl_]
-
-
-['Inherited from windows::basic_overlapped_handle.]
-
-[indexterm2 boost_asio.indexterm.windows__basic_random_access_handle.impl_..impl_..windows::basic_random_access_handle] 
-
-  boost::asio::detail::io_object_impl< boost::asio::detail::win_iocp_handle_service, Executor > impl_;
-
-
-
-[endsect]
-
-
-
 [section:is_open windows::basic_random_access_handle::is_open]
 
 
@@ -131883,17 +131350,6 @@ An overlapped\_handle is always the lowest layer.
     [Protected destructor to prevent deletion through this type. ]
   ]
   
-]
-
-[heading Protected Data Members]
-[table
-  [[Name][Description]]
-
-  [
-    [[link boost_asio.reference.windows__basic_overlapped_handle.impl_ [*impl_]]]
-    []
-  ]
-
 ]
 
 The [link boost_asio.reference.windows__overlapped_handle `windows::overlapped_handle`] class provides the ability to wrap a Windows handle. The underlying object referred to by the handle must support overlapped I/O.
@@ -132414,17 +131870,6 @@ The handle type when rebound to the specified executor.
   
 ]
 
-[heading Protected Data Members]
-[table
-  [[Name][Description]]
-
-  [
-    [[link boost_asio.reference.windows__basic_random_access_handle.impl_ [*impl_]]]
-    []
-  ]
-
-]
-
 The [link boost_asio.reference.windows__basic_random_access_handle `windows::basic_random_access_handle`] class provides asynchronous and blocking random-access handle functionality.
 
 
@@ -132571,17 +132016,6 @@ Provides stream-oriented handle functionality.
     [Write some data to the handle. ]
   ]
   
-]
-
-[heading Protected Data Members]
-[table
-  [[Name][Description]]
-
-  [
-    [[link boost_asio.reference.windows__basic_stream_handle.impl_ [*impl_]]]
-    []
-  ]
-
 ]
 
 The [link boost_asio.reference.windows__basic_stream_handle `windows::basic_stream_handle`] class provides asynchronous and blocking stream-oriented handle functionality.
@@ -133191,21 +132625,6 @@ Get the executor associated with the object.
 
 
 
-[section:impl_ windows::basic_stream_handle::impl_]
-
-
-['Inherited from windows::basic_overlapped_handle.]
-
-[indexterm2 boost_asio.indexterm.windows__basic_stream_handle.impl_..impl_..windows::basic_stream_handle] 
-
-  boost::asio::detail::io_object_impl< boost::asio::detail::win_iocp_handle_service, Executor > impl_;
-
-
-
-[endsect]
-
-
-
 [section:is_open windows::basic_stream_handle::is_open]
 
 
@@ -133405,17 +132824,6 @@ An overlapped\_handle is always the lowest layer.
     [Protected destructor to prevent deletion through this type. ]
   ]
   
-]
-
-[heading Protected Data Members]
-[table
-  [[Name][Description]]
-
-  [
-    [[link boost_asio.reference.windows__basic_overlapped_handle.impl_ [*impl_]]]
-    []
-  ]
-
 ]
 
 The [link boost_asio.reference.windows__overlapped_handle `windows::overlapped_handle`] class provides the ability to wrap a Windows handle. The underlying object referred to by the handle must support overlapped I/O.
@@ -133920,17 +133328,6 @@ The handle type when rebound to the specified executor.
   
 ]
 
-[heading Protected Data Members]
-[table
-  [[Name][Description]]
-
-  [
-    [[link boost_asio.reference.windows__basic_stream_handle.impl_ [*impl_]]]
-    []
-  ]
-
-]
-
 The [link boost_asio.reference.windows__basic_stream_handle `windows::basic_stream_handle`] class provides asynchronous and blocking stream-oriented handle functionality.
 
 
@@ -134200,17 +133597,6 @@ Typedef for the typical usage of an overlapped handle.
     [Protected destructor to prevent deletion through this type. ]
   ]
   
-]
-
-[heading Protected Data Members]
-[table
-  [[Name][Description]]
-
-  [
-    [[link boost_asio.reference.windows__basic_overlapped_handle.impl_ [*impl_]]]
-    []
-  ]
-
 ]
 
 The [link boost_asio.reference.windows__overlapped_handle `windows::overlapped_handle`] class provides the ability to wrap a Windows handle. The underlying object referred to by the handle must support overlapped I/O.
@@ -134686,17 +134072,6 @@ Typedef for the typical usage of a random-access handle.
   
 ]
 
-[heading Protected Data Members]
-[table
-  [[Name][Description]]
-
-  [
-    [[link boost_asio.reference.windows__basic_random_access_handle.impl_ [*impl_]]]
-    []
-  ]
-
-]
-
 The [link boost_asio.reference.windows__basic_random_access_handle `windows::basic_random_access_handle`] class provides asynchronous and blocking random-access handle functionality.
 
 
@@ -134838,17 +134213,6 @@ Typedef for the typical usage of a stream-oriented handle.
     [Write some data to the handle. ]
   ]
   
-]
-
-[heading Protected Data Members]
-[table
-  [[Name][Description]]
-
-  [
-    [[link boost_asio.reference.windows__basic_stream_handle.impl_ [*impl_]]]
-    []
-  ]
-
 ]
 
 The [link boost_asio.reference.windows__basic_stream_handle `windows::basic_stream_handle`] class provides asynchronous and blocking stream-oriented handle functionality.
