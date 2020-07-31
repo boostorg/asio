@@ -206,6 +206,7 @@ void test_sender_traits()
 
 void test_is_sender()
 {
+  BOOST_ASIO_CHECK(!exec::is_sender<void>::value);
   BOOST_ASIO_CHECK(!exec::is_sender<not_a_sender>::value);
   BOOST_ASIO_CHECK(exec::is_sender<sender_using_base>::value);
   BOOST_ASIO_CHECK(exec::is_sender<executor>::value);
@@ -217,6 +218,7 @@ void test_is_sender()
 
 void test_is_typed_sender()
 {
+  BOOST_ASIO_CHECK(!exec::is_typed_sender<void>::value);
   BOOST_ASIO_CHECK(!exec::is_typed_sender<not_a_sender>::value);
   BOOST_ASIO_CHECK(!exec::is_typed_sender<sender_using_base>::value);
 
