@@ -416,7 +416,7 @@ template <typename Executor>
 class adapter
 {
 public:
-  explicit adapter(const Executor& e) BOOST_ASIO_NOEXCEPT
+  adapter(int, const Executor& e) BOOST_ASIO_NOEXCEPT
     : executor_(e)
   {
   }
@@ -483,7 +483,7 @@ public:
   {
     return adapter<typename decay<
       typename require_result<const Executor&, Property>::type
-        >::type>(boost::asio::require(executor_, p));
+        >::type>(0, boost::asio::require(executor_, p));
   }
 
   template <typename Property>
@@ -498,7 +498,7 @@ public:
   {
     return adapter<typename decay<
       typename prefer_result<const Executor&, Property>::type
-        >::type>(boost::asio::prefer(executor_, p));
+        >::type>(0, boost::asio::prefer(executor_, p));
   }
 
   template <typename Function>
@@ -583,7 +583,7 @@ struct allowed_t
         is_executor<Executor>::value
       >::type* = 0)
   {
-    return adapter<Executor>(e);
+    return adapter<Executor>(0, e);
   }
 };
 
