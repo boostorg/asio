@@ -169,6 +169,12 @@ public:
   /// The sender type, when this type is used as a scheduler.
   typedef basic_executor_type sender_type;
 
+  /// The bulk execution shape type.
+  typedef std::size_t shape_type;
+
+  /// The bulk execution index type.
+  typedef std::size_t index_type;
+
 #if defined(BOOST_ASIO_HAS_DEDUCED_EXECUTION_IS_TYPED_SENDER_TRAIT) \
   && defined(BOOST_ASIO_HAS_STD_EXCEPTION_PTR)
   template <
