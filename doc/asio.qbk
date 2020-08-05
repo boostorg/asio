@@ -105,6 +105,15 @@ C++ approach.
   ]
   [
     [
+      [link boost_asio.std_executors Proposed Standard Executors]
+    ]
+    [
+      Description of Boost.Asio's support for the proposed standard executors
+      library.
+    ]
+  ]
+  [
+    [
       [link boost_asio.history Revision History]
     ]
     [
@@ -127,5 +136,6 @@ C++ approach.
 [include examples.qbk]
 [include reference.qbk]
 [include net_ts.qbk]
+[include std_executors.qbk]
 [include history.qbk]
 [xinclude index.xml]
