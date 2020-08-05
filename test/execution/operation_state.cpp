@@ -82,6 +82,11 @@ void is_operation_state_test()
 {
   BOOST_ASIO_CHECK((
       !boost::asio::execution::is_operation_state<
+        void
+      >::value));
+
+  BOOST_ASIO_CHECK((
+      !boost::asio::execution::is_operation_state<
         not_an_operation_state_1
       >::value));
 

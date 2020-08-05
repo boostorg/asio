@@ -103,7 +103,7 @@ struct blocking_t
     static constexpr bool is_requirable = true;
 
     /// The blocking_t::always_t property can be preferred.
-    static constexpr bool is_preferable = true;
+    static constexpr bool is_preferable = false;
 
     /// The type returned by queries against an @c any_executor.
     typedef blocking_t polymorphic_query_result_type;
@@ -326,12 +326,14 @@ struct blocking_t
       typename enable_if<
         can_query<const Executor&, possibly_t>::value
       >::type* = 0)
-#if defined(_MSC_VER) // Visual C++ wants the type to be qualified.
+#if !defined(__clang__) // Clang crashes if noexcept is used here.
+#if defined(BOOST_ASIO_MSVC) // Visual C++ wants the type to be qualified.
     BOOST_ASIO_NOEXCEPT_IF((
       is_nothrow_query<const Executor&, blocking_t<>::possibly_t>::value))
-#elif !defined(__clang__) // Clang crashes if noexcept is used here.
+#else // defined(BOOST_ASIO_MSVC)
     BOOST_ASIO_NOEXCEPT_IF((
       is_nothrow_query<const Executor&, possibly_t>::value))
+#endif // defined(BOOST_ASIO_MSVC)
 #endif // !defined(__clang__)
   {
     return boost::asio::query(ex, possibly_t());
@@ -344,12 +346,14 @@ struct blocking_t
         !can_query<const Executor&, possibly_t>::value
           && can_query<const Executor&, always_t>::value
       >::type* = 0)
-#if defined(_MSC_VER) // Visual C++ wants the type to be qualified.
+#if !defined(__clang__) // Clang crashes if noexcept is used here.
+#if defined(BOOST_ASIO_MSVC) // Visual C++ wants the type to be qualified.
     BOOST_ASIO_NOEXCEPT_IF((
       is_nothrow_query<const Executor&, blocking_t<>::always_t>::value))
-#elif !defined(__clang__) // Clang crashes if noexcept is used here.
+#else // defined(BOOST_ASIO_MSVC)
     BOOST_ASIO_NOEXCEPT_IF((
       is_nothrow_query<const Executor&, always_t>::value))
+#endif // defined(BOOST_ASIO_MSVC)
 #endif // !defined(__clang__)
   {
     return boost::asio::query(ex, always_t());
@@ -363,12 +367,14 @@ struct blocking_t
           && !can_query<const Executor&, always_t>::value
           && can_query<const Executor&, never_t>::value
       >::type* = 0)
-#if defined(_MSC_VER) // Visual C++ wants the type to be qualified.
+#if !defined(__clang__) // Clang crashes if noexcept is used here.
+#if defined(BOOST_ASIO_MSVC) // Visual C++ wants the type to be qualified.
     BOOST_ASIO_NOEXCEPT_IF((
       is_nothrow_query<const Executor&, blocking_t<>::never_t>::value))
-#elif !defined(__clang__) // Clang crashes if noexcept is used here.
+#else // defined(BOOST_ASIO_MSVC)
     BOOST_ASIO_NOEXCEPT_IF((
       is_nothrow_query<const Executor&, never_t>::value))
+#endif // defined(BOOST_ASIO_MSVC)
 #endif // !defined(__clang__)
   {
     return boost::asio::query(ex, never_t());
@@ -511,7 +517,7 @@ template <typename Executor>
 class adapter
 {
 public:
-  explicit adapter(const Executor& e) BOOST_ASIO_NOEXCEPT
+  adapter(int, const Executor& e) BOOST_ASIO_NOEXCEPT
     : executor_(e)
   {
   }
@@ -597,7 +603,7 @@ public:
   {
     return adapter<typename decay<
       typename require_result<const Executor&, Property>::type
-        >::type>(boost::asio::require(executor_, p));
+        >::type>(0, boost::asio::require(executor_, p));
   }
 
   template <typename Property>
@@ -612,7 +618,7 @@ public:
   {
     return adapter<typename decay<
       typename prefer_result<const Executor&, Property>::type
-        >::type>(boost::asio::prefer(executor_, p));
+        >::type>(0, boost::asio::prefer(executor_, p));
   }
 
   template <typename Function>
@@ -649,7 +655,7 @@ struct always_t
 #endif // defined(BOOST_ASIO_HAS_VARIABLE_TEMPLATES)
 
   BOOST_ASIO_STATIC_CONSTEXPR(bool, is_requirable = true);
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_preferable = true);
+  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_preferable = false);
   typedef blocking_t<I> polymorphic_query_result_type;
 
   BOOST_ASIO_CONSTEXPR always_t()
@@ -726,7 +732,7 @@ struct always_t
         >::is_valid
       >::type* = 0)
   {
-    return adapter<Executor>(e);
+    return adapter<Executor>(0, e);
   }
 };
 

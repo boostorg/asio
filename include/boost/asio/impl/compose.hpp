@@ -318,7 +318,10 @@ namespace detail
 #endif // defined(BOOST_ASIO_HAS_MOVE)
 
     typedef typename associated_executor<Handler,
-        typename Work::head_type>::type executor_type;
+        typename composed_work_guard<
+          typename Work::head_type
+        >::executor_type
+      >::type executor_type;
 
     executor_type get_executor() const BOOST_ASIO_NOEXCEPT
     {
@@ -460,7 +463,7 @@ namespace detail
     typedef typename composed_io_executors<Executors>::head_type executor_type;
 
     template <typename T>
-    explicit initiate_composed_op(BOOST_ASIO_MOVE_ARG(T) executors)
+    explicit initiate_composed_op(int, BOOST_ASIO_MOVE_ARG(T) executors)
       : executors_(BOOST_ASIO_MOVE_CAST(T)(executors))
     {
     }
@@ -489,21 +492,27 @@ namespace detail
   inline initiate_composed_op<Signature, Executors> make_initiate_composed_op(
       BOOST_ASIO_MOVE_ARG(composed_io_executors<Executors>) executors)
   {
-    return initiate_composed_op<Signature, Executors>(
+    return initiate_composed_op<Signature, Executors>(0,
         BOOST_ASIO_MOVE_CAST(composed_io_executors<Executors>)(executors));
   }
 
   template <typename IoObject>
   inline typename IoObject::executor_type
   get_composed_io_executor(IoObject& io_object,
-      typename enable_if<!is_executor<IoObject>::value>::type* = 0)
+      typename enable_if<
+        !is_executor<IoObject>::value
+          && !execution::is_executor<IoObject>::value
+      >::type* = 0)
   {
     return io_object.get_executor();
   }
 
   template <typename Executor>
   inline const Executor& get_composed_io_executor(const Executor& ex,
-      typename enable_if<is_executor<Executor>::value>::type* = 0)
+      typename enable_if<
+        is_executor<Executor>::value
+          || execution::is_executor<Executor>::value
+      >::type* = 0)
   {
     return ex;
   }

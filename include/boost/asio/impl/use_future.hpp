@@ -937,20 +937,19 @@ public:
 
 #endif // defined(BOOST_ASIO_HAS_VARIADIC_TEMPLATES)
 
-namespace execution {
+namespace traits {
 
-#if !defined(BOOST_ASIO_HAS_DEDUCED_EXECUTION_IS_EXECUTOR_TRAIT)
+#if !defined(BOOST_ASIO_HAS_DEDUCED_EQUALITY_COMPARABLE_TRAIT)
 
 template <typename T, typename Blocking>
-struct is_executor<
-    boost::asio::detail::promise_executor<T, Blocking> > : true_type
+struct equality_comparable<
+    boost::asio::detail::promise_executor<T, Blocking> >
 {
+  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
+  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_noexcept = true);
 };
 
-#endif // !defined(BOOST_ASIO_HAS_DEDUCED_EXECUTION_IS_EXECUTOR_TRAIT)
-
-} // namespace execution
-namespace traits {
+#endif // !defined(BOOST_ASIO_HAS_DEDUCED_EQUALITY_COMPARABLE_TRAIT)
 
 #if !defined(BOOST_ASIO_HAS_DEDUCED_EXECUTE_MEMBER_TRAIT)
 

@@ -7,9 +7,7 @@
 
 [section:history Revision History]
 
-[heading Asio 1.17.0 / Boost 1.74 beta]
-
-(N.B. The Boost 1.74 release will be tagged as Asio 1.18.0.)
+[heading Asio 1.18.0 / Boost 1.74]
 
 * Added an implementation of the proposed standard executors
 	([@http://wg21.link/P0443r13 P0443r13], [@http://wg21.link/P1348r0 P1348r0],
@@ -26,13 +24,14 @@
     existing Networking TS executors. The implementation determines at compile
     time which model a particular executor meets; the proposed standard
     executor model is used in preference if both are detected.
-  * The `any_io_executor` type alias has been introduced as the default
+  * The `any_io_executor` type alias has been introduced as the new default
     runtime-polymorphic executor for all I/O objects. This type alias points to
     the `execution::any_executor<>` template with a set of supportable
-    properties specified for use with I/O. If required for backward
-    compatibility, `BOOST_ASIO_USE_TS_EXECUTOR_AS_DEFAULT` can be defined, which
-    changes the `any_io_executor` type alias to point to the old polymorphic
-    wrapper, `executor`.
+    properties specified for use with I/O. This change may break existing code
+    that directly uses the old polymorphic wrapper, `executor`. If required for
+    backward compatibility, `BOOST_ASIO_USE_TS_EXECUTOR_AS_DEFAULT` can be
+    defined, which changes the `any_io_executor` type alias to instead point to
+    the `executor` polymorphic wrapper.
   * Support for the existing Networking TS model of executors can be disabled
     by defining `BOOST_ASIO_NO_TS_EXECUTORS`.
 * Added converting move construction and assignment to `basic_waitable_timer`.
@@ -96,6 +95,8 @@
     only accessing `errno` and error codes when on an error path.
   * Applying additional optimisations if a "native" I/O executor (such as
     `io_context::exeutor_type`) is detected.
+  * Reinstating a previously removed null-pointer check, as it had a measurable
+    impact on performance.
 * Added source location support to handler tracking. The new
   `BOOST_ASIO_HANDLER_LOCATION((file_name, line, function_name))` macro may be used
   to inform the handler tracking mechanism of a source location. This macro

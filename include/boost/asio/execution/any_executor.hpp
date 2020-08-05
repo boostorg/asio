@@ -472,6 +472,16 @@ BOOST_ASIO_VARIADIC_GENERATE(BOOST_ASIO_PRIVATE_ANY_EXECUTOR_PROPS_BASE_DEF)
 
 #endif // defined(BOOST_ASIO_HAS_VARIADIC_TEMPLATES)
 
+template <typename T, typename Props>
+struct is_valid_target_executor :
+  conditional<
+    is_executor<T>::value,
+    typename supportable_properties<0, Props>::template is_valid_target<T>,
+    false_type
+  >::type
+{
+};
+
 class any_executor_base
 {
 public:
@@ -1175,13 +1185,18 @@ public:
   }
 
   template <typename Executor>
-  any_executor(Executor ex)
+  any_executor(Executor ex,
+      typename enable_if<
+        conditional<
+          !is_same<Executor, any_executor>::value
+            && !is_base_of<detail::any_executor_base, Executor>::value,
+          is_executor<Executor>,
+          false_type
+        >::type::value
+      >::type* = 0)
     : detail::any_executor_base(
         BOOST_ASIO_MOVE_CAST(Executor)(ex), false_type())
   {
-    BOOST_ASIO_STATIC_ASSERT(is_executor<Executor>::value,
-        any_executor_target_must_be_an_executor,
-        "any_executor target must be an executor");
   }
 
 #if defined(BOOST_ASIO_HAS_VARIADIC_TEMPLATES)
@@ -1328,35 +1343,40 @@ public:
   }
 
   template <typename Executor>
-  any_executor(Executor ex)
+  any_executor(Executor ex,
+      typename enable_if<
+        conditional<
+          !is_same<Executor, any_executor>::value
+            && !is_base_of<detail::any_executor_base, Executor>::value,
+          detail::is_valid_target_executor<
+            Executor, void(SupportableProperties...)>,
+          false_type
+        >::type::value
+      >::type* = 0)
     : detail::any_executor_base(
         BOOST_ASIO_MOVE_CAST(Executor)(ex), false_type()),
       prop_fns_(prop_fns_table<Executor>())
   {
-    BOOST_ASIO_STATIC_ASSERT(is_executor<Executor>::value,
-        any_executor_target_must_be_an_executor,
-        "any_executor target must be an executor");
-
-    BOOST_ASIO_STATIC_ASSERT(
-        (detail::supportable_properties<
-          0, void(SupportableProperties...)>::template
-            is_valid_target<Executor>::value),
-        any_executor_target_must_support_listed_properties,
-        "any_executor target must support listed properties");
   }
 
   template <typename... OtherSupportableProperties>
-  any_executor(any_executor<OtherSupportableProperties...> other)
+  any_executor(any_executor<OtherSupportableProperties...> other,
+      typename enable_if<
+        conditional<
+          !is_same<
+            any_executor<OtherSupportableProperties...>,
+            any_executor
+          >::value,
+          typename detail::supportable_properties<
+            0, void(SupportableProperties...)>::template is_valid_target<
+              any_executor<OtherSupportableProperties...> >,
+          false_type
+        >::type::value
+      >::type* = 0)
     : detail::any_executor_base(BOOST_ASIO_MOVE_CAST(
           any_executor<OtherSupportableProperties...>)(other), true_type()),
       prop_fns_(prop_fns_table<any_executor<OtherSupportableProperties...> >())
   {
-    BOOST_ASIO_STATIC_ASSERT(
-        (detail::supportable_properties<
-          0, void(SupportableProperties...)>::template is_valid_target<
-            any_executor<OtherSupportableProperties...> >::value),
-        any_executor_target_must_support_listed_properties,
-        "any_executor target must support listed properties");
   }
 
   any_executor(const any_executor& other) BOOST_ASIO_NOEXCEPT
@@ -1741,25 +1761,18 @@ inline void swap(any_executor<SupportableProperties...>& a,
     template <BOOST_ASIO_EXECUTION_EXECUTOR Executor> \
     any_executor(Executor ex, \
         typename enable_if< \
-          !is_base_of< \
-            detail::any_executor_base, \
-            Executor \
-          >::value \
+          conditional< \
+            !is_same<Executor, any_executor>::value \
+              && !is_base_of<detail::any_executor_base, Executor>::value, \
+            detail::is_valid_target_executor< \
+              Executor, void(BOOST_ASIO_VARIADIC_TARGS(n))>, \
+            false_type \
+          >::type::value \
         >::type* = 0) \
       : detail::any_executor_base(BOOST_ASIO_MOVE_CAST( \
             Executor)(ex), false_type()), \
         prop_fns_(prop_fns_table<Executor>()) \
     { \
-      BOOST_ASIO_STATIC_ASSERT(is_executor<Executor>::value, \
-          any_executor_target_must_be_an_executor, \
-          "any_executor target must be an executor"); \
-    \
-      BOOST_ASIO_STATIC_ASSERT( \
-          (detail::supportable_properties< \
-            0, void(BOOST_ASIO_VARIADIC_TARGS(n))>::template \
-              is_valid_target<Executor>::value), \
-          any_executor_target_must_support_listed_properties, \
-          "any_executor target must support listed properties"); \
     } \
     \
     any_executor(const any_executor& other) BOOST_ASIO_NOEXCEPT \
@@ -1779,20 +1792,20 @@ inline void swap(any_executor<SupportableProperties...>& a,
     template <typename OtherAnyExecutor> \
     any_executor(OtherAnyExecutor other, \
         typename enable_if< \
-          is_base_of< \
-            detail::any_executor_base, \
-            OtherAnyExecutor \
-          >::value \
+          conditional< \
+            !is_same<OtherAnyExecutor, any_executor>::value \
+              && is_base_of<detail::any_executor_base, \
+                OtherAnyExecutor>::value, \
+            typename detail::supportable_properties< \
+              0, void(BOOST_ASIO_VARIADIC_TARGS(n))>::template \
+                is_valid_target<OtherAnyExecutor>, \
+            false_type \
+          >::type::value \
         >::type* = 0) \
       : detail::any_executor_base(BOOST_ASIO_MOVE_CAST( \
             OtherAnyExecutor)(other), true_type()), \
         prop_fns_(prop_fns_table<OtherAnyExecutor>()) \
     { \
-      BOOST_ASIO_STATIC_ASSERT( \
-          OtherAnyExecutor::supportable_properties_type::template \
-            is_valid_target<OtherAnyExecutor>::value, \
-          any_executor_target_must_support_listed_properties, \
-          "any_executor target must support listed properties"); \
     } \
     \
     any_executor& operator=(const any_executor& other) BOOST_ASIO_NOEXCEPT \

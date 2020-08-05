@@ -20,6 +20,7 @@
 #if defined(BOOST_ASIO_HAS_IOCP)
 
 #include <boost/asio/io_context.hpp>
+#include <boost/asio/query.hpp>
 #include <boost/asio/detail/handler_alloc_helpers.hpp>
 #include <boost/asio/detail/memory.hpp>
 #include <boost/asio/detail/noncopyable.hpp>
@@ -77,7 +78,6 @@ public:
   template <typename Executor, typename Handler>
   void reset(const Executor& ex, Handler handler)
   {
-    const bool native = is_same<Executor, io_context::executor_type>::value;
     win_iocp_io_context* iocp_service = this->get_iocp_service(ex);
 
     typedef win_iocp_overlapped_op<Handler, Executor> op;
@@ -134,7 +134,20 @@ public:
 
 private:
   template <typename Executor>
-  static win_iocp_io_context* get_iocp_service(const Executor& ex)
+  static win_iocp_io_context* get_iocp_service(const Executor& ex,
+      typename enable_if<
+        can_query<const Executor&, execution::context_t>::value
+      >::type* = 0)
+  {
+    return &use_service<win_iocp_io_context>(
+        boost::asio::query(ex, execution::context));
+  }
+
+  template <typename Executor>
+  static win_iocp_io_context* get_iocp_service(const Executor& ex,
+      typename enable_if<
+        !can_query<const Executor&, execution::context_t>::value
+      >::type* = 0)
   {
     return &use_service<win_iocp_io_context>(ex.context());
   }
@@ -142,7 +155,7 @@ private:
   static win_iocp_io_context* get_iocp_service(
       const io_context::executor_type& ex)
   {
-    return &ex.context().impl_;
+    return &boost::asio::query(ex, execution::context).impl_;
   }
 
   win_iocp_operation* ptr_;

@@ -89,6 +89,7 @@ struct equality_comparable<executor>
 
 void test_is_scheduler()
 {
+  BOOST_ASIO_CHECK(!exec::is_scheduler<void>::value);
   BOOST_ASIO_CHECK(!exec::is_scheduler<not_a_scheduler>::value);
   BOOST_ASIO_CHECK(exec::is_scheduler<executor>::value);
 }

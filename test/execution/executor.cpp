@@ -89,6 +89,11 @@ void is_executor_test()
 {
   BOOST_ASIO_CHECK((
       !boost::asio::execution::is_executor<
+        void
+      >::value));
+
+  BOOST_ASIO_CHECK((
+      !boost::asio::execution::is_executor<
         not_an_executor
       >::value));
 
@@ -100,6 +105,12 @@ void is_executor_test()
 
 void is_executor_of_test()
 {
+  BOOST_ASIO_CHECK((
+      !boost::asio::execution::is_executor_of<
+        void,
+        void(*)()
+      >::value));
+
   BOOST_ASIO_CHECK((
       !boost::asio::execution::is_executor_of<
         not_an_executor,

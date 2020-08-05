@@ -305,6 +305,12 @@ void is_receiver_test()
 {
   BOOST_ASIO_CHECK((
       !boost::asio::execution::is_receiver<
+        void,
+        boost::system::error_code
+      >::value));
+
+  BOOST_ASIO_CHECK((
+      !boost::asio::execution::is_receiver<
         not_a_receiver,
         boost::system::error_code
       >::value));
@@ -336,6 +342,17 @@ void is_receiver_test()
 
 void is_receiver_of_test()
 {
+  BOOST_ASIO_CHECK((
+      !boost::asio::execution::is_receiver_of<
+        void
+      >::value));
+
+  BOOST_ASIO_CHECK((
+      !boost::asio::execution::is_receiver_of<
+        void,
+        int
+      >::value));
+
   BOOST_ASIO_CHECK((
       !boost::asio::execution::is_receiver_of<
         not_a_receiver
@@ -429,6 +446,17 @@ void is_receiver_of_test()
 
 void is_nothrow_receiver_of_test()
 {
+  BOOST_ASIO_CHECK((
+      !boost::asio::execution::is_nothrow_receiver_of<
+        void
+      >::value));
+
+  BOOST_ASIO_CHECK((
+      !boost::asio::execution::is_nothrow_receiver_of<
+        void,
+        int
+      >::value));
+
   BOOST_ASIO_CHECK((
       !boost::asio::execution::is_nothrow_receiver_of<
         not_a_receiver
