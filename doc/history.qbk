@@ -95,8 +95,6 @@
     only accessing `errno` and error codes when on an error path.
   * Applying additional optimisations if a "native" I/O executor (such as
     `io_context::exeutor_type`) is detected.
-  * Reinstating a previously removed null-pointer check, as it had a measurable
-    impact on performance.
 * Added source location support to handler tracking. The new
   `BOOST_ASIO_HANDLER_LOCATION((file_name, line, function_name))` macro may be used
   to inform the handler tracking mechanism of a source location. This macro
