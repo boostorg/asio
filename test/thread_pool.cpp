@@ -90,6 +90,10 @@ void thread_pool_test()
 class test_service : public boost::asio::execution_context::service
 {
 public:
+#if defined(BOOST_ASIO_NO_TYPEID)
+  static boost::asio::execution_context::id id;
+#endif // defined(BOOST_ASIO_NO_TYPEID)
+
   typedef test_service key_type;
 
   test_service(boost::asio::execution_context& ctx)
@@ -100,6 +104,10 @@ public:
 private:
   virtual void shutdown() {}
 };
+
+#if defined(BOOST_ASIO_NO_TYPEID)
+boost::asio::execution_context::id test_service::id;
+#endif // defined(BOOST_ASIO_NO_TYPEID)
 
 void thread_pool_service_test()
 {
