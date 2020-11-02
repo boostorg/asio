@@ -853,6 +853,7 @@ struct associated_allocator<detail::binder2<Handler, Arg1, Arg2>, Allocator>
 
 template <typename Handler, typename Arg1, typename Executor>
 struct associated_executor<detail::binder1<Handler, Arg1>, Executor>
+  : detail::associated_executor_forwarding_base<Handler, Executor>
 {
   typedef typename associated_executor<Handler, Executor>::type type;
 
@@ -865,6 +866,7 @@ struct associated_executor<detail::binder1<Handler, Arg1>, Executor>
 
 template <typename Handler, typename Arg1, typename Arg2, typename Executor>
 struct associated_executor<detail::binder2<Handler, Arg1, Arg2>, Executor>
+  : detail::associated_executor_forwarding_base<Handler, Executor>
 {
   typedef typename associated_executor<Handler, Executor>::type type;
 
@@ -904,6 +906,7 @@ struct associated_allocator<
 
 template <typename Handler, typename Arg1, typename Executor>
 struct associated_executor<detail::move_binder1<Handler, Arg1>, Executor>
+  : detail::associated_executor_forwarding_base<Handler, Executor>
 {
   typedef typename associated_executor<Handler, Executor>::type type;
 
@@ -916,6 +919,7 @@ struct associated_executor<detail::move_binder1<Handler, Arg1>, Executor>
 
 template <typename Handler, typename Arg1, typename Arg2, typename Executor>
 struct associated_executor<detail::move_binder2<Handler, Arg1, Arg2>, Executor>
+  : detail::associated_executor_forwarding_base<Handler, Executor>
 {
   typedef typename associated_executor<Handler, Executor>::type type;
 
