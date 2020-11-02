@@ -82,6 +82,7 @@ INPUT                  = ./../../../boost/asio.hpp \
                          ./../../../boost/asio/ssl \
                          ./../../../boost/asio/windows \
                          ./../../../boost/asio/execution \
+                         ./../../../boost/asio/experimental \
                          ./noncopyable_dox.txt \
                          ./std_exception_dox.txt
 FILE_PATTERNS          = 
