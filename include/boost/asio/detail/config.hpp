@@ -1803,4 +1803,15 @@
 # define BOOST_ASIO_NODISCARD
 #endif // !defined(BOOST_ASIO_NODISCARD)
 
+// Kernel support for MSG_NOSIGNAL.
+#if !defined(BOOST_ASIO_HAS_MSG_NOSIGNAL)
+# if defined(__linux__)
+#  define BOOST_ASIO_HAS_MSG_NOSIGNAL 1
+# elif defined(_POSIX_VERSION)
+#  if (_POSIX_VERSION >= 200809L)
+#   define BOOST_ASIO_HAS_MSG_NOSIGNAL 1
+#  endif // _POSIX_VERSION >= 200809L
+# endif // defined(_POSIX_VERSION)
+#endif // !defined(BOOST_ASIO_HAS_MSG_NOSIGNAL)
+
 #endif // BOOST_ASIO_DETAIL_CONFIG_HPP
