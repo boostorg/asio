@@ -429,13 +429,13 @@
 #    endif // __has_feature(__cxx_variable_templates__)
 #   endif // (__cplusplus >= 201402)
 #  endif // defined(__clang__)
-#  if defined(__GNUC__)
+#  if defined(__GNUC__) && !defined(__INTEL_COMPILER)
 #   if (__GNUC__ >= 6)
 #    if (__cplusplus >= 201402)
 #     define BOOST_ASIO_HAS_VARIABLE_TEMPLATES 1
 #    endif // (__cplusplus >= 201402)
 #   endif // (__GNUC__ >= 6)
-#  endif // defined(__GNUC__)
+#  endif // defined(__GNUC__) && !defined(__INTEL_COMPILER)
 #  if defined(BOOST_ASIO_MSVC)
 #   if (_MSC_VER >= 1901)
 #    define BOOST_ASIO_HAS_VARIABLE_TEMPLATES 1
@@ -477,13 +477,13 @@
 #    define BOOST_ASIO_HAS_CONSTANT_EXPRESSION_SFINAE 1
 #   endif // (__cplusplus >= 201402)
 #  endif // defined(__clang__)
-#  if defined(__GNUC__)
+#  if defined(__GNUC__) && !defined(__INTEL_COMPILER)
 #   if (__GNUC__ >= 7)
 #    if (__cplusplus >= 201402)
 #     define BOOST_ASIO_HAS_CONSTANT_EXPRESSION_SFINAE 1
 #    endif // (__cplusplus >= 201402)
 #   endif // (__GNUC__ >= 7)
-#  endif // defined(__GNUC__)
+#  endif // defined(__GNUC__) && !defined(__INTEL_COMPILER)
 #  if defined(BOOST_ASIO_MSVC)
 #   if (_MSC_VER >= 1901)
 #    define BOOST_ASIO_HAS_CONSTANT_EXPRESSION_SFINAE 1
@@ -495,11 +495,11 @@
 // Enable workarounds for lack of working expression SFINAE.
 #if !defined(BOOST_ASIO_HAS_WORKING_EXPRESSION_SFINAE)
 # if !defined(BOOST_ASIO_DISABLE_WORKING_EXPRESSION_SFINAE)
-#  if !defined(BOOST_ASIO_MSVC)
+#  if !defined(BOOST_ASIO_MSVC) && !defined(__INTEL_COMPILER)
 #   if (__cplusplus >= 201103)
 #    define BOOST_ASIO_HAS_WORKING_EXPRESSION_SFINAE 1
 #   endif // (__cplusplus >= 201103)
-#  endif // !defined(BOOST_ASIO_MSVC)
+#  endif // !defined(BOOST_ASIO_MSVC) && !defined(__INTEL_COMPILER)
 # endif // !defined(BOOST_ASIO_DISABLE_WORKING_EXPRESSION_SFINAE)
 #endif // !defined(BOOST_ASIO_HAS_WORKING_EXPRESSION_SFINAE)
 
