@@ -89875,8 +89875,15 @@ Move-construct a [link boost_asio.reference.ip__basic_resolver `ip::basic_resolv
       basic_resolver && other);
   ``  [''''&raquo;''' [link boost_asio.reference.ip__basic_resolver.basic_resolver.overload3 more...]]``
 
+  template<
+      typename ``[link boost_asio.reference.Executor1 Executor1]``>
+  ``[link boost_asio.reference.ip__basic_resolver.basic_resolver.overload4 basic_resolver]``(
+      basic_resolver< InternetProtocol, Executor1 > && other,
+      typename enable_if< is_convertible< Executor1, Executor >::value >::type *  = 0);
+  ``  [''''&raquo;''' [link boost_asio.reference.ip__basic_resolver.basic_resolver.overload4 more...]]``
 
-[section:overload1 ip::basic_resolver::basic_resolver (1 of 3 overloads)]
+
+[section:overload1 ip::basic_resolver::basic_resolver (1 of 4 overloads)]
 
 
 Construct with executor. 
@@ -89905,7 +89912,7 @@ This constructor creates a [link boost_asio.reference.ip__basic_resolver `ip::ba
 
 
 
-[section:overload2 ip::basic_resolver::basic_resolver (2 of 3 overloads)]
+[section:overload2 ip::basic_resolver::basic_resolver (2 of 4 overloads)]
 
 
 Construct with execution context. 
@@ -89937,7 +89944,7 @@ This constructor creates a [link boost_asio.reference.ip__basic_resolver `ip::ba
 
 
 
-[section:overload3 ip::basic_resolver::basic_resolver (3 of 3 overloads)]
+[section:overload3 ip::basic_resolver::basic_resolver (3 of 4 overloads)]
 
 
 Move-construct a [link boost_asio.reference.ip__basic_resolver `ip::basic_resolver`] from another. 
@@ -89945,6 +89952,43 @@ Move-construct a [link boost_asio.reference.ip__basic_resolver `ip::basic_resolv
 
   basic_resolver(
       basic_resolver && other);
+
+
+This constructor moves a resolver from one object to another.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[other][The other [link boost_asio.reference.ip__basic_resolver `ip::basic_resolver`] object from which the move will occur.]]
+
+]
+
+
+[heading Remarks]
+      
+Following the move, the moved-from object is in the same state as if constructed using the `basic_resolver(const executor_type&) constructor`. 
+
+
+
+
+[endsect]
+
+
+
+[section:overload4 ip::basic_resolver::basic_resolver (4 of 4 overloads)]
+
+
+Move-construct a [link boost_asio.reference.ip__basic_resolver `ip::basic_resolver`] from another. 
+
+
+  template<
+      typename ``[link boost_asio.reference.Executor1 Executor1]``>
+  basic_resolver(
+      basic_resolver< InternetProtocol, Executor1 > && other,
+      typename enable_if< is_convertible< Executor1, Executor >::value >::type *  = 0);
 
 
 This constructor moves a resolver from one object to another.
@@ -90291,10 +90335,26 @@ Service name should be treated as a numeric string defining a port number and no
 [endsect]
 
 
-
 [section:operator_eq_ ip::basic_resolver::operator=]
 
 [indexterm2 boost_asio.indexterm.ip__basic_resolver.operator_eq_..operator=..ip::basic_resolver] 
+Move-assign a [link boost_asio.reference.ip__basic_resolver `ip::basic_resolver`] from another. 
+
+
+  basic_resolver & ``[link boost_asio.reference.ip__basic_resolver.operator_eq_.overload1 operator=]``(
+      basic_resolver && other);
+  ``  [''''&raquo;''' [link boost_asio.reference.ip__basic_resolver.operator_eq_.overload1 more...]]``
+
+  template<
+      typename ``[link boost_asio.reference.Executor1 Executor1]``>
+  enable_if< is_convertible< Executor1, Executor >::value, basic_resolver & >::type ``[link boost_asio.reference.ip__basic_resolver.operator_eq_.overload2 operator=]``(
+      basic_resolver< InternetProtocol, Executor1 > && other);
+  ``  [''''&raquo;''' [link boost_asio.reference.ip__basic_resolver.operator_eq_.overload2 more...]]``
+
+
+[section:overload1 ip::basic_resolver::operator= (1 of 2 overloads)]
+
+
 Move-assign a [link boost_asio.reference.ip__basic_resolver `ip::basic_resolver`] from another. 
 
 
@@ -90324,6 +90384,44 @@ Following the move, the moved-from object is in the same state as if constructed
 
 [endsect]
 
+
+
+[section:overload2 ip::basic_resolver::operator= (2 of 2 overloads)]
+
+
+Move-assign a [link boost_asio.reference.ip__basic_resolver `ip::basic_resolver`] from another. 
+
+
+  template<
+      typename ``[link boost_asio.reference.Executor1 Executor1]``>
+  enable_if< is_convertible< Executor1, Executor >::value, basic_resolver & >::type operator=(
+      basic_resolver< InternetProtocol, Executor1 > && other);
+
+
+This assignment operator moves a resolver from one object to another. Cancels any outstanding asynchronous operations associated with the target object.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[other][The other [link boost_asio.reference.ip__basic_resolver `ip::basic_resolver`] object from which the move will occur.]]
+
+]
+
+
+[heading Remarks]
+      
+Following the move, the moved-from object is in the same state as if constructed using the `basic_resolver(const executor_type&) constructor`. 
+
+
+
+
+[endsect]
+
+
+[endsect]
 
 
 [section:passive ip::basic_resolver::passive]
