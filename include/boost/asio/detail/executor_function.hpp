@@ -17,6 +17,7 @@
 
 #include <boost/asio/detail/config.hpp>
 #include <boost/asio/detail/handler_alloc_helpers.hpp>
+#include <boost/asio/detail/handler_invoke_helpers.hpp>
 #include <boost/asio/detail/memory.hpp>
 
 #include <boost/asio/detail/push_options.hpp>
@@ -112,7 +113,7 @@ private:
     // Make the upcall if required.
     if (call)
     {
-      function();
+      boost_asio_handler_invoke_helpers::invoke(function, function);
     }
   }
 

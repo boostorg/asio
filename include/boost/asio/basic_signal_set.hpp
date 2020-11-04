@@ -28,6 +28,8 @@
 #include <boost/asio/error.hpp>
 #include <boost/asio/execution_context.hpp>
 
+#include <boost/asio/detail/push_options.hpp>
+
 namespace boost {
 namespace asio {
 
@@ -566,5 +568,7 @@ private:
 
 } // namespace asio
 } // namespace boost
+
+#include <boost/asio/detail/pop_options.hpp>
 
 #endif // BOOST_ASIO_BASIC_SIGNAL_SET_HPP

@@ -429,13 +429,13 @@
 #    endif // __has_feature(__cxx_variable_templates__)
 #   endif // (__cplusplus >= 201402)
 #  endif // defined(__clang__)
-#  if defined(__GNUC__)
+#  if defined(__GNUC__) && !defined(__INTEL_COMPILER)
 #   if (__GNUC__ >= 6)
 #    if (__cplusplus >= 201402)
 #     define BOOST_ASIO_HAS_VARIABLE_TEMPLATES 1
 #    endif // (__cplusplus >= 201402)
 #   endif // (__GNUC__ >= 6)
-#  endif // defined(__GNUC__)
+#  endif // defined(__GNUC__) && !defined(__INTEL_COMPILER)
 #  if defined(BOOST_ASIO_MSVC)
 #   if (_MSC_VER >= 1901)
 #    define BOOST_ASIO_HAS_VARIABLE_TEMPLATES 1
@@ -477,13 +477,13 @@
 #    define BOOST_ASIO_HAS_CONSTANT_EXPRESSION_SFINAE 1
 #   endif // (__cplusplus >= 201402)
 #  endif // defined(__clang__)
-#  if defined(__GNUC__)
+#  if defined(__GNUC__) && !defined(__INTEL_COMPILER)
 #   if (__GNUC__ >= 7)
 #    if (__cplusplus >= 201402)
 #     define BOOST_ASIO_HAS_CONSTANT_EXPRESSION_SFINAE 1
 #    endif // (__cplusplus >= 201402)
 #   endif // (__GNUC__ >= 7)
-#  endif // defined(__GNUC__)
+#  endif // defined(__GNUC__) && !defined(__INTEL_COMPILER)
 #  if defined(BOOST_ASIO_MSVC)
 #   if (_MSC_VER >= 1901)
 #    define BOOST_ASIO_HAS_CONSTANT_EXPRESSION_SFINAE 1
@@ -495,11 +495,11 @@
 // Enable workarounds for lack of working expression SFINAE.
 #if !defined(BOOST_ASIO_HAS_WORKING_EXPRESSION_SFINAE)
 # if !defined(BOOST_ASIO_DISABLE_WORKING_EXPRESSION_SFINAE)
-#  if !defined(BOOST_ASIO_MSVC)
+#  if !defined(BOOST_ASIO_MSVC) && !defined(__INTEL_COMPILER)
 #   if (__cplusplus >= 201103)
 #    define BOOST_ASIO_HAS_WORKING_EXPRESSION_SFINAE 1
 #   endif // (__cplusplus >= 201103)
-#  endif // !defined(BOOST_ASIO_MSVC)
+#  endif // !defined(BOOST_ASIO_MSVC) && !defined(__INTEL_COMPILER)
 # endif // !defined(BOOST_ASIO_DISABLE_WORKING_EXPRESSION_SFINAE)
 #endif // !defined(BOOST_ASIO_HAS_WORKING_EXPRESSION_SFINAE)
 
@@ -1473,13 +1473,9 @@
 // UNIX domain sockets.
 #if !defined(BOOST_ASIO_HAS_LOCAL_SOCKETS)
 # if !defined(BOOST_ASIO_DISABLE_LOCAL_SOCKETS)
-#  if !defined(BOOST_ASIO_WINDOWS) \
-  && !defined(BOOST_ASIO_WINDOWS_RUNTIME) \
-  && !defined(__CYGWIN__)
+#  if !defined(BOOST_ASIO_WINDOWS_RUNTIME)
 #   define BOOST_ASIO_HAS_LOCAL_SOCKETS 1
-#  endif // !defined(BOOST_ASIO_WINDOWS)
-         //   && !defined(BOOST_ASIO_WINDOWS_RUNTIME)
-         //   && !defined(__CYGWIN__)
+#  endif // !defined(BOOST_ASIO_WINDOWS_RUNTIME)
 # endif // !defined(BOOST_ASIO_DISABLE_LOCAL_SOCKETS)
 #endif // !defined(BOOST_ASIO_HAS_LOCAL_SOCKETS)
 
@@ -1802,5 +1798,16 @@
 #if !defined(BOOST_ASIO_NODISCARD)
 # define BOOST_ASIO_NODISCARD
 #endif // !defined(BOOST_ASIO_NODISCARD)
+
+// Kernel support for MSG_NOSIGNAL.
+#if !defined(BOOST_ASIO_HAS_MSG_NOSIGNAL)
+# if defined(__linux__)
+#  define BOOST_ASIO_HAS_MSG_NOSIGNAL 1
+# elif defined(_POSIX_VERSION)
+#  if (_POSIX_VERSION >= 200809L)
+#   define BOOST_ASIO_HAS_MSG_NOSIGNAL 1
+#  endif // _POSIX_VERSION >= 200809L
+# endif // defined(_POSIX_VERSION)
+#endif // !defined(BOOST_ASIO_HAS_MSG_NOSIGNAL)
 
 #endif // BOOST_ASIO_DETAIL_CONFIG_HPP

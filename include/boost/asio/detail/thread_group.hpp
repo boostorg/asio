@@ -19,6 +19,8 @@
 #include <boost/asio/detail/scoped_ptr.hpp>
 #include <boost/asio/detail/thread.hpp>
 
+#include <boost/asio/detail/push_options.hpp>
+
 namespace boost {
 namespace asio {
 namespace detail {
@@ -93,5 +95,7 @@ private:
 } // namespace detail
 } // namespace asio
 } // namespace boost
+
+#include <boost/asio/detail/pop_options.hpp>
 
 #endif // BOOST_ASIO_DETAIL_THREAD_GROUP_HPP
