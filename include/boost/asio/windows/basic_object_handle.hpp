@@ -2,7 +2,7 @@
 // windows/basic_object_handle.hpp
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2019 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2020 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 // Copyright (c) 2011 Boris Schaeling (boris@highscore.de)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
@@ -21,13 +21,13 @@
 #if defined(BOOST_ASIO_HAS_WINDOWS_OBJECT_HANDLE) \
   || defined(GENERATING_DOCUMENTATION)
 
+#include <boost/asio/any_io_executor.hpp>
 #include <boost/asio/async_result.hpp>
 #include <boost/asio/detail/io_object_impl.hpp>
 #include <boost/asio/detail/throw_error.hpp>
 #include <boost/asio/detail/win_object_handle_service.hpp>
 #include <boost/asio/error.hpp>
 #include <boost/asio/execution_context.hpp>
-#include <boost/asio/executor.hpp>
 
 #if defined(BOOST_ASIO_HAS_MOVE)
 # include <utility>
@@ -48,7 +48,7 @@ namespace windows {
  * @e Distinct @e objects: Safe.@n
  * @e Shared @e objects: Unsafe.
  */
-template <typename Executor = executor>
+template <typename Executor = any_io_executor>
 class basic_object_handle
 {
 public:
@@ -413,8 +413,8 @@ private:
 
       detail::non_const_lvalue<WaitHandler> handler2(handler);
       self_->impl_.get_service().async_wait(
-          self_->impl_.get_implementation(), handler2.value,
-          self_->impl_.get_implementation_executor());
+          self_->impl_.get_implementation(),
+          handler2.value, self_->impl_.get_executor());
     }
 
   private:

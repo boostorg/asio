@@ -2,14 +2,14 @@
 // daytime_client.cpp
 // ~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2019 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2020 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
 #include <boost/asio.hpp>
-#include <boost/bind.hpp>
+#include <boost/bind/bind.hpp>
 #include <iostream>
 #include "logger.hpp"
 
@@ -30,7 +30,9 @@ void read_handler(const boost::system::error_code& e,
   }
   else
   {
-    services::logger logger(s->get_executor().context(), "read_handler");
+    boost::asio::execution_context& context = boost::asio::query(
+        s->get_executor(), boost::asio::execution::context);
+    services::logger logger(context, "read_handler");
 
     std::string msg = "Read error: ";
     msg += e.message();
@@ -40,7 +42,9 @@ void read_handler(const boost::system::error_code& e,
 
 void connect_handler(const boost::system::error_code& e, tcp::socket* s)
 {
-  services::logger logger(s->get_executor().context(), "connect_handler");
+  boost::asio::execution_context& context = boost::asio::query(
+      s->get_executor(), boost::asio::execution::context);
+  services::logger logger(context, "connect_handler");
 
   if (!e)
   {

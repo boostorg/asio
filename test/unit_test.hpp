@@ -2,7 +2,7 @@
 // unit_test.hpp
 // ~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2019 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2020 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -19,7 +19,7 @@
 # include <stdlib.h> // Needed for lrand48.
 #endif // defined(__sun)
 
-#if defined(__BORLANDC__)
+#if defined(__BORLANDC__) && !defined(__clang__)
 
 // Prevent use of intrinsic for strcmp.
 # include <cstring>
@@ -28,7 +28,7 @@
 // Suppress error about condition always being true.
 # pragma option -w-ccc
 
-#endif // defined(__BORLANDC__)
+#endif // defined(__BORLANDC__) && !defined(__clang__)
 
 #if defined(BOOST_ASIO_MSVC)
 # pragma warning (disable:4127)
@@ -153,6 +153,21 @@ void throw_exception(const T& t)
 
 #define BOOST_ASIO_TEST_CASE(test) \
   boost::asio::detail::run_test<&test>(#test);
+
+#define BOOST_ASIO_TEST_CASE2(test1, test2) \
+  boost::asio::detail::run_test<&test1, test2>(#test1 "," #test2);
+
+#define BOOST_ASIO_TEST_CASE3(test1, test2, test3) \
+  boost::asio::detail::run_test<&test1, test2, test3>( \
+    #test1 "," #test2 "," #test3);
+
+#define BOOST_ASIO_TEST_CASE4(test1, test2, test3, test4) \
+  boost::asio::detail::run_test<&test1, test2, test3, test4>( \
+    #test1 "," #test2 "," #test3 "," #test4);
+
+#define BOOST_ASIO_TEST_CASE5(test1, test2, test3, test4, test5) \
+  boost::asio::detail::run_test<&test1, test2, test3, test4, test5>( \
+    #test1 "," #test2 "," #test3 "," #test4 "," #test5);
 
 #define BOOST_ASIO_COMPILE_TEST_CASE(test) \
   boost::asio::detail::compile_test<&test>(#test);

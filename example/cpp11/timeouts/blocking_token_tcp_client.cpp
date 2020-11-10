@@ -2,7 +2,7 @@
 // blocking_token_tcp_client.cpp
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2019 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2020 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -98,7 +98,8 @@ public:
   // use this function to run the io_context until the operation is complete.
   return_type get()
   {
-    boost::asio::io_context& io_context = socket_.get_executor().context();
+    boost::asio::io_context& io_context = boost::asio::query(
+        socket_.get_executor(), boost::asio::execution::context);
 
     // Restart the io_context, as it may have been left in the "stopped" state
     // by a previous operation.

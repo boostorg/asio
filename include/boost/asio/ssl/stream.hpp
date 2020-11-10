@@ -2,7 +2,7 @@
 // ssl/stream.hpp
 // ~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2019 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2020 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -106,6 +106,21 @@ public:
   stream(Arg& arg, context& ctx)
     : next_layer_(arg),
       core_(ctx.native_handle(), next_layer_.lowest_layer().get_executor())
+  {
+  }
+#endif // defined(BOOST_ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
+
+#if defined(BOOST_ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
+  /// Move-construct a stream from another.
+  /**
+   * @param other The other stream object from which the move will occur. Must
+   * have no outstanding asynchronous operations associated with it. Following
+   * the move, @c other has a valid but unspecified state where the only safe
+   * operation is destruction.
+   */
+  stream(stream&& other)
+    : next_layer_(BOOST_ASIO_MOVE_CAST(Stream)(other.next_layer_)),
+      core_(BOOST_ASIO_MOVE_CAST(detail::stream_core)(other.core_))
   {
   }
 #endif // defined(BOOST_ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)

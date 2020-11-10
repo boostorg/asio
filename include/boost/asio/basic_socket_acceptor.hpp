@@ -2,7 +2,7 @@
 // basic_socket_acceptor.hpp
 // ~~~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2019 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2020 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -16,6 +16,7 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include <boost/asio/detail/config.hpp>
+#include <boost/asio/any_io_executor.hpp>
 #include <boost/asio/basic_socket.hpp>
 #include <boost/asio/detail/handler_type_requirements.hpp>
 #include <boost/asio/detail/io_object_impl.hpp>
@@ -24,7 +25,6 @@
 #include <boost/asio/detail/type_traits.hpp>
 #include <boost/asio/error.hpp>
 #include <boost/asio/execution_context.hpp>
-#include <boost/asio/executor.hpp>
 #include <boost/asio/socket_base.hpp>
 
 #if defined(BOOST_ASIO_WINDOWS_RUNTIME)
@@ -48,7 +48,7 @@ namespace asio {
 #define BOOST_ASIO_BASIC_SOCKET_ACCEPTOR_FWD_DECL
 
 // Forward declaration with defaulted arguments.
-template <typename Protocol, typename Executor = executor>
+template <typename Protocol, typename Executor = any_io_executor>
 class basic_socket_acceptor;
 
 #endif // !defined(BOOST_ASIO_BASIC_SOCKET_ACCEPTOR_FWD_DECL)
@@ -354,7 +354,7 @@ public:
    * constructed using the @c basic_socket_acceptor(const executor_type&)
    * constructor.
    */
-  basic_socket_acceptor(basic_socket_acceptor&& other)
+  basic_socket_acceptor(basic_socket_acceptor&& other) BOOST_ASIO_NOEXCEPT
     : impl_(std::move(other.impl_))
   {
   }
@@ -1621,6 +1621,7 @@ public:
   accept(const Executor1& ex,
       typename enable_if<
         is_executor<Executor1>::value
+          || execution::is_executor<Executor1>::value
       >::type* = 0)
   {
     boost::system::error_code ec;
@@ -1703,6 +1704,7 @@ public:
   accept(const Executor1& ex, boost::system::error_code& ec,
       typename enable_if<
         is_executor<Executor1>::value
+          || execution::is_executor<Executor1>::value
       >::type* = 0)
   {
     typename Protocol::socket::template
@@ -1809,6 +1811,7 @@ public:
         BOOST_ASIO_DEFAULT_COMPLETION_TOKEN(executor_type),
       typename enable_if<
         is_executor<Executor1>::value
+          || execution::is_executor<Executor1>::value
       >::type* = 0)
   {
     typedef typename Protocol::socket::template rebind_executor<
@@ -2067,6 +2070,7 @@ public:
   accept(const Executor1& ex, endpoint_type& peer_endpoint,
       typename enable_if<
         is_executor<Executor1>::value
+          || execution::is_executor<Executor1>::value
       >::type* = 0)
   {
     boost::system::error_code ec;
@@ -2162,6 +2166,7 @@ public:
       endpoint_type& peer_endpoint, boost::system::error_code& ec,
       typename enable_if<
         is_executor<Executor1>::value
+          || execution::is_executor<Executor1>::value
       >::type* = 0)
   {
     typename Protocol::socket::template
@@ -2282,6 +2287,7 @@ public:
         BOOST_ASIO_DEFAULT_COMPLETION_TOKEN(executor_type),
       typename enable_if<
         is_executor<Executor1>::value
+          || execution::is_executor<Executor1>::value
       >::type* = 0)
   {
     typedef typename Protocol::socket::template rebind_executor<
@@ -2401,8 +2407,8 @@ private:
 
       detail::non_const_lvalue<WaitHandler> handler2(handler);
       self_->impl_.get_service().async_wait(
-          self_->impl_.get_implementation(), w, handler2.value,
-          self_->impl_.get_implementation_executor());
+          self_->impl_.get_implementation(), w,
+          handler2.value, self_->impl_.get_executor());
     }
 
   private:
@@ -2436,7 +2442,7 @@ private:
       detail::non_const_lvalue<AcceptHandler> handler2(handler);
       self_->impl_.get_service().async_accept(
           self_->impl_.get_implementation(), *peer, peer_endpoint,
-          handler2.value, self_->impl_.get_implementation_executor());
+          handler2.value, self_->impl_.get_executor());
     }
 
   private:
@@ -2470,7 +2476,7 @@ private:
       detail::non_const_lvalue<MoveAcceptHandler> handler2(handler);
       self_->impl_.get_service().async_move_accept(
           self_->impl_.get_implementation(), peer_ex, peer_endpoint,
-          handler2.value, self_->impl_.get_implementation_executor());
+          handler2.value, self_->impl_.get_executor());
     }
 
   private:

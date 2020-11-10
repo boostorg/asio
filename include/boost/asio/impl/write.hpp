@@ -2,7 +2,7 @@
 // impl/write.hpp
 // ~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2019 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2020 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -27,6 +27,7 @@
 #include <boost/asio/detail/handler_alloc_helpers.hpp>
 #include <boost/asio/detail/handler_cont_helpers.hpp>
 #include <boost/asio/detail/handler_invoke_helpers.hpp>
+#include <boost/asio/detail/handler_tracking.hpp>
 #include <boost/asio/detail/handler_type_requirements.hpp>
 #include <boost/asio/detail/non_const_lvalue.hpp>
 #include <boost/asio/detail/throw_error.hpp>
@@ -55,7 +56,7 @@ namespace detail
       else
         break;
     }
-    return tmp.total_consumed();;
+    return tmp.total_consumed();
   }
 } // namespace detail
 
@@ -326,8 +327,11 @@ namespace detail
         max_size = this->check_for_completion(ec, buffers_.total_consumed());
         do
         {
-          stream_.async_write_some(buffers_.prepare(max_size),
-              BOOST_ASIO_MOVE_CAST(write_op)(*this));
+          {
+            BOOST_ASIO_HANDLER_LOCATION((__FILE__, __LINE__, "async_write"));
+            stream_.async_write_some(buffers_.prepare(max_size),
+                BOOST_ASIO_MOVE_CAST(write_op)(*this));
+          }
           return; default:
           buffers_.consume(bytes_transferred);
           if ((!ec && bytes_transferred == 0) || buffers_.empty())
@@ -352,23 +356,33 @@ namespace detail
   template <typename AsyncWriteStream, typename ConstBufferSequence,
       typename ConstBufferIterator, typename CompletionCondition,
       typename WriteHandler>
-  inline void* asio_handler_allocate(std::size_t size,
+  inline asio_handler_allocate_is_deprecated
+  asio_handler_allocate(std::size_t size,
       write_op<AsyncWriteStream, ConstBufferSequence, ConstBufferIterator,
         CompletionCondition, WriteHandler>* this_handler)
   {
+#if defined(BOOST_ASIO_NO_DEPRECATED)
+    boost_asio_handler_alloc_helpers::allocate(size, this_handler->handler_);
+    return asio_handler_allocate_is_no_longer_used();
+#else // defined(BOOST_ASIO_NO_DEPRECATED)
     return boost_asio_handler_alloc_helpers::allocate(
         size, this_handler->handler_);
+#endif // defined(BOOST_ASIO_NO_DEPRECATED)
   }
 
   template <typename AsyncWriteStream, typename ConstBufferSequence,
       typename ConstBufferIterator, typename CompletionCondition,
       typename WriteHandler>
-  inline void asio_handler_deallocate(void* pointer, std::size_t size,
+  inline asio_handler_deallocate_is_deprecated
+  asio_handler_deallocate(void* pointer, std::size_t size,
       write_op<AsyncWriteStream, ConstBufferSequence, ConstBufferIterator,
         CompletionCondition, WriteHandler>* this_handler)
   {
     boost_asio_handler_alloc_helpers::deallocate(
         pointer, size, this_handler->handler_);
+#if defined(BOOST_ASIO_NO_DEPRECATED)
+    return asio_handler_deallocate_is_no_longer_used();
+#endif // defined(BOOST_ASIO_NO_DEPRECATED)
   }
 
   template <typename AsyncWriteStream, typename ConstBufferSequence,
@@ -386,23 +400,31 @@ namespace detail
   template <typename Function, typename AsyncWriteStream,
       typename ConstBufferSequence, typename ConstBufferIterator,
       typename CompletionCondition, typename WriteHandler>
-  inline void asio_handler_invoke(Function& function,
+  inline asio_handler_invoke_is_deprecated
+  asio_handler_invoke(Function& function,
       write_op<AsyncWriteStream, ConstBufferSequence, ConstBufferIterator,
         CompletionCondition, WriteHandler>* this_handler)
   {
     boost_asio_handler_invoke_helpers::invoke(
         function, this_handler->handler_);
+#if defined(BOOST_ASIO_NO_DEPRECATED)
+    return asio_handler_invoke_is_no_longer_used();
+#endif // defined(BOOST_ASIO_NO_DEPRECATED)
   }
 
   template <typename Function, typename AsyncWriteStream,
       typename ConstBufferSequence, typename ConstBufferIterator,
       typename CompletionCondition, typename WriteHandler>
-  inline void asio_handler_invoke(const Function& function,
+  inline asio_handler_invoke_is_deprecated
+  asio_handler_invoke(const Function& function,
       write_op<AsyncWriteStream, ConstBufferSequence, ConstBufferIterator,
         CompletionCondition, WriteHandler>* this_handler)
   {
     boost_asio_handler_invoke_helpers::invoke(
         function, this_handler->handler_);
+#if defined(BOOST_ASIO_NO_DEPRECATED)
+    return asio_handler_invoke_is_no_longer_used();
+#endif // defined(BOOST_ASIO_NO_DEPRECATED)
   }
 
   template <typename AsyncWriteStream, typename ConstBufferSequence,
@@ -484,6 +506,7 @@ struct associated_executor<
     detail::write_op<AsyncWriteStream, ConstBufferSequence,
       ConstBufferIterator, CompletionCondition, WriteHandler>,
     Executor>
+  : detail::associated_executor_forwarding_base<WriteHandler, Executor>
 {
   typedef typename associated_executor<WriteHandler, Executor>::type type;
 
@@ -600,22 +623,32 @@ namespace detail
 
   template <typename AsyncWriteStream, typename DynamicBuffer_v1,
       typename CompletionCondition, typename WriteHandler>
-  inline void* asio_handler_allocate(std::size_t size,
+  inline asio_handler_allocate_is_deprecated
+  asio_handler_allocate(std::size_t size,
       write_dynbuf_v1_op<AsyncWriteStream, DynamicBuffer_v1,
         CompletionCondition, WriteHandler>* this_handler)
   {
+#if defined(BOOST_ASIO_NO_DEPRECATED)
+    boost_asio_handler_alloc_helpers::allocate(size, this_handler->handler_);
+    return asio_handler_allocate_is_no_longer_used();
+#else // defined(BOOST_ASIO_NO_DEPRECATED)
     return boost_asio_handler_alloc_helpers::allocate(
         size, this_handler->handler_);
+#endif // defined(BOOST_ASIO_NO_DEPRECATED)
   }
 
   template <typename AsyncWriteStream, typename DynamicBuffer_v1,
       typename CompletionCondition, typename WriteHandler>
-  inline void asio_handler_deallocate(void* pointer, std::size_t size,
+  inline asio_handler_deallocate_is_deprecated
+  asio_handler_deallocate(void* pointer, std::size_t size,
       write_dynbuf_v1_op<AsyncWriteStream, DynamicBuffer_v1,
         CompletionCondition, WriteHandler>* this_handler)
   {
     boost_asio_handler_alloc_helpers::deallocate(
         pointer, size, this_handler->handler_);
+#if defined(BOOST_ASIO_NO_DEPRECATED)
+    return asio_handler_deallocate_is_no_longer_used();
+#endif // defined(BOOST_ASIO_NO_DEPRECATED)
   }
 
   template <typename AsyncWriteStream, typename DynamicBuffer_v1,
@@ -631,23 +664,31 @@ namespace detail
   template <typename Function, typename AsyncWriteStream,
       typename DynamicBuffer_v1, typename CompletionCondition,
       typename WriteHandler>
-  inline void asio_handler_invoke(Function& function,
+  inline asio_handler_invoke_is_deprecated
+  asio_handler_invoke(Function& function,
       write_dynbuf_v1_op<AsyncWriteStream, DynamicBuffer_v1,
         CompletionCondition, WriteHandler>* this_handler)
   {
     boost_asio_handler_invoke_helpers::invoke(
         function, this_handler->handler_);
+#if defined(BOOST_ASIO_NO_DEPRECATED)
+    return asio_handler_invoke_is_no_longer_used();
+#endif // defined(BOOST_ASIO_NO_DEPRECATED)
   }
 
   template <typename Function, typename AsyncWriteStream,
       typename DynamicBuffer_v1, typename CompletionCondition,
       typename WriteHandler>
-  inline void asio_handler_invoke(const Function& function,
+  inline asio_handler_invoke_is_deprecated
+  asio_handler_invoke(const Function& function,
       write_dynbuf_v1_op<AsyncWriteStream, DynamicBuffer_v1,
         CompletionCondition, WriteHandler>* this_handler)
   {
     boost_asio_handler_invoke_helpers::invoke(
         function, this_handler->handler_);
+#if defined(BOOST_ASIO_NO_DEPRECATED)
+    return asio_handler_invoke_is_no_longer_used();
+#endif // defined(BOOST_ASIO_NO_DEPRECATED)
   }
 
   template <typename AsyncWriteStream>
@@ -717,6 +758,7 @@ struct associated_executor<
     detail::write_dynbuf_v1_op<AsyncWriteStream,
       DynamicBuffer_v1, CompletionCondition, WriteHandler>,
     Executor>
+  : detail::associated_executor_forwarding_base<WriteHandler, Executor>
 {
   typedef typename associated_executor<WriteHandler, Executor>::type type;
 
@@ -870,22 +912,32 @@ namespace detail
 
   template <typename AsyncWriteStream, typename DynamicBuffer_v2,
       typename CompletionCondition, typename WriteHandler>
-  inline void* asio_handler_allocate(std::size_t size,
+  inline asio_handler_allocate_is_deprecated
+  asio_handler_allocate(std::size_t size,
       write_dynbuf_v2_op<AsyncWriteStream, DynamicBuffer_v2,
         CompletionCondition, WriteHandler>* this_handler)
   {
+#if defined(BOOST_ASIO_NO_DEPRECATED)
+    boost_asio_handler_alloc_helpers::allocate(size, this_handler->handler_);
+    return asio_handler_allocate_is_no_longer_used();
+#else // defined(BOOST_ASIO_NO_DEPRECATED)
     return boost_asio_handler_alloc_helpers::allocate(
         size, this_handler->handler_);
+#endif // defined(BOOST_ASIO_NO_DEPRECATED)
   }
 
   template <typename AsyncWriteStream, typename DynamicBuffer_v2,
       typename CompletionCondition, typename WriteHandler>
-  inline void asio_handler_deallocate(void* pointer, std::size_t size,
+  inline asio_handler_deallocate_is_deprecated
+  asio_handler_deallocate(void* pointer, std::size_t size,
       write_dynbuf_v2_op<AsyncWriteStream, DynamicBuffer_v2,
         CompletionCondition, WriteHandler>* this_handler)
   {
     boost_asio_handler_alloc_helpers::deallocate(
         pointer, size, this_handler->handler_);
+#if defined(BOOST_ASIO_NO_DEPRECATED)
+    return asio_handler_deallocate_is_no_longer_used();
+#endif // defined(BOOST_ASIO_NO_DEPRECATED)
   }
 
   template <typename AsyncWriteStream, typename DynamicBuffer_v2,
@@ -901,23 +953,31 @@ namespace detail
   template <typename Function, typename AsyncWriteStream,
       typename DynamicBuffer_v2, typename CompletionCondition,
       typename WriteHandler>
-  inline void asio_handler_invoke(Function& function,
+  inline asio_handler_invoke_is_deprecated
+  asio_handler_invoke(Function& function,
       write_dynbuf_v2_op<AsyncWriteStream, DynamicBuffer_v2,
         CompletionCondition, WriteHandler>* this_handler)
   {
     boost_asio_handler_invoke_helpers::invoke(
         function, this_handler->handler_);
+#if defined(BOOST_ASIO_NO_DEPRECATED)
+    return asio_handler_invoke_is_no_longer_used();
+#endif // defined(BOOST_ASIO_NO_DEPRECATED)
   }
 
   template <typename Function, typename AsyncWriteStream,
       typename DynamicBuffer_v2, typename CompletionCondition,
       typename WriteHandler>
-  inline void asio_handler_invoke(const Function& function,
+  inline asio_handler_invoke_is_deprecated
+  asio_handler_invoke(const Function& function,
       write_dynbuf_v2_op<AsyncWriteStream, DynamicBuffer_v2,
         CompletionCondition, WriteHandler>* this_handler)
   {
     boost_asio_handler_invoke_helpers::invoke(
         function, this_handler->handler_);
+#if defined(BOOST_ASIO_NO_DEPRECATED)
+    return asio_handler_invoke_is_no_longer_used();
+#endif // defined(BOOST_ASIO_NO_DEPRECATED)
   }
 
   template <typename AsyncWriteStream>
@@ -987,6 +1047,7 @@ struct associated_executor<
     detail::write_dynbuf_v2_op<AsyncWriteStream,
       DynamicBuffer_v2, CompletionCondition, WriteHandler>,
     Executor>
+  : detail::associated_executor_forwarding_base<WriteHandler, Executor>
 {
   typedef typename associated_executor<WriteHandler, Executor>::type type;
 

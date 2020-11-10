@@ -2,7 +2,7 @@
 // async_result.hpp
 // ~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2019 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2020 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -66,9 +66,10 @@ BOOST_ASIO_CONCEPT completion_signature =
 #define BOOST_ASIO_COMPLETION_SIGNATURE \
   ::boost::asio::completion_signature
 
-template <typename T, completion_signature Signature>
+template <typename T, typename Signature>
 BOOST_ASIO_CONCEPT completion_handler_for =
-  detail::is_completion_handler_for<T, Signature>::value;
+  detail::is_completion_signature<Signature>::value
+    && detail::is_completion_handler_for<T, Signature>::value;
 
 #define BOOST_ASIO_COMPLETION_HANDLER_FOR(s) \
   ::boost::asio::completion_handler_for<s>
@@ -312,7 +313,7 @@ struct async_result_has_initiate_memfn
     typename ::boost::asio::decay<ct>::type, sig>::completion_handler_type
 #endif
 
-#if defined(GENERATION_DOCUMENTATION)
+#if defined(GENERATING_DOCUMENTATION)
 # define BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(ct, sig) \
   auto
 #elif defined(BOOST_ASIO_HAS_RETURN_TYPE_DEDUCTION)
@@ -323,7 +324,7 @@ struct async_result_has_initiate_memfn
   BOOST_ASIO_INITFN_RESULT_TYPE(ct, sig)
 #endif
 
-#if defined(GENERATION_DOCUMENTATION)
+#if defined(GENERATING_DOCUMENTATION)
 # define BOOST_ASIO_INITFN_DEDUCED_RESULT_TYPE(ct, sig, expr) \
   void_or_deduced
 #elif defined(BOOST_ASIO_HAS_DECLTYPE)
@@ -488,11 +489,14 @@ struct initiation_archetype
 
 } // namespace detail
 
-template <typename T, completion_signature Signature>
-BOOST_ASIO_CONCEPT completion_token_for = requires(T&& t)
-{
-  async_initiate<T, Signature>(detail::initiation_archetype<Signature>{}, t);
-};
+template <typename T, typename Signature>
+BOOST_ASIO_CONCEPT completion_token_for =
+  detail::is_completion_signature<Signature>::value
+  &&
+  requires(T&& t)
+  {
+    async_initiate<T, Signature>(detail::initiation_archetype<Signature>{}, t);
+  };
 
 #define BOOST_ASIO_COMPLETION_TOKEN_FOR(s) \
   ::boost::asio::completion_token_for<s>
@@ -509,12 +513,6 @@ BOOST_ASIO_CONCEPT completion_token_for = requires(T&& t)
 
 namespace detail {
 
-template <typename>
-struct default_completion_token_check
-{
-  typedef void type;
-};
-
 template <typename T, typename = void>
 struct default_completion_token_impl
 {
@@ -523,8 +521,7 @@ struct default_completion_token_impl
 
 template <typename T>
 struct default_completion_token_impl<T,
-  typename default_completion_token_check<
-    typename T::default_completion_token_type>::type>
+  typename void_type<typename T::default_completion_token_type>::type>
 {
   typedef typename T::default_completion_token_type type;
 };

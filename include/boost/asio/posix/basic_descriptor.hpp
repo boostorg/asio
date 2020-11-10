@@ -2,7 +2,7 @@
 // posix/basic_descriptor.hpp
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2019 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2020 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -20,6 +20,7 @@
 #if defined(BOOST_ASIO_HAS_POSIX_STREAM_DESCRIPTOR) \
   || defined(GENERATING_DOCUMENTATION)
 
+#include <boost/asio/any_io_executor.hpp>
 #include <boost/asio/async_result.hpp>
 #include <boost/asio/detail/handler_type_requirements.hpp>
 #include <boost/asio/detail/io_object_impl.hpp>
@@ -28,7 +29,6 @@
 #include <boost/asio/detail/throw_error.hpp>
 #include <boost/asio/error.hpp>
 #include <boost/asio/execution_context.hpp>
-#include <boost/asio/executor.hpp>
 #include <boost/asio/posix/descriptor_base.hpp>
 
 #if defined(BOOST_ASIO_HAS_MOVE)
@@ -50,7 +50,7 @@ namespace posix {
  * @e Distinct @e objects: Safe.@n
  * @e Shared @e objects: Unsafe.
  */
-template <typename Executor = executor>
+template <typename Executor = any_io_executor>
 class basic_descriptor
   : public descriptor_base
 {
@@ -169,7 +169,7 @@ public:
    * constructed using the @c basic_descriptor(const executor_type&)
    * constructor.
    */
-  basic_descriptor(basic_descriptor&& other)
+  basic_descriptor(basic_descriptor&& other) BOOST_ASIO_NOEXCEPT
     : impl_(std::move(other.impl_))
   {
   }
@@ -678,8 +678,8 @@ private:
 
       detail::non_const_lvalue<WaitHandler> handler2(handler);
       self_->impl_.get_service().async_wait(
-          self_->impl_.get_implementation(), w, handler2.value,
-          self_->impl_.get_implementation_executor());
+          self_->impl_.get_implementation(), w,
+          handler2.value, self_->impl_.get_executor());
     }
 
   private:

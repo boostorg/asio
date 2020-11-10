@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2003-2019 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+# Copyright (c) 2003-2020 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 #
 # Distributed under the Boost Software License, Version 1.0. (See accompanying
 # file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -176,6 +176,8 @@ test-suite "asio" :
   [ run signal_set.cpp : : : $(USE_SELECT) : signal_set_select ]
   [ run socket_base.cpp ]
   [ run socket_base.cpp : : : $(USE_SELECT) : socket_base_select ]
+  [ run static_thread_pool.cpp ]
+  [ run static_thread_pool.cpp : : : $(USE_SELECT) : static_thread_pool_select ]
   [ link steady_timer.cpp ]
   [ link steady_timer.cpp : $(USE_SELECT) : steady_timer_select ]
   [ run strand.cpp ]
@@ -190,6 +192,8 @@ test-suite "asio" :
   [ link system_executor.cpp : $(USE_SELECT) : system_executor_select ]
   [ link this_coro.cpp ]
   [ link this_coro.cpp : $(USE_SELECT) : this_coro_select ]
+  [ run thread_pool.cpp ]
+  [ run thread_pool.cpp : : : $(USE_SELECT) : thread_pool_select ]
   [ link time_traits.cpp ]
   [ link time_traits.cpp : $(USE_SELECT) : time_traits_select ]
   [ link ts/buffer.cpp : : ts_buffer ]
@@ -233,3 +237,5 @@ test-suite "asio" :
   [ run write_at.cpp ]
   [ run write_at.cpp : : : $(USE_SELECT) : write_at_select ]
   ;
+
+build-project execution ;

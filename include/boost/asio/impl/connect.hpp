@@ -2,7 +2,7 @@
 // impl/connect.hpp
 // ~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2019 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2020 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -22,6 +22,7 @@
 #include <boost/asio/detail/handler_alloc_helpers.hpp>
 #include <boost/asio/detail/handler_cont_helpers.hpp>
 #include <boost/asio/detail/handler_invoke_helpers.hpp>
+#include <boost/asio/detail/handler_tracking.hpp>
 #include <boost/asio/detail/handler_type_requirements.hpp>
 #include <boost/asio/detail/non_const_lvalue.hpp>
 #include <boost/asio/detail/throw_error.hpp>
@@ -358,6 +359,7 @@ namespace detail
           if (iter != end)
           {
             socket_.close(ec);
+            BOOST_ASIO_HANDLER_LOCATION((__FILE__, __LINE__, "async_connect"));
             socket_.async_connect(*iter,
                 BOOST_ASIO_MOVE_CAST(range_connect_op)(*this));
             return;
@@ -366,6 +368,7 @@ namespace detail
           if (start)
           {
             ec = boost::asio::error::not_found;
+            BOOST_ASIO_HANDLER_LOCATION((__FILE__, __LINE__, "async_connect"));
             boost::asio::post(socket_.get_executor(),
                 detail::bind_handler(
                   BOOST_ASIO_MOVE_CAST(range_connect_op)(*this), ec));
@@ -405,22 +408,32 @@ namespace detail
 
   template <typename Protocol, typename Executor, typename EndpointSequence,
       typename ConnectCondition, typename RangeConnectHandler>
-  inline void* asio_handler_allocate(std::size_t size,
+  inline asio_handler_allocate_is_deprecated
+  asio_handler_allocate(std::size_t size,
       range_connect_op<Protocol, Executor, EndpointSequence,
         ConnectCondition, RangeConnectHandler>* this_handler)
   {
+#if defined(BOOST_ASIO_NO_DEPRECATED)
+    boost_asio_handler_alloc_helpers::allocate(size, this_handler->handler_);
+    return asio_handler_allocate_is_no_longer_used();
+#else // defined(BOOST_ASIO_NO_DEPRECATED)
     return boost_asio_handler_alloc_helpers::allocate(
         size, this_handler->handler_);
+#endif // defined(BOOST_ASIO_NO_DEPRECATED)
   }
 
   template <typename Protocol, typename Executor, typename EndpointSequence,
       typename ConnectCondition, typename RangeConnectHandler>
-  inline void asio_handler_deallocate(void* pointer, std::size_t size,
+  inline asio_handler_deallocate_is_deprecated
+  asio_handler_deallocate(void* pointer, std::size_t size,
       range_connect_op<Protocol, Executor, EndpointSequence,
         ConnectCondition, RangeConnectHandler>* this_handler)
   {
     boost_asio_handler_alloc_helpers::deallocate(
         pointer, size, this_handler->handler_);
+#if defined(BOOST_ASIO_NO_DEPRECATED)
+    return asio_handler_deallocate_is_no_longer_used();
+#endif // defined(BOOST_ASIO_NO_DEPRECATED)
   }
 
   template <typename Protocol, typename Executor, typename EndpointSequence,
@@ -436,23 +449,31 @@ namespace detail
   template <typename Function, typename Executor, typename Protocol,
       typename EndpointSequence, typename ConnectCondition,
       typename RangeConnectHandler>
-  inline void asio_handler_invoke(Function& function,
+  inline asio_handler_invoke_is_deprecated
+  asio_handler_invoke(Function& function,
       range_connect_op<Protocol, Executor, EndpointSequence,
         ConnectCondition, RangeConnectHandler>* this_handler)
   {
     boost_asio_handler_invoke_helpers::invoke(
         function, this_handler->handler_);
+#if defined(BOOST_ASIO_NO_DEPRECATED)
+    return asio_handler_invoke_is_no_longer_used();
+#endif // defined(BOOST_ASIO_NO_DEPRECATED)
   }
 
   template <typename Function, typename Executor, typename Protocol,
       typename EndpointSequence, typename ConnectCondition,
       typename RangeConnectHandler>
-  inline void asio_handler_invoke(const Function& function,
+  inline asio_handler_invoke_is_deprecated
+  asio_handler_invoke(const Function& function,
       range_connect_op<Protocol, Executor, EndpointSequence,
         ConnectCondition, RangeConnectHandler>* this_handler)
   {
     boost_asio_handler_invoke_helpers::invoke(
         function, this_handler->handler_);
+#if defined(BOOST_ASIO_NO_DEPRECATED)
+    return asio_handler_invoke_is_no_longer_used();
+#endif // defined(BOOST_ASIO_NO_DEPRECATED)
   }
 
   template <typename Protocol, typename Executor>
@@ -545,6 +566,7 @@ namespace detail
           if (iter_ != end_)
           {
             socket_.close(ec);
+            BOOST_ASIO_HANDLER_LOCATION((__FILE__, __LINE__, "async_connect"));
             socket_.async_connect(*iter_,
                 BOOST_ASIO_MOVE_CAST(iterator_connect_op)(*this));
             return;
@@ -553,6 +575,7 @@ namespace detail
           if (start)
           {
             ec = boost::asio::error::not_found;
+            BOOST_ASIO_HANDLER_LOCATION((__FILE__, __LINE__, "async_connect"));
             boost::asio::post(socket_.get_executor(),
                 detail::bind_handler(
                   BOOST_ASIO_MOVE_CAST(iterator_connect_op)(*this), ec));
@@ -591,22 +614,32 @@ namespace detail
 
   template <typename Protocol, typename Executor, typename Iterator,
       typename ConnectCondition, typename IteratorConnectHandler>
-  inline void* asio_handler_allocate(std::size_t size,
+  inline asio_handler_allocate_is_deprecated
+  asio_handler_allocate(std::size_t size,
       iterator_connect_op<Protocol, Executor, Iterator,
         ConnectCondition, IteratorConnectHandler>* this_handler)
   {
+#if defined(BOOST_ASIO_NO_DEPRECATED)
+    boost_asio_handler_alloc_helpers::allocate(size, this_handler->handler_);
+    return asio_handler_allocate_is_no_longer_used();
+#else // defined(BOOST_ASIO_NO_DEPRECATED)
     return boost_asio_handler_alloc_helpers::allocate(
         size, this_handler->handler_);
+#endif // defined(BOOST_ASIO_NO_DEPRECATED)
   }
 
   template <typename Protocol, typename Executor, typename Iterator,
       typename ConnectCondition, typename IteratorConnectHandler>
-  inline void asio_handler_deallocate(void* pointer, std::size_t size,
+  inline asio_handler_deallocate_is_deprecated
+  asio_handler_deallocate(void* pointer, std::size_t size,
       iterator_connect_op<Protocol, Executor, Iterator,
         ConnectCondition, IteratorConnectHandler>* this_handler)
   {
     boost_asio_handler_alloc_helpers::deallocate(
         pointer, size, this_handler->handler_);
+#if defined(BOOST_ASIO_NO_DEPRECATED)
+    return asio_handler_deallocate_is_no_longer_used();
+#endif // defined(BOOST_ASIO_NO_DEPRECATED)
   }
 
   template <typename Protocol, typename Executor, typename Iterator,
@@ -622,23 +655,31 @@ namespace detail
   template <typename Function, typename Executor, typename Protocol,
       typename Iterator, typename ConnectCondition,
       typename IteratorConnectHandler>
-  inline void asio_handler_invoke(Function& function,
+  inline asio_handler_invoke_is_deprecated
+  asio_handler_invoke(Function& function,
       iterator_connect_op<Protocol, Executor, Iterator,
         ConnectCondition, IteratorConnectHandler>* this_handler)
   {
     boost_asio_handler_invoke_helpers::invoke(
         function, this_handler->handler_);
+#if defined(BOOST_ASIO_NO_DEPRECATED)
+    return asio_handler_invoke_is_no_longer_used();
+#endif // defined(BOOST_ASIO_NO_DEPRECATED)
   }
 
   template <typename Function, typename Executor, typename Protocol,
       typename Iterator, typename ConnectCondition,
       typename IteratorConnectHandler>
-  inline void asio_handler_invoke(const Function& function,
+  inline asio_handler_invoke_is_deprecated
+  asio_handler_invoke(const Function& function,
       iterator_connect_op<Protocol, Executor, Iterator,
         ConnectCondition, IteratorConnectHandler>* this_handler)
   {
     boost_asio_handler_invoke_helpers::invoke(
         function, this_handler->handler_);
+#if defined(BOOST_ASIO_NO_DEPRECATED)
+    return asio_handler_invoke_is_no_longer_used();
+#endif // defined(BOOST_ASIO_NO_DEPRECATED)
   }
 
   template <typename Protocol, typename Executor>
@@ -707,6 +748,7 @@ template <typename Protocol, typename Executor, typename EndpointSequence,
 struct associated_executor<
     detail::range_connect_op<Protocol, Executor, EndpointSequence,
       ConnectCondition, RangeConnectHandler>, Executor1>
+  : detail::associated_executor_forwarding_base<RangeConnectHandler, Executor1>
 {
   typedef typename associated_executor<
       RangeConnectHandler, Executor1>::type type;
@@ -749,6 +791,8 @@ struct associated_executor<
     detail::iterator_connect_op<Protocol, Executor,
       Iterator, ConnectCondition, IteratorConnectHandler>,
     Executor1>
+  : detail::associated_executor_forwarding_base<
+      IteratorConnectHandler, Executor1>
 {
   typedef typename associated_executor<
       IteratorConnectHandler, Executor1>::type type;

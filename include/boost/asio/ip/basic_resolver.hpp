@@ -2,7 +2,7 @@
 // ip/basic_resolver.hpp
 // ~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2019 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2020 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -17,6 +17,7 @@
 
 #include <boost/asio/detail/config.hpp>
 #include <string>
+#include <boost/asio/any_io_executor.hpp>
 #include <boost/asio/async_result.hpp>
 #include <boost/asio/detail/handler_type_requirements.hpp>
 #include <boost/asio/detail/io_object_impl.hpp>
@@ -25,7 +26,6 @@
 #include <boost/asio/detail/throw_error.hpp>
 #include <boost/asio/error.hpp>
 #include <boost/asio/execution_context.hpp>
-#include <boost/asio/executor.hpp>
 #include <boost/asio/ip/basic_resolver_iterator.hpp>
 #include <boost/asio/ip/basic_resolver_query.hpp>
 #include <boost/asio/ip/basic_resolver_results.hpp>
@@ -50,7 +50,7 @@ namespace ip {
 #define BOOST_ASIO_IP_BASIC_RESOLVER_FWD_DECL
 
 // Forward declaration with defaulted arguments.
-template <typename InternetProtocol, typename Executor = executor>
+template <typename InternetProtocol, typename Executor = any_io_executor>
 class basic_resolver;
 
 #endif // !defined(BOOST_ASIO_IP_BASIC_RESOLVER_FWD_DECL)
@@ -143,6 +143,29 @@ public:
   {
   }
 
+  // All resolvers have access to each other's implementations.
+  template <typename InternetProtocol1, typename Executor1>
+  friend class basic_resolver;
+
+  /// Move-construct a basic_resolver from another.
+  /**
+   * This constructor moves a resolver from one object to another.
+   *
+   * @param other The other basic_resolver object from which the move will
+   * occur.
+   *
+   * @note Following the move, the moved-from object is in the same state as if
+   * constructed using the @c basic_resolver(const executor_type&) constructor.
+   */
+  template <typename Executor1>
+  basic_resolver(basic_resolver<InternetProtocol, Executor1>&& other,
+      typename enable_if<
+          is_convertible<Executor1, Executor>::value
+      >::type* = 0)
+    : impl_(std::move(other.impl_))
+  {
+  }
+
   /// Move-assign a basic_resolver from another.
   /**
    * This assignment operator moves a resolver from one object to another.
@@ -158,6 +181,29 @@ public:
   basic_resolver& operator=(basic_resolver&& other)
   {
     impl_ = std::move(other.impl_);
+    return *this;
+  }
+
+  /// Move-assign a basic_resolver from another.
+  /**
+   * This assignment operator moves a resolver from one object to another.
+   * Cancels any outstanding asynchronous operations associated with the target
+   * object.
+   *
+   * @param other The other basic_resolver object from which the move will
+   * occur.
+   *
+   * @note Following the move, the moved-from object is in the same state as if
+   * constructed using the @c basic_resolver(const executor_type&) constructor.
+   */
+  template <typename Executor1>
+  typename enable_if<
+    is_convertible<Executor1, Executor>::value,
+    basic_resolver&
+  >::type operator=(basic_resolver<InternetProtocol, Executor1>&& other)
+  {
+    basic_resolver tmp(std::move(other));
+    impl_ = std::move(tmp.impl_);
     return *this;
   }
 #endif // defined(BOOST_ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
@@ -1004,8 +1050,8 @@ private:
 
       boost::asio::detail::non_const_lvalue<ResolveHandler> handler2(handler);
       self_->impl_.get_service().async_resolve(
-          self_->impl_.get_implementation(), q, handler2.value,
-          self_->impl_.get_implementation_executor());
+          self_->impl_.get_implementation(), q,
+          handler2.value, self_->impl_.get_executor());
     }
 
   private:

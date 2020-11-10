@@ -2,7 +2,7 @@
 // defer.hpp
 // ~~~~~~~~~
 //
-// Copyright (c) 2003-2019 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2020 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -19,6 +19,7 @@
 #include <boost/asio/async_result.hpp>
 #include <boost/asio/detail/type_traits.hpp>
 #include <boost/asio/execution_context.hpp>
+#include <boost/asio/execution/executor.hpp>
 #include <boost/asio/is_executor.hpp>
 
 #include <boost/asio/detail/push_options.hpp>
@@ -101,7 +102,9 @@ BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(CompletionToken, void()) defer(
     const Executor& ex,
     BOOST_ASIO_MOVE_ARG(CompletionToken) token
       BOOST_ASIO_DEFAULT_COMPLETION_TOKEN(Executor),
-    typename enable_if<is_executor<Executor>::value>::type* = 0);
+    typename enable_if<
+      execution::is_executor<Executor>::value || is_executor<Executor>::value
+    >::type* = 0);
 
 /// Submits a completion token or function object for execution.
 /**

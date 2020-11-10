@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2003-2019 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+# Copyright (c) 2003-2020 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 #
 # Distributed under the Boost Software License, Version 1.0. (See accompanying
 # file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -49,6 +49,8 @@ test-suite "asio-ssl" :
   [ compile context.cpp : $(USE_SELECT) : context_select ]
   [ compile error.cpp ]
   [ compile error.cpp : $(USE_SELECT) : error_select ]
+  [ compile host_name_verification.cpp ]
+  [ compile host_name_verification.cpp : $(USE_SELECT) : host_name_verification_select ]
   [ compile rfc2818_verification.cpp ]
   [ compile rfc2818_verification.cpp : $(USE_SELECT) : rfc2818_verification_select ]
   [ compile stream_base.cpp ]

@@ -2,7 +2,7 @@
 // basic_stream_socket.hpp
 // ~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2019 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2020 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -33,7 +33,7 @@ namespace asio {
 #define BOOST_ASIO_BASIC_STREAM_SOCKET_FWD_DECL
 
 // Forward declaration with defaulted arguments.
-template <typename Protocol, typename Executor = executor>
+template <typename Protocol, typename Executor = any_io_executor>
 class basic_stream_socket;
 
 #endif // !defined(BOOST_ASIO_BASIC_STREAM_SOCKET_FWD_DECL)
@@ -974,6 +974,10 @@ public:
   }
 
 private:
+  // Disallow copying and assignment.
+  basic_stream_socket(const basic_stream_socket&) BOOST_ASIO_DELETED;
+  basic_stream_socket& operator=(const basic_stream_socket&) BOOST_ASIO_DELETED;
+
   class initiate_async_send
   {
   public:
@@ -1001,7 +1005,7 @@ private:
       detail::non_const_lvalue<WriteHandler> handler2(handler);
       self_->impl_.get_service().async_send(
           self_->impl_.get_implementation(), buffers, flags,
-          handler2.value, self_->impl_.get_implementation_executor());
+          handler2.value, self_->impl_.get_executor());
     }
 
   private:
@@ -1035,7 +1039,7 @@ private:
       detail::non_const_lvalue<ReadHandler> handler2(handler);
       self_->impl_.get_service().async_receive(
           self_->impl_.get_implementation(), buffers, flags,
-          handler2.value, self_->impl_.get_implementation_executor());
+          handler2.value, self_->impl_.get_executor());
     }
 
   private:

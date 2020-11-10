@@ -2,7 +2,7 @@
 // impl/read_at.hpp
 // ~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2019 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2020 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -28,6 +28,7 @@
 #include <boost/asio/detail/handler_alloc_helpers.hpp>
 #include <boost/asio/detail/handler_cont_helpers.hpp>
 #include <boost/asio/detail/handler_invoke_helpers.hpp>
+#include <boost/asio/detail/handler_tracking.hpp>
 #include <boost/asio/detail/handler_type_requirements.hpp>
 #include <boost/asio/detail/non_const_lvalue.hpp>
 #include <boost/asio/detail/throw_error.hpp>
@@ -61,7 +62,7 @@ namespace detail
       else
         break;
     }
-    return tmp.total_consumed();;
+    return tmp.total_consumed();
   }
 } // namespace detail
 
@@ -226,9 +227,12 @@ namespace detail
         max_size = this->check_for_completion(ec, buffers_.total_consumed());
         do
         {
-          device_.async_read_some_at(
-              offset_ + buffers_.total_consumed(), buffers_.prepare(max_size),
-              BOOST_ASIO_MOVE_CAST(read_at_op)(*this));
+          {
+            BOOST_ASIO_HANDLER_LOCATION((__FILE__, __LINE__, "async_read_at"));
+            device_.async_read_some_at(
+                offset_ + buffers_.total_consumed(), buffers_.prepare(max_size),
+                BOOST_ASIO_MOVE_CAST(read_at_op)(*this));
+          }
           return; default:
           buffers_.consume(bytes_transferred);
           if ((!ec && bytes_transferred == 0) || buffers_.empty())
@@ -254,23 +258,33 @@ namespace detail
   template <typename AsyncRandomAccessReadDevice,
       typename MutableBufferSequence, typename MutableBufferIterator,
       typename CompletionCondition, typename ReadHandler>
-  inline void* asio_handler_allocate(std::size_t size,
+  inline asio_handler_allocate_is_deprecated
+  asio_handler_allocate(std::size_t size,
       read_at_op<AsyncRandomAccessReadDevice, MutableBufferSequence,
         MutableBufferIterator, CompletionCondition, ReadHandler>* this_handler)
   {
+#if defined(BOOST_ASIO_NO_DEPRECATED)
+    boost_asio_handler_alloc_helpers::allocate(size, this_handler->handler_);
+    return asio_handler_allocate_is_no_longer_used();
+#else // defined(BOOST_ASIO_NO_DEPRECATED)
     return boost_asio_handler_alloc_helpers::allocate(
         size, this_handler->handler_);
+#endif // defined(BOOST_ASIO_NO_DEPRECATED)
   }
 
   template <typename AsyncRandomAccessReadDevice,
       typename MutableBufferSequence, typename MutableBufferIterator,
       typename CompletionCondition, typename ReadHandler>
-  inline void asio_handler_deallocate(void* pointer, std::size_t size,
+  inline asio_handler_deallocate_is_deprecated
+  asio_handler_deallocate(void* pointer, std::size_t size,
       read_at_op<AsyncRandomAccessReadDevice, MutableBufferSequence,
         MutableBufferIterator, CompletionCondition, ReadHandler>* this_handler)
   {
     boost_asio_handler_alloc_helpers::deallocate(
         pointer, size, this_handler->handler_);
+#if defined(BOOST_ASIO_NO_DEPRECATED)
+    return asio_handler_deallocate_is_no_longer_used();
+#endif // defined(BOOST_ASIO_NO_DEPRECATED)
   }
 
   template <typename AsyncRandomAccessReadDevice,
@@ -288,23 +302,31 @@ namespace detail
   template <typename Function, typename AsyncRandomAccessReadDevice,
       typename MutableBufferSequence, typename MutableBufferIterator,
       typename CompletionCondition, typename ReadHandler>
-  inline void asio_handler_invoke(Function& function,
+  inline asio_handler_invoke_is_deprecated
+  asio_handler_invoke(Function& function,
       read_at_op<AsyncRandomAccessReadDevice, MutableBufferSequence,
         MutableBufferIterator, CompletionCondition, ReadHandler>* this_handler)
   {
     boost_asio_handler_invoke_helpers::invoke(
         function, this_handler->handler_);
+#if defined(BOOST_ASIO_NO_DEPRECATED)
+    return asio_handler_invoke_is_no_longer_used();
+#endif // defined(BOOST_ASIO_NO_DEPRECATED)
   }
 
   template <typename Function, typename AsyncRandomAccessReadDevice,
       typename MutableBufferSequence, typename MutableBufferIterator,
       typename CompletionCondition, typename ReadHandler>
-  inline void asio_handler_invoke(const Function& function,
+  inline asio_handler_invoke_is_deprecated
+  asio_handler_invoke(const Function& function,
       read_at_op<AsyncRandomAccessReadDevice, MutableBufferSequence,
         MutableBufferIterator, CompletionCondition, ReadHandler>* this_handler)
   {
     boost_asio_handler_invoke_helpers::invoke(
         function, this_handler->handler_);
+#if defined(BOOST_ASIO_NO_DEPRECATED)
+    return asio_handler_invoke_is_no_longer_used();
+#endif // defined(BOOST_ASIO_NO_DEPRECATED)
   }
 
   template <typename AsyncRandomAccessReadDevice,
@@ -389,6 +411,7 @@ struct associated_executor<
     detail::read_at_op<AsyncRandomAccessReadDevice, MutableBufferSequence,
     MutableBufferIterator, CompletionCondition, ReadHandler>,
     Executor>
+  : detail::associated_executor_forwarding_base<ReadHandler, Executor>
 {
   typedef typename associated_executor<ReadHandler, Executor>::type type;
 
@@ -501,9 +524,12 @@ namespace detail
         bytes_available = read_size_helper(streambuf_, max_size);
         for (;;)
         {
-          device_.async_read_some_at(offset_ + total_transferred_,
-              streambuf_.prepare(bytes_available),
-              BOOST_ASIO_MOVE_CAST(read_at_streambuf_op)(*this));
+          {
+            BOOST_ASIO_HANDLER_LOCATION((__FILE__, __LINE__, "async_read_at"));
+            device_.async_read_some_at(offset_ + total_transferred_,
+                streambuf_.prepare(bytes_available),
+                BOOST_ASIO_MOVE_CAST(read_at_streambuf_op)(*this));
+          }
           return; default:
           total_transferred_ += bytes_transferred;
           streambuf_.commit(bytes_transferred);
@@ -528,22 +554,32 @@ namespace detail
 
   template <typename AsyncRandomAccessReadDevice, typename Allocator,
       typename CompletionCondition, typename ReadHandler>
-  inline void* asio_handler_allocate(std::size_t size,
+  inline asio_handler_allocate_is_deprecated
+  asio_handler_allocate(std::size_t size,
       read_at_streambuf_op<AsyncRandomAccessReadDevice, Allocator,
         CompletionCondition, ReadHandler>* this_handler)
   {
+#if defined(BOOST_ASIO_NO_DEPRECATED)
+    boost_asio_handler_alloc_helpers::allocate(size, this_handler->handler_);
+    return asio_handler_allocate_is_no_longer_used();
+#else // defined(BOOST_ASIO_NO_DEPRECATED)
     return boost_asio_handler_alloc_helpers::allocate(
         size, this_handler->handler_);
+#endif // defined(BOOST_ASIO_NO_DEPRECATED)
   }
 
   template <typename AsyncRandomAccessReadDevice, typename Allocator,
       typename CompletionCondition, typename ReadHandler>
-  inline void asio_handler_deallocate(void* pointer, std::size_t size,
+  inline asio_handler_deallocate_is_deprecated
+  asio_handler_deallocate(void* pointer, std::size_t size,
       read_at_streambuf_op<AsyncRandomAccessReadDevice, Allocator,
         CompletionCondition, ReadHandler>* this_handler)
   {
     boost_asio_handler_alloc_helpers::deallocate(
         pointer, size, this_handler->handler_);
+#if defined(BOOST_ASIO_NO_DEPRECATED)
+    return asio_handler_deallocate_is_no_longer_used();
+#endif // defined(BOOST_ASIO_NO_DEPRECATED)
   }
 
   template <typename AsyncRandomAccessReadDevice, typename Allocator,
@@ -559,22 +595,30 @@ namespace detail
 
   template <typename Function, typename AsyncRandomAccessReadDevice,
       typename Allocator, typename CompletionCondition, typename ReadHandler>
-  inline void asio_handler_invoke(Function& function,
+  inline asio_handler_invoke_is_deprecated
+  asio_handler_invoke(Function& function,
       read_at_streambuf_op<AsyncRandomAccessReadDevice, Allocator,
         CompletionCondition, ReadHandler>* this_handler)
   {
     boost_asio_handler_invoke_helpers::invoke(
         function, this_handler->handler_);
+#if defined(BOOST_ASIO_NO_DEPRECATED)
+    return asio_handler_invoke_is_no_longer_used();
+#endif // defined(BOOST_ASIO_NO_DEPRECATED)
   }
 
   template <typename Function, typename AsyncRandomAccessReadDevice,
       typename Allocator, typename CompletionCondition, typename ReadHandler>
-  inline void asio_handler_invoke(const Function& function,
+  inline asio_handler_invoke_is_deprecated
+  asio_handler_invoke(const Function& function,
       read_at_streambuf_op<AsyncRandomAccessReadDevice, Allocator,
         CompletionCondition, ReadHandler>* this_handler)
   {
     boost_asio_handler_invoke_helpers::invoke(
         function, this_handler->handler_);
+#if defined(BOOST_ASIO_NO_DEPRECATED)
+    return asio_handler_invoke_is_no_longer_used();
+#endif // defined(BOOST_ASIO_NO_DEPRECATED)
   }
 
   template <typename AsyncRandomAccessReadDevice>
@@ -643,6 +687,7 @@ struct associated_executor<
     detail::read_at_streambuf_op<AsyncRandomAccessReadDevice,
       Executor, CompletionCondition, ReadHandler>,
     Executor1>
+  : detail::associated_executor_forwarding_base<ReadHandler, Executor>
 {
   typedef typename associated_executor<ReadHandler, Executor1>::type type;
 
