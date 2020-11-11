@@ -145,7 +145,9 @@ enum overload_type
   ill_formed
 };
 
-template <typename T, typename Properties, typename = void>
+template <typename T, typename Properties, typename = void,
+    typename = void, typename = void, typename = void,
+    typename = void, typename = void, typename = void>
 struct call_traits
 {
   BOOST_ASIO_STATIC_CONSTEXPR(overload_type, overload = ill_formed);
@@ -156,16 +158,16 @@ struct call_traits
 template <typename T, typename Property>
 struct call_traits<T, void(Property),
   typename enable_if<
-    (
-      is_applicable_property<
-        typename decay<T>::type,
-        typename decay<Property>::type
-      >::value
-      &&
-      decay<Property>::type::is_preferable
-      &&
-      static_require<T, Property>::is_valid
-    )
+    is_applicable_property<
+      typename decay<T>::type,
+      typename decay<Property>::type
+    >::value
+  >::type,
+  typename enable_if<
+    decay<Property>::type::is_preferable
+  >::type,
+  typename enable_if<
+    static_require<T, Property>::is_valid
   >::type>
 {
   BOOST_ASIO_STATIC_CONSTEXPR(overload_type, overload = identity);
@@ -181,18 +183,19 @@ struct call_traits<T, void(Property),
 template <typename T, typename Property>
 struct call_traits<T, void(Property),
   typename enable_if<
-    (
-      is_applicable_property<
-        typename decay<T>::type,
-        typename decay<Property>::type
-      >::value
-      &&
-      decay<Property>::type::is_preferable
-      &&
-      !static_require<T, Property>::is_valid
-      &&
-      require_member<T, Property>::is_valid
-    )
+    is_applicable_property<
+      typename decay<T>::type,
+      typename decay<Property>::type
+    >::value
+  >::type,
+  typename enable_if<
+    decay<Property>::type::is_preferable
+  >::type,
+  typename enable_if<
+    !static_require<T, Property>::is_valid
+  >::type,
+  typename enable_if<
+    require_member<T, Property>::is_valid
   >::type> :
   require_member<T, Property>
 {
@@ -202,20 +205,22 @@ struct call_traits<T, void(Property),
 template <typename T, typename Property>
 struct call_traits<T, void(Property),
   typename enable_if<
-    (
-      is_applicable_property<
-        typename decay<T>::type,
-        typename decay<Property>::type
-      >::value
-      &&
-      decay<Property>::type::is_preferable
-      &&
-      !static_require<T, Property>::is_valid
-      &&
-      !require_member<T, Property>::is_valid
-      &&
-      require_free<T, Property>::is_valid
-    )
+    is_applicable_property<
+      typename decay<T>::type,
+      typename decay<Property>::type
+    >::value
+  >::type,
+  typename enable_if<
+    decay<Property>::type::is_preferable
+  >::type,
+  typename enable_if<
+    !static_require<T, Property>::is_valid
+  >::type,
+  typename enable_if<
+    !require_member<T, Property>::is_valid
+  >::type,
+  typename enable_if<
+    require_free<T, Property>::is_valid
   >::type> :
   require_free<T, Property>
 {
@@ -225,22 +230,25 @@ struct call_traits<T, void(Property),
 template <typename T, typename Property>
 struct call_traits<T, void(Property),
   typename enable_if<
-    (
-      is_applicable_property<
-        typename decay<T>::type,
-        typename decay<Property>::type
-      >::value
-      &&
-      decay<Property>::type::is_preferable
-      &&
-      !static_require<T, Property>::is_valid
-      &&
-      !require_member<T, Property>::is_valid
-      &&
-      !require_free<T, Property>::is_valid
-      &&
-      prefer_member<T, Property>::is_valid
-    )
+    is_applicable_property<
+      typename decay<T>::type,
+      typename decay<Property>::type
+    >::value
+  >::type,
+  typename enable_if<
+    decay<Property>::type::is_preferable
+  >::type,
+  typename enable_if<
+    !static_require<T, Property>::is_valid
+  >::type,
+  typename enable_if<
+    !require_member<T, Property>::is_valid
+  >::type,
+  typename enable_if<
+    !require_free<T, Property>::is_valid
+  >::type,
+  typename enable_if<
+    prefer_member<T, Property>::is_valid
   >::type> :
   prefer_member<T, Property>
 {
@@ -250,24 +258,28 @@ struct call_traits<T, void(Property),
 template <typename T, typename Property>
 struct call_traits<T, void(Property),
   typename enable_if<
-    (
-      is_applicable_property<
-        typename decay<T>::type,
-        typename decay<Property>::type
-      >::value
-      &&
-      decay<Property>::type::is_preferable
-      &&
-      !static_require<T, Property>::is_valid
-      &&
-      !require_member<T, Property>::is_valid
-      &&
-      !require_free<T, Property>::is_valid
-      &&
-      !prefer_member<T, Property>::is_valid
-      &&
-      prefer_free<T, Property>::is_valid
-    )
+    is_applicable_property<
+      typename decay<T>::type,
+      typename decay<Property>::type
+    >::value
+  >::type,
+  typename enable_if<
+    decay<Property>::type::is_preferable
+  >::type,
+  typename enable_if<
+    !static_require<T, Property>::is_valid
+  >::type,
+  typename enable_if<
+    !require_member<T, Property>::is_valid
+  >::type,
+  typename enable_if<
+    !require_free<T, Property>::is_valid
+  >::type,
+  typename enable_if<
+    !prefer_member<T, Property>::is_valid
+  >::type,
+  typename enable_if<
+    prefer_free<T, Property>::is_valid
   >::type> :
   prefer_free<T, Property>
 {
@@ -277,24 +289,28 @@ struct call_traits<T, void(Property),
 template <typename T, typename Property>
 struct call_traits<T, void(Property),
   typename enable_if<
-    (
-      is_applicable_property<
-        typename decay<T>::type,
-        typename decay<Property>::type
-      >::value
-      &&
-      decay<Property>::type::is_preferable
-      &&
-      !static_require<T, Property>::is_valid
-      &&
-      !require_member<T, Property>::is_valid
-      &&
-      !require_free<T, Property>::is_valid
-      &&
-      !prefer_member<T, Property>::is_valid
-      &&
-      !prefer_free<T, Property>::is_valid
-    )
+    is_applicable_property<
+      typename decay<T>::type,
+      typename decay<Property>::type
+    >::value
+  >::type,
+  typename enable_if<
+    decay<Property>::type::is_preferable
+  >::type,
+  typename enable_if<
+    !static_require<T, Property>::is_valid
+  >::type,
+  typename enable_if<
+    !require_member<T, Property>::is_valid
+  >::type,
+  typename enable_if<
+    !require_free<T, Property>::is_valid
+  >::type,
+  typename enable_if<
+    !prefer_member<T, Property>::is_valid
+  >::type,
+  typename enable_if<
+    !prefer_free<T, Property>::is_valid
   >::type>
 {
   BOOST_ASIO_STATIC_CONSTEXPR(overload_type, overload = identity);
@@ -311,7 +327,8 @@ template <typename T, typename P0, typename P1>
 struct call_traits<T, void(P0, P1),
   typename enable_if<
     call_traits<T, void(P0)>::overload != ill_formed
-    &&
+  >::type,
+  typename enable_if<
     call_traits<
       typename call_traits<T, void(P0)>::result_type,
       void(P1)
@@ -342,7 +359,8 @@ template <typename T, typename P0, typename P1, typename BOOST_ASIO_ELLIPSIS PN>
 struct call_traits<T, void(P0, P1, PN BOOST_ASIO_ELLIPSIS),
   typename enable_if<
     call_traits<T, void(P0)>::overload != ill_formed
-    &&
+  >::type,
+  typename enable_if<
     call_traits<
       typename call_traits<T, void(P0)>::result_type,
       void(P1, PN BOOST_ASIO_ELLIPSIS)

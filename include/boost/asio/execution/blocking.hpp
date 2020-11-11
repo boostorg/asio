@@ -271,8 +271,12 @@ struct blocking_t
   static_query(
       typename enable_if<
         !traits::query_static_constexpr_member<T, blocking_t>::is_valid
-          && !traits::query_member<T, blocking_t>::is_valid
-          && traits::static_query<T, possibly_t>::is_valid
+      >::type* = 0,
+      typename enable_if<
+        !traits::query_member<T, blocking_t>::is_valid
+      >::type* = 0,
+      typename enable_if<
+        traits::static_query<T, possibly_t>::is_valid
       >::type* = 0) BOOST_ASIO_NOEXCEPT
   {
     return traits::static_query<T, possibly_t>::value();
@@ -284,9 +288,15 @@ struct blocking_t
   static_query(
       typename enable_if<
         !traits::query_static_constexpr_member<T, blocking_t>::is_valid
-          && !traits::query_member<T, blocking_t>::is_valid
-          && !traits::static_query<T, possibly_t>::is_valid
-          && traits::static_query<T, always_t>::is_valid
+      >::type* = 0,
+      typename enable_if<
+        !traits::query_member<T, blocking_t>::is_valid
+      >::type* = 0,
+      typename enable_if<
+        !traits::static_query<T, possibly_t>::is_valid
+      >::type* = 0,
+      typename enable_if<
+        traits::static_query<T, always_t>::is_valid
       >::type* = 0) BOOST_ASIO_NOEXCEPT
   {
     return traits::static_query<T, always_t>::value();
@@ -298,10 +308,18 @@ struct blocking_t
   static_query(
       typename enable_if<
         !traits::query_static_constexpr_member<T, blocking_t>::is_valid
-          && !traits::query_member<T, blocking_t>::is_valid
-          && !traits::static_query<T, possibly_t>::is_valid
-          && !traits::static_query<T, always_t>::is_valid
-          && traits::static_query<T, never_t>::is_valid
+      >::type* = 0,
+      typename enable_if<
+        !traits::query_member<T, blocking_t>::is_valid
+      >::type* = 0,
+      typename enable_if<
+        !traits::static_query<T, possibly_t>::is_valid
+      >::type* = 0,
+      typename enable_if<
+        !traits::static_query<T, always_t>::is_valid
+      >::type* = 0,
+      typename enable_if<
+        traits::static_query<T, never_t>::is_valid
       >::type* = 0) BOOST_ASIO_NOEXCEPT
   {
     return traits::static_query<T, never_t>::value();
@@ -354,7 +372,9 @@ struct blocking_t
       const Executor& ex, convertible_from_blocking_t,
       typename enable_if<
         !can_query<const Executor&, possibly_t>::value
-          && can_query<const Executor&, always_t>::value
+      >::type* = 0,
+      typename enable_if<
+        can_query<const Executor&, always_t>::value
       >::type* = 0)
 #if !defined(__clang__) // Clang crashes if noexcept is used here.
 #if defined(BOOST_ASIO_MSVC) // Visual C++ wants the type to be qualified.
@@ -374,8 +394,12 @@ struct blocking_t
       const Executor& ex, convertible_from_blocking_t,
       typename enable_if<
         !can_query<const Executor&, possibly_t>::value
-          && !can_query<const Executor&, always_t>::value
-          && can_query<const Executor&, never_t>::value
+      >::type* = 0,
+      typename enable_if<
+        !can_query<const Executor&, always_t>::value
+      >::type* = 0,
+      typename enable_if<
+        can_query<const Executor&, never_t>::value
       >::type* = 0)
 #if !defined(__clang__) // Clang crashes if noexcept is used here.
 #if defined(BOOST_ASIO_MSVC) // Visual C++ wants the type to be qualified.
@@ -469,10 +493,18 @@ struct possibly_t
   static BOOST_ASIO_CONSTEXPR possibly_t static_query(
       typename enable_if<
         !traits::query_static_constexpr_member<T, possibly_t>::is_valid
-          && !traits::query_member<T, possibly_t>::is_valid
-          && !traits::query_free<T, possibly_t>::is_valid
-          && !can_query<T, always_t<I> >::value
-          && !can_query<T, never_t<I> >::value
+      >::type* = 0,
+      typename enable_if<
+        !traits::query_member<T, possibly_t>::is_valid
+      >::type* = 0,
+      typename enable_if<
+        !traits::query_free<T, possibly_t>::is_valid
+      >::type* = 0,
+      typename enable_if<
+        !can_query<T, always_t<I> >::value
+      >::type* = 0,
+      typename enable_if<
+        !can_query<T, never_t<I> >::value
       >::type* = 0) BOOST_ASIO_NOEXCEPT
   {
     return possibly_t();
@@ -756,7 +788,9 @@ struct always_t
       const Executor& e, const always_t&,
       typename enable_if<
         is_executor<Executor>::value
-        && traits::static_require<
+      >::type* = 0,
+      typename enable_if<
+        traits::static_require<
           const Executor&,
           blocking_adaptation::allowed_t<0>
         >::is_valid

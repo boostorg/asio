@@ -121,7 +121,9 @@ struct context_as_t
       const Executor& ex, const context_as_t<U>&,
       typename enable_if<
         is_same<T, U>::value
-          && can_query<const Executor&, const context_t&>::value
+      >::type* = 0,
+      typename enable_if<
+        can_query<const Executor&, const context_t&>::value
       >::type* = 0)
 #if !defined(__clang__) // Clang crashes if noexcept is used here.
 #if defined(BOOST_ASIO_MSVC) // Visual C++ wants the type to be qualified.
@@ -160,16 +162,16 @@ constexpr context_as_t<T> context_as{};
 template <typename T, typename U>
 struct is_applicable_property<T, execution::context_as_t<U> >
   : integral_constant<bool,
-      execution::is_executor<U>::value
+      execution::is_executor<T>::value
         || conditional<
-            execution::is_executor<U>::value,
+            execution::is_executor<T>::value,
             false_type,
-            execution::is_sender<U>
+            execution::is_sender<T>
           >::type::value
         || conditional<
-            execution::is_executor<U>::value,
+            execution::is_executor<T>::value,
             false_type,
-            execution::is_scheduler<U>
+            execution::is_scheduler<T>
           >::type::value>
 {
 };

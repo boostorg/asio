@@ -90,7 +90,6 @@ void submit_helper(BOOST_ASIO_MOVE_ARG(S) s, BOOST_ASIO_MOVE_ARG(R) r);
 } // namespace boost
 namespace asio_execution_execute_fn {
 
-using boost::asio::conditional;
 using boost::asio::decay;
 using boost::asio::declval;
 using boost::asio::enable_if;
@@ -102,6 +101,7 @@ using boost::asio::result_of;
 using boost::asio::traits::execute_free;
 using boost::asio::traits::execute_member;
 using boost::asio::true_type;
+using boost::asio::void_type;
 
 void execute();
 
@@ -113,7 +113,8 @@ enum overload_type
   ill_formed
 };
 
-template <typename T, typename F, typename = void>
+template <typename T, typename F, typename = void, typename = void,
+    typename = void, typename = void, typename = void>
 struct call_traits
 {
   BOOST_ASIO_STATIC_CONSTEXPR(overload_type, overload = ill_formed);
@@ -122,9 +123,7 @@ struct call_traits
 template <typename T, typename F>
 struct call_traits<T, void(F),
   typename enable_if<
-    (
       execute_member<T, F>::is_valid
-    )
   >::type> :
   execute_member<T, F>
 {
@@ -134,11 +133,10 @@ struct call_traits<T, void(F),
 template <typename T, typename F>
 struct call_traits<T, void(F),
   typename enable_if<
-    (
-      !execute_member<T, F>::is_valid
-      &&
-      execute_free<T, F>::is_valid
-    )
+    !execute_member<T, F>::is_valid
+  >::type,
+  typename enable_if<
+    execute_free<T, F>::is_valid
   >::type> :
   execute_free<T, F>
 {
@@ -148,26 +146,19 @@ struct call_traits<T, void(F),
 template <typename T, typename F>
 struct call_traits<T, void(F),
   typename enable_if<
-    (
-      !execute_member<T, F>::is_valid
-      &&
-      !execute_free<T, F>::is_valid
-      &&
-      conditional<true, true_type,
-       typename result_of<typename decay<F>::type&()>::type
-      >::type::value
-      &&
-      conditional<
-        !is_as_invocable<
-          typename decay<F>::type
-        >::value,
-        is_sender_to<
-          T,
-          as_receiver<typename decay<F>::type, T>
-        >,
-        false_type
-      >::type::value
-    )
+    !execute_member<T, F>::is_valid
+  >::type,
+  typename enable_if<
+    !execute_free<T, F>::is_valid
+  >::type,
+  typename void_type<
+   typename result_of<typename decay<F>::type&()>::type
+  >::type,
+  typename enable_if<
+    !is_as_invocable<typename decay<F>::type>::value
+  >::type,
+  typename enable_if<
+    is_sender_to<T, as_receiver<typename decay<F>::type, T> >::value
   >::type>
 {
   BOOST_ASIO_STATIC_CONSTEXPR(overload_type, overload = adapter);

@@ -120,7 +120,8 @@ enum overload_type
   ill_formed
 };
 
-template <typename T, typename Properties, typename = void>
+template <typename T, typename Properties, typename = void,
+    typename = void, typename = void, typename = void>
 struct call_traits
 {
   BOOST_ASIO_STATIC_CONSTEXPR(overload_type, overload = ill_formed);
@@ -131,14 +132,13 @@ struct call_traits
 template <typename T, typename Property>
 struct call_traits<T, void(Property),
   typename enable_if<
-    (
-      is_applicable_property<
-        typename decay<T>::type,
-        typename decay<Property>::type
-      >::value
-      &&
-      static_query<T, Property>::is_valid
-    )
+    is_applicable_property<
+      typename decay<T>::type,
+      typename decay<Property>::type
+    >::value
+  >::type,
+  typename enable_if<
+    static_query<T, Property>::is_valid
   >::type> :
   static_query<T, Property>
 {
@@ -148,16 +148,16 @@ struct call_traits<T, void(Property),
 template <typename T, typename Property>
 struct call_traits<T, void(Property),
   typename enable_if<
-    (
-      is_applicable_property<
-        typename decay<T>::type,
-        typename decay<Property>::type
-      >::value
-      &&
-      !static_query<T, Property>::is_valid
-      &&
-      query_member<T, Property>::is_valid
-    )
+    is_applicable_property<
+      typename decay<T>::type,
+      typename decay<Property>::type
+    >::value
+  >::type,
+  typename enable_if<
+    !static_query<T, Property>::is_valid
+  >::type,
+  typename enable_if<
+    query_member<T, Property>::is_valid
   >::type> :
   query_member<T, Property>
 {
@@ -167,18 +167,19 @@ struct call_traits<T, void(Property),
 template <typename T, typename Property>
 struct call_traits<T, void(Property),
   typename enable_if<
-    (
-      is_applicable_property<
-        typename decay<T>::type,
-        typename decay<Property>::type
-      >::value
-      &&
-      !static_query<T, Property>::is_valid
-      &&
-      !query_member<T, Property>::is_valid
-      &&
-      query_free<T, Property>::is_valid
-    )
+    is_applicable_property<
+      typename decay<T>::type,
+      typename decay<Property>::type
+    >::value
+  >::type,
+  typename enable_if<
+    !static_query<T, Property>::is_valid
+  >::type,
+  typename enable_if<
+    !query_member<T, Property>::is_valid
+  >::type,
+  typename enable_if<
+    query_free<T, Property>::is_valid
   >::type> :
   query_free<T, Property>
 {
