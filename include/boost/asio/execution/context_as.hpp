@@ -71,8 +71,18 @@ struct context_as_t
 #if defined(BOOST_ASIO_HAS_VARIABLE_TEMPLATES)
   template <typename U>
   BOOST_ASIO_STATIC_CONSTEXPR(bool,
-    is_applicable_property_v = is_executor<U>::value
-      || is_sender<U>::value || is_scheduler<U>::value);
+    is_applicable_property_v = (
+      is_executor<U>::value
+        || conditional<
+            is_executor<U>::value,
+            false_type,
+            is_sender<U>
+          >::type::value
+        || conditional<
+            is_executor<U>::value,
+            false_type,
+            is_scheduler<U>
+          >::type::value));
 #endif // defined(BOOST_ASIO_HAS_VARIABLE_TEMPLATES)
 
   BOOST_ASIO_STATIC_CONSTEXPR(bool, is_requirable = false);
@@ -150,9 +160,17 @@ constexpr context_as_t<T> context_as{};
 template <typename T, typename U>
 struct is_applicable_property<T, execution::context_as_t<U> >
   : integral_constant<bool,
-      execution::is_executor<T>::value
-        || execution::is_sender<T>::value
-        || execution::is_scheduler<T>::value>
+      execution::is_executor<U>::value
+        || conditional<
+            execution::is_executor<U>::value,
+            false_type,
+            execution::is_sender<U>
+          >::type::value
+        || conditional<
+            execution::is_executor<U>::value,
+            false_type,
+            execution::is_scheduler<U>
+          >::type::value>
 {
 };
 

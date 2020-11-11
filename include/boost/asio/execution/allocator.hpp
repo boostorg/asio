@@ -81,8 +81,18 @@ struct allocator_t
 #if defined(BOOST_ASIO_HAS_VARIABLE_TEMPLATES)
   template <typename T>
   BOOST_ASIO_STATIC_CONSTEXPR(bool,
-    is_applicable_property_v = is_executor<T>::value
-      || is_sender<T>::value || is_scheduler<T>::value);
+    is_applicable_property_v = (
+      is_executor<T>::value
+        || conditional<
+            is_executor<T>::value,
+            false_type,
+            is_sender<T>
+          >::type::value
+        || conditional<
+            is_executor<T>::value,
+            false_type,
+            is_scheduler<T>
+          >::type::value));
 #endif // defined(BOOST_ASIO_HAS_VARIABLE_TEMPLATES)
 
   BOOST_ASIO_STATIC_CONSTEXPR(bool, is_requirable = true);
@@ -135,8 +145,18 @@ struct allocator_t<void>
 #if defined(BOOST_ASIO_HAS_VARIABLE_TEMPLATES)
   template <typename T>
   BOOST_ASIO_STATIC_CONSTEXPR(bool,
-    is_applicable_property_v = is_executor<T>::value
-      || is_sender<T>::value || is_scheduler<T>::value);
+    is_applicable_property_v = (
+      is_executor<T>::value
+        || conditional<
+            is_executor<T>::value,
+            false_type,
+            is_sender<T>
+          >::type::value
+        || conditional<
+            is_executor<T>::value,
+            false_type,
+            is_scheduler<T>
+          >::type::value));
 #endif // defined(BOOST_ASIO_HAS_VARIABLE_TEMPLATES)
 
   BOOST_ASIO_STATIC_CONSTEXPR(bool, is_requirable = true);
@@ -204,8 +224,16 @@ template <typename T, typename ProtoAllocator>
 struct is_applicable_property<T, execution::allocator_t<ProtoAllocator> >
   : integral_constant<bool,
       execution::is_executor<T>::value
-        || execution::is_sender<T>::value
-        || execution::is_scheduler<T>::value>
+        || conditional<
+            execution::is_executor<T>::value,
+            false_type,
+            execution::is_sender<T>
+          >::type::value
+        || conditional<
+            execution::is_executor<T>::value,
+            false_type,
+            execution::is_scheduler<T>
+          >::type::value>
 {
 };
 

@@ -211,8 +211,18 @@ struct blocking_t
 #if defined(BOOST_ASIO_HAS_VARIABLE_TEMPLATES)
   template <typename T>
   BOOST_ASIO_STATIC_CONSTEXPR(bool,
-    is_applicable_property_v = is_executor<T>::value
-      || is_sender<T>::value || is_scheduler<T>::value);
+    is_applicable_property_v = (
+      is_executor<T>::value
+        || conditional<
+            is_executor<T>::value,
+            false_type,
+            is_sender<T>
+          >::type::value
+        || conditional<
+            is_executor<T>::value,
+            false_type,
+            is_scheduler<T>
+          >::type::value));
 #endif // defined(BOOST_ASIO_HAS_VARIABLE_TEMPLATES)
 
   BOOST_ASIO_STATIC_CONSTEXPR(bool, is_requirable = false);
@@ -421,8 +431,18 @@ struct possibly_t
 #if defined(BOOST_ASIO_HAS_VARIABLE_TEMPLATES)
   template <typename T>
   BOOST_ASIO_STATIC_CONSTEXPR(bool,
-    is_applicable_property_v = is_executor<T>::value
-      || is_sender<T>::value || is_scheduler<T>::value);
+    is_applicable_property_v = (
+      is_executor<T>::value
+        || conditional<
+            is_executor<T>::value,
+            false_type,
+            is_sender<T>
+          >::type::value
+        || conditional<
+            is_executor<T>::value,
+            false_type,
+            is_scheduler<T>
+          >::type::value));
 #endif // defined(BOOST_ASIO_HAS_VARIABLE_TEMPLATES)
 
   BOOST_ASIO_STATIC_CONSTEXPR(bool, is_requirable = true);
@@ -650,8 +670,18 @@ struct always_t
 #if defined(BOOST_ASIO_HAS_VARIABLE_TEMPLATES)
   template <typename T>
   BOOST_ASIO_STATIC_CONSTEXPR(bool,
-    is_applicable_property_v = is_executor<T>::value
-      || is_sender<T>::value || is_scheduler<T>::value);
+    is_applicable_property_v = (
+      is_executor<T>::value
+        || conditional<
+            is_executor<T>::value,
+            false_type,
+            is_sender<T>
+          >::type::value
+        || conditional<
+            is_executor<T>::value,
+            false_type,
+            is_scheduler<T>
+          >::type::value));
 #endif // defined(BOOST_ASIO_HAS_VARIABLE_TEMPLATES)
 
   BOOST_ASIO_STATIC_CONSTEXPR(bool, is_requirable = true);
@@ -749,8 +779,18 @@ struct never_t
 #if defined(BOOST_ASIO_HAS_VARIABLE_TEMPLATES)
   template <typename T>
   BOOST_ASIO_STATIC_CONSTEXPR(bool,
-    is_applicable_property_v = is_executor<T>::value
-      || is_sender<T>::value || is_scheduler<T>::value);
+    is_applicable_property_v = (
+      is_executor<T>::value
+        || conditional<
+            is_executor<T>::value,
+            false_type,
+            is_sender<T>
+          >::type::value
+        || conditional<
+            is_executor<T>::value,
+            false_type,
+            is_scheduler<T>
+          >::type::value));
 #endif // defined(BOOST_ASIO_HAS_VARIABLE_TEMPLATES)
 
   BOOST_ASIO_STATIC_CONSTEXPR(bool, is_requirable = true);
@@ -846,8 +886,16 @@ template <typename T>
 struct is_applicable_property<T, execution::blocking_t>
   : integral_constant<bool,
       execution::is_executor<T>::value
-        || execution::is_sender<T>::value
-        || execution::is_scheduler<T>::value>
+        || conditional<
+            execution::is_executor<T>::value,
+            false_type,
+            execution::is_sender<T>
+          >::type::value
+        || conditional<
+            execution::is_executor<T>::value,
+            false_type,
+            execution::is_scheduler<T>
+          >::type::value>
 {
 };
 
@@ -855,8 +903,16 @@ template <typename T>
 struct is_applicable_property<T, execution::blocking_t::possibly_t>
   : integral_constant<bool,
       execution::is_executor<T>::value
-        || execution::is_sender<T>::value
-        || execution::is_scheduler<T>::value>
+        || conditional<
+            execution::is_executor<T>::value,
+            false_type,
+            execution::is_sender<T>
+          >::type::value
+        || conditional<
+            execution::is_executor<T>::value,
+            false_type,
+            execution::is_scheduler<T>
+          >::type::value>
 {
 };
 
@@ -864,8 +920,16 @@ template <typename T>
 struct is_applicable_property<T, execution::blocking_t::always_t>
   : integral_constant<bool,
       execution::is_executor<T>::value
-        || execution::is_sender<T>::value
-        || execution::is_scheduler<T>::value>
+        || conditional<
+            execution::is_executor<T>::value,
+            false_type,
+            execution::is_sender<T>
+          >::type::value
+        || conditional<
+            execution::is_executor<T>::value,
+            false_type,
+            execution::is_scheduler<T>
+          >::type::value>
 {
 };
 
@@ -873,8 +937,16 @@ template <typename T>
 struct is_applicable_property<T, execution::blocking_t::never_t>
   : integral_constant<bool,
       execution::is_executor<T>::value
-        || execution::is_sender<T>::value
-        || execution::is_scheduler<T>::value>
+        || conditional<
+            execution::is_executor<T>::value,
+            false_type,
+            execution::is_sender<T>
+          >::type::value
+        || conditional<
+            execution::is_executor<T>::value,
+            false_type,
+            execution::is_scheduler<T>
+          >::type::value>
 {
 };
 

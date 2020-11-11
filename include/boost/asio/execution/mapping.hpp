@@ -195,8 +195,18 @@ struct mapping_t
 #if defined(BOOST_ASIO_HAS_VARIABLE_TEMPLATES)
   template <typename T>
   BOOST_ASIO_STATIC_CONSTEXPR(bool,
-    is_applicable_property_v = is_executor<T>::value
-      || is_sender<T>::value || is_scheduler<T>::value);
+    is_applicable_property_v = (
+      is_executor<T>::value
+        || conditional<
+            is_executor<T>::value,
+            false_type,
+            is_sender<T>
+          >::type::value
+        || conditional<
+            is_executor<T>::value,
+            false_type,
+            is_scheduler<T>
+          >::type::value));
 #endif // defined(BOOST_ASIO_HAS_VARIABLE_TEMPLATES)
 
   BOOST_ASIO_STATIC_CONSTEXPR(bool, is_requirable = false);
@@ -405,8 +415,18 @@ struct thread_t
 #if defined(BOOST_ASIO_HAS_VARIABLE_TEMPLATES)
   template <typename T>
   BOOST_ASIO_STATIC_CONSTEXPR(bool,
-    is_applicable_property_v = is_executor<T>::value
-      || is_sender<T>::value || is_scheduler<T>::value);
+    is_applicable_property_v = (
+      is_executor<T>::value
+        || conditional<
+            is_executor<T>::value,
+            false_type,
+            is_sender<T>
+          >::type::value
+        || conditional<
+            is_executor<T>::value,
+            false_type,
+            is_scheduler<T>
+          >::type::value));
 #endif // defined(BOOST_ASIO_HAS_VARIABLE_TEMPLATES)
 
   BOOST_ASIO_STATIC_CONSTEXPR(bool, is_requirable = true);
@@ -479,8 +499,18 @@ struct new_thread_t
 #if defined(BOOST_ASIO_HAS_VARIABLE_TEMPLATES)
   template <typename T>
   BOOST_ASIO_STATIC_CONSTEXPR(bool,
-    is_applicable_property_v = is_executor<T>::value
-      || is_sender<T>::value || is_scheduler<T>::value);
+    is_applicable_property_v = (
+      is_executor<T>::value
+        || conditional<
+            is_executor<T>::value,
+            false_type,
+            is_sender<T>
+          >::type::value
+        || conditional<
+            is_executor<T>::value,
+            false_type,
+            is_scheduler<T>
+          >::type::value));
 #endif // defined(BOOST_ASIO_HAS_VARIABLE_TEMPLATES)
 
   BOOST_ASIO_STATIC_CONSTEXPR(bool, is_requirable = true);
@@ -540,8 +570,18 @@ struct other_t
 #if defined(BOOST_ASIO_HAS_VARIABLE_TEMPLATES)
   template <typename T>
   BOOST_ASIO_STATIC_CONSTEXPR(bool,
-    is_applicable_property_v = is_executor<T>::value
-      || is_sender<T>::value || is_scheduler<T>::value);
+    is_applicable_property_v = (
+      is_executor<T>::value
+        || conditional<
+            is_executor<T>::value,
+            false_type,
+            is_sender<T>
+          >::type::value
+        || conditional<
+            is_executor<T>::value,
+            false_type,
+            is_scheduler<T>
+          >::type::value));
 #endif // defined(BOOST_ASIO_HAS_VARIABLE_TEMPLATES)
 
   BOOST_ASIO_STATIC_CONSTEXPR(bool, is_requirable = true);
@@ -614,8 +654,16 @@ template <typename T>
 struct is_applicable_property<T, execution::mapping_t>
   : integral_constant<bool,
       execution::is_executor<T>::value
-        || execution::is_sender<T>::value
-        || execution::is_scheduler<T>::value>
+        || conditional<
+            execution::is_executor<T>::value,
+            false_type,
+            execution::is_sender<T>
+          >::type::value
+        || conditional<
+            execution::is_executor<T>::value,
+            false_type,
+            execution::is_scheduler<T>
+          >::type::value>
 {
 };
 
@@ -623,8 +671,16 @@ template <typename T>
 struct is_applicable_property<T, execution::mapping_t::thread_t>
   : integral_constant<bool,
       execution::is_executor<T>::value
-        || execution::is_sender<T>::value
-        || execution::is_scheduler<T>::value>
+        || conditional<
+            execution::is_executor<T>::value,
+            false_type,
+            execution::is_sender<T>
+          >::type::value
+        || conditional<
+            execution::is_executor<T>::value,
+            false_type,
+            execution::is_scheduler<T>
+          >::type::value>
 {
 };
 
@@ -632,8 +688,16 @@ template <typename T>
 struct is_applicable_property<T, execution::mapping_t::new_thread_t>
   : integral_constant<bool,
       execution::is_executor<T>::value
-        || execution::is_sender<T>::value
-        || execution::is_scheduler<T>::value>
+        || conditional<
+            execution::is_executor<T>::value,
+            false_type,
+            execution::is_sender<T>
+          >::type::value
+        || conditional<
+            execution::is_executor<T>::value,
+            false_type,
+            execution::is_scheduler<T>
+          >::type::value>
 {
 };
 
@@ -641,8 +705,16 @@ template <typename T>
 struct is_applicable_property<T, execution::mapping_t::other_t>
   : integral_constant<bool,
       execution::is_executor<T>::value
-        || execution::is_sender<T>::value
-        || execution::is_scheduler<T>::value>
+        || conditional<
+            execution::is_executor<T>::value,
+            false_type,
+            execution::is_sender<T>
+          >::type::value
+        || conditional<
+            execution::is_executor<T>::value,
+            false_type,
+            execution::is_scheduler<T>
+          >::type::value>
 {
 };
 
