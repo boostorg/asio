@@ -147,11 +147,75 @@ If using Boost.Asio's SSL support, you will also need to add `#include
 
 [heading Macros]
 
-The macros listed in the table below may be used to control the behaviour of
-Boost.Asio.
+The macros listed in the table below may be used to control the interface,
+functionality, and behaviour of Boost.Asio.
 
 [table
   [[Macro][Description]]
+  [
+    [`BOOST_ASIO_NO_DEPRECATED`]
+    [
+      Disables Boost.Asio's deprecated interfaces and functionality.
+
+      See [link boost_asio.net_ts Networking TS Compatibility] for a list of older
+      interfaces that have been deprecated, and their replacements.
+    ]
+  ]
+  [
+    [`BOOST_ASIO_NO_TS_EXECUTORS`]
+    [
+      Disables Boost.Asio's support for the Networking TS executor model.
+
+      By default, Boost.Asio simultaneously supports both Networking TS-style
+      executors, and executors that adhere to the proposed standard executor
+      model. This macro may be used to limit support to the proposed standard
+      executors only. See [link boost_asio.std_executors Proposed Standard
+      Executors] for more information.
+    ]
+  ]
+  [
+    [`BOOST_ASIO_USE_TS_EXECUTOR_AS_DEFAULT`]
+    [
+      Specifies that [link boost_asio.reference.any_io_executor `any_io_executor`]
+      refer to the Networking TS-style polymorphic wrapper.
+
+      The `any_io_executor` type alias is the default runtime-polymorphic
+      executor for all I/O objects. This type alias points to the [link
+      boost_asio.reference.execution__any_executor `execution::any_executor<>`]
+      template with a set of supportable properties specified for use with I/O.
+
+      This new name may break existing code that directly uses the old
+      Networking TS-style polymorphic wrapper, [link boost_asio.reference.executor
+      `executor`]. If required for backward compatibility,
+      `BOOST_ASIO_USE_TS_EXECUTOR_AS_DEFAULT` changes the `any_io_executor` type
+      alias to instead point to the `executor` polymorphic wrapper.
+
+      See [link boost_asio.std_executors Proposed Standard Executors] for more
+      information.
+    ]
+  ]
+  [
+    [`BOOST_ASIO_NO_DYNAMIC_BUFFER_V1`]
+    [
+      Disables support for the [link boost_asio.reference.DynamicBuffer_v1
+      `DynamicBuffer_v1`] type requirements.
+
+      By default, dynamic buffer operations such as [link boost_asio.reference.read
+      `read`], [link boost_asio.reference.async_read `async_read`], [link
+      boost_asio.reference.read_until `read_until`], [link
+      boost_asio.reference.async_read_until `async_read_until`], [link
+      boost_asio.reference.write `write`], and [link boost_asio.reference.async_write
+      `async_write`] support both the `DynamicBuffer_v1` and the [link
+      boost_asio.reference.DynamicBuffer_v2 `DynamicBuffer_v2`] type requirements
+      for dynamic buffers.
+
+      When `BOOST_ASIO_NO_DYNAMIC_BUFFER_V1` is defined, all support for
+      `DynamicBuffer_v1` types and functions is #ifdef-ed out. Support for
+      using [link boost_asio.reference.basic_streambuf `basic_streambuf`] with the
+      `read`, `async_read`, `read_until`, `async_read_until`, `write`, and
+      `async_write` functions is also disabled as a consequence.
+    ]
+  ]
   [
     [`BOOST_ASIO_ENABLE_BUFFER_DEBUGGING`]
     [
@@ -173,6 +237,13 @@ Boost.Asio.
     [`BOOST_ASIO_DISABLE_BUFFER_DEBUGGING`]
     [
       Explictly disables Boost.Asio's buffer debugging support.
+    ]
+  ]
+  [
+    [`BOOST_ASIO_ENABLE_HANDLER_TRACKING`]
+    [
+      Enables Boost.Asio's [link boost_asio.overview.core.handler_tracking Handler
+      Tracking] debugging facility.
     ]
   ]
   [
@@ -303,6 +374,43 @@ Boost.Asio.
         `hash_map` objects will initially contain 53 buckets. The number of
         buckets will be increased to 389 and then 1543 as elements are added to
         the map.
+    ]
+  ]
+  [
+    [`BOOST_ASIO_USE_BOOST_DATE_TIME_FOR_SOCKET_IOSTREAM`]
+    [
+      Changes [link boost_asio.reference.basic_socket_streambuf
+      `basic_socket_streambuf`] and [link boost_asio.reference.basic_socket_iostream
+      `basic_socket_iostream`] to use the old Boost.Date_Time interface, rather
+      than chrono.
+    ]
+  ]
+  [
+    [`BOOST_ASIO_SEPARATE_COMPILATION`]
+    [
+      Uses separately compiled source code for Boost.Asio's implementation.
+
+      See [link boost_asio.using.optional_separate_compilation above] for further
+      information.
+    ]
+  ]
+  [
+    [`BOOST_ASIO_DYN_LINK`]
+    [
+      Uses separately compiled source code for Boost.Asio's implementation,
+      with symbols exported for inclusion as part of a shared library.
+
+      See [link boost_asio.using.optional_separate_compilation above] for further
+      information.
+    ]
+  ]
+  [
+    [`BOOST_ASIO_DISABLE_VISIBILITY`]
+    [
+      Disables all symbol visibility pragmas.
+
+      Note: If symbols are hidden, extra care must be taken to ensure that Boost.Asio
+      types are not passed across shared library API boundaries.
     ]
   ]
 ]
