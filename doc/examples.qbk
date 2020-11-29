@@ -554,7 +554,6 @@ Coroutines TS.
 
 * [@boost_asio/example/cpp17/coroutines_ts/echo_server.cpp]
 * [@boost_asio/example/cpp17/coroutines_ts/refactored_echo_server.cpp]
-* [@boost_asio/example/cpp17/coroutines_ts/double_buffered_echo_server.cpp]
 * [@boost_asio/example/cpp17/coroutines_ts/chat_server.cpp]
 * [@boost_asio/example/cpp17/coroutines_ts/range_based_for.cpp]
 
