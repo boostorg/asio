@@ -307,6 +307,8 @@ Boost.Asio.
   ]
 ]
 
+[include platform_macros.qbk]
+
 [heading Mailing List]
 
 A mailing list specifically for Boost.Asio may be found on
