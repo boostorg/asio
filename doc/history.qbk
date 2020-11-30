@@ -62,6 +62,8 @@
 * Updated the documentation to clarify when the [^select] reactor is used on
   Windows.
 * Fixed potential ambiguity caused by `any_executor` comparisons and conversion.
+* Added detection of non-experimental C++20 coroutines on MSVC 19.8.
+* Fixed compatibility with uClibc.
 
 [heading Asio 1.18.0 / Boost 1.74]
 
