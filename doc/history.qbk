@@ -7,7 +7,7 @@
 
 [section:history Revision History]
 
-[heading Boost 1.75 beta]
+[heading Asio 1.18.1 / Boost 1.75]
 
 * Enabled support for UNIX domain sockets on Windows. From Windows 10, UNIX
   domain sockets (a.k.a "local" sockets) are supported on Windows, with the
