@@ -458,7 +458,10 @@ struct equality_comparable<strand<Executor> >
 #if !defined(BOOST_ASIO_HAS_DEDUCED_EXECUTE_MEMBER_TRAIT)
 
 template <typename Executor, typename Function>
-struct execute_member<strand<Executor>, Function>
+struct execute_member<strand<Executor>, Function,
+    typename enable_if<
+      execution::can_execute<const Executor&, Function>::value
+    >::type>
 {
   BOOST_ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
   BOOST_ASIO_STATIC_CONSTEXPR(bool, is_noexcept = false);
