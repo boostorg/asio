@@ -64,6 +64,8 @@
 * Fixed potential ambiguity caused by `any_executor` comparisons and conversion.
 * Added detection of non-experimental C++20 coroutines on MSVC 19.8.
 * Fixed compatibility with uClibc.
+* Fixed `strand<>` adaptation of Networking TS executors when targeting older
+  C++ versions or less conformant compilers.
 
 [heading Asio 1.18.0 / Boost 1.74]
 
