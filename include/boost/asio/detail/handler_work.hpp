@@ -349,12 +349,10 @@ public:
   }
 
   template <typename Function, typename Handler>
-  void dispatch(Function& function, Handler& handler)
+  void dispatch(Function& function, Handler&)
   {
     execution::execute(
-        boost::asio::prefer(executor_,
-          execution::blocking.possibly,
-          execution::allocator((get_associated_allocator)(handler))),
+        boost::asio::prefer(executor_, execution::blocking.possibly),
         BOOST_ASIO_MOVE_CAST(Function)(function));
   }
 
