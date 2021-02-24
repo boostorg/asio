@@ -39,7 +39,7 @@ address_v6::address_v6() BOOST_ASIO_NOEXCEPT
 }
 
 address_v6::address_v6(const address_v6::bytes_type& bytes,
-    unsigned long scope)
+    scope_id_type scope)
   : scope_id_(scope)
 {
 #if UCHAR_MAX > 0xFF
