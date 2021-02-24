@@ -112,7 +112,7 @@ public:
    * dispatch handlers for any asynchronous operations performed on the socket.
    */
   explicit basic_socket(const executor_type& ex)
-    : impl_(ex)
+    : impl_(0, ex)
   {
   }
 
@@ -129,7 +129,7 @@ public:
       typename enable_if<
         is_convertible<ExecutionContext&, execution_context&>::value
       >::type* = 0)
-    : impl_(context)
+    : impl_(0, 0, context)
   {
   }
 
@@ -145,7 +145,7 @@ public:
    * @throws boost::system::system_error Thrown on failure.
    */
   basic_socket(const executor_type& ex, const protocol_type& protocol)
-    : impl_(ex)
+    : impl_(0, ex)
   {
     boost::system::error_code ec;
     impl_.get_service().open(impl_.get_implementation(), protocol, ec);
@@ -169,7 +169,7 @@ public:
       typename enable_if<
         is_convertible<ExecutionContext&, execution_context&>::value
       >::type* = 0)
-    : impl_(context)
+    : impl_(0, 0, context)
   {
     boost::system::error_code ec;
     impl_.get_service().open(impl_.get_implementation(), protocol, ec);
@@ -192,7 +192,7 @@ public:
    * @throws boost::system::system_error Thrown on failure.
    */
   basic_socket(const executor_type& ex, const endpoint_type& endpoint)
-    : impl_(ex)
+    : impl_(0, ex)
   {
     boost::system::error_code ec;
     const protocol_type protocol = endpoint.protocol();
@@ -223,7 +223,7 @@ public:
       typename enable_if<
         is_convertible<ExecutionContext&, execution_context&>::value
       >::type* = 0)
-    : impl_(context)
+    : impl_(0, 0, context)
   {
     boost::system::error_code ec;
     const protocol_type protocol = endpoint.protocol();
@@ -248,7 +248,7 @@ public:
    */
   basic_socket(const executor_type& ex, const protocol_type& protocol,
       const native_handle_type& native_socket)
-    : impl_(ex)
+    : impl_(0, ex)
   {
     boost::system::error_code ec;
     impl_.get_service().assign(impl_.get_implementation(),
@@ -276,7 +276,7 @@ public:
       typename enable_if<
         is_convertible<ExecutionContext&, execution_context&>::value
       >::type* = 0)
-    : impl_(context)
+    : impl_(0, 0, context)
   {
     boost::system::error_code ec;
     impl_.get_service().assign(impl_.get_implementation(),

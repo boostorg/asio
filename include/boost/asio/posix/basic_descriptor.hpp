@@ -86,7 +86,7 @@ public:
    * descriptor.
    */
   explicit basic_descriptor(const executor_type& ex)
-    : impl_(ex)
+    : impl_(0, ex)
   {
   }
 
@@ -103,7 +103,7 @@ public:
       typename enable_if<
         is_convertible<ExecutionContext&, execution_context&>::value
       >::type* = 0)
-    : impl_(context)
+    : impl_(0, 0, context)
   {
   }
 
@@ -122,7 +122,7 @@ public:
    */
   basic_descriptor(const executor_type& ex,
       const native_handle_type& native_descriptor)
-    : impl_(ex)
+    : impl_(0, ex)
   {
     boost::system::error_code ec;
     impl_.get_service().assign(impl_.get_implementation(),
@@ -149,7 +149,7 @@ public:
       typename enable_if<
         is_convertible<ExecutionContext&, execution_context&>::value
       >::type* = 0)
-    : impl_(context)
+    : impl_(0, 0, context)
   {
     boost::system::error_code ec;
     impl_.get_service().assign(impl_.get_implementation(),
