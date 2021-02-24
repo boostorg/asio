@@ -16,6 +16,7 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include <boost/asio/detail/config.hpp>
+#include <boost/asio/detail/cstdint.hpp>
 #include <boost/asio/ip/address.hpp>
 #include <boost/asio/ip/detail/endpoint.hpp>
 
@@ -28,6 +29,9 @@
 namespace boost {
 namespace asio {
 namespace ip {
+
+/// Type used for storing port numbers.
+typedef uint_least16_t port_type;
 
 /// Describes an endpoint for a version-independent IP socket.
 /**
@@ -79,7 +83,7 @@ public:
    * @endcode
    */
   basic_endpoint(const InternetProtocol& internet_protocol,
-      unsigned short port_num) BOOST_ASIO_NOEXCEPT
+      port_type port_num) BOOST_ASIO_NOEXCEPT
     : impl_(internet_protocol.family(), port_num)
   {
   }
@@ -88,7 +92,7 @@ public:
   /// constructor may be used for accepting connections on a specific interface
   /// or for making a connection to a remote endpoint.
   basic_endpoint(const boost::asio::ip::address& addr,
-      unsigned short port_num) BOOST_ASIO_NOEXCEPT
+      port_type port_num) BOOST_ASIO_NOEXCEPT
     : impl_(addr, port_num)
   {
   }
@@ -163,14 +167,14 @@ public:
 
   /// Get the port associated with the endpoint. The port number is always in
   /// the host's byte order.
-  unsigned short port() const BOOST_ASIO_NOEXCEPT
+  port_type port() const BOOST_ASIO_NOEXCEPT
   {
     return impl_.port();
   }
 
   /// Set the port associated with the endpoint. The port number is always in
   /// the host's byte order.
-  void port(unsigned short port_num) BOOST_ASIO_NOEXCEPT
+  void port(port_type port_num) BOOST_ASIO_NOEXCEPT
   {
     impl_.port(port_num);
   }
