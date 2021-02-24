@@ -20,6 +20,10 @@
 #include <boost/asio/ip/address.hpp>
 #include <boost/asio/ip/detail/endpoint.hpp>
 
+#if defined(BOOST_ASIO_HAS_STD_HASH)
+# include <functional>
+#endif // defined(BOOST_ASIO_HAS_STD_HASH)
+
 #if !defined(BOOST_ASIO_NO_IOSTREAM)
 # include <iosfwd>
 #endif // !defined(BOOST_ASIO_NO_IOSTREAM)
@@ -262,6 +266,25 @@ std::basic_ostream<Elem, Traits>& operator<<(
 } // namespace ip
 } // namespace asio
 } // namespace boost
+
+#if defined(BOOST_ASIO_HAS_STD_HASH)
+namespace std {
+
+template <typename InternetProtocol>
+struct hash<boost::asio::ip::basic_endpoint<InternetProtocol> >
+{
+  std::size_t operator()(
+      const boost::asio::ip::basic_endpoint<InternetProtocol>& ep)
+    const BOOST_ASIO_NOEXCEPT
+  {
+    std::size_t hash1 = std::hash<boost::asio::ip::address>()(ep.address());
+    std::size_t hash2 = std::hash<unsigned short>()(ep.port());
+    return hash1 ^ (hash2 + 0x9e3779b9 + (hash1 << 6) + (hash1 >> 2));
+  }
+};
+
+} // namespace std
+#endif // defined(BOOST_ASIO_HAS_STD_HASH)
 
 #include <boost/asio/detail/pop_options.hpp>
 
