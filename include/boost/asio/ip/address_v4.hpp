@@ -24,6 +24,10 @@
 #include <boost/asio/detail/winsock_init.hpp>
 #include <boost/system/error_code.hpp>
 
+#if defined(BOOST_ASIO_HAS_STD_HASH)
+# include <functional>
+#endif // defined(BOOST_ASIO_HAS_STD_HASH)
+
 #if !defined(BOOST_ASIO_NO_IOSTREAM)
 # include <iosfwd>
 #endif // !defined(BOOST_ASIO_NO_IOSTREAM)
@@ -326,6 +330,22 @@ std::basic_ostream<Elem, Traits>& operator<<(
 } // namespace ip
 } // namespace asio
 } // namespace boost
+
+#if defined(BOOST_ASIO_HAS_STD_HASH)
+namespace std {
+
+template <>
+struct hash<boost::asio::ip::address_v4>
+{
+  std::size_t operator()(const boost::asio::ip::address_v4& addr)
+    const BOOST_ASIO_NOEXCEPT
+  {
+    return std::hash<unsigned int>()(addr.to_uint());
+  }
+};
+
+} // namespace std
+#endif // defined(BOOST_ASIO_HAS_STD_HASH)
 
 #include <boost/asio/detail/pop_options.hpp>
 

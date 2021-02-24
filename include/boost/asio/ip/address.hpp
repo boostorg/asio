@@ -25,6 +25,10 @@
 #include <boost/asio/ip/address_v6.hpp>
 #include <boost/asio/ip/bad_address_cast.hpp>
 
+#if defined(BOOST_ASIO_HAS_STD_HASH)
+# include <functional>
+#endif // defined(BOOST_ASIO_HAS_STD_HASH)
+
 #if !defined(BOOST_ASIO_NO_IOSTREAM)
 # include <iosfwd>
 #endif // !defined(BOOST_ASIO_NO_IOSTREAM)
@@ -259,6 +263,24 @@ std::basic_ostream<Elem, Traits>& operator<<(
 } // namespace ip
 } // namespace asio
 } // namespace boost
+
+#if defined(BOOST_ASIO_HAS_STD_HASH)
+namespace std {
+
+template <>
+struct hash<boost::asio::ip::address>
+{
+  std::size_t operator()(const boost::asio::ip::address& addr)
+    const BOOST_ASIO_NOEXCEPT
+  {
+    return addr.is_v4()
+      ? std::hash<boost::asio::ip::address_v4>()(addr.to_v4())
+      : std::hash<boost::asio::ip::address_v6>()(addr.to_v6());
+  }
+};
+
+} // namespace std
+#endif // defined(BOOST_ASIO_HAS_STD_HASH)
 
 #include <boost/asio/detail/pop_options.hpp>
 
