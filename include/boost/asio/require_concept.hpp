@@ -127,7 +127,8 @@ enum overload_type
   ill_formed
 };
 
-template <typename T, typename Properties, typename = void>
+template <typename T, typename Properties, typename = void,
+    typename = void, typename = void, typename = void, typename = void>
 struct call_traits
 {
   BOOST_ASIO_STATIC_CONSTEXPR(overload_type, overload = ill_formed);
@@ -138,16 +139,16 @@ struct call_traits
 template <typename T, typename Property>
 struct call_traits<T, void(Property),
   typename enable_if<
-    (
-      is_applicable_property<
-        typename decay<T>::type,
-        typename decay<Property>::type
-      >::value
-      &&
-      decay<Property>::type::is_requirable_concept
-      &&
-      static_require_concept<T, Property>::is_valid
-    )
+    is_applicable_property<
+      typename decay<T>::type,
+      typename decay<Property>::type
+    >::value
+  >::type,
+  typename enable_if<
+    decay<Property>::type::is_requirable_concept
+  >::type,
+  typename enable_if<
+    static_require_concept<T, Property>::is_valid
   >::type>
 {
   BOOST_ASIO_STATIC_CONSTEXPR(overload_type, overload = identity);
@@ -158,18 +159,19 @@ struct call_traits<T, void(Property),
 template <typename T, typename Property>
 struct call_traits<T, void(Property),
   typename enable_if<
-    (
-      is_applicable_property<
-        typename decay<T>::type,
-        typename decay<Property>::type
-      >::value
-      &&
-      decay<Property>::type::is_requirable_concept
-      &&
-      !static_require_concept<T, Property>::is_valid
-      &&
-      require_concept_member<T, Property>::is_valid
-    )
+    is_applicable_property<
+      typename decay<T>::type,
+      typename decay<Property>::type
+    >::value
+  >::type,
+  typename enable_if<
+    decay<Property>::type::is_requirable_concept
+  >::type,
+  typename enable_if<
+    !static_require_concept<T, Property>::is_valid
+  >::type,
+  typename enable_if<
+    require_concept_member<T, Property>::is_valid
   >::type> :
   require_concept_member<T, Property>
 {
@@ -179,20 +181,22 @@ struct call_traits<T, void(Property),
 template <typename T, typename Property>
 struct call_traits<T, void(Property),
   typename enable_if<
-    (
-      is_applicable_property<
-        typename decay<T>::type,
-        typename decay<Property>::type
-      >::value
-      &&
-      decay<Property>::type::is_requirable_concept
-      &&
-      !static_require_concept<T, Property>::is_valid
-      &&
-      !require_concept_member<T, Property>::is_valid
-      &&
-      require_concept_free<T, Property>::is_valid
-    )
+    is_applicable_property<
+      typename decay<T>::type,
+      typename decay<Property>::type
+    >::value
+  >::type,
+  typename enable_if<
+    decay<Property>::type::is_requirable_concept
+  >::type,
+  typename enable_if<
+    !static_require_concept<T, Property>::is_valid
+  >::type,
+  typename enable_if<
+    !require_concept_member<T, Property>::is_valid
+  >::type,
+  typename enable_if<
+    require_concept_free<T, Property>::is_valid
   >::type> :
   require_concept_free<T, Property>
 {

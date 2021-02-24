@@ -127,7 +127,8 @@ enum overload_type
   ill_formed
 };
 
-template <typename S, typename R, typename = void>
+template <typename S, typename R, typename = void,
+    typename = void, typename = void>
 struct call_traits
 {
   BOOST_ASIO_STATIC_CONSTEXPR(overload_type, overload = ill_formed);
@@ -138,11 +139,10 @@ struct call_traits
 template <typename S, typename R>
 struct call_traits<S, void(R),
   typename enable_if<
-    (
-      submit_member<S, R>::is_valid
-      &&
-      is_sender_to<S, R>::value
-    )
+    submit_member<S, R>::is_valid
+  >::type,
+  typename enable_if<
+    is_sender_to<S, R>::value
   >::type> :
   submit_member<S, R>
 {
@@ -152,13 +152,13 @@ struct call_traits<S, void(R),
 template <typename S, typename R>
 struct call_traits<S, void(R),
   typename enable_if<
-    (
-      !submit_member<S, R>::is_valid
-      &&
-      submit_free<S, R>::is_valid
-      &&
-      is_sender_to<S, R>::value
-    )
+    !submit_member<S, R>::is_valid
+  >::type,
+  typename enable_if<
+    submit_free<S, R>::is_valid
+  >::type,
+  typename enable_if<
+    is_sender_to<S, R>::value
   >::type> :
   submit_free<S, R>
 {
@@ -168,13 +168,13 @@ struct call_traits<S, void(R),
 template <typename S, typename R>
 struct call_traits<S, void(R),
   typename enable_if<
-    (
-      !submit_member<S, R>::is_valid
-      &&
-      !submit_free<S, R>::is_valid
-      &&
-      is_sender_to<S, R>::value
-    )
+    !submit_member<S, R>::is_valid
+  >::type,
+  typename enable_if<
+    !submit_free<S, R>::is_valid
+  >::type,
+  typename enable_if<
+    is_sender_to<S, R>::value
   >::type>
 {
   BOOST_ASIO_STATIC_CONSTEXPR(overload_type, overload = adapter);

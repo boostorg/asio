@@ -82,7 +82,7 @@ enum overload_type
   ill_formed
 };
 
-template <typename R, typename = void>
+template <typename R, typename = void, typename = void>
 struct call_traits
 {
   BOOST_ASIO_STATIC_CONSTEXPR(overload_type, overload = ill_formed);
@@ -93,9 +93,7 @@ struct call_traits
 template <typename R>
 struct call_traits<R,
   typename enable_if<
-    (
-      start_member<R>::is_valid
-    )
+    start_member<R>::is_valid
   >::type> :
   start_member<R>
 {
@@ -105,11 +103,10 @@ struct call_traits<R,
 template <typename R>
 struct call_traits<R,
   typename enable_if<
-    (
-      !start_member<R>::is_valid
-      &&
-      start_free<R>::is_valid
-    )
+    !start_member<R>::is_valid
+  >::type,
+  typename enable_if<
+    start_free<R>::is_valid
   >::type> :
   start_free<R>
 {

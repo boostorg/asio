@@ -255,8 +255,12 @@ struct mapping_t
   static_query(
       typename enable_if<
         !traits::query_static_constexpr_member<T, mapping_t>::is_valid
-          && !traits::query_member<T, mapping_t>::is_valid
-          && traits::static_query<T, thread_t>::is_valid
+      >::type* = 0,
+      typename enable_if<
+        !traits::query_member<T, mapping_t>::is_valid
+      >::type* = 0,
+      typename enable_if<
+        traits::static_query<T, thread_t>::is_valid
       >::type* = 0) BOOST_ASIO_NOEXCEPT
   {
     return traits::static_query<T, thread_t>::value();
@@ -268,9 +272,15 @@ struct mapping_t
   static_query(
       typename enable_if<
         !traits::query_static_constexpr_member<T, mapping_t>::is_valid
-          && !traits::query_member<T, mapping_t>::is_valid
-          && !traits::static_query<T, thread_t>::is_valid
-          && traits::static_query<T, new_thread_t>::is_valid
+      >::type* = 0,
+      typename enable_if<
+        !traits::query_member<T, mapping_t>::is_valid
+      >::type* = 0,
+      typename enable_if<
+        !traits::static_query<T, thread_t>::is_valid
+      >::type* = 0,
+      typename enable_if<
+        traits::static_query<T, new_thread_t>::is_valid
       >::type* = 0) BOOST_ASIO_NOEXCEPT
   {
     return traits::static_query<T, new_thread_t>::value();
@@ -282,10 +292,18 @@ struct mapping_t
   static_query(
       typename enable_if<
         !traits::query_static_constexpr_member<T, mapping_t>::is_valid
-          && !traits::query_member<T, mapping_t>::is_valid
-          && !traits::static_query<T, thread_t>::is_valid
-          && !traits::static_query<T, new_thread_t>::is_valid
-          && traits::static_query<T, other_t>::is_valid
+      >::type* = 0,
+      typename enable_if<
+        !traits::query_member<T, mapping_t>::is_valid
+      >::type* = 0,
+      typename enable_if<
+        !traits::static_query<T, thread_t>::is_valid
+      >::type* = 0,
+      typename enable_if<
+        !traits::static_query<T, new_thread_t>::is_valid
+      >::type* = 0,
+      typename enable_if<
+        traits::static_query<T, other_t>::is_valid
       >::type* = 0) BOOST_ASIO_NOEXCEPT
   {
     return traits::static_query<T, other_t>::value();
@@ -338,7 +356,9 @@ struct mapping_t
       const Executor& ex, convertible_from_mapping_t,
       typename enable_if<
         !can_query<const Executor&, thread_t>::value
-          && can_query<const Executor&, new_thread_t>::value
+      >::type* = 0,
+      typename enable_if<
+        can_query<const Executor&, new_thread_t>::value
       >::type* = 0)
 #if !defined(__clang__) // Clang crashes if noexcept is used here.
 #if defined(BOOST_ASIO_MSVC) // Visual C++ wants the type to be qualified.
@@ -358,8 +378,12 @@ struct mapping_t
       const Executor& ex, convertible_from_mapping_t,
       typename enable_if<
         !can_query<const Executor&, thread_t>::value
-          && !can_query<const Executor&, new_thread_t>::value
-          && can_query<const Executor&, other_t>::value
+      >::type* = 0,
+      typename enable_if<
+        !can_query<const Executor&, new_thread_t>::value
+      >::type* = 0,
+      typename enable_if<
+        can_query<const Executor&, other_t>::value
       >::type* = 0)
 #if !defined(__clang__) // Clang crashes if noexcept is used here.
 #if defined(BOOST_ASIO_MSVC) // Visual C++ wants the type to be qualified.
@@ -453,10 +477,18 @@ struct thread_t
   static BOOST_ASIO_CONSTEXPR thread_t static_query(
       typename enable_if<
         !traits::query_static_constexpr_member<T, thread_t>::is_valid
-          && !traits::query_member<T, thread_t>::is_valid
-          && !traits::query_free<T, thread_t>::is_valid
-          && !can_query<T, new_thread_t<I> >::value
-          && !can_query<T, other_t<I> >::value
+      >::type* = 0,
+      typename enable_if<
+        !traits::query_member<T, thread_t>::is_valid
+      >::type* = 0,
+      typename enable_if<
+        !traits::query_free<T, thread_t>::is_valid
+      >::type* = 0,
+      typename enable_if<
+        !can_query<T, new_thread_t<I> >::value
+      >::type* = 0,
+      typename enable_if<
+        !can_query<T, other_t<I> >::value
       >::type* = 0) BOOST_ASIO_NOEXCEPT
   {
     return thread_t();

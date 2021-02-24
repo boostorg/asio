@@ -221,7 +221,9 @@ struct prefer_only :
   prefer(const Executor& ex, const prefer_only<Property>& p,
       typename enable_if<
         is_same<Property, InnerProperty>::value
-          && can_prefer<const Executor&, const InnerProperty&>::value
+      >::type* = 0,
+      typename enable_if<
+        can_prefer<const Executor&, const InnerProperty&>::value
       >::type* = 0)
 #if !defined(BOOST_ASIO_MSVC) \
   && !defined(__clang__) // Clang crashes if noexcept is used here.
@@ -239,7 +241,9 @@ struct prefer_only :
   query(const Executor& ex, const prefer_only<Property>& p,
       typename enable_if<
         is_same<Property, InnerProperty>::value
-          && can_query<const Executor&, const InnerProperty&>::value
+      >::type* = 0,
+      typename enable_if<
+        can_query<const Executor&, const InnerProperty&>::value
       >::type* = 0)
 #if !defined(BOOST_ASIO_MSVC) \
   && !defined(__clang__) // Clang crashes if noexcept is used here.
