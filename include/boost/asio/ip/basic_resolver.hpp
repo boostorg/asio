@@ -2,7 +2,7 @@
 // ip/basic_resolver.hpp
 // ~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2020 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2021 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -106,7 +106,7 @@ public:
    * resolver.
    */
   explicit basic_resolver(const executor_type& ex)
-    : impl_(ex)
+    : impl_(0, ex)
   {
   }
 
@@ -123,7 +123,7 @@ public:
       typename enable_if<
         is_convertible<ExecutionContext&, execution_context&>::value
       >::type* = 0)
-    : impl_(context)
+    : impl_(0, 0, context)
   {
   }
 

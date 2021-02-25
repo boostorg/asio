@@ -2,7 +2,7 @@
 // experimental/impl/as_single.hpp
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2020 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2021 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -76,19 +76,29 @@ public:
 };
 
 template <typename Handler>
-inline void* asio_handler_allocate(std::size_t size,
+inline asio_handler_allocate_is_deprecated
+asio_handler_allocate(std::size_t size,
     as_single_handler<Handler>* this_handler)
 {
+#if defined(BOOST_ASIO_NO_DEPRECATED)
+  boost_asio_handler_alloc_helpers::allocate(size, this_handler->handler_);
+  return asio_handler_allocate_is_no_longer_used();
+#else // defined(BOOST_ASIO_NO_DEPRECATED)
   return boost_asio_handler_alloc_helpers::allocate(
       size, this_handler->handler_);
+#endif // defined(BOOST_ASIO_NO_DEPRECATED)
 }
 
 template <typename Handler>
-inline void asio_handler_deallocate(void* pointer, std::size_t size,
+inline asio_handler_deallocate_is_deprecated
+asio_handler_deallocate(void* pointer, std::size_t size,
     as_single_handler<Handler>* this_handler)
 {
   boost_asio_handler_alloc_helpers::deallocate(
       pointer, size, this_handler->handler_);
+#if defined(BOOST_ASIO_NO_DEPRECATED)
+  return asio_handler_deallocate_is_no_longer_used();
+#endif // defined(BOOST_ASIO_NO_DEPRECATED)
 }
 
 template <typename Handler>
@@ -100,19 +110,27 @@ inline bool asio_handler_is_continuation(
 }
 
 template <typename Function, typename Handler>
-inline void asio_handler_invoke(Function& function,
+inline asio_handler_invoke_is_deprecated
+asio_handler_invoke(Function& function,
     as_single_handler<Handler>* this_handler)
 {
   boost_asio_handler_invoke_helpers::invoke(
       function, this_handler->handler_);
+#if defined(BOOST_ASIO_NO_DEPRECATED)
+  return asio_handler_invoke_is_no_longer_used();
+#endif // defined(BOOST_ASIO_NO_DEPRECATED)
 }
 
 template <typename Function, typename Handler>
-inline void asio_handler_invoke(const Function& function,
+inline asio_handler_invoke_is_deprecated
+asio_handler_invoke(const Function& function,
     as_single_handler<Handler>* this_handler)
 {
   boost_asio_handler_invoke_helpers::invoke(
       function, this_handler->handler_);
+#if defined(BOOST_ASIO_NO_DEPRECATED)
+  return asio_handler_invoke_is_no_longer_used();
+#endif // defined(BOOST_ASIO_NO_DEPRECATED)
 }
 
 template <typename Signature>

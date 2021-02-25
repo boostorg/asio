@@ -2,7 +2,7 @@
 // impl/thread_pool.hpp
 // ~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2020 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2021 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -77,11 +77,16 @@ thread_pool::basic_executor_type<Allocator, Bits>::operator=(
 {
   if (this != &other)
   {
+    thread_pool* old_thread_pool = pool_;
     pool_ = other.pool_;
     allocator_ = std::move(other.allocator_);
     bits_ = other.bits_;
     if (Bits & outstanding_work_tracked)
+    {
       other.pool_ = 0;
+      if (old_thread_pool)
+        old_thread_pool->scheduler_.work_finished();
+    }
   }
   return *this;
 }

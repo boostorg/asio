@@ -2,7 +2,7 @@
 // basic_socket_acceptor.hpp
 // ~~~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2020 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2021 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -62,6 +62,12 @@ class basic_socket_acceptor;
  * @e Distinct @e objects: Safe.@n
  * @e Shared @e objects: Unsafe.
  *
+ * Synchronous @c accept operations are thread safe, if the underlying
+ * operating system calls are also thread safe. This means that it is permitted
+ * to perform concurrent calls to synchronous @c accept operations on a single
+ * socket object. Other synchronous operations, such as @c open or @c close, are
+ * not thread safe.
+ *
  * @par Example
  * Opening a socket acceptor with the SO_REUSEADDR option enabled:
  * @code
@@ -120,7 +126,7 @@ public:
    * acceptor.
    */
   explicit basic_socket_acceptor(const executor_type& ex)
-    : impl_(ex)
+    : impl_(0, ex)
   {
   }
 
@@ -139,7 +145,7 @@ public:
       typename enable_if<
         is_convertible<ExecutionContext&, execution_context&>::value
       >::type* = 0)
-    : impl_(context)
+    : impl_(0, 0, context)
   {
   }
 
@@ -156,7 +162,7 @@ public:
    * @throws boost::system::system_error Thrown on failure.
    */
   basic_socket_acceptor(const executor_type& ex, const protocol_type& protocol)
-    : impl_(ex)
+    : impl_(0, ex)
   {
     boost::system::error_code ec;
     impl_.get_service().open(impl_.get_implementation(), protocol, ec);
@@ -181,7 +187,7 @@ public:
       typename enable_if<
         is_convertible<ExecutionContext&, execution_context&>::value
       >::type* = 0)
-    : impl_(context)
+    : impl_(0, 0, context)
   {
     boost::system::error_code ec;
     impl_.get_service().open(impl_.get_implementation(), protocol, ec);
@@ -217,7 +223,7 @@ public:
    */
   basic_socket_acceptor(const executor_type& ex,
       const endpoint_type& endpoint, bool reuse_addr = true)
-    : impl_(ex)
+    : impl_(0, ex)
   {
     boost::system::error_code ec;
     const protocol_type protocol = endpoint.protocol();
@@ -269,7 +275,7 @@ public:
       typename enable_if<
         is_convertible<ExecutionContext&, execution_context&>::value
       >::type* = 0)
-    : impl_(context)
+    : impl_(0, 0, context)
   {
     boost::system::error_code ec;
     const protocol_type protocol = endpoint.protocol();
@@ -305,7 +311,7 @@ public:
    */
   basic_socket_acceptor(const executor_type& ex,
       const protocol_type& protocol, const native_handle_type& native_acceptor)
-    : impl_(ex)
+    : impl_(0, ex)
   {
     boost::system::error_code ec;
     impl_.get_service().assign(impl_.get_implementation(),
@@ -334,7 +340,7 @@ public:
       typename enable_if<
         is_convertible<ExecutionContext&, execution_context&>::value
       >::type* = 0)
-    : impl_(context)
+    : impl_(0, 0, context)
   {
     boost::system::error_code ec;
     impl_.get_service().assign(impl_.get_implementation(),
