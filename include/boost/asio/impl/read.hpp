@@ -121,7 +121,9 @@ std::size_t read(SyncReadStream& s,
     CompletionCondition completion_condition, boost::system::error_code& ec,
     typename constraint<
       is_dynamic_buffer_v1<typename decay<DynamicBuffer_v1>::type>::value
-        && !is_dynamic_buffer_v2<typename decay<DynamicBuffer_v1>::type>::value
+    >::type,
+    typename constraint<
+      !is_dynamic_buffer_v2<typename decay<DynamicBuffer_v1>::type>::value
     >::type)
 {
   typename decay<DynamicBuffer_v1>::type b(
@@ -153,7 +155,9 @@ inline std::size_t read(SyncReadStream& s,
     BOOST_ASIO_MOVE_ARG(DynamicBuffer_v1) buffers,
     typename constraint<
       is_dynamic_buffer_v1<typename decay<DynamicBuffer_v1>::type>::value
-        && !is_dynamic_buffer_v2<typename decay<DynamicBuffer_v1>::type>::value
+    >::type,
+    typename constraint<
+      !is_dynamic_buffer_v2<typename decay<DynamicBuffer_v1>::type>::value
     >::type)
 {
   boost::system::error_code ec;
@@ -169,7 +173,9 @@ inline std::size_t read(SyncReadStream& s,
     boost::system::error_code& ec,
     typename constraint<
       is_dynamic_buffer_v1<typename decay<DynamicBuffer_v1>::type>::value
-        && !is_dynamic_buffer_v2<typename decay<DynamicBuffer_v1>::type>::value
+    >::type,
+    typename constraint<
+      !is_dynamic_buffer_v2<typename decay<DynamicBuffer_v1>::type>::value
     >::type)
 {
   return read(s, BOOST_ASIO_MOVE_CAST(DynamicBuffer_v1)(buffers),
@@ -183,7 +189,9 @@ inline std::size_t read(SyncReadStream& s,
     CompletionCondition completion_condition,
     typename constraint<
       is_dynamic_buffer_v1<typename decay<DynamicBuffer_v1>::type>::value
-        && !is_dynamic_buffer_v2<typename decay<DynamicBuffer_v1>::type>::value
+    >::type,
+    typename constraint<
+      !is_dynamic_buffer_v2<typename decay<DynamicBuffer_v1>::type>::value
     >::type)
 {
   boost::system::error_code ec;
@@ -847,7 +855,9 @@ async_read(AsyncReadStream& s,
     BOOST_ASIO_MOVE_ARG(ReadHandler) handler,
     typename constraint<
       is_dynamic_buffer_v1<typename decay<DynamicBuffer_v1>::type>::value
-        && !is_dynamic_buffer_v2<typename decay<DynamicBuffer_v1>::type>::value
+    >::type,
+    typename constraint<
+      !is_dynamic_buffer_v2<typename decay<DynamicBuffer_v1>::type>::value
     >::type)
 {
   return async_read(s,
@@ -867,7 +877,9 @@ async_read(AsyncReadStream& s,
     BOOST_ASIO_MOVE_ARG(ReadHandler) handler,
     typename constraint<
       is_dynamic_buffer_v1<typename decay<DynamicBuffer_v1>::type>::value
-        && !is_dynamic_buffer_v2<typename decay<DynamicBuffer_v1>::type>::value
+    >::type,
+    typename constraint<
+      !is_dynamic_buffer_v2<typename decay<DynamicBuffer_v1>::type>::value
     >::type)
 {
   return async_initiate<ReadHandler,
