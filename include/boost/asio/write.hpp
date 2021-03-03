@@ -258,7 +258,9 @@ std::size_t write(SyncWriteStream& s,
     BOOST_ASIO_MOVE_ARG(DynamicBuffer_v1) buffers,
     typename constraint<
       is_dynamic_buffer_v1<typename decay<DynamicBuffer_v1>::type>::value
-        && !is_dynamic_buffer_v2<typename decay<DynamicBuffer_v1>::type>::value
+    >::type = 0,
+    typename constraint<
+      !is_dynamic_buffer_v2<typename decay<DynamicBuffer_v1>::type>::value
     >::type = 0);
 
 /// Write all of the supplied data to a stream before returning.
@@ -294,7 +296,9 @@ std::size_t write(SyncWriteStream& s,
     boost::system::error_code& ec,
     typename constraint<
       is_dynamic_buffer_v1<typename decay<DynamicBuffer_v1>::type>::value
-        && !is_dynamic_buffer_v2<typename decay<DynamicBuffer_v1>::type>::value
+    >::type = 0,
+    typename constraint<
+      !is_dynamic_buffer_v2<typename decay<DynamicBuffer_v1>::type>::value
     >::type = 0);
 
 /// Write a certain amount of data to a stream before returning.
@@ -340,7 +344,9 @@ std::size_t write(SyncWriteStream& s,
     CompletionCondition completion_condition,
     typename constraint<
       is_dynamic_buffer_v1<typename decay<DynamicBuffer_v1>::type>::value
-        && !is_dynamic_buffer_v2<typename decay<DynamicBuffer_v1>::type>::value
+    >::type = 0,
+    typename constraint<
+      !is_dynamic_buffer_v2<typename decay<DynamicBuffer_v1>::type>::value
     >::type = 0);
 
 /// Write a certain amount of data to a stream before returning.
@@ -387,7 +393,9 @@ std::size_t write(SyncWriteStream& s,
     CompletionCondition completion_condition, boost::system::error_code& ec,
     typename constraint<
       is_dynamic_buffer_v1<typename decay<DynamicBuffer_v1>::type>::value
-        && !is_dynamic_buffer_v2<typename decay<DynamicBuffer_v1>::type>::value
+    >::type = 0,
+    typename constraint<
+      !is_dynamic_buffer_v2<typename decay<DynamicBuffer_v1>::type>::value
     >::type = 0);
 
 #if !defined(BOOST_ASIO_NO_EXTENSIONS)
@@ -908,7 +916,9 @@ async_write(AsyncWriteStream& s,
         typename AsyncWriteStream::executor_type),
     typename constraint<
       is_dynamic_buffer_v1<typename decay<DynamicBuffer_v1>::type>::value
-        && !is_dynamic_buffer_v2<typename decay<DynamicBuffer_v1>::type>::value
+    >::type = 0,
+    typename constraint<
+      !is_dynamic_buffer_v2<typename decay<DynamicBuffer_v1>::type>::value
     >::type = 0);
 
 /// Start an asynchronous operation to write a certain amount of data to a
@@ -980,7 +990,9 @@ async_write(AsyncWriteStream& s,
     BOOST_ASIO_MOVE_ARG(WriteHandler) handler,
     typename constraint<
       is_dynamic_buffer_v1<typename decay<DynamicBuffer_v1>::type>::value
-        && !is_dynamic_buffer_v2<typename decay<DynamicBuffer_v1>::type>::value
+    >::type = 0,
+    typename constraint<
+      !is_dynamic_buffer_v2<typename decay<DynamicBuffer_v1>::type>::value
     >::type = 0);
 
 #if !defined(BOOST_ASIO_NO_EXTENSIONS)
