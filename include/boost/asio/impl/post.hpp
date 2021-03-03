@@ -225,9 +225,9 @@ template <typename Executor,
     BOOST_ASIO_COMPLETION_TOKEN_FOR(void()) CompletionToken>
 BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(CompletionToken, void()) post(
     const Executor& ex, BOOST_ASIO_MOVE_ARG(CompletionToken) token,
-    typename enable_if<
+    typename constraint<
       execution::is_executor<Executor>::value || is_executor<Executor>::value
-    >::type*)
+    >::type)
 {
   return async_initiate<CompletionToken, void()>(
       detail::initiate_post_with_executor<Executor>(ex), token);
@@ -237,8 +237,8 @@ template <typename ExecutionContext,
     BOOST_ASIO_COMPLETION_TOKEN_FOR(void()) CompletionToken>
 inline BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(CompletionToken, void()) post(
     ExecutionContext& ctx, BOOST_ASIO_MOVE_ARG(CompletionToken) token,
-    typename enable_if<is_convertible<
-      ExecutionContext&, execution_context&>::value>::type*)
+    typename constraint<is_convertible<
+      ExecutionContext&, execution_context&>::value>::type)
 {
   return async_initiate<CompletionToken, void()>(
       detail::initiate_post_with_executor<

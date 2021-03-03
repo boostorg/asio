@@ -120,7 +120,7 @@ public:
 #else // defined(GENERATING_DOCUMENTATION)
   template <typename OtherAnyExecutor>
   any_io_executor(OtherAnyExecutor e,
-      typename enable_if<
+      typename constraint<
         conditional<
           !is_same<OtherAnyExecutor, any_io_executor>::value
             && is_base_of<execution::detail::any_executor_base,
@@ -130,7 +130,7 @@ public:
               is_valid_target<OtherAnyExecutor>,
           false_type
         >::type::value
-      >::type* = 0)
+      >::type = 0)
     : base_type(BOOST_ASIO_MOVE_CAST(OtherAnyExecutor)(e))
   {
   }
@@ -143,7 +143,7 @@ public:
 #else // defined(GENERATING_DOCUMENTATION)
   template <BOOST_ASIO_EXECUTION_EXECUTOR Executor>
   any_io_executor(Executor e,
-      typename enable_if<
+      typename constraint<
         conditional<
           !is_same<Executor, any_io_executor>::value
             && !is_base_of<execution::detail::any_executor_base,
@@ -152,7 +152,7 @@ public:
             Executor, supportable_properties_type>,
           false_type
         >::type::value
-      >::type* = 0)
+      >::type = 0)
     : base_type(BOOST_ASIO_MOVE_CAST(Executor)(e))
   {
   }
@@ -203,9 +203,9 @@ public:
    */
   template <typename Property>
   any_io_executor require(const Property& p,
-      typename enable_if<
+      typename constraint<
         traits::require_member<const base_type&, const Property&>::is_valid
-      >::type* = 0) const
+      >::type = 0) const
   {
     return static_cast<const base_type&>(*this).require(p);
   }
@@ -221,9 +221,9 @@ public:
    */
   template <typename Property>
   any_io_executor prefer(const Property& p,
-      typename enable_if<
+      typename constraint<
         traits::prefer_member<const base_type&, const Property&>::is_valid
-      >::type* = 0) const
+      >::type = 0) const
   {
     return static_cast<const base_type&>(*this).prefer(p);
   }
