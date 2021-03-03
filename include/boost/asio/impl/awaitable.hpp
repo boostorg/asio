@@ -78,7 +78,7 @@ public:
   {
     return boost::asio::detail::thread_info_base::allocate(
         boost::asio::detail::thread_info_base::awaitable_frame_tag(),
-        boost::asio::detail::thread_context::thread_call_stack::top(),
+        boost::asio::detail::thread_context::top_of_thread_call_stack(),
         size);
   }
 
@@ -86,7 +86,7 @@ public:
   {
     boost::asio::detail::thread_info_base::deallocate(
         boost::asio::detail::thread_info_base::awaitable_frame_tag(),
-        boost::asio::detail::thread_context::thread_call_stack::top(),
+        boost::asio::detail::thread_context::top_of_thread_call_stack(),
         pointer, size);
   }
 #endif // !defined(BOOST_ASIO_DISABLE_AWAITABLE_FRAME_RECYCLING)

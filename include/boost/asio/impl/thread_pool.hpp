@@ -20,7 +20,6 @@
 #include <boost/asio/detail/executor_op.hpp>
 #include <boost/asio/detail/fenced_block.hpp>
 #include <boost/asio/detail/non_const_lvalue.hpp>
-#include <boost/asio/detail/recycling_allocator.hpp>
 #include <boost/asio/detail/type_traits.hpp>
 #include <boost/asio/execution_context.hpp>
 

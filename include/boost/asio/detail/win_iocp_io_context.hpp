@@ -110,10 +110,7 @@ public:
   }
 
   // Return whether a handler can be dispatched immediately.
-  bool can_dispatch()
-  {
-    return thread_call_stack::contains(this) != 0;
-  }
+  BOOST_ASIO_DECL bool can_dispatch();
 
   /// Capture the current exception so it can be rethrown from a run function.
   BOOST_ASIO_DECL void capture_current_exception();

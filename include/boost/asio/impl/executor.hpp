@@ -22,7 +22,6 @@
 #include <boost/asio/detail/atomic_count.hpp>
 #include <boost/asio/detail/global.hpp>
 #include <boost/asio/detail/memory.hpp>
-#include <boost/asio/detail/recycling_allocator.hpp>
 #include <boost/asio/executor.hpp>
 #include <boost/asio/system_executor.hpp>
 
