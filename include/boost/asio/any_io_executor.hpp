@@ -229,6 +229,8 @@ public:
   }
 };
 
+#if !defined(GENERATING_DOCUMENTATION)
+
 namespace traits {
 
 #if !defined(BOOST_ASIO_HAS_DEDUCED_EQUALITY_COMPARABLE_TRAIT)
@@ -287,6 +289,8 @@ struct prefer_member<any_io_executor, Prop> :
 #endif // !defined(BOOST_ASIO_HAS_DEDUCED_PREFER_MEMBER_TRAIT)
 
 } // namespace traits
+
+#endif // !defined(GENERATING_DOCUMENTATION)
 
 #endif // defined(BOOST_ASIO_USE_TS_EXECUTOR_AS_DEFAULT)
 
