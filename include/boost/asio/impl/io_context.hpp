@@ -20,7 +20,6 @@
 #include <boost/asio/detail/fenced_block.hpp>
 #include <boost/asio/detail/handler_type_requirements.hpp>
 #include <boost/asio/detail/non_const_lvalue.hpp>
-#include <boost/asio/detail/recycling_allocator.hpp>
 #include <boost/asio/detail/service_registry.hpp>
 #include <boost/asio/detail/throw_error.hpp>
 #include <boost/asio/detail/type_traits.hpp>

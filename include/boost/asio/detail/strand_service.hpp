@@ -97,11 +97,10 @@ public:
       const implementation_type& impl) const;
 
 private:
-  // Helper function to dispatch a handler. Returns true if the handler should
-  // be dispatched immediately.
-  BOOST_ASIO_DECL bool do_dispatch(implementation_type& impl, operation* op);
+  // Helper function to dispatch a handler.
+  BOOST_ASIO_DECL void do_dispatch(implementation_type& impl, operation* op);
 
-  // Helper fiunction to post a handler.
+  // Helper function to post a handler.
   BOOST_ASIO_DECL void do_post(implementation_type& impl,
       operation* op, bool is_continuation);
 

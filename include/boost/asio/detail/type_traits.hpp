@@ -144,6 +144,14 @@ template <typename Head, typename... Tail> struct conjunction<Head, Tail...> :
 
 #endif // defined(BOOST_ASIO_HAS_VARIADIC_TEMPLATES)
 
+struct defaulted_constraint
+{
+  BOOST_ASIO_CONSTEXPR defaulted_constraint() {}
+};
+
+template <bool Condition, typename Type = int>
+struct constraint : enable_if<Condition, Type> {};
+
 } // namespace asio
 } // namespace boost
 

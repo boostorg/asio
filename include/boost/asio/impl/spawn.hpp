@@ -435,10 +435,10 @@ template <typename Handler, typename Function>
 void spawn(BOOST_ASIO_MOVE_ARG(Handler) handler,
     BOOST_ASIO_MOVE_ARG(Function) function,
     const boost::coroutines::attributes& attributes,
-    typename enable_if<
+    typename constraint<
       !is_executor<typename decay<Handler>::type>::value &&
       !execution::is_executor<typename decay<Handler>::type>::value &&
-      !is_convertible<Handler&, execution_context&>::value>::type*)
+      !is_convertible<Handler&, execution_context&>::value>::type)
 {
   typedef typename decay<Handler>::type handler_type;
   typedef typename decay<Function>::type function_type;
@@ -476,9 +476,9 @@ template <typename Function, typename Executor>
 inline void spawn(const Executor& ex,
     BOOST_ASIO_MOVE_ARG(Function) function,
     const boost::coroutines::attributes& attributes,
-    typename enable_if<
+    typename constraint<
       is_executor<Executor>::value || execution::is_executor<Executor>::value
-    >::type*)
+    >::type)
 {
   boost::asio::spawn(boost::asio::strand<Executor>(ex),
       BOOST_ASIO_MOVE_CAST(Function)(function), attributes);
@@ -512,8 +512,8 @@ template <typename Function, typename ExecutionContext>
 inline void spawn(ExecutionContext& ctx,
     BOOST_ASIO_MOVE_ARG(Function) function,
     const boost::coroutines::attributes& attributes,
-    typename enable_if<is_convertible<
-      ExecutionContext&, execution_context&>::value>::type*)
+    typename constraint<is_convertible<
+      ExecutionContext&, execution_context&>::value>::type)
 {
   boost::asio::spawn(ctx.get_executor(),
       BOOST_ASIO_MOVE_CAST(Function)(function), attributes);

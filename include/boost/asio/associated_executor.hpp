@@ -109,9 +109,9 @@ get_associated_executor(const T& t) BOOST_ASIO_NOEXCEPT
 template <typename T, typename Executor>
 inline typename associated_executor<T, Executor>::type
 get_associated_executor(const T& t, const Executor& ex,
-    typename enable_if<
+    typename constraint<
       is_executor<Executor>::value || execution::is_executor<Executor>::value
-    >::type* = 0) BOOST_ASIO_NOEXCEPT
+    >::type = 0) BOOST_ASIO_NOEXCEPT
 {
   return associated_executor<T, Executor>::get(t, ex);
 }
@@ -125,8 +125,8 @@ template <typename T, typename ExecutionContext>
 inline typename associated_executor<T,
   typename ExecutionContext::executor_type>::type
 get_associated_executor(const T& t, ExecutionContext& ctx,
-    typename enable_if<is_convertible<ExecutionContext&,
-      execution_context&>::value>::type* = 0) BOOST_ASIO_NOEXCEPT
+    typename constraint<is_convertible<ExecutionContext&,
+      execution_context&>::value>::type = 0) BOOST_ASIO_NOEXCEPT
 {
   return associated_executor<T,
     typename ExecutionContext::executor_type>::get(t, ctx.get_executor());

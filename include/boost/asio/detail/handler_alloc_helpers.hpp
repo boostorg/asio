@@ -61,7 +61,7 @@ inline void* allocate(std::size_t s, Handler& h)
   (void)h;
 #if !defined(BOOST_ASIO_DISABLE_SMALL_BLOCK_RECYCLING)
   return boost::asio::detail::thread_info_base::allocate(
-      boost::asio::detail::thread_context::thread_call_stack::top(), s);
+      boost::asio::detail::thread_context::top_of_thread_call_stack(), s);
 #else // !defined(BOOST_ASIO_DISABLE_SMALL_BLOCK_RECYCLING)
   return ::operator new(size);
 #endif // !defined(BOOST_ASIO_DISABLE_SMALL_BLOCK_RECYCLING)
@@ -82,7 +82,7 @@ inline void deallocate(void* p, std::size_t s, Handler& h)
   (void)h;
 #if !defined(BOOST_ASIO_DISABLE_SMALL_BLOCK_RECYCLING)
   boost::asio::detail::thread_info_base::deallocate(
-      boost::asio::detail::thread_context::thread_call_stack::top(), p, s);
+      boost::asio::detail::thread_context::top_of_thread_call_stack(), p, s);
 #else // !defined(BOOST_ASIO_DISABLE_SMALL_BLOCK_RECYCLING)
   (void)s;
   ::operator delete(p);

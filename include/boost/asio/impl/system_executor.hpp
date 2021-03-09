@@ -17,7 +17,6 @@
 
 #include <boost/asio/detail/executor_op.hpp>
 #include <boost/asio/detail/global.hpp>
-#include <boost/asio/detail/recycling_allocator.hpp>
 #include <boost/asio/detail/type_traits.hpp>
 #include <boost/asio/system_context.hpp>
 
