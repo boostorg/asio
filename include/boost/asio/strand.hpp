@@ -18,6 +18,7 @@
 #include <boost/asio/detail/config.hpp>
 #include <boost/asio/detail/strand_executor_service.hpp>
 #include <boost/asio/detail/type_traits.hpp>
+#include <boost/asio/execution/blocking.hpp>
 #include <boost/asio/execution/executor.hpp>
 #include <boost/asio/is_executor.hpp>
 
@@ -158,7 +159,7 @@ public:
   /// Forward a query to the underlying executor.
   /**
    * Do not call this function directly. It is intended for use with the
-   * execution::execute customisation point.
+   * boost::asio::query customisation point.
    *
    * For example:
    * @code boost::asio::strand<my_executor_type> ex = ...;
@@ -169,12 +170,17 @@ public:
   template <typename Property>
   typename constraint<
     can_query<const Executor&, Property>::value,
-    typename query_result<const Executor&, Property>::type
+    typename conditional<
+      is_convertible<Property, execution::blocking_t>::value,
+      execution::blocking_t,
+      typename query_result<const Executor&, Property>::type
+    >::type
   >::type query(const Property& p) const
     BOOST_ASIO_NOEXCEPT_IF((
       is_nothrow_query<const Executor&, Property>::value))
   {
-    return boost::asio::query(executor_, p);
+    return this->query_helper(
+        is_convertible<Property, execution::blocking_t>(), p);
   }
 
   /// Forward a requirement to the underlying executor.
@@ -189,7 +195,8 @@ public:
    */
   template <typename Property>
   typename constraint<
-    can_require<const Executor&, Property>::value,
+    can_require<const Executor&, Property>::value
+      && !is_convertible<Property, execution::blocking_t::always_t>::value,
     strand<typename decay<
       typename require_result<const Executor&, Property>::type
     >::type>
@@ -214,7 +221,8 @@ public:
    */
   template <typename Property>
   typename constraint<
-    can_prefer<const Executor&, Property>::value,
+    can_prefer<const Executor&, Property>::value
+      && !is_convertible<Property, execution::blocking_t::always_t>::value,
     strand<typename decay<
       typename prefer_result<const Executor&, Property>::type
     >::type>
@@ -407,6 +415,21 @@ private:
   {
   }
 
+  template <typename Property>
+  typename query_result<const Executor&, Property>::type query_helper(
+      false_type, const Property& property) const
+  {
+    return boost::asio::query(executor_, property);
+  }
+
+  template <typename Property>
+  execution::blocking_t query_helper(true_type, const Property& property) const
+  {
+    execution::blocking_t result = boost::asio::query(executor_, property);
+    return result == execution::blocking.always
+      ? execution::blocking.possibly : result;
+  }
+
   Executor executor_;
   implementation_type impl_;
 };
@@ -482,7 +505,10 @@ struct query_member<strand<Executor>, Property,
   BOOST_ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
   BOOST_ASIO_STATIC_CONSTEXPR(bool, is_noexcept =
       (is_nothrow_query<Executor, Property>::value));
-  typedef typename query_result<Executor, Property>::type result_type;
+  typedef typename conditional<
+    is_convertible<Property, execution::blocking_t>::value,
+      execution::blocking_t, typename query_result<Executor, Property>::type
+        >::type result_type;
 };
 
 #endif // !defined(BOOST_ASIO_HAS_DEDUCED_QUERY_MEMBER_TRAIT)
@@ -493,6 +519,7 @@ template <typename Executor, typename Property>
 struct require_member<strand<Executor>, Property,
     typename enable_if<
       can_require<const Executor&, Property>::value
+        && !is_convertible<Property, execution::blocking_t::always_t>::value
     >::type>
 {
   BOOST_ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
@@ -511,6 +538,7 @@ template <typename Executor, typename Property>
 struct prefer_member<strand<Executor>, Property,
     typename enable_if<
       can_prefer<const Executor&, Property>::value
+        && !is_convertible<Property, execution::blocking_t::always_t>::value
     >::type>
 {
   BOOST_ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
