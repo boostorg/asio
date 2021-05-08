@@ -74,7 +74,7 @@ void epoll_reactor::cancel_timer_by_key(timer_queue<Time_Traits>& queue,
 {
   mutex::scoped_lock lock(mutex_);
   op_queue<operation> ops;
-  queue.cancel_timer_op(timer, ops, cancellation_key);
+  queue.cancel_timer_by_key(timer, ops, cancellation_key);
   lock.unlock();
   scheduler_.post_deferred_completions(ops);
 }
