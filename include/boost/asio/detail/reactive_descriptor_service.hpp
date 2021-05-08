@@ -21,6 +21,7 @@
   && !defined(BOOST_ASIO_WINDOWS_RUNTIME) \
   && !defined(__CYGWIN__)
 
+#include <boost/asio/associated_cancellation_slot.hpp>
 #include <boost/asio/buffer.hpp>
 #include <boost/asio/execution_context.hpp>
 #include <boost/asio/detail/bind_handler.hpp>
@@ -226,6 +227,16 @@ public:
         return;
     }
 
+    // Optionally register for per-operation cancellation.
+    typename associated_cancellation_slot<Handler>::type slot
+      = boost::asio::get_associated_cancellation_slot(handler);
+    if (slot.is_connected())
+    {
+      p.p->cancellation_key_ =
+        &slot.template emplace<reactor_op_cancellation>(
+            &reactor_, &impl.reactor_data_, impl.descriptor_, op_type);
+    }
+
     start_op(impl, op_type, p.p, is_continuation, false, false);
     p.v = p.p = 0;
   }
@@ -279,6 +290,17 @@ public:
       op::ptr::allocate(handler), 0 };
     p.p = new (p.v) op(success_ec_, impl.descriptor_, buffers, handler, io_ex);
 
+    // Optionally register for per-operation cancellation.
+    typename associated_cancellation_slot<Handler>::type slot
+      = boost::asio::get_associated_cancellation_slot(handler);
+    if (slot.is_connected())
+    {
+      p.p->cancellation_key_ =
+        &slot.template emplace<reactor_op_cancellation>(
+            &reactor_, &impl.reactor_data_,
+            impl.descriptor_, reactor::write_op);
+    }
+
     BOOST_ASIO_HANDLER_CREATION((reactor_.context(), *p.p, "descriptor",
           &impl, impl.descriptor_, "async_write_some"));
 
@@ -301,6 +323,17 @@ public:
     typename op::ptr p = { boost::asio::detail::addressof(handler),
       op::ptr::allocate(handler), 0 };
     p.p = new (p.v) op(success_ec_, handler, io_ex);
+
+    // Optionally register for per-operation cancellation.
+    typename associated_cancellation_slot<Handler>::type slot
+      = boost::asio::get_associated_cancellation_slot(handler);
+    if (slot.is_connected())
+    {
+      p.p->cancellation_key_ =
+        &slot.template emplace<reactor_op_cancellation>(
+            &reactor_, &impl.reactor_data_,
+            impl.descriptor_, reactor::write_op);
+    }
 
     BOOST_ASIO_HANDLER_CREATION((reactor_.context(), *p.p, "descriptor",
           &impl, impl.descriptor_, "async_write_some(null_buffers)"));
@@ -359,6 +392,17 @@ public:
       op::ptr::allocate(handler), 0 };
     p.p = new (p.v) op(success_ec_, impl.descriptor_, buffers, handler, io_ex);
 
+    // Optionally register for per-operation cancellation.
+    typename associated_cancellation_slot<Handler>::type slot
+      = boost::asio::get_associated_cancellation_slot(handler);
+    if (slot.is_connected())
+    {
+      p.p->cancellation_key_ =
+        &slot.template emplace<reactor_op_cancellation>(
+            &reactor_, &impl.reactor_data_,
+            impl.descriptor_, reactor::read_op);
+    }
+
     BOOST_ASIO_HANDLER_CREATION((reactor_.context(), *p.p, "descriptor",
           &impl, impl.descriptor_, "async_read_some"));
 
@@ -382,6 +426,17 @@ public:
       op::ptr::allocate(handler), 0 };
     p.p = new (p.v) op(success_ec_, handler, io_ex);
 
+    // Optionally register for per-operation cancellation.
+    typename associated_cancellation_slot<Handler>::type slot
+      = boost::asio::get_associated_cancellation_slot(handler);
+    if (slot.is_connected())
+    {
+      p.p->cancellation_key_ =
+        &slot.template emplace<reactor_op_cancellation>(
+            &reactor_, &impl.reactor_data_,
+            impl.descriptor_, reactor::read_op);
+    }
+
     BOOST_ASIO_HANDLER_CREATION((reactor_.context(), *p.p, "descriptor",
           &impl, impl.descriptor_, "async_read_some(null_buffers)"));
 
@@ -393,6 +448,31 @@ private:
   // Start the asynchronous operation.
   BOOST_ASIO_DECL void start_op(implementation_type& impl, int op_type,
       reactor_op* op, bool is_continuation, bool is_non_blocking, bool noop);
+
+  // Helper class used to implement per-operation cancellation
+  class reactor_op_cancellation
+  {
+  public:
+    reactor_op_cancellation(reactor* r,
+        reactor::per_descriptor_data* p, int d, int o)
+      : reactor_(r),
+        reactor_data_(p),
+        descriptor_(d),
+        op_type_(o)
+    {
+    }
+
+    void operator()()
+    {
+      reactor_->cancel_ops_by_key(descriptor_, *reactor_data_, op_type_, this);
+    }
+
+  private:
+    reactor* reactor_;
+    reactor::per_descriptor_data* reactor_data_;
+    int descriptor_;
+    int op_type_;
+  };
 
   // The selector that performs event demultiplexing for the service.
   reactor& reactor_;

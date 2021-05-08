@@ -17,6 +17,7 @@
 
 #include <boost/asio/detail/config.hpp>
 #include <cstddef>
+#include <boost/asio/associated_cancellation_slot.hpp>
 #include <boost/asio/error.hpp>
 #include <boost/asio/execution_context.hpp>
 #include <boost/asio/detail/bind_handler.hpp>
@@ -252,6 +253,15 @@ public:
       op::ptr::allocate(handler), 0 };
     p.p = new (p.v) op(handler, io_ex);
 
+    // Optionally register for per-operation cancellation.
+    typename associated_cancellation_slot<Handler>::type slot
+      = boost::asio::get_associated_cancellation_slot(handler);
+    if (slot.is_connected())
+    {
+      p.p->cancellation_key_ =
+        &slot.template emplace<op_cancellation>(this, &impl.timer_data);
+    }
+
     impl.might_have_pending_waits = true;
 
     BOOST_ASIO_HANDLER_CREATION((scheduler_.context(),
@@ -280,6 +290,28 @@ private:
     socket_ops::select(0, 0, 0, 0, &tv, ec);
 #endif // defined(BOOST_ASIO_WINDOWS_RUNTIME)
   }
+
+  // Helper class used to implement per-operation cancellation.
+  class op_cancellation
+  {
+  public:
+    op_cancellation(deadline_timer_service* s,
+        typename timer_queue<Time_Traits>::per_timer_data* p)
+      : service_(s),
+        timer_data_(p)
+    {
+    }
+
+    void operator()()
+    {
+      service_->scheduler_.cancel_timer_by_key(
+          service_->timer_queue_, timer_data_, this);
+    }
+
+  private:
+    deadline_timer_service* service_;
+    typename timer_queue<Time_Traits>::per_timer_data* timer_data_;
+  };
 
   // The queue of timers.
   timer_queue<Time_Traits> timer_queue_;
