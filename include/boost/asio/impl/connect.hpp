@@ -18,6 +18,7 @@
 #include <algorithm>
 #include <boost/asio/associated_allocator.hpp>
 #include <boost/asio/associated_executor.hpp>
+#include <boost/asio/detail/base_from_cancellation_state.hpp>
 #include <boost/asio/detail/bind_handler.hpp>
 #include <boost/asio/detail/handler_alloc_helpers.hpp>
 #include <boost/asio/detail/handler_cont_helpers.hpp>
@@ -295,14 +296,17 @@ namespace detail
 
   template <typename Protocol, typename Executor, typename EndpointSequence,
       typename ConnectCondition, typename RangeConnectHandler>
-  class range_connect_op : base_from_connect_condition<ConnectCondition>
+  class range_connect_op
+    : public base_from_cancellation_state<RangeConnectHandler>,
+      base_from_connect_condition<ConnectCondition>
   {
   public:
     range_connect_op(basic_socket<Protocol, Executor>& sock,
         const EndpointSequence& endpoints,
         const ConnectCondition& connect_condition,
         RangeConnectHandler& handler)
-      : base_from_connect_condition<ConnectCondition>(connect_condition),
+      : base_from_cancellation_state<RangeConnectHandler>(handler),
+        base_from_connect_condition<ConnectCondition>(connect_condition),
         socket_(sock),
         endpoints_(endpoints),
         index_(0),
@@ -313,7 +317,8 @@ namespace detail
 
 #if defined(BOOST_ASIO_HAS_MOVE)
     range_connect_op(const range_connect_op& other)
-      : base_from_connect_condition<ConnectCondition>(other),
+      : base_from_cancellation_state<RangeConnectHandler>(other),
+        base_from_connect_condition<ConnectCondition>(other),
         socket_(other.socket_),
         endpoints_(other.endpoints_),
         index_(other.index_),
@@ -323,7 +328,10 @@ namespace detail
     }
 
     range_connect_op(range_connect_op&& other)
-      : base_from_connect_condition<ConnectCondition>(other),
+      : base_from_cancellation_state<RangeConnectHandler>(
+          BOOST_ASIO_MOVE_CAST(base_from_cancellation_state<
+            RangeConnectHandler>)(other)),
+        base_from_connect_condition<ConnectCondition>(other),
         socket_(other.socket_),
         endpoints_(other.endpoints_),
         index_(other.index_),
@@ -388,6 +396,12 @@ namespace detail
 
           if (!ec)
             break;
+
+          if (this->cancelled())
+          {
+            ec = boost::asio::error::operation_aborted;
+            break;
+          }
 
           ++iter;
           ++index_;
@@ -516,14 +530,17 @@ namespace detail
 
   template <typename Protocol, typename Executor, typename Iterator,
       typename ConnectCondition, typename IteratorConnectHandler>
-  class iterator_connect_op : base_from_connect_condition<ConnectCondition>
+  class iterator_connect_op
+    : public base_from_cancellation_state<IteratorConnectHandler>,
+      base_from_connect_condition<ConnectCondition>
   {
   public:
     iterator_connect_op(basic_socket<Protocol, Executor>& sock,
         const Iterator& begin, const Iterator& end,
         const ConnectCondition& connect_condition,
         IteratorConnectHandler& handler)
-      : base_from_connect_condition<ConnectCondition>(connect_condition),
+      : base_from_cancellation_state<IteratorConnectHandler>(handler),
+        base_from_connect_condition<ConnectCondition>(connect_condition),
         socket_(sock),
         iter_(begin),
         end_(end),
@@ -534,7 +551,8 @@ namespace detail
 
 #if defined(BOOST_ASIO_HAS_MOVE)
     iterator_connect_op(const iterator_connect_op& other)
-      : base_from_connect_condition<ConnectCondition>(other),
+      : base_from_cancellation_state<IteratorConnectHandler>(other),
+        base_from_connect_condition<ConnectCondition>(other),
         socket_(other.socket_),
         iter_(other.iter_),
         end_(other.end_),
@@ -544,7 +562,10 @@ namespace detail
     }
 
     iterator_connect_op(iterator_connect_op&& other)
-      : base_from_connect_condition<ConnectCondition>(other),
+      : base_from_cancellation_state<IteratorConnectHandler>(
+          BOOST_ASIO_MOVE_CAST(base_from_cancellation_state<
+            IteratorConnectHandler>)(other)),
+        base_from_connect_condition<ConnectCondition>(other),
         socket_(other.socket_),
         iter_(other.iter_),
         end_(other.end_),
@@ -595,6 +616,12 @@ namespace detail
 
           if (!ec)
             break;
+
+          if (this->cancelled())
+          {
+            ec = boost::asio::error::operation_aborted;
+            break;
+          }
 
           ++iter_;
         }
