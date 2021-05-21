@@ -17,8 +17,10 @@
 
 #include <algorithm>
 #include <boost/asio/associated_allocator.hpp>
+#include <boost/asio/associated_cancellation_slot.hpp>
 #include <boost/asio/associated_executor.hpp>
 #include <boost/asio/buffer.hpp>
+#include <boost/asio/cancellation_signal.hpp>
 #include <boost/asio/completion_condition.hpp>
 #include <boost/asio/detail/array_fwd.hpp>
 #include <boost/asio/detail/base_from_completion_cond.hpp>
@@ -327,6 +329,8 @@ namespace detail
     : detail::base_from_completion_cond<CompletionCondition>
   {
   public:
+    typedef cancellation_slot cancellation_slot_type;
+
     read_op(AsyncReadStream& stream, const MutableBufferSequence& buffers,
         CompletionCondition& completion_condition, ReadHandler& handler)
       : detail::base_from_completion_cond<
@@ -334,7 +338,9 @@ namespace detail
         stream_(stream),
         buffers_(buffers),
         start_(0),
-        handler_(BOOST_ASIO_MOVE_CAST(ReadHandler)(handler))
+        handler_(BOOST_ASIO_MOVE_CAST(ReadHandler)(handler)),
+        cancellation_state_(
+            boost::asio::get_associated_cancellation_slot(handler_))
     {
     }
 
@@ -344,7 +350,8 @@ namespace detail
         stream_(other.stream_),
         buffers_(other.buffers_),
         start_(other.start_),
-        handler_(other.handler_)
+        handler_(other.handler_),
+        cancellation_state_(other.cancellation_state_)
     {
     }
 
@@ -355,10 +362,17 @@ namespace detail
         stream_(other.stream_),
         buffers_(BOOST_ASIO_MOVE_CAST(buffers_type)(other.buffers_)),
         start_(other.start_),
-        handler_(BOOST_ASIO_MOVE_CAST(ReadHandler)(other.handler_))
+        handler_(BOOST_ASIO_MOVE_CAST(ReadHandler)(other.handler_)),
+        cancellation_state_(
+            BOOST_ASIO_MOVE_CAST(cancellation_state)(other.cancellation_state_))
     {
     }
 #endif // defined(BOOST_ASIO_HAS_MOVE)
+
+    cancellation_slot_type get_cancellation_slot() const BOOST_ASIO_NOEXCEPT
+    {
+      return cancellation_state_.slot();
+    }
 
     void operator()(const boost::system::error_code& ec,
         std::size_t bytes_transferred, int start = 0)
@@ -368,7 +382,7 @@ namespace detail
       {
         case 1:
         max_size = this->check_for_completion(ec, buffers_.total_consumed());
-        do
+        for (;;)
         {
           {
             BOOST_ASIO_HANDLER_LOCATION((__FILE__, __LINE__, "async_read"));
@@ -380,7 +394,11 @@ namespace detail
           if ((!ec && bytes_transferred == 0) || buffers_.empty())
             break;
           max_size = this->check_for_completion(ec, buffers_.total_consumed());
-        } while (max_size > 0);
+          if (max_size == 0)
+            break;
+          if (cancellation_state_.cancelled())
+            break;
+        }
 
         handler_(ec, buffers_.total_consumed());
       }
@@ -394,6 +412,7 @@ namespace detail
     buffers_type buffers_;
     int start_;
     ReadHandler handler_;
+    cancellation_state cancellation_state_;
   };
 
   template <typename AsyncReadStream, typename MutableBufferSequence,

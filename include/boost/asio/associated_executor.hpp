@@ -72,7 +72,9 @@ struct associated_executor_impl<T, E,
 template <typename T, typename E>
 struct associated_executor_impl<T, E,
   typename enable_if<
-    !has_executor_type<T>::value,
+    !has_executor_type<T>::value
+  >::type,
+  typename void_type<
     typename associator<associated_executor, T, E>::type
   >::type> : associator<associated_executor, T, E>
 {

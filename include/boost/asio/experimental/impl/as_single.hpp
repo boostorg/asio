@@ -206,32 +206,18 @@ struct async_result<experimental::as_single_t<CompletionToken>, Signature>
   }
 };
 
-template <typename Handler, typename Executor>
-struct associated_executor<
-    experimental::detail::as_single_handler<Handler>, Executor>
-  : detail::associated_executor_forwarding_base<Handler, Executor>
+template <template <typename, typename> class Associator,
+    typename Handler, typename DefaultCandidate>
+struct associator<Associator,
+    experimental::detail::as_single_handler<Handler>, DefaultCandidate>
 {
-  typedef typename associated_executor<Handler, Executor>::type type;
+  typedef typename Associator<Handler, DefaultCandidate>::type type;
 
   static type get(
       const experimental::detail::as_single_handler<Handler>& h,
-      const Executor& ex = Executor()) BOOST_ASIO_NOEXCEPT
+      const DefaultCandidate& c = DefaultCandidate()) BOOST_ASIO_NOEXCEPT
   {
-    return associated_executor<Handler, Executor>::get(h.handler_, ex);
-  }
-};
-
-template <typename Handler, typename Allocator>
-struct associated_allocator<
-    experimental::detail::as_single_handler<Handler>, Allocator>
-{
-  typedef typename associated_allocator<Handler, Allocator>::type type;
-
-  static type get(
-      const experimental::detail::as_single_handler<Handler>& h,
-      const Allocator& a = Allocator()) BOOST_ASIO_NOEXCEPT
-  {
-    return associated_allocator<Handler, Allocator>::get(h.handler_, a);
+    return Associator<Handler, DefaultCandidate>::get(h.handler_, c);
   }
 };
 

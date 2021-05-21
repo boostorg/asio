@@ -42,7 +42,7 @@ struct has_allocator_type<T,
 {
 };
 
-template <typename T, typename E, typename = void>
+template <typename T, typename E, typename = void, typename = void>
 struct associated_allocator_impl
 {
   typedef E type;
@@ -68,7 +68,9 @@ struct associated_allocator_impl<T, E,
 template <typename T, typename E>
 struct associated_allocator_impl<T, E,
   typename enable_if<
-    !has_allocator_type<T>::value,
+    !has_allocator_type<T>::value
+  >::type,
+  typename void_type<
     typename associator<associated_allocator, T, E>::type
   >::type> : associator<associated_allocator, T, E>
 {

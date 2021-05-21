@@ -20,6 +20,7 @@
 #include <new>
 #include <tuple>
 #include <utility>
+#include <boost/asio/cancellation_signal.hpp>
 #include <boost/asio/detail/thread_context.hpp>
 #include <boost/asio/detail/thread_info_base.hpp>
 #include <boost/asio/detail/type_traits.hpp>
@@ -173,6 +174,32 @@ public:
       auto await_resume() const noexcept
       {
         return this_->attached_thread_->get_executor();
+      }
+    };
+
+    return result{this};
+  }
+
+  // This await transformation obtains the associated cancellation state of the
+  // thread of execution.
+  auto await_transform(this_coro::cancellation_state_t) noexcept
+  {
+    struct result
+    {
+      awaitable_frame_base* this_;
+
+      bool await_ready() const noexcept
+      {
+        return true;
+      }
+
+      void await_suspend(coroutine_handle<void>) noexcept
+      {
+      }
+
+      auto await_resume() const noexcept
+      {
+        return this_->attached_thread_->get_cancellation_state();
       }
     };
 
@@ -337,12 +364,15 @@ class awaitable_thread
 {
 public:
   typedef Executor executor_type;
+  typedef cancellation_slot cancellation_slot_type;
 
   // Construct from the entry point of a new thread of execution.
-  awaitable_thread(awaitable<void, Executor> p, const Executor& ex)
+  awaitable_thread(awaitable<void, Executor> p,
+      const Executor& ex, cancellation_state cs)
     : bottom_of_stack_(std::move(p)),
       top_of_stack_(bottom_of_stack_.frame_),
-      executor_(ex)
+      executor_(ex),
+      cancellation_state_(cs)
   {
   }
 
@@ -350,7 +380,8 @@ public:
   awaitable_thread(awaitable_thread&& other) noexcept
     : bottom_of_stack_(std::move(other.bottom_of_stack_)),
       top_of_stack_(std::exchange(other.top_of_stack_, nullptr)),
-      executor_(std::move(other.executor_))
+      executor_(std::move(other.executor_)),
+      cancellation_state_(std::move(other.cancellation_state_))
   {
   }
 
@@ -372,6 +403,16 @@ public:
   executor_type get_executor() const noexcept
   {
     return executor_;
+  }
+
+  cancellation_state get_cancellation_state() const noexcept
+  {
+    return cancellation_state_;
+  }
+
+  cancellation_slot_type get_cancellation_slot() const noexcept
+  {
+    return cancellation_state_.slot();
   }
 
   // Launch a new thread of execution.
@@ -399,6 +440,7 @@ protected:
   awaitable<void, Executor> bottom_of_stack_;
   awaitable_frame_base<Executor>* top_of_stack_;
   executor_type executor_;
+  boost::asio::cancellation_state cancellation_state_;
 };
 
 } // namespace detail
