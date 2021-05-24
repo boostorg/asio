@@ -42,7 +42,6 @@ namespace bindns = std;
 #endif
 
 #if defined(BOOST_ASIO_HAS_BOOST_DATE_TIME)
-#error foo
 typedef deadline_timer timer;
 namespace chronons = boost::posix_time;
 #elif defined(BOOST_ASIO_HAS_CHRONO)
@@ -69,7 +68,7 @@ void bind_cancellation_slot_to_function_object_test()
         bindns::bind(&increment_on_cancel,
           &count, bindns::placeholders::_1)));
 
-  ioc.run_for(chronons::seconds(1));
+  ioc.poll();
 
   BOOST_ASIO_CHECK(count == 0);
 
@@ -149,7 +148,7 @@ void bind_cancellation_slot_to_completion_token_test()
       bind_cancellation_slot(sig.slot(),
         incrementer_token(&count)));
 
-  ioc.run_for(chronons::seconds(1));
+  ioc.poll();
 
   BOOST_ASIO_CHECK(count == 0);
 

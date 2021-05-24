@@ -210,10 +210,9 @@ template <template <typename, typename> class Associator,
     typename Handler, typename DefaultCandidate>
 struct associator<Associator,
     experimental::detail::as_single_handler<Handler>, DefaultCandidate>
+  : Associator<Handler, DefaultCandidate>
 {
-  typedef typename Associator<Handler, DefaultCandidate>::type type;
-
-  static type get(
+  static typename Associator<Handler, DefaultCandidate>::type get(
       const experimental::detail::as_single_handler<Handler>& h,
       const DefaultCandidate& c = DefaultCandidate()) BOOST_ASIO_NOEXCEPT
   {

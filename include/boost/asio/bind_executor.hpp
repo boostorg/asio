@@ -593,6 +593,17 @@ public:
           BOOST_ASIO_MOVE_CAST(Args)(args)...);
     }
 
+    template <typename Handler, typename... Args>
+    void operator()(
+        BOOST_ASIO_MOVE_ARG(Handler) handler,
+        BOOST_ASIO_MOVE_ARG(Args)... args) const
+    {
+      initiation_(
+          executor_binder<typename decay<Handler>::type, Executor>(
+            executor_arg_t(), ex_, BOOST_ASIO_MOVE_CAST(Handler)(handler)),
+          BOOST_ASIO_MOVE_CAST(Args)(args)...);
+    }
+
 #else // defined(BOOST_ASIO_HAS_VARIADIC_TEMPLATES)
 
     template <typename Handler>
@@ -604,6 +615,15 @@ public:
             executor_arg_t(), ex_, BOOST_ASIO_MOVE_CAST(Handler)(handler)));
     }
 
+    template <typename Handler>
+    void operator()(
+        BOOST_ASIO_MOVE_ARG(Handler) handler) const
+    {
+      initiation_(
+          executor_binder<typename decay<Handler>::type, Executor>(
+            executor_arg_t(), ex_, BOOST_ASIO_MOVE_CAST(Handler)(handler)));
+    }
+
 #define BOOST_ASIO_PRIVATE_INIT_WRAPPER_DEF(n) \
     template <typename Handler, BOOST_ASIO_VARIADIC_TPARAMS(n)> \
     void operator()( \
@@ -611,6 +631,17 @@ public:
         BOOST_ASIO_VARIADIC_MOVE_PARAMS(n)) \
     { \
       BOOST_ASIO_MOVE_CAST(Initiation)(initiation_)( \
+          executor_binder<typename decay<Handler>::type, Executor>( \
+            executor_arg_t(), ex_, BOOST_ASIO_MOVE_CAST(Handler)(handler)), \
+          BOOST_ASIO_VARIADIC_MOVE_ARGS(n)); \
+    } \
+    \
+    template <typename Handler, BOOST_ASIO_VARIADIC_TPARAMS(n)> \
+    void operator()( \
+        BOOST_ASIO_MOVE_ARG(Handler) handler, \
+        BOOST_ASIO_VARIADIC_MOVE_PARAMS(n)) const \
+    { \
+      initiation_( \
           executor_binder<typename decay<Handler>::type, Executor>( \
             executor_arg_t(), ex_, BOOST_ASIO_MOVE_CAST(Handler)(handler)), \
           BOOST_ASIO_VARIADIC_MOVE_ARGS(n)); \

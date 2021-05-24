@@ -41,7 +41,6 @@ namespace bindns = std;
 #endif
 
 #if defined(BOOST_ASIO_HAS_BOOST_DATE_TIME)
-#error foo
 typedef deadline_timer timer;
 namespace chronons = boost::posix_time;
 #elif defined(BOOST_ASIO_HAS_CHRONO)
