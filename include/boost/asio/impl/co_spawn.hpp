@@ -16,6 +16,7 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include <boost/asio/detail/config.hpp>
+#include <boost/asio/associated_cancellation_slot.hpp>
 #include <boost/asio/awaitable.hpp>
 #include <boost/asio/dispatch.hpp>
 #include <boost/asio/execution/outstanding_work.hpp>
