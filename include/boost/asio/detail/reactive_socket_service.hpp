@@ -261,6 +261,9 @@ public:
     bool is_continuation =
       boost_asio_handler_cont_helpers::is_continuation(handler);
 
+    typename associated_cancellation_slot<Handler>::type slot
+      = boost::asio::get_associated_cancellation_slot(handler);
+
     // Allocate and construct an operation to wrap the handler.
     typedef reactive_socket_sendto_op<ConstBufferSequence,
         endpoint_type, Handler, IoExecutor> op;
@@ -270,8 +273,6 @@ public:
         buffers, destination, flags, handler, io_ex);
 
     // Optionally register for per-operation cancellation.
-    typename associated_cancellation_slot<Handler>::type slot
-      = boost::asio::get_associated_cancellation_slot(handler);
     if (slot.is_connected())
     {
       p.p->cancellation_key_ =
@@ -295,6 +296,9 @@ public:
     bool is_continuation =
       boost_asio_handler_cont_helpers::is_continuation(handler);
 
+    typename associated_cancellation_slot<Handler>::type slot
+      = boost::asio::get_associated_cancellation_slot(handler);
+
     // Allocate and construct an operation to wrap the handler.
     typedef reactive_null_buffers_op<Handler, IoExecutor> op;
     typename op::ptr p = { boost::asio::detail::addressof(handler),
@@ -302,8 +306,6 @@ public:
     p.p = new (p.v) op(success_ec_, handler, io_ex);
 
     // Optionally register for per-operation cancellation.
-    typename associated_cancellation_slot<Handler>::type slot
-      = boost::asio::get_associated_cancellation_slot(handler);
     if (slot.is_connected())
     {
       p.p->cancellation_key_ =
@@ -379,6 +381,9 @@ public:
     bool is_continuation =
       boost_asio_handler_cont_helpers::is_continuation(handler);
 
+    typename associated_cancellation_slot<Handler>::type slot
+      = boost::asio::get_associated_cancellation_slot(handler);
+
     // Allocate and construct an operation to wrap the handler.
     typedef reactive_socket_recvfrom_op<MutableBufferSequence,
         endpoint_type, Handler, IoExecutor> op;
@@ -389,8 +394,6 @@ public:
         buffers, sender_endpoint, flags, handler, io_ex);
 
     // Optionally register for per-operation cancellation.
-    typename associated_cancellation_slot<Handler>::type slot
-      = boost::asio::get_associated_cancellation_slot(handler);
     if (slot.is_connected())
     {
       p.p->cancellation_key_ =
@@ -417,6 +420,9 @@ public:
     bool is_continuation =
       boost_asio_handler_cont_helpers::is_continuation(handler);
 
+    typename associated_cancellation_slot<Handler>::type slot
+      = boost::asio::get_associated_cancellation_slot(handler);
+
     // Allocate and construct an operation to wrap the handler.
     typedef reactive_null_buffers_op<Handler, IoExecutor> op;
     typename op::ptr p = { boost::asio::detail::addressof(handler),
@@ -424,8 +430,6 @@ public:
     p.p = new (p.v) op(success_ec_, handler, io_ex);
 
     // Optionally register for per-operation cancellation.
-    typename associated_cancellation_slot<Handler>::type slot
-      = boost::asio::get_associated_cancellation_slot(handler);
     if (slot.is_connected())
     {
       p.p->cancellation_key_ =
@@ -485,6 +489,9 @@ public:
     bool is_continuation =
       boost_asio_handler_cont_helpers::is_continuation(handler);
 
+    typename associated_cancellation_slot<Handler>::type slot
+      = boost::asio::get_associated_cancellation_slot(handler);
+
     // Allocate and construct an operation to wrap the handler.
     typedef reactive_socket_accept_op<Socket, Protocol, Handler, IoExecutor> op;
     typename op::ptr p = { boost::asio::detail::addressof(handler),
@@ -493,8 +500,6 @@ public:
         peer, impl.protocol_, peer_endpoint, handler, io_ex);
 
     // Optionally register for per-operation cancellation.
-    typename associated_cancellation_slot<Handler>::type slot
-      = boost::asio::get_associated_cancellation_slot(handler);
     if (slot.is_connected() && !peer.is_open())
     {
       p.p->cancellation_key_ =
@@ -520,6 +525,9 @@ public:
     bool is_continuation =
       boost_asio_handler_cont_helpers::is_continuation(handler);
 
+    typename associated_cancellation_slot<Handler>::type slot
+      = boost::asio::get_associated_cancellation_slot(handler);
+
     // Allocate and construct an operation to wrap the handler.
     typedef reactive_socket_move_accept_op<Protocol,
         PeerIoExecutor, Handler, IoExecutor> op;
@@ -529,8 +537,6 @@ public:
         impl.state_, impl.protocol_, peer_endpoint, handler, io_ex);
 
     // Optionally register for per-operation cancellation.
-    typename associated_cancellation_slot<Handler>::type slot
-      = boost::asio::get_associated_cancellation_slot(handler);
     if (slot.is_connected())
     {
       p.p->cancellation_key_ =
@@ -564,6 +570,9 @@ public:
     bool is_continuation =
       boost_asio_handler_cont_helpers::is_continuation(handler);
 
+    typename associated_cancellation_slot<Handler>::type slot
+      = boost::asio::get_associated_cancellation_slot(handler);
+
     // Allocate and construct an operation to wrap the handler.
     typedef reactive_socket_connect_op<Handler, IoExecutor> op;
     typename op::ptr p = { boost::asio::detail::addressof(handler),
@@ -571,8 +580,6 @@ public:
     p.p = new (p.v) op(success_ec_, impl.socket_, handler, io_ex);
 
     // Optionally register for per-operation cancellation.
-    typename associated_cancellation_slot<Handler>::type slot
-      = boost::asio::get_associated_cancellation_slot(handler);
     if (slot.is_connected())
     {
       p.p->cancellation_key_ =

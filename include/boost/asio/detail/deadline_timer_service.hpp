@@ -247,6 +247,9 @@ public:
   void async_wait(implementation_type& impl,
       Handler& handler, const IoExecutor& io_ex)
   {
+    typename associated_cancellation_slot<Handler>::type slot
+      = boost::asio::get_associated_cancellation_slot(handler);
+
     // Allocate and construct an operation to wrap the handler.
     typedef wait_handler<Handler, IoExecutor> op;
     typename op::ptr p = { boost::asio::detail::addressof(handler),
@@ -254,8 +257,6 @@ public:
     p.p = new (p.v) op(handler, io_ex);
 
     // Optionally register for per-operation cancellation.
-    typename associated_cancellation_slot<Handler>::type slot
-      = boost::asio::get_associated_cancellation_slot(handler);
     if (slot.is_connected())
     {
       p.p->cancellation_key_ =

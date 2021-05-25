@@ -183,30 +183,18 @@ namespace detail
 
 #if !defined(GENERATING_DOCUMENTATION)
 
-template <typename WriteHandler, typename Allocator>
-struct associated_allocator<
-    detail::buffered_flush_handler<WriteHandler>, Allocator>
+template <template <typename, typename> class Associator,
+    typename WriteHandler, typename DefaultCandidate>
+struct associator<Associator,
+    detail::buffered_flush_handler<WriteHandler>,
+    DefaultCandidate>
+  : Associator<WriteHandler, DefaultCandidate>
 {
-  typedef typename associated_allocator<WriteHandler, Allocator>::type type;
-
-  static type get(const detail::buffered_flush_handler<WriteHandler>& h,
-      const Allocator& a = Allocator()) BOOST_ASIO_NOEXCEPT
+  static typename Associator<WriteHandler, DefaultCandidate>::type get(
+      const detail::buffered_flush_handler<WriteHandler>& h,
+      const DefaultCandidate& c = DefaultCandidate()) BOOST_ASIO_NOEXCEPT
   {
-    return associated_allocator<WriteHandler, Allocator>::get(h.handler_, a);
-  }
-};
-
-template <typename WriteHandler, typename Executor>
-struct associated_executor<
-    detail::buffered_flush_handler<WriteHandler>, Executor>
-  : detail::associated_executor_forwarding_base<WriteHandler, Executor>
-{
-  typedef typename associated_executor<WriteHandler, Executor>::type type;
-
-  static type get(const detail::buffered_flush_handler<WriteHandler>& h,
-      const Executor& ex = Executor()) BOOST_ASIO_NOEXCEPT
-  {
-    return associated_executor<WriteHandler, Executor>::get(h.handler_, ex);
+    return Associator<WriteHandler, DefaultCandidate>::get(h.handler_, c);
   }
 };
 
@@ -435,38 +423,20 @@ namespace detail
 
 #if !defined(GENERATING_DOCUMENTATION)
 
-template <typename ConstBufferSequence,
-    typename WriteHandler, typename Allocator>
-struct associated_allocator<
+template <template <typename, typename> class Associator,
+    typename ConstBufferSequence, typename WriteHandler,
+    typename DefaultCandidate>
+struct associator<Associator,
     detail::buffered_write_some_handler<ConstBufferSequence, WriteHandler>,
-    Allocator>
+    DefaultCandidate>
+  : Associator<WriteHandler, DefaultCandidate>
 {
-  typedef typename associated_allocator<WriteHandler, Allocator>::type type;
-
-  static type get(
+  static typename Associator<WriteHandler, DefaultCandidate>::type get(
       const detail::buffered_write_some_handler<
         ConstBufferSequence, WriteHandler>& h,
-      const Allocator& a = Allocator()) BOOST_ASIO_NOEXCEPT
+      const DefaultCandidate& c = DefaultCandidate()) BOOST_ASIO_NOEXCEPT
   {
-    return associated_allocator<WriteHandler, Allocator>::get(h.handler_, a);
-  }
-};
-
-template <typename ConstBufferSequence,
-    typename WriteHandler, typename Executor>
-struct associated_executor<
-    detail::buffered_write_some_handler<ConstBufferSequence, WriteHandler>,
-    Executor>
-  : detail::associated_executor_forwarding_base<WriteHandler, Executor>
-{
-  typedef typename associated_executor<WriteHandler, Executor>::type type;
-
-  static type get(
-      const detail::buffered_write_some_handler<
-        ConstBufferSequence, WriteHandler>& h,
-      const Executor& ex = Executor()) BOOST_ASIO_NOEXCEPT
-  {
-    return associated_executor<WriteHandler, Executor>::get(h.handler_, ex);
+    return Associator<WriteHandler, DefaultCandidate>::get(h.handler_, c);
   }
 };
 
