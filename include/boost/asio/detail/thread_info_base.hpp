@@ -39,18 +39,36 @@ class thread_info_base
 public:
   struct default_tag
   {
-    enum { mem_index = 0 };
+    enum
+    {
+      begin_mem_index = 0,
+#ifdef BOOST_ASIO_RECYCLING_ALLOCATOR_CACHE_SIZE
+      end_mem_index = BOOST_ASIO_RECYCLING_ALLOCATOR_CACHE_SIZE
+#else // BOOST_ASIO_RECYCLING_ALLOCATOR_CACHE_SIZE
+      end_mem_index = 2
+#endif // BOOST_ASIO_RECYCLING_ALLOCATOR_CACHE_SIZE
+    };
   };
 
   struct awaitable_frame_tag
   {
-    enum { mem_index = 1 };
+    enum
+    {
+      begin_mem_index = default_tag::end_mem_index,
+      end_mem_index = begin_mem_index + 1
+    };
   };
 
   struct executor_function_tag
   {
-    enum { mem_index = 2 };
+    enum
+    {
+      begin_mem_index = awaitable_frame_tag::end_mem_index,
+      end_mem_index = begin_mem_index + 1
+    };
   };
+
+  enum { max_mem_index = executor_function_tag::end_mem_index };
 
   thread_info_base()
 #if defined(BOOST_ASIO_HAS_STD_EXCEPTION_PTR) \
@@ -92,19 +110,35 @@ public:
   {
     std::size_t chunks = (size + chunk_size - 1) / chunk_size;
 
-    if (this_thread && this_thread->reusable_memory_[Purpose::mem_index])
+    if (this_thread)
     {
-      void* const pointer = this_thread->reusable_memory_[Purpose::mem_index];
-      this_thread->reusable_memory_[Purpose::mem_index] = 0;
-
-      unsigned char* const mem = static_cast<unsigned char*>(pointer);
-      if (static_cast<std::size_t>(mem[0]) >= chunks)
+      for (int mem_index = Purpose::begin_mem_index;
+          mem_index < Purpose::end_mem_index; ++mem_index)
       {
-        mem[size] = mem[0];
-        return pointer;
+        if (this_thread->reusable_memory_[mem_index])
+        {
+          void* const pointer = this_thread->reusable_memory_[mem_index];
+          unsigned char* const mem = static_cast<unsigned char*>(pointer);
+          if (static_cast<std::size_t>(mem[0]) >= chunks)
+          {
+            this_thread->reusable_memory_[mem_index] = 0;
+            mem[size] = mem[0];
+            return pointer;
+          }
+        }
       }
 
-      ::operator delete(pointer);
+      for (int mem_index = Purpose::begin_mem_index;
+          mem_index < Purpose::end_mem_index; ++mem_index)
+      {
+        if (this_thread->reusable_memory_[mem_index])
+        {
+          void* const pointer = this_thread->reusable_memory_[mem_index];
+          this_thread->reusable_memory_[mem_index] = 0;
+          ::operator delete(pointer);
+          break;
+        }
+      }
     }
 
     void* const pointer = ::operator new(chunks * chunk_size + 1);
@@ -119,12 +153,19 @@ public:
   {
     if (size <= chunk_size * UCHAR_MAX)
     {
-      if (this_thread && this_thread->reusable_memory_[Purpose::mem_index] == 0)
+      if (this_thread)
       {
-        unsigned char* const mem = static_cast<unsigned char*>(pointer);
-        mem[0] = mem[size];
-        this_thread->reusable_memory_[Purpose::mem_index] = pointer;
-        return;
+        for (int mem_index = Purpose::begin_mem_index;
+            mem_index < Purpose::end_mem_index; ++mem_index)
+        {
+          if (this_thread->reusable_memory_[mem_index] == 0)
+          {
+            unsigned char* const mem = static_cast<unsigned char*>(pointer);
+            mem[0] = mem[size];
+            this_thread->reusable_memory_[mem_index] = pointer;
+            return;
+          }
+        }
       }
     }
 
@@ -172,7 +213,6 @@ public:
 
 private:
   enum { chunk_size = 4 };
-  enum { max_mem_index = 3 };
   void* reusable_memory_[max_mem_index];
 
 #if defined(BOOST_ASIO_HAS_STD_EXCEPTION_PTR) \
