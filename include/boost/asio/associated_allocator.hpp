@@ -17,6 +17,7 @@
 
 #include <boost/asio/detail/config.hpp>
 #include <memory>
+#include <boost/asio/associator.hpp>
 #include <boost/asio/detail/functional.hpp>
 #include <boost/asio/detail/type_traits.hpp>
 
@@ -24,9 +25,25 @@
 
 namespace boost {
 namespace asio {
+
+template <typename T, typename Allocator>
+struct associated_allocator;
+
 namespace detail {
 
-template <typename T, typename E, typename = void>
+template <typename T, typename = void>
+struct has_allocator_type : false_type
+{
+};
+
+template <typename T>
+struct has_allocator_type<T,
+  typename void_type<typename T::executor_type>::type>
+    : true_type
+{
+};
+
+template <typename T, typename E, typename = void, typename = void>
 struct associated_allocator_impl
 {
   typedef E type;
@@ -47,6 +64,17 @@ struct associated_allocator_impl<T, E,
   {
     return t.get_allocator();
   }
+};
+
+template <typename T, typename E>
+struct associated_allocator_impl<T, E,
+  typename enable_if<
+    !has_allocator_type<T>::value
+  >::type,
+  typename void_type<
+    typename associator<associated_allocator, T, E>::type
+  >::type> : associator<associated_allocator, T, E>
+{
 };
 
 } // namespace detail
