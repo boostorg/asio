@@ -19,7 +19,7 @@
 #include <boost/asio/detail/type_traits.hpp>
 #include <boost/asio/detail/variadic_templates.hpp>
 #include <boost/asio/associated_executor.hpp>
-#include <boost/asio/associated_allocator.hpp>
+#include <boost/asio/associator.hpp>
 #include <boost/asio/async_result.hpp>
 #include <boost/asio/execution/executor.hpp>
 #include <boost/asio/execution_context.hpp>
@@ -543,15 +543,16 @@ private:
   async_result<T, Signature> target_;
 };
 
-template <typename T, typename Executor, typename Allocator>
-struct associated_allocator<executor_binder<T, Executor>, Allocator>
+template <template <typename, typename> class Associator,
+    typename T, typename Executor, typename DefaultCandidate>
+struct associator<Associator, executor_binder<T, Executor>, DefaultCandidate>
 {
-  typedef typename associated_allocator<T, Allocator>::type type;
+  typedef typename Associator<T, DefaultCandidate>::type type;
 
   static type get(const executor_binder<T, Executor>& b,
-      const Allocator& a = Allocator()) BOOST_ASIO_NOEXCEPT
+      const DefaultCandidate& c = DefaultCandidate()) BOOST_ASIO_NOEXCEPT
   {
-    return associated_allocator<T, Allocator>::get(b.get(), a);
+    return Associator<T, DefaultCandidate>::get(b.get(), c);
   }
 };
 
