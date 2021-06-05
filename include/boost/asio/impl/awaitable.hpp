@@ -364,7 +364,7 @@ public:
       (post)(executor_,
           [a = std::move(bottom_of_stack_)]() mutable
           {
-            awaitable<void, Executor>(std::move(a));
+            (void)awaitable<void, Executor>(std::move(a));
           });
     }
   }
