@@ -23,11 +23,23 @@
       && !defined(BOOST_ASIO_HAS_KQUEUE) \
       && !defined(BOOST_ASIO_WINDOWS_RUNTIME))
 
+#if defined(BOOST_ASIO_HAS_IOCP)
+# include <boost/asio/detail/win_iocp_io_context.hpp>
+#else // defined(BOOST_ASIO_HAS_IOCP)
+# include <boost/asio/detail/scheduler.hpp>
+#endif // defined(BOOST_ASIO_HAS_IOCP)
+
 #include <boost/asio/detail/push_options.hpp>
 
 namespace boost {
 namespace asio {
 namespace detail {
+
+inline void select_reactor::post_immediate_completion(
+    reactor_op* op, bool is_continuation)
+{
+  scheduler_.post_immediate_completion(op, is_continuation);
+}
 
 template <typename Time_Traits>
 void select_reactor::add_timer_queue(timer_queue<Time_Traits>& queue)

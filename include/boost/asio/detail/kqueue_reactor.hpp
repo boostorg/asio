@@ -24,8 +24,8 @@
 #include <sys/types.h>
 #include <sys/event.h>
 #include <sys/time.h>
+#include <boost/asio/detail/conditionally_enabled_mutex.hpp>
 #include <boost/asio/detail/limits.hpp>
-#include <boost/asio/detail/mutex.hpp>
 #include <boost/asio/detail/object_pool.hpp>
 #include <boost/asio/detail/op_queue.hpp>
 #include <boost/asio/detail/reactor_op.hpp>
@@ -115,10 +115,7 @@ public:
       per_descriptor_data& source_descriptor_data);
 
   // Post a reactor operation for immediate completion.
-  void post_immediate_completion(reactor_op* op, bool is_continuation)
-  {
-    scheduler_.post_immediate_completion(op, is_continuation);
-  }
+  void post_immediate_completion(reactor_op* op, bool is_continuation);
 
   // Start a new operation. The reactor operation will be performed when the
   // given descriptor is flagged as ready, or an error has occurred.

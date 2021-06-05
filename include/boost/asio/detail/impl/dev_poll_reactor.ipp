@@ -21,6 +21,7 @@
 
 #include <boost/asio/detail/dev_poll_reactor.hpp>
 #include <boost/asio/detail/assert.hpp>
+#include <boost/asio/detail/scheduler.hpp>
 #include <boost/asio/detail/throw_error.hpp>
 #include <boost/asio/error.hpp>
 

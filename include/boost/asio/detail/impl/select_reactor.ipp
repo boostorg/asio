@@ -28,6 +28,12 @@
 #include <boost/asio/detail/signal_blocker.hpp>
 #include <boost/asio/detail/socket_ops.hpp>
 
+#if defined(BOOST_ASIO_HAS_IOCP)
+# include <boost/asio/detail/win_iocp_io_context.hpp>
+#else // defined(BOOST_ASIO_HAS_IOCP)
+# include <boost/asio/detail/scheduler.hpp>
+#endif // defined(BOOST_ASIO_HAS_IOCP)
+
 #include <boost/asio/detail/push_options.hpp>
 
 namespace boost {
