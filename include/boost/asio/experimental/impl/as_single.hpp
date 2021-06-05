@@ -19,8 +19,7 @@
 
 #include <tuple>
 
-#include <boost/asio/associated_executor.hpp>
-#include <boost/asio/associated_allocator.hpp>
+#include <boost/asio/associator.hpp>
 #include <boost/asio/async_result.hpp>
 #include <boost/asio/detail/handler_alloc_helpers.hpp>
 #include <boost/asio/detail/handler_cont_helpers.hpp>
@@ -206,32 +205,17 @@ struct async_result<experimental::as_single_t<CompletionToken>, Signature>
   }
 };
 
-template <typename Handler, typename Executor>
-struct associated_executor<
-    experimental::detail::as_single_handler<Handler>, Executor>
-  : detail::associated_executor_forwarding_base<Handler, Executor>
+template <template <typename, typename> class Associator,
+    typename Handler, typename DefaultCandidate>
+struct associator<Associator,
+    experimental::detail::as_single_handler<Handler>, DefaultCandidate>
+  : Associator<Handler, DefaultCandidate>
 {
-  typedef typename associated_executor<Handler, Executor>::type type;
-
-  static type get(
+  static typename Associator<Handler, DefaultCandidate>::type get(
       const experimental::detail::as_single_handler<Handler>& h,
-      const Executor& ex = Executor()) BOOST_ASIO_NOEXCEPT
+      const DefaultCandidate& c = DefaultCandidate()) BOOST_ASIO_NOEXCEPT
   {
-    return associated_executor<Handler, Executor>::get(h.handler_, ex);
-  }
-};
-
-template <typename Handler, typename Allocator>
-struct associated_allocator<
-    experimental::detail::as_single_handler<Handler>, Allocator>
-{
-  typedef typename associated_allocator<Handler, Allocator>::type type;
-
-  static type get(
-      const experimental::detail::as_single_handler<Handler>& h,
-      const Allocator& a = Allocator()) BOOST_ASIO_NOEXCEPT
-  {
-    return associated_allocator<Handler, Allocator>::get(h.handler_, a);
+    return Associator<Handler, DefaultCandidate>::get(h.handler_, c);
   }
 };
 
