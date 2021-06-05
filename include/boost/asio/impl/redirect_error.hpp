@@ -55,7 +55,7 @@ public:
 
   void operator()()
   {
-    handler_();
+    BOOST_ASIO_MOVE_OR_LVALUE(Handler)(handler_)();
   }
 
 #if defined(BOOST_ASIO_HAS_VARIADIC_TEMPLATES)
@@ -66,7 +66,8 @@ public:
   >::type
   operator()(BOOST_ASIO_MOVE_ARG(Arg) arg, BOOST_ASIO_MOVE_ARG(Args)... args)
   {
-    handler_(BOOST_ASIO_MOVE_CAST(Arg)(arg),
+    BOOST_ASIO_MOVE_OR_LVALUE(Handler)(handler_)(
+        BOOST_ASIO_MOVE_CAST(Arg)(arg),
         BOOST_ASIO_MOVE_CAST(Args)(args)...);
   }
 
@@ -75,7 +76,8 @@ public:
       BOOST_ASIO_MOVE_ARG(Args)... args)
   {
     ec_ = ec;
-    handler_(BOOST_ASIO_MOVE_CAST(Args)(args)...);
+    BOOST_ASIO_MOVE_OR_LVALUE(Handler)(handler_)(
+        BOOST_ASIO_MOVE_CAST(Args)(args)...);
   }
 
 #else // defined(BOOST_ASIO_HAS_VARIADIC_TEMPLATES)
@@ -86,13 +88,14 @@ public:
   >::type
   operator()(BOOST_ASIO_MOVE_ARG(Arg) arg)
   {
-    handler_(BOOST_ASIO_MOVE_CAST(Arg)(arg));
+    BOOST_ASIO_MOVE_OR_LVALUE(Handler)(handler_)(
+        BOOST_ASIO_MOVE_CAST(Arg)(arg));
   }
 
   void operator()(const boost::system::error_code& ec)
   {
     ec_ = ec;
-    handler_();
+    BOOST_ASIO_MOVE_OR_LVALUE(Handler)(handler_)();
   }
 
 #define BOOST_ASIO_PRIVATE_REDIRECT_ERROR_DEF(n) \
@@ -102,7 +105,8 @@ public:
   >::type \
   operator()(BOOST_ASIO_MOVE_ARG(Arg) arg, BOOST_ASIO_VARIADIC_MOVE_PARAMS(n)) \
   { \
-    handler_(BOOST_ASIO_MOVE_CAST(Arg)(arg), \
+    BOOST_ASIO_MOVE_OR_LVALUE(Handler)(handler_)( \
+        BOOST_ASIO_MOVE_CAST(Arg)(arg), \
         BOOST_ASIO_VARIADIC_MOVE_ARGS(n)); \
   } \
   \
@@ -111,7 +115,8 @@ public:
       BOOST_ASIO_VARIADIC_MOVE_PARAMS(n)) \
   { \
     ec_ = ec; \
-    handler_(BOOST_ASIO_VARIADIC_MOVE_ARGS(n)); \
+    BOOST_ASIO_MOVE_OR_LVALUE(Handler)(handler_)( \
+        BOOST_ASIO_VARIADIC_MOVE_ARGS(n)); \
   } \
   /**/
   BOOST_ASIO_VARIADIC_GENERATE(BOOST_ASIO_PRIVATE_REDIRECT_ERROR_DEF)

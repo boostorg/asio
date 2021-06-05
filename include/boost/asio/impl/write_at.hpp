@@ -224,7 +224,8 @@ namespace detail
           max_size = this->check_for_completion(ec, buffers_.total_consumed());
         } while (max_size > 0);
 
-        handler_(ec, buffers_.total_consumed());
+        BOOST_ASIO_MOVE_OR_LVALUE(WriteHandler)(handler_)(
+            ec, buffers_.total_consumed());
       }
     }
 
@@ -460,7 +461,7 @@ namespace detail
         const std::size_t bytes_transferred)
     {
       streambuf_.consume(bytes_transferred);
-      handler_(ec, bytes_transferred);
+      BOOST_ASIO_MOVE_OR_LVALUE(WriteHandler)(handler_)(ec, bytes_transferred);
     }
 
   //private:

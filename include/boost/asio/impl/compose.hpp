@@ -349,7 +349,8 @@ namespace detail
     void complete(Args... args)
     {
       this->work_.reset();
-      this->handler_(BOOST_ASIO_MOVE_CAST(Args)(args)...);
+      BOOST_ASIO_MOVE_OR_LVALUE(Handler)(this->handler_)(
+          BOOST_ASIO_MOVE_CAST(Args)(args)...);
     }
 
 #else // defined(BOOST_ASIO_HAS_VARIADIC_TEMPLATES)
@@ -364,7 +365,7 @@ namespace detail
     void complete()
     {
       this->work_.reset();
-      this->handler_();
+      BOOST_ASIO_MOVE_OR_LVALUE(Handler)(this->handler_)();
     }
 
 #define BOOST_ASIO_PRIVATE_COMPOSED_OP_DEF(n) \
@@ -380,7 +381,8 @@ namespace detail
     void complete(BOOST_ASIO_VARIADIC_MOVE_PARAMS(n)) \
     { \
       this->work_.reset(); \
-      this->handler_(BOOST_ASIO_VARIADIC_MOVE_ARGS(n)); \
+      BOOST_ASIO_MOVE_OR_LVALUE(Handler)(this->handler_)( \
+          BOOST_ASIO_VARIADIC_MOVE_ARGS(n)); \
     } \
     /**/
     BOOST_ASIO_VARIADIC_GENERATE(BOOST_ASIO_PRIVATE_COMPOSED_OP_DEF)

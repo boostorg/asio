@@ -55,19 +55,21 @@ public:
 
   void operator()()
   {
-    handler_();
+    BOOST_ASIO_MOVE_OR_LVALUE(Handler)(handler_)();
   }
 
   template <typename Arg>
   void operator()(BOOST_ASIO_MOVE_ARG(Arg) arg)
   {
-    handler_(BOOST_ASIO_MOVE_CAST(Arg)(arg));
+    BOOST_ASIO_MOVE_OR_LVALUE(Handler)(handler_)(
+        BOOST_ASIO_MOVE_CAST(Arg)(arg));
   }
 
   template <typename... Args>
   void operator()(BOOST_ASIO_MOVE_ARG(Args)... args)
   {
-    handler_(std::make_tuple(BOOST_ASIO_MOVE_CAST(Args)(args)...));
+    BOOST_ASIO_MOVE_OR_LVALUE(Handler)(handler_)(
+        std::make_tuple(BOOST_ASIO_MOVE_CAST(Args)(args)...));
   }
 
 //private:

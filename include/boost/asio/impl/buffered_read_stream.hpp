@@ -91,7 +91,7 @@ namespace detail
         const std::size_t bytes_transferred)
     {
       storage_.resize(previous_size_ + bytes_transferred);
-      handler_(ec, bytes_transferred);
+      BOOST_ASIO_MOVE_OR_LVALUE(ReadHandler)(handler_)(ec, bytes_transferred);
     }
 
   //private:
@@ -301,14 +301,14 @@ namespace detail
       if (ec || storage_.empty())
       {
         const std::size_t length = 0;
-        handler_(ec, length);
+        BOOST_ASIO_MOVE_OR_LVALUE(ReadHandler)(handler_)(ec, length);
       }
       else
       {
         const std::size_t bytes_copied = boost::asio::buffer_copy(
             buffers_, storage_.data(), storage_.size());
         storage_.consume(bytes_copied);
-        handler_(ec, bytes_copied);
+        BOOST_ASIO_MOVE_OR_LVALUE(ReadHandler)(handler_)(ec, bytes_copied);
       }
     }
 

@@ -392,7 +392,8 @@ namespace detail
           ++index_;
         }
 
-        handler_(static_cast<const boost::system::error_code&>(ec),
+        BOOST_ASIO_MOVE_OR_LVALUE(RangeConnectHandler)(handler_)(
+            static_cast<const boost::system::error_code&>(ec),
             static_cast<const typename Protocol::endpoint&>(
               ec || iter == end ? typename Protocol::endpoint() : *iter));
       }
@@ -598,7 +599,8 @@ namespace detail
           ++iter_;
         }
 
-        handler_(static_cast<const boost::system::error_code&>(ec),
+        BOOST_ASIO_MOVE_OR_LVALUE(IteratorConnectHandler)(handler_)(
+            static_cast<const boost::system::error_code&>(ec),
             static_cast<const Iterator&>(iter_));
       }
     }
