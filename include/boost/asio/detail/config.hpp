@@ -574,9 +574,9 @@
 // Support for operator new with alignment argument.
 #if !defined(BOOST_ASIO_HAS_ALIGNED_NEW)
 # if !defined(BOOST_ASIO_DISABLE_ALIGNED_NEW)
-#  if (__cplusplus >= 201703)
+#  if (__cplusplus >= 201703) && defined(__cpp_aligned_new)
 #   define BOOST_ASIO_HAS_ALIGNED_NEW 1
-#  endif // (__cplusplus >= 201703)
+#  endif // (__cplusplus >= 201703) && defined(__cpp_aligned_new)
 # endif // !defined(BOOST_ASIO_DISABLE_ALIGNED_NEW)
 #endif // !defined(BOOST_ASIO_HAS_ALIGNED_NEW)
 
