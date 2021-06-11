@@ -17,6 +17,7 @@
 
 #include <boost/asio/detail/config.hpp>
 #include <boost/asio/associated_executor.hpp>
+#include <boost/asio/detail/base_from_cancellation_state.hpp>
 #include <boost/asio/detail/handler_alloc_helpers.hpp>
 #include <boost/asio/detail/handler_cont_helpers.hpp>
 #include <boost/asio/detail/handler_invoke_helpers.hpp>
@@ -294,13 +295,15 @@ namespace detail
   template <typename Impl, typename Work, typename Handler, typename Signature>
   class composed_op
 #endif // defined(BOOST_ASIO_HAS_VARIADIC_TEMPLATES)
+    : public base_from_cancellation_state<Handler>
   {
   public:
     template <typename I, typename W, typename H>
     composed_op(BOOST_ASIO_MOVE_ARG(I) impl,
         BOOST_ASIO_MOVE_ARG(W) work,
         BOOST_ASIO_MOVE_ARG(H) handler)
-      : impl_(BOOST_ASIO_MOVE_CAST(I)(impl)),
+      : base_from_cancellation_state<Handler>(handler),
+        impl_(BOOST_ASIO_MOVE_CAST(I)(impl)),
         work_(BOOST_ASIO_MOVE_CAST(W)(work)),
         handler_(BOOST_ASIO_MOVE_CAST(H)(handler)),
         invocations_(0)
@@ -309,7 +312,10 @@ namespace detail
 
 #if defined(BOOST_ASIO_HAS_MOVE)
     composed_op(composed_op&& other)
-      : impl_(BOOST_ASIO_MOVE_CAST(Impl)(other.impl_)),
+      : base_from_cancellation_state<Handler>(
+          BOOST_ASIO_MOVE_CAST(base_from_cancellation_state<
+            Handler>)(other)),
+        impl_(BOOST_ASIO_MOVE_CAST(Impl)(other.impl_)),
         work_(BOOST_ASIO_MOVE_CAST(Work)(other.work_)),
         handler_(BOOST_ASIO_MOVE_CAST(Handler)(other.handler_)),
         invocations_(other.invocations_)
