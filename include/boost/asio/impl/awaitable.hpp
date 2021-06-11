@@ -33,6 +33,8 @@ namespace boost {
 namespace asio {
 namespace detail {
 
+struct awaitable_thread_has_context_switched {};
+
 // An awaitable_thread represents a thread-of-execution that is composed of one
 // or more "stack frames", with each frame represented by an awaitable_frame.
 // All execution occurs in the context of the awaitable_thread's executor. An
@@ -215,6 +217,31 @@ public:
     return result{std::move(f), this};
   }
 
+  // Access the awaitable thread's has_context_switched_ flag.
+  auto await_transform(detail::awaitable_thread_has_context_switched) noexcept
+  {
+    struct result
+    {
+      awaitable_frame_base* this_;
+
+      bool await_ready() const noexcept
+      {
+        return true;
+      }
+
+      void await_suspend(coroutine_handle<void>) noexcept
+      {
+      }
+
+      bool& await_resume() const noexcept
+      {
+        return this_->attached_thread_->has_context_switched_;
+      }
+    };
+
+    return result{this};
+  }
+
   void attach_thread(awaitable_thread<Executor>* handler) noexcept
   {
     attached_thread_ = handler;
@@ -342,7 +369,8 @@ public:
   awaitable_thread(awaitable<void, Executor> p, const Executor& ex)
     : bottom_of_stack_(std::move(p)),
       top_of_stack_(bottom_of_stack_.frame_),
-      executor_(ex)
+      executor_(ex),
+      has_context_switched_(false)
   {
   }
 
@@ -350,7 +378,8 @@ public:
   awaitable_thread(awaitable_thread&& other) noexcept
     : bottom_of_stack_(std::move(other.bottom_of_stack_)),
       top_of_stack_(std::exchange(other.top_of_stack_, nullptr)),
-      executor_(std::move(other.executor_))
+      executor_(std::move(other.executor_)),
+      has_context_switched_(true)
   {
   }
 
@@ -399,6 +428,7 @@ protected:
   awaitable<void, Executor> bottom_of_stack_;
   awaitable_frame_base<Executor>* top_of_stack_;
   executor_type executor_;
+  bool has_context_switched_;
 };
 
 } // namespace detail
