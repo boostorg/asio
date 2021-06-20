@@ -93,6 +93,28 @@ public:
   }
 };
 
+/// Class used to encapsulate the result of a lazy operation.
+template <typename Impl>
+class lazy_operation : public Impl
+{
+public:
+  template <typename I>
+  explicit lazy_operation(BOOST_ASIO_MOVE_ARG(I) impl)
+    : Impl(BOOST_ASIO_MOVE_CAST(I)(impl))
+  {
+  }
+};
+
+template <typename T>
+struct is_lazy_operation : false_type
+{
+};
+
+template <typename Impl>
+struct is_lazy_operation<lazy_operation<Impl>> : true_type
+{
+};
+
 /// A special value, similar to std::nothrow.
 /**
  * See the documentation for boost::asio::experimental::lazy_t for a usage example.
