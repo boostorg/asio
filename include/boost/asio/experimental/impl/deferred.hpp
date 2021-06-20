@@ -1,15 +1,15 @@
 //
-// experimental/impl/lazy.hpp
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~
+// experimental/impl/deferred.hpp
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2020 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2021 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
-#ifndef BOOST_ASIO_EXPERIMENTAL_IMPL_LAZY_HPP
-#define BOOST_ASIO_EXPERIMENTAL_IMPL_LAZY_HPP
+#ifndef BOOST_ASIO_EXPERIMENTAL_IMPL_DEFERRED_HPP
+#define BOOST_ASIO_EXPERIMENTAL_IMPL_DEFERRED_HPP
 
 #if defined(_MSC_VER) && (_MSC_VER >= 1200)
 # pragma once
@@ -28,7 +28,7 @@ namespace experimental {
 namespace detail {
 
 template <typename Signature, typename Initiation, typename... InitArgs>
-class lazy_init
+class deferred_init
 {
 private:
   typename decay<Initiation>::type initiation_;
@@ -46,7 +46,7 @@ private:
 
 public:
   template <typename I, typename... A>
-  explicit lazy_init(BOOST_ASIO_MOVE_ARG(I) initiation,
+  explicit deferred_init(BOOST_ASIO_MOVE_ARG(I) initiation,
       BOOST_ASIO_MOVE_ARG(A)... init_args)
     : initiation_(BOOST_ASIO_MOVE_CAST(I)(initiation)),
       init_args_(BOOST_ASIO_MOVE_CAST(A)(init_args)...)
@@ -62,38 +62,38 @@ public:
   }
 };
 
-struct lazy_signature_probe {};
+struct deferred_signature_probe {};
 
 template <typename T>
-struct lazy_signature_probe_result
+struct deferred_signature_probe_result
 {
   typedef T type;
 };
 
 template <typename T>
-struct lazy_signature
+struct deferred_signature
 {
   typedef typename decltype(
-      declval<T>()(declval<lazy_signature_probe>()))::type type;
+      declval<T>()(declval<deferred_signature_probe>()))::type type;
 };
 
 template <typename HeadSignature, typename Tail>
-struct lazy_link_signature;
+struct deferred_link_signature;
 
 template <typename R, typename... Args, typename Tail>
-struct lazy_link_signature<R(Args...), Tail>
+struct deferred_link_signature<R(Args...), Tail>
 {
   typedef typename decltype(
       declval<Tail>()(declval<Args>()...)(
-        declval<lazy_signature_probe>()))::type type;
+        declval<deferred_signature_probe>()))::type type;
 };
 
 template <typename Handler, typename Tail>
-class lazy_link_handler
+class deferred_link_handler
 {
 public:
   template <typename H, typename T>
-  explicit lazy_link_handler(
+  explicit deferred_link_handler(
       BOOST_ASIO_MOVE_ARG(H) handler, BOOST_ASIO_MOVE_ARG(T) tail)
     : handler_(BOOST_ASIO_MOVE_CAST(H)(handler)),
       tail_(BOOST_ASIO_MOVE_CAST(T)(tail))
@@ -113,14 +113,14 @@ public:
   Tail tail_;
 };
 
-struct lazy_link_initiate
+struct deferred_link_initiate
 {
   template <typename Handler, typename Head, typename Tail>
   void operator()(BOOST_ASIO_MOVE_ARG(Handler) handler,
       Head head, BOOST_ASIO_MOVE_ARG(Tail) tail)
   {
     BOOST_ASIO_MOVE_OR_LVALUE(Head)(head)(
-        lazy_link_handler<typename decay<Handler>::type,
+        deferred_link_handler<typename decay<Handler>::type,
           typename decay<Tail>::type>(
             BOOST_ASIO_MOVE_CAST(Handler)(handler),
             BOOST_ASIO_MOVE_CAST(Tail)(tail)));
@@ -128,15 +128,15 @@ struct lazy_link_initiate
 };
 
 template <typename Head, typename Tail>
-class lazy_link
+class deferred_link
 {
 public:
-  typedef typename lazy_link_signature<
-    typename lazy_signature<Head>::type, Tail>::type
+  typedef typename deferred_link_signature<
+    typename deferred_signature<Head>::type, Tail>::type
       signature;
 
   template <typename H, typename T>
-  explicit lazy_link(BOOST_ASIO_MOVE_ARG(H) head, BOOST_ASIO_MOVE_ARG(T) tail)
+  explicit deferred_link(BOOST_ASIO_MOVE_ARG(H) head, BOOST_ASIO_MOVE_ARG(T) tail)
     : head_(BOOST_ASIO_MOVE_CAST(H)(head)),
       tail_(BOOST_ASIO_MOVE_CAST(T)(tail))
   {
@@ -146,7 +146,7 @@ public:
   decltype(auto) operator()(BOOST_ASIO_MOVE_ARG(CompletionToken) token)
   {
     return boost::asio::async_initiate<CompletionToken, signature>(
-        lazy_link_initiate(), token,
+        deferred_link_initiate(), token,
         BOOST_ASIO_MOVE_OR_LVALUE(Head)(head_),
         BOOST_ASIO_MOVE_OR_LVALUE(Tail)(tail_));
   }
@@ -162,34 +162,34 @@ private:
 #if !defined(GENERATING_DOCUMENTATION)
 
 template <typename Signature>
-class async_result<experimental::lazy_t, Signature>
+class async_result<experimental::deferred_t, Signature>
 {
 public:
   template <typename Initiation, typename... InitArgs>
-  static experimental::lazy_operation<
-    experimental::detail::lazy_init<Signature, Initiation, InitArgs...> >
+  static experimental::deferred_operation<
+    experimental::detail::deferred_init<Signature, Initiation, InitArgs...> >
   initiate(BOOST_ASIO_MOVE_ARG(Initiation) initiation,
-      experimental::lazy_t, BOOST_ASIO_MOVE_ARG(InitArgs)... args)
+      experimental::deferred_t, BOOST_ASIO_MOVE_ARG(InitArgs)... args)
   {
-    return experimental::lazy_operation<
-      experimental::detail::lazy_init<Signature, Initiation, InitArgs...> >(
-        experimental::detail::lazy_init<Signature, Initiation, InitArgs...>(
+    return experimental::deferred_operation<
+      experimental::detail::deferred_init<Signature, Initiation, InitArgs...> >(
+        experimental::detail::deferred_init<Signature, Initiation, InitArgs...>(
           BOOST_ASIO_MOVE_CAST(Initiation)(initiation),
           BOOST_ASIO_MOVE_CAST(InitArgs)(args)...));
     }
 };
 
 template <typename R, typename... Args>
-class async_result<experimental::detail::lazy_signature_probe, R(Args...)>
+class async_result<experimental::detail::deferred_signature_probe, R(Args...)>
 {
 public:
-  typedef experimental::detail::lazy_signature_probe_result<void(Args...)>
+  typedef experimental::detail::deferred_signature_probe_result<void(Args...)>
     return_type;
 
   template <typename Initiation, typename... InitArgs>
   static return_type initiate(
       BOOST_ASIO_MOVE_ARG(Initiation),
-      experimental::detail::lazy_signature_probe,
+      experimental::detail::deferred_signature_probe,
       BOOST_ASIO_MOVE_ARG(InitArgs)...)
   {
     return return_type{};
@@ -197,7 +197,7 @@ public:
 };
 
 template <typename Tail, typename R, typename... Args>
-  requires (experimental::is_lazy_operation<std::invoke_result_t<Tail, Args...>>::value)
+  requires (experimental::is_deferred_operation<std::invoke_result_t<Tail, Args...>>::value)
 class boost::asio::async_result<Tail, R(Args...)>
 {
 public:
@@ -205,14 +205,14 @@ public:
   static auto initiate(BOOST_ASIO_MOVE_ARG(Initiation) initiation,
       Tail tail, BOOST_ASIO_MOVE_ARG(InitArgs)... init_args)
   {
-    return experimental::lazy_operation<
-      experimental::detail::lazy_link<
-        experimental::detail::lazy_init<R(Args...), Initiation, InitArgs...>,
+    return experimental::deferred_operation<
+      experimental::detail::deferred_link<
+        experimental::detail::deferred_init<R(Args...), Initiation, InitArgs...>,
         Tail> >(
-          experimental::detail::lazy_link<
-            experimental::detail::lazy_init<R(Args...), Initiation, InitArgs...>,
+          experimental::detail::deferred_link<
+            experimental::detail::deferred_init<R(Args...), Initiation, InitArgs...>,
             Tail>(
-              experimental::detail::lazy_init<R(Args...), Initiation, InitArgs...>(
+              experimental::detail::deferred_init<R(Args...), Initiation, InitArgs...>(
                 BOOST_ASIO_MOVE_CAST(Initiation)(initiation),
                 BOOST_ASIO_MOVE_CAST(InitArgs)(init_args)...),
               BOOST_ASIO_MOVE_CAST(Tail)(tail)));
@@ -222,11 +222,11 @@ public:
 template <template <typename, typename> class Associator,
     typename Handler, typename Tail, typename DefaultCandidate>
 struct associator<Associator,
-    experimental::detail::lazy_link_handler<Handler, Tail>, DefaultCandidate>
+    experimental::detail::deferred_link_handler<Handler, Tail>, DefaultCandidate>
   : Associator<Handler, DefaultCandidate>
 {
   static typename Associator<Handler, DefaultCandidate>::type get(
-      const experimental::detail::lazy_link_handler<Handler, Tail>& h,
+      const experimental::detail::deferred_link_handler<Handler, Tail>& h,
       const DefaultCandidate& c = DefaultCandidate()) BOOST_ASIO_NOEXCEPT
   {
     return Associator<Handler, DefaultCandidate>::get(h.handler_, c);
@@ -240,4 +240,4 @@ struct associator<Associator,
 
 #include <boost/asio/detail/pop_options.hpp>
 
-#endif // BOOST_ASIO_EXPERIMENTAL_IMPL_LAZY_HPP
+#endif // BOOST_ASIO_EXPERIMENTAL_IMPL_DEFERRED_HPP
