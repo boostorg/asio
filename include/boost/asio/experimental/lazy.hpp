@@ -22,6 +22,20 @@
 namespace boost {
 namespace asio {
 namespace experimental {
+namespace detail {
+
+struct lazy_empty_branch
+{
+  template <typename... Args>
+  void operator()(BOOST_ASIO_MOVE_ARG(Args)...) BOOST_ASIO_RVALUE_REF_QUAL
+  {
+  }
+};
+
+} // namespace detail
+
+template <typename Impl> class lazy_operation;
+template <typename OnTrue, typename OnFalse> class lazy_condition;
 
 /// Class used to specify that an asynchronous operation should return a
 /// function object to lazily launch the operation.
@@ -91,6 +105,14 @@ public:
         executor_with_default<typename decay<T>::type::executor_type>
       >::other(BOOST_ASIO_MOVE_CAST(T)(object));
   }
+
+  /// Creates a conditional object for branching lazy operations.
+  static lazy_condition<detail::lazy_empty_branch,
+    detail::lazy_empty_branch> when(bool b);
+
+  /// Returns a lazy operation that returns the provided values.
+  template <typename... Args>
+  static auto values(Args... args);
 };
 
 /// Class used to encapsulate the result of a lazy operation.
@@ -104,18 +126,6 @@ public:
   {
   }
 };
-
-namespace detail {
-
-struct lazy_empty_branch
-{
-  template <typename... Args>
-  void operator()(BOOST_ASIO_MOVE_ARG(Args)...) BOOST_ASIO_RVALUE_REF_QUAL
-  {
-  }
-};
-
-} // namespace detail
 
 /// Class used to make conditional lazy branches.
 template <typename OnTrue, typename OnFalse>
@@ -190,12 +200,21 @@ private:
   bool bool_;
 };
 
-/// Helper function to create a lazy condition.
 inline lazy_condition<detail::lazy_empty_branch, detail::lazy_empty_branch>
-when(bool b)
+lazy_t::when(bool b)
 {
   return lazy_condition<detail::lazy_empty_branch, detail::lazy_empty_branch>(
       b, detail::lazy_empty_branch(), detail::lazy_empty_branch());
+}
+
+template <typename... Args>
+auto lazy_t::values(Args... args)
+{
+  return boost::asio::async_initiate<const lazy_t&, void(Args...)>(
+      [](auto handler, auto... args)
+      {
+        handler(BOOST_ASIO_MOVE_CAST(Args)(args)...);
+      }, lazy_t(), BOOST_ASIO_MOVE_CAST(Args)(args)...);
 }
 
 /// Pipe operator used to chain lazy operations.
