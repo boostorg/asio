@@ -410,6 +410,19 @@
 # endif // !defined(BOOST_ASIO_DISABLE_DEFAULT_FUNCTION_TEMPLATE_ARGUMENTS)
 #endif // !defined(BOOST_ASIO_HAS_DEFAULT_FUNCTION_TEMPLATE_ARGUMENTS)
 
+// Support enum classes on compilers known to allow them.
+#if !defined(BOOST_ASIO_HAS_ENUM_CLASS)
+# if !defined(BOOST_ASIO_DISABLE_ENUM_CLASS)
+#  if (__cplusplus >= 201103)
+#   define BOOST_ASIO_HAS_ENUM_CLASS 1
+#  elif defined(BOOST_ASIO_MSVC)
+#   if (_MSC_VER >= 1900 && _MSVC_LANG >= 201103)
+#    define BOOST_ASIO_HAS_ENUM_CLASS 1
+#   endif // (_MSC_VER >= 1900 && _MSVC_LANG >= 201103)
+#  endif // defined(BOOST_ASIO_MSVC)
+# endif // !defined(BOOST_ASIO_DISABLE_ENUM_CLASS)
+#endif // !defined(BOOST_ASIO_HAS_ENUM_CLASS)
+
 // Support concepts on compilers known to allow them.
 #if !defined(BOOST_ASIO_HAS_CONCEPTS)
 # if !defined(BOOST_ASIO_DISABLE_CONCEPTS)

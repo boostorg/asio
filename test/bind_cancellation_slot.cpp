@@ -72,7 +72,7 @@ void bind_cancellation_slot_to_function_object_test()
 
   BOOST_ASIO_CHECK(count == 0);
 
-  sig.emit();
+  sig.emit(boost::asio::cancellation_type::interrupt);
 
   ioc.run();
 
@@ -152,7 +152,7 @@ void bind_cancellation_slot_to_completion_token_test()
 
   BOOST_ASIO_CHECK(count == 0);
 
-  sig.emit();
+  sig.emit(boost::asio::cancellation_type::interrupt);
 
   ioc.run();
 

@@ -44,9 +44,19 @@ protected:
   {
   }
 
+  template <typename FilterIn, typename FilterOut>
+  base_from_cancellation_state(const Handler& handler,
+      FilterIn filter_in, FilterOut filter_out)
+    : cancellation_state_(
+        boost::asio::get_associated_cancellation_slot(handler),
+        BOOST_ASIO_MOVE_CAST(FilterIn)(filter_in),
+        BOOST_ASIO_MOVE_CAST(FilterOut)(filter_out))
+  {
+  }
+
   bool cancelled() const
   {
-    return cancellation_state_.cancelled();
+    return cancellation_state_.cancelled() != cancellation_type_t();
   }
 
 private:
@@ -66,6 +76,11 @@ class base_from_cancellation_state<Handler,
 {
 protected:
   explicit base_from_cancellation_state(const Handler&)
+  {
+  }
+
+  template <typename FilterIn, typename FilterOut>
+  base_from_cancellation_state(const Handler&, FilterIn, FilterOut)
   {
   }
 

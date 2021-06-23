@@ -23,6 +23,7 @@
 
 #include <boost/asio/associated_cancellation_slot.hpp>
 #include <boost/asio/buffer.hpp>
+#include <boost/asio/cancellation_type.hpp>
 #include <boost/asio/execution_context.hpp>
 #include <boost/asio/detail/bind_handler.hpp>
 #include <boost/asio/detail/buffer_sequence_adapter.hpp>
@@ -467,9 +468,11 @@ private:
     {
     }
 
-    void operator()()
+    void operator()(cancellation_type_t t)
     {
-      reactor_->cancel_ops_by_key(descriptor_, *reactor_data_, op_type_, this);
+      if (!!(t & (cancellation_type::terminal | cancellation_type::interrupt)))
+        reactor_->cancel_ops_by_key(descriptor_,
+            *reactor_data_, op_type_, this);
     }
 
   private:

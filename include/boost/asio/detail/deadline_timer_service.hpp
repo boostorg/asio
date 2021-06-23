@@ -18,6 +18,7 @@
 #include <boost/asio/detail/config.hpp>
 #include <cstddef>
 #include <boost/asio/associated_cancellation_slot.hpp>
+#include <boost/asio/cancellation_type.hpp>
 #include <boost/asio/error.hpp>
 #include <boost/asio/execution_context.hpp>
 #include <boost/asio/detail/bind_handler.hpp>
@@ -303,10 +304,11 @@ private:
     {
     }
 
-    void operator()()
+    void operator()(cancellation_type_t t)
     {
-      service_->scheduler_.cancel_timer_by_key(
-          service_->timer_queue_, timer_data_, this);
+      if (!!(t & (cancellation_type::terminal | cancellation_type::interrupt)))
+        service_->scheduler_.cancel_timer_by_key(
+            service_->timer_queue_, timer_data_, this);
     }
 
   private:

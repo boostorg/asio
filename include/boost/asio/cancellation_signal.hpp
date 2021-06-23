@@ -19,6 +19,7 @@
 #include <cassert>
 #include <new>
 #include <utility>
+#include <boost/asio/cancellation_type.hpp>
 #include <boost/asio/detail/cstddef.hpp>
 
 #include <boost/asio/detail/push_options.hpp>
@@ -30,7 +31,7 @@ namespace detail {
 class cancellation_handler_base
 {
 public:
-  virtual void call() = 0;
+  virtual void call(cancellation_type_t) = 0;
   virtual std::pair<void*, std::size_t> destroy() BOOST_ASIO_NOEXCEPT = 0;
 
 protected:
@@ -68,9 +69,9 @@ public:
 #undef BOOST_ASIO_PRIVATE_HANDLER_CTOR_DEF
 #endif // defined(BOOST_ASIO_HAS_VARIADIC_TEMPLATES)
 
-  void call()
+  void call(cancellation_type_t type)
   {
-    handler_();
+    handler_(type);
   }
 
   std::pair<void*, std::size_t> destroy() BOOST_ASIO_NOEXCEPT
@@ -114,10 +115,10 @@ public:
   }
 
   /// Emits the signal and causes invocation of the slot's handler, if any.
-  void emit()
+  void emit(cancellation_type_t type)
   {
     if (handler_)
-      handler_->call();
+      handler_->call(type);
   }
 
   /// Returns the single slot associated with the signal.
@@ -293,18 +294,41 @@ inline cancellation_slot cancellation_signal::slot()
   return cancellation_slot(0, &handler_);
 }
 
+/// Default cancellation signal propagation filter.
+template <cancellation_type_t Mask>
+struct cancellation_filter
+{
+  cancellation_type_t operator()(
+      cancellation_type_t type) const BOOST_ASIO_NOEXCEPT
+  {
+    return type & Mask;
+  }
+};
+
 /// A cancellation state is used for chaining signals and slots in compositions.
 class cancellation_state
 {
 public:
-  /// Construct from a slot to create a new child slot.
+  /// Construct and attach to a parent slot to create a new child slot.
   template <typename CancellationSlot>
   explicit cancellation_state(CancellationSlot slot)
-    : impl_(slot.is_connected() ? &slot.template emplace<impl>() : 0)
+    : impl_(slot.is_connected() ? &slot.template emplace<impl<> >() : 0)
   {
   }
 
-  /// Returns the single slot associated with the state.
+  /// Construct and attach to a parent slot to create a new child slot.
+  template <typename CancellationSlot, typename FilterIn, typename FilterOut>
+  cancellation_state(CancellationSlot slot,
+      FilterIn filter_in, FilterOut filter_out)
+    : impl_(slot.is_connected()
+        ? &slot.template emplace<impl<FilterIn, FilterOut> >(
+            BOOST_ASIO_MOVE_CAST(FilterIn)(filter_in),
+            BOOST_ASIO_MOVE_CAST(FilterOut)(filter_out))
+        : 0)
+  {
+  }
+
+  /// Returns the single child slot associated with the state.
   /**
    * This sub-slot is used with the operations that are being composed.
    */
@@ -313,31 +337,60 @@ public:
     return impl_ ? impl_->signal_.slot() : cancellation_slot();
   }
 
-  /// Returns whether cancellation has been triggered.
-  bool cancelled() const BOOST_ASIO_NOEXCEPT
+  /// Returns whether specified cancellation types have been triggered.
+  cancellation_type_t cancelled() const BOOST_ASIO_NOEXCEPT
   {
-    return impl_ ? impl_->cancelled_ : false;
+    return impl_ ? impl_->cancelled_ : cancellation_type_t();
   }
 
 private:
-  struct impl
+  struct impl_base
   {
-    impl()
-      : cancelled_(false)
+    impl_base()
+      : cancelled_()
     {
-    }
-
-    void operator()()
-    {
-      cancelled_ = true;
-      signal_.emit();
     }
 
     cancellation_signal signal_;
-    bool cancelled_;
+    cancellation_type_t cancelled_;
   };
 
-  impl* impl_;
+  typedef cancellation_filter<
+    static_cast<cancellation_type_t>(
+      static_cast<unsigned int>(cancellation_type::terminal)
+        | static_cast<unsigned int>(cancellation_type::interrupt))>
+    default_filter;
+
+  template <
+      typename FilterIn = default_filter,
+      typename FilterOut = default_filter>
+  struct impl : impl_base
+  {
+    impl()
+      : filter_in_(),
+        filter_out_()
+    {
+    }
+
+    impl(FilterIn filter_in, FilterOut filter_out)
+      : filter_in_(BOOST_ASIO_MOVE_CAST(FilterIn)(filter_in)),
+        filter_out_(BOOST_ASIO_MOVE_CAST(FilterOut)(filter_out))
+    {
+    }
+
+    void operator()(cancellation_type_t type)
+    {
+      this->cancelled_ = filter_in_(type);
+      cancellation_type_t propagate = filter_out_(this->cancelled_);
+      if (propagate != cancellation_type::none)
+        this->signal_.emit(propagate);
+    }
+
+    FilterIn filter_in_;
+    FilterOut filter_out_;
+  };
+
+  impl_base* impl_;
 };
 
 } // namespace asio
