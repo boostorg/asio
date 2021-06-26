@@ -169,7 +169,8 @@ namespace detail
     write_at_op(AsyncRandomAccessWriteDevice& device,
         uint64_t offset, const ConstBufferSequence& buffers,
         CompletionCondition& completion_condition, WriteHandler& handler)
-      : base_from_cancellation_state<WriteHandler>(handler),
+      : base_from_cancellation_state<WriteHandler>(
+          handler, enable_partial_cancellation()),
         base_from_completion_cond<CompletionCondition>(completion_condition),
         device_(device),
         offset_(offset),
@@ -230,7 +231,7 @@ namespace detail
           max_size = this->check_for_completion(ec, buffers_.total_consumed());
           if (max_size == 0)
             break;
-          if (this->cancelled())
+          if (this->cancelled() != cancellation_type::none)
           {
             ec = boost::asio::error::operation_aborted;
             break;

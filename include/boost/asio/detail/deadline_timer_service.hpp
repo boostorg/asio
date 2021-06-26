@@ -304,11 +304,16 @@ private:
     {
     }
 
-    void operator()(cancellation_type_t t)
+    void operator()(cancellation_type_t type)
     {
-      if (!!(t & (cancellation_type::terminal | cancellation_type::interrupt)))
+      if (!!(type &
+            (cancellation_type::terminal
+              | cancellation_type::partial
+              | cancellation_type::total)))
+      {
         service_->scheduler_.cancel_timer_by_key(
             service_->timer_queue_, timer_data_, this);
+      }
     }
 
   private:

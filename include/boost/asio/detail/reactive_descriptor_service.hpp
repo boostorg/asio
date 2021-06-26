@@ -468,11 +468,16 @@ private:
     {
     }
 
-    void operator()(cancellation_type_t t)
+    void operator()(cancellation_type_t type)
     {
-      if (!!(t & (cancellation_type::terminal | cancellation_type::interrupt)))
+      if (!!(type &
+            (cancellation_type::terminal
+              | cancellation_type::partial
+              | cancellation_type::total)))
+      {
         reactor_->cancel_ops_by_key(descriptor_,
             *reactor_data_, op_type_, this);
+      }
     }
 
   private:

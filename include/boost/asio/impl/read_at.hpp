@@ -184,7 +184,8 @@ namespace detail
     read_at_op(AsyncRandomAccessReadDevice& device,
         uint64_t offset, const MutableBufferSequence& buffers,
         CompletionCondition& completion_condition, ReadHandler& handler)
-      : base_from_cancellation_state<ReadHandler>(handler),
+      : base_from_cancellation_state<ReadHandler>(
+          handler, enable_partial_cancellation()),
         base_from_completion_cond<CompletionCondition>(completion_condition),
         device_(device),
         offset_(offset),
@@ -245,7 +246,7 @@ namespace detail
           max_size = this->check_for_completion(ec, buffers_.total_consumed());
           if (max_size == 0)
             break;
-          if (this->cancelled())
+          if (this->cancelled() != cancellation_type::none)
           {
             ec = boost::asio::error::operation_aborted;
             break;
@@ -470,7 +471,8 @@ namespace detail
     read_at_streambuf_op(AsyncRandomAccessReadDevice& device,
         uint64_t offset, basic_streambuf<Allocator>& streambuf,
         CompletionCondition& completion_condition, ReadHandler& handler)
-      : base_from_cancellation_state<ReadHandler>(handler),
+      : base_from_cancellation_state<ReadHandler>(
+          handler, enable_partial_cancellation()),
         base_from_completion_cond<CompletionCondition>(completion_condition),
         device_(device),
         offset_(offset),
@@ -535,7 +537,7 @@ namespace detail
           bytes_available = read_size_helper(streambuf_, max_size);
           if ((!ec && bytes_transferred == 0) || bytes_available == 0)
             break;
-          if (this->cancelled())
+          if (this->cancelled() != cancellation_type::none)
           {
             ec = boost::asio::error::operation_aborted;
             break;

@@ -304,7 +304,8 @@ namespace detail
         const EndpointSequence& endpoints,
         const ConnectCondition& connect_condition,
         RangeConnectHandler& handler)
-      : base_from_cancellation_state<RangeConnectHandler>(handler),
+      : base_from_cancellation_state<RangeConnectHandler>(
+          handler, enable_partial_cancellation()),
         base_from_connect_condition<ConnectCondition>(connect_condition),
         socket_(sock),
         endpoints_(endpoints),
@@ -396,7 +397,7 @@ namespace detail
           if (!ec)
             break;
 
-          if (this->cancelled())
+          if (this->cancelled() != cancellation_type::none)
           {
             ec = boost::asio::error::operation_aborted;
             break;
@@ -539,7 +540,8 @@ namespace detail
         const Iterator& begin, const Iterator& end,
         const ConnectCondition& connect_condition,
         IteratorConnectHandler& handler)
-      : base_from_cancellation_state<IteratorConnectHandler>(handler),
+      : base_from_cancellation_state<IteratorConnectHandler>(
+          handler, enable_partial_cancellation()),
         base_from_connect_condition<ConnectCondition>(connect_condition),
         socket_(sock),
         iter_(begin),
@@ -617,7 +619,7 @@ namespace detail
           if (!ec)
             break;
 
-          if (this->cancelled())
+          if (this->cancelled() != cancellation_type::none)
           {
             ec = boost::asio::error::operation_aborted;
             break;

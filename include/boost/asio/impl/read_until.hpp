@@ -813,7 +813,8 @@ namespace detail
     read_until_delim_op_v1(AsyncReadStream& stream,
         BOOST_ASIO_MOVE_ARG(BufferSequence) buffers,
         char delim, ReadHandler& handler)
-      : base_from_cancellation_state<ReadHandler>(handler),
+      : base_from_cancellation_state<ReadHandler>(
+          handler, enable_partial_cancellation()),
         stream_(stream),
         buffers_(BOOST_ASIO_MOVE_CAST(BufferSequence)(buffers)),
         delim_(delim),
@@ -913,7 +914,7 @@ namespace detail
           buffers_.commit(bytes_transferred);
           if (ec || bytes_transferred == 0)
             break;
-          if (this->cancelled())
+          if (this->cancelled() != cancellation_type::none)
           {
             ec = error::operation_aborted;
             break;
@@ -1103,7 +1104,8 @@ namespace detail
     read_until_delim_string_op_v1(AsyncReadStream& stream,
         BOOST_ASIO_MOVE_ARG(BufferSequence) buffers,
         const std::string& delim, ReadHandler& handler)
-      : base_from_cancellation_state<ReadHandler>(handler),
+      : base_from_cancellation_state<ReadHandler>(
+          handler, enable_partial_cancellation()),
         stream_(stream),
         buffers_(BOOST_ASIO_MOVE_CAST(BufferSequence)(buffers)),
         delim_(delim),
@@ -1214,7 +1216,7 @@ namespace detail
           buffers_.commit(bytes_transferred);
           if (ec || bytes_transferred == 0)
             break;
-          if (this->cancelled())
+          if (this->cancelled() != cancellation_type::none)
           {
             ec = error::operation_aborted;
             break;
@@ -1409,7 +1411,8 @@ namespace detail
     read_until_expr_op_v1(AsyncReadStream& stream,
         BOOST_ASIO_MOVE_ARG(BufferSequence) buffers,
         const boost::regex& expr, ReadHandler& handler)
-      : base_from_cancellation_state<ReadHandler>(handler),
+      : base_from_cancellation_state<ReadHandler>(
+          handler, enable_partial_cancellation()),
         stream_(stream),
         buffers_(BOOST_ASIO_MOVE_CAST(BufferSequence)(buffers)),
         expr_(expr),
@@ -1523,7 +1526,7 @@ namespace detail
           buffers_.commit(bytes_transferred);
           if (ec || bytes_transferred == 0)
             break;
-          if (this->cancelled())
+          if (this->cancelled() != cancellation_type::none)
           {
             ec = error::operation_aborted;
             break;
@@ -1715,7 +1718,8 @@ namespace detail
     read_until_match_op_v1(AsyncReadStream& stream,
         BOOST_ASIO_MOVE_ARG(BufferSequence) buffers,
         MatchCondition match_condition, ReadHandler& handler)
-      : base_from_cancellation_state<ReadHandler>(handler),
+      : base_from_cancellation_state<ReadHandler>(
+          handler, enable_partial_cancellation()),
         stream_(stream),
         buffers_(BOOST_ASIO_MOVE_CAST(BufferSequence)(buffers)),
         match_condition_(match_condition),
@@ -1825,7 +1829,7 @@ namespace detail
           buffers_.commit(bytes_transferred);
           if (ec || bytes_transferred == 0)
             break;
-          if (this->cancelled())
+          if (this->cancelled() != cancellation_type::none)
           {
             ec = error::operation_aborted;
             break;
@@ -2086,7 +2090,8 @@ namespace detail
     read_until_delim_op_v2(AsyncReadStream& stream,
         BOOST_ASIO_MOVE_ARG(BufferSequence) buffers,
         char delim, ReadHandler& handler)
-      : base_from_cancellation_state<ReadHandler>(handler),
+      : base_from_cancellation_state<ReadHandler>(
+          handler, enable_partial_cancellation()),
         stream_(stream),
         buffers_(BOOST_ASIO_MOVE_CAST(BufferSequence)(buffers)),
         delim_(delim),
@@ -2193,7 +2198,7 @@ namespace detail
           buffers_.shrink(bytes_to_read_ - bytes_transferred);
           if (ec || bytes_transferred == 0)
             break;
-          if (this->cancelled())
+          if (this->cancelled() != cancellation_type::none)
           {
             ec = error::operation_aborted;
             break;
@@ -2379,7 +2384,8 @@ namespace detail
     read_until_delim_string_op_v2(AsyncReadStream& stream,
         BOOST_ASIO_MOVE_ARG(BufferSequence) buffers,
         const std::string& delim, ReadHandler& handler)
-      : base_from_cancellation_state<ReadHandler>(handler),
+      : base_from_cancellation_state<ReadHandler>(
+          handler, enable_partial_cancellation()),
         stream_(stream),
         buffers_(BOOST_ASIO_MOVE_CAST(BufferSequence)(buffers)),
         delim_(delim),
@@ -2497,7 +2503,7 @@ namespace detail
           buffers_.shrink(bytes_to_read_ - bytes_transferred);
           if (ec || bytes_transferred == 0)
             break;
-          if (this->cancelled())
+          if (this->cancelled() != cancellation_type::none)
           {
             ec = error::operation_aborted;
             break;
@@ -2690,7 +2696,8 @@ namespace detail
     read_until_expr_op_v2(AsyncReadStream& stream,
         BOOST_ASIO_MOVE_ARG(BufferSequence) buffers,
         const boost::regex& expr, ReadHandler& handler)
-      : base_from_cancellation_state<ReadHandler>(handler),
+      : base_from_cancellation_state<ReadHandler>(
+          handler, enable_partial_cancellation()),
         stream_(stream),
         buffers_(BOOST_ASIO_MOVE_CAST(BufferSequence)(buffers)),
         expr_(expr),
@@ -2811,7 +2818,7 @@ namespace detail
           buffers_.shrink(bytes_to_read_ - bytes_transferred);
           if (ec || bytes_transferred == 0)
             break;
-          if (this->cancelled())
+          if (this->cancelled() != cancellation_type::none)
           {
             ec = error::operation_aborted;
             break;
@@ -3000,7 +3007,8 @@ namespace detail
     read_until_match_op_v2(AsyncReadStream& stream,
         BOOST_ASIO_MOVE_ARG(BufferSequence) buffers,
         MatchCondition match_condition, ReadHandler& handler)
-      : base_from_cancellation_state<ReadHandler>(handler),
+      : base_from_cancellation_state<ReadHandler>(
+          handler, enable_partial_cancellation()),
         stream_(stream),
         buffers_(BOOST_ASIO_MOVE_CAST(BufferSequence)(buffers)),
         match_condition_(match_condition),
@@ -3117,7 +3125,7 @@ namespace detail
           buffers_.shrink(bytes_to_read_ - bytes_transferred);
           if (ec || bytes_transferred == 0)
             break;
-          if (this->cancelled())
+          if (this->cancelled() != cancellation_type::none)
           {
             ec = error::operation_aborted;
             break;

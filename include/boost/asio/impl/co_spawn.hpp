@@ -182,12 +182,16 @@ public:
   {
     typedef typename result_of<F()>::type awaitable_type;
 
-    cancellation_state cs(
-        boost::asio::get_associated_cancellation_slot(handler));
+    cancellation_state proxy_cancel_state(
+        boost::asio::get_associated_cancellation_slot(handler),
+        enable_total_cancellation());
+
+    cancellation_state cancel_state(proxy_cancel_state.slot());
 
     auto a = (co_spawn_entry_point)(static_cast<awaitable_type*>(nullptr),
         ex_, std::forward<F>(f), std::forward<Handler>(handler));
-    awaitable_handler<executor_type, void>(std::move(a), ex_, cs).launch();
+    awaitable_handler<executor_type, void>(std::move(a), ex_,
+        proxy_cancel_state.slot(), cancel_state).launch();
   }
 
 private:

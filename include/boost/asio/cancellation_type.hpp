@@ -32,17 +32,19 @@ enum class cancellation_type : unsigned int
   /// Bitmask representing no types of cancellation.
   none = 0,
 
-  /// Following cancellation, the only safe operation on the I/O object is
-  /// destruction.
+  /// Requests cancellation where, following a successful cancellation, the only
+  /// safe operations on the I/O object are closure or destruction.
   terminal = 1,
 
-  /// Following cancellation, the I/O object is in a well-known state, and
-  /// may be used for further operations.
-  interrupt = 2,
+  /// Requests cancellation where a successful cancellation may result in
+  /// partial side effects or no side effects. Following cancellation, the I/O
+  /// object is in a well-known state, and may be used for further operations.
+  partial = 2,
 
-  /// Following cancellation, the operation has had no side effects and may be
-  /// restarted.
-  restartable = 4,
+  /// Requests cancellation where a successful cancellation results in no
+  /// apparent side effects. Following cancellation, the I/O object is in the
+  /// same observable state as it was prior to the operation.
+  total = 4,
 
   /// Bitmask representing all types of cancellation.
   all = 0xFFFFFFFF
@@ -59,8 +61,8 @@ enum cancellation_type_t
 {
   none = 0,
   terminal = 1,
-  interrupt = 2,
-  restartable = 4,
+  partial = 2,
+  total = 4,
   all = 0xFFFFFFFF
 };
 

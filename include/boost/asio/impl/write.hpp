@@ -295,7 +295,8 @@ namespace detail
   public:
     write_op(AsyncWriteStream& stream, const ConstBufferSequence& buffers,
         CompletionCondition& completion_condition, WriteHandler& handler)
-      : base_from_cancellation_state<WriteHandler>(handler),
+      : base_from_cancellation_state<WriteHandler>(
+          handler, enable_partial_cancellation()),
         base_from_completion_cond<CompletionCondition>(completion_condition),
         stream_(stream),
         buffers_(buffers),
@@ -352,7 +353,7 @@ namespace detail
           max_size = this->check_for_completion(ec, buffers_.total_consumed());
           if (max_size == 0)
             break;
-          if (this->cancelled())
+          if (this->cancelled() != cancellation_type::none)
           {
             ec = error::operation_aborted;
             break;

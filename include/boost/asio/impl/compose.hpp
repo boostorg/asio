@@ -302,7 +302,8 @@ namespace detail
     composed_op(BOOST_ASIO_MOVE_ARG(I) impl,
         BOOST_ASIO_MOVE_ARG(W) work,
         BOOST_ASIO_MOVE_ARG(H) handler)
-      : base_from_cancellation_state<Handler>(handler),
+      : base_from_cancellation_state<Handler>(
+          handler, enable_terminal_cancellation()),
         impl_(BOOST_ASIO_MOVE_CAST(I)(impl)),
         work_(BOOST_ASIO_MOVE_CAST(W)(work)),
         handler_(BOOST_ASIO_MOVE_CAST(H)(handler)),
@@ -395,6 +396,27 @@ namespace detail
 #undef BOOST_ASIO_PRIVATE_COMPOSED_OP_DEF
 
 #endif // defined(BOOST_ASIO_HAS_VARIADIC_TEMPLATES)
+
+    void reset_cancellation_state()
+    {
+      base_from_cancellation_state<Handler>::reset_cancellation_state(handler_);
+    }
+
+    template <typename Filter>
+    void reset_cancellation_state(BOOST_ASIO_MOVE_ARG(Filter) filter)
+    {
+      base_from_cancellation_state<Handler>::reset_cancellation_state(handler_,
+          BOOST_ASIO_MOVE_CAST(Filter)(filter));
+    }
+
+    template <typename InFilter, typename OutFilter>
+    void reset_cancellation_state(BOOST_ASIO_MOVE_ARG(InFilter) in_filter,
+        BOOST_ASIO_MOVE_ARG(OutFilter) out_filter)
+    {
+      base_from_cancellation_state<Handler>::reset_cancellation_state(handler_,
+          BOOST_ASIO_MOVE_CAST(InFilter)(in_filter),
+          BOOST_ASIO_MOVE_CAST(OutFilter)(out_filter));
+    }
 
   //private:
     Impl impl_;

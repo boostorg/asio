@@ -330,7 +330,8 @@ namespace detail
   public:
     read_op(AsyncReadStream& stream, const MutableBufferSequence& buffers,
         CompletionCondition& completion_condition, ReadHandler& handler)
-      : base_from_cancellation_state<ReadHandler>(handler),
+      : base_from_cancellation_state<ReadHandler>(
+          handler, enable_partial_cancellation()),
         base_from_completion_cond<CompletionCondition>(completion_condition),
         stream_(stream),
         buffers_(buffers),
@@ -387,7 +388,7 @@ namespace detail
           max_size = this->check_for_completion(ec, buffers_.total_consumed());
           if (max_size == 0)
             break;
-          if (this->cancelled())
+          if (this->cancelled() != cancellation_type::none)
           {
             ec = error::operation_aborted;
             break;
@@ -609,7 +610,8 @@ namespace detail
     read_dynbuf_v1_op(AsyncReadStream& stream,
         BOOST_ASIO_MOVE_ARG(BufferSequence) buffers,
         CompletionCondition& completion_condition, ReadHandler& handler)
-      : base_from_cancellation_state<ReadHandler>(handler),
+      : base_from_cancellation_state<ReadHandler>(
+          handler, enable_partial_cancellation()),
         base_from_completion_cond<CompletionCondition>(completion_condition),
         stream_(stream),
         buffers_(BOOST_ASIO_MOVE_CAST(BufferSequence)(buffers)),
@@ -678,7 +680,7 @@ namespace detail
                   buffers_.max_size() - buffers_.size()));
           if ((!ec && bytes_transferred == 0) || bytes_available == 0)
             break;
-          if (this->cancelled())
+          if (this->cancelled() != cancellation_type::none)
           {
             ec = error::operation_aborted;
             break;
@@ -924,7 +926,8 @@ namespace detail
     read_dynbuf_v2_op(AsyncReadStream& stream,
         BOOST_ASIO_MOVE_ARG(BufferSequence) buffers,
         CompletionCondition& completion_condition, ReadHandler& handler)
-      : base_from_cancellation_state<ReadHandler>(handler),
+      : base_from_cancellation_state<ReadHandler>(
+          handler, enable_partial_cancellation()),
         base_from_completion_cond<CompletionCondition>(completion_condition),
         stream_(stream),
         buffers_(BOOST_ASIO_MOVE_CAST(BufferSequence)(buffers)),
@@ -998,7 +1001,7 @@ namespace detail
                   buffers_.max_size() - buffers_.size()));
           if ((!ec && bytes_transferred == 0) || bytes_available_ == 0)
             break;
-          if (this->cancelled())
+          if (this->cancelled() != cancellation_type::none)
           {
             ec = error::operation_aborted;
             break;

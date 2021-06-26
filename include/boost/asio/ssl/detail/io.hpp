@@ -272,7 +272,7 @@ public:
           core_.pending_read_.expires_at(core_.neg_infin());
 
           // Check for cancellation before continuing.
-          if (this->cancelled())
+          if (this->cancelled() != cancellation_type::none)
           {
             ec_ = boost::asio::error::operation_aborted;
             break;
@@ -287,7 +287,7 @@ public:
           core_.pending_write_.expires_at(core_.neg_infin());
 
           // Check for cancellation before continuing.
-          if (this->cancelled())
+          if (this->cancelled() != cancellation_type::none)
           {
             ec_ = boost::asio::error::operation_aborted;
             break;
