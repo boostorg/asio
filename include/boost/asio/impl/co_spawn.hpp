@@ -16,6 +16,7 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include <boost/asio/detail/config.hpp>
+#include <boost/asio/associated_cancellation_slot.hpp>
 #include <boost/asio/awaitable.hpp>
 #include <boost/asio/dispatch.hpp>
 #include <boost/asio/execution/outstanding_work.hpp>
@@ -181,9 +182,16 @@ public:
   {
     typedef typename result_of<F()>::type awaitable_type;
 
+    cancellation_state proxy_cancel_state(
+        boost::asio::get_associated_cancellation_slot(handler),
+        enable_total_cancellation());
+
+    cancellation_state cancel_state(proxy_cancel_state.slot());
+
     auto a = (co_spawn_entry_point)(static_cast<awaitable_type*>(nullptr),
         ex_, std::forward<F>(f), std::forward<Handler>(handler));
-    awaitable_handler<executor_type, void>(std::move(a), ex_).launch();
+    awaitable_handler<executor_type, void>(std::move(a), ex_,
+        proxy_cancel_state.slot(), cancel_state).launch();
   }
 
 private:

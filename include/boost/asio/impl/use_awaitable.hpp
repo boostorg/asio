@@ -17,6 +17,7 @@
 
 #include <boost/asio/detail/config.hpp>
 #include <boost/asio/async_result.hpp>
+#include <boost/asio/cancellation_signal.hpp>
 
 #include <boost/asio/detail/push_options.hpp>
 
@@ -33,8 +34,9 @@ public:
   typedef awaitable<T, Executor> awaitable_type;
 
   // Construct from the entry point of a new thread of execution.
-  awaitable_handler_base(awaitable<void, Executor> a, const Executor& ex)
-    : awaitable_thread<Executor>(std::move(a), ex)
+  awaitable_handler_base(awaitable<void, Executor> a,
+      const Executor& ex, cancellation_slot pcs, cancellation_state cs)
+    : awaitable_thread<Executor>(std::move(a), ex, pcs, cs)
   {
   }
 
@@ -65,6 +67,7 @@ public:
   {
     this->frame()->attach_thread(this);
     this->frame()->return_void();
+    this->frame()->clear_cancellation_slot();
     this->frame()->pop_frame();
     this->pump();
   }
@@ -84,6 +87,7 @@ public:
       this->frame()->set_error(ec);
     else
       this->frame()->return_void();
+    this->frame()->clear_cancellation_slot();
     this->frame()->pop_frame();
     this->pump();
   }
@@ -103,6 +107,7 @@ public:
       this->frame()->set_except(ex);
     else
       this->frame()->return_void();
+    this->frame()->clear_cancellation_slot();
     this->frame()->pop_frame();
     this->pump();
   }
@@ -120,6 +125,7 @@ public:
   {
     this->frame()->attach_thread(this);
     this->frame()->return_value(std::forward<Arg>(arg));
+    this->frame()->clear_cancellation_slot();
     this->frame()->pop_frame();
     this->pump();
   }
@@ -140,6 +146,7 @@ public:
       this->frame()->set_error(ec);
     else
       this->frame()->return_value(std::forward<Arg>(arg));
+    this->frame()->clear_cancellation_slot();
     this->frame()->pop_frame();
     this->pump();
   }
@@ -160,6 +167,7 @@ public:
       this->frame()->set_except(ex);
     else
       this->frame()->return_value(std::forward<Arg>(arg));
+    this->frame()->clear_cancellation_slot();
     this->frame()->pop_frame();
     this->pump();
   }
@@ -178,6 +186,7 @@ public:
   {
     this->frame()->attach_thread(this);
     this->frame()->return_values(std::forward<Args>(args)...);
+    this->frame()->clear_cancellation_slot();
     this->frame()->pop_frame();
     this->pump();
   }
@@ -199,6 +208,7 @@ public:
       this->frame()->set_error(ec);
     else
       this->frame()->return_values(std::forward<Args>(args)...);
+    this->frame()->clear_cancellation_slot();
     this->frame()->pop_frame();
     this->pump();
   }
@@ -220,6 +230,7 @@ public:
       this->frame()->set_except(ex);
     else
       this->frame()->return_values(std::forward<Args>(args)...);
+    this->frame()->clear_cancellation_slot();
     this->frame()->pop_frame();
     this->pump();
   }

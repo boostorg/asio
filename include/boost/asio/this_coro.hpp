@@ -16,6 +16,7 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include <boost/asio/detail/config.hpp>
+#include <boost/asio/detail/type_traits.hpp>
 
 #include <boost/asio/detail/push_options.hpp>
 
@@ -37,6 +38,112 @@ constexpr executor_t executor;
 #elif defined(BOOST_ASIO_MSVC)
 __declspec(selectany) executor_t executor;
 #endif
+
+/// Awaitable type that returns the cancellation state of the current coroutine.
+struct cancellation_state_t
+{
+  BOOST_ASIO_CONSTEXPR cancellation_state_t()
+  {
+  }
+};
+
+/// Awaitable object that returns the cancellation state of the current
+/// coroutine.
+#if defined(BOOST_ASIO_HAS_CONSTEXPR) || defined(GENERATING_DOCUMENTATION)
+constexpr cancellation_state_t cancellation_state;
+#elif defined(BOOST_ASIO_MSVC)
+__declspec(selectany) cancellation_state_t cancellation_state;
+#endif
+
+#if defined(GENERATING_DOCUMENTATION)
+
+/// Returns an awaitable object that may be used to reset the cancellation state
+/// of the current coroutine.
+BOOST_ASIO_NODISCARD BOOST_ASIO_CONSTEXPR unspecified
+reset_cancellation_state();
+
+/// Returns an awaitable object that may be used to reset the cancellation state
+/// of the current coroutine.
+template <typename Filter>
+BOOST_ASIO_NODISCARD BOOST_ASIO_CONSTEXPR unspecified
+reset_cancellation_state(BOOST_ASIO_MOVE_ARG(Filter) filter);
+
+/// Returns an awaitable object that may be used to reset the cancellation state
+/// of the current coroutine.
+template <typename InFilter, typename OutFilter>
+BOOST_ASIO_NODISCARD BOOST_ASIO_CONSTEXPR unspecified
+reset_cancellation_state(
+    BOOST_ASIO_MOVE_ARG(InFilter) in_filter,
+    BOOST_ASIO_MOVE_ARG(OutFilter) out_filter);
+
+#else // defined(GENERATING_DOCUMENTATION)
+
+struct reset_cancellation_state_0_t
+{
+  BOOST_ASIO_CONSTEXPR reset_cancellation_state_0_t()
+  {
+  }
+};
+
+BOOST_ASIO_NODISCARD inline BOOST_ASIO_CONSTEXPR reset_cancellation_state_0_t
+reset_cancellation_state()
+{
+  return reset_cancellation_state_0_t();
+}
+
+template <typename Filter>
+struct reset_cancellation_state_1_t
+{
+  template <typename F>
+  BOOST_ASIO_CONSTEXPR reset_cancellation_state_1_t(
+      BOOST_ASIO_MOVE_ARG(F) filter)
+    : filter(BOOST_ASIO_MOVE_CAST(F)(filter))
+  {
+  }
+
+  Filter filter;
+};
+
+template <typename Filter>
+BOOST_ASIO_NODISCARD inline BOOST_ASIO_CONSTEXPR reset_cancellation_state_1_t<
+    typename decay<Filter>::type>
+reset_cancellation_state(BOOST_ASIO_MOVE_ARG(Filter) filter)
+{
+  return reset_cancellation_state_1_t<typename decay<Filter>::type>(
+      BOOST_ASIO_MOVE_CAST(Filter)(filter));
+}
+
+template <typename InFilter, typename OutFilter>
+struct reset_cancellation_state_2_t
+{
+  template <typename F1, typename F2>
+  BOOST_ASIO_CONSTEXPR reset_cancellation_state_2_t(
+      BOOST_ASIO_MOVE_ARG(F1) in_filter, BOOST_ASIO_MOVE_ARG(F2) out_filter)
+    : in_filter(BOOST_ASIO_MOVE_CAST(F1)(in_filter)),
+      out_filter(BOOST_ASIO_MOVE_CAST(F2)(out_filter))
+  {
+  }
+
+  InFilter in_filter;
+  OutFilter out_filter;
+};
+
+template <typename InFilter, typename OutFilter>
+BOOST_ASIO_NODISCARD inline BOOST_ASIO_CONSTEXPR reset_cancellation_state_2_t<
+    typename decay<InFilter>::type,
+    typename decay<OutFilter>::type>
+reset_cancellation_state(
+    BOOST_ASIO_MOVE_ARG(InFilter) in_filter,
+    BOOST_ASIO_MOVE_ARG(OutFilter) out_filter)
+{
+  return reset_cancellation_state_2_t<
+      typename decay<InFilter>::type,
+      typename decay<OutFilter>::type>(
+        BOOST_ASIO_MOVE_CAST(InFilter)(in_filter),
+        BOOST_ASIO_MOVE_CAST(OutFilter)(out_filter));
+}
+
+#endif // defined(GENERATING_DOCUMENTATION)
 
 } // namespace this_coro
 } // namespace asio
