@@ -207,6 +207,78 @@ struct redirect_error_signature<R(const boost::system::error_code&, Args...)>
   typedef R type(Args...);
 };
 
+# if defined(BOOST_ASIO_HAS_REF_QUALIFIED_FUNCTIONS)
+
+template <typename R, typename... Args>
+struct redirect_error_signature<R(boost::system::error_code, Args...) &>
+{
+  typedef R type(Args...) &;
+};
+
+template <typename R, typename... Args>
+struct redirect_error_signature<R(const boost::system::error_code&, Args...) &>
+{
+  typedef R type(Args...) &;
+};
+
+template <typename R, typename... Args>
+struct redirect_error_signature<R(boost::system::error_code, Args...) &&>
+{
+  typedef R type(Args...) &&;
+};
+
+template <typename R, typename... Args>
+struct redirect_error_signature<R(const boost::system::error_code&, Args...) &&>
+{
+  typedef R type(Args...) &&;
+};
+
+#  if defined(BOOST_ASIO_HAS_NOEXCEPT_FUNCTION_TYPE)
+
+template <typename R, typename... Args>
+struct redirect_error_signature<
+  R(boost::system::error_code, Args...) noexcept>
+{
+  typedef R type(Args...) & noexcept;
+};
+
+template <typename R, typename... Args>
+struct redirect_error_signature<
+  R(const boost::system::error_code&, Args...) noexcept>
+{
+  typedef R type(Args...) & noexcept;
+};
+
+template <typename R, typename... Args>
+struct redirect_error_signature<
+  R(boost::system::error_code, Args...) & noexcept>
+{
+  typedef R type(Args...) & noexcept;
+};
+
+template <typename R, typename... Args>
+struct redirect_error_signature<
+  R(const boost::system::error_code&, Args...) & noexcept>
+{
+  typedef R type(Args...) & noexcept;
+};
+
+template <typename R, typename... Args>
+struct redirect_error_signature<
+  R(boost::system::error_code, Args...) && noexcept>
+{
+  typedef R type(Args...) && noexcept;
+};
+
+template <typename R, typename... Args>
+struct redirect_error_signature<
+  R(const boost::system::error_code&, Args...) && noexcept>
+{
+  typedef R type(Args...) && noexcept;
+};
+
+#  endif // defined(BOOST_ASIO_HAS_NOEXCEPT_FUNCTION_TYPE)
+# endif // defined(BOOST_ASIO_HAS_REF_QUALIFIED_FUNCTIONS)
 #else // defined(BOOST_ASIO_HAS_VARIADIC_TEMPLATES)
 
 template <typename R>
@@ -239,6 +311,161 @@ struct redirect_error_signature<R(const boost::system::error_code&)>
   BOOST_ASIO_VARIADIC_GENERATE(BOOST_ASIO_PRIVATE_REDIRECT_ERROR_DEF)
 #undef BOOST_ASIO_PRIVATE_REDIRECT_ERROR_DEF
 
+# if defined(BOOST_ASIO_HAS_REF_QUALIFIED_FUNCTIONS)
+
+template <typename R>
+struct redirect_error_signature<R(boost::system::error_code) &>
+{
+  typedef R type() &;
+};
+
+template <typename R>
+struct redirect_error_signature<R(const boost::system::error_code&) &>
+{
+  typedef R type() &;
+};
+
+template <typename R>
+struct redirect_error_signature<R(boost::system::error_code) &&>
+{
+  typedef R type() &&;
+};
+
+template <typename R>
+struct redirect_error_signature<R(const boost::system::error_code&) &&>
+{
+  typedef R type() &&;
+};
+
+#define BOOST_ASIO_PRIVATE_REDIRECT_ERROR_DEF(n) \
+  template <typename R, BOOST_ASIO_VARIADIC_TPARAMS(n)> \
+  struct redirect_error_signature< \
+      R(boost::system::error_code, BOOST_ASIO_VARIADIC_TARGS(n)) &> \
+  { \
+    typedef R type(BOOST_ASIO_VARIADIC_TARGS(n)) &; \
+  }; \
+  \
+  template <typename R, BOOST_ASIO_VARIADIC_TPARAMS(n)> \
+  struct redirect_error_signature< \
+      R(const boost::system::error_code&, BOOST_ASIO_VARIADIC_TARGS(n)) &> \
+  { \
+    typedef R type(BOOST_ASIO_VARIADIC_TARGS(n)) &; \
+  }; \
+  \
+  template <typename R, BOOST_ASIO_VARIADIC_TPARAMS(n)> \
+  struct redirect_error_signature< \
+      R(boost::system::error_code, BOOST_ASIO_VARIADIC_TARGS(n)) &&> \
+  { \
+    typedef R type(BOOST_ASIO_VARIADIC_TARGS(n)) &&; \
+  }; \
+  \
+  template <typename R, BOOST_ASIO_VARIADIC_TPARAMS(n)> \
+  struct redirect_error_signature< \
+      R(const boost::system::error_code&, BOOST_ASIO_VARIADIC_TARGS(n)) &&> \
+  { \
+    typedef R type(BOOST_ASIO_VARIADIC_TARGS(n)) &&; \
+  }; \
+  /**/
+  BOOST_ASIO_VARIADIC_GENERATE(BOOST_ASIO_PRIVATE_REDIRECT_ERROR_DEF)
+#undef BOOST_ASIO_PRIVATE_REDIRECT_ERROR_DEF
+
+#  if defined(BOOST_ASIO_HAS_NOEXCEPT_FUNCTION_TYPE)
+
+template <typename R>
+struct redirect_error_signature<
+  R(boost::system::error_code) noexcept>
+{
+  typedef R type() noexcept;
+};
+
+template <typename R>
+struct redirect_error_signature<
+  R(const boost::system::error_code&) noexcept>
+{
+  typedef R type() noexcept;
+};
+
+template <typename R>
+struct redirect_error_signature<
+  R(boost::system::error_code) & noexcept>
+{
+  typedef R type() & noexcept;
+};
+
+template <typename R>
+struct redirect_error_signature<
+  R(const boost::system::error_code&) & noexcept>
+{
+  typedef R type() & noexcept;
+};
+
+template <typename R>
+struct redirect_error_signature<
+  R(boost::system::error_code) && noexcept>
+{
+  typedef R type() && noexcept;
+};
+
+template <typename R>
+struct redirect_error_signature<
+  R(const boost::system::error_code&) && noexcept>
+{
+  typedef R type() && noexcept;
+};
+
+#define BOOST_ASIO_PRIVATE_REDIRECT_ERROR_DEF(n) \
+  template <typename R, BOOST_ASIO_VARIADIC_TPARAMS(n)> \
+  struct redirect_error_signature< \
+      R(boost::system::error_code, BOOST_ASIO_VARIADIC_TARGS(n)) noexcept> \
+  { \
+    typedef R type(BOOST_ASIO_VARIADIC_TARGS(n)) noexcept; \
+  }; \
+  \
+  template <typename R, BOOST_ASIO_VARIADIC_TPARAMS(n)> \
+  struct redirect_error_signature< \
+      R(const boost::system::error_code&, \
+        BOOST_ASIO_VARIADIC_TARGS(n)) noexcept> \
+  { \
+    typedef R type(BOOST_ASIO_VARIADIC_TARGS(n)) noexcept; \
+  }; \
+  \
+  template <typename R, BOOST_ASIO_VARIADIC_TPARAMS(n)> \
+  struct redirect_error_signature< \
+      R(boost::system::error_code, \
+        BOOST_ASIO_VARIADIC_TARGS(n)) & noexcept> \
+  { \
+    typedef R type(BOOST_ASIO_VARIADIC_TARGS(n)) & noexcept; \
+  }; \
+  \
+  template <typename R, BOOST_ASIO_VARIADIC_TPARAMS(n)> \
+  struct redirect_error_signature< \
+      R(const boost::system::error_code&, \
+        BOOST_ASIO_VARIADIC_TARGS(n)) & noexcept> \
+  { \
+    typedef R type(BOOST_ASIO_VARIADIC_TARGS(n)) & noexcept; \
+  }; \
+  \
+  template <typename R, BOOST_ASIO_VARIADIC_TPARAMS(n)> \
+  struct redirect_error_signature< \
+      R(boost::system::error_code, \
+        BOOST_ASIO_VARIADIC_TARGS(n)) && noexcept> \
+  { \
+    typedef R type(BOOST_ASIO_VARIADIC_TARGS(n)) && noexcept; \
+  }; \
+  \
+  template <typename R, BOOST_ASIO_VARIADIC_TPARAMS(n)> \
+  struct redirect_error_signature< \
+      R(const boost::system::error_code&, \
+        BOOST_ASIO_VARIADIC_TARGS(n)) && noexcept> \
+  { \
+    typedef R type(BOOST_ASIO_VARIADIC_TARGS(n)) && noexcept; \
+  }; \
+  /**/
+  BOOST_ASIO_VARIADIC_GENERATE(BOOST_ASIO_PRIVATE_REDIRECT_ERROR_DEF)
+#undef BOOST_ASIO_PRIVATE_REDIRECT_ERROR_DEF
+
+#  endif // defined(BOOST_ASIO_HAS_NOEXCEPT_FUNCTION_TYPE)
+# endif // defined(BOOST_ASIO_HAS_REF_QUALIFIED_FUNCTIONS)
 #endif // defined(BOOST_ASIO_HAS_VARIADIC_TEMPLATES)
 
 } // namespace detail
