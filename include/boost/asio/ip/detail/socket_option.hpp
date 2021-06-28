@@ -415,6 +415,32 @@ public:
     }
   }
 
+  // Construct with multicast address and address specifying an interface.
+  explicit multicast_request(
+      const boost::asio::ip::address& multicast_address,
+      const boost::asio::ip::address& network_interface)
+      : ipv4_value_(), // Zero-initialisation gives the "any" address.
+      ipv6_value_() // Zero-initialisation gives the "any" address.
+  {
+      if (multicast_address.is_v6())
+      {
+          using namespace std; // For memcpy.
+          boost::asio::ip::address_v6 ipv6_address = multicast_address.to_v6();
+          boost::asio::ip::address_v6::bytes_type bytes = ipv6_address.to_bytes();
+          memcpy(ipv6_value_.ipv6mr_multiaddr.s6_addr, bytes.data(), 16);
+          ipv6_value_.ipv6mr_interface = network_interface.to_v6().scope_id();
+      }
+      else
+      {
+          ipv4_value_.imr_multiaddr.s_addr =
+              boost::asio::detail::socket_ops::host_to_network_long(
+              multicast_address.to_v4().to_ulong());
+          ipv4_value_.imr_interface.s_addr =
+              boost::asio::detail::socket_ops::host_to_network_long(
+              network_interface.to_v4().to_ulong());
+      }
+  }
+
   // Construct with multicast address and IPv4 address specifying an interface.
   explicit multicast_request(const address_v4& multicast_address,
       const address_v4& network_interface = address_v4::any())
