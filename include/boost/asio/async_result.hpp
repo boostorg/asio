@@ -40,6 +40,38 @@ struct is_completion_signature<R(Args...)> : true_type
 {
 };
 
+#if defined(BOOST_ASIO_HAS_REF_QUALIFIED_FUNCTIONS)
+
+template <typename R, typename... Args>
+struct is_completion_signature<R(Args...) &> : true_type
+{
+};
+
+template <typename R, typename... Args>
+struct is_completion_signature<R(Args...) &&> : true_type
+{
+};
+
+# if defined(BOOST_ASIO_HAS_NOEXCEPT_FUNCTION_TYPE)
+
+template <typename R, typename... Args>
+struct is_completion_signature<R(Args...) noexcept> : true_type
+{
+};
+
+template <typename R, typename... Args>
+struct is_completion_signature<R(Args...) & noexcept> : true_type
+{
+};
+
+template <typename R, typename... Args>
+struct is_completion_signature<R(Args...) && noexcept> : true_type
+{
+};
+
+# endif // defined(BOOST_ASIO_HAS_NOEXCEPT_FUNCTION_TYPE)
+#endif // defined(BOOST_ASIO_HAS_REF_QUALIFIED_FUNCTIONS)
+
 template <typename... T>
 struct are_completion_signatures : false_type
 {
@@ -76,11 +108,48 @@ struct is_completion_handler_for<T, R(Args...)>
 {
 };
 
-template <typename T, typename R, typename... Args, typename... Signatures>
-struct is_completion_handler_for<T, R(Args...), Signatures...>
+#if defined(BOOST_ASIO_HAS_REF_QUALIFIED_FUNCTIONS)
+
+template <typename T, typename R, typename... Args>
+struct is_completion_handler_for<T, R(Args...) &>
+  : integral_constant<bool, (callable_with<T&, Args...>)>
+{
+};
+
+template <typename T, typename R, typename... Args>
+struct is_completion_handler_for<T, R(Args...) &&>
+  : integral_constant<bool, (callable_with<T&&, Args...>)>
+{
+};
+
+# if defined(BOOST_ASIO_HAS_NOEXCEPT_FUNCTION_TYPE)
+
+template <typename T, typename R, typename... Args>
+struct is_completion_handler_for<T, R(Args...) noexcept>
+  : integral_constant<bool, (callable_with<T, Args...>)>
+{
+};
+
+template <typename T, typename R, typename... Args>
+struct is_completion_handler_for<T, R(Args...) & noexcept>
+  : integral_constant<bool, (callable_with<T&, Args...>)>
+{
+};
+
+template <typename T, typename R, typename... Args>
+struct is_completion_handler_for<T, R(Args...) && noexcept>
+  : integral_constant<bool, (callable_with<T&&, Args...>)>
+{
+};
+
+# endif // defined(BOOST_ASIO_HAS_NOEXCEPT_FUNCTION_TYPE)
+#endif // defined(BOOST_ASIO_HAS_REF_QUALIFIED_FUNCTIONS)
+
+template <typename T, typename Signature0, typename... SignatureN>
+struct is_completion_handler_for<T, Signature0, SignatureN...>
   : integral_constant<bool, (
-      callable_with<T, Args...>
-        && is_completion_handler_for<T, Signatures...>::value)>
+      is_completion_handler_for<T, Signature0>::value
+        && is_completion_handler_for<T, SignatureN...>::value)>
 {
 };
 
@@ -118,6 +187,229 @@ BOOST_ASIO_CONCEPT completion_handler_for =
        //   && defined(BOOST_ASIO_HAS_VARIADIC_TEMPLATES)
        //   && defined(BOOST_ASIO_HAS_DECLTYPE)
 
+namespace detail {
+
+template <typename T>
+struct is_simple_completion_signature : false_type
+{
+};
+
+template <typename T>
+struct simple_completion_signature;
+
+#if defined(BOOST_ASIO_HAS_VARIADIC_TEMPLATES)
+
+template <typename R, typename... Args>
+struct is_simple_completion_signature<R(Args...)> : true_type
+{
+};
+
+template <typename... Signatures>
+struct are_simple_completion_signatures : false_type
+{
+};
+
+template <typename Sig0>
+struct are_simple_completion_signatures<Sig0>
+  : is_simple_completion_signature<Sig0>
+{
+};
+
+template <typename Sig0, typename... SigN>
+struct are_simple_completion_signatures<Sig0, SigN...>
+  : integral_constant<bool, (
+      is_simple_completion_signature<Sig0>::value
+        && are_simple_completion_signatures<SigN...>::value)>
+{
+};
+
+template <typename R, typename... Args>
+struct simple_completion_signature<R(Args...)>
+{
+  typedef R type(Args...);
+};
+
+#if defined(BOOST_ASIO_HAS_REF_QUALIFIED_FUNCTIONS)
+
+template <typename R, typename... Args>
+struct simple_completion_signature<R(Args...) &>
+{
+  typedef R type(Args...);
+};
+
+template <typename R, typename... Args>
+struct simple_completion_signature<R(Args...) &&>
+{
+  typedef R type(Args...);
+};
+
+# if defined(BOOST_ASIO_HAS_NOEXCEPT_FUNCTION_TYPE)
+
+template <typename R, typename... Args>
+struct simple_completion_signature<R(Args...) noexcept>
+{
+  typedef R type(Args...);
+};
+
+template <typename R, typename... Args>
+struct simple_completion_signature<R(Args...) & noexcept>
+{
+  typedef R type(Args...);
+};
+
+template <typename R, typename... Args>
+struct simple_completion_signature<R(Args...) && noexcept>
+{
+  typedef R type(Args...);
+};
+
+# endif // defined(BOOST_ASIO_HAS_NOEXCEPT_FUNCTION_TYPE)
+#endif // defined(BOOST_ASIO_HAS_REF_QUALIFIED_FUNCTIONS)
+
+#else // defined(BOOST_ASIO_HAS_VARIADIC_TEMPLATES)
+
+template <typename R>
+struct is_simple_completion_signature<R()> : true_type
+{
+};
+
+#define BOOST_ASIO_PRIVATE_SIMPLE_SIG_DEF(n) \
+  template <typename R, BOOST_ASIO_VARIADIC_TPARAMS(n)> \
+  struct is_simple_completion_signature<R(BOOST_ASIO_VARIADIC_TARGS(n))> \
+    : true_type \
+  { \
+  }; \
+  /**/
+  BOOST_ASIO_VARIADIC_GENERATE(BOOST_ASIO_PRIVATE_SIMPLE_SIG_DEF)
+#undef BOOST_ASIO_PRIVATE_SIMPLE_SIG_DEF
+
+template <typename Sig0 = void, typename Sig1 = void,
+    typename Sig2 = void, typename = void>
+struct are_simple_completion_signatures : false_type
+{
+};
+
+template <typename Sig0>
+struct are_simple_completion_signatures<Sig0>
+  : is_simple_completion_signature<Sig0>
+{
+};
+
+template <typename Sig0, typename Sig1>
+struct are_simple_completion_signatures<Sig0, Sig1>
+  : integral_constant<bool,
+      (is_simple_completion_signature<Sig0>::value
+        && is_simple_completion_signature<Sig1>::value)>
+{
+};
+
+template <typename Sig0, typename Sig1, typename Sig2>
+struct are_simple_completion_signatures<Sig0, Sig1, Sig2>
+  : integral_constant<bool,
+      (is_simple_completion_signature<Sig0>::value
+        && is_simple_completion_signature<Sig1>::value
+        && is_simple_completion_signature<Sig2>::value)>
+{
+};
+
+template <typename R>
+struct simple_completion_signature<R()>
+{
+  typedef R type();
+};
+
+#define BOOST_ASIO_PRIVATE_SIMPLE_SIG_DEF(n) \
+  template <typename R, BOOST_ASIO_VARIADIC_TPARAMS(n)> \
+  struct simple_completion_signature<R(BOOST_ASIO_VARIADIC_TARGS(n))> \
+  { \
+    typedef R type(BOOST_ASIO_VARIADIC_TARGS(n)); \
+  }; \
+  /**/
+  BOOST_ASIO_VARIADIC_GENERATE(BOOST_ASIO_PRIVATE_SIMPLE_SIG_DEF)
+#undef BOOST_ASIO_PRIVATE_SIMPLE_SIG_DEF
+
+#if defined(BOOST_ASIO_HAS_REF_QUALIFIED_FUNCTIONS)
+
+template <typename R>
+struct simple_completion_signature<R() &>
+{
+  typedef R type();
+};
+
+template <typename R>
+struct simple_completion_signature<R() &&>
+{
+  typedef R type();
+};
+
+#define BOOST_ASIO_PRIVATE_SIMPLE_SIG_DEF(n) \
+  template <typename R, BOOST_ASIO_VARIADIC_TPARAMS(n)> \
+  struct simple_completion_signature< \
+    R(BOOST_ASIO_VARIADIC_TARGS(n)) &> \
+  { \
+    typedef R type(BOOST_ASIO_VARIADIC_TARGS(n)); \
+  }; \
+  \
+  template <typename R, BOOST_ASIO_VARIADIC_TPARAMS(n)> \
+  struct simple_completion_signature< \
+    R(BOOST_ASIO_VARIADIC_TARGS(n)) &&> \
+  { \
+    typedef R type(BOOST_ASIO_VARIADIC_TARGS(n)); \
+  }; \
+  /**/
+  BOOST_ASIO_VARIADIC_GENERATE(BOOST_ASIO_PRIVATE_SIMPLE_SIG_DEF)
+#undef BOOST_ASIO_PRIVATE_SIMPLE_SIG_DEF
+
+# if defined(BOOST_ASIO_HAS_NOEXCEPT_FUNCTION_TYPE)
+
+template <typename R>
+struct simple_completion_signature<R() noexcept>
+{
+  typedef R type();
+};
+
+template <typename R>
+struct simple_completion_signature<R() & noexcept>
+{
+  typedef R type();
+};
+
+template <typename R>
+struct simple_completion_signature<R() && noexcept>
+{
+  typedef R type();
+};
+
+#define BOOST_ASIO_PRIVATE_SIMPLE_SIG_DEF(n) \
+  template <typename R, BOOST_ASIO_VARIADIC_TPARAMS(n)> \
+  struct simple_completion_signature< \
+    R(BOOST_ASIO_VARIADIC_TARGS(n)) noexcept> \
+  { \
+    typedef R type(BOOST_ASIO_VARIADIC_TARGS(n)); \
+  }; \
+  \
+  template <typename R, BOOST_ASIO_VARIADIC_TPARAMS(n)> \
+  struct simple_completion_signature< \
+    R(BOOST_ASIO_VARIADIC_TARGS(n)) & noexcept> \
+  { \
+    typedef R type(BOOST_ASIO_VARIADIC_TARGS(n)); \
+  }; \
+  \
+  template <typename R, BOOST_ASIO_VARIADIC_TPARAMS(n)> \
+  struct simple_completion_signature< \
+    R(BOOST_ASIO_VARIADIC_TARGS(n)) && noexcept> \
+  { \
+    typedef R type(BOOST_ASIO_VARIADIC_TARGS(n)); \
+  }; \
+  /**/
+  BOOST_ASIO_VARIADIC_GENERATE(BOOST_ASIO_PRIVATE_SIMPLE_SIG_DEF)
+#undef BOOST_ASIO_PRIVATE_SIMPLE_SIG_DEF
+
+# endif // defined(BOOST_ASIO_HAS_NOEXCEPT_FUNCTION_TYPE)
+#endif // defined(BOOST_ASIO_HAS_REF_QUALIFIED_FUNCTIONS)
+
+#endif // defined(BOOST_ASIO_HAS_VARIADIC_TEMPLATES)
+
 #if defined(BOOST_ASIO_HAS_VARIADIC_TEMPLATES) \
   || defined(GENERATING_DOCUMENTATION)
 
@@ -128,6 +420,10 @@ BOOST_ASIO_CONCEPT completion_handler_for =
     BOOST_ASIO_COMPLETION_SIGNATURE... Signatures
 
 # define BOOST_ASIO_COMPLETION_SIGNATURES_TARGS Signatures...
+
+# define BOOST_ASIO_COMPLETION_SIGNATURES_TSIMPLEARGS \
+    typename boost::asio::detail::simple_completion_signature< \
+      Signatures>::type...
 
 #else // defined(BOOST_ASIO_HAS_VARIADIC_TEMPLATES)
       //   || defined(GENERATING_DOCUMENTATION)
@@ -144,64 +440,30 @@ BOOST_ASIO_CONCEPT completion_handler_for =
 
 # define BOOST_ASIO_COMPLETION_SIGNATURES_TARGS Sig0, Sig1, Sig2
 
+# define BOOST_ASIO_COMPLETION_SIGNATURES_TSIMPLEARGS \
+    typename ::boost::asio::detail::simple_completion_signature<Sig0>::type, \
+    typename ::boost::asio::detail::simple_completion_signature<Sig1>::type, \
+    typename ::boost::asio::detail::simple_completion_signature<Sig2>::type
+
 #endif // defined(BOOST_ASIO_HAS_VARIADIC_TEMPLATES)
        //   || defined(GENERATING_DOCUMENTATION)
 
-/// An interface for customising the behaviour of an initiating function.
-/**
- * The async_result traits class is used for determining:
- *
- * @li the concrete completion handler type to be called at the end of the
- * asynchronous operation;
- *
- * @li the initiating function return type; and
- *
- * @li how the return value of the initiating function is obtained.
- *
- * The trait allows the handler and return types to be determined at the point
- * where the specific completion handler signature is known.
- *
- * This template may be specialised for user-defined completion token types.
- * The primary template assumes that the CompletionToken is the completion
- * handler.
- */
 template <typename CompletionToken, BOOST_ASIO_COMPLETION_SIGNATURES_TPARAMS>
-class async_result
+class completion_handler_async_result
 {
 public:
-  /// The concrete completion handler type for the specific signature.
   typedef CompletionToken completion_handler_type;
-
-  /// The return type of the initiating function.
   typedef void return_type;
 
-  /// Construct an async result from a given handler.
-  /**
-   * When using a specalised async_result, the constructor has an opportunity
-   * to initialise some state associated with the completion handler, which is
-   * then returned from the initiating function.
-   */
-  explicit async_result(completion_handler_type& h)
+  explicit completion_handler_async_result(completion_handler_type&)
   {
-    (void)h;
   }
 
-  /// Obtain the value to be returned from the initiating function.
   return_type get()
   {
   }
 
-#if defined(GENERATING_DOCUMENTATION)
-
-  /// Initiate the asynchronous operation that will produce the result, and
-  /// obtain the value to be returned from the initiating function.
-  template <typename Initiation, typename RawCompletionToken, typename... Args>
-  static return_type initiate(
-      BOOST_ASIO_MOVE_ARG(Initiation) initiation,
-      BOOST_ASIO_MOVE_ARG(RawCompletionToken) token,
-      BOOST_ASIO_MOVE_ARG(Args)... args);
-
-#elif defined(BOOST_ASIO_HAS_VARIADIC_TEMPLATES)
+#if defined(BOOST_ASIO_HAS_VARIADIC_TEMPLATES)
 
   template <typename Initiation,
       BOOST_ASIO_COMPLETION_HANDLER_FOR(Signatures...) RawCompletionToken,
@@ -247,11 +509,120 @@ public:
 #endif // defined(BOOST_ASIO_HAS_VARIADIC_TEMPLATES)
 
 private:
+  completion_handler_async_result(
+      const completion_handler_async_result&) BOOST_ASIO_DELETED;
+  completion_handler_async_result& operator=(
+      const completion_handler_async_result&) BOOST_ASIO_DELETED;
+};
+
+} // namespace detail
+
+#if defined(GENERATING_DOCUMENTATION)
+
+/// An interface for customising the behaviour of an initiating function.
+/**
+ * The async_result traits class is used for determining:
+ *
+ * @li the concrete completion handler type to be called at the end of the
+ * asynchronous operation;
+ *
+ * @li the initiating function return type; and
+ *
+ * @li how the return value of the initiating function is obtained.
+ *
+ * The trait allows the handler and return types to be determined at the point
+ * where the specific completion handler signature is known.
+ *
+ * This template may be specialised for user-defined completion token types.
+ * The primary template assumes that the CompletionToken is the completion
+ * handler.
+ */
+template <typename CompletionToken, BOOST_ASIO_COMPLETION_SIGNATURES_TPARAMS>
+class async_result
+{
+public:
+  /// The concrete completion handler type for the specific signature.
+  typedef CompletionToken completion_handler_type;
+
+  /// The return type of the initiating function.
+  typedef void return_type;
+
+  /// Construct an async result from a given handler.
+  /**
+   * When using a specalised async_result, the constructor has an opportunity
+   * to initialise some state associated with the completion handler, which is
+   * then returned from the initiating function.
+   */
+  explicit async_result(completion_handler_type& h);
+
+  /// Obtain the value to be returned from the initiating function.
+  return_type get();
+
+  /// Initiate the asynchronous operation that will produce the result, and
+  /// obtain the value to be returned from the initiating function.
+  template <typename Initiation, typename RawCompletionToken, typename... Args>
+  static return_type initiate(
+      BOOST_ASIO_MOVE_ARG(Initiation) initiation,
+      BOOST_ASIO_MOVE_ARG(RawCompletionToken) token,
+      BOOST_ASIO_MOVE_ARG(Args)... args);
+
+private:
   async_result(const async_result&) BOOST_ASIO_DELETED;
   async_result& operator=(const async_result&) BOOST_ASIO_DELETED;
 };
 
-#if !defined(GENERATING_DOCUMENTATION)
+#else // defined(GENERATING_DOCUMENTATION)
+
+#if defined(BOOST_ASIO_HAS_REF_QUALIFIED_FUNCTIONS)
+
+template <typename CompletionToken, BOOST_ASIO_COMPLETION_SIGNATURES_TPARAMS>
+class async_result :
+  public conditional<
+      detail::are_simple_completion_signatures<
+        BOOST_ASIO_COMPLETION_SIGNATURES_TARGS>::value,
+      detail::completion_handler_async_result<
+        CompletionToken, BOOST_ASIO_COMPLETION_SIGNATURES_TARGS>,
+      async_result<CompletionToken,
+        BOOST_ASIO_COMPLETION_SIGNATURES_TSIMPLEARGS>
+    >::type
+{
+public:
+  typedef typename conditional<
+      detail::are_simple_completion_signatures<
+        BOOST_ASIO_COMPLETION_SIGNATURES_TARGS>::value,
+      detail::completion_handler_async_result<
+        CompletionToken, BOOST_ASIO_COMPLETION_SIGNATURES_TARGS>,
+      async_result<CompletionToken,
+        BOOST_ASIO_COMPLETION_SIGNATURES_TSIMPLEARGS>
+    >::type base_type;
+
+  using base_type::base_type;
+
+private:
+  async_result(const async_result&) BOOST_ASIO_DELETED;
+  async_result& operator=(const async_result&) BOOST_ASIO_DELETED;
+};
+
+#else // defined(BOOST_ASIO_HAS_REF_QUALIFIED_FUNCTIONS)
+
+template <typename CompletionToken, BOOST_ASIO_COMPLETION_SIGNATURES_TPARAMS>
+class async_result :
+  public detail::completion_handler_async_result<
+    CompletionToken, BOOST_ASIO_COMPLETION_SIGNATURES_TARGS>
+{
+public:
+  explicit async_result(CompletionToken& h)
+    : detail::completion_handler_async_result<
+        CompletionToken, BOOST_ASIO_COMPLETION_SIGNATURES_TARGS>(h)
+  {
+  }
+
+private:
+  async_result(const async_result&) BOOST_ASIO_DELETED;
+  async_result& operator=(const async_result&) BOOST_ASIO_DELETED;
+};
+
+#endif // defined(BOOST_ASIO_HAS_REF_QUALIFIED_FUNCTIONS)
 
 template <BOOST_ASIO_COMPLETION_SIGNATURES_TSPECPARAMS>
 class async_result<void, BOOST_ASIO_COMPLETION_SIGNATURES_TARGS>
@@ -259,7 +630,7 @@ class async_result<void, BOOST_ASIO_COMPLETION_SIGNATURES_TARGS>
   // Empty.
 };
 
-#endif // !defined(GENERATING_DOCUMENTATION)
+#endif // defined(GENERATING_DOCUMENTATION)
 
 /// Helper template to deduce the handler type from a CompletionToken, capture
 /// a local copy of the handler, and then create an async_result for the
