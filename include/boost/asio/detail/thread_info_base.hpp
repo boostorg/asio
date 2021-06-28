@@ -69,7 +69,21 @@ public:
     };
   };
 
-  enum { max_mem_index = executor_function_tag::end_mem_index };
+  struct cancellation_signal_tag
+  {
+    enum
+    {
+      begin_mem_index = executor_function_tag::end_mem_index,
+#ifdef BOOST_ASIO_RECYCLING_ALLOCATOR_CACHE_SIZE
+      end_mem_index =
+        begin_mem_index + BOOST_ASIO_RECYCLING_ALLOCATOR_CACHE_SIZE
+#else // BOOST_ASIO_RECYCLING_ALLOCATOR_CACHE_SIZE
+      end_mem_index = begin_mem_index + 2
+#endif // BOOST_ASIO_RECYCLING_ALLOCATOR_CACHE_SIZE
+    };
+  };
+
+  enum { max_mem_index = cancellation_signal_tag::end_mem_index };
 
   thread_info_base()
 #if defined(BOOST_ASIO_HAS_STD_EXCEPTION_PTR) \
