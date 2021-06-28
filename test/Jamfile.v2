@@ -68,6 +68,8 @@ test-suite "asio" :
   [ link basic_streambuf.cpp : $(USE_SELECT) : basic_streambuf_select ]
   [ link basic_waitable_timer.cpp ]
   [ link basic_waitable_timer.cpp : $(USE_SELECT) : basic_waitable_timer_select ]
+  [ run bind_cancellation_slot.cpp ]
+  [ run bind_cancellation_slot.cpp : : : $(USE_SELECT) : bind_cancellation_slot_select ]
   [ run buffer.cpp ]
   [ run buffer.cpp : : : $(USE_SELECT) : buffer_select ]
   [ run buffered_read_stream.cpp ]

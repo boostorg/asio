@@ -37,6 +37,7 @@
 #include <boost/asio/basic_stream_socket.hpp>
 #include <boost/asio/basic_streambuf.hpp>
 #include <boost/asio/basic_waitable_timer.hpp>
+#include <boost/asio/bind_cancellation_slot.hpp>
 #include <boost/asio/bind_executor.hpp>
 #include <boost/asio/buffer.hpp>
 #include <boost/asio/buffered_read_stream_fwd.hpp>
