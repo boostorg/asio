@@ -179,6 +179,7 @@ struct async_result<
       (async_initiate<CompletionToken, signature>(
         declval<init_wrapper<typename decay<Initiation>::type> >(),
         declval<CompletionToken&>(),
+        declval<std::tuple<Values...> >(),
         declval<BOOST_ASIO_MOVE_ARG(Args)>()...)))
   initiate(
       BOOST_ASIO_MOVE_ARG(Initiation) initiation,
