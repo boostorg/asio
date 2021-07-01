@@ -21,6 +21,8 @@
 #include <utility>
 #include <boost/asio/cancellation_type.hpp>
 #include <boost/asio/detail/cstddef.hpp>
+#include <boost/asio/detail/type_traits.hpp>
+#include <boost/asio/detail/variadic_templates.hpp>
 
 #include <boost/asio/detail/push_options.hpp>
 
