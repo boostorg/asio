@@ -71,7 +71,8 @@ public:
   {
   }
 
-  BOOST_ASIO_CONSTEXPR cancellation_type_t operator()() const BOOST_ASIO_NOEXCEPT
+  BOOST_ASIO_CONSTEXPR cancellation_type_t
+  operator()() const BOOST_ASIO_NOEXCEPT
   {
     return cancel_type_;
   }
@@ -114,7 +115,8 @@ public:
   {
   }
 
-  BOOST_ASIO_CONSTEXPR cancellation_type_t operator()() const BOOST_ASIO_NOEXCEPT
+  BOOST_ASIO_CONSTEXPR cancellation_type_t
+  operator()() const BOOST_ASIO_NOEXCEPT
   {
     return cancellation_type::none;
   }
