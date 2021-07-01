@@ -16,7 +16,10 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include <boost/asio/detail/config.hpp>
+#include <exception>
 #include <boost/asio/cancellation_type.hpp>
+#include <boost/system/error_code.hpp>
+#include <boost/asio/detail/type_traits.hpp>
 
 #include <boost/asio/detail/push_options.hpp>
 
@@ -79,7 +82,7 @@ public:
 
   template <typename E, typename... Args>
   BOOST_ASIO_CONSTEXPR typename constraint<
-    !is_same<typename decay<E>::type, error_code>::value
+    !is_same<typename decay<E>::type, boost::system::error_code>::value
       && !is_same<typename decay<E>::type, std::exception_ptr>::value,
     cancellation_type_t
   >::type operator()(const E&, Args&&...) const BOOST_ASIO_NOEXCEPT
@@ -89,7 +92,7 @@ public:
 
   template <typename E, typename... Args>
   BOOST_ASIO_CONSTEXPR typename constraint<
-      is_same<typename decay<E>::type, error_code>::value
+      is_same<typename decay<E>::type, boost::system::error_code>::value
         || is_same<typename decay<E>::type, std::exception_ptr>::value,
       cancellation_type_t
   >::type operator()(const E& e, Args&&...) const BOOST_ASIO_NOEXCEPT
@@ -123,7 +126,7 @@ public:
 
   template <typename E, typename... Args>
   BOOST_ASIO_CONSTEXPR typename constraint<
-    !is_same<typename decay<E>::type, error_code>::value
+    !is_same<typename decay<E>::type, boost::system::error_code>::value
       && !is_same<typename decay<E>::type, std::exception_ptr>::value,
     cancellation_type_t
   >::type operator()(const E&, Args&&...) const BOOST_ASIO_NOEXCEPT
@@ -133,7 +136,7 @@ public:
 
   template <typename E, typename... Args>
   BOOST_ASIO_CONSTEXPR typename constraint<
-      is_same<typename decay<E>::type, error_code>::value
+      is_same<typename decay<E>::type, boost::system::error_code>::value
         || is_same<typename decay<E>::type, std::exception_ptr>::value,
       cancellation_type_t
   >::type operator()(const E& e, Args&&...) const BOOST_ASIO_NOEXCEPT
