@@ -191,6 +191,10 @@
           <simplelist type="vert" columns="1">
             <member><link linkend="boost_asio.reference.any_io_executor">any_io_executor</link></member>
             <member><link linkend="boost_asio.reference.bad_executor">bad_executor</link></member>
+            <member><link linkend="boost_asio.reference.cancellation_signal">cancellation_signal</link></member>
+            <member><link linkend="boost_asio.reference.cancellation_slot">cancellation_slot</link></member>
+            <member><link linkend="boost_asio.reference.cancellation_state">cancellation_state</link></member>
+            <member><link linkend="boost_asio.reference.cancellation_type">cancellation_type</link></member>
             <member><link linkend="boost_asio.reference.coroutine">coroutine</link></member>
             <member><link linkend="boost_asio.reference.detached_t">detached_t</link></member>
             <member><link linkend="boost_asio.reference.execution_context">execution_context</link></member>
@@ -225,11 +229,13 @@
             <member><link linkend="boost_asio.reference.asio_handler_is_continuation">asio_handler_is_continuation</link></member>
             <member><link linkend="boost_asio.reference.async_compose">async_compose</link></member>
             <member><link linkend="boost_asio.reference.async_initiate">async_initiate</link></member>
+            <member><link linkend="boost_asio.reference.bind_cancellation_slot">bind_cancellation_slot</link></member>
             <member><link linkend="boost_asio.reference.bind_executor">bind_executor</link></member>
             <member><link linkend="boost_asio.reference.co_spawn">co_spawn</link></member>
             <member><link linkend="boost_asio.reference.dispatch">dispatch</link></member>
             <member><link linkend="boost_asio.reference.defer">defer</link></member>
             <member><link linkend="boost_asio.reference.get_associated_allocator">get_associated_allocator</link></member>
+            <member><link linkend="boost_asio.reference.get_associated_cancellation_slot">get_associated_cancellation_slot</link></member>
             <member><link linkend="boost_asio.reference.get_associated_executor">get_associated_executor</link></member>
             <member><link linkend="boost_asio.reference.execution_context.has_service">has_service</link></member>
             <member><link linkend="boost_asio.reference.make_strand">make_strand</link></member>
@@ -237,6 +243,7 @@
             <member><link linkend="boost_asio.reference.post">post</link></member>
             <member><link linkend="boost_asio.reference.redirect_error">redirect_error</link></member>
             <member><link linkend="boost_asio.reference.spawn">spawn</link></member>
+            <member><link linkend="boost_asio.reference.this_coro__reset_cancellation_state">this_coro::reset_cancellation_state</link></member>
             <member><link linkend="boost_asio.reference.execution_context.use_service">use_service</link></member>
           </simplelist>
         </entry>
@@ -248,6 +255,8 @@
             <member><link linkend="boost_asio.reference.basic_io_object">basic_io_object</link></member>
             <member><link linkend="boost_asio.reference.basic_system_executor">basic_system_executor</link></member>
             <member><link linkend="boost_asio.reference.basic_yield_context">basic_yield_context</link></member>
+            <member><link linkend="boost_asio.reference.cancellation_filter">cancellation_filter</link></member>
+            <member><link linkend="boost_asio.reference.cancellation_slot_binder">cancellation_slot_binder</link></member>
             <member><link linkend="boost_asio.reference.executor_binder">executor_binder</link></member>
             <member><link linkend="boost_asio.reference.executor_work_guard">executor_work_guard</link></member>
             <member><link linkend="boost_asio.reference.experimental__as_single_t">experimental::as_single_t</link></member>
@@ -263,6 +272,7 @@
             <member><link linkend="boost_asio.reference.detached">detached</link></member>
             <member><link linkend="boost_asio.reference.executor_arg">executor_arg</link></member>
             <member><link linkend="boost_asio.reference.experimental__as_single">experimental::as_single</link></member>
+            <member><link linkend="boost_asio.reference.this_coro__cancellation_state">this_coro::cancellation_state</link></member>
             <member><link linkend="boost_asio.reference.this_coro__executor">this_coro::executor</link></member>
             <member><link linkend="boost_asio.reference.use_future">use_future</link></member>
             <member><link linkend="boost_asio.reference.use_awaitable">use_awaitable</link></member>
@@ -288,7 +298,9 @@
           <bridgehead renderas="sect3">Type Traits</bridgehead>
           <simplelist type="vert" columns="1">
             <member><link linkend="boost_asio.reference.associated_allocator">associated_allocator</link></member>
+            <member><link linkend="boost_asio.reference.associated_cancellation_slot">associated_cancellation_slot</link></member>
             <member><link linkend="boost_asio.reference.associated_executor">associated_executor</link></member>
+            <member><link linkend="boost_asio.reference.associator">associator</link></member>
             <member><link linkend="boost_asio.reference.async_result">async_result</link></member>
             <member><link linkend="boost_asio.reference.default_completion_token">default_completion_token</link></member>
             <member><link linkend="boost_asio.reference.is_executor">is_executor</link></member>
@@ -297,6 +309,8 @@
           <bridgehead renderas="sect3">Type Requirements</bridgehead>
           <simplelist type="vert" columns="1">
             <member><link linkend="boost_asio.reference.asynchronous_operations">Asynchronous operations</link></member>
+            <member><link linkend="boost_asio.reference.CancellationHandler">CancellationHandler</link></member>
+            <member><link linkend="boost_asio.reference.CancellationSlot">CancellationSlot</link></member>
             <member><link linkend="boost_asio.reference.CompletionHandler">CompletionHandler</link></member>
             <member><link linkend="boost_asio.reference.ExecutionContext">ExecutionContext</link></member>
             <member><link linkend="boost_asio.reference.Executor1">Executor</link></member>

@@ -31,6 +31,27 @@ with Boost.Asio's needs.
     [`BOOST_ASIO_DISABLE_ALIAS_TEMPLATES`]
   ]
   [
+    [`BOOST_ASIO_HAS_ALIGNED_NEW`]
+    [
+      Support for operator new with alignment argument.
+    ]
+    [`BOOST_ASIO_DISABLE_ALIGNED_NEW`]
+  ]
+  [
+    [`BOOST_ASIO_HAS_ALIGNOF`]
+    [
+      Support for the alignof operator.
+    ]
+    [`BOOST_ASIO_DISABLE_ALIGNOF`]
+  ]
+  [
+    [`BOOST_ASIO_HAS_BOOST_ALIGN`]
+    [
+      Boost align library.
+    ]
+    [`BOOST_ASIO_DISABLE_BOOST_ALIGN`]
+  ]
+  [
     [`BOOST_ASIO_HAS_BOOST_ARRAY`]
     [
       Boost array library.
@@ -434,6 +455,13 @@ with Boost.Asio's needs.
     [`BOOST_ASIO_DISABLE_STD_FUTURE`]
   ]
   [
+    [`BOOST_ASIO_HAS_STD_HASH`]
+    [
+      Standard library support for std::hash.
+    ]
+    [`BOOST_ASIO_DISABLE_STD_HASH`]
+  ]
+  [
     [`BOOST_ASIO_HAS_STD_INVOKE_RESULT`]
     [
       Standard library has invoke_result (which supersedes result_of).
@@ -460,6 +488,13 @@ with Boost.Asio's needs.
       Standard library support for std::nested_exception.
     ]
     [`BOOST_ASIO_DISABLE_STD_NESTED_EXCEPTION`]
+  ]
+  [
+    [`BOOST_ASIO_HAS_STD_REFERENCE_WRAPPER`]
+    [
+      Standard library support for the reference_wrapper class.
+    ]
+    [`BOOST_ASIO_DISABLE_STD_REFERENCE_WRAPPER`]
   ]
   [
     [`BOOST_ASIO_HAS_STD_SHARED_PTR`]

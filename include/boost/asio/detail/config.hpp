@@ -12,6 +12,7 @@
 #define BOOST_ASIO_DETAIL_CONFIG_HPP
 
 #if defined(BOOST_ASIO_STANDALONE)
+# define BOOST_ASIO_DISABLE_BOOST_ALIGN 1
 # define BOOST_ASIO_DISABLE_BOOST_ARRAY 1
 # define BOOST_ASIO_DISABLE_BOOST_ASSERT 1
 # define BOOST_ASIO_DISABLE_BOOST_BIND 1
@@ -333,6 +334,25 @@
 # endif // defined(BOOST_ASIO_HAS_NOEXCEPT)
 #endif // !defined(BOOST_ASIO_NOEXCEPT_IF)
 
+// Support noexcept on function types on compilers known to allow it.
+#if !defined(BOOST_ASIO_HAS_NOEXCEPT_FUNCTION_TYPE)
+# if !defined(BOOST_ASIO_DISABLE_NOEXCEPT_FUNCTION_TYPE)
+#  if defined(__clang__)
+#   if (__cplusplus >= 202002)
+#    define BOOST_ASIO_HAS_NOEXCEPT_FUNCTION_TYPE 1
+#   endif // (__cplusplus >= 202002)
+#  elif defined(__GNUC__)
+#   if (__cplusplus >= 202002)
+#    define BOOST_ASIO_HAS_NOEXCEPT_FUNCTION_TYPE 1
+#   endif // (__cplusplus >= 202002)
+#  elif defined(BOOST_ASIO_MSVC)
+#   if (_MSC_VER >= 1900 && _MSVC_LANG >= 202002)
+#    define BOOST_ASIO_HAS_NOEXCEPT_FUNCTION_TYPE 1
+#   endif // (_MSC_VER >= 1900 && _MSVC_LANG >= 202002)
+#  endif // defined(BOOST_ASIO_MSVC)
+# endif // !defined(BOOST_ASIO_DISABLE_NOEXCEPT_FUNCTION_TYPE)
+#endif // !defined(BOOST_ASIO_HAS_NOEXCEPT_FUNCTION_TYPE)
+
 // Support automatic type deduction on compilers known to support it.
 #if !defined(BOOST_ASIO_HAS_DECLTYPE)
 # if !defined(BOOST_ASIO_DISABLE_DECLTYPE)
@@ -408,6 +428,19 @@
 #  endif // defined(BOOST_ASIO_MSVC)
 # endif // !defined(BOOST_ASIO_DISABLE_DEFAULT_FUNCTION_TEMPLATE_ARGUMENTS)
 #endif // !defined(BOOST_ASIO_HAS_DEFAULT_FUNCTION_TEMPLATE_ARGUMENTS)
+
+// Support enum classes on compilers known to allow them.
+#if !defined(BOOST_ASIO_HAS_ENUM_CLASS)
+# if !defined(BOOST_ASIO_DISABLE_ENUM_CLASS)
+#  if (__cplusplus >= 201103)
+#   define BOOST_ASIO_HAS_ENUM_CLASS 1
+#  elif defined(BOOST_ASIO_MSVC)
+#   if (_MSC_VER >= 1900 && _MSVC_LANG >= 201103)
+#    define BOOST_ASIO_HAS_ENUM_CLASS 1
+#   endif // (_MSC_VER >= 1900 && _MSVC_LANG >= 201103)
+#  endif // defined(BOOST_ASIO_MSVC)
+# endif // !defined(BOOST_ASIO_DISABLE_ENUM_CLASS)
+#endif // !defined(BOOST_ASIO_HAS_ENUM_CLASS)
 
 // Support concepts on compilers known to allow them.
 #if !defined(BOOST_ASIO_HAS_CONCEPTS)
@@ -544,6 +577,52 @@
 #  define BOOST_ASIO_RVALUE_REF_QUAL
 # endif // !defined(BOOST_ASIO_RVALUE_REF_QUAL)
 #endif // defined(BOOST_ASIO_HAS_REF_QUALIFIED_FUNCTIONS)
+
+// Support for the alignof operator.
+#if !defined(BOOST_ASIO_HAS_ALIGNOF)
+# if !defined(BOOST_ASIO_DISABLE_ALIGNOF)
+#  if (__cplusplus >= 201103)
+#   define BOOST_ASIO_HAS_ALIGNOF 1
+#  endif // (__cplusplus >= 201103)
+# endif // !defined(BOOST_ASIO_DISABLE_ALIGNOF)
+#endif // !defined(BOOST_ASIO_HAS_ALIGNOF)
+
+#if defined(BOOST_ASIO_HAS_ALIGNOF)
+# define BOOST_ASIO_ALIGNOF(T) alignof(T)
+# if defined(__GNUC__)
+#  if ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 9)) || (__GNUC__ > 4)
+#   define BOOST_ASIO_DEFAULT_ALIGN alignof(std::max_align_t)
+#  else // ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 9)) || (__GNUC__ > 4)
+#   define BOOST_ASIO_DEFAULT_ALIGN alignof(max_align_t)
+#  endif // ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 9)) || (__GNUC__ > 4)
+# else // defined(__GNUC__)
+#  define BOOST_ASIO_DEFAULT_ALIGN alignof(std::max_align_t)
+# endif // defined(__GNUC__)
+#else // defined(BOOST_ASIO_HAS_ALIGNOF)
+# define BOOST_ASIO_ALIGNOF(T) 1
+# define BOOST_ASIO_DEFAULT_ALIGN 1
+#endif // defined(BOOST_ASIO_HAS_ALIGNOF)
+
+// Standard library support for aligned allocation.
+#if !defined(BOOST_ASIO_HAS_STD_ALIGNED_ALLOC)
+# if !defined(BOOST_ASIO_DISABLE_STD_ALIGNED_ALLOC)
+#  if (__cplusplus >= 201703)
+#   if defined(__clang__)
+#    if defined(BOOST_ASIO_HAS_CLANG_LIBCXX)
+#     if (_LIBCPP_STD_VER > 14) && defined(_LIBCPP_HAS_ALIGNED_ALLOC)
+#      define BOOST_ASIO_HAS_STD_ALIGNED_ALLOC 1
+#     endif // (_LIBCPP_STD_VER > 14) && defined(_LIBCPP_HAS_ALIGNED_ALLOC)
+#    elif defined(_GLIBCXX_HAVE_ALIGNED_ALLOC)
+#     define BOOST_ASIO_HAS_STD_ALIGNED_ALLOC 1
+#    endif // defined(_GLIBCXX_HAVE_ALIGNED_ALLOC)
+#   elif defined(__GNUC__)
+#    if defined(_GLIBCXX_HAVE_ALIGNED_ALLOC)
+#     define BOOST_ASIO_HAS_STD_ALIGNED_ALLOC 1
+#    endif // defined(_GLIBCXX_HAVE_ALIGNED_ALLOC)
+#   endif // defined(__GNUC__)
+#  endif // (__cplusplus >= 201703)
+# endif // !defined(BOOST_ASIO_DISABLE_STD_ALIGNED_ALLOC)
+#endif // !defined(BOOST_ASIO_HAS_STD_ALIGNED_ALLOC)
 
 // Standard library support for system errors.
 # if !defined(BOOST_ASIO_DISABLE_STD_SYSTEM_ERROR)
@@ -810,6 +889,31 @@
 #  endif // defined(BOOST_ASIO_MSVC)
 # endif // !defined(BOOST_ASIO_DISABLE_STD_FUNCTION)
 #endif // !defined(BOOST_ASIO_HAS_STD_FUNCTION)
+
+// Standard library support for the reference_wrapper class.
+#if !defined(BOOST_ASIO_HAS_STD_REFERENCE_WRAPPER)
+# if !defined(BOOST_ASIO_DISABLE_STD_REFERENCE_WRAPPER)
+#  if defined(__clang__)
+#   if defined(BOOST_ASIO_HAS_CLANG_LIBCXX)
+#    define BOOST_ASIO_HAS_STD_REFERENCE_WRAPPER 1
+#   elif (__cplusplus >= 201103)
+#    define BOOST_ASIO_HAS_STD_REFERENCE_WRAPPER 1
+#   endif // (__cplusplus >= 201103)
+#  endif // defined(__clang__)
+#  if defined(__GNUC__)
+#   if ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 5)) || (__GNUC__ > 4)
+#    if (__cplusplus >= 201103) || defined(__GXX_EXPERIMENTAL_CXX0X__)
+#     define BOOST_ASIO_HAS_STD_REFERENCE_WRAPPER 1
+#    endif // (__cplusplus >= 201103) || defined(__GXX_EXPERIMENTAL_CXX0X__)
+#   endif // ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 5)) || (__GNUC__ > 4)
+#  endif // defined(__GNUC__)
+#  if defined(BOOST_ASIO_MSVC)
+#   if (_MSC_VER >= 1700)
+#    define BOOST_ASIO_HAS_STD_REFERENCE_WRAPPER 1
+#   endif // (_MSC_VER >= 1700)
+#  endif // defined(BOOST_ASIO_MSVC)
+# endif // !defined(BOOST_ASIO_DISABLE_STD_REFERENCE_WRAPPER)
+#endif // !defined(BOOST_ASIO_HAS_STD_REFERENCE_WRAPPER)
 
 // Standard library support for type traits.
 #if !defined(BOOST_ASIO_HAS_STD_TYPE_TRAITS)
@@ -1599,6 +1703,15 @@
     static const type assignment
 # endif // !defined(BOOST_ASIO_DISABLE_BOOST_STATIC_CONSTANT)
 #endif // !defined(BOOST_ASIO_STATIC_CONSTANT)
+
+// Boost align library.
+#if !defined(BOOST_ASIO_HAS_BOOST_ALIGN)
+# if !defined(BOOST_ASIO_DISABLE_BOOST_ALIGN)
+#  if defined(BOOST_ASIO_HAS_BOOST_CONFIG) && (BOOST_VERSION >= 105600)
+#   define BOOST_ASIO_HAS_BOOST_ALIGN 1
+#  endif // defined(BOOST_ASIO_HAS_BOOST_CONFIG) && (BOOST_VERSION >= 105600)
+# endif // !defined(BOOST_ASIO_DISABLE_BOOST_ALIGN)
+#endif // !defined(BOOST_ASIO_HAS_BOOST_ALIGN)
 
 // Boost array library.
 #if !defined(BOOST_ASIO_HAS_BOOST_ARRAY)
