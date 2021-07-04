@@ -20,7 +20,9 @@
 #include <memory>
 #include <new>
 #include <tuple>
+#include <boost/asio/associated_cancellation_slot.hpp>
 #include <boost/asio/detail/type_traits.hpp>
+#include <boost/asio/dispatch.hpp>
 
 #include <boost/asio/detail/push_options.hpp>
 
@@ -68,6 +70,7 @@ private:
   union u
   {
     u() {}
+    ~u() {}
     char c_;
     T value_;
   } u_;
