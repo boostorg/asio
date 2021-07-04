@@ -24,6 +24,7 @@
 #include <boost/asio/co_spawn.hpp>
 #include <boost/asio/detached.hpp>
 #include <boost/asio/io_context.hpp>
+#include <boost/asio/post.hpp>
 #include "../unit_test.hpp"
 
 using boost::asio::awaitable;
@@ -38,6 +39,12 @@ awaitable<void> void_ex()
 {
   throw std::runtime_error("exception");
   co_return;
+}
+
+awaitable<void> void_post_loop()
+{
+  for (;;)
+    co_await boost::asio::post(boost::asio::use_awaitable);
 }
 
 awaitable<int> int_0()
@@ -69,6 +76,10 @@ awaitable<void> do_test_and_awaitable_operator()
 
   co_await (void_ok() && void_ok());
   co_await (void_ok() && void_ok() && void_ok());
+  try { co_await (void_ex() && void_ok()); } catch (...) {}
+  try { co_await (void_ex() && void_ok() && void_ok()); } catch (...) {}
+  try { co_await (void_ex() && void_post_loop()); } catch (...) {}
+  try { co_await (void_ex() && void_ok() && void_post_loop()); } catch (...) {}
 
   i = co_await (void_ok() && int_0());
   BOOST_ASIO_CHECK(i == 0);

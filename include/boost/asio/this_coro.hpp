@@ -76,6 +76,16 @@ reset_cancellation_state(
     BOOST_ASIO_MOVE_ARG(InFilter) in_filter,
     BOOST_ASIO_MOVE_ARG(OutFilter) out_filter);
 
+/// Returns an awaitable object that may be used to determine whether the
+/// coroutine throws if trying to suspend when it has been cancelled.
+BOOST_ASIO_NODISCARD BOOST_ASIO_CONSTEXPR unspecified
+throw_if_cancelled();
+
+/// Returns an awaitable object that may be used to specify whether the
+/// coroutine throws if trying to suspend when it has been cancelled.
+BOOST_ASIO_NODISCARD BOOST_ASIO_CONSTEXPR unspecified
+throw_if_cancelled(bool value);
+
 #else // defined(GENERATING_DOCUMENTATION)
 
 struct reset_cancellation_state_0_t
@@ -141,6 +151,35 @@ reset_cancellation_state(
       typename decay<OutFilter>::type>(
         BOOST_ASIO_MOVE_CAST(InFilter)(in_filter),
         BOOST_ASIO_MOVE_CAST(OutFilter)(out_filter));
+}
+
+struct throw_if_cancelled_0_t
+{
+  BOOST_ASIO_CONSTEXPR throw_if_cancelled_0_t()
+  {
+  }
+};
+
+BOOST_ASIO_NODISCARD inline BOOST_ASIO_CONSTEXPR throw_if_cancelled_0_t
+throw_if_cancelled()
+{
+  return throw_if_cancelled_0_t();
+}
+
+struct throw_if_cancelled_1_t
+{
+  BOOST_ASIO_CONSTEXPR throw_if_cancelled_1_t(bool value)
+    : value(value)
+  {
+  }
+
+  bool value;
+};
+
+BOOST_ASIO_NODISCARD inline BOOST_ASIO_CONSTEXPR throw_if_cancelled_1_t
+throw_if_cancelled(bool value)
+{
+  return throw_if_cancelled_1_t(value);
 }
 
 #endif // defined(GENERATING_DOCUMENTATION)

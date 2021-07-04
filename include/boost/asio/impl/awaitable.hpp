@@ -24,6 +24,7 @@
 #include <boost/asio/cancellation_state.hpp>
 #include <boost/asio/detail/thread_context.hpp>
 #include <boost/asio/detail/thread_info_base.hpp>
+#include <boost/asio/detail/throw_error.hpp>
 #include <boost/asio/detail/type_traits.hpp>
 #include <boost/asio/post.hpp>
 #include <boost/system/system_error.hpp>
@@ -159,6 +160,9 @@ public:
   template <typename T>
   auto await_transform(awaitable<T, Executor> a) const
   {
+    if (attached_thread_->entry_point()->throw_if_cancelled_)
+      if (!!attached_thread_->get_cancellation_state().cancelled())
+        do_throw_error(boost::asio::error::operation_aborted, "co_await");
     return a;
   }
 
@@ -300,6 +304,61 @@ public:
     return result{this,
         BOOST_ASIO_MOVE_CAST(InFilter)(reset.in_filter),
         BOOST_ASIO_MOVE_CAST(OutFilter)(reset.out_filter)};
+  }
+
+  // This await transformation determines whether cancellation is propagated as
+  // an exception.
+  auto await_transform(this_coro::throw_if_cancelled_0_t)
+    noexcept
+  {
+    struct result
+    {
+      awaitable_frame_base* this_;
+
+      bool await_ready() const noexcept
+      {
+        return true;
+      }
+
+      void await_suspend(coroutine_handle<void>) noexcept
+      {
+      }
+
+      auto await_resume()
+      {
+        return this_->attached_thread_->throw_if_cancelled();
+      }
+    };
+
+    return result{this};
+  }
+
+  // This await transformation sets whether cancellation is propagated as an
+  // exception.
+  auto await_transform(this_coro::throw_if_cancelled_1_t throw_if_cancelled)
+    noexcept
+  {
+    struct result
+    {
+      awaitable_frame_base* this_;
+      bool value_;
+
+      bool await_ready() const noexcept
+      {
+        return true;
+      }
+
+      void await_suspend(coroutine_handle<void>) noexcept
+      {
+      }
+
+      auto await_resume()
+      {
+        this_->attached_thread_->throw_if_cancelled(value_);
+      }
+    };
+
+    return result{this, throw_if_cancelled.value};
   }
 
   // This await transformation is used to run an async operation's initiation
@@ -491,7 +550,8 @@ public:
   awaitable_frame()
     : top_of_stack_(0),
       has_executor_(false),
-      has_context_switched_(false)
+      has_context_switched_(false),
+      throw_if_cancelled_(true)
   {
   }
 
@@ -535,6 +595,7 @@ private:
   boost::asio::cancellation_state cancellation_state_;
   bool has_executor_;
   bool has_context_switched_;
+  bool throw_if_cancelled_;
 };
 
 template <typename Executor>
@@ -616,6 +677,16 @@ public:
       cancellation_state(bottom_of_stack_.frame_->parent_cancellation_slot_,
         BOOST_ASIO_MOVE_CAST(InFilter)(in_filter),
         BOOST_ASIO_MOVE_CAST(OutFilter)(out_filter));
+  }
+
+  bool throw_if_cancelled() const
+  {
+    return bottom_of_stack_.frame_->throw_if_cancelled_;
+  }
+
+  void throw_if_cancelled(bool value)
+  {
+    bottom_of_stack_.frame_->throw_if_cancelled_ = value;
   }
 
   cancellation_slot_type get_cancellation_slot() const noexcept
