@@ -385,15 +385,15 @@ private:
 
         struct cancel_handler
         {
-          cancel_handler(E e, coro& coro) : e(e), coro(coro.coro_) {}
+          cancel_handler(E e, coro& coro) : e(e), coro_(coro.coro_) {}
 
           E e;
-          typename coro::promise_type* coro;
+          typename coro::promise_type* coro_;
 
           void operator()(cancellation_type ct)
           {
             boost::asio::dispatch(e,
-                [ct, p = coro]() mutable
+                [ct, p = coro_]() mutable
                 {
                   p->cancel.signal.emit(ct);
                 });

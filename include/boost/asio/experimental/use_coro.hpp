@@ -215,7 +215,6 @@ struct coro_init_handler
           }(std::make_index_sequence<sizeof...(Args) - 1>{});
     }
 
-    template <>
     static auto resume_impl(std::tuple<std::exception_ptr>&& tup)
     {
       auto ex = get<0>(std::move(tup));
@@ -223,7 +222,6 @@ struct coro_init_handler
         std::rethrow_exception(ex);
     }
 
-    template <>
     static auto resume_impl(
         std::tuple<boost::system::error_code>&& tup)
     {
