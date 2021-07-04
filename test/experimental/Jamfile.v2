@@ -42,6 +42,8 @@ project
 test-suite "asio-experimental" :
   [ run awaitable_operators.cpp ]
   [ run awaitable_operators.cpp : : : $(USE_SELECT) : awaitable_operators_select ]
+  [ run deferred.cpp ]
+  [ run deferred.cpp : : : $(USE_SELECT) : deferred_select ]
   [ run promise.cpp ]
   [ run promise.cpp : : : $(USE_SELECT) : promise_select ]
   ;
