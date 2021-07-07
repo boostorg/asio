@@ -202,9 +202,12 @@ PREDEFINED             = GENERATING_DOCUMENTATION \
                          BOOST_ASIO_DECL= \
                          BOOST_ASIO_CONSTEXPR=constexpr \
                          BOOST_ASIO_NOEXCEPT=noexcept \
+                         BOOST_ASIO_NODISCARD= \
                          BOOST_ASIO_COMPLETION_SIGNATURE=typename \
                          BOOST_ASIO_COMPLETION_HANDLER_FOR(s)=typename \
                          BOOST_ASIO_COMPLETION_TOKEN_FOR(s)=typename \
+                         BOOST_ASIO_COMPLETION_SIGNATURES_TPARAMS="typename... Signatures" \
+                         BOOST_ASIO_COMPLETION_SIGNATURES_TARGS=Signatures... \
                          BOOST_ASIO_INITFN_RESULT_TYPE(t,a)=void_or_deduced \
                          BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(t,a)=void_or_deduced \
                          BOOST_ASIO_DEFAULT_COMPLETION_TOKEN_TYPE(e)==default_token \
