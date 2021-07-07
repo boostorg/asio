@@ -57,6 +57,8 @@ extern "C" BOOST_ASIO_DECL void boost_asio_signal_handler(int signal_number);
 class signal_set_service :
   public execution_context_service_base<signal_set_service>
 {
+  friend void boost_asio_signal_handler(int signal_number);
+
 public:
   // Type used for tracking an individual signal registration.
   class registration
