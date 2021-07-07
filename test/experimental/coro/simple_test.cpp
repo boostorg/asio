@@ -176,7 +176,7 @@ boost::asio::experimental::coro<char> completion_generator_test_impl(
     boost::asio::any_io_executor, int limit)
 {
   for (int i = 0; i < limit; i++)
-    co_yield i++;
+    co_yield i;
 }
 
 boost::asio::awaitable<void> completion_generator_test()
