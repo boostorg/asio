@@ -15,9 +15,6 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include <boost/asio/detail/config.hpp>
-#include <boost/asio/async_result.hpp>
-
 #include <boost/asio/detail/push_options.hpp>
 
 namespace boost {

@@ -176,7 +176,7 @@ boost::asio::experimental::coro<char> completion_generator_test_impl(
     boost::asio::any_io_executor, int limit)
 {
   for (int i = 0; i < limit; i++)
-    co_yield i++;
+    co_yield i;
 }
 
 boost::asio::awaitable<void> completion_generator_test()
@@ -218,31 +218,31 @@ boost::asio::awaitable<void> symmetrical_test()
   BOOST_ASIO_CHECK(0  == (co_await g.async_resume(0,
           boost::asio::use_awaitable)).value_or(-1));
 
-  BOOST_ASIO_CHECK(0  == (co_await g.async_resume(1,
+  BOOST_ASIO_CHECK(1  == (co_await g.async_resume(1,
           boost::asio::use_awaitable)).value_or(-1));
 
-  BOOST_ASIO_CHECK(1  == (co_await g.async_resume(2,
+  BOOST_ASIO_CHECK(3  == (co_await g.async_resume(2,
           boost::asio::use_awaitable)).value_or(-1));
 
-  BOOST_ASIO_CHECK(3  == (co_await g.async_resume(3,
+  BOOST_ASIO_CHECK(6  == (co_await g.async_resume(3,
           boost::asio::use_awaitable)).value_or(-1));
 
-  BOOST_ASIO_CHECK(6  == (co_await g.async_resume(4,
+  BOOST_ASIO_CHECK(10  == (co_await g.async_resume(4,
           boost::asio::use_awaitable)).value_or(-1));
 
-  BOOST_ASIO_CHECK(10 == (co_await g.async_resume(5,
+  BOOST_ASIO_CHECK(15 == (co_await g.async_resume(5,
           boost::asio::use_awaitable)).value_or(-1));
 
-  BOOST_ASIO_CHECK(15 == (co_await g.async_resume(6,
+  BOOST_ASIO_CHECK(21 == (co_await g.async_resume(6,
           boost::asio::use_awaitable)).value_or(-1));
 
-  BOOST_ASIO_CHECK(21 == (co_await g.async_resume(7,
+  BOOST_ASIO_CHECK(28 == (co_await g.async_resume(7,
           boost::asio::use_awaitable)).value_or(-1));
 
-  BOOST_ASIO_CHECK(28 == (co_await g.async_resume(8,
+  BOOST_ASIO_CHECK(36 == (co_await g.async_resume(8,
           boost::asio::use_awaitable)).value_or(-1));
 
-  BOOST_ASIO_CHECK(36 == (co_await g.async_resume(9,
+  BOOST_ASIO_CHECK(45 == (co_await g.async_resume(9,
           boost::asio::use_awaitable)).value_or(-1));
 };
 

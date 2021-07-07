@@ -17,6 +17,7 @@
 
 #include <boost/asio/detail/config.hpp>
 #include <utility>
+#include <boost/asio/detail/array.hpp>
 #include <boost/asio/experimental/cancellation_condition.hpp>
 
 #include <boost/asio/detail/push_options.hpp>

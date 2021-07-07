@@ -215,7 +215,6 @@ struct coro_init_handler
           }(std::make_index_sequence<sizeof...(Args) - 1>{});
     }
 
-    template <>
     static auto resume_impl(std::tuple<std::exception_ptr>&& tup)
     {
       auto ex = get<0>(std::move(tup));
@@ -223,7 +222,6 @@ struct coro_init_handler
         std::rethrow_exception(ex);
     }
 
-    template <>
     static auto resume_impl(
         std::tuple<boost::system::error_code>&& tup)
     {
@@ -256,6 +254,8 @@ struct coro_init_handler
 } // namespace detail
 } // namespace experimental
 
+#if !defined(GENERATING_DOCUMENTATION)
+
 template <typename Executor, typename R, typename... Args>
 struct async_result<experimental::use_coro_t<Executor>, R(Args...)>
 {
@@ -269,6 +269,8 @@ struct async_result<experimental::use_coro_t<Executor>, R(Args...)>
     std::move(initiation)(co_await return_type::handler, std::move(args)...);
   }
 };
+
+#endif // !defined(GENERATING_DOCUMENTATION)
 
 } // namespace asio
 } // namespace boost

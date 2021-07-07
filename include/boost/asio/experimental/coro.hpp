@@ -221,13 +221,16 @@ struct coro
 
   using promise_type = detail::coro_promise<Yield, Return, Executor>;
 
+#if !defined(GENERATING_DOCUMENTATION)
   template <typename T, typename Coroutine, typename>
-  friend
-  struct detail::coro_with_arg;
+  friend struct detail::coro_with_arg;
+#endif // !defined(GENERATING_DOCUMENTATION)
 
   using executor_type = Executor;
 
+#if !defined(GENERATING_DOCUMENTATION)
   friend struct detail::coro_promise<Yield, Return, Executor>;
+#endif // !defined(GENERATING_DOCUMENTATION)
 
   coro() = default;
 
@@ -385,15 +388,15 @@ private:
 
         struct cancel_handler
         {
-          cancel_handler(E e, coro& coro) : e(e), coro(coro.coro_) {}
+          cancel_handler(E e, coro& coro) : e(e), coro_(coro.coro_) {}
 
           E e;
-          typename coro::promise_type* coro;
+          typename coro::promise_type* coro_;
 
           void operator()(cancellation_type ct)
           {
             boost::asio::dispatch(e,
-                [ct, p = coro]() mutable
+                [ct, p = coro_]() mutable
                 {
                   p->cancel.signal.emit(ct);
                 });
@@ -540,7 +543,6 @@ private:
         std::false_type  /* result is void */) const
     {
       return [self = self_, h = std::forward<WaitHandler>(handler),
-          cancel = get_associated_cancellation_slot(handler),
           exec = std::move(exec)]() mutable
       {
         if (!self)
@@ -692,7 +694,7 @@ struct coro_promise_error<true>
 template <typename T = void>
 struct yield_input
 {
-  T value;
+  T& value;
   coroutine_handle<> awaited_from{noop_coroutine()};
 
   bool await_ready() const noexcept
@@ -843,18 +845,18 @@ struct coro_promise_exchange<Yield, Input, void> : coro_awaited_from
   auto yield_value(Yield&& y)
   {
     result_ = std::move(y);
-    return yield_input<Input>{std::move(input_),
+    return yield_input<Input>{input_,
       std::exchange(awaited_from, noop_coroutine())};
   }
 
   auto yield_value(const Yield& y)
   {
     result_ = y;
-    return yield_input<Input>{std::move(input_),
+    return yield_input<Input>{input_,
       std::exchange(awaited_from, noop_coroutine())};
   }
 
-  void return_void() {}
+  void return_void() { result_.reset(); }
 };
 
 template <typename Return>
@@ -899,7 +901,7 @@ struct coro_promise_exchange<Yield, void, void> : coro_awaited_from
     return yield_input<void>{std::exchange(awaited_from, noop_coroutine())};
   }
 
-  void return_void() {}
+  void return_void() { result_.reset(); }
 };
 
 template <typename Yield, typename Return, typename Executor>
