@@ -249,7 +249,7 @@
             <member><link linkend="boost_asio.reference.redirect_error">redirect_error</link></member>
             <member><link linkend="boost_asio.reference.spawn">spawn</link></member>
             <member><link linkend="boost_asio.reference.this_coro__reset_cancellation_state">this_coro::reset_cancellation_state</link></member>
-            <member><link linkend="boost_asio.reference.this_coro__throw_if_error">this_coro::throw_if_error</link></member>
+            <member><link linkend="boost_asio.reference.this_coro__throw_if_cancelled">this_coro::throw_if_cancelled</link></member>
             <member><link linkend="boost_asio.reference.execution_context.use_service">use_service</link></member>
           </simplelist>
         </entry>
