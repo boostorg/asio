@@ -22,6 +22,7 @@
 #include <boost/asio/io_context.hpp>
 #include <boost/asio/use_awaitable.hpp>
 #include <iostream>
+#include <vector>
 #include "../../unit_test.hpp"
 
 using namespace boost::asio::experimental;

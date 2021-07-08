@@ -26,6 +26,7 @@
 #include <boost/asio/detail/thread_info_base.hpp>
 #include <boost/asio/detail/throw_error.hpp>
 #include <boost/asio/detail/type_traits.hpp>
+#include <boost/asio/error.hpp>
 #include <boost/asio/post.hpp>
 #include <boost/system/system_error.hpp>
 #include <boost/asio/this_coro.hpp>
