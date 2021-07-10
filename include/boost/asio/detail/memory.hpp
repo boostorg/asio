@@ -103,7 +103,7 @@ inline void* aligned_new(std::size_t align, std::size_t size)
   return ptr;
 #elif defined(BOOST_ASIO_MSVC) && defined(BOOST_ASIO_HAS_ALIGNOF)
   size = (size % align == 0) ? size : size + (align - size % align);
-  void* ptr = _aligned_malloc(align, size);
+  void* ptr = _aligned_malloc(size, align);
   if (!ptr)
   {
     std::bad_alloc ex;
