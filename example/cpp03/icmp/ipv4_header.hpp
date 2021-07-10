@@ -68,14 +68,14 @@ public:
   boost::asio::ip::address_v4 source_address() const
   {
     boost::asio::ip::address_v4::bytes_type bytes
-      = { { rep_[12], rep_[13], rep_[14], rep_[15] } };
+      = { rep_[12], rep_[13], rep_[14], rep_[15] };
     return boost::asio::ip::address_v4(bytes);
   }
 
   boost::asio::ip::address_v4 destination_address() const
   {
     boost::asio::ip::address_v4::bytes_type bytes
-      = { { rep_[16], rep_[17], rep_[18], rep_[19] } };
+      = { rep_[16], rep_[17], rep_[18], rep_[19] };
     return boost::asio::ip::address_v4(bytes);
   }
 
