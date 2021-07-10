@@ -21,6 +21,8 @@
 #include <utility>
 #include <boost/asio/cancellation_type.hpp>
 #include <boost/asio/detail/cstddef.hpp>
+#include <boost/asio/detail/thread_context.hpp>
+#include <boost/asio/detail/thread_info_base.hpp>
 #include <boost/asio/detail/type_traits.hpp>
 #include <boost/asio/detail/variadic_templates.hpp>
 
@@ -113,7 +115,13 @@ public:
   ~cancellation_signal()
   {
     if (handler_)
-      ::operator delete(handler_->destroy().first);
+    {
+      std::pair<void*, std::size_t> mem = handler_->destroy();
+      detail::thread_info_base::deallocate(
+          detail::thread_info_base::cancellation_signal_tag(),
+          detail::thread_context::top_of_thread_call_stack(),
+          mem.first, mem.second);
+    }
   }
 
   /// Emits the signal and causes invocation of the slot's handler, if any.
@@ -171,13 +179,13 @@ public:
   {
     typedef detail::cancellation_handler<CancellationHandler>
       cancellation_handler_type;
-    std::pair<void*, std::size_t> mem =
-      prepare_memory(sizeof(cancellation_handler_type));
-    auto_delete_helper del = { mem.first };
+    auto_delete_helper del = { prepare_memory(
+        sizeof(cancellation_handler_type),
+        BOOST_ASIO_ALIGNOF(CancellationHandler)) };
     cancellation_handler_type* handler_obj =
-      new (del.p) cancellation_handler_type(
-        mem.second, BOOST_ASIO_MOVE_CAST(Args)(args)...);
-    del.p = 0;
+      new (del.mem.first) cancellation_handler_type(
+        del.mem.second, BOOST_ASIO_MOVE_CAST(Args)(args)...);
+    del.mem.first = 0;
     *handler_ = handler_obj;
     return handler_obj->handler();
   }
@@ -188,12 +196,12 @@ public:
   {
     typedef detail::cancellation_handler<CancellationHandler>
       cancellation_handler_type;
-    std::pair<void*, std::size_t> mem =
-      prepare_memory(sizeof(cancellation_handler_type));
-    auto_delete_helper del = { mem.first };
+    auto_delete_helper del = { prepare_memory(
+        sizeof(cancellation_handler_type),
+        BOOST_ASIO_ALIGNOF(CancellationHandler)) };
     cancellation_handler_type* handler_obj =
-      new (del.p) cancellation_handler_type(mem.second);
-    del.p = 0;
+      new (del.mem.first) cancellation_handler_type(del.mem.second);
+    del.mem.first = 0;
     *handler_ = handler_obj;
     return handler_obj->handler();
   }
@@ -204,13 +212,13 @@ public:
   { \
     typedef detail::cancellation_handler<CancellationHandler> \
       cancellation_handler_type; \
-    std::pair<void*, std::size_t> mem = \
-      prepare_memory(sizeof(cancellation_handler_type)); \
-    auto_delete_helper del = { mem.first }; \
+    auto_delete_helper del = { prepare_memory( \
+        sizeof(cancellation_handler_type), \
+        BOOST_ASIO_ALIGNOF(CancellationHandler)) }; \
     cancellation_handler_type* handler_obj = \
-      new (del.p) cancellation_handler_type( \
-        mem.second, BOOST_ASIO_VARIADIC_MOVE_ARGS(n)); \
-    del.p = 0; \
+      new (del.mem.first) cancellation_handler_type( \
+        del.mem.second, BOOST_ASIO_VARIADIC_MOVE_ARGS(n)); \
+    del.mem.first = 0; \
     *handler_ = handler_obj; \
     return handler_obj->handler(); \
   } \
@@ -248,7 +256,11 @@ public:
   {
     if (handler_ != 0 && *handler_ != 0)
     {
-      ::operator delete((*handler_)->destroy().first);
+      std::pair<void*, std::size_t> mem = (*handler_)->destroy();
+      detail::thread_info_base::deallocate(
+          detail::thread_info_base::cancellation_signal_tag(),
+          detail::thread_context::top_of_thread_call_stack(),
+          mem.first, mem.second);
       *handler_ = 0;
     }
   }
@@ -288,7 +300,8 @@ private:
   {
   }
 
-  std::pair<void*, std::size_t> prepare_memory(std::size_t size)
+  std::pair<void*, std::size_t> prepare_memory(
+      std::size_t size, std::size_t align)
   {
     assert(handler_);
     std::pair<void*, std::size_t> mem;
@@ -297,10 +310,20 @@ private:
       mem = (*handler_)->destroy();
       *handler_ = 0;
     }
-    if (size > mem.second)
+    if (size > mem.second
+        || reinterpret_cast<std::size_t>(mem.first) % align != 0)
     {
-      ::operator delete(mem.first);
-      mem.first = ::operator new(size);
+      if (mem.first)
+      {
+        detail::thread_info_base::deallocate(
+            detail::thread_info_base::cancellation_signal_tag(),
+            detail::thread_context::top_of_thread_call_stack(),
+            mem.first, mem.second);
+      }
+      mem.first = detail::thread_info_base::allocate(
+          detail::thread_info_base::cancellation_signal_tag(),
+          detail::thread_context::top_of_thread_call_stack(),
+          size, align);
       mem.second = size;
     }
     return mem;
@@ -308,12 +331,17 @@ private:
 
   struct auto_delete_helper
   {
-    void* p;
+    std::pair<void*, std::size_t> mem;
 
     ~auto_delete_helper()
     {
-      if (p)
-        ::operator delete(p);
+      if (mem.first)
+      {
+        detail::thread_info_base::deallocate(
+            detail::thread_info_base::cancellation_signal_tag(),
+            detail::thread_context::top_of_thread_call_stack(),
+            mem.first, mem.second);
+      }
     }
   };
 
