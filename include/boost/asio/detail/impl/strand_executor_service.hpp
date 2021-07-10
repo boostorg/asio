@@ -106,9 +106,10 @@ public:
       if (push_waiting_to_ready(this_->impl_))
       {
         recycling_allocator<void> allocator;
+        executor_type ex = this_->executor_;
         execution::execute(
             boost::asio::prefer(
-              boost::asio::require(this_->executor_,
+              boost::asio::require(ex,
                 execution::blocking.never),
             execution::allocator(allocator)),
             BOOST_ASIO_MOVE_CAST(invoker)(*this_));
