@@ -16,10 +16,12 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include <boost/asio/detail/config.hpp>
+#include <optional>
 #include <stdexcept>
 #include <tuple>
 #include <variant>
 #include <boost/asio/awaitable.hpp>
+#include <boost/asio/detail/type_traits.hpp>
 #include <boost/asio/experimental/deferred.hpp>
 #include <boost/asio/experimental/parallel_group.hpp>
 #include <boost/asio/multiple_exceptions.hpp>
@@ -32,6 +34,37 @@ namespace boost {
 namespace asio {
 namespace experimental {
 namespace awaitable_operators {
+namespace detail {
+
+template <typename T, typename Executor>
+awaitable<T, Executor> awaitable_wrap(awaitable<T, Executor> a,
+    typename constraint<is_constructible<T>::value>::type* = 0)
+{
+  return a;
+}
+
+template <typename T, typename Executor>
+awaitable<std::optional<T>, Executor> awaitable_wrap(awaitable<T, Executor> a,
+    typename constraint<!is_constructible<T>::value>::type* = 0)
+{
+  co_return std::optional<T>(co_await std::move(a));
+}
+
+template <typename T>
+T& awaitable_unwrap(typename conditional<true, T, void>::type& r,
+    typename constraint<is_constructible<T>::value>::type* = 0)
+{
+  return r;
+}
+
+template <typename T>
+T& awaitable_unwrap(std::optional<typename conditional<true, T, void>::type>& r,
+    typename constraint<!is_constructible<T>::value>::type* = 0)
+{
+  return *r;
+}
+
+} // namespace detail
 
 /// Wait for both operations to succeed.
 /**
@@ -76,7 +109,7 @@ awaitable<U, Executor> operator&&(
   auto [order, ex0, ex1, r1] =
     co_await make_parallel_group(
       co_spawn(ex, std::move(t), deferred),
-      co_spawn(ex, std::move(u), deferred)
+      co_spawn(ex, detail::awaitable_wrap(std::move(u)), deferred)
     ).async_wait(
       wait_for_one_error(),
       use_awaitable_t<Executor>{}
@@ -88,7 +121,7 @@ awaitable<U, Executor> operator&&(
     std::rethrow_exception(ex0);
   if (ex1)
     std::rethrow_exception(ex1);
-  co_return std::move(r1);
+  co_return std::move(detail::awaitable_unwrap<U>(r1));
 }
 
 /// Wait for both operations to succeed.
@@ -104,7 +137,7 @@ awaitable<T, Executor> operator&&(
 
   auto [order, ex0, r0, ex1] =
     co_await make_parallel_group(
-      co_spawn(ex, std::move(t), deferred),
+      co_spawn(ex, detail::awaitable_wrap(std::move(t)), deferred),
       co_spawn(ex, std::move(u), deferred)
     ).async_wait(
       wait_for_one_error(),
@@ -117,7 +150,7 @@ awaitable<T, Executor> operator&&(
     std::rethrow_exception(ex0);
   if (ex1)
     std::rethrow_exception(ex1);
-  co_return std::move(r0);
+  co_return std::move(detail::awaitable_unwrap<T>(r0));
 }
 
 /// Wait for both operations to succeed.
@@ -133,8 +166,8 @@ awaitable<std::tuple<T, U>, Executor> operator&&(
 
   auto [order, ex0, r0, ex1, r1] =
     co_await make_parallel_group(
-      co_spawn(ex, std::move(t), deferred),
-      co_spawn(ex, std::move(u), deferred)
+      co_spawn(ex, detail::awaitable_wrap(std::move(t)), deferred),
+      co_spawn(ex, detail::awaitable_wrap(std::move(u)), deferred)
     ).async_wait(
       wait_for_one_error(),
       use_awaitable_t<Executor>{}
@@ -146,7 +179,9 @@ awaitable<std::tuple<T, U>, Executor> operator&&(
     std::rethrow_exception(ex0);
   if (ex1)
     std::rethrow_exception(ex1);
-  co_return std::make_tuple(std::move(r0), std::move(r1));
+  co_return std::make_tuple(
+      std::move(detail::awaitable_unwrap<T>(r0)),
+      std::move(detail::awaitable_unwrap<U>(r1)));
 }
 
 /// Wait for both operations to succeed.
@@ -162,7 +197,7 @@ awaitable<std::tuple<T..., std::monostate>, Executor> operator&&(
 
   auto [order, ex0, r0, ex1, r1] =
     co_await make_parallel_group(
-      co_spawn(ex, std::move(t), deferred),
+      co_spawn(ex, detail::awaitable_wrap(std::move(t)), deferred),
       co_spawn(ex, std::move(u), deferred)
     ).async_wait(
       wait_for_one_error(),
@@ -175,7 +210,7 @@ awaitable<std::tuple<T..., std::monostate>, Executor> operator&&(
     std::rethrow_exception(ex0);
   if (ex1)
     std::rethrow_exception(ex1);
-  co_return std::move(r0);
+  co_return std::move(detail::awaitable_unwrap<std::tuple<T...>>(r0));
 }
 
 /// Wait for both operations to succeed.
@@ -191,8 +226,8 @@ awaitable<std::tuple<T..., U>, Executor> operator&&(
 
   auto [order, ex0, r0, ex1, r1] =
     co_await make_parallel_group(
-      co_spawn(ex, std::move(t), deferred),
-      co_spawn(ex, std::move(u), deferred)
+      co_spawn(ex, detail::awaitable_wrap(std::move(t)), deferred),
+      co_spawn(ex, detail::awaitable_wrap(std::move(u)), deferred)
     ).async_wait(
       wait_for_one_error(),
       use_awaitable_t<Executor>{}
@@ -204,7 +239,9 @@ awaitable<std::tuple<T..., U>, Executor> operator&&(
     std::rethrow_exception(ex0);
   if (ex1)
     std::rethrow_exception(ex1);
-  co_return std::tuple_cat(std::move(r0), std::make_tuple(std::move(r1)));
+  co_return std::tuple_cat(
+      std::move(detail::awaitable_unwrap<std::tuple<T...>>(r0)),
+      std::make_tuple(std::move(detail::awaitable_unwrap<U>(r1))));
 }
 
 /// Wait for one operation to succeed.
@@ -263,7 +300,7 @@ awaitable<std::variant<std::monostate, U>, Executor> operator||(
   auto [order, ex0, ex1, r1] =
     co_await make_parallel_group(
       co_spawn(ex, std::move(t), deferred),
-      co_spawn(ex, std::move(u), deferred)
+      co_spawn(ex, detail::awaitable_wrap(std::move(u)), deferred)
     ).async_wait(
       wait_for_one_success(),
       use_awaitable_t<Executor>{}
@@ -276,14 +313,16 @@ awaitable<std::variant<std::monostate, U>, Executor> operator||(
           std::in_place_index<0>};
     if (!ex1)
       co_return std::variant<std::monostate, U>{
-          std::in_place_index<1>, std::move(r1)};
+          std::in_place_index<1>,
+          std::move(detail::awaitable_unwrap<U>(r1))};
     throw multiple_exceptions(ex0);
   }
   else
   {
     if (!ex1)
       co_return std::variant<std::monostate, U>{
-          std::in_place_index<1>, std::move(r1)};
+          std::in_place_index<1>,
+          std::move(detail::awaitable_unwrap<U>(r1))};
     if (!ex0)
       co_return std::variant<std::monostate, U>{
           std::in_place_index<0>};
@@ -304,7 +343,7 @@ awaitable<std::variant<T, std::monostate>, Executor> operator||(
 
   auto [order, ex0, r0, ex1] =
     co_await make_parallel_group(
-      co_spawn(ex, std::move(t), deferred),
+      co_spawn(ex, detail::awaitable_wrap(std::move(t)), deferred),
       co_spawn(ex, std::move(u), deferred)
     ).async_wait(
       wait_for_one_success(),
@@ -315,7 +354,8 @@ awaitable<std::variant<T, std::monostate>, Executor> operator||(
   {
     if (!ex0)
       co_return std::variant<T, std::monostate>{
-          std::in_place_index<0>, std::move(r0)};
+          std::in_place_index<0>,
+          std::move(detail::awaitable_unwrap<T>(r0))};
     if (!ex1)
       co_return std::variant<T, std::monostate>{
           std::in_place_index<1>};
@@ -328,7 +368,8 @@ awaitable<std::variant<T, std::monostate>, Executor> operator||(
           std::in_place_index<1>};
     if (!ex0)
       co_return std::variant<T, std::monostate>{
-          std::in_place_index<0>, std::move(r0)};
+          std::in_place_index<0>,
+          std::move(detail::awaitable_unwrap<T>(r0))};
     throw multiple_exceptions(ex1);
   }
 }
@@ -346,8 +387,8 @@ awaitable<std::variant<T, U>, Executor> operator||(
 
   auto [order, ex0, r0, ex1, r1] =
     co_await make_parallel_group(
-      co_spawn(ex, std::move(t), deferred),
-      co_spawn(ex, std::move(u), deferred)
+      co_spawn(ex, detail::awaitable_wrap(std::move(t)), deferred),
+      co_spawn(ex, detail::awaitable_wrap(std::move(u)), deferred)
     ).async_wait(
       wait_for_one_success(),
       use_awaitable_t<Executor>{}
@@ -356,17 +397,25 @@ awaitable<std::variant<T, U>, Executor> operator||(
   if (order[0] == 0)
   {
     if (!ex0)
-      co_return std::variant<T, U>{std::in_place_index<0>, std::move(r0)};
+      co_return std::variant<T, U>{
+          std::in_place_index<0>,
+          std::move(detail::awaitable_unwrap<T>(r0))};
     if (!ex1)
-      co_return std::variant<T, U>{std::in_place_index<1>, std::move(r1)};
+      co_return std::variant<T, U>{
+          std::in_place_index<1>,
+          std::move(detail::awaitable_unwrap<U>(r1))};
     throw multiple_exceptions(ex0);
   }
   else
   {
     if (!ex1)
-      co_return std::variant<T, U>{std::in_place_index<1>, std::move(r1)};
+      co_return std::variant<T, U>{
+          std::in_place_index<1>,
+          std::move(detail::awaitable_unwrap<U>(r1))};
     if (!ex0)
-      co_return std::variant<T, U>{std::in_place_index<0>, std::move(r0)};
+      co_return std::variant<T, U>{
+          std::in_place_index<0>,
+          std::move(detail::awaitable_unwrap<T>(r0))};
     throw multiple_exceptions(ex1);
   }
 }
@@ -404,7 +453,7 @@ awaitable<std::variant<T..., std::monostate>, Executor> operator||(
 
   auto [order, ex0, r0, ex1] =
     co_await make_parallel_group(
-      co_spawn(ex, std::move(t), deferred),
+      co_spawn(ex, detail::awaitable_wrap(std::move(t)), deferred),
       co_spawn(ex, std::move(u), deferred)
     ).async_wait(
       wait_for_one_success(),
@@ -415,7 +464,8 @@ awaitable<std::variant<T..., std::monostate>, Executor> operator||(
   if (order[0] == 0)
   {
     if (!ex0)
-      co_return widen::template call<0>(r0);
+      co_return widen::template call<0>(
+          detail::awaitable_unwrap<std::variant<T...>>(r0));
     if (!ex1)
       co_return std::variant<T..., std::monostate>{
           std::in_place_index<sizeof...(T)>};
@@ -427,7 +477,8 @@ awaitable<std::variant<T..., std::monostate>, Executor> operator||(
       co_return std::variant<T..., std::monostate>{
           std::in_place_index<sizeof...(T)>};
     if (!ex0)
-      co_return widen::template call<0>(r0);
+      co_return widen::template call<0>(
+          detail::awaitable_unwrap<std::variant<T...>>(r0));
     throw multiple_exceptions(ex1);
   }
 }
@@ -445,8 +496,8 @@ awaitable<std::variant<T..., U>, Executor> operator||(
 
   auto [order, ex0, r0, ex1, r1] =
     co_await make_parallel_group(
-      co_spawn(ex, std::move(t), deferred),
-      co_spawn(ex, std::move(u), deferred)
+      co_spawn(ex, detail::awaitable_wrap(std::move(t)), deferred),
+      co_spawn(ex, detail::awaitable_wrap(std::move(u)), deferred)
     ).async_wait(
       wait_for_one_success(),
       use_awaitable_t<Executor>{}
@@ -456,19 +507,23 @@ awaitable<std::variant<T..., U>, Executor> operator||(
   if (order[0] == 0)
   {
     if (!ex0)
-      co_return widen::template call<0>(r0);
+      co_return widen::template call<0>(
+          detail::awaitable_unwrap<std::variant<T...>>(r0));
     if (!ex1)
       co_return std::variant<T..., U>{
-          std::in_place_index<sizeof...(T)>, std::move(r1)};
+          std::in_place_index<sizeof...(T)>,
+          std::move(detail::awaitable_unwrap<U>(r1))};
     throw multiple_exceptions(ex0);
   }
   else
   {
     if (!ex1)
       co_return std::variant<T..., U>{
-          std::in_place_index<sizeof...(T)>, std::move(r1)};
+          std::in_place_index<sizeof...(T)>,
+          std::move(detail::awaitable_unwrap<U>(r1))};
     if (!ex0)
-      co_return widen::template call<0>(r0);
+      co_return widen::template call<0>(
+          detail::awaitable_unwrap<std::variant<T...>>(r0));
     throw multiple_exceptions(ex1);
   }
 }
