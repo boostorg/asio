@@ -122,6 +122,9 @@ struct is_deferred<deferred_noop> : true_type
 };
 #endif // !defined(GENERATING_DOCUMENTATION)
 
+/// Tag type to disambiguate deferred constructors.
+struct deferred_init_tag {};
+
 /// Wraps a function object so that it may be used as an element in a deferred
 /// composition.
 template <typename Function>
@@ -131,7 +134,7 @@ public:
   /// Constructor. 
   template <typename F>
   BOOST_ASIO_CONSTEXPR explicit deferred_function(
-      BOOST_ASIO_MOVE_ARG(F) function)
+      deferred_init_tag, BOOST_ASIO_MOVE_ARG(F) function)
     : function_(BOOST_ASIO_MOVE_CAST(F)(function))
   {
   }
@@ -197,7 +200,7 @@ public:
   /// initiation function object.
   template <typename... V>
   BOOST_ASIO_CONSTEXPR explicit deferred_values(
-      BOOST_ASIO_MOVE_ARG(V)... values)
+      deferred_init_tag, BOOST_ASIO_MOVE_ARG(V)... values)
     : values_(BOOST_ASIO_MOVE_CAST(V)(values)...)
   {
   }
@@ -254,7 +257,7 @@ public:
   /// initiation function object.
   template <typename I, typename... A>
   BOOST_ASIO_CONSTEXPR explicit deferred_async_operation(
-      BOOST_ASIO_MOVE_ARG(I) initiation,
+      deferred_init_tag, BOOST_ASIO_MOVE_ARG(I) initiation,
       BOOST_ASIO_MOVE_ARG(A)... init_args)
     : initiation_(BOOST_ASIO_MOVE_CAST(I)(initiation)),
       init_args_(BOOST_ASIO_MOVE_CAST(A)(init_args)...)
@@ -301,7 +304,7 @@ private:
 
 public:
   template <typename H, typename T>
-  BOOST_ASIO_CONSTEXPR explicit deferred_sequence(
+  BOOST_ASIO_CONSTEXPR explicit deferred_sequence(deferred_init_tag,
       BOOST_ASIO_MOVE_ARG(H) head, BOOST_ASIO_MOVE_ARG(T) tail)
     : head_(BOOST_ASIO_MOVE_CAST(H)(head)),
       tail_(BOOST_ASIO_MOVE_CAST(T)(tail))
@@ -539,7 +542,7 @@ public:
   >::type operator()(BOOST_ASIO_MOVE_ARG(Function) function) const
   {
     return deferred_function<typename decay<Function>::type>(
-        BOOST_ASIO_MOVE_CAST(Function)(function));
+        deferred_init_tag{}, BOOST_ASIO_MOVE_CAST(Function)(function));
   }
 
   /// Passes through anything that is already deferred.
@@ -558,7 +561,7 @@ public:
   values(BOOST_ASIO_MOVE_ARG(Args)... args)
   {
     return deferred_values<typename decay<Args>::type...>(
-        BOOST_ASIO_MOVE_CAST(Args)(args)...);
+        deferred_init_tag{}, BOOST_ASIO_MOVE_CAST(Args)(args)...);
   }
 
   /// Creates a conditional object for branching deferred operations.
