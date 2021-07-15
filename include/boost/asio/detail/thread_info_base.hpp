@@ -56,7 +56,12 @@ public:
     enum
     {
       begin_mem_index = default_tag::end_mem_index,
-      end_mem_index = begin_mem_index + 1
+#ifdef BOOST_ASIO_RECYCLING_ALLOCATOR_CACHE_SIZE
+      end_mem_index =
+        begin_mem_index + BOOST_ASIO_RECYCLING_ALLOCATOR_CACHE_SIZE
+#else // BOOST_ASIO_RECYCLING_ALLOCATOR_CACHE_SIZE
+      end_mem_index = begin_mem_index + 2
+#endif // BOOST_ASIO_RECYCLING_ALLOCATOR_CACHE_SIZE
     };
   };
 
