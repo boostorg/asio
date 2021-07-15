@@ -24,6 +24,8 @@
 
 #include <variant>
 
+#include <boost/asio/detail/push_options.hpp>
+
 namespace boost {
 namespace asio {
 namespace experimental {
@@ -599,5 +601,7 @@ struct async_result<experimental::use_promise_t<Executor>, R(Args...)>
 
 } // namespace asio
 } // namespace boost
+
+#include <boost/asio/detail/pop_options.hpp>
 
 #endif // BOOST_ASIO_EXPERIMENTAL_PROMISE_HPP

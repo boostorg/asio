@@ -19,8 +19,9 @@
 #include <tuple>
 #include <boost/asio/associator.hpp>
 #include <boost/asio/async_result.hpp>
-#include <boost/asio/detail/push_options.hpp>
 #include <boost/asio/detail/type_traits.hpp>
+
+#include <boost/asio/detail/push_options.hpp>
 
 namespace boost {
 namespace asio {
