@@ -527,7 +527,11 @@
 #   if (__cplusplus >= 201103)
 #    define BOOST_ASIO_HAS_WORKING_EXPRESSION_SFINAE 1
 #   endif // (__cplusplus >= 201103)
-#  endif // !defined(BOOST_ASIO_MSVC) && !defined(__INTEL_COMPILER)
+#  elif defined(BOOST_ASIO_MSVC) && (_MSC_VER >= 1929)
+#   if (_MSVC_LANG >= 202000)
+#    define BOOST_ASIO_HAS_WORKING_EXPRESSION_SFINAE 1
+#   endif // (_MSVC_LANG >= 202000)
+#  endif // defined(BOOST_ASIO_MSVC) && (_MSC_VER >= 1929)
 # endif // !defined(BOOST_ASIO_DISABLE_WORKING_EXPRESSION_SFINAE)
 #endif // !defined(BOOST_ASIO_HAS_WORKING_EXPRESSION_SFINAE)
 
