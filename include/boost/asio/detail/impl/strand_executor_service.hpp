@@ -109,7 +109,8 @@ public:
         executor_type ex = this_->executor_;
         execution::execute(
             boost::asio::prefer(
-              boost::asio::require(ex,
+              boost::asio::require(
+                BOOST_ASIO_MOVE_CAST(executor_type)(ex),
                 execution::blocking.never),
             execution::allocator(allocator)),
             BOOST_ASIO_MOVE_CAST(invoker)(*this_));
