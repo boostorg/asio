@@ -271,7 +271,7 @@ public:
     return handler_ != 0;
   }
 
-  /// Returns whether the slow is connected and has an installed handler.
+  /// Returns whether the slot is connected and has an installed handler.
   BOOST_ASIO_CONSTEXPR bool has_handler() const BOOST_ASIO_NOEXCEPT
   {
     return handler_ != 0 && *handler_ != 0;
