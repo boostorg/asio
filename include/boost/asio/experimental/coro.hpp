@@ -957,7 +957,7 @@ struct coro_promise final :
   }
 
   template <execution_context Context, typename... Args>
-  coro_promise(Context& ctx, Args &&...) noexcept
+  coro_promise(Context&& ctx, Args&&...) noexcept
     : executor_(ctx.get_executor())
   {
   }
