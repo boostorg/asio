@@ -16,6 +16,8 @@
 #include <tuple>
 #include <optional>
 
+#include <boost/asio/detail/push_options.hpp>
+
 namespace boost {
 namespace asio {
 namespace experimental {
@@ -92,5 +94,7 @@ struct promise_handler<void(Ts...), Executor>
 } // namespace experimental
 } // namespace asio
 } // namespace boost
+
+#include <boost/asio/detail/pop_options.hpp>
 
 #endif // BOOST_ASIO_EXPERIMENTAL_IMPL_PROMISE_HPP

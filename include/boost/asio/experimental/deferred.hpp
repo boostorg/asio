@@ -19,8 +19,9 @@
 #include <tuple>
 #include <boost/asio/associator.hpp>
 #include <boost/asio/async_result.hpp>
-#include <boost/asio/detail/push_options.hpp>
 #include <boost/asio/detail/type_traits.hpp>
+
+#include <boost/asio/detail/push_options.hpp>
 
 namespace boost {
 namespace asio {
@@ -105,6 +106,14 @@ struct deferred_noop
   void operator()(BOOST_ASIO_MOVE_ARG(Args)...) BOOST_ASIO_RVALUE_REF_QUAL
   {
   }
+
+#if defined(BOOST_ASIO_HAS_REF_QUALIFIED_FUNCTIONS)
+  /// No effect.
+  template <typename... Args>
+  decltype(auto) operator()(BOOST_ASIO_MOVE_ARG(Args)...) const &
+  {
+  }
+#endif // defined(BOOST_ASIO_HAS_REF_QUALIFIED_FUNCTIONS)
 };
 
 #if !defined(GENERATING_DOCUMENTATION)
@@ -113,6 +122,9 @@ struct is_deferred<deferred_noop> : true_type
 {
 };
 #endif // !defined(GENERATING_DOCUMENTATION)
+
+/// Tag type to disambiguate deferred constructors.
+struct deferred_init_tag {};
 
 /// Wraps a function object so that it may be used as an element in a deferred
 /// composition.
@@ -123,7 +135,7 @@ public:
   /// Constructor. 
   template <typename F>
   BOOST_ASIO_CONSTEXPR explicit deferred_function(
-      BOOST_ASIO_MOVE_ARG(F) function)
+      deferred_init_tag, BOOST_ASIO_MOVE_ARG(F) function)
     : function_(BOOST_ASIO_MOVE_CAST(F)(function))
   {
   }
@@ -135,6 +147,16 @@ public:
     return BOOST_ASIO_MOVE_CAST(Function)(function_)(
         BOOST_ASIO_MOVE_CAST(Args)(args)...);
   }
+
+#if defined(BOOST_ASIO_HAS_REF_QUALIFIED_FUNCTIONS)
+  template <typename... Args>
+  decltype(auto) operator()(
+      BOOST_ASIO_MOVE_ARG(Args)... args) const &
+  {
+    return deferred_function(*this)(
+        BOOST_ASIO_MOVE_CAST(Args)(args)...);
+  }
+#endif // defined(BOOST_ASIO_HAS_REF_QUALIFIED_FUNCTIONS)
 
 //private:
   Function function_;
@@ -179,7 +201,7 @@ public:
   /// initiation function object.
   template <typename... V>
   BOOST_ASIO_CONSTEXPR explicit deferred_values(
-      BOOST_ASIO_MOVE_ARG(V)... values)
+      deferred_init_tag, BOOST_ASIO_MOVE_ARG(V)... values)
     : values_(BOOST_ASIO_MOVE_CAST(V)(values)...)
   {
   }
@@ -193,6 +215,16 @@ public:
         BOOST_ASIO_MOVE_CAST(CompletionToken)(token),
         std::index_sequence_for<Values...>());
   }
+
+#if defined(BOOST_ASIO_HAS_REF_QUALIFIED_FUNCTIONS)
+  template <BOOST_ASIO_COMPLETION_TOKEN_FOR(void(Values...)) CompletionToken>
+  decltype(auto) operator()(
+      BOOST_ASIO_MOVE_ARG(CompletionToken) token) const &
+  {
+    return deferred_values(*this)(
+        BOOST_ASIO_MOVE_CAST(CompletionToken)(token));
+  }
+#endif // defined(BOOST_ASIO_HAS_REF_QUALIFIED_FUNCTIONS)
 };
 
 #if !defined(GENERATING_DOCUMENTATION)
@@ -226,7 +258,7 @@ public:
   /// initiation function object.
   template <typename I, typename... A>
   BOOST_ASIO_CONSTEXPR explicit deferred_async_operation(
-      BOOST_ASIO_MOVE_ARG(I) initiation,
+      deferred_init_tag, BOOST_ASIO_MOVE_ARG(I) initiation,
       BOOST_ASIO_MOVE_ARG(A)... init_args)
     : initiation_(BOOST_ASIO_MOVE_CAST(I)(initiation)),
       init_args_(BOOST_ASIO_MOVE_CAST(A)(init_args)...)
@@ -242,6 +274,16 @@ public:
         BOOST_ASIO_MOVE_CAST(CompletionToken)(token),
         std::index_sequence_for<InitArgs...>());
   }
+
+#if defined(BOOST_ASIO_HAS_REF_QUALIFIED_FUNCTIONS)
+  template <BOOST_ASIO_COMPLETION_TOKEN_FOR(Signature) CompletionToken>
+  decltype(auto) operator()(
+      BOOST_ASIO_MOVE_ARG(CompletionToken) token) const &
+  {
+    return deferred_async_operation(*this)(
+        BOOST_ASIO_MOVE_CAST(CompletionToken)(token));
+  }
+#endif // defined(BOOST_ASIO_HAS_REF_QUALIFIED_FUNCTIONS)
 };
 
 #if !defined(GENERATING_DOCUMENTATION)
@@ -263,7 +305,7 @@ private:
 
 public:
   template <typename H, typename T>
-  BOOST_ASIO_CONSTEXPR explicit deferred_sequence(
+  BOOST_ASIO_CONSTEXPR explicit deferred_sequence(deferred_init_tag,
       BOOST_ASIO_MOVE_ARG(H) head, BOOST_ASIO_MOVE_ARG(T) tail)
     : head_(BOOST_ASIO_MOVE_CAST(H)(head)),
       tail_(BOOST_ASIO_MOVE_CAST(T)(tail))
@@ -271,12 +313,23 @@ public:
   }
 
   template <BOOST_ASIO_COMPLETION_TOKEN_FOR(signature) CompletionToken>
-  decltype(auto) operator()(BOOST_ASIO_MOVE_ARG(CompletionToken) token)
+  decltype(auto) operator()(
+      BOOST_ASIO_MOVE_ARG(CompletionToken) token) BOOST_ASIO_RVALUE_REF_QUAL
   {
     return boost::asio::async_initiate<CompletionToken, signature>(
         initiate(), token, BOOST_ASIO_MOVE_OR_LVALUE(Head)(head_),
         BOOST_ASIO_MOVE_OR_LVALUE(Tail)(tail_));
   }
+
+#if defined(BOOST_ASIO_HAS_REF_QUALIFIED_FUNCTIONS)
+  template <BOOST_ASIO_COMPLETION_TOKEN_FOR(signature) CompletionToken>
+  decltype(auto) operator()(
+      BOOST_ASIO_MOVE_ARG(CompletionToken) token) const &
+  {
+    return deferred_sequence(*this)(
+        BOOST_ASIO_MOVE_CAST(CompletionToken)(token));
+  }
+#endif // defined(BOOST_ASIO_HAS_REF_QUALIFIED_FUNCTIONS)
 
 private:
   struct initiate
@@ -335,6 +388,15 @@ public:
           BOOST_ASIO_MOVE_CAST(Args)(args)...);
     }
   }
+
+#if defined(BOOST_ASIO_HAS_REF_QUALIFIED_FUNCTIONS)
+  template <typename... Args>
+  auto operator()(BOOST_ASIO_MOVE_ARG(Args)... args) const &
+  {
+    return deferred_conditional(*this)(
+        BOOST_ASIO_MOVE_CAST(Args)(args)...);
+  }
+#endif // defined(BOOST_ASIO_HAS_REF_QUALIFIED_FUNCTIONS)
 
   /// Set the true branch of the conditional.
   template <typename T>
@@ -481,7 +543,7 @@ public:
   >::type operator()(BOOST_ASIO_MOVE_ARG(Function) function) const
   {
     return deferred_function<typename decay<Function>::type>(
-        BOOST_ASIO_MOVE_CAST(Function)(function));
+        deferred_init_tag{}, BOOST_ASIO_MOVE_CAST(Function)(function));
   }
 
   /// Passes through anything that is already deferred.
@@ -500,7 +562,7 @@ public:
   values(BOOST_ASIO_MOVE_ARG(Args)... args)
   {
     return deferred_values<typename decay<Args>::type...>(
-        BOOST_ASIO_MOVE_CAST(Args)(args)...);
+        deferred_init_tag{}, BOOST_ASIO_MOVE_CAST(Args)(args)...);
   }
 
   /// Creates a conditional object for branching deferred operations.

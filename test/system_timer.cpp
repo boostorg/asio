@@ -25,6 +25,8 @@
 
 #if defined(BOOST_ASIO_HAS_STD_CHRONO)
 
+#include <boost/asio/bind_cancellation_slot.hpp>
+#include <boost/asio/cancellation_signal.hpp>
 #include <boost/asio/executor_work_guard.hpp>
 #include <boost/asio/io_context.hpp>
 #include <boost/asio/detail/thread.hpp>
@@ -466,6 +468,44 @@ void system_timer_move_test()
 #endif // defined(BOOST_ASIO_HAS_MOVE)
 }
 
+void system_timer_op_cancel_test()
+{
+  boost::asio::cancellation_signal cancel_signal;
+  boost::asio::io_context ioc;
+  int count = 0;
+
+  boost::asio::system_timer timer(ioc, boost::asio::chrono::seconds(10));
+
+  timer.async_wait(bindns::bind(increment, &count));
+
+  timer.async_wait(
+      boost::asio::bind_cancellation_slot(
+        cancel_signal.slot(),
+        bindns::bind(increment, &count)));
+
+  timer.async_wait(bindns::bind(increment, &count));
+
+  ioc.poll();
+
+  BOOST_ASIO_CHECK(count == 0);
+  BOOST_ASIO_CHECK(!ioc.stopped());
+
+  cancel_signal.emit(boost::asio::cancellation_type::all);
+
+  ioc.run_one();
+  ioc.poll();
+
+  BOOST_ASIO_CHECK(count == 1);
+  BOOST_ASIO_CHECK(!ioc.stopped());
+
+  timer.cancel();
+
+  ioc.run();
+
+  BOOST_ASIO_CHECK(count == 3);
+  BOOST_ASIO_CHECK(ioc.stopped());
+}
+
 BOOST_ASIO_TEST_SUITE
 (
   "system_timer",
@@ -474,6 +514,7 @@ BOOST_ASIO_TEST_SUITE
   BOOST_ASIO_TEST_CASE(system_timer_custom_allocation_test)
   BOOST_ASIO_TEST_CASE(system_timer_thread_test)
   BOOST_ASIO_TEST_CASE(system_timer_move_test)
+  BOOST_ASIO_TEST_CASE(system_timer_op_cancel_test)
 )
 #else // defined(BOOST_ASIO_HAS_STD_CHRONO)
 BOOST_ASIO_TEST_SUITE

@@ -19,6 +19,8 @@
 #include <boost/system/error_code.hpp>
 #include <boost/asio/experimental/detail/partial_promise.hpp>
 
+#include <boost/asio/detail/push_options.hpp>
+
 namespace boost {
 namespace asio {
 
@@ -274,6 +276,8 @@ struct async_result<experimental::use_coro_t<Executor>, R(Args...)>
 
 } // namespace asio
 } // namespace boost
+
+#include <boost/asio/detail/pop_options.hpp>
 
 #include <boost/asio/experimental/coro.hpp>
 
