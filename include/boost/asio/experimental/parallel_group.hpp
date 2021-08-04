@@ -99,6 +99,10 @@ void parallel_group_launch(Condition cancellation_condition, Handler handler,
 } // namespace detail
 
 /// A group of asynchronous operations that may be launched in parallel.
+/**
+ * See the documentation for boost::asio::experimental::make_parallel_group for
+ * a usage example.
+ */
 template <typename... Ops>
 class parallel_group
 {
@@ -114,6 +118,27 @@ public:
       typename detail::parallel_op_signature<Ops>::type...>::type signature;
 
   /// Initiate an asynchronous wait for the group of operations.
+  /**
+   * Launches the group and asynchronously waits for completion.
+   *
+   * @param cancellation_condition A function object, called on completion of
+   * an operation within the group, that is used to determine whether to cancel
+   * the remaining operations. The function object is passed the arguments of
+   * the completed operation's handler. To trigger cancellation of the remaining
+   * operations, it must return a boost::asio::cancellation_type value other
+   * than <tt>boost::asio::cancellation_type::none</tt>.
+   *
+   * @param token A completion token whose signature is comprised of
+   * a @c std::array<std::size_t, N> indicating the completion order of the
+   * operations, followed by all operations' completion handler arguments.
+   *
+   * The library provides the following @c cancellation_condition types:
+   *
+   * @li boost::asio::experimental::wait_for_all
+   * @li boost::asio::experimental::wait_for_one
+   * @li boost::asio::experimental::wait_for_one_error
+   * @li boost::asio::experimental::wait_for_one_success
+   */
   template <typename CancellationCondition,
       BOOST_ASIO_COMPLETION_TOKEN_FOR(signature) CompletionToken>
   auto async_wait(CancellationCondition cancellation_condition,
@@ -139,6 +164,42 @@ private:
 };
 
 /// Create a group of operations that may be launched in parallel.
+/**
+ * For example:
+ * @code boost::asio::experimental::make_parallel_group(
+ *    [&](auto token)
+ *    {
+ *      return in.async_read_some(boost::asio::buffer(data), token);
+ *    },
+ *    [&](auto token)
+ *    {
+ *      return timer.async_wait(token);
+ *    }
+ *  ).async_wait(
+ *    boost::asio::experimental::wait_for_all(),
+ *    [](
+ *        std::array<std::size_t, 2> completion_order,
+ *        boost::system::error_code ec1, std::size_t n1,
+ *        boost::system::error_code ec2
+ *    )
+ *    {
+ *      switch (completion_order[0])
+ *      {
+ *      case 0:
+ *        {
+ *          std::cout << "descriptor finished: " << ec1 << ", " << n1 << "\n";
+ *        }
+ *        break;
+ *      case 1:
+ *        {
+ *          std::cout << "timer finished: " << ec2 << "\n";
+ *        }
+ *        break;
+ *      }
+ *    }
+ *  );
+ * @endcode
+ */
 template <typename... Ops>
 inline parallel_group<Ops...> make_parallel_group(Ops... ops)
 {
