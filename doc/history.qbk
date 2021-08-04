@@ -7,9 +7,9 @@
 
 [section:history Revision History]
 
-[heading Asio 1.19.0 / Boost 1.77 beta]
+[heading Asio 1.20.0 / Boost 1.77]
 
-* Added support for cancellation of individual asynchonrous operations.
+* Added support for cancellation of individual asynchronous operations.
   Cancellation is implemented by having each completion handler carry an
   associated `CancellationSlot`, a lightweight cancellation channel that is
   specified through the new `associated_cancellation_slot` associator. A
@@ -396,6 +396,14 @@
   `use_awaitable_t::executor_with_default`.
 * Fixed the `any_io_executor` equality operators to correctly return a result
   based on the target executor.
+* Fixed `strand<>` to avoid using a potentially moved-from executor.
+* Ensured [^gcc] tests are not used for [^clang] when detecting compiler
+  features.
+* Disabled coroutines support for the [^clang] shipped with MSVC.
+* Fixed compatibility with recent LibreSSL when `OPENSSL_NO_SSL_INTERN` is
+  defined.
+* Fixed `posix::basic_stream_descriptor` move operations to work with
+  non-defaulted executors.
 
 [heading Asio 1.18.2 / Boost 1.76]
 
