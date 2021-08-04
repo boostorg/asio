@@ -34,7 +34,9 @@ local example-names = cpp03/allocation cpp03/buffers cpp03/chat cpp03/echo
   cpp11/chat cpp11/echo cpp11/executors cpp11/fork cpp11/futures
   cpp11/handler_tracking cpp11/http/server cpp11/invocation cpp11/local
   cpp11/multicast cpp11/nonblocking cpp11/operations cpp11/socks4 cpp11/ssl
-  cpp11/timeouts cpp11/timers cpp11/spawn cpp14/operations cpp17/coroutines_ts ;
+  cpp11/timeouts cpp11/timers cpp11/spawn cpp14/deferred cpp14/echo
+  cpp14/executors cpp14/iostreams cpp14/operations cpp14/parallel_group
+  cpp17/coroutines_ts ;
 
 for local l in $(example-names)
 {
