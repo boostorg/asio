@@ -49,6 +49,19 @@ struct cancellation_state_t
 
 /// Awaitable object that returns the cancellation state of the current
 /// coroutine.
+/**
+ * @par Example
+ * @code boost::asio::awaitable<void> my_coroutine()
+ * {
+ *   boost::asio::cancellation_state cs
+ *     = co_await boost::asio::this_coro::cancellation_state;
+ *
+ *   // ...
+ *
+ *   if (cs.cancelled() != boost::asio::cancellation_type::none)
+ *     // ...
+ * } @endcode
+ */
 #if defined(BOOST_ASIO_HAS_CONSTEXPR) || defined(GENERATING_DOCUMENTATION)
 constexpr cancellation_state_t cancellation_state;
 #elif defined(BOOST_ASIO_MSVC)
@@ -59,17 +72,74 @@ __declspec(selectany) cancellation_state_t cancellation_state;
 
 /// Returns an awaitable object that may be used to reset the cancellation state
 /// of the current coroutine.
+/**
+ * Let <tt>P</tt> be the cancellation slot associated with the current
+ * coroutine's `co_spawn` completion handler. Assigns a new
+ * boost::asio::cancellation_state object <tt>S</tt>, constructed as
+ * <tt>S(P)</tt>, into the current coroutine's cancellation state object.
+ *
+ * @par Example
+ * @code boost::asio::awaitable<void> my_coroutine()
+ * {
+ *   co_await boost::asio::this_coro::reset_cancellation_state();
+ *
+ *   // ...
+ * } @endcode
+ *
+ * @note The cancellation state is shared by all coroutines in the same "thread
+ * of execution" that was created using boost::asio::co_spawn.
+ */
 BOOST_ASIO_NODISCARD BOOST_ASIO_CONSTEXPR unspecified
 reset_cancellation_state();
 
 /// Returns an awaitable object that may be used to reset the cancellation state
 /// of the current coroutine.
+/**
+ * Let <tt>P</tt> be the cancellation slot associated with the current
+ * coroutine's `co_spawn` completion handler. Assigns a new
+ * boost::asio::cancellation_state object <tt>S</tt>, constructed as <tt>S(P,
+ * std::forward<Filter>(filter))</tt>, into the current coroutine's
+ * cancellation state object.
+ *
+ * @par Example
+ * @code boost::asio::awaitable<void> my_coroutine()
+ * {
+ *   co_await boost::asio::this_coro::reset_cancellation_state(
+ *       boost::asio::enable_partial_cancellation());
+ *
+ *   // ...
+ * } @endcode
+ *
+ * @note The cancellation state is shared by all coroutines in the same "thread
+ * of execution" that was created using boost::asio::co_spawn.
+ */
 template <typename Filter>
 BOOST_ASIO_NODISCARD BOOST_ASIO_CONSTEXPR unspecified
 reset_cancellation_state(BOOST_ASIO_MOVE_ARG(Filter) filter);
 
 /// Returns an awaitable object that may be used to reset the cancellation state
 /// of the current coroutine.
+/**
+ * Let <tt>P</tt> be the cancellation slot associated with the current
+ * coroutine's `co_spawn` completion handler. Assigns a new
+ * boost::asio::cancellation_state object <tt>S</tt>, constructed as <tt>S(P,
+ * std::forward<InFilter>(in_filter),
+ * std::forward<OutFilter>(out_filter))</tt>, into the current coroutine's
+ * cancellation state object.
+ *
+ * @par Example
+ * @code boost::asio::awaitable<void> my_coroutine()
+ * {
+ *   co_await boost::asio::this_coro::reset_cancellation_state(
+ *       boost::asio::enable_partial_cancellation(),
+ *       boost::asio::disable_cancellation());
+ *
+ *   // ...
+ * } @endcode
+ *
+ * @note The cancellation state is shared by all coroutines in the same "thread
+ * of execution" that was created using boost::asio::co_spawn.
+ */
 template <typename InFilter, typename OutFilter>
 BOOST_ASIO_NODISCARD BOOST_ASIO_CONSTEXPR unspecified
 reset_cancellation_state(
@@ -78,11 +148,30 @@ reset_cancellation_state(
 
 /// Returns an awaitable object that may be used to determine whether the
 /// coroutine throws if trying to suspend when it has been cancelled.
+/**
+ * @par Example
+ * @code boost::asio::awaitable<void> my_coroutine()
+ * {
+ *   if (co_await boost::asio::this_coro::throw_if_cancelled)
+ *     // ...
+ *
+ *   // ...
+ * } @endcode
+ */
 BOOST_ASIO_NODISCARD BOOST_ASIO_CONSTEXPR unspecified
 throw_if_cancelled();
 
 /// Returns an awaitable object that may be used to specify whether the
 /// coroutine throws if trying to suspend when it has been cancelled.
+/**
+ * @par Example
+ * @code boost::asio::awaitable<void> my_coroutine()
+ * {
+ *   co_await boost::asio::this_coro::throw_if_cancelled(false);
+ *
+ *   // ...
+ * } @endcode
+ */
 BOOST_ASIO_NODISCARD BOOST_ASIO_CONSTEXPR unspecified
 throw_if_cancelled(bool value);
 
