@@ -224,7 +224,7 @@ public:
 
     cancellation_state proxy_cancel_state(
         boost::asio::get_associated_cancellation_slot(handler),
-        enable_terminal_cancellation());
+        enable_total_cancellation());
 
     cancellation_state cancel_state(proxy_cancel_state.slot());
 
