@@ -88,8 +88,9 @@ public:
 
   /// Construct and attach to a parent slot to create a new child slot.
   /**
-   * Initialises the cancellation state so that it relays all cancellation types
-   * from parent slot to child slot.
+   * Initialises the cancellation state so that it allows terminal cancellation
+   * only. Equivalent to <tt>cancellation_state(slot,
+   * enable_terminal_cancellation())</tt>.
    *
    * @param slot The parent cancellation slot to which the state will be
    * attached.

@@ -61996,7 +61996,7 @@ Construct and attach to a parent slot to create a new child slot.
       CancellationSlot slot);
 
 
-Initialises the cancellation state so that it relays all cancellation types from parent slot to child slot.
+Initialises the cancellation state so that it allows terminal cancellation only. Equivalent to `cancellation_state(slot, enable_terminal_cancellation())`.
 
 
 [heading Parameters]
@@ -133242,8 +133242,9 @@ Awaitable object that returns the cancellation state of the current coroutine.
   constexpr cancellation_state_t cancellation_state;
 
 
-For example:
 
+[heading Example]
+  
 
 
    boost::asio::awaitable<void> my_coroutine()
@@ -133256,6 +133257,8 @@ For example:
      if (cs.cancelled() != boost::asio::cancellation_type::none)
        // ...
    } 
+
+
 
 
 
@@ -133414,8 +133417,11 @@ Returns an awaitable object that may be used to reset the cancellation state of 
   constexpr unspecified reset_cancellation_state();
 
 
-Assigns a default-constructed [link boost_asio.reference.cancellation_state `cancellation_state`] into the current coroutine's cancellation state object. For example:
+Let `P` be the cancellation slot associated with the current coroutine's `co\_spawn` completion handler. Assigns a new [link boost_asio.reference.cancellation_state `cancellation_state`] object `S`, constructed as `S(P)`, into the current coroutine's cancellation state object.
 
+
+[heading Example]
+  
 
 
    boost::asio::awaitable<void> my_coroutine()
@@ -133452,8 +133458,11 @@ Returns an awaitable object that may be used to reset the cancellation state of 
       Filter && filter);
 
 
-Assigns a new [link boost_asio.reference.cancellation_state `cancellation_state`] object `S`, constructed as `S(std::forward<Filter>(filter))`, into the current coroutine's cancellation state object. For example:
+Let `P` be the cancellation slot associated with the current coroutine's `co\_spawn` completion handler. Assigns a new [link boost_asio.reference.cancellation_state `cancellation_state`] object `S`, constructed as `S(P, std::forward<Filter>(filter))`, into the current coroutine's cancellation state object.
 
+
+[heading Example]
+  
 
 
    boost::asio::awaitable<void> my_coroutine()
@@ -133493,8 +133502,11 @@ Returns an awaitable object that may be used to reset the cancellation state of 
       OutFilter && out_filter);
 
 
-Assigns a new [link boost_asio.reference.cancellation_state `cancellation_state`] object `S`, constructed as `S(std::forward<InFilter>(in_filter), std::forward<OutFilter>(out_filter))`, into the current coroutine's cancellation state object. For example:
+Let `P` be the cancellation slot associated with the current coroutine's `co\_spawn` completion handler. Assigns a new [link boost_asio.reference.cancellation_state `cancellation_state`] object `S`, constructed as `S(P, std::forward<InFilter>(in_filter), std::forward<OutFilter>(out_filter))`, into the current coroutine's cancellation state object.
 
+
+[heading Example]
+  
 
 
    boost::asio::awaitable<void> my_coroutine()
@@ -133552,8 +133564,9 @@ Returns an awaitable object that may be used to determine whether the coroutine 
   constexpr unspecified throw_if_cancelled();
 
 
-For example:
 
+[heading Example]
+  
 
 
    boost::asio::awaitable<void> my_coroutine()
@@ -133563,6 +133576,8 @@ For example:
 
      // ...
    } 
+
+
 
 
 
@@ -133582,8 +133597,9 @@ Returns an awaitable object that may be used to specify whether the coroutine th
       bool value);
 
 
-For example:
 
+[heading Example]
+  
 
 
    boost::asio::awaitable<void> my_coroutine()
@@ -133592,6 +133608,8 @@ For example:
 
      // ...
    } 
+
+
 
 
 
