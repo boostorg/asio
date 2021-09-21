@@ -28,8 +28,8 @@ public:
     while (!handlers_.empty())
     {
       queued_handler handler = handlers_.top();
-      handler.execute();
       handlers_.pop();
+      handler.execute();
     }
   }
 
