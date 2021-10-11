@@ -1196,7 +1196,11 @@
 #   if (_MSC_VER >= 1911 && _MSVC_LANG >= 201703)
 #    define BOOST_ASIO_HAS_STD_INVOKE_RESULT 1
 #   endif // (_MSC_VER >= 1911 && _MSVC_LANG >= 201703)
-#  endif // defined(BOOST_ASIO_MSVC)
+#  elif defined(BOOST_ASIO_HAS_CLANG_LIBCXX)
+#   if (_LIBCPP_VERSION >= 7000 && _LIBCPP_STD_VER > 14)
+#    define BOOST_ASIO_HAS_STD_INVOKE_RESULT 1
+#   endif // (_LIBCPP_VERSION > 6000 && _LIBCPP_STD_VER > 14)
+#  endif
 # endif // !defined(BOOST_ASIO_DISABLE_STD_INVOKE_RESULT)
 #endif // !defined(BOOST_ASIO_HAS_STD_INVOKE_RESULT)
 
