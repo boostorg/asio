@@ -20,6 +20,7 @@
 #endif
 
 #include <boost/asio/impl/any_io_executor.ipp>
+#include <boost/asio/impl/cancellation_signal.ipp>
 #include <boost/asio/impl/error.ipp>
 #include <boost/asio/impl/execution_context.ipp>
 #include <boost/asio/impl/executor.ipp>
