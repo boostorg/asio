@@ -19,6 +19,7 @@
 # error Do not compile Asio library source with BOOST_ASIO_HEADER_ONLY defined
 #endif
 
+#include <boost/asio/impl/any_io_executor.ipp>
 #include <boost/asio/impl/error.ipp>
 #include <boost/asio/impl/execution_context.ipp>
 #include <boost/asio/impl/executor.ipp>
