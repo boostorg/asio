@@ -26,6 +26,7 @@
 #include <boost/asio/detail/handler_type_requirements.hpp>
 #include <boost/asio/detail/non_const_lvalue.hpp>
 #include <boost/asio/detail/throw_error.hpp>
+#include <boost/asio/detail/type_traits.hpp>
 #include <boost/asio/error.hpp>
 #include <boost/asio/post.hpp>
 
@@ -74,9 +75,9 @@ namespace detail
 
     static const bool value =
       sizeof(asio_connect_condition_check(
-        (*static_cast<legacy_connect_condition_helper<T, Iterator>*>(0))(
-          *static_cast<const boost::system::error_code*>(0),
-          *static_cast<const Iterator*>(0)))) != 1;
+        (declval<legacy_connect_condition_helper<T, Iterator> >())(
+          declval<const boost::system::error_code>(),
+          declval<const Iterator>()))) != 1;
   };
 
   template <typename ConnectCondition, typename Iterator>
