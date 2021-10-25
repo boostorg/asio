@@ -20,6 +20,7 @@
 #if defined(BOOST_ASIO_HAS_IOCP) || defined(BOOST_ASIO_WINDOWS_RUNTIME)
 
 #include <boost/asio/detail/scheduler_operation.hpp>
+#include <boost/asio/detail/scheduler_task.hpp>
 #include <boost/asio/execution_context.hpp>
 
 #include <boost/asio/detail/push_options.hpp>
@@ -29,7 +30,8 @@ namespace asio {
 namespace detail {
 
 class null_reactor
-  : public execution_context_service_base<null_reactor>
+  : public execution_context_service_base<null_reactor>,
+    public scheduler_task
 {
 public:
   // Constructor.
