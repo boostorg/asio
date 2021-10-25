@@ -1168,7 +1168,7 @@ private:
 //  template <typename...> friend class any_executor;
 
   typedef aligned_storage<
-      sizeof(boost::asio::detail::shared_ptr<void>),
+      sizeof(boost::asio::detail::shared_ptr<void>) + sizeof(void*),
       alignment_of<boost::asio::detail::shared_ptr<void> >::value
     >::type object_type;
 
