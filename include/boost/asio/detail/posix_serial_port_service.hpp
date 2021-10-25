@@ -1,6 +1,6 @@
 //
-// detail/reactive_serial_port_service.hpp
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// detail/posix_serial_port_service.hpp
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2021 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 // Copyright (c) 2008 Rep Invariant Systems, Inc. (info@repinvariant.com)
@@ -9,8 +9,8 @@
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
-#ifndef BOOST_ASIO_DETAIL_REACTIVE_SERIAL_PORT_SERVICE_HPP
-#define BOOST_ASIO_DETAIL_REACTIVE_SERIAL_PORT_SERVICE_HPP
+#ifndef BOOST_ASIO_DETAIL_POSIX_SERIAL_PORT_SERVICE_HPP
+#define BOOST_ASIO_DETAIL_POSIX_SERIAL_PORT_SERVICE_HPP
 
 #if defined(_MSC_VER) && (_MSC_VER >= 1200)
 # pragma once
@@ -26,7 +26,12 @@
 #include <boost/asio/execution_context.hpp>
 #include <boost/asio/serial_port_base.hpp>
 #include <boost/asio/detail/descriptor_ops.hpp>
-#include <boost/asio/detail/reactive_descriptor_service.hpp>
+
+#if defined(BOOST_ASIO_HAS_IO_URING_AS_DEFAULT)
+# include <boost/asio/detail/io_uring_descriptor_service.hpp>
+#else // defined(BOOST_ASIO_HAS_IO_URING_AS_DEFAULT)
+# include <boost/asio/detail/reactive_descriptor_service.hpp>
+#endif // defined(BOOST_ASIO_HAS_IO_URING_AS_DEFAULT)
 
 #include <boost/asio/detail/push_options.hpp>
 
@@ -34,18 +39,24 @@ namespace boost {
 namespace asio {
 namespace detail {
 
-// Extend reactive_descriptor_service to provide serial port support.
-class reactive_serial_port_service :
-  public execution_context_service_base<reactive_serial_port_service>
+// Extend a descriptor_service to provide serial port support.
+class posix_serial_port_service :
+  public execution_context_service_base<posix_serial_port_service>
 {
 public:
+#if defined(BOOST_ASIO_HAS_IO_URING_AS_DEFAULT)
+  typedef io_uring_descriptor_service descriptor_service;
+#else // defined(BOOST_ASIO_HAS_IO_URING_AS_DEFAULT)
+  typedef reactive_descriptor_service descriptor_service;
+#endif // defined(BOOST_ASIO_HAS_IO_URING_AS_DEFAULT)
+
   // The native type of a serial port.
-  typedef reactive_descriptor_service::native_handle_type native_handle_type;
+  typedef descriptor_service::native_handle_type native_handle_type;
 
   // The implementation type of the serial port.
-  typedef reactive_descriptor_service::implementation_type implementation_type;
+  typedef descriptor_service::implementation_type implementation_type;
 
-  BOOST_ASIO_DECL reactive_serial_port_service(execution_context& context);
+  BOOST_ASIO_DECL posix_serial_port_service(execution_context& context);
 
   // Destroy all user-defined handler objects owned by the service.
   BOOST_ASIO_DECL void shutdown();
@@ -65,7 +76,7 @@ public:
 
   // Move-assign from another serial port implementation.
   void move_assign(implementation_type& impl,
-      reactive_serial_port_service& other_service,
+      posix_serial_port_service& other_service,
       implementation_type& other_impl)
   {
     descriptor_service_.move_assign(impl,
@@ -122,7 +133,7 @@ public:
       const SettableSerialPortOption& option, boost::system::error_code& ec)
   {
     return do_set_option(impl,
-        &reactive_serial_port_service::store_option<SettableSerialPortOption>,
+        &posix_serial_port_service::store_option<SettableSerialPortOption>,
         &option, ec);
   }
 
@@ -132,7 +143,7 @@ public:
       GettableSerialPortOption& option, boost::system::error_code& ec) const
   {
     return do_get_option(impl,
-        &reactive_serial_port_service::load_option<GettableSerialPortOption>,
+        &posix_serial_port_service::load_option<GettableSerialPortOption>,
         &option, ec);
   }
 
@@ -220,7 +231,7 @@ private:
       void* option, boost::system::error_code& ec) const;
 
   // The implementation used for initiating asynchronous operations.
-  reactive_descriptor_service descriptor_service_;
+  descriptor_service descriptor_service_;
 };
 
 } // namespace detail
@@ -230,10 +241,10 @@ private:
 #include <boost/asio/detail/pop_options.hpp>
 
 #if defined(BOOST_ASIO_HEADER_ONLY)
-# include <boost/asio/detail/impl/reactive_serial_port_service.ipp>
+# include <boost/asio/detail/impl/posix_serial_port_service.ipp>
 #endif // defined(BOOST_ASIO_HEADER_ONLY)
 
 #endif // !defined(BOOST_ASIO_WINDOWS) && !defined(__CYGWIN__)
 #endif // defined(BOOST_ASIO_HAS_SERIAL_PORT)
 
-#endif // BOOST_ASIO_DETAIL_REACTIVE_SERIAL_PORT_SERVICE_HPP
+#endif // BOOST_ASIO_DETAIL_POSIX_SERIAL_PORT_SERVICE_HPP

@@ -20,10 +20,15 @@
 #include <boost/asio/detail/concurrency_hint.hpp>
 #include <boost/asio/detail/event.hpp>
 #include <boost/asio/detail/limits.hpp>
-#include <boost/asio/detail/reactor.hpp>
 #include <boost/asio/detail/scheduler.hpp>
 #include <boost/asio/detail/scheduler_thread_info.hpp>
 #include <boost/asio/detail/signal_blocker.hpp>
+
+#if defined(BOOST_ASIO_HAS_IO_URING_AS_DEFAULT)
+# include <boost/asio/detail/io_uring_service.hpp>
+#else // defined(BOOST_ASIO_HAS_IO_URING_AS_DEFAULT)
+# include <boost/asio/detail/reactor.hpp>
+#endif // defined(BOOST_ASIO_HAS_IO_URING_AS_DEFAULT)
 
 #include <boost/asio/detail/push_options.hpp>
 
@@ -655,7 +660,11 @@ void scheduler::wake_one_thread_and_unlock(
 
 scheduler_task* scheduler::get_default_task(boost::asio::execution_context& ctx)
 {
+#if defined(BOOST_ASIO_HAS_IO_URING_AS_DEFAULT)
+  return &use_service<io_uring_service>(ctx);
+#else // defined(BOOST_ASIO_HAS_IO_URING_AS_DEFAULT)
   return &use_service<reactor>(ctx);
+#endif // defined(BOOST_ASIO_HAS_IO_URING_AS_DEFAULT)
 }
 
 } // namespace detail

@@ -17,7 +17,9 @@
 
 #include <boost/asio/detail/config.hpp>
 
-#if defined(BOOST_ASIO_HAS_IOCP) || defined(BOOST_ASIO_WINDOWS_RUNTIME)
+#if defined(BOOST_ASIO_HAS_IOCP) \
+  || defined(BOOST_ASIO_WINDOWS_RUNTIME) \
+  || defined(BOOST_ASIO_HAS_IO_URING_AS_DEFAULT)
 
 #include <boost/asio/detail/scheduler_operation.hpp>
 #include <boost/asio/detail/scheduler_task.hpp>
@@ -34,6 +36,10 @@ class null_reactor
     public scheduler_task
 {
 public:
+  struct per_descriptor_data
+  {
+  };
+
   // Constructor.
   null_reactor(boost::asio::execution_context& ctx)
     : execution_context_service_base<null_reactor>(ctx)
@@ -42,6 +48,11 @@ public:
 
   // Destructor.
   ~null_reactor()
+  {
+  }
+
+  // Initialise the task.
+  void init_task()
   {
   }
 
@@ -67,6 +78,8 @@ public:
 
 #include <boost/asio/detail/pop_options.hpp>
 
-#endif // defined(BOOST_ASIO_HAS_IOCP) || defined(BOOST_ASIO_WINDOWS_RUNTIME)
+#endif // defined(BOOST_ASIO_HAS_IOCP)
+       //   || defined(BOOST_ASIO_WINDOWS_RUNTIME)
+       //   || defined(BOOST_ASIO_HAS_IO_URING_AS_DEFAULT)
 
 #endif // BOOST_ASIO_DETAIL_NULL_REACTOR_HPP

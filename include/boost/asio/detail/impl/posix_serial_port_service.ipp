@@ -1,6 +1,6 @@
 //
-// detail/impl/reactive_serial_port_service.ipp
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// detail/impl/posix_serial_port_service.ipp
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2021 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 // Copyright (c) 2008 Rep Invariant Systems, Inc. (info@repinvariant.com)
@@ -9,8 +9,8 @@
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
-#ifndef BOOST_ASIO_DETAIL_IMPL_REACTIVE_SERIAL_PORT_SERVICE_IPP
-#define BOOST_ASIO_DETAIL_IMPL_REACTIVE_SERIAL_PORT_SERVICE_IPP
+#ifndef BOOST_ASIO_DETAIL_IMPL_POSIX_SERIAL_PORT_SERVICE_IPP
+#define BOOST_ASIO_DETAIL_IMPL_POSIX_SERIAL_PORT_SERVICE_IPP
 
 #if defined(_MSC_VER) && (_MSC_VER >= 1200)
 # pragma once
@@ -22,7 +22,7 @@
 #if !defined(BOOST_ASIO_WINDOWS) && !defined(__CYGWIN__)
 
 #include <cstring>
-#include <boost/asio/detail/reactive_serial_port_service.hpp>
+#include <boost/asio/detail/posix_serial_port_service.hpp>
 
 #include <boost/asio/detail/push_options.hpp>
 
@@ -30,20 +30,20 @@ namespace boost {
 namespace asio {
 namespace detail {
 
-reactive_serial_port_service::reactive_serial_port_service(
+posix_serial_port_service::posix_serial_port_service(
     execution_context& context)
-  : execution_context_service_base<reactive_serial_port_service>(context),
+  : execution_context_service_base<posix_serial_port_service>(context),
     descriptor_service_(context)
 {
 }
 
-void reactive_serial_port_service::shutdown()
+void posix_serial_port_service::shutdown()
 {
   descriptor_service_.shutdown();
 }
 
-boost::system::error_code reactive_serial_port_service::open(
-    reactive_serial_port_service::implementation_type& impl,
+boost::system::error_code posix_serial_port_service::open(
+    posix_serial_port_service::implementation_type& impl,
     const std::string& device, boost::system::error_code& ec)
 {
   if (is_open(impl))
@@ -106,9 +106,9 @@ boost::system::error_code reactive_serial_port_service::open(
   return ec;
 }
 
-boost::system::error_code reactive_serial_port_service::do_set_option(
-    reactive_serial_port_service::implementation_type& impl,
-    reactive_serial_port_service::store_function_type store,
+boost::system::error_code posix_serial_port_service::do_set_option(
+    posix_serial_port_service::implementation_type& impl,
+    posix_serial_port_service::store_function_type store,
     const void* option, boost::system::error_code& ec)
 {
   termios ios;
@@ -125,9 +125,9 @@ boost::system::error_code reactive_serial_port_service::do_set_option(
   return ec;
 }
 
-boost::system::error_code reactive_serial_port_service::do_get_option(
-    const reactive_serial_port_service::implementation_type& impl,
-    reactive_serial_port_service::load_function_type load,
+boost::system::error_code posix_serial_port_service::do_get_option(
+    const posix_serial_port_service::implementation_type& impl,
+    posix_serial_port_service::load_function_type load,
     void* option, boost::system::error_code& ec) const
 {
   termios ios;
@@ -148,4 +148,4 @@ boost::system::error_code reactive_serial_port_service::do_get_option(
 #endif // !defined(BOOST_ASIO_WINDOWS) && !defined(__CYGWIN__)
 #endif // defined(BOOST_ASIO_HAS_SERIAL_PORT)
 
-#endif // BOOST_ASIO_DETAIL_IMPL_REACTIVE_SERIAL_PORT_SERVICE_IPP
+#endif // BOOST_ASIO_DETAIL_IMPL_POSIX_SERIAL_PORT_SERVICE_IPP

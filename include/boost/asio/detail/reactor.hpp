@@ -19,6 +19,8 @@
 
 #if defined(BOOST_ASIO_HAS_IOCP) || defined(BOOST_ASIO_WINDOWS_RUNTIME)
 # include <boost/asio/detail/null_reactor.hpp>
+#elif defined(BOOST_ASIO_HAS_IO_URING_AS_DEFAULT)
+# include <boost/asio/detail/null_reactor.hpp>
 #elif defined(BOOST_ASIO_HAS_EPOLL)
 # include <boost/asio/detail/epoll_reactor.hpp>
 #elif defined(BOOST_ASIO_HAS_KQUEUE)
@@ -34,6 +36,8 @@ namespace asio {
 namespace detail {
 
 #if defined(BOOST_ASIO_HAS_IOCP) || defined(BOOST_ASIO_WINDOWS_RUNTIME)
+typedef null_reactor reactor;
+#elif defined(BOOST_ASIO_HAS_IO_URING_AS_DEFAULT)
 typedef null_reactor reactor;
 #elif defined(BOOST_ASIO_HAS_EPOLL)
 typedef epoll_reactor reactor;
