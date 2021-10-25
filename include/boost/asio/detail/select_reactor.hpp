@@ -49,8 +49,10 @@ namespace asio {
 namespace detail {
 
 class select_reactor
-  : public execution_context_service_base<select_reactor>,
-    public scheduler_task
+  : public execution_context_service_base<select_reactor>
+#if !defined(BOOST_ASIO_HAS_IOCP)
+    , public scheduler_task
+#endif // !defined(BOOST_ASIO_HAS_IOCP)
 {
 public:
 #if defined(BOOST_ASIO_WINDOWS) || defined(__CYGWIN__)

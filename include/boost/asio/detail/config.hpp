@@ -1579,6 +1579,17 @@
 # endif // !defined(BOOST_ASIO_DISABLE_LOCAL_SOCKETS)
 #endif // !defined(BOOST_ASIO_HAS_LOCAL_SOCKETS)
 
+// Files.
+#if !defined(BOOST_ASIO_HAS_FILE)
+# if !defined(BOOST_ASIO_DISABLE_FILE)
+#  if defined(BOOST_ASIO_HAS_WINDOWS_RANDOM_ACCESS_HANDLE)
+#   define BOOST_ASIO_HAS_FILE 1
+#  elif defined(BOOST_ASIO_HAS_IO_URING)
+#   define BOOST_ASIO_HAS_FILE 1
+#  endif // defined(BOOST_ASIO_HAS_IO_URING)
+# endif // !defined(BOOST_ASIO_DISABLE_FILE)
+#endif // !defined(BOOST_ASIO_HAS_FILE)
+
 // Can use sigaction() instead of signal().
 #if !defined(BOOST_ASIO_HAS_SIGACTION)
 # if !defined(BOOST_ASIO_DISABLE_SIGACTION)

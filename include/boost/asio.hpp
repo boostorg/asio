@@ -25,7 +25,9 @@
 #include <boost/asio/awaitable.hpp>
 #include <boost/asio/basic_datagram_socket.hpp>
 #include <boost/asio/basic_deadline_timer.hpp>
+#include <boost/asio/basic_file.hpp>
 #include <boost/asio/basic_io_object.hpp>
+#include <boost/asio/basic_random_access_file.hpp>
 #include <boost/asio/basic_raw_socket.hpp>
 #include <boost/asio/basic_seq_packet_socket.hpp>
 #include <boost/asio/basic_serial_port.hpp>
@@ -34,6 +36,7 @@
 #include <boost/asio/basic_socket_acceptor.hpp>
 #include <boost/asio/basic_socket_iostream.hpp>
 #include <boost/asio/basic_socket_streambuf.hpp>
+#include <boost/asio/basic_stream_file.hpp>
 #include <boost/asio/basic_stream_socket.hpp>
 #include <boost/asio/basic_streambuf.hpp>
 #include <boost/asio/basic_waitable_timer.hpp>
@@ -91,6 +94,7 @@
 #include <boost/asio/execution_context.hpp>
 #include <boost/asio/executor.hpp>
 #include <boost/asio/executor_work_guard.hpp>
+#include <boost/asio/file_base.hpp>
 #include <boost/asio/generic/basic_endpoint.hpp>
 #include <boost/asio/generic/datagram_protocol.hpp>
 #include <boost/asio/generic/raw_protocol.hpp>
@@ -147,6 +151,7 @@
 #include <boost/asio/post.hpp>
 #include <boost/asio/prefer.hpp>
 #include <boost/asio/query.hpp>
+#include <boost/asio/random_access_file.hpp>
 #include <boost/asio/read.hpp>
 #include <boost/asio/read_at.hpp>
 #include <boost/asio/read_until.hpp>
@@ -160,6 +165,7 @@
 #include <boost/asio/static_thread_pool.hpp>
 #include <boost/asio/steady_timer.hpp>
 #include <boost/asio/strand.hpp>
+#include <boost/asio/stream_file.hpp>
 #include <boost/asio/streambuf.hpp>
 #include <boost/asio/system_context.hpp>
 #include <boost/asio/system_executor.hpp>
