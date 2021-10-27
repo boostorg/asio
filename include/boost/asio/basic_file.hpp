@@ -734,6 +734,8 @@ public:
    * current size is less than @c n then the file is extended and filled with
    * zeroes.
    *
+   * @param n The new size for the file.
+   *
    * @param ec Set to indicate what error occurred, if any.
    */
   BOOST_ASIO_SYNC_OP_VOID resize(uint64_t n, boost::system::error_code& ec)
