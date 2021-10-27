@@ -29,6 +29,7 @@
 #include <boost/asio/basic_io_object.hpp>
 #include <boost/asio/basic_random_access_file.hpp>
 #include <boost/asio/basic_raw_socket.hpp>
+#include <boost/asio/basic_readable_pipe.hpp>
 #include <boost/asio/basic_seq_packet_socket.hpp>
 #include <boost/asio/basic_serial_port.hpp>
 #include <boost/asio/basic_signal_set.hpp>
@@ -40,6 +41,7 @@
 #include <boost/asio/basic_stream_socket.hpp>
 #include <boost/asio/basic_streambuf.hpp>
 #include <boost/asio/basic_waitable_timer.hpp>
+#include <boost/asio/basic_writable_pipe.hpp>
 #include <boost/asio/bind_cancellation_slot.hpp>
 #include <boost/asio/bind_executor.hpp>
 #include <boost/asio/buffer.hpp>
@@ -57,6 +59,7 @@
 #include <boost/asio/completion_condition.hpp>
 #include <boost/asio/compose.hpp>
 #include <boost/asio/connect.hpp>
+#include <boost/asio/connect_pipe.hpp>
 #include <boost/asio/coroutine.hpp>
 #include <boost/asio/deadline_timer.hpp>
 #include <boost/asio/defer.hpp>
@@ -155,6 +158,7 @@
 #include <boost/asio/read.hpp>
 #include <boost/asio/read_at.hpp>
 #include <boost/asio/read_until.hpp>
+#include <boost/asio/readable_pipe.hpp>
 #include <boost/asio/redirect_error.hpp>
 #include <boost/asio/require.hpp>
 #include <boost/asio/require_concept.hpp>
@@ -187,6 +191,7 @@
 #include <boost/asio/windows/overlapped_ptr.hpp>
 #include <boost/asio/windows/random_access_handle.hpp>
 #include <boost/asio/windows/stream_handle.hpp>
+#include <boost/asio/writable_pipe.hpp>
 #include <boost/asio/write.hpp>
 #include <boost/asio/write_at.hpp>
 

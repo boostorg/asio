@@ -1590,6 +1590,23 @@
 # endif // !defined(BOOST_ASIO_DISABLE_FILE)
 #endif // !defined(BOOST_ASIO_HAS_FILE)
 
+// Pipes.
+#if !defined(BOOST_ASIO_HAS_PIPE)
+# if defined(BOOST_ASIO_HAS_IOCP) \
+  || !defined(BOOST_ASIO_WINDOWS) \
+  && !defined(BOOST_ASIO_WINDOWS_RUNTIME) \
+  && !defined(__CYGWIN__)
+#  if !defined(__SYMBIAN32__)
+#   if !defined(BOOST_ASIO_DISABLE_PIPE)
+#    define BOOST_ASIO_HAS_PIPE 1
+#   endif // !defined(BOOST_ASIO_DISABLE_PIPE)
+#  endif // !defined(__SYMBIAN32__)
+# endif // defined(BOOST_ASIO_HAS_IOCP)
+        //   || !defined(BOOST_ASIO_WINDOWS)
+        //   && !defined(BOOST_ASIO_WINDOWS_RUNTIME)
+        //   && !defined(__CYGWIN__)
+#endif // !defined(BOOST_ASIO_HAS_PIPE)
+
 // Can use sigaction() instead of signal().
 #if !defined(BOOST_ASIO_HAS_SIGACTION)
 # if !defined(BOOST_ASIO_DISABLE_SIGACTION)
