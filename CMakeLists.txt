@@ -14,6 +14,7 @@ target_include_directories(boost_asio INTERFACE include)
 
 target_link_libraries(boost_asio
   INTERFACE
+    Boost::align
     Boost::array
     Boost::assert
     Boost::bind
