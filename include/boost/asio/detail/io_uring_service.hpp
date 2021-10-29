@@ -21,6 +21,7 @@
 
 #include <liburing.h>
 #include <boost/asio/detail/atomic_count.hpp>
+#include <boost/asio/detail/buffer_sequence_adapter.hpp>
 #include <boost/asio/detail/conditionally_enabled_mutex.hpp>
 #include <boost/asio/detail/io_uring_operation.hpp>
 #include <boost/asio/detail/limits.hpp>
@@ -110,6 +111,12 @@ public:
   // Register an internal I/O object with io_uring.
   BOOST_ASIO_DECL void register_internal_io_object(
       io_object*& io_obj, int op_type, io_uring_operation* op);
+
+  // Register buffers with io_uring.
+  BOOST_ASIO_DECL void register_buffers(const ::iovec* v, unsigned n);
+
+  // Unregister buffers from io_uring.
+  BOOST_ASIO_DECL void unregister_buffers();
 
   // Post an operation for immediate completion.
   void post_immediate_completion(operation* op, bool is_continuation);

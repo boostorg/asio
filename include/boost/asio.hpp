@@ -45,6 +45,7 @@
 #include <boost/asio/bind_cancellation_slot.hpp>
 #include <boost/asio/bind_executor.hpp>
 #include <boost/asio/buffer.hpp>
+#include <boost/asio/buffer_registration.hpp>
 #include <boost/asio/buffered_read_stream_fwd.hpp>
 #include <boost/asio/buffered_read_stream.hpp>
 #include <boost/asio/buffered_stream_fwd.hpp>
@@ -160,6 +161,7 @@
 #include <boost/asio/read_until.hpp>
 #include <boost/asio/readable_pipe.hpp>
 #include <boost/asio/redirect_error.hpp>
+#include <boost/asio/registered_buffer.hpp>
 #include <boost/asio/require.hpp>
 #include <boost/asio/require_concept.hpp>
 #include <boost/asio/serial_port.hpp>
