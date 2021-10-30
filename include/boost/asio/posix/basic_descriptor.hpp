@@ -25,11 +25,16 @@
 #include <boost/asio/detail/handler_type_requirements.hpp>
 #include <boost/asio/detail/io_object_impl.hpp>
 #include <boost/asio/detail/non_const_lvalue.hpp>
-#include <boost/asio/detail/reactive_descriptor_service.hpp>
 #include <boost/asio/detail/throw_error.hpp>
 #include <boost/asio/error.hpp>
 #include <boost/asio/execution_context.hpp>
 #include <boost/asio/posix/descriptor_base.hpp>
+
+#if defined(BOOST_ASIO_HAS_IO_URING_AS_DEFAULT)
+# include <boost/asio/detail/io_uring_descriptor_service.hpp>
+#else // defined(BOOST_ASIO_HAS_IO_URING_AS_DEFAULT)
+# include <boost/asio/detail/reactive_descriptor_service.hpp>
+#endif // defined(BOOST_ASIO_HAS_IO_URING_AS_DEFAULT)
 
 #if defined(BOOST_ASIO_HAS_MOVE)
 # include <utility>
@@ -69,10 +74,13 @@ public:
   /// The native representation of a descriptor.
 #if defined(GENERATING_DOCUMENTATION)
   typedef implementation_defined native_handle_type;
-#else
+#elif defined(BOOST_ASIO_HAS_IO_URING_AS_DEFAULT)
+  typedef detail::io_uring_descriptor_service::native_handle_type
+    native_handle_type;
+#else // defined(BOOST_ASIO_HAS_IO_URING_AS_DEFAULT)
   typedef detail::reactive_descriptor_service::native_handle_type
     native_handle_type;
-#endif
+#endif // defined(BOOST_ASIO_HAS_IO_URING_AS_DEFAULT)
 
   /// A descriptor is always the lowest layer.
   typedef basic_descriptor lowest_layer_type;
@@ -658,7 +666,11 @@ protected:
   {
   }
 
+#if defined(BOOST_ASIO_HAS_IO_URING_AS_DEFAULT)
+  detail::io_object_impl<detail::io_uring_descriptor_service, Executor> impl_;
+#else // defined(BOOST_ASIO_HAS_IO_URING_AS_DEFAULT)
   detail::io_object_impl<detail::reactive_descriptor_service, Executor> impl_;
+#endif // defined(BOOST_ASIO_HAS_IO_URING_AS_DEFAULT)
 
 private:
   // Disallow copying and assignment.

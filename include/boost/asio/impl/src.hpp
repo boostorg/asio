@@ -19,6 +19,9 @@
 # error Do not compile Asio library source with BOOST_ASIO_HEADER_ONLY defined
 #endif
 
+#include <boost/asio/impl/any_io_executor.ipp>
+#include <boost/asio/impl/cancellation_signal.ipp>
+#include <boost/asio/impl/connect_pipe.ipp>
 #include <boost/asio/impl/error.ipp>
 #include <boost/asio/impl/execution_context.ipp>
 #include <boost/asio/impl/executor.ipp>
@@ -34,15 +37,19 @@
 #include <boost/asio/detail/impl/epoll_reactor.ipp>
 #include <boost/asio/detail/impl/eventfd_select_interrupter.ipp>
 #include <boost/asio/detail/impl/handler_tracking.ipp>
+#include <boost/asio/detail/impl/io_uring_descriptor_service.ipp>
+#include <boost/asio/detail/impl/io_uring_file_service.ipp>
+#include <boost/asio/detail/impl/io_uring_socket_service_base.ipp>
+#include <boost/asio/detail/impl/io_uring_service.ipp>
 #include <boost/asio/detail/impl/kqueue_reactor.ipp>
 #include <boost/asio/detail/impl/null_event.ipp>
 #include <boost/asio/detail/impl/pipe_select_interrupter.ipp>
 #include <boost/asio/detail/impl/posix_event.ipp>
 #include <boost/asio/detail/impl/posix_mutex.ipp>
+#include <boost/asio/detail/impl/posix_serial_port_service.ipp>
 #include <boost/asio/detail/impl/posix_thread.ipp>
 #include <boost/asio/detail/impl/posix_tss_ptr.ipp>
 #include <boost/asio/detail/impl/reactive_descriptor_service.ipp>
-#include <boost/asio/detail/impl/reactive_serial_port_service.ipp>
 #include <boost/asio/detail/impl/reactive_socket_service_base.ipp>
 #include <boost/asio/detail/impl/resolver_service_base.ipp>
 #include <boost/asio/detail/impl/scheduler.ipp>
@@ -57,6 +64,7 @@
 #include <boost/asio/detail/impl/throw_error.ipp>
 #include <boost/asio/detail/impl/timer_queue_ptime.ipp>
 #include <boost/asio/detail/impl/timer_queue_set.ipp>
+#include <boost/asio/detail/impl/win_iocp_file_service.ipp>
 #include <boost/asio/detail/impl/win_iocp_handle_service.ipp>
 #include <boost/asio/detail/impl/win_iocp_io_context.ipp>
 #include <boost/asio/detail/impl/win_iocp_serial_port_service.ipp>

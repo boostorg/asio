@@ -25,6 +25,8 @@ namespace detail {
 typedef class winrt_timer_scheduler timer_scheduler;
 #elif defined(BOOST_ASIO_HAS_IOCP)
 typedef class win_iocp_io_context timer_scheduler;
+#elif defined(BOOST_ASIO_HAS_IO_URING_AS_DEFAULT)
+typedef class io_uring_service timer_scheduler;
 #elif defined(BOOST_ASIO_HAS_EPOLL)
 typedef class epoll_reactor timer_scheduler;
 #elif defined(BOOST_ASIO_HAS_KQUEUE)

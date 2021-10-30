@@ -1197,6 +1197,13 @@
 #    define BOOST_ASIO_HAS_STD_INVOKE_RESULT 1
 #   endif // (_MSC_VER >= 1911 && _MSVC_LANG >= 201703)
 #  endif // defined(BOOST_ASIO_MSVC)
+#  if defined(BOOST_ASIO_HAS_CLANG_LIBCXX)
+#   if (_LIBCPP_VERSION >= 13000)
+#    if (__cplusplus >= 202002)
+#     define BOOST_ASIO_HAS_STD_INVOKE_RESULT 1
+#    endif // (__cplusplus >= 202002)
+#   endif // (_LIBCPP_VERSION >= 13000)
+#  endif // defined(BOOST_ASIO_HAS_CLANG_LIBCXX)
 # endif // !defined(BOOST_ASIO_DISABLE_STD_INVOKE_RESULT)
 #endif // !defined(BOOST_ASIO_HAS_STD_INVOKE_RESULT)
 
@@ -1464,6 +1471,13 @@
 # endif // !defined(BOOST_ASIO_HAS_TIMERFD)
 #endif // defined(__linux__)
 
+// Linux: io_uring is used instead of epoll.
+#if !defined(BOOST_ASIO_HAS_IO_URING_AS_DEFAULT)
+# if !defined(BOOST_ASIO_HAS_EPOLL) && defined(BOOST_ASIO_HAS_IO_URING)
+#  define BOOST_ASIO_HAS_IO_URING_AS_DEFAULT 1
+# endif // !defined(BOOST_ASIO_HAS_EPOLL) && defined(BOOST_ASIO_HAS_IO_URING)
+#endif // !defined(BOOST_ASIO_HAS_IO_URING_AS_DEFAULT)
+
 // Mac OS X, FreeBSD, NetBSD, OpenBSD: kqueue.
 #if (defined(__MACH__) && defined(__APPLE__)) \
   || defined(__FreeBSD__) \
@@ -1564,6 +1578,34 @@
 #  endif // !defined(BOOST_ASIO_WINDOWS_RUNTIME)
 # endif // !defined(BOOST_ASIO_DISABLE_LOCAL_SOCKETS)
 #endif // !defined(BOOST_ASIO_HAS_LOCAL_SOCKETS)
+
+// Files.
+#if !defined(BOOST_ASIO_HAS_FILE)
+# if !defined(BOOST_ASIO_DISABLE_FILE)
+#  if defined(BOOST_ASIO_HAS_WINDOWS_RANDOM_ACCESS_HANDLE)
+#   define BOOST_ASIO_HAS_FILE 1
+#  elif defined(BOOST_ASIO_HAS_IO_URING)
+#   define BOOST_ASIO_HAS_FILE 1
+#  endif // defined(BOOST_ASIO_HAS_IO_URING)
+# endif // !defined(BOOST_ASIO_DISABLE_FILE)
+#endif // !defined(BOOST_ASIO_HAS_FILE)
+
+// Pipes.
+#if !defined(BOOST_ASIO_HAS_PIPE)
+# if defined(BOOST_ASIO_HAS_IOCP) \
+  || !defined(BOOST_ASIO_WINDOWS) \
+  && !defined(BOOST_ASIO_WINDOWS_RUNTIME) \
+  && !defined(__CYGWIN__)
+#  if !defined(__SYMBIAN32__)
+#   if !defined(BOOST_ASIO_DISABLE_PIPE)
+#    define BOOST_ASIO_HAS_PIPE 1
+#   endif // !defined(BOOST_ASIO_DISABLE_PIPE)
+#  endif // !defined(__SYMBIAN32__)
+# endif // defined(BOOST_ASIO_HAS_IOCP)
+        //   || !defined(BOOST_ASIO_WINDOWS)
+        //   && !defined(BOOST_ASIO_WINDOWS_RUNTIME)
+        //   && !defined(__CYGWIN__)
+#endif // !defined(BOOST_ASIO_HAS_PIPE)
 
 // Can use sigaction() instead of signal().
 #if !defined(BOOST_ASIO_HAS_SIGACTION)

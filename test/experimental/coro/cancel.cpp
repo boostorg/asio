@@ -20,7 +20,6 @@
 #include <boost/asio/io_context.hpp>
 #include <boost/asio/steady_timer.hpp>
 #include <boost/asio/this_coro.hpp>
-#include <boost/scope_exit.hpp>
 #include "../../unit_test.hpp"
 
 using namespace boost::asio::experimental;

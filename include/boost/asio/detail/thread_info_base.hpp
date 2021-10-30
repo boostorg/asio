@@ -238,7 +238,11 @@ public:
   }
 
 private:
+#if defined(BOOST_ASIO_HAS_IO_URING)
+  enum { chunk_size = 8 };
+#else // defined(BOOST_ASIO_HAS_IO_URING)
   enum { chunk_size = 4 };
+#endif // defined(BOOST_ASIO_HAS_IO_URING)
   void* reusable_memory_[max_mem_index];
 
 #if defined(BOOST_ASIO_HAS_STD_EXCEPTION_PTR) \

@@ -28,6 +28,7 @@
 #include <boost/asio/detail/op_queue.hpp>
 #include <boost/asio/detail/reactor_op.hpp>
 #include <boost/asio/detail/reactor_op_queue.hpp>
+#include <boost/asio/detail/scheduler_task.hpp>
 #include <boost/asio/detail/select_interrupter.hpp>
 #include <boost/asio/detail/socket_types.hpp>
 #include <boost/asio/detail/timer_queue_base.hpp>
@@ -42,7 +43,8 @@ namespace asio {
 namespace detail {
 
 class dev_poll_reactor
-  : public execution_context_service_base<dev_poll_reactor>
+  : public execution_context_service_base<dev_poll_reactor>,
+    public scheduler_task
 {
 public:
   enum op_types { read_op = 0, write_op = 1,
@@ -142,6 +144,12 @@ public:
   std::size_t cancel_timer(timer_queue<Time_Traits>& queue,
       typename timer_queue<Time_Traits>::per_timer_data& timer,
       std::size_t max_cancelled = (std::numeric_limits<std::size_t>::max)());
+
+  // Cancel the timer operations associated with the given key.
+  template <typename Time_Traits>
+  void cancel_timer_by_key(timer_queue<Time_Traits>& queue,
+      typename timer_queue<Time_Traits>::per_timer_data* timer,
+      void* cancellation_key);
 
   // Move the timer operations associated with the given timer.
   template <typename Time_Traits>

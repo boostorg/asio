@@ -25,6 +25,7 @@
 #include <boost/asio/detail/object_pool.hpp>
 #include <boost/asio/detail/op_queue.hpp>
 #include <boost/asio/detail/reactor_op.hpp>
+#include <boost/asio/detail/scheduler_task.hpp>
 #include <boost/asio/detail/select_interrupter.hpp>
 #include <boost/asio/detail/socket_types.hpp>
 #include <boost/asio/detail/timer_queue_base.hpp>
@@ -43,7 +44,8 @@ namespace asio {
 namespace detail {
 
 class epoll_reactor
-  : public execution_context_service_base<epoll_reactor>
+  : public execution_context_service_base<epoll_reactor>,
+    public scheduler_task
 {
 private:
   // The mutex type used by this reactor.

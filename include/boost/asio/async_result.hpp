@@ -312,6 +312,12 @@ struct are_simple_completion_signatures<Sig0, Sig1, Sig2>
 {
 };
 
+template <>
+struct simple_completion_signature<void>
+{
+  typedef void type;
+};
+
 template <typename R>
 struct simple_completion_signature<R()>
 {

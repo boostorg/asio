@@ -17,7 +17,8 @@
 
 #include <boost/asio/detail/config.hpp>
 
-#if !defined(BOOST_ASIO_HAS_IOCP)
+#if !defined(BOOST_ASIO_HAS_IOCP) \
+  && !defined(BOOST_ASIO_HAS_IO_URING_AS_DEFAULT)
 
 #include <boost/asio/buffer.hpp>
 #include <boost/asio/error.hpp>
@@ -603,5 +604,6 @@ public:
 #include <boost/asio/detail/pop_options.hpp>
 
 #endif // !defined(BOOST_ASIO_HAS_IOCP)
+       //   && !defined(BOOST_ASIO_HAS_IO_URING_AS_DEFAULT)
 
 #endif // BOOST_ASIO_DETAIL_REACTIVE_SOCKET_SERVICE_HPP
