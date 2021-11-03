@@ -109,6 +109,8 @@ boost::asio::experimental::coro<int(int)> throwing_stacked(
     boost::asio::any_io_executor exec, int &val,
     bool &destroyed_inner, bool &destroyed)
 {
+  BOOST_ASIO_CHECK((co_await boost::asio::this_coro::throw_if_cancelled()));
+
   on_scope_exit x = [&]() noexcept { destroyed = true; };
   (void)x;
 
