@@ -15,7 +15,6 @@
 #include <boost/asio/detail/config.hpp>
 #include <boost/asio/experimental/detail/coro_traits.hpp>
 #include <boost/asio/awaitable.hpp>
-#include <iostream>
 
 #if defined(BOOST_ASIO_HAS_STD_COROUTINE)
 # include <coroutine>
