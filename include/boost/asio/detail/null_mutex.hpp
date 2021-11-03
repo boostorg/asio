@@ -17,8 +17,6 @@
 
 #include <boost/asio/detail/config.hpp>
 
-#if !defined(BOOST_ASIO_HAS_THREADS)
-
 #include <boost/asio/detail/noncopyable.hpp>
 #include <boost/asio/detail/scoped_lock.hpp>
 
@@ -60,7 +58,5 @@ public:
 } // namespace boost
 
 #include <boost/asio/detail/pop_options.hpp>
-
-#endif // !defined(BOOST_ASIO_HAS_THREADS)
 
 #endif // BOOST_ASIO_DETAIL_NULL_MUTEX_HPP
