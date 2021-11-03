@@ -143,6 +143,14 @@ public:
   BOOST_ASIO_DECL boost::system::error_code resize(implementation_type& impl,
       uint64_t n, boost::system::error_code& ec);
 
+  // Synchronise the file to disk.
+  BOOST_ASIO_DECL boost::system::error_code sync_all(implementation_type& impl,
+      boost::system::error_code& ec);
+
+  // Synchronise the file data to disk.
+  BOOST_ASIO_DECL boost::system::error_code sync_data(implementation_type& impl,
+      boost::system::error_code& ec);
+
   // Seek to a position in the file.
   BOOST_ASIO_DECL uint64_t seek(implementation_type& impl, int64_t offset,
       file_base::seek_basis whence, boost::system::error_code& ec);
