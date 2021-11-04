@@ -27,7 +27,7 @@
 #include <boost/asio/detail/limits.hpp>
 #include <boost/asio/detail/object_pool.hpp>
 #include <boost/asio/detail/op_queue.hpp>
-#include <boost/asio/detail/reactor.hpp>
+#include <boost/asio/detail/scheduler.hpp>
 #include <boost/asio/detail/scheduler_task.hpp>
 #include <boost/asio/detail/timer_queue_base.hpp>
 #include <boost/asio/detail/timer_queue_set.hpp>

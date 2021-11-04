@@ -42,8 +42,12 @@ project
 test-suite "asio-experimental-coro" :
   [ run cancel.cpp ]
   [ run cancel.cpp : : : $(USE_SELECT) : cancel_select ]
+  [ run co_spawn.cpp ]
+  [ run co_spawn.cpp : : : $(USE_SELECT) : co_spawn_select ]
   [ run exception.cpp ]
   [ run exception.cpp : : : $(USE_SELECT) : exception_select ]
+  [ run executor.cpp ]
+  [ run executor.cpp : : : $(USE_SELECT) : executor_select ]
   [ run partial.cpp ]
   [ run partial.cpp : : : $(USE_SELECT) : partial_select ]
   [ run simple_test.cpp ]

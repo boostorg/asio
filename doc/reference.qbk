@@ -16119,6 +16119,16 @@ Provides file functionality.
     [Get the size of the file. ]
   ]
   
+  [
+    [[link boost_asio.reference.basic_file.sync_all [*sync_all]]]
+    [Synchronise the file to disk. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.basic_file.sync_data [*sync_data]]]
+    [Synchronise the file data to disk. ]
+  ]
+  
 ]
 
 [heading Protected Member Functions]
@@ -17690,6 +17700,150 @@ This function determines the size of the file, in bytes.
 
 [endsect]
 
+[section:sync_all basic_file::sync_all]
+
+[indexterm2 boost_asio.indexterm.basic_file.sync_all..sync_all..basic_file] 
+Synchronise the file to disk. 
+
+
+  void ``[link boost_asio.reference.basic_file.sync_all.overload1 sync_all]``();
+  ``  [''''&raquo;''' [link boost_asio.reference.basic_file.sync_all.overload1 more...]]``
+
+  void ``[link boost_asio.reference.basic_file.sync_all.overload2 sync_all]``(
+      boost::system::error_code & ec);
+  ``  [''''&raquo;''' [link boost_asio.reference.basic_file.sync_all.overload2 more...]]``
+
+
+[section:overload1 basic_file::sync_all (1 of 2 overloads)]
+
+
+Synchronise the file to disk. 
+
+
+  void sync_all();
+
+
+This function synchronises the file data and metadata to disk. Note that the semantics of this synchronisation vary between operation systems.
+
+
+[heading Exceptions]
+    
+
+[variablelist
+  
+[[boost::system::system_error][Thrown on failure. ]]
+
+]
+
+
+
+
+[endsect]
+
+
+
+[section:overload2 basic_file::sync_all (2 of 2 overloads)]
+
+
+Synchronise the file to disk. 
+
+
+  void sync_all(
+      boost::system::error_code & ec);
+
+
+This function synchronises the file data and metadata to disk. Note that the semantics of this synchronisation vary between operation systems.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[ec][Set to indicate what error occurred, if any. ]]
+
+]
+
+
+
+
+[endsect]
+
+
+[endsect]
+
+[section:sync_data basic_file::sync_data]
+
+[indexterm2 boost_asio.indexterm.basic_file.sync_data..sync_data..basic_file] 
+Synchronise the file data to disk. 
+
+
+  void ``[link boost_asio.reference.basic_file.sync_data.overload1 sync_data]``();
+  ``  [''''&raquo;''' [link boost_asio.reference.basic_file.sync_data.overload1 more...]]``
+
+  void ``[link boost_asio.reference.basic_file.sync_data.overload2 sync_data]``(
+      boost::system::error_code & ec);
+  ``  [''''&raquo;''' [link boost_asio.reference.basic_file.sync_data.overload2 more...]]``
+
+
+[section:overload1 basic_file::sync_data (1 of 2 overloads)]
+
+
+Synchronise the file data to disk. 
+
+
+  void sync_data();
+
+
+This function synchronises the file data to disk. Note that the semantics of this synchronisation vary between operation systems.
+
+
+[heading Exceptions]
+    
+
+[variablelist
+  
+[[boost::system::system_error][Thrown on failure. ]]
+
+]
+
+
+
+
+[endsect]
+
+
+
+[section:overload2 basic_file::sync_data (2 of 2 overloads)]
+
+
+Synchronise the file data to disk. 
+
+
+  void sync_data(
+      boost::system::error_code & ec);
+
+
+This function synchronises the file data to disk. Note that the semantics of this synchronisation vary between operation systems.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[ec][Set to indicate what error occurred, if any. ]]
+
+]
+
+
+
+
+[endsect]
+
+
+[endsect]
+
 
 [section:truncate basic_file::truncate]
 
@@ -17900,6 +18054,16 @@ The file type when rebound to the specified executor.
   [
     [[link boost_asio.reference.basic_file.size [*size]]]
     [Get the size of the file. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.basic_file.sync_all [*sync_all]]]
+    [Synchronise the file to disk. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.basic_file.sync_data [*sync_data]]]
+    [Synchronise the file data to disk. ]
   ]
   
 ]
@@ -18594,6 +18758,16 @@ Provides random-access file functionality.
   [
     [[link boost_asio.reference.basic_random_access_file.size [*size]]]
     [Get the size of the file. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.basic_random_access_file.sync_all [*sync_all]]]
+    [Synchronise the file to disk. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.basic_random_access_file.sync_data [*sync_data]]]
+    [Synchronise the file data to disk. ]
   ]
   
   [
@@ -20541,6 +20715,162 @@ This function determines the size of the file, in bytes.
 
 [endsect]
 
+[section:sync_all basic_random_access_file::sync_all]
+
+[indexterm2 boost_asio.indexterm.basic_random_access_file.sync_all..sync_all..basic_random_access_file] 
+Synchronise the file to disk. 
+
+
+  void ``[link boost_asio.reference.basic_random_access_file.sync_all.overload1 sync_all]``();
+  ``  [''''&raquo;''' [link boost_asio.reference.basic_random_access_file.sync_all.overload1 more...]]``
+
+  void ``[link boost_asio.reference.basic_random_access_file.sync_all.overload2 sync_all]``(
+      boost::system::error_code & ec);
+  ``  [''''&raquo;''' [link boost_asio.reference.basic_random_access_file.sync_all.overload2 more...]]``
+
+
+[section:overload1 basic_random_access_file::sync_all (1 of 2 overloads)]
+
+
+['Inherited from basic_file.]
+
+
+Synchronise the file to disk. 
+
+
+  void sync_all();
+
+
+This function synchronises the file data and metadata to disk. Note that the semantics of this synchronisation vary between operation systems.
+
+
+[heading Exceptions]
+    
+
+[variablelist
+  
+[[boost::system::system_error][Thrown on failure. ]]
+
+]
+
+
+
+
+[endsect]
+
+
+
+[section:overload2 basic_random_access_file::sync_all (2 of 2 overloads)]
+
+
+['Inherited from basic_file.]
+
+
+Synchronise the file to disk. 
+
+
+  void sync_all(
+      boost::system::error_code & ec);
+
+
+This function synchronises the file data and metadata to disk. Note that the semantics of this synchronisation vary between operation systems.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[ec][Set to indicate what error occurred, if any. ]]
+
+]
+
+
+
+
+[endsect]
+
+
+[endsect]
+
+[section:sync_data basic_random_access_file::sync_data]
+
+[indexterm2 boost_asio.indexterm.basic_random_access_file.sync_data..sync_data..basic_random_access_file] 
+Synchronise the file data to disk. 
+
+
+  void ``[link boost_asio.reference.basic_random_access_file.sync_data.overload1 sync_data]``();
+  ``  [''''&raquo;''' [link boost_asio.reference.basic_random_access_file.sync_data.overload1 more...]]``
+
+  void ``[link boost_asio.reference.basic_random_access_file.sync_data.overload2 sync_data]``(
+      boost::system::error_code & ec);
+  ``  [''''&raquo;''' [link boost_asio.reference.basic_random_access_file.sync_data.overload2 more...]]``
+
+
+[section:overload1 basic_random_access_file::sync_data (1 of 2 overloads)]
+
+
+['Inherited from basic_file.]
+
+
+Synchronise the file data to disk. 
+
+
+  void sync_data();
+
+
+This function synchronises the file data to disk. Note that the semantics of this synchronisation vary between operation systems.
+
+
+[heading Exceptions]
+    
+
+[variablelist
+  
+[[boost::system::system_error][Thrown on failure. ]]
+
+]
+
+
+
+
+[endsect]
+
+
+
+[section:overload2 basic_random_access_file::sync_data (2 of 2 overloads)]
+
+
+['Inherited from basic_file.]
+
+
+Synchronise the file data to disk. 
+
+
+  void sync_data(
+      boost::system::error_code & ec);
+
+
+This function synchronises the file data to disk. Note that the semantics of this synchronisation vary between operation systems.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[ec][Set to indicate what error occurred, if any. ]]
+
+]
+
+
+
+
+[endsect]
+
+
+[endsect]
+
 
 [section:truncate basic_random_access_file::truncate]
 
@@ -20898,6 +21228,16 @@ The file type when rebound to the specified executor.
   [
     [[link boost_asio.reference.basic_random_access_file.size [*size]]]
     [Get the size of the file. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.basic_random_access_file.sync_all [*sync_all]]]
+    [Synchronise the file to disk. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.basic_random_access_file.sync_data [*sync_data]]]
+    [Synchronise the file data to disk. ]
   ]
   
   [
@@ -51056,6 +51396,16 @@ Provides stream-oriented file functionality.
   ]
   
   [
+    [[link boost_asio.reference.basic_stream_file.sync_all [*sync_all]]]
+    [Synchronise the file to disk. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.basic_stream_file.sync_data [*sync_data]]]
+    [Synchronise the file data to disk. ]
+  ]
+  
+  [
     [[link boost_asio.reference.basic_stream_file.write_some [*write_some]]]
     [Write some data to the file. ]
   ]
@@ -53093,6 +53443,162 @@ This function determines the size of the file, in bytes.
 
 [endsect]
 
+[section:sync_all basic_stream_file::sync_all]
+
+[indexterm2 boost_asio.indexterm.basic_stream_file.sync_all..sync_all..basic_stream_file] 
+Synchronise the file to disk. 
+
+
+  void ``[link boost_asio.reference.basic_stream_file.sync_all.overload1 sync_all]``();
+  ``  [''''&raquo;''' [link boost_asio.reference.basic_stream_file.sync_all.overload1 more...]]``
+
+  void ``[link boost_asio.reference.basic_stream_file.sync_all.overload2 sync_all]``(
+      boost::system::error_code & ec);
+  ``  [''''&raquo;''' [link boost_asio.reference.basic_stream_file.sync_all.overload2 more...]]``
+
+
+[section:overload1 basic_stream_file::sync_all (1 of 2 overloads)]
+
+
+['Inherited from basic_file.]
+
+
+Synchronise the file to disk. 
+
+
+  void sync_all();
+
+
+This function synchronises the file data and metadata to disk. Note that the semantics of this synchronisation vary between operation systems.
+
+
+[heading Exceptions]
+    
+
+[variablelist
+  
+[[boost::system::system_error][Thrown on failure. ]]
+
+]
+
+
+
+
+[endsect]
+
+
+
+[section:overload2 basic_stream_file::sync_all (2 of 2 overloads)]
+
+
+['Inherited from basic_file.]
+
+
+Synchronise the file to disk. 
+
+
+  void sync_all(
+      boost::system::error_code & ec);
+
+
+This function synchronises the file data and metadata to disk. Note that the semantics of this synchronisation vary between operation systems.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[ec][Set to indicate what error occurred, if any. ]]
+
+]
+
+
+
+
+[endsect]
+
+
+[endsect]
+
+[section:sync_data basic_stream_file::sync_data]
+
+[indexterm2 boost_asio.indexterm.basic_stream_file.sync_data..sync_data..basic_stream_file] 
+Synchronise the file data to disk. 
+
+
+  void ``[link boost_asio.reference.basic_stream_file.sync_data.overload1 sync_data]``();
+  ``  [''''&raquo;''' [link boost_asio.reference.basic_stream_file.sync_data.overload1 more...]]``
+
+  void ``[link boost_asio.reference.basic_stream_file.sync_data.overload2 sync_data]``(
+      boost::system::error_code & ec);
+  ``  [''''&raquo;''' [link boost_asio.reference.basic_stream_file.sync_data.overload2 more...]]``
+
+
+[section:overload1 basic_stream_file::sync_data (1 of 2 overloads)]
+
+
+['Inherited from basic_file.]
+
+
+Synchronise the file data to disk. 
+
+
+  void sync_data();
+
+
+This function synchronises the file data to disk. Note that the semantics of this synchronisation vary between operation systems.
+
+
+[heading Exceptions]
+    
+
+[variablelist
+  
+[[boost::system::system_error][Thrown on failure. ]]
+
+]
+
+
+
+
+[endsect]
+
+
+
+[section:overload2 basic_stream_file::sync_data (2 of 2 overloads)]
+
+
+['Inherited from basic_file.]
+
+
+Synchronise the file data to disk. 
+
+
+  void sync_data(
+      boost::system::error_code & ec);
+
+
+This function synchronises the file data to disk. Note that the semantics of this synchronisation vary between operation systems.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[ec][Set to indicate what error occurred, if any. ]]
+
+]
+
+
+
+
+[endsect]
+
+
+[endsect]
+
 
 [section:truncate basic_stream_file::truncate]
 
@@ -53447,6 +53953,16 @@ The file type when rebound to the specified executor.
   [
     [[link boost_asio.reference.basic_stream_file.size [*size]]]
     [Get the size of the file. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.basic_stream_file.sync_all [*sync_all]]]
+    [Synchronise the file to disk. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.basic_stream_file.sync_data [*sync_data]]]
+    [Synchronise the file data to disk. ]
   ]
   
   [
@@ -89923,10 +90439,2207 @@ If one operations succeeds, the other is cancelled as the OR-condition is alread
 
 [endsect]
 
+[section:experimental__basic_channel experimental::basic_channel]
+
+[indexterm1 boost_asio.indexterm.experimental__basic_channel..experimental::basic_channel]
+
+
+A channel for messages. 
+
+
+  template<
+      typename ``[link boost_asio.reference.Executor1 Executor]``,
+      typename Traits,
+      typename... Signatures>
+  class basic_channel
+
+
+[heading Types]
+[table
+  [[Name][Description]]
+
+  [
+
+    [[link boost_asio.reference.experimental__basic_channel__rebind_executor [*rebind_executor]]]
+    [Rebinds the channel type to another executor. ]
+  
+  ]
+
+  [
+
+    [[link boost_asio.reference.experimental__basic_channel.executor_type [*executor_type]]]
+    [The type of the executor associated with the channel. ]
+  
+  ]
+
+  [
+
+    [[link boost_asio.reference.experimental__basic_channel.traits_type [*traits_type]]]
+    [The traits type associated with the channel. ]
+  
+  ]
+
+]
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link boost_asio.reference.experimental__basic_channel.async_receive [*async_receive]]]
+    [Asynchronously receive a message. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.experimental__basic_channel.async_send [*async_send]]]
+    [Asynchronously send a message. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.experimental__basic_channel.basic_channel [*basic_channel]] [constructor]]
+    [Construct a basic_channel. 
+     [hr]
+     Construct and open a basic_channel. 
+     [hr]
+     Move-construct a basic_channel from another. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.experimental__basic_channel.cancel [*cancel]]]
+    [Cancel all asynchronous operations waiting on the channel. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.experimental__basic_channel.capacity [*capacity]]]
+    [Get the capacity of the channel's buffer. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.experimental__basic_channel.close [*close]]]
+    [Close the channel. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.experimental__basic_channel.get_executor [*get_executor]]]
+    [Get the executor associated with the object. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.experimental__basic_channel.is_open [*is_open]]]
+    [Determine whether the channel is open. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.experimental__basic_channel.operator_eq_ [*operator=]]]
+    [Move-assign a basic_channel from another. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.experimental__basic_channel.ready [*ready]]]
+    [Determine whether a message can be received without blocking. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.experimental__basic_channel.reset [*reset]]]
+    [Reset the channel to its initial state. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.experimental__basic_channel.try_receive [*try_receive]]]
+    [Try to receive a message without blocking. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.experimental__basic_channel.try_send [*try_send]]]
+    [Try to send a message without blocking. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.experimental__basic_channel.try_send_n [*try_send_n]]]
+    [Try to send a number of messages without blocking. ]
+  ]
+  
+]
+
+[heading Requirements]
+
+['Header: ][^boost/asio/experimental/basic_channel.hpp]
+
+['Convenience header: ]None
+
+
+[section:async_receive experimental::basic_channel::async_receive]
+
+[indexterm2 boost_asio.indexterm.experimental__basic_channel.async_receive..async_receive..experimental::basic_channel] 
+Asynchronously receive a message. 
+
+
+  template<
+      typename CompletionToken = ``[link boost_asio.reference.asynchronous_operations.default_completion_tokens ['DEFAULT]]``>
+  auto async_receive(
+      CompletionToken && token = ``[link boost_asio.reference.asynchronous_operations.default_completion_tokens ['DEFAULT]]``);
+
+
+
+[endsect]
+
+
+
+[section:async_send experimental::basic_channel::async_send]
+
+[indexterm2 boost_asio.indexterm.experimental__basic_channel.async_send..async_send..experimental::basic_channel] 
+Asynchronously send a message. 
+
+
+  template<
+      typename... Args,
+      typename CompletionToken = ``[link boost_asio.reference.asynchronous_operations.default_completion_tokens ['DEFAULT]]``>
+  auto async_send(
+      Args &&... args,
+      CompletionToken && token);
+
+
+
+[endsect]
+
+
+[section:basic_channel experimental::basic_channel::basic_channel]
+
+[indexterm2 boost_asio.indexterm.experimental__basic_channel.basic_channel..basic_channel..experimental::basic_channel] 
+Construct a [link boost_asio.reference.experimental__basic_channel `experimental::basic_channel`]. 
+
+
+  ``[link boost_asio.reference.experimental__basic_channel.basic_channel.overload1 basic_channel]``(
+      const executor_type & ex,
+      std::size_t max_buffer_size = 0);
+  ``  [''''&raquo;''' [link boost_asio.reference.experimental__basic_channel.basic_channel.overload1 more...]]``
+
+
+Construct and open a [link boost_asio.reference.experimental__basic_channel `experimental::basic_channel`]. 
+
+
+  template<
+      typename ExecutionContext>
+  ``[link boost_asio.reference.experimental__basic_channel.basic_channel.overload2 basic_channel]``(
+      ExecutionContext & context,
+      std::size_t max_buffer_size = 0,
+      typename constraint< is_convertible< ExecutionContext &, execution_context & >::value, defaulted_constraint >::type  = defaulted_constraint());
+  ``  [''''&raquo;''' [link boost_asio.reference.experimental__basic_channel.basic_channel.overload2 more...]]``
+
+
+Move-construct a [link boost_asio.reference.experimental__basic_channel `experimental::basic_channel`] from another. 
+
+
+  ``[link boost_asio.reference.experimental__basic_channel.basic_channel.overload3 basic_channel]``(
+      basic_channel && other);
+  ``  [''''&raquo;''' [link boost_asio.reference.experimental__basic_channel.basic_channel.overload3 more...]]``
+
+  template<
+      typename ``[link boost_asio.reference.Executor1 Executor1]``>
+  ``[link boost_asio.reference.experimental__basic_channel.basic_channel.overload4 basic_channel]``(
+      basic_channel< Executor1, Traits, Signatures...> && other,
+      typename constraint< is_convertible< Executor1, Executor >::value >::type  = 0);
+  ``  [''''&raquo;''' [link boost_asio.reference.experimental__basic_channel.basic_channel.overload4 more...]]``
+
+
+[section:overload1 experimental::basic_channel::basic_channel (1 of 4 overloads)]
+
+
+Construct a [link boost_asio.reference.experimental__basic_channel `experimental::basic_channel`]. 
+
+
+  basic_channel(
+      const executor_type & ex,
+      std::size_t max_buffer_size = 0);
+
+
+This constructor creates and channel.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[ex][The I/O executor that the channel will use, by default, to dispatch handlers for any asynchronous operations performed on the channel.]]
+
+[[max_buffer_size][The maximum number of messages that may be buffered in the channel. ]]
+
+]
+
+
+
+
+[endsect]
+
+
+
+[section:overload2 experimental::basic_channel::basic_channel (2 of 4 overloads)]
+
+
+Construct and open a [link boost_asio.reference.experimental__basic_channel `experimental::basic_channel`]. 
+
+
+  template<
+      typename ExecutionContext>
+  basic_channel(
+      ExecutionContext & context,
+      std::size_t max_buffer_size = 0,
+      typename constraint< is_convertible< ExecutionContext &, execution_context & >::value, defaulted_constraint >::type  = defaulted_constraint());
+
+
+This constructor creates and opens a channel.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[context][An execution context which provides the I/O executor that the channel will use, by default, to dispatch handlers for any asynchronous operations performed on the channel.]]
+
+[[max_buffer_size][The maximum number of messages that may be buffered in the channel. ]]
+
+]
+
+
+
+
+[endsect]
+
+
+
+[section:overload3 experimental::basic_channel::basic_channel (3 of 4 overloads)]
+
+
+Move-construct a [link boost_asio.reference.experimental__basic_channel `experimental::basic_channel`] from another. 
+
+
+  basic_channel(
+      basic_channel && other);
+
+
+This constructor moves a channel from one object to another.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[other][The other [link boost_asio.reference.experimental__basic_channel `experimental::basic_channel`] object from which the move will occur.]]
+
+]
+
+
+[heading Remarks]
+      
+Following the move, the moved-from object is in the same state as if constructed using the `basic_channel(const executor_type&) constructor`. 
+
+
+
+
+[endsect]
+
+
+
+[section:overload4 experimental::basic_channel::basic_channel (4 of 4 overloads)]
+
+
+Move-construct a [link boost_asio.reference.experimental__basic_channel `experimental::basic_channel`] from another. 
+
+
+  template<
+      typename ``[link boost_asio.reference.Executor1 Executor1]``>
+  basic_channel(
+      basic_channel< Executor1, Traits, Signatures...> && other,
+      typename constraint< is_convertible< Executor1, Executor >::value >::type  = 0);
+
+
+This constructor moves a channel from one object to another.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[other][The other [link boost_asio.reference.experimental__basic_channel `experimental::basic_channel`] object from which the move will occur.]]
+
+]
+
+
+[heading Remarks]
+      
+Following the move, the moved-from object is in the same state as if constructed using the `basic_channel(const executor_type&)` constructor. 
+
+
+
+
+[endsect]
+
+
+[endsect]
+
+
+[section:cancel experimental::basic_channel::cancel]
+
+[indexterm2 boost_asio.indexterm.experimental__basic_channel.cancel..cancel..experimental::basic_channel] 
+Cancel all asynchronous operations waiting on the channel. 
+
+
+  void cancel();
+
+
+All outstanding send operations will complete with the error `boost::asio::experimental::error::channel_canceld`. Outstanding receive operations complete with the result as determined by the channel traits. 
+
+
+[endsect]
+
+
+
+[section:capacity experimental::basic_channel::capacity]
+
+[indexterm2 boost_asio.indexterm.experimental__basic_channel.capacity..capacity..experimental::basic_channel] 
+Get the capacity of the channel's buffer. 
+
+
+  std::size_t capacity();
+
+
+
+[endsect]
+
+
+
+[section:close experimental::basic_channel::close]
+
+[indexterm2 boost_asio.indexterm.experimental__basic_channel.close..close..experimental::basic_channel] 
+Close the channel. 
+
+
+  void close();
+
+
+
+[endsect]
+
+
+
+[section:executor_type experimental::basic_channel::executor_type]
+
+[indexterm2 boost_asio.indexterm.experimental__basic_channel.executor_type..executor_type..experimental::basic_channel] 
+The type of the executor associated with the channel. 
+
+
+  typedef Executor executor_type;
+
+
+
+[heading Requirements]
+
+['Header: ][^boost/asio/experimental/basic_channel.hpp]
+
+['Convenience header: ]None
+
+
+[endsect]
+
+
+
+[section:get_executor experimental::basic_channel::get_executor]
+
+[indexterm2 boost_asio.indexterm.experimental__basic_channel.get_executor..get_executor..experimental::basic_channel] 
+Get the executor associated with the object. 
+
+
+  executor_type get_executor();
+
+
+
+[endsect]
+
+
+
+[section:is_open experimental::basic_channel::is_open]
+
+[indexterm2 boost_asio.indexterm.experimental__basic_channel.is_open..is_open..experimental::basic_channel] 
+Determine whether the channel is open. 
+
+
+  bool is_open() const;
+
+
+
+[endsect]
+
+
+[section:operator_eq_ experimental::basic_channel::operator=]
+
+[indexterm2 boost_asio.indexterm.experimental__basic_channel.operator_eq_..operator=..experimental::basic_channel] 
+Move-assign a [link boost_asio.reference.experimental__basic_channel `experimental::basic_channel`] from another. 
+
+
+  basic_channel & ``[link boost_asio.reference.experimental__basic_channel.operator_eq_.overload1 operator=]``(
+      basic_channel && other);
+  ``  [''''&raquo;''' [link boost_asio.reference.experimental__basic_channel.operator_eq_.overload1 more...]]``
+
+  template<
+      typename ``[link boost_asio.reference.Executor1 Executor1]``>
+  constraint< is_convertible< Executor1, Executor >::value, basic_channel & >::type ``[link boost_asio.reference.experimental__basic_channel.operator_eq_.overload2 operator=]``(
+      basic_channel< Executor1, Traits, Signatures...> && other);
+  ``  [''''&raquo;''' [link boost_asio.reference.experimental__basic_channel.operator_eq_.overload2 more...]]``
+
+
+[section:overload1 experimental::basic_channel::operator= (1 of 2 overloads)]
+
+
+Move-assign a [link boost_asio.reference.experimental__basic_channel `experimental::basic_channel`] from another. 
+
+
+  basic_channel & operator=(
+      basic_channel && other);
+
+
+This assignment operator moves a channel from one object to another. Cancels any outstanding asynchronous operations associated with the target object.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[other][The other [link boost_asio.reference.experimental__basic_channel `experimental::basic_channel`] object from which the move will occur.]]
+
+]
+
+
+[heading Remarks]
+      
+Following the move, the moved-from object is in the same state as if constructed using the `basic_channel(const executor_type&)` constructor. 
+
+
+
+
+[endsect]
+
+
+
+[section:overload2 experimental::basic_channel::operator= (2 of 2 overloads)]
+
+
+Move-assign a [link boost_asio.reference.experimental__basic_channel `experimental::basic_channel`] from another. 
+
+
+  template<
+      typename ``[link boost_asio.reference.Executor1 Executor1]``>
+  constraint< is_convertible< Executor1, Executor >::value, basic_channel & >::type operator=(
+      basic_channel< Executor1, Traits, Signatures...> && other);
+
+
+This assignment operator moves a channel from one object to another. Cancels any outstanding asynchronous operations associated with the target object.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[other][The other [link boost_asio.reference.experimental__basic_channel `experimental::basic_channel`] object from which the move will occur.]]
+
+]
+
+
+[heading Remarks]
+      
+Following the move, the moved-from object is in the same state as if constructed using the `basic_channel(const executor_type&)` constructor. 
+
+
+
+
+[endsect]
+
+
+[endsect]
+
+
+[section:ready experimental::basic_channel::ready]
+
+[indexterm2 boost_asio.indexterm.experimental__basic_channel.ready..ready..experimental::basic_channel] 
+Determine whether a message can be received without blocking. 
+
+
+  bool ready() const;
+
+
+
+[endsect]
+
+
+
+[section:reset experimental::basic_channel::reset]
+
+[indexterm2 boost_asio.indexterm.experimental__basic_channel.reset..reset..experimental::basic_channel] 
+Reset the channel to its initial state. 
+
+
+  void reset();
+
+
+
+[endsect]
+
+
+
+[section:traits_type experimental::basic_channel::traits_type]
+
+[indexterm2 boost_asio.indexterm.experimental__basic_channel.traits_type..traits_type..experimental::basic_channel] 
+The traits type associated with the channel. 
+
+
+  typedef Traits::template rebind< Signatures...>::other traits_type;
+
+
+
+[heading Requirements]
+
+['Header: ][^boost/asio/experimental/basic_channel.hpp]
+
+['Convenience header: ]None
+
+
+[endsect]
+
+
+
+[section:try_receive experimental::basic_channel::try_receive]
+
+[indexterm2 boost_asio.indexterm.experimental__basic_channel.try_receive..try_receive..experimental::basic_channel] 
+Try to receive a message without blocking. 
+
+
+  template<
+      typename ``[link boost_asio.reference.Handler Handler]``>
+  bool try_receive(
+      Handler && handler);
+
+
+Fails if the buffer is full and there are no waiting receive operations.
+
+
+[heading Return Value]
+      
+`true` on success, `false` on failure. 
+
+
+
+
+[endsect]
+
+
+
+[section:try_send experimental::basic_channel::try_send]
+
+[indexterm2 boost_asio.indexterm.experimental__basic_channel.try_send..try_send..experimental::basic_channel] 
+Try to send a message without blocking. 
+
+
+  template<
+      typename... Args>
+  bool try_send(
+      Args &&... args);
+
+
+Fails if the buffer is full and there are no waiting receive operations.
+
+
+[heading Return Value]
+      
+`true` on success, `false` on failure. 
+
+
+
+
+[endsect]
+
+
+
+[section:try_send_n experimental::basic_channel::try_send_n]
+
+[indexterm2 boost_asio.indexterm.experimental__basic_channel.try_send_n..try_send_n..experimental::basic_channel] 
+Try to send a number of messages without blocking. 
+
+
+  template<
+      typename... Args>
+  std::size_t try_send_n(
+      std::size_t count,
+      Args &&... args);
+
+
+
+[heading Return Value]
+      
+The number of messages that were sent. 
+
+
+
+
+[endsect]
+
+
+
+[endsect]
+
+[section:experimental__basic_channel__rebind_executor experimental::basic_channel::rebind_executor]
+
+[indexterm1 boost_asio.indexterm.experimental__basic_channel__rebind_executor..experimental::basic_channel::rebind_executor]
+
+
+Rebinds the channel type to another executor. 
+
+
+  template<
+      typename ``[link boost_asio.reference.Executor1 Executor1]``>
+  struct rebind_executor
+
+
+[heading Types]
+[table
+  [[Name][Description]]
+
+  [
+
+    [[link boost_asio.reference.experimental__basic_channel__rebind_executor.other [*other]]]
+    [The channel type when rebound to the specified executor. ]
+  
+  ]
+
+]
+
+[heading Requirements]
+
+['Header: ][^boost/asio/experimental/basic_channel.hpp]
+
+['Convenience header: ]None
+
+
+[section:other experimental::basic_channel::rebind_executor::other]
+
+[indexterm2 boost_asio.indexterm.experimental__basic_channel__rebind_executor.other..other..experimental::basic_channel::rebind_executor] 
+The channel type when rebound to the specified executor. 
+
+
+  typedef basic_channel< Executor1, Traits, Signatures...> other;
+
+
+[heading Types]
+[table
+  [[Name][Description]]
+
+  [
+
+    [[link boost_asio.reference.experimental__basic_channel__rebind_executor [*rebind_executor]]]
+    [Rebinds the channel type to another executor. ]
+  
+  ]
+
+  [
+
+    [[link boost_asio.reference.experimental__basic_channel.executor_type [*executor_type]]]
+    [The type of the executor associated with the channel. ]
+  
+  ]
+
+  [
+
+    [[link boost_asio.reference.experimental__basic_channel.traits_type [*traits_type]]]
+    [The traits type associated with the channel. ]
+  
+  ]
+
+]
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link boost_asio.reference.experimental__basic_channel.async_receive [*async_receive]]]
+    [Asynchronously receive a message. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.experimental__basic_channel.async_send [*async_send]]]
+    [Asynchronously send a message. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.experimental__basic_channel.basic_channel [*basic_channel]] [constructor]]
+    [Construct a basic_channel. 
+     [hr]
+     Construct and open a basic_channel. 
+     [hr]
+     Move-construct a basic_channel from another. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.experimental__basic_channel.cancel [*cancel]]]
+    [Cancel all asynchronous operations waiting on the channel. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.experimental__basic_channel.capacity [*capacity]]]
+    [Get the capacity of the channel's buffer. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.experimental__basic_channel.close [*close]]]
+    [Close the channel. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.experimental__basic_channel.get_executor [*get_executor]]]
+    [Get the executor associated with the object. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.experimental__basic_channel.is_open [*is_open]]]
+    [Determine whether the channel is open. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.experimental__basic_channel.operator_eq_ [*operator=]]]
+    [Move-assign a basic_channel from another. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.experimental__basic_channel.ready [*ready]]]
+    [Determine whether a message can be received without blocking. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.experimental__basic_channel.reset [*reset]]]
+    [Reset the channel to its initial state. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.experimental__basic_channel.try_receive [*try_receive]]]
+    [Try to receive a message without blocking. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.experimental__basic_channel.try_send [*try_send]]]
+    [Try to send a message without blocking. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.experimental__basic_channel.try_send_n [*try_send_n]]]
+    [Try to send a number of messages without blocking. ]
+  ]
+  
+]
+
+
+[heading Requirements]
+
+['Header: ][^boost/asio/experimental/basic_channel.hpp]
+
+['Convenience header: ]None
+
+
+[endsect]
+
+
+
+[endsect]
+
+[section:experimental__basic_concurrent_channel experimental::basic_concurrent_channel]
+
+[indexterm1 boost_asio.indexterm.experimental__basic_concurrent_channel..experimental::basic_concurrent_channel]
+
+
+A channel for messages. 
+
+
+  template<
+      typename ``[link boost_asio.reference.Executor1 Executor]``,
+      typename Traits,
+      typename... Signatures>
+  class basic_concurrent_channel
+
+
+[heading Types]
+[table
+  [[Name][Description]]
+
+  [
+
+    [[link boost_asio.reference.experimental__basic_concurrent_channel__rebind_executor [*rebind_executor]]]
+    [Rebinds the channel type to another executor. ]
+  
+  ]
+
+  [
+
+    [[link boost_asio.reference.experimental__basic_concurrent_channel.executor_type [*executor_type]]]
+    [The type of the executor associated with the channel. ]
+  
+  ]
+
+  [
+
+    [[link boost_asio.reference.experimental__basic_concurrent_channel.traits_type [*traits_type]]]
+    [The traits type associated with the channel. ]
+  
+  ]
+
+]
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link boost_asio.reference.experimental__basic_concurrent_channel.async_receive [*async_receive]]]
+    [Asynchronously receive a message. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.experimental__basic_concurrent_channel.async_send [*async_send]]]
+    [Asynchronously send a message. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.experimental__basic_concurrent_channel.basic_concurrent_channel [*basic_concurrent_channel]] [constructor]]
+    [Construct a basic_concurrent_channel. 
+     [hr]
+     Construct and open a basic_concurrent_channel. 
+     [hr]
+     Move-construct a basic_concurrent_channel from another. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.experimental__basic_concurrent_channel.cancel [*cancel]]]
+    [Cancel all asynchronous operations waiting on the channel. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.experimental__basic_concurrent_channel.capacity [*capacity]]]
+    [Get the capacity of the channel's buffer. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.experimental__basic_concurrent_channel.close [*close]]]
+    [Close the channel. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.experimental__basic_concurrent_channel.get_executor [*get_executor]]]
+    [Get the executor associated with the object. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.experimental__basic_concurrent_channel.is_open [*is_open]]]
+    [Determine whether the channel is open. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.experimental__basic_concurrent_channel.operator_eq_ [*operator=]]]
+    [Move-assign a basic_concurrent_channel from another. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.experimental__basic_concurrent_channel.ready [*ready]]]
+    [Determine whether a message can be received without blocking. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.experimental__basic_concurrent_channel.reset [*reset]]]
+    [Reset the channel to its initial state. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.experimental__basic_concurrent_channel.try_receive [*try_receive]]]
+    [Try to receive a message without blocking. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.experimental__basic_concurrent_channel.try_send [*try_send]]]
+    [Try to send a message without blocking. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.experimental__basic_concurrent_channel.try_send_n [*try_send_n]]]
+    [Try to send a number of messages without blocking. ]
+  ]
+  
+]
+
+[heading Requirements]
+
+['Header: ][^boost/asio/experimental/basic_concurrent_channel.hpp]
+
+['Convenience header: ]None
+
+
+[section:async_receive experimental::basic_concurrent_channel::async_receive]
+
+[indexterm2 boost_asio.indexterm.experimental__basic_concurrent_channel.async_receive..async_receive..experimental::basic_concurrent_channel] 
+Asynchronously receive a message. 
+
+
+  template<
+      typename CompletionToken = ``[link boost_asio.reference.asynchronous_operations.default_completion_tokens ['DEFAULT]]``>
+  auto async_receive(
+      CompletionToken && token = ``[link boost_asio.reference.asynchronous_operations.default_completion_tokens ['DEFAULT]]``);
+
+
+
+[endsect]
+
+
+
+[section:async_send experimental::basic_concurrent_channel::async_send]
+
+[indexterm2 boost_asio.indexterm.experimental__basic_concurrent_channel.async_send..async_send..experimental::basic_concurrent_channel] 
+Asynchronously send a message. 
+
+
+  template<
+      typename... Args,
+      typename CompletionToken = ``[link boost_asio.reference.asynchronous_operations.default_completion_tokens ['DEFAULT]]``>
+  auto async_send(
+      Args &&... args,
+      CompletionToken && token);
+
+
+
+[endsect]
+
+
+[section:basic_concurrent_channel experimental::basic_concurrent_channel::basic_concurrent_channel]
+
+[indexterm2 boost_asio.indexterm.experimental__basic_concurrent_channel.basic_concurrent_channel..basic_concurrent_channel..experimental::basic_concurrent_channel] 
+Construct a [link boost_asio.reference.experimental__basic_concurrent_channel `experimental::basic_concurrent_channel`]. 
+
+
+  ``[link boost_asio.reference.experimental__basic_concurrent_channel.basic_concurrent_channel.overload1 basic_concurrent_channel]``(
+      const executor_type & ex,
+      std::size_t max_buffer_size = 0);
+  ``  [''''&raquo;''' [link boost_asio.reference.experimental__basic_concurrent_channel.basic_concurrent_channel.overload1 more...]]``
+
+
+Construct and open a [link boost_asio.reference.experimental__basic_concurrent_channel `experimental::basic_concurrent_channel`]. 
+
+
+  template<
+      typename ExecutionContext>
+  ``[link boost_asio.reference.experimental__basic_concurrent_channel.basic_concurrent_channel.overload2 basic_concurrent_channel]``(
+      ExecutionContext & context,
+      std::size_t max_buffer_size = 0,
+      typename constraint< is_convertible< ExecutionContext &, execution_context & >::value, defaulted_constraint >::type  = defaulted_constraint());
+  ``  [''''&raquo;''' [link boost_asio.reference.experimental__basic_concurrent_channel.basic_concurrent_channel.overload2 more...]]``
+
+
+Move-construct a [link boost_asio.reference.experimental__basic_concurrent_channel `experimental::basic_concurrent_channel`] from another. 
+
+
+  ``[link boost_asio.reference.experimental__basic_concurrent_channel.basic_concurrent_channel.overload3 basic_concurrent_channel]``(
+      basic_concurrent_channel && other);
+  ``  [''''&raquo;''' [link boost_asio.reference.experimental__basic_concurrent_channel.basic_concurrent_channel.overload3 more...]]``
+
+  template<
+      typename ``[link boost_asio.reference.Executor1 Executor1]``>
+  ``[link boost_asio.reference.experimental__basic_concurrent_channel.basic_concurrent_channel.overload4 basic_concurrent_channel]``(
+      basic_concurrent_channel< Executor1, Traits, Signatures...> && other,
+      typename constraint< is_convertible< Executor1, Executor >::value >::type  = 0);
+  ``  [''''&raquo;''' [link boost_asio.reference.experimental__basic_concurrent_channel.basic_concurrent_channel.overload4 more...]]``
+
+
+[section:overload1 experimental::basic_concurrent_channel::basic_concurrent_channel (1 of 4 overloads)]
+
+
+Construct a [link boost_asio.reference.experimental__basic_concurrent_channel `experimental::basic_concurrent_channel`]. 
+
+
+  basic_concurrent_channel(
+      const executor_type & ex,
+      std::size_t max_buffer_size = 0);
+
+
+This constructor creates and channel.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[ex][The I/O executor that the channel will use, by default, to dispatch handlers for any asynchronous operations performed on the channel.]]
+
+[[max_buffer_size][The maximum number of messages that may be buffered in the channel. ]]
+
+]
+
+
+
+
+[endsect]
+
+
+
+[section:overload2 experimental::basic_concurrent_channel::basic_concurrent_channel (2 of 4 overloads)]
+
+
+Construct and open a [link boost_asio.reference.experimental__basic_concurrent_channel `experimental::basic_concurrent_channel`]. 
+
+
+  template<
+      typename ExecutionContext>
+  basic_concurrent_channel(
+      ExecutionContext & context,
+      std::size_t max_buffer_size = 0,
+      typename constraint< is_convertible< ExecutionContext &, execution_context & >::value, defaulted_constraint >::type  = defaulted_constraint());
+
+
+This constructor creates and opens a channel.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[context][An execution context which provides the I/O executor that the channel will use, by default, to dispatch handlers for any asynchronous operations performed on the channel.]]
+
+[[max_buffer_size][The maximum number of messages that may be buffered in the channel. ]]
+
+]
+
+
+
+
+[endsect]
+
+
+
+[section:overload3 experimental::basic_concurrent_channel::basic_concurrent_channel (3 of 4 overloads)]
+
+
+Move-construct a [link boost_asio.reference.experimental__basic_concurrent_channel `experimental::basic_concurrent_channel`] from another. 
+
+
+  basic_concurrent_channel(
+      basic_concurrent_channel && other);
+
+
+This constructor moves a channel from one object to another.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[other][The other [link boost_asio.reference.experimental__basic_concurrent_channel `experimental::basic_concurrent_channel`] object from which the move will occur.]]
+
+]
+
+
+[heading Remarks]
+      
+Following the move, the moved-from object is in the same state as if constructed using the `basic_concurrent_channel(const executor_type&)` constructor. 
+
+
+
+
+[endsect]
+
+
+
+[section:overload4 experimental::basic_concurrent_channel::basic_concurrent_channel (4 of 4 overloads)]
+
+
+Move-construct a [link boost_asio.reference.experimental__basic_concurrent_channel `experimental::basic_concurrent_channel`] from another. 
+
+
+  template<
+      typename ``[link boost_asio.reference.Executor1 Executor1]``>
+  basic_concurrent_channel(
+      basic_concurrent_channel< Executor1, Traits, Signatures...> && other,
+      typename constraint< is_convertible< Executor1, Executor >::value >::type  = 0);
+
+
+This constructor moves a channel from one object to another.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[other][The other [link boost_asio.reference.experimental__basic_concurrent_channel `experimental::basic_concurrent_channel`] object from which the move will occur.]]
+
+]
+
+
+[heading Remarks]
+      
+Following the move, the moved-from object is in the same state as if constructed using the `basic_concurrent_channel(const executor_type&)` constructor. 
+
+
+
+
+[endsect]
+
+
+[endsect]
+
+
+[section:cancel experimental::basic_concurrent_channel::cancel]
+
+[indexterm2 boost_asio.indexterm.experimental__basic_concurrent_channel.cancel..cancel..experimental::basic_concurrent_channel] 
+Cancel all asynchronous operations waiting on the channel. 
+
+
+  void cancel();
+
+
+All outstanding send operations will complete with the error `boost::asio::experimental::error::channel_canceld`. Outstanding receive operations complete with the result as determined by the channel traits. 
+
+
+[endsect]
+
+
+
+[section:capacity experimental::basic_concurrent_channel::capacity]
+
+[indexterm2 boost_asio.indexterm.experimental__basic_concurrent_channel.capacity..capacity..experimental::basic_concurrent_channel] 
+Get the capacity of the channel's buffer. 
+
+
+  std::size_t capacity();
+
+
+
+[endsect]
+
+
+
+[section:close experimental::basic_concurrent_channel::close]
+
+[indexterm2 boost_asio.indexterm.experimental__basic_concurrent_channel.close..close..experimental::basic_concurrent_channel] 
+Close the channel. 
+
+
+  void close();
+
+
+
+[endsect]
+
+
+
+[section:executor_type experimental::basic_concurrent_channel::executor_type]
+
+[indexterm2 boost_asio.indexterm.experimental__basic_concurrent_channel.executor_type..executor_type..experimental::basic_concurrent_channel] 
+The type of the executor associated with the channel. 
+
+
+  typedef Executor executor_type;
+
+
+
+[heading Requirements]
+
+['Header: ][^boost/asio/experimental/basic_concurrent_channel.hpp]
+
+['Convenience header: ]None
+
+
+[endsect]
+
+
+
+[section:get_executor experimental::basic_concurrent_channel::get_executor]
+
+[indexterm2 boost_asio.indexterm.experimental__basic_concurrent_channel.get_executor..get_executor..experimental::basic_concurrent_channel] 
+Get the executor associated with the object. 
+
+
+  executor_type get_executor();
+
+
+
+[endsect]
+
+
+
+[section:is_open experimental::basic_concurrent_channel::is_open]
+
+[indexterm2 boost_asio.indexterm.experimental__basic_concurrent_channel.is_open..is_open..experimental::basic_concurrent_channel] 
+Determine whether the channel is open. 
+
+
+  bool is_open() const;
+
+
+
+[endsect]
+
+
+[section:operator_eq_ experimental::basic_concurrent_channel::operator=]
+
+[indexterm2 boost_asio.indexterm.experimental__basic_concurrent_channel.operator_eq_..operator=..experimental::basic_concurrent_channel] 
+Move-assign a [link boost_asio.reference.experimental__basic_concurrent_channel `experimental::basic_concurrent_channel`] from another. 
+
+
+  basic_concurrent_channel & ``[link boost_asio.reference.experimental__basic_concurrent_channel.operator_eq_.overload1 operator=]``(
+      basic_concurrent_channel && other);
+  ``  [''''&raquo;''' [link boost_asio.reference.experimental__basic_concurrent_channel.operator_eq_.overload1 more...]]``
+
+  template<
+      typename ``[link boost_asio.reference.Executor1 Executor1]``>
+  constraint< is_convertible< Executor1, Executor >::value, basic_concurrent_channel & >::type ``[link boost_asio.reference.experimental__basic_concurrent_channel.operator_eq_.overload2 operator=]``(
+      basic_concurrent_channel< Executor1, Traits, Signatures...> && other);
+  ``  [''''&raquo;''' [link boost_asio.reference.experimental__basic_concurrent_channel.operator_eq_.overload2 more...]]``
+
+
+[section:overload1 experimental::basic_concurrent_channel::operator= (1 of 2 overloads)]
+
+
+Move-assign a [link boost_asio.reference.experimental__basic_concurrent_channel `experimental::basic_concurrent_channel`] from another. 
+
+
+  basic_concurrent_channel & operator=(
+      basic_concurrent_channel && other);
+
+
+This assignment operator moves a channel from one object to another. Cancels any outstanding asynchronous operations associated with the target object.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[other][The other [link boost_asio.reference.experimental__basic_concurrent_channel `experimental::basic_concurrent_channel`] object from which the move will occur.]]
+
+]
+
+
+[heading Remarks]
+      
+Following the move, the moved-from object is in the same state as if constructed using the `basic_concurrent_channel(const executor_type&)` constructor. 
+
+
+
+
+[endsect]
+
+
+
+[section:overload2 experimental::basic_concurrent_channel::operator= (2 of 2 overloads)]
+
+
+Move-assign a [link boost_asio.reference.experimental__basic_concurrent_channel `experimental::basic_concurrent_channel`] from another. 
+
+
+  template<
+      typename ``[link boost_asio.reference.Executor1 Executor1]``>
+  constraint< is_convertible< Executor1, Executor >::value, basic_concurrent_channel & >::type operator=(
+      basic_concurrent_channel< Executor1, Traits, Signatures...> && other);
+
+
+This assignment operator moves a channel from one object to another. Cancels any outstanding asynchronous operations associated with the target object.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[other][The other [link boost_asio.reference.experimental__basic_concurrent_channel `experimental::basic_concurrent_channel`] object from which the move will occur.]]
+
+]
+
+
+[heading Remarks]
+      
+Following the move, the moved-from object is in the same state as if constructed using the `basic_concurrent_channel(const executor_type&)` constructor. 
+
+
+
+
+[endsect]
+
+
+[endsect]
+
+
+[section:ready experimental::basic_concurrent_channel::ready]
+
+[indexterm2 boost_asio.indexterm.experimental__basic_concurrent_channel.ready..ready..experimental::basic_concurrent_channel] 
+Determine whether a message can be received without blocking. 
+
+
+  bool ready() const;
+
+
+
+[endsect]
+
+
+
+[section:reset experimental::basic_concurrent_channel::reset]
+
+[indexterm2 boost_asio.indexterm.experimental__basic_concurrent_channel.reset..reset..experimental::basic_concurrent_channel] 
+Reset the channel to its initial state. 
+
+
+  void reset();
+
+
+
+[endsect]
+
+
+
+[section:traits_type experimental::basic_concurrent_channel::traits_type]
+
+[indexterm2 boost_asio.indexterm.experimental__basic_concurrent_channel.traits_type..traits_type..experimental::basic_concurrent_channel] 
+The traits type associated with the channel. 
+
+
+  typedef Traits::template rebind< Signatures...>::other traits_type;
+
+
+
+[heading Requirements]
+
+['Header: ][^boost/asio/experimental/basic_concurrent_channel.hpp]
+
+['Convenience header: ]None
+
+
+[endsect]
+
+
+
+[section:try_receive experimental::basic_concurrent_channel::try_receive]
+
+[indexterm2 boost_asio.indexterm.experimental__basic_concurrent_channel.try_receive..try_receive..experimental::basic_concurrent_channel] 
+Try to receive a message without blocking. 
+
+
+  template<
+      typename ``[link boost_asio.reference.Handler Handler]``>
+  bool try_receive(
+      Handler && handler);
+
+
+Fails if the buffer is full and there are no waiting receive operations.
+
+
+[heading Return Value]
+      
+`true` on success, `false` on failure. 
+
+
+
+
+[endsect]
+
+
+
+[section:try_send experimental::basic_concurrent_channel::try_send]
+
+[indexterm2 boost_asio.indexterm.experimental__basic_concurrent_channel.try_send..try_send..experimental::basic_concurrent_channel] 
+Try to send a message without blocking. 
+
+
+  template<
+      typename... Args>
+  bool try_send(
+      Args &&... args);
+
+
+Fails if the buffer is full and there are no waiting receive operations.
+
+
+[heading Return Value]
+      
+`true` on success, `false` on failure. 
+
+
+
+
+[endsect]
+
+
+
+[section:try_send_n experimental::basic_concurrent_channel::try_send_n]
+
+[indexterm2 boost_asio.indexterm.experimental__basic_concurrent_channel.try_send_n..try_send_n..experimental::basic_concurrent_channel] 
+Try to send a number of messages without blocking. 
+
+
+  template<
+      typename... Args>
+  std::size_t try_send_n(
+      std::size_t count,
+      Args &&... args);
+
+
+
+[heading Return Value]
+      
+The number of messages that were sent. 
+
+
+
+
+[endsect]
+
+
+
+[endsect]
+
+[section:experimental__basic_concurrent_channel__rebind_executor experimental::basic_concurrent_channel::rebind_executor]
+
+[indexterm1 boost_asio.indexterm.experimental__basic_concurrent_channel__rebind_executor..experimental::basic_concurrent_channel::rebind_executor]
+
+
+Rebinds the channel type to another executor. 
+
+
+  template<
+      typename ``[link boost_asio.reference.Executor1 Executor1]``>
+  struct rebind_executor
+
+
+[heading Types]
+[table
+  [[Name][Description]]
+
+  [
+
+    [[link boost_asio.reference.experimental__basic_concurrent_channel__rebind_executor.other [*other]]]
+    [The channel type when rebound to the specified executor. ]
+  
+  ]
+
+]
+
+[heading Requirements]
+
+['Header: ][^boost/asio/experimental/basic_concurrent_channel.hpp]
+
+['Convenience header: ]None
+
+
+[section:other experimental::basic_concurrent_channel::rebind_executor::other]
+
+[indexterm2 boost_asio.indexterm.experimental__basic_concurrent_channel__rebind_executor.other..other..experimental::basic_concurrent_channel::rebind_executor] 
+The channel type when rebound to the specified executor. 
+
+
+  typedef basic_concurrent_channel< Executor1, Traits, Signatures...> other;
+
+
+[heading Types]
+[table
+  [[Name][Description]]
+
+  [
+
+    [[link boost_asio.reference.experimental__basic_concurrent_channel__rebind_executor [*rebind_executor]]]
+    [Rebinds the channel type to another executor. ]
+  
+  ]
+
+  [
+
+    [[link boost_asio.reference.experimental__basic_concurrent_channel.executor_type [*executor_type]]]
+    [The type of the executor associated with the channel. ]
+  
+  ]
+
+  [
+
+    [[link boost_asio.reference.experimental__basic_concurrent_channel.traits_type [*traits_type]]]
+    [The traits type associated with the channel. ]
+  
+  ]
+
+]
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link boost_asio.reference.experimental__basic_concurrent_channel.async_receive [*async_receive]]]
+    [Asynchronously receive a message. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.experimental__basic_concurrent_channel.async_send [*async_send]]]
+    [Asynchronously send a message. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.experimental__basic_concurrent_channel.basic_concurrent_channel [*basic_concurrent_channel]] [constructor]]
+    [Construct a basic_concurrent_channel. 
+     [hr]
+     Construct and open a basic_concurrent_channel. 
+     [hr]
+     Move-construct a basic_concurrent_channel from another. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.experimental__basic_concurrent_channel.cancel [*cancel]]]
+    [Cancel all asynchronous operations waiting on the channel. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.experimental__basic_concurrent_channel.capacity [*capacity]]]
+    [Get the capacity of the channel's buffer. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.experimental__basic_concurrent_channel.close [*close]]]
+    [Close the channel. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.experimental__basic_concurrent_channel.get_executor [*get_executor]]]
+    [Get the executor associated with the object. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.experimental__basic_concurrent_channel.is_open [*is_open]]]
+    [Determine whether the channel is open. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.experimental__basic_concurrent_channel.operator_eq_ [*operator=]]]
+    [Move-assign a basic_concurrent_channel from another. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.experimental__basic_concurrent_channel.ready [*ready]]]
+    [Determine whether a message can be received without blocking. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.experimental__basic_concurrent_channel.reset [*reset]]]
+    [Reset the channel to its initial state. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.experimental__basic_concurrent_channel.try_receive [*try_receive]]]
+    [Try to receive a message without blocking. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.experimental__basic_concurrent_channel.try_send [*try_send]]]
+    [Try to send a message without blocking. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.experimental__basic_concurrent_channel.try_send_n [*try_send_n]]]
+    [Try to send a number of messages without blocking. ]
+  ]
+  
+]
+
+
+[heading Requirements]
+
+['Header: ][^boost/asio/experimental/basic_concurrent_channel.hpp]
+
+['Convenience header: ]None
+
+
+[endsect]
+
+
+
+[endsect]
+
+[section:experimental__channel_traits experimental::channel_traits]
+
+[indexterm1 boost_asio.indexterm.experimental__channel_traits..experimental::channel_traits]
+
+
+
+  template<
+      typename... Signatures>
+  struct channel_traits
+
+
+[heading Types]
+[table
+  [[Name][Description]]
+
+  [
+
+    [[link boost_asio.reference.experimental__channel_traits__container [*container]]]
+    [Determine the container for the specified elements. ]
+  
+  ]
+
+  [
+
+    [[link boost_asio.reference.experimental__channel_traits__rebind [*rebind]]]
+    [Rebind the traits to a new set of signatures. ]
+  
+  ]
+
+  [
+
+    [[link boost_asio.reference.experimental__channel_traits.receive_cancelled_signature [*receive_cancelled_signature]]]
+    [The signature of a channel cancellation notification. ]
+  
+  ]
+
+  [
+
+    [[link boost_asio.reference.experimental__channel_traits.receive_closed_signature [*receive_closed_signature]]]
+    [The signature of a channel closed notification. ]
+  
+  ]
+
+]
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link boost_asio.reference.experimental__channel_traits.invoke_receive_cancelled [*invoke_receive_cancelled]] [static]]
+    [Invoke the specified handler with a cancellation notification. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.experimental__channel_traits.invoke_receive_closed [*invoke_receive_closed]] [static]]
+    [Invoke the specified handler with a closed notification. ]
+  ]
+  
+]
+
+[heading Requirements]
+
+['Header: ][^boost/asio/experimental/channel_traits.hpp]
+
+['Convenience header: ]None
+
+
+[section:invoke_receive_cancelled experimental::channel_traits::invoke_receive_cancelled]
+
+[indexterm2 boost_asio.indexterm.experimental__channel_traits.invoke_receive_cancelled..invoke_receive_cancelled..experimental::channel_traits] 
+Invoke the specified handler with a cancellation notification. 
+
+
+  template<
+      typename F>
+  static void invoke_receive_cancelled(
+      F f);
+
+
+
+[endsect]
+
+
+
+[section:invoke_receive_closed experimental::channel_traits::invoke_receive_closed]
+
+[indexterm2 boost_asio.indexterm.experimental__channel_traits.invoke_receive_closed..invoke_receive_closed..experimental::channel_traits] 
+Invoke the specified handler with a closed notification. 
+
+
+  template<
+      typename F>
+  static void invoke_receive_closed(
+      F f);
+
+
+
+[endsect]
+
+
+
+[section:receive_cancelled_signature experimental::channel_traits::receive_cancelled_signature]
+
+[indexterm2 boost_asio.indexterm.experimental__channel_traits.receive_cancelled_signature..receive_cancelled_signature..experimental::channel_traits] 
+The signature of a channel cancellation notification. 
+
+
+  typedef void receive_cancelled_signature;
+
+
+
+[heading Requirements]
+
+['Header: ][^boost/asio/experimental/channel_traits.hpp]
+
+['Convenience header: ]None
+
+
+[endsect]
+
+
+
+[section:receive_closed_signature experimental::channel_traits::receive_closed_signature]
+
+[indexterm2 boost_asio.indexterm.experimental__channel_traits.receive_closed_signature..receive_closed_signature..experimental::channel_traits] 
+The signature of a channel closed notification. 
+
+
+  typedef void receive_closed_signature;
+
+
+
+[heading Requirements]
+
+['Header: ][^boost/asio/experimental/channel_traits.hpp]
+
+['Convenience header: ]None
+
+
+[endsect]
+
+
+
+[endsect]
+
+[section:experimental__channel_traits__container experimental::channel_traits::container]
+
+[indexterm1 boost_asio.indexterm.experimental__channel_traits__container..experimental::channel_traits::container]
+
+
+Determine the container for the specified elements. 
+
+
+  template<
+      typename Element>
+  struct container
+
+
+[heading Types]
+[table
+  [[Name][Description]]
+
+  [
+
+    [[link boost_asio.reference.experimental__channel_traits__container.type [*type]]]
+    []
+  
+  ]
+
+]
+
+This nested structure must have a single nested type `other` that aliases a container type for the specified element type. 
+
+[heading Requirements]
+
+['Header: ][^boost/asio/experimental/channel_traits.hpp]
+
+['Convenience header: ]None
+
+
+[section:type experimental::channel_traits::container::type]
+
+[indexterm2 boost_asio.indexterm.experimental__channel_traits__container.type..type..experimental::channel_traits::container] 
+
+  typedef user_defined type;
+
+
+
+[heading Requirements]
+
+['Header: ][^boost/asio/experimental/channel_traits.hpp]
+
+['Convenience header: ]None
+
+
+[endsect]
+
+
+
+[endsect]
+
+[section:experimental__channel_traits__rebind experimental::channel_traits::rebind]
+
+[indexterm1 boost_asio.indexterm.experimental__channel_traits__rebind..experimental::channel_traits::rebind]
+
+
+Rebind the traits to a new set of signatures. 
+
+
+  template<
+      typename... NewSignatures>
+  struct rebind
+
+
+[heading Types]
+[table
+  [[Name][Description]]
+
+  [
+
+    [[link boost_asio.reference.experimental__channel_traits__rebind.other [*other]]]
+    []
+  
+  ]
+
+]
+
+This nested structure must have a single nested type `other` that aliases a traits type with the specified set of signatures. 
+
+[heading Requirements]
+
+['Header: ][^boost/asio/experimental/channel_traits.hpp]
+
+['Convenience header: ]None
+
+
+[section:other experimental::channel_traits::rebind::other]
+
+[indexterm2 boost_asio.indexterm.experimental__channel_traits__rebind.other..other..experimental::channel_traits::rebind] 
+
+  typedef user_defined other;
+
+
+
+[heading Requirements]
+
+['Header: ][^boost/asio/experimental/channel_traits.hpp]
+
+['Convenience header: ]None
+
+
+[endsect]
+
+
+
+[endsect]
+
+[section:experimental__co_spawn experimental::co_spawn]
+
+[indexterm1 boost_asio.indexterm.experimental__co_spawn..experimental::co_spawn] 
+Spawn a resumable coroutine. 
+
+  template<
+      typename T,
+      typename ``[link boost_asio.reference.Executor1 Executor]``,
+      typename CompletionToken>
+  ``[link boost_asio.reference.asynchronous_operations.automatic_deduction_of_initiating_function_return_type ['DEDUCED]]`` ``[link boost_asio.reference.experimental__co_spawn.overload1 co_spawn]``(
+      coro< void, T, Executor > c,
+      CompletionToken && token);
+  ``  [''''&raquo;''' [link boost_asio.reference.experimental__co_spawn.overload1 more...]]``
+
+  template<
+      typename T,
+      typename ``[link boost_asio.reference.Executor1 Executor]``,
+      typename CompletionToken>
+  ``[link boost_asio.reference.asynchronous_operations.automatic_deduction_of_initiating_function_return_type ['DEDUCED]]`` ``[link boost_asio.reference.experimental__co_spawn.overload2 co_spawn]``(
+      coro< void(), T, Executor > c,
+      CompletionToken && token);
+  ``  [''''&raquo;''' [link boost_asio.reference.experimental__co_spawn.overload2 more...]]``
+
+  template<
+      typename T,
+      typename ``[link boost_asio.reference.Executor1 Executor]``,
+      typename CompletionToken>
+  ``[link boost_asio.reference.asynchronous_operations.automatic_deduction_of_initiating_function_return_type ['DEDUCED]]`` ``[link boost_asio.reference.experimental__co_spawn.overload3 co_spawn]``(
+      coro< void() noexcept, T, Executor > c,
+      CompletionToken && token);
+  ``  [''''&raquo;''' [link boost_asio.reference.experimental__co_spawn.overload3 more...]]``
+
+  template<
+      typename ``[link boost_asio.reference.Executor1 Executor]``,
+      typename CompletionToken>
+  ``[link boost_asio.reference.asynchronous_operations.automatic_deduction_of_initiating_function_return_type ['DEDUCED]]`` ``[link boost_asio.reference.experimental__co_spawn.overload4 co_spawn]``(
+      coro< void, void, Executor > c,
+      CompletionToken && token);
+  ``  [''''&raquo;''' [link boost_asio.reference.experimental__co_spawn.overload4 more...]]``
+
+  template<
+      typename ``[link boost_asio.reference.Executor1 Executor]``,
+      typename CompletionToken>
+  ``[link boost_asio.reference.asynchronous_operations.automatic_deduction_of_initiating_function_return_type ['DEDUCED]]`` ``[link boost_asio.reference.experimental__co_spawn.overload5 co_spawn]``(
+      coro< void(), void, Executor > c,
+      CompletionToken && token);
+  ``  [''''&raquo;''' [link boost_asio.reference.experimental__co_spawn.overload5 more...]]``
+
+  template<
+      typename ``[link boost_asio.reference.Executor1 Executor]``,
+      typename CompletionToken>
+  ``[link boost_asio.reference.asynchronous_operations.automatic_deduction_of_initiating_function_return_type ['DEDUCED]]`` ``[link boost_asio.reference.experimental__co_spawn.overload6 co_spawn]``(
+      coro< void() noexcept, void, Executor > c,
+      CompletionToken && token);
+  ``  [''''&raquo;''' [link boost_asio.reference.experimental__co_spawn.overload6 more...]]``
+
+[heading Requirements]
+
+['Header: ][^boost/asio/experimental/co_spawn.hpp]
+
+['Convenience header: ]None
+
+
+[section:overload1 experimental::co_spawn (1 of 6 overloads)]
+
+
+Spawn a resumable coroutine. 
+
+
+  template<
+      typename T,
+      typename ``[link boost_asio.reference.Executor1 Executor]``,
+      typename CompletionToken>
+  ``[link boost_asio.reference.asynchronous_operations.automatic_deduction_of_initiating_function_return_type ['DEDUCED]]`` co_spawn(
+      coro< void, T, Executor > c,
+      CompletionToken && token);
+
+
+This function spawns the coroutine for execution on its executor. It binds the lifetime of the coroutine to the executor.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[c][The coroutine]]
+
+[[token][The completion token]]
+
+]
+
+
+[heading Return Value]
+      
+Implementation defined 
+
+
+
+
+[endsect]
+
+
+
+[section:overload2 experimental::co_spawn (2 of 6 overloads)]
+
+
+Spawn a resumable coroutine. 
+
+
+  template<
+      typename T,
+      typename ``[link boost_asio.reference.Executor1 Executor]``,
+      typename CompletionToken>
+  ``[link boost_asio.reference.asynchronous_operations.automatic_deduction_of_initiating_function_return_type ['DEDUCED]]`` co_spawn(
+      coro< void(), T, Executor > c,
+      CompletionToken && token);
+
+
+This function spawns the coroutine for execution on its executor. It binds the lifetime of the coroutine to the executor.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[c][The coroutine]]
+
+[[token][The completion token]]
+
+]
+
+
+[heading Return Value]
+      
+Implementation defined 
+
+
+
+
+[endsect]
+
+
+
+[section:overload3 experimental::co_spawn (3 of 6 overloads)]
+
+
+Spawn a resumable coroutine. 
+
+
+  template<
+      typename T,
+      typename ``[link boost_asio.reference.Executor1 Executor]``,
+      typename CompletionToken>
+  ``[link boost_asio.reference.asynchronous_operations.automatic_deduction_of_initiating_function_return_type ['DEDUCED]]`` co_spawn(
+      coro< void() noexcept, T, Executor > c,
+      CompletionToken && token);
+
+
+This function spawns the coroutine for execution on its executor. It binds the lifetime of the coroutine to the executor.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[c][The coroutine]]
+
+[[token][The completion token]]
+
+]
+
+
+[heading Return Value]
+      
+Implementation defined 
+
+
+
+
+[endsect]
+
+
+
+[section:overload4 experimental::co_spawn (4 of 6 overloads)]
+
+
+Spawn a resumable coroutine. 
+
+
+  template<
+      typename ``[link boost_asio.reference.Executor1 Executor]``,
+      typename CompletionToken>
+  ``[link boost_asio.reference.asynchronous_operations.automatic_deduction_of_initiating_function_return_type ['DEDUCED]]`` co_spawn(
+      coro< void, void, Executor > c,
+      CompletionToken && token);
+
+
+This function spawns the coroutine for execution on its executor. It binds the lifetime of the coroutine to the executor.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[c][The coroutine]]
+
+[[token][The completion token]]
+
+]
+
+
+[heading Return Value]
+      
+Implementation defined 
+
+
+
+
+[endsect]
+
+
+
+[section:overload5 experimental::co_spawn (5 of 6 overloads)]
+
+
+Spawn a resumable coroutine. 
+
+
+  template<
+      typename ``[link boost_asio.reference.Executor1 Executor]``,
+      typename CompletionToken>
+  ``[link boost_asio.reference.asynchronous_operations.automatic_deduction_of_initiating_function_return_type ['DEDUCED]]`` co_spawn(
+      coro< void(), void, Executor > c,
+      CompletionToken && token);
+
+
+This function spawns the coroutine for execution on its executor. It binds the lifetime of the coroutine to the executor.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[c][The coroutine]]
+
+[[token][The completion token]]
+
+]
+
+
+[heading Return Value]
+      
+Implementation defined 
+
+
+
+
+[endsect]
+
+
+
+[section:overload6 experimental::co_spawn (6 of 6 overloads)]
+
+
+Spawn a resumable coroutine. 
+
+
+  template<
+      typename ``[link boost_asio.reference.Executor1 Executor]``,
+      typename CompletionToken>
+  ``[link boost_asio.reference.asynchronous_operations.automatic_deduction_of_initiating_function_return_type ['DEDUCED]]`` co_spawn(
+      coro< void() noexcept, void, Executor > c,
+      CompletionToken && token);
+
+
+This function spawns the coroutine for execution on its executor. It binds the lifetime of the coroutine to the executor.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[c][The coroutine]]
+
+[[token][The completion token]]
+
+]
+
+
+[heading Return Value]
+      
+Implementation defined 
+
+
+
+
+[endsect]
+
+
+[endsect]
+
 [section:experimental__coro experimental::coro]
 
 [indexterm1 boost_asio.indexterm.experimental__coro..experimental::coro]
 
+
+The main type of a resumable coroutine. 
 
 
   template<
@@ -89942,52 +92655,51 @@ If one operations succeeds, the other is cancelled as the OR-condition is alread
 
   [
     [[link boost_asio.reference.experimental__coro.async_resume [*async_resume]]]
-    []
-  ]
-  
-  [
-    [[link boost_asio.reference.experimental__coro.cancel [*cancel]]]
-    []
+    [Resume the coroutine. ]
   ]
   
   [
     [[link boost_asio.reference.experimental__coro.coro [*coro]] [constructor]]
-    []
+    [The default constructor, gives an invalid coroutine. 
+     [hr]
+     Move constructor. 
+     [hr]
+     ]
   ]
   
   [
     [[link boost_asio.reference.experimental__coro.get_executor [*get_executor]]]
-    []
+    [Get the used executor. ]
   ]
   
   [
     [[link boost_asio.reference.experimental__coro.is_open [*is_open]]]
-    []
+    [Check whether the coroutine is open, i.e. can be resumed. ]
   ]
   
   [
     [[link boost_asio.reference.experimental__coro.operator_bool [*operator bool]]]
-    []
+    [Check whether the coroutine is open, i.e. can be resumed. ]
   ]
   
   [
     [[link boost_asio.reference.experimental__coro.operator_co_await [*operator co_await]]]
-    []
+    [Operator used for coroutines without input value. ]
   ]
   
   [
     [[link boost_asio.reference.experimental__coro.operator_lp__rp_ [*operator()]]]
-    []
+    [Operator used for coroutines with input value. ]
   ]
   
   [
     [[link boost_asio.reference.experimental__coro.operator_eq_ [*operator=]]]
-    []
+    [Move assignment. ]
   ]
   
   [
     [[link boost_asio.reference.experimental__coro._coro [*~coro]] [destructor]]
-    []
+    [Destructor. Destroys the coroutine, if it holds a valid one. ]
   ]
   
 ]
@@ -89998,10 +92710,12 @@ If one operations succeeds, the other is cancelled as the OR-condition is alread
 
   [
     [[link boost_asio.reference.experimental__coro.is_noexcept [*is_noexcept]] [static]]
-    []
+    [Whether or not the coroutine is noexcept. ]
   ]
 
 ]
+
+Template parameter `Yield` specifies type or signature used by co\_yield, `Return` specifies the type used for co\_return, and `Executor` specifies the underlying executor type. 
 
 [heading Requirements]
 
@@ -90012,6 +92726,8 @@ If one operations succeeds, the other is cancelled as the OR-condition is alread
 [section:async_resume experimental::coro::async_resume]
 
 [indexterm2 boost_asio.indexterm.experimental__coro.async_resume..async_resume..experimental::coro] 
+Resume the coroutine. 
+
 
   template<
       typename CompletionToken>
@@ -90031,11 +92747,35 @@ If one operations succeeds, the other is cancelled as the OR-condition is alread
 [section:overload1 experimental::coro::async_resume (1 of 2 overloads)]
 
 
+Resume the coroutine. 
+
 
   template<
       typename CompletionToken>
   requires std::is_void_v< input_type > auto async_resume(
       CompletionToken && token);
+
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[token][The completion token of the async resume.]]
+
+]
+
+
+[heading Attention]
+      
+Calling an invalid coroutine with a noexcept signature is undefined behaviour.
+
+
+[heading Remarks]
+      
+This overload is only available for coroutines without an input value. 
+
 
 
 
@@ -90045,6 +92785,8 @@ If one operations succeeds, the other is cancelled as the OR-condition is alread
 
 [section:overload2 experimental::coro::async_resume (2 of 2 overloads)]
 
+
+Resume the coroutine. 
 
 
   template<
@@ -90056,34 +92798,51 @@ If one operations succeeds, the other is cancelled as the OR-condition is alread
 
 
 
-[endsect]
+[heading Parameters]
+    
+
+[variablelist
+  
+[[token][The completion token of the async resume.]]
+
+]
+
+
+[heading Attention]
+      
+Calling an invalid coroutine with a noexcept signature is undefined behaviour.
+
+
+[heading Remarks]
+      
+This overload is only available for coroutines with an input value. 
+
+
 
 
 [endsect]
 
 
-[section:cancel experimental::coro::cancel]
-
-[indexterm2 boost_asio.indexterm.experimental__coro.cancel..cancel..experimental::coro] 
-
-  void cancel(
-      cancellation_type ct = cancellation_type::all);
-
-
-
 [endsect]
-
 
 [section:coro experimental::coro::coro]
 
 [indexterm2 boost_asio.indexterm.experimental__coro.coro..coro..experimental::coro] 
+The default constructor, gives an invalid coroutine. 
+
 
   ``[link boost_asio.reference.experimental__coro.coro.overload1 coro]``();
   ``  [''''&raquo;''' [link boost_asio.reference.experimental__coro.coro.overload1 more...]]``
 
+
+Move constructor. 
+
+
   ``[link boost_asio.reference.experimental__coro.coro.overload2 coro]``(
       coro && lhs);
   ``  [''''&raquo;''' [link boost_asio.reference.experimental__coro.coro.overload2 more...]]``
+
+
 
   ``[link boost_asio.reference.experimental__coro.coro.overload3 coro]``(
       const coro & );
@@ -90092,6 +92851,8 @@ If one operations succeeds, the other is cancelled as the OR-condition is alread
 
 [section:overload1 experimental::coro::coro (1 of 3 overloads)]
 
+
+The default constructor, gives an invalid coroutine. 
 
 
   coro();
@@ -90104,6 +92865,8 @@ If one operations succeeds, the other is cancelled as the OR-condition is alread
 
 [section:overload2 experimental::coro::coro (2 of 3 overloads)]
 
+
+Move constructor. 
 
 
   coro(
@@ -90133,6 +92896,8 @@ If one operations succeeds, the other is cancelled as the OR-condition is alread
 [section:get_executor experimental::coro::get_executor]
 
 [indexterm2 boost_asio.indexterm.experimental__coro.get_executor..get_executor..experimental::coro] 
+Get the used executor. 
+
 
   executor_type get_executor() const;
 
@@ -90145,6 +92910,8 @@ If one operations succeeds, the other is cancelled as the OR-condition is alread
 [section:is_noexcept experimental::coro::is_noexcept]
 
 [indexterm2 boost_asio.indexterm.experimental__coro.is_noexcept..is_noexcept..experimental::coro] 
+Whether or not the coroutine is noexcept. 
+
 
   static constexpr bool is_noexcept = traits::is_noexcept;
 
@@ -90157,6 +92924,8 @@ If one operations succeeds, the other is cancelled as the OR-condition is alread
 [section:is_open experimental::coro::is_open]
 
 [indexterm2 boost_asio.indexterm.experimental__coro.is_open..is_open..experimental::coro] 
+Check whether the coroutine is open, i.e. can be resumed. 
+
 
   bool is_open() const;
 
@@ -90169,6 +92938,8 @@ If one operations succeeds, the other is cancelled as the OR-condition is alread
 [section:operator_bool experimental::coro::operator bool]
 
 [indexterm2 boost_asio.indexterm.experimental__coro.operator_bool..operator bool..experimental::coro] 
+Check whether the coroutine is open, i.e. can be resumed. 
+
 
   operator bool() const;
 
@@ -90181,6 +92952,8 @@ If one operations succeeds, the other is cancelled as the OR-condition is alread
 [section:operator_co_await experimental::coro::operator co_await]
 
 [indexterm2 boost_asio.indexterm.experimental__coro.operator_co_await..operator co_await..experimental::coro] 
+Operator used for coroutines without input value. 
+
 
   auto operator co_await();
 
@@ -90193,11 +92966,38 @@ If one operations succeeds, the other is cancelled as the OR-condition is alread
 [section:operator_lp__rp_ experimental::coro::operator()]
 
 [indexterm2 boost_asio.indexterm.experimental__coro.operator_lp__rp_..operator()..experimental::coro] 
+Operator used for coroutines with input value. 
+
 
   template<
       detail::convertible_to< input_type > T>
   auto operator()(
       T && ip);
+
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[ip][The input value]]
+
+]
+
+
+[heading Return Value]
+      
+An awaitable handle.
+
+
+
+   coro<void> push_values(coro<double(int)> c)
+   {
+      std::optional<double> res = co_await c(42);
+   }
+
+
 
 
 
@@ -90207,6 +93007,8 @@ If one operations succeeds, the other is cancelled as the OR-condition is alread
 [section:operator_eq_ experimental::coro::operator=]
 
 [indexterm2 boost_asio.indexterm.experimental__coro.operator_eq_..operator=..experimental::coro] 
+Move assignment. 
+
 
   coro & ``[link boost_asio.reference.experimental__coro.operator_eq_.overload1 operator=]``(
       coro && lhs);
@@ -90219,6 +93021,8 @@ If one operations succeeds, the other is cancelled as the OR-condition is alread
 
 [section:overload1 experimental::coro::operator= (1 of 2 overloads)]
 
+
+Move assignment. 
 
 
   coro & operator=(
@@ -90248,111 +93052,68 @@ If one operations succeeds, the other is cancelled as the OR-condition is alread
 [section:_coro experimental::coro::~coro]
 
 [indexterm2 boost_asio.indexterm.experimental__coro._coro..~coro..experimental::coro] 
+Destructor. Destroys the coroutine, if it holds a valid one. 
+
 
   ~coro();
 
 
 
+[heading Remarks]
+      
+This does not cancel an active coroutine. Destructing a resumable coroutine, i.e. one with a call to async\_resume that has not completed, is undefined behaviour. 
+
+
+
+
 [endsect]
 
 
 
 [endsect]
 
-[section:experimental__coro__awaitable_t experimental::coro::awaitable_t]
+[section:experimental__coro_traits experimental::coro_traits]
 
-[indexterm1 boost_asio.indexterm.experimental__coro__awaitable_t..experimental::coro::awaitable_t]
-
-
-
-  struct awaitable_t
+[indexterm1 boost_asio.indexterm.experimental__coro_traits..experimental::coro_traits]
 
 
-[heading Member Functions]
-[table
-  [[Name][Description]]
+The traits describing the resumable coroutine behaviour. 
 
-  [
-    [[link boost_asio.reference.experimental__coro__awaitable_t.await_ready [*await_ready]] [static]]
-    []
-  ]
-  
-  [
-    [[link boost_asio.reference.experimental__coro__awaitable_t.await_resume [*await_resume]]]
-    []
-  ]
-  
-  [
-    [[link boost_asio.reference.experimental__coro__awaitable_t.await_suspend [*await_suspend]]]
-    []
-  ]
-  
-]
+
+  template<
+      typename Yield,
+      typename Return,
+      typename ``[link boost_asio.reference.Executor1 Executor]``>
+  struct coro_traits
+
 
 [heading Data Members]
 [table
   [[Name][Description]]
 
   [
-    [[link boost_asio.reference.experimental__coro__awaitable_t.coro_ [*coro_]]]
-    []
+    [[link boost_asio.reference.experimental__coro_traits.is_noexcept [*is_noexcept]] [static]]
+    [Whether or not the coroutine is noexcept. ]
   ]
 
 ]
 
+Template parameter `Yield` specifies type or signature used by co\_yield, `Return` specifies the type used for co\_return, and `Executor` specifies the underlying executor type. 
+
 [heading Requirements]
 
-['Header: ][^boost/asio/experimental/coro.hpp]
+['Header: ][^boost/asio/experimental/coro_traits.hpp]
 
 ['Convenience header: ]None
 
 
-[section:await_ready experimental::coro::awaitable_t::await_ready]
+[section:is_noexcept experimental::coro_traits::is_noexcept]
 
-[indexterm2 boost_asio.indexterm.experimental__coro__awaitable_t.await_ready..await_ready..experimental::coro::awaitable_t] 
-
-  static constexpr bool await_ready();
-
+[indexterm2 boost_asio.indexterm.experimental__coro_traits.is_noexcept..is_noexcept..experimental::coro_traits] 
+Whether or not the coroutine is noexcept. 
 
 
-[endsect]
-
-
-
-[section:await_resume experimental::coro::awaitable_t::await_resume]
-
-[indexterm2 boost_asio.indexterm.experimental__coro__awaitable_t.await_resume..await_resume..experimental::coro::awaitable_t] 
-
-  auto await_resume();
-
-
-
-[endsect]
-
-
-
-[section:await_suspend experimental::coro::awaitable_t::await_suspend]
-
-[indexterm2 boost_asio.indexterm.experimental__coro__awaitable_t.await_suspend..await_suspend..experimental::coro::awaitable_t] 
-
-  template<
-      typename Y,
-      typename R,
-      typename E>
-  auto await_suspend(
-      detail::coroutine_handle< detail::coro_promise< Y, R, E >> h);
-
-
-
-[endsect]
-
-
-
-[section:coro_ experimental::coro::awaitable_t::coro_]
-
-[indexterm2 boost_asio.indexterm.experimental__coro__awaitable_t.coro_..coro_..experimental::coro::awaitable_t] 
-
-  coro & coro_;
+  static constexpr bool is_noexcept = argument_dependent;
 
 
 
@@ -91219,6 +93980,96 @@ Encapsulates deferred values.
 
 
 [endsect]
+
+
+[section:experimental__error__channel_category experimental::error::channel_category]
+
+[indexterm1 boost_asio.indexterm.experimental__error__channel_category..experimental::error::channel_category] 
+
+  static const boost::system::error_category & channel_category = boost::asio::experimental::error::get_channel_category();
+
+
+[heading Requirements]
+
+['Header: ][^boost/asio/experimental/channel_error.hpp]
+
+['Convenience header: ]None
+
+
+[endsect]
+
+
+
+[section:experimental__error__channel_errors experimental::error::channel_errors]
+
+[indexterm1 boost_asio.indexterm.experimental__error__channel_errors..experimental::error::channel_errors] 
+  enum channel_errors
+
+[indexterm2 boost_asio.indexterm.experimental__error__channel_errors.channel_closed..channel_closed..experimental::error::channel_errors]
+[indexterm2 boost_asio.indexterm.experimental__error__channel_errors.channel_cancelled..channel_cancelled..experimental::error::channel_errors]
+
+[heading Values]
+[variablelist
+
+  [
+    [channel_closed]
+    [The channel was closed. ]
+  ]
+
+  [
+    [channel_cancelled]
+    [The channel was cancelled. ]
+  ]
+
+]
+
+
+[heading Requirements]
+
+['Header: ][^boost/asio/experimental/channel_error.hpp]
+
+['Convenience header: ]None
+
+
+[endsect]
+
+
+
+[section:experimental__error__get_channel_category experimental::error::get_channel_category]
+
+[indexterm1 boost_asio.indexterm.experimental__error__get_channel_category..experimental::error::get_channel_category] 
+
+  const boost::system::error_category & get_channel_category();
+
+
+[heading Requirements]
+
+['Header: ][^boost/asio/experimental/channel_error.hpp]
+
+['Convenience header: ]None
+
+
+[endsect]
+
+
+
+[section:experimental__error__make_error_code experimental::error::make_error_code]
+
+[indexterm1 boost_asio.indexterm.experimental__error__make_error_code..experimental::error::make_error_code] 
+
+  boost::system::error_code make_error_code(
+      channel_errors e);
+
+
+[heading Requirements]
+
+['Header: ][^boost/asio/experimental/channel_error.hpp]
+
+['Convenience header: ]None
+
+
+[endsect]
+
 
 [section:experimental__is_deferred experimental::is_deferred]
 
@@ -92126,9 +94977,13 @@ The primary template is not defined.
 [section:experimental__use_coro experimental::use_coro]
 
 [indexterm1 boost_asio.indexterm.experimental__use_coro..experimental::use_coro] 
+A completion token object that represents the currently executing resumable coroutine. 
+
 
   constexpr use_coro_t use_coro;
 
+
+See the documentation for boost::asio::use\_coro\_t for a usage example. 
 
 [heading Requirements]
 
@@ -92145,10 +95000,236 @@ The primary template is not defined.
 [indexterm1 boost_asio.indexterm.experimental__use_coro_t..experimental::use_coro_t]
 
 
+A completion token that represents the currently executing resumable coroutine. 
+
 
   template<
       typename ``[link boost_asio.reference.Executor1 Executor]`` = any_io_executor>
   struct use_coro_t
+
+
+[heading Types]
+[table
+  [[Name][Description]]
+
+  [
+
+    [[link boost_asio.reference.experimental__use_coro_t__executor_with_default [*executor_with_default]]]
+    [Adapts an executor to add the use_coro_t completion token as the default. ]
+  
+  ]
+
+]
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link boost_asio.reference.experimental__use_coro_t.as_default_on [*as_default_on]] [static]]
+    [Function helper to adapt an I/O object to use use_coro_t as its default completion token type. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.experimental__use_coro_t.use_coro_t [*use_coro_t]] [constructor]]
+    [Default constructor. 
+     [hr]
+     Constructor used to specify file name, line, and function name. ]
+  ]
+  
+]
+
+The `use_coro_t` class, with its value `use_coro`, is used to represent an operation that can be awaited by the current resumable coroutine. This completion token may be passed as a handler to an asynchronous operation. For example:
+
+
+
+   coro<void> my_coroutine(tcp::socket my_socket)
+   {
+     std::size_t n = co_await my_socket.async_read_some(buffer, use_coro);
+     ...
+   } 
+
+
+
+
+When used with co\_await, the initiating function (`async_read_some` in the above example) suspends the current coroutine. The coroutine is resumed when the asynchronous operation completes, and the result of the operation is returned. 
+
+[heading Requirements]
+
+['Header: ][^boost/asio/experimental/use_coro.hpp]
+
+['Convenience header: ]None
+
+
+[section:as_default_on experimental::use_coro_t::as_default_on]
+
+[indexterm2 boost_asio.indexterm.experimental__use_coro_t.as_default_on..as_default_on..experimental::use_coro_t] 
+Function helper to adapt an I/O object to use `use_coro_t` as its default completion token type. 
+
+
+  template<
+      typename T>
+  static decay< T >::type::template rebind_executor< executor_with_default< typename decay< T >::type::executor_type > >::other as_default_on(
+      T && object);
+
+
+
+[endsect]
+
+
+[section:use_coro_t experimental::use_coro_t::use_coro_t]
+
+[indexterm2 boost_asio.indexterm.experimental__use_coro_t.use_coro_t..use_coro_t..experimental::use_coro_t] 
+Default constructor. 
+
+
+  constexpr ``[link boost_asio.reference.experimental__use_coro_t.use_coro_t.overload1 use_coro_t]``();
+  ``  [''''&raquo;''' [link boost_asio.reference.experimental__use_coro_t.use_coro_t.overload1 more...]]``
+
+
+Constructor used to specify file name, line, and function name. 
+
+
+  constexpr ``[link boost_asio.reference.experimental__use_coro_t.use_coro_t.overload2 use_coro_t]``(
+      const char * file_name,
+      int line,
+      const char * function_name);
+  ``  [''''&raquo;''' [link boost_asio.reference.experimental__use_coro_t.use_coro_t.overload2 more...]]``
+
+
+[section:overload1 experimental::use_coro_t::use_coro_t (1 of 2 overloads)]
+
+
+Default constructor. 
+
+
+  constexpr use_coro_t();
+
+
+
+[endsect]
+
+
+
+[section:overload2 experimental::use_coro_t::use_coro_t (2 of 2 overloads)]
+
+
+Constructor used to specify file name, line, and function name. 
+
+
+  constexpr use_coro_t(
+      const char * file_name,
+      int line,
+      const char * function_name);
+
+
+
+[endsect]
+
+
+[endsect]
+
+
+[endsect]
+
+[section:experimental__use_coro_t__executor_with_default experimental::use_coro_t::executor_with_default]
+
+[indexterm1 boost_asio.indexterm.experimental__use_coro_t__executor_with_default..experimental::use_coro_t::executor_with_default]
+
+
+Adapts an executor to add the `use_coro_t` completion token as the default. 
+
+
+  template<
+      typename ``[link boost_asio.reference.Executor1 InnerExecutor]``>
+  struct executor_with_default
+
+
+[heading Types]
+[table
+  [[Name][Description]]
+
+  [
+
+    [[link boost_asio.reference.experimental__use_coro_t__executor_with_default.default_completion_token_type [*default_completion_token_type]]]
+    [Specify use_coro_t as the default completion token type. ]
+  
+  ]
+
+]
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link boost_asio.reference.experimental__use_coro_t__executor_with_default.executor_with_default [*executor_with_default]] [constructor]]
+    [Construct the adapted executor from the inner executor type. ]
+  ]
+  
+]
+
+[heading Requirements]
+
+['Header: ][^boost/asio/experimental/use_coro.hpp]
+
+['Convenience header: ]None
+
+
+[section:default_completion_token_type experimental::use_coro_t::executor_with_default::default_completion_token_type]
+
+[indexterm2 boost_asio.indexterm.experimental__use_coro_t__executor_with_default.default_completion_token_type..default_completion_token_type..experimental::use_coro_t::executor_with_default] 
+Specify `use_coro_t` as the default completion token type. 
+
+
+  typedef use_coro_t default_completion_token_type;
+
+
+[heading Types]
+[table
+  [[Name][Description]]
+
+  [
+
+    [[link boost_asio.reference.experimental__use_coro_t__executor_with_default [*executor_with_default]]]
+    [Adapts an executor to add the use_coro_t completion token as the default. ]
+  
+  ]
+
+]
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link boost_asio.reference.experimental__use_coro_t.as_default_on [*as_default_on]] [static]]
+    [Function helper to adapt an I/O object to use use_coro_t as its default completion token type. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.experimental__use_coro_t.use_coro_t [*use_coro_t]] [constructor]]
+    [Default constructor. 
+     [hr]
+     Constructor used to specify file name, line, and function name. ]
+  ]
+  
+]
+
+The `use_coro_t` class, with its value `use_coro`, is used to represent an operation that can be awaited by the current resumable coroutine. This completion token may be passed as a handler to an asynchronous operation. For example:
+
+
+
+   coro<void> my_coroutine(tcp::socket my_socket)
+   {
+     std::size_t n = co_await my_socket.async_read_some(buffer, use_coro);
+     ...
+   } 
+
+
+
+
+When used with co\_await, the initiating function (`async_read_some` in the above example) suspends the current coroutine. The coroutine is resumed when the asynchronous operation completes, and the result of the operation is returned. 
 
 
 [heading Requirements]
@@ -92156,6 +95237,28 @@ The primary template is not defined.
 ['Header: ][^boost/asio/experimental/use_coro.hpp]
 
 ['Convenience header: ]None
+
+
+[endsect]
+
+
+
+[section:executor_with_default experimental::use_coro_t::executor_with_default::executor_with_default]
+
+[indexterm2 boost_asio.indexterm.experimental__use_coro_t__executor_with_default.executor_with_default..executor_with_default..experimental::use_coro_t::executor_with_default] 
+Construct the adapted executor from the inner executor type. 
+
+
+  template<
+      typename ``[link boost_asio.reference.Executor1 InnerExecutor1]``>
+  executor_with_default(
+      const InnerExecutor1 & ex,
+      typename constraint< conditional< !is_same< InnerExecutor1, executor_with_default >::value, is_convertible< InnerExecutor1, InnerExecutor >, false_type >::type::value >::type  = 0);
+
+
+
+[endsect]
+
 
 
 [endsect]
@@ -129064,6 +132167,16 @@ Typedef for the typical usage of a random-access file.
   ]
   
   [
+    [[link boost_asio.reference.basic_random_access_file.sync_all [*sync_all]]]
+    [Synchronise the file to disk. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.basic_random_access_file.sync_data [*sync_data]]]
+    [Synchronise the file data to disk. ]
+  ]
+  
+  [
     [[link boost_asio.reference.basic_random_access_file.write_some_at [*write_some_at]]]
     [Write some data to the handle at the specified offset. ]
   ]
@@ -143950,6 +147063,16 @@ Typedef for the typical usage of a stream-oriented file.
   ]
   
   [
+    [[link boost_asio.reference.basic_stream_file.sync_all [*sync_all]]]
+    [Synchronise the file to disk. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.basic_stream_file.sync_data [*sync_data]]]
+    [Synchronise the file data to disk. ]
+  ]
+  
+  [
     [[link boost_asio.reference.basic_stream_file.write_some [*write_some]]]
     [Write some data to the file. ]
   ]
@@ -157896,6 +161019,48 @@ The initiating function (async\_read\_some in the above example) suspends the cu
 
 [endsect]
 
+[section:is_error_code_enum_lt__boost__asio__experimental__error__channel_errors__gt_ boost::system::is_error_code_enum< boost::asio::experimental::error::channel_errors >]
+
+[indexterm1 boost_asio.indexterm.is_error_code_enum_lt__boost__asio__experimental__error__channel_errors__gt_..boost::system::is_error_code_enum< boost::asio::experimental::error::channel_errors >]
+
+
+
+  template<>
+  struct boost::system::is_error_code_enum< boost::asio::experimental::error::channel_errors >
+
+
+[heading Data Members]
+[table
+  [[Name][Description]]
+
+  [
+    [[link boost_asio.reference.is_error_code_enum_lt__boost__asio__experimental__error__channel_errors__gt_.value [*value]] [static]]
+    []
+  ]
+
+]
+
+[heading Requirements]
+
+['Header: ][^boost/asio/experimental/channel_error.hpp]
+
+['Convenience header: ]None
+
+
+[section:value boost::system::is_error_code_enum< boost::asio::experimental::error::channel_errors >::value]
+
+[indexterm2 boost_asio.indexterm.is_error_code_enum_lt__boost__asio__experimental__error__channel_errors__gt_.value..value..boost::system::is_error_code_enum< boost::asio::experimental::error::channel_errors >] 
+
+  static const bool value = true;
+
+
+
+[endsect]
+
+
+
+[endsect]
+
 [section:is_error_code_enum_lt__boost__asio__ssl__error__stream_errors__gt_ boost::system::is_error_code_enum< boost::asio::ssl::error::stream_errors >]
 
 [indexterm1 boost_asio.indexterm.is_error_code_enum_lt__boost__asio__ssl__error__stream_errors__gt_..boost::system::is_error_code_enum< boost::asio::ssl::error::stream_errors >]
@@ -157937,24 +161102,5 @@ The initiating function (async\_read\_some in the above example) suspends the cu
 
 
 [endsect]
-
-
-[section:std__move std::move]
-
-[indexterm1 boost_asio.indexterm.std__move..std::move] 
-
-  else return move(
-      kr );
-
-
-[heading Requirements]
-
-['Header: ][^boost/asio/experimental/coro.hpp]
-
-['Convenience header: ]None
-
-
-[endsect]
-
 
 [endsect]

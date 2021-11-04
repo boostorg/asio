@@ -80,6 +80,7 @@
 #include <boost/asio/detail/impl/winsock_init.ipp>
 #include <boost/asio/execution/impl/bad_executor.ipp>
 #include <boost/asio/execution/impl/receiver_invocation_error.ipp>
+#include <boost/asio/experimental/impl/channel_error.ipp>
 #include <boost/asio/generic/detail/impl/endpoint.ipp>
 #include <boost/asio/ip/impl/address.ipp>
 #include <boost/asio/ip/impl/address_v4.ipp>
