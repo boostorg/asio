@@ -52,6 +52,20 @@ struct stream_core
     pending_write_.expires_at(neg_infin());
   }
 
+  template <typename Executor>
+  stream_core(SSL* ssl_impl, const Executor& ex)
+    : engine_(ssl_impl),
+      pending_read_(ex),
+      pending_write_(ex),
+      output_buffer_space_(max_tls_record_size),
+      output_buffer_(boost::asio::buffer(output_buffer_space_)),
+      input_buffer_space_(max_tls_record_size),
+      input_buffer_(boost::asio::buffer(input_buffer_space_))
+  {
+    pending_read_.expires_at(neg_infin());
+    pending_write_.expires_at(neg_infin());
+  }
+
 #if defined(BOOST_ASIO_HAS_MOVE)
   stream_core(stream_core&& other)
     : engine_(BOOST_ASIO_MOVE_CAST(engine)(other.engine_)),
