@@ -296,8 +296,10 @@ struct prefer_member<any_io_executor, Prop> :
 
 #include <boost/asio/detail/pop_options.hpp>
 
-#if defined(BOOST_ASIO_HEADER_ONLY)
+#if defined(BOOST_ASIO_HEADER_ONLY) \
+  && !defined(BOOST_ASIO_USE_TS_EXECUTOR_AS_DEFAULT)
 # include <boost/asio/impl/any_io_executor.ipp>
 #endif // defined(BOOST_ASIO_HEADER_ONLY)
+       //   && !defined(BOOST_ASIO_USE_TS_EXECUTOR_AS_DEFAULT)
 
 #endif // BOOST_ASIO_ANY_IO_EXECUTOR_HPP
