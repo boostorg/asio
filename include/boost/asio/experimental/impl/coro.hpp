@@ -95,22 +95,22 @@ struct coro_error<boost::system::error_code>
 {
   static boost::system::error_code invalid()
   {
-    return error::fault;
+    return boost::asio::error::fault;
   }
 
   static boost::system::error_code cancelled()
   {
-    return error::operation_aborted;
+    return boost::asio::error::operation_aborted;
   }
 
   static boost::system::error_code interrupted()
   {
-    return error::interrupted;
+    return boost::asio::error::interrupted;
   }
 
   static boost::system::error_code done()
   {
-    return error::broken_pipe;
+    return boost::asio::error::broken_pipe;
   }
 };
 
