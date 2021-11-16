@@ -27,6 +27,7 @@
 #include <boost/asio/registered_buffer.hpp>
 
 #if defined(BOOST_ASIO_HAS_IO_URING)
+# include <boost/asio/detail/scheduler.hpp>
 # include <boost/asio/detail/io_uring_service.hpp>
 #endif // defined(BOOST_ASIO_HAS_IO_URING)
 
