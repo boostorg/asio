@@ -248,7 +248,7 @@ Construct a polymorphic wrapper for the specified executor.
 
 
   template<
-      BOOST_ASIO_EXECUTION_EXECUTOR ``[link boost_asio.reference.Executor1 Executor]``>
+      typename ``[link boost_asio.reference.Executor1 Executor]``>
   ``[link boost_asio.reference.any_io_executor.any_io_executor.overload6 any_io_executor]``(
       Executor e);
   ``  [''''&raquo;''' [link boost_asio.reference.any_io_executor.any_io_executor.overload6 more...]]``
@@ -337,7 +337,7 @@ Construct a polymorphic wrapper for the specified executor.
 
 
   template<
-      BOOST_ASIO_EXECUTION_EXECUTOR ``[link boost_asio.reference.Executor1 Executor]``>
+      typename ``[link boost_asio.reference.Executor1 Executor]``>
   any_io_executor(
       Executor e);
 
@@ -7392,6 +7392,11 @@ The return type of a coroutine or asynchronous operation.
   ]
   
   [
+    [[link boost_asio.reference.awaitable.operator_eq_ [*operator=]]]
+    [Move assignment. ]
+  ]
+  
+  [
     [[link boost_asio.reference.awaitable.valid [*valid]]]
     [Checks if the awaitable refers to a future result. ]
   ]
@@ -7473,6 +7478,21 @@ The executor type that will be used for the coroutine.
 ['Header: ][^boost/asio/awaitable.hpp]
 
 ['Convenience header: ][^boost/asio.hpp]
+
+
+[endsect]
+
+
+
+[section:operator_eq_ awaitable::operator=]
+
+[indexterm2 boost_asio.indexterm.awaitable.operator_eq_..operator=..awaitable] 
+Move assignment. 
+
+
+  awaitable operator=(
+      awaitable && other);
+
 
 
 [endsect]
@@ -90559,6 +90579,11 @@ A channel for messages.
     [Try to send a number of messages without blocking. ]
   ]
   
+  [
+    [[link boost_asio.reference.experimental__basic_channel._basic_channel [*~basic_channel]] [destructor]]
+    [Destructor. ]
+  ]
+  
 ]
 
 [heading Requirements]
@@ -91089,6 +91114,20 @@ The number of messages that were sent.
 
 
 
+[section:_basic_channel experimental::basic_channel::~basic_channel]
+
+[indexterm2 boost_asio.indexterm.experimental__basic_channel._basic_channel..~basic_channel..experimental::basic_channel] 
+Destructor. 
+
+
+  ~basic_channel();
+
+
+
+[endsect]
+
+
+
 [endsect]
 
 [section:experimental__basic_channel__rebind_executor experimental::basic_channel::rebind_executor]
@@ -91238,6 +91277,11 @@ The channel type when rebound to the specified executor.
     [Try to send a number of messages without blocking. ]
   ]
   
+  [
+    [[link boost_asio.reference.experimental__basic_channel._basic_channel [*~basic_channel]] [destructor]]
+    [Destructor. ]
+  ]
+  
 ]
 
 
@@ -91372,6 +91416,11 @@ A channel for messages.
   [
     [[link boost_asio.reference.experimental__basic_concurrent_channel.try_send_n [*try_send_n]]]
     [Try to send a number of messages without blocking. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.experimental__basic_concurrent_channel._basic_concurrent_channel [*~basic_concurrent_channel]] [destructor]]
+    [Destructor. ]
   ]
   
 ]
@@ -91904,6 +91953,20 @@ The number of messages that were sent.
 
 
 
+[section:_basic_concurrent_channel experimental::basic_concurrent_channel::~basic_concurrent_channel]
+
+[indexterm2 boost_asio.indexterm.experimental__basic_concurrent_channel._basic_concurrent_channel..~basic_concurrent_channel..experimental::basic_concurrent_channel] 
+Destructor. 
+
+
+  ~basic_concurrent_channel();
+
+
+
+[endsect]
+
+
+
 [endsect]
 
 [section:experimental__basic_concurrent_channel__rebind_executor experimental::basic_concurrent_channel::rebind_executor]
@@ -92051,6 +92114,11 @@ The channel type when rebound to the specified executor.
   [
     [[link boost_asio.reference.experimental__basic_concurrent_channel.try_send_n [*try_send_n]]]
     [Try to send a number of messages without blocking. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.experimental__basic_concurrent_channel._basic_concurrent_channel [*~basic_concurrent_channel]] [destructor]]
+    [Destructor. ]
   ]
   
 ]

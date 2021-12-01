@@ -228,6 +228,7 @@ PREDEFINED             = GENERATING_DOCUMENTATION \
                          BOOST_ASIO_STRING_VIEW_PARAM=string_view \
                          BOOST_ASIO_UNUSED_VARIABLE= \
                          BOOST_ASIO_UNSPECIFIED(e)=unspecified \
+                         BOOST_ASIO_EXECUTION_EXECUTOR=typename \
                          BOOST_ASIO_EXECUTION_RECEIVER_ERROR_DEFAULT==std::exception_ptr \
                          BOOST_ASIO_EXECUTION_RECEIVER_OF_0=typename \
                          BOOST_ASIO_NOEXCEPT_IF(c)=

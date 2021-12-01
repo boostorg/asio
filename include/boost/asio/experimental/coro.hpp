@@ -178,7 +178,7 @@ struct coro
    */
   template <typename CompletionToken>
     requires std::is_void_v<input_type>
-  auto async_resume(CompletionToken&& token)
+  auto async_resume(CompletionToken&& token) &
   {
     return async_initiate<CompletionToken,
         typename traits::completion_handler>(
@@ -195,7 +195,7 @@ struct coro
    * @note This overload is only available for coroutines with an input value.
    */
   template <typename CompletionToken, detail::convertible_to<input_type> T>
-  auto async_resume(T&& ip, CompletionToken&& token)
+  auto async_resume(T&& ip, CompletionToken&& token) &
   {
     return async_initiate<CompletionToken,
         typename traits::completion_handler>(

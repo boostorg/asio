@@ -78,6 +78,72 @@ Where a handler signature has the form:
 the `co_await` expression produces a `void` result. As above, an error is
 passed back to the coroutine as a `system_error` exception.
 
+[heading Error Handling]
+
+To perform explicit error handling, rather than the default exception-throwing
+behaviour, use the [link boost_asio.reference.experimental__as_tuple
+`experimental::as_tuple`] or [link boost_asio.reference.redirect_error
+`redirect_error`] completion token adapters.
+
+The `experimental::as_tuple` completion token adapter packages the completion
+handler arguments into a single tuple, which is then returned as the result of
+the awaited operation. For example:
+
+  boost::asio::awaitable<void> echo(tcp::socket socket)
+  {
+    char data[1024];
+    for (;;)
+    {
+      std::tuple<boost::system::error_code, std::size_t> result =
+        co_await socket.async_read_some(boost::asio::buffer(data),
+          boost::asio::experimental::as_tuple(boost::asio::use_awaitable));
+      if (!std::get<0>(result))
+      {
+        // success
+      }
+
+      // ...
+    }
+  }
+
+The result can also be captured directly into a structured binding:
+
+  boost::asio::awaitable<void> echo(tcp::socket socket)
+  {
+    char data[1024];
+    for (;;)
+    {
+      auto [ec, n] = co_await socket.async_read_some(boost::asio::buffer(data),
+          boost::asio::experimental::as_tuple(boost::asio::use_awaitable));
+      if (!ec)
+      {
+        // success
+      }
+
+      // ...
+    }
+  }
+
+Alternatively, the `redirect_error` completion token adapter may be used to
+capture the error into a supplied `error_code` variable:
+
+  boost::asio::awaitable<void> echo(tcp::socket socket)
+  {
+    char data[1024];
+    for (;;)
+    {
+      boost::system::error_code ec;
+      std::size_t n = co_await socket.async_read_some(boost::asio::buffer(data),
+          boost::asio::redirect_error(boost::asio::use_awaitable, ec));
+      if (!ec)
+      {
+        // success
+      }
+
+      // ...
+    }
+  }
+
 [heading Coroutines and Per-Operation Cancellation]
 
 All threads of execution created by `co_spawn` have a cancellation state that
@@ -155,61 +221,6 @@ namespace into scope:
 
   using namespace boost::asio::experimental::awaitable_operators;
 
-[heading Coroutines that Await and Yield]
-
-[note This is an experimental feature.]
-
-The [link boost_asio.reference.experimental__coro `coro`] type is a C++20 coroutine
-primitive for resumable functions, with the ability to combine both
-asynchronous waiting (`co_await`) and yielding (`co_yield`) into a single,
-stateful control flow. For example:
-
-  #include <asio.hpp>
-  #include <boost/asio/experimental/coro.hpp>
-
-  using boost::asio::ip::tcp;
-
-  boost::asio::experimental::coro<std::string> reader(tcp::socket& sock)
-  {
-    std::string buf;
-    while (sock.is_open())
-    {
-      std::size_t n = co_await boost::asio::async_read_until(
-          sock, boost::asio::dynamic_buffer(buf), '\n',
-          boost::asio::experimental::use_coro);
-      co_yield buf.substr(0, n);
-      buf.erase(0, n);
-    }
-  }
-
-  boost::asio::awaitable<void> consumer(tcp::socket sock)
-  {
-    auto r = reader(sock);
-    auto msg1 = co_await r.async_resume(boost::asio::use_awaitable);
-    std::cout << "Message 1: " << msg1.value_or("\n");
-    auto msg2 = co_await r.async_resume(boost::asio::use_awaitable);
-    std::cout << "Message 2: " << msg2.value_or("\n");
-  }
-
-  boost::asio::awaitable<void> listen(tcp::acceptor& acceptor)
-  {
-    for (;;)
-    {
-      co_spawn(
-          acceptor.get_executor(),
-          consumer(co_await acceptor.async_accept(boost::asio::use_awaitable)),
-          boost::asio::detached);
-    }
-  }
-
-  int main()
-  {
-    boost::asio::io_context ctx;
-    tcp::acceptor acceptor(ctx, {tcp::v4(), 54321});
-    co_spawn(ctx, listen(acceptor), boost::asio::detached);
-    ctx.run();
-  }
-
 [heading See Also]
 
 [link boost_asio.reference.co_spawn co_spawn],
@@ -221,6 +232,7 @@ stateful control flow. For example:
 [link boost_asio.reference.this_coro__executor this_coro::executor],
 [link boost_asio.reference.experimental__coro experimental::coro],
 [link boost_asio.examples.cpp17_examples.coroutines_ts_support Coroutines examples],
+[link boost_asio.overview.core.coro Resumable C++20 Coroutines],
 [link boost_asio.overview.core.spawn Stackful Coroutines],
 [link boost_asio.overview.core.coroutine Stackless Coroutines].
 
