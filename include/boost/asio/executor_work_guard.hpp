@@ -246,7 +246,8 @@ private:
 
 /// Create an @ref executor_work_guard object.
 template <typename Executor>
-inline executor_work_guard<Executor> make_work_guard(const Executor& ex,
+BOOST_ASIO_NODISCARD inline executor_work_guard<Executor>
+make_work_guard(const Executor& ex,
     typename constraint<
       is_executor<Executor>::value || execution::is_executor<Executor>::value
     >::type = 0)
@@ -256,7 +257,8 @@ inline executor_work_guard<Executor> make_work_guard(const Executor& ex,
 
 /// Create an @ref executor_work_guard object.
 template <typename ExecutionContext>
-inline executor_work_guard<typename ExecutionContext::executor_type>
+BOOST_ASIO_NODISCARD inline
+executor_work_guard<typename ExecutionContext::executor_type>
 make_work_guard(ExecutionContext& ctx,
     typename constraint<
       is_convertible<ExecutionContext&, execution_context&>::value
@@ -268,7 +270,8 @@ make_work_guard(ExecutionContext& ctx,
 
 /// Create an @ref executor_work_guard object.
 template <typename T>
-inline executor_work_guard<typename associated_executor<T>::type>
+BOOST_ASIO_NODISCARD inline
+executor_work_guard<typename associated_executor<T>::type>
 make_work_guard(const T& t,
     typename constraint<
       !is_executor<T>::value
@@ -286,7 +289,8 @@ make_work_guard(const T& t,
 
 /// Create an @ref executor_work_guard object.
 template <typename T, typename Executor>
-inline executor_work_guard<typename associated_executor<T, Executor>::type>
+BOOST_ASIO_NODISCARD inline
+executor_work_guard<typename associated_executor<T, Executor>::type>
 make_work_guard(const T& t, const Executor& ex,
     typename constraint<
       is_executor<Executor>::value || execution::is_executor<Executor>::value
@@ -298,7 +302,7 @@ make_work_guard(const T& t, const Executor& ex,
 
 /// Create an @ref executor_work_guard object.
 template <typename T, typename ExecutionContext>
-inline executor_work_guard<typename associated_executor<T,
+BOOST_ASIO_NODISCARD inline executor_work_guard<typename associated_executor<T,
   typename ExecutionContext::executor_type>::type>
 make_work_guard(const T& t, ExecutionContext& ctx,
     typename constraint<
