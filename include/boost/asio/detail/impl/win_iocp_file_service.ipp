@@ -89,6 +89,8 @@ boost::system::error_code win_iocp_file_service::open(
     flags |= FILE_FLAG_SEQUENTIAL_SCAN;
   else
     flags |= FILE_FLAG_RANDOM_ACCESS;
+  if ((open_flags & file_base::sync_all_on_write) != 0)
+    flags |= FILE_FLAG_WRITE_THROUGH;
 
   HANDLE handle = ::CreateFileA(path, access, 0, 0, disposition, flags, 0);
   if (handle != INVALID_HANDLE_VALUE)
