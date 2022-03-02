@@ -21,6 +21,16 @@ install images
     overview/sync_op.png
     overview/async_op1.png
     overview/async_op2.png
+    overview/model/async_agent_chain.png
+    overview/model/async_agent_model.png
+    overview/model/async_child_agent_chain.png
+    overview/model/async_op_init_complete.png
+    overview/model/async_op_model.png
+    overview/model/async_op_phases.png
+    overview/model/async_op_trivial_chain.png
+    overview/model/completion_token_model.png
+    overview/model/completion_token_transform.png
+    overview/model/higher_level_model.png
   :
     <location>html/boost_asio
   ;
@@ -74,6 +84,16 @@ install asio_doc_images
     overview/sync_op.png
     overview/async_op1.png
     overview/async_op2.png
+    overview/model/async_agent_chain.png
+    overview/model/async_agent_model.png
+    overview/model/async_child_agent_chain.png
+    overview/model/async_op_init_complete.png
+    overview/model/async_op_model.png
+    overview/model/async_op_phases.png
+    overview/model/async_op_trivial_chain.png
+    overview/model/completion_token_model.png
+    overview/model/completion_token_transform.png
+    overview/model/higher_level_model.png
   :
     <location>$(BOOST_ROOT)/doc/html/boost_asio
   ;

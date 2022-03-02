@@ -1471,8 +1471,8 @@
   stackful coroutines, based on the Boost.Coroutine library. The `spawn()`
   function enables programs to implement asynchronous logic in a synchronous
   manner. For example: `size_t n = my_socket.async_read_some(my_buffer, yield);`.
-  For further information, see [link boost_asio.overview.core.spawn Stackful
-  Coroutines].
+  For further information, see [link boost_asio.overview.composition.spawn
+  Stackful Coroutines].
 * Added the `asio::use_future` special value, which provides first-class
   support for returning a C++11 `std::future` from an asynchronous
   operation's initiating function. For example:
@@ -1481,7 +1481,7 @@
   2011 Support - Futures].
 * Promoted the stackless coroutine class and macros to be part of Asio's
   documented interface, rather than part of the HTTP server 4 example.
-  For further information, see [link boost_asio.overview.core.coroutine
+  For further information, see [link boost_asio.overview.composition.coroutine
   Stackless Coroutines].
 * Added a new handler hook called `asio_handler_is_continuation`.
   Asynchronous operations may represent a continuation of the asynchronous
