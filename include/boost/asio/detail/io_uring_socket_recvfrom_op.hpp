@@ -122,7 +122,7 @@ private:
   socket_type socket_;
   socket_ops::state_type state_;
   MutableBufferSequence buffers_;
-  Endpoint sender_endpoint_;
+  Endpoint& sender_endpoint_;
   socket_base::message_flags flags_;
   buffer_sequence_adapter<boost::asio::mutable_buffer,
       MutableBufferSequence> bufs_;
