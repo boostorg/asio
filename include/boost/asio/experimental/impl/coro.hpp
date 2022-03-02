@@ -213,7 +213,7 @@ struct coro_with_arg
 
           void operator()(cancellation_type ct)
           {
-            boost::asio::dispatch(e, [ct, p = coro_, st = st]() mutable
+            boost::asio::dispatch(e, [ct, st = st]() mutable
             {
               auto & [sig, state] = *st;
               sig.emit(ct);
