@@ -676,9 +676,10 @@ public:
 
   template <typename Initiation, typename RawCompletionToken, typename... Args>
   static BOOST_ASIO_INITFN_DEDUCED_RESULT_TYPE(T, Signature,
-    (async_result<T, Signature>::initiate(
+    (async_initiate<T, Signature>(
         declval<init_wrapper<typename decay<Initiation>::type> >(),
-        declval<T>(), declval<BOOST_ASIO_MOVE_ARG(Args)>()...)))
+        declval<RawCompletionToken>().get(),
+        declval<BOOST_ASIO_MOVE_ARG(Args)>()...)))
   initiate(
       BOOST_ASIO_MOVE_ARG(Initiation) initiation,
       BOOST_ASIO_MOVE_ARG(RawCompletionToken) token,
@@ -694,9 +695,9 @@ public:
 
   template <typename Initiation, typename RawCompletionToken>
   static BOOST_ASIO_INITFN_DEDUCED_RESULT_TYPE(T, Signature,
-    (async_result<T, Signature>::initiate(
+    (async_initiate<T, Signature>(
         declval<init_wrapper<typename decay<Initiation>::type> >(),
-        declval<T>())))
+        declval<RawCompletionToken>().get())))
   initiate(
       BOOST_ASIO_MOVE_ARG(Initiation) initiation,
       BOOST_ASIO_MOVE_ARG(RawCompletionToken) token)
@@ -711,9 +712,10 @@ public:
   template <typename Initiation, typename RawCompletionToken, \
       BOOST_ASIO_VARIADIC_TPARAMS(n)> \
   static BOOST_ASIO_INITFN_DEDUCED_RESULT_TYPE(T, Signature, \
-    (async_result<T, Signature>::initiate( \
+    (async_initiate<T, Signature>( \
         declval<init_wrapper<typename decay<Initiation>::type> >(), \
-        declval<T>(), BOOST_ASIO_VARIADIC_MOVE_DECLVAL(n)))) \
+        declval<RawCompletionToken>().get(), \
+        BOOST_ASIO_VARIADIC_MOVE_DECLVAL(n)))) \
   initiate( \
       BOOST_ASIO_MOVE_ARG(Initiation) initiation, \
       BOOST_ASIO_MOVE_ARG(RawCompletionToken) token, \

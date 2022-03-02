@@ -75,9 +75,16 @@ void bind_executor_to_function_object_test()
   BOOST_ASIO_CHECK(count == 1);
 }
 
-struct incrementer_token
+struct incrementer_token_v1
 {
-  explicit incrementer_token(int* c) : count(c) {}
+  explicit incrementer_token_v1(int* c) : count(c) {}
+  int* count;
+};
+
+struct incrementer_handler_v1
+{
+  explicit incrementer_handler_v1(incrementer_token_v1 t) : count(t.count) {}
+  void operator()(boost::system::error_code){ increment(count); }
   int* count;
 };
 
@@ -85,7 +92,51 @@ namespace boost {
 namespace asio {
 
 template <>
-class async_result<incrementer_token, void(boost::system::error_code)>
+class async_result<incrementer_token_v1, void(boost::system::error_code)>
+{
+public:
+  typedef incrementer_handler_v1 completion_handler_type;
+  typedef void return_type;
+  explicit async_result(completion_handler_type&) {}
+  return_type get() {}
+};
+
+} // namespace asio
+} // namespace boost
+
+void bind_executor_to_completion_token_v1_test()
+{
+  io_context ioc1;
+  io_context ioc2;
+
+  int count = 0;
+
+  timer t(ioc1, chronons::seconds(1));
+  t.async_wait(
+      bind_executor(
+        ioc2.get_executor(),
+        incrementer_token_v1(&count)));
+
+  ioc1.run();
+
+  BOOST_ASIO_CHECK(count == 0);
+
+  ioc2.run();
+
+  BOOST_ASIO_CHECK(count == 1);
+}
+
+struct incrementer_token_v2
+{
+  explicit incrementer_token_v2(int* c) : count(c) {}
+  int* count;
+};
+
+namespace boost {
+namespace asio {
+
+template <>
+class async_result<incrementer_token_v2, void(boost::system::error_code)>
 {
 public:
   typedef void return_type;
@@ -94,7 +145,7 @@ public:
 
   template <typename Initiation, typename... Args>
   static void initiate(Initiation initiation,
-      incrementer_token token, BOOST_ASIO_MOVE_ARG(Args)... args)
+      incrementer_token_v2 token, BOOST_ASIO_MOVE_ARG(Args)... args)
   {
     initiation(bindns::bind(&increment, token.count),
         BOOST_ASIO_MOVE_CAST(Args)(args)...);
@@ -126,7 +177,7 @@ public:
 } // namespace asio
 } // namespace boost
 
-void bind_executor_to_completion_token_test()
+void bind_executor_to_completion_token_v2_test()
 {
   io_context ioc1;
   io_context ioc2;
@@ -137,7 +188,7 @@ void bind_executor_to_completion_token_test()
   t.async_wait(
       bind_executor(
         ioc2.get_executor(),
-        incrementer_token(&count)));
+        incrementer_token_v2(&count)));
 
   ioc1.run();
 
@@ -152,5 +203,6 @@ BOOST_ASIO_TEST_SUITE
 (
   "bind_executor",
   BOOST_ASIO_TEST_CASE(bind_executor_to_function_object_test)
-  BOOST_ASIO_TEST_CASE(bind_executor_to_completion_token_test)
+  BOOST_ASIO_TEST_CASE(bind_executor_to_completion_token_v1_test)
+  BOOST_ASIO_TEST_CASE(bind_executor_to_completion_token_v2_test)
 )
