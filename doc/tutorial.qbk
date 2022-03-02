@@ -2082,7 +2082,7 @@ We have created two lots of work for the
 
 [heading The tcp_connection and tcp_server classes]
 
-The following two classes are taken from [link boost_asio.tutorial.tutdaytime3 Daytime.3] .
+The following two classes are taken from [link boost_asio.tutorial.tutdaytime3 Daytime.3].
 
 
   ``''''''``class tcp_connection
@@ -2163,7 +2163,7 @@ The following two classes are taken from [link boost_asio.tutorial.tutdaytime3 D
 
 [heading The udp_server class]
 
-Similarly, this next class is taken from the [link boost_asio.tutorial.tutdaytime6 previous tutorial step] .
+Similarly, this next class is taken from the [link boost_asio.tutorial.tutdaytime6 previous tutorial step].
 
 
   ``''''''``class udp_server
