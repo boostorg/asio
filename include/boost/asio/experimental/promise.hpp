@@ -26,6 +26,7 @@
 #include <boost/asio/experimental/impl/promise.hpp>
 #include <boost/asio/post.hpp>
 
+#include <algorithm>
 #include <variant>
 
 #include <boost/asio/detail/push_options.hpp>
