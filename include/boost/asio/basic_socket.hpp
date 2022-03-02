@@ -928,6 +928,9 @@ public:
    * immediate completion, invocation of the handler will be performed in a
    * manner equivalent to using boost::asio::post().
    *
+   * @par Completion Signature
+   * @code void(boost::system::error_code) @endcode
+   *
    * @par Example
    * @code
    * void connect_handler(const boost::system::error_code& error)
@@ -1771,6 +1774,9 @@ public:
    * not, the handler will not be invoked from within this function. On
    * immediate completion, invocation of the handler will be performed in a
    * manner equivalent to using boost::asio::post().
+   *
+   * @par Completion Signature
+   * @code void(boost::system::error_code) @endcode
    *
    * @par Example
    * @code

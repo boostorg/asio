@@ -50,6 +50,9 @@ namespace asio {
  * @li Performs <tt>ex.dispatch(std::move(handler), alloc)</tt>.
  *
  * @li Returns <tt>result.get()</tt>.
+ *
+ * @par Completion Signature
+ * @code void() @endcode
  */
 template <BOOST_ASIO_COMPLETION_TOKEN_FOR(void()) CompletionToken>
 BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(CompletionToken, void()) dispatch(
@@ -84,6 +87,9 @@ BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(CompletionToken, void()) dispatch(
  * @li Performs <tt>Executor(ex).dispatch(std::move(f), alloc)</tt>.
  *
  * @li Returns <tt>result.get()</tt>.
+ *
+ * @par Completion Signature
+ * @code void() @endcode
  */
 template <typename Executor,
     BOOST_ASIO_COMPLETION_TOKEN_FOR(void()) CompletionToken
@@ -100,6 +106,9 @@ BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(CompletionToken, void()) dispatch(
 /**
  * @returns <tt>dispatch(ctx.get_executor(),
  * forward<CompletionToken>(token))</tt>.
+ *
+ * @par Completion Signature
+ * @code void() @endcode
  */
 template <typename ExecutionContext,
     BOOST_ASIO_COMPLETION_TOKEN_FOR(void()) CompletionToken

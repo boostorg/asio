@@ -126,6 +126,10 @@ public:
   }
 
   /// Start an asynchronous flush.
+  /**
+   * @par Completion Signature
+   * @code void(boost::system::error_code, std::size_t) @endcode
+   */
   template <
       BOOST_ASIO_COMPLETION_TOKEN_FOR(void (boost::system::error_code,
         std::size_t)) WriteHandler
@@ -159,6 +163,10 @@ public:
 
   /// Start an asynchronous write. The data being written must be valid for the
   /// lifetime of the asynchronous operation.
+  /**
+   * @par Completion Signature
+   * @code void(boost::system::error_code, std::size_t) @endcode
+   */
   template <typename ConstBufferSequence,
       BOOST_ASIO_COMPLETION_TOKEN_FOR(void (boost::system::error_code,
         std::size_t)) WriteHandler
@@ -188,6 +196,10 @@ public:
   }
 
   /// Start an asynchronous fill.
+  /**
+   * @par Completion Signature
+   * @code void(boost::system::error_code, std::size_t) @endcode
+   */
   template <
       BOOST_ASIO_COMPLETION_TOKEN_FOR(void (boost::system::error_code,
         std::size_t)) ReadHandler
@@ -220,6 +232,10 @@ public:
 
   /// Start an asynchronous read. The buffer into which the data will be read
   /// must be valid for the lifetime of the asynchronous operation.
+  /**
+   * @par Completion Signature
+   * @code void(boost::system::error_code, std::size_t) @endcode
+   */
   template <typename MutableBufferSequence,
       BOOST_ASIO_COMPLETION_TOKEN_FOR(void (boost::system::error_code,
         std::size_t)) ReadHandler

@@ -753,6 +753,9 @@ std::size_t read(SyncReadStream& s, DynamicBuffer_v2 buffers,
  * immediate completion, invocation of the handler will be performed in a
  * manner equivalent to using boost::asio::post().
  *
+ * @par Completion Signature
+ * @code void(boost::system::error_code, std::size_t) @endcode
+ *
  * @par Example
  * To read into a single data buffer use the @ref buffer function as follows:
  * @code
@@ -847,6 +850,9 @@ async_read(AsyncReadStream& s, const MutableBufferSequence& buffers,
  * immediate completion, invocation of the handler will be performed in a
  * manner equivalent to using boost::asio::post().
  *
+ * @par Completion Signature
+ * @code void(boost::system::error_code, std::size_t) @endcode
+ *
  * @par Example
  * To read into a single data buffer use the @ref buffer function as follows:
  * @code boost::asio::async_read(s,
@@ -930,6 +936,9 @@ async_read(AsyncReadStream& s, const MutableBufferSequence& buffers,
  * not, the handler will not be invoked from within this function. On
  * immediate completion, invocation of the handler will be performed in a
  * manner equivalent to using boost::asio::post().
+ *
+ * @par Completion Signature
+ * @code void(boost::system::error_code, std::size_t) @endcode
  *
  * @note This overload is equivalent to calling:
  * @code boost::asio::async_read(
@@ -1025,6 +1034,9 @@ async_read(AsyncReadStream& s,
  * immediate completion, invocation of the handler will be performed in a
  * manner equivalent to using boost::asio::post().
  *
+ * @par Completion Signature
+ * @code void(boost::system::error_code, std::size_t) @endcode
+ *
  * @par Per-Operation Cancellation
  * This asynchronous operation supports cancellation for the following
  * boost::asio::cancellation_type values:
@@ -1101,6 +1113,9 @@ async_read(AsyncReadStream& s,
  * not, the handler will not be invoked from within this function. On
  * immediate completion, invocation of the handler will be performed in a
  * manner equivalent to using boost::asio::post().
+ *
+ * @par Completion Signature
+ * @code void(boost::system::error_code, std::size_t) @endcode
  *
  * @note This overload is equivalent to calling:
  * @code boost::asio::async_read(
@@ -1187,6 +1202,9 @@ async_read(AsyncReadStream& s, basic_streambuf<Allocator>& b,
  * immediate completion, invocation of the handler will be performed in a
  * manner equivalent to using boost::asio::post().
  *
+ * @par Completion Signature
+ * @code void(boost::system::error_code, std::size_t) @endcode
+ *
  * @par Per-Operation Cancellation
  * This asynchronous operation supports cancellation for the following
  * boost::asio::cancellation_type values:
@@ -1259,6 +1277,9 @@ async_read(AsyncReadStream& s, basic_streambuf<Allocator>& b,
  * not, the handler will not be invoked from within this function. On
  * immediate completion, invocation of the handler will be performed in a
  * manner equivalent to using boost::asio::post().
+ *
+ * @par Completion Signature
+ * @code void(boost::system::error_code, std::size_t) @endcode
  *
  * @note This overload is equivalent to calling:
  * @code boost::asio::async_read(
@@ -1349,6 +1370,9 @@ async_read(AsyncReadStream& s, DynamicBuffer_v2 buffers,
  * not, the handler will not be invoked from within this function. On
  * immediate completion, invocation of the handler will be performed in a
  * manner equivalent to using boost::asio::post().
+ *
+ * @par Completion Signature
+ * @code void(boost::system::error_code, std::size_t) @endcode
  *
  * @par Per-Operation Cancellation
  * This asynchronous operation supports cancellation for the following

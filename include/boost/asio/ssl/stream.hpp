@@ -487,6 +487,9 @@ public:
    *   const boost::system::error_code& error // Result of operation.
    * ); @endcode
    *
+   * @par Completion Signature
+   * @code void(boost::system::error_code) @endcode
+   *
    * @par Per-Operation Cancellation
    * This asynchronous operation supports cancellation for the following
    * boost::asio::cancellation_type values:
@@ -533,6 +536,9 @@ public:
    *   const boost::system::error_code& error, // Result of operation.
    *   std::size_t bytes_transferred // Amount of buffers used in handshake.
    * ); @endcode
+   *
+   * @par Completion Signature
+   * @code void(boost::system::error_code, std::size_t) @endcode
    *
    * @par Per-Operation Cancellation
    * This asynchronous operation supports cancellation for the following
@@ -598,6 +604,9 @@ public:
    * @code void handler(
    *   const boost::system::error_code& error // Result of operation.
    * ); @endcode
+   *
+   * @par Completion Signature
+   * @code void(boost::system::error_code) @endcode
    *
    * @par Per-Operation Cancellation
    * This asynchronous operation supports cancellation for the following
@@ -691,6 +700,9 @@ public:
    *   const boost::system::error_code& error, // Result of operation.
    *   std::size_t bytes_transferred           // Number of bytes written.
    * ); @endcode
+   *
+   * @par Completion Signature
+   * @code void(boost::system::error_code, std::size_t) @endcode
    *
    * @note The async_write_some operation may not transmit all of the data to
    * the peer. Consider using the @ref async_write function if you need to
@@ -789,6 +801,9 @@ public:
    *   const boost::system::error_code& error, // Result of operation.
    *   std::size_t bytes_transferred           // Number of bytes read.
    * ); @endcode
+   *
+   * @par Completion Signature
+   * @code void(boost::system::error_code, std::size_t) @endcode
    *
    * @note The async_read_some operation may not read all of the requested
    * number of bytes. Consider using the @ref async_read function if you need to

@@ -613,6 +613,9 @@ public:
    * immediate completion, invocation of the handler will be performed in a
    * manner equivalent to using boost::asio::post().
    *
+   * @par Completion Signature
+   * @code void(boost::system::error_code) @endcode
+   *
    * @par Example
    * @code
    * void wait_handler(const boost::system::error_code& error)
