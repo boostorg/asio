@@ -20,6 +20,7 @@
 #include <stdexcept>
 #include <typeinfo>
 #include <boost/asio/async_result.hpp>
+#include <boost/asio/detail/concurrency_hint.hpp>
 #include <boost/asio/detail/cstdint.hpp>
 #include <boost/asio/detail/wrapped_handler.hpp>
 #include <boost/system/error_code.hpp>
