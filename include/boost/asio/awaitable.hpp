@@ -25,6 +25,7 @@
 # include <experimental/coroutine>
 #endif // defined(BOOST_ASIO_HAS_STD_COROUTINE)
 
+#include <utility>
 #include <boost/asio/any_io_executor.hpp>
 
 #include <boost/asio/detail/push_options.hpp>
