@@ -103,7 +103,7 @@ public:
 #else // defined(BOOST_ASIO_HAS_VARIADIC_TEMPLATES)
 
   template <typename Initiation>
-  static void initiate(Initiation initiation, incrementer_token token)
+  static void initiate(Initiation initiation, incrementer_token_v2 token)
   {
     initiation(bindns::bind(&increment, token.count));
   }
@@ -111,7 +111,7 @@ public:
 #define BOOST_ASIO_PRIVATE_INITIATE_DEF(n) \
   template <typename Initiation, BOOST_ASIO_VARIADIC_TPARAMS(n)> \
   static return_type initiate(Initiation initiation, \
-      incrementer_token token, BOOST_ASIO_VARIADIC_MOVE_PARAMS(n)) \
+      incrementer_token_v2 token, BOOST_ASIO_VARIADIC_MOVE_PARAMS(n)) \
   { \
     initiation(bindns::bind(&increment, token.count), \
         BOOST_ASIO_VARIADIC_MOVE_ARGS(n)); \
