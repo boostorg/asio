@@ -51,7 +51,7 @@ public:
 /// arguments should be passed additional values before the results of the
 /// operation.
 template <typename CompletionToken, typename... Values>
-inline BOOST_ASIO_CONSTEXPR prepend_t<
+BOOST_ASIO_NODISCARD inline BOOST_ASIO_CONSTEXPR prepend_t<
   typename decay<CompletionToken>::type, typename decay<Values>::type...>
 prepend(BOOST_ASIO_MOVE_ARG(CompletionToken) completion_token,
     BOOST_ASIO_MOVE_ARG(Values)... values)
