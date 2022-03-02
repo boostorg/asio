@@ -131,6 +131,13 @@ public:
     return handle_service_.native_handle(impl);
   }
 
+  // Release ownership of a file.
+  native_handle_type release(implementation_type& impl,
+      boost::system::error_code& ec)
+  {
+    return handle_service_.release(impl, ec);
+  }
+
   // Cancel all operations associated with the file.
   boost::system::error_code cancel(implementation_type& impl,
       boost::system::error_code& ec)
