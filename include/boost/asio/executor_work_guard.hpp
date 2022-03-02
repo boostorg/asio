@@ -17,8 +17,6 @@
 
 #include <boost/asio/detail/config.hpp>
 
-#if !defined(BOOST_ASIO_NO_TS_EXECUTORS)
-
 #include <boost/asio/associated_executor.hpp>
 #include <boost/asio/detail/type_traits.hpp>
 #include <boost/asio/execution.hpp>
@@ -37,13 +35,11 @@ class executor_work_guard;
 
 #endif // !defined(BOOST_ASIO_EXECUTOR_WORK_GUARD_DECL)
 
+#if defined(GENERATING_DOCUMENTATION)
+
 /// An object of type @c executor_work_guard controls ownership of executor work
 /// within a scope.
-#if defined(GENERATING_DOCUMENTATION)
 template <typename Executor>
-#else // defined(GENERATING_DOCUMENTATION)
-template <typename Executor, typename, typename>
-#endif // defined(GENERATING_DOCUMENTATION)
 class executor_work_guard
 {
 public:
@@ -54,6 +50,50 @@ public:
   /**
    * Stores a copy of @c e and calls <tt>on_work_started()</tt> on it.
    */
+  explicit executor_work_guard(const executor_type& e) BOOST_ASIO_NOEXCEPT;
+
+  /// Copy constructor.
+  executor_work_guard(const executor_work_guard& other) BOOST_ASIO_NOEXCEPT;
+
+  /// Move constructor.
+  executor_work_guard(executor_work_guard&& other) BOOST_ASIO_NOEXCEPT;
+
+  /// Destructor.
+  /**
+   * Unless the object has already been reset, or is in a moved-from state,
+   * calls <tt>on_work_finished()</tt> on the stored executor.
+   */
+  ~executor_work_guard();
+
+  /// Obtain the associated executor.
+  executor_type get_executor() const BOOST_ASIO_NOEXCEPT;
+
+  /// Whether the executor_work_guard object owns some outstanding work.
+  bool owns_work() const BOOST_ASIO_NOEXCEPT;
+
+  /// Indicate that the work is no longer outstanding.
+  /**
+   * Unless the object has already been reset, or is in a moved-from state,
+   * calls <tt>on_work_finished()</tt> on the stored executor.
+   */
+  void reset() BOOST_ASIO_NOEXCEPT;
+};
+
+#endif // defined(GENERATING_DOCUMENTATION)
+
+#if !defined(GENERATING_DOCUMENTATION)
+
+#if !defined(BOOST_ASIO_NO_TS_EXECUTORS)
+
+template <typename Executor>
+class executor_work_guard<Executor,
+    typename enable_if<
+      is_executor<Executor>::value
+    >::type>
+{
+public:
+  typedef Executor executor_type;
+
   explicit executor_work_guard(const executor_type& e) BOOST_ASIO_NOEXCEPT
     : executor_(e),
       owns_(true)
@@ -61,7 +101,6 @@ public:
     executor_.on_work_started();
   }
 
-  /// Copy constructor.
   executor_work_guard(const executor_work_guard& other) BOOST_ASIO_NOEXCEPT
     : executor_(other.executor_),
       owns_(other.owns_)
@@ -70,44 +109,31 @@ public:
       executor_.on_work_started();
   }
 
-#if defined(BOOST_ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
-  /// Move constructor.
+#if defined(BOOST_ASIO_HAS_MOVE)
   executor_work_guard(executor_work_guard&& other) BOOST_ASIO_NOEXCEPT
     : executor_(BOOST_ASIO_MOVE_CAST(Executor)(other.executor_)),
       owns_(other.owns_)
   {
     other.owns_ = false;
   }
-#endif //  defined(BOOST_ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
+#endif // defined(BOOST_ASIO_HAS_MOVE)
 
-  /// Destructor.
-  /**
-   * Unless the object has already been reset, or is in a moved-from state,
-   * calls <tt>on_work_finished()</tt> on the stored executor.
-   */
   ~executor_work_guard()
   {
     if (owns_)
       executor_.on_work_finished();
   }
 
-  /// Obtain the associated executor.
   executor_type get_executor() const BOOST_ASIO_NOEXCEPT
   {
     return executor_;
   }
 
-  /// Whether the executor_work_guard object owns some outstanding work.
   bool owns_work() const BOOST_ASIO_NOEXCEPT
   {
     return owns_;
   }
 
-  /// Indicate that the work is no longer outstanding.
-  /**
-   * Unless the object has already been reset, or is in a moved-from state,
-   * calls <tt>on_work_finished()</tt> on the stored executor.
-   */
   void reset() BOOST_ASIO_NOEXCEPT
   {
     if (owns_)
@@ -125,7 +151,7 @@ private:
   bool owns_;
 };
 
-#if !defined(GENERATING_DOCUMENTATION)
+#endif // !defined(BOOST_ASIO_NO_TS_EXECUTORS)
 
 template <typename Executor>
 class executor_work_guard<Executor,
@@ -298,7 +324,5 @@ make_work_guard(const T& t, ExecutionContext& ctx,
 } // namespace boost
 
 #include <boost/asio/detail/pop_options.hpp>
-
-#endif // !defined(BOOST_ASIO_NO_TS_EXECUTORS)
 
 #endif // BOOST_ASIO_EXECUTOR_WORK_GUARD_HPP

@@ -45,8 +45,7 @@ public:
   logger_service(boost::asio::execution_context& context)
     : boost::asio::execution_context::service(context),
       work_io_context_(),
-      work_(boost::asio::require(work_io_context_.get_executor(),
-            boost::asio::execution::outstanding_work.tracked)),
+      work_(boost::asio::make_work_guard(work_io_context_)),
       work_thread_(new boost::thread(
             boost::bind(&boost::asio::io_context::run, &work_io_context_)))
   {
@@ -57,7 +56,7 @@ public:
   {
     /// Indicate that we have finished with the private io_context. Its
     /// io_context::run() function will exit once all other work has completed.
-    work_ = boost::asio::any_io_executor();
+    work_.reset();
     if (work_thread_)
       work_thread_->join();
   }
@@ -129,10 +128,11 @@ private:
   /// Private io_context used for performing logging operations.
   boost::asio::io_context work_io_context_;
 
-  /// A work-tracking executor giving work for the private io_context to
-  /// perform. If we do not give the io_context some work to do then the
-  /// io_context::run() function will exit immediately.
-  boost::asio::any_io_executor work_;
+  /// Work for the private io_context to perform. If we do not give the
+  /// io_context some work to do then the io_context::run() function will exit
+  /// immediately.
+  boost::asio::executor_work_guard<
+      boost::asio::io_context::executor_type> work_;
 
   /// Thread used for running the work io_context's run loop.
   boost::scoped_ptr<boost::thread> work_thread_;
