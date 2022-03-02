@@ -18,6 +18,7 @@
 #include <boost/asio/detail/config.hpp>
 #include <boost/asio/async_result.hpp>
 #include <boost/asio/detail/type_traits.hpp>
+#include <boost/system/error_code.hpp>
 #include <boost/asio/experimental/detail/channel_message.hpp>
 
 #include <boost/asio/detail/push_options.hpp>
