@@ -16,6 +16,9 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include <boost/asio/detail/config.hpp>
+
+#if !defined(BOOST_ASIO_USE_TS_EXECUTOR_AS_DEFAULT)
+
 #include <boost/asio/any_io_executor.hpp>
 
 #include <boost/asio/detail/push_options.hpp>
@@ -122,5 +125,7 @@ any_io_executor any_io_executor::prefer(
 } // namespace boost
 
 #include <boost/asio/detail/pop_options.hpp>
+
+#endif // !defined(BOOST_ASIO_USE_TS_EXECUTOR_AS_DEFAULT)
 
 #endif // BOOST_ASIO_IMPL_ANY_IO_EXECUTOR_IPP
