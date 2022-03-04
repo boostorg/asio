@@ -524,6 +524,8 @@ Examples showing how to use UNIX domain (local) sockets.
 * [@boost_asio/example/cpp11/local/iostream_client.cpp]
 * [@boost_asio/example/cpp11/local/stream_server.cpp]
 * [@boost_asio/example/cpp11/local/stream_client.cpp]
+* [@boost_asio/example/cpp11/local/fd_passing_stream_server.cpp]
+* [@boost_asio/example/cpp11/local/fd_passing_stream_client.cpp]
 
 
 [endsect]
