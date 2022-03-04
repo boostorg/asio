@@ -210,6 +210,8 @@ test-suite "asio" :
   [ run read_until.cpp : : : $(USE_SELECT) : read_until_select ]
   [ link readable_pipe.cpp ]
   [ link readable_pipe.cpp : $(USE_SELECT) : readable_pipe_select ]
+  [ run recycling_allocator.cpp ]
+  [ run recycling_allocator.cpp : : : $(USE_SELECT) : recycling_allocator_select ]
   [ link redirect_error.cpp ]
   [ link redirect_error.cpp : $(USE_SELECT) : redirect_error_select ]
   [ link registered_buffer.cpp ]
