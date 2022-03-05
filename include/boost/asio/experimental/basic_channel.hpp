@@ -2,7 +2,7 @@
 // experimental/basic_channel.hpp
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2021 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2022 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -287,6 +287,10 @@ public:
   std::size_t try_send_n(std::size_t count, BOOST_ASIO_MOVE_ARG(Args)... args);
 
   /// Asynchronously send a message.
+  /**
+   * @par Completion Signature
+   * @code void(boost::system::error_code) @endcode
+   */
   template <typename... Args,
       BOOST_ASIO_COMPLETION_TOKEN_FOR(void (boost::system::error_code))
         CompletionToken BOOST_ASIO_DEFAULT_COMPLETION_TOKEN_TYPE(executor_type)>
@@ -308,6 +312,11 @@ public:
   }
 
   /// Asynchronously receive a message.
+  /**
+   * @par Completion Signature
+   * As determined by the <tt>Signatures...</tt> template parameter and the
+   * channel traits.
+   */
   template <typename CompletionToken
       BOOST_ASIO_DEFAULT_COMPLETION_TOKEN_TYPE(executor_type)>
   auto async_receive(

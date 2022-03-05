@@ -1,5 +1,5 @@
 [/
- / Copyright (c) 2003-2021 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+ / Copyright (c) 2003-2022 Christopher M. Kohlhoff (chris at kohlhoff dot com)
  /
  / Distributed under the Boost Software License, Version 1.0. (See accompanying
  / file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -322,6 +322,8 @@ Examples showing how to use UNIX domain (local) sockets.
 * [@boost_asio/example/cpp03/local/iostream_client.cpp]
 * [@boost_asio/example/cpp03/local/stream_server.cpp]
 * [@boost_asio/example/cpp03/local/stream_client.cpp]
+* [@boost_asio/example/cpp03/local/fd_passing_stream_server.cpp]
+* [@boost_asio/example/cpp03/local/fd_passing_stream_client.cpp]
 
 
 [heading Windows]
@@ -522,6 +524,8 @@ Examples showing how to use UNIX domain (local) sockets.
 * [@boost_asio/example/cpp11/local/iostream_client.cpp]
 * [@boost_asio/example/cpp11/local/stream_server.cpp]
 * [@boost_asio/example/cpp11/local/stream_client.cpp]
+* [@boost_asio/example/cpp11/local/fd_passing_stream_server.cpp]
+* [@boost_asio/example/cpp11/local/fd_passing_stream_client.cpp]
 
 
 [endsect]

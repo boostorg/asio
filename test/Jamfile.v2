@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2003-2021 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+# Copyright (c) 2003-2022 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 #
 # Distributed under the Boost Software License, Version 1.0. (See accompanying
 # file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -86,8 +86,12 @@ test-suite "asio" :
   [ link basic_waitable_timer.cpp : $(USE_SELECT) : basic_waitable_timer_select ]
   [ link basic_writable_pipe.cpp ]
   [ link basic_writable_pipe.cpp : $(USE_SELECT) : basic_writable_pipe_select ]
+  [ run bind_allocator.cpp ]
+  [ run bind_allocator.cpp : : : $(USE_SELECT) : bind_allocator_select ]
   [ run bind_cancellation_slot.cpp ]
   [ run bind_cancellation_slot.cpp : : : $(USE_SELECT) : bind_cancellation_slot_select ]
+  [ run bind_executor.cpp ]
+  [ run bind_executor.cpp : : : $(USE_SELECT) : bind_executor_select ]
   [ run buffer.cpp ]
   [ run buffer.cpp : : : $(USE_SELECT) : buffer_select ]
   [ link buffer_registration.cpp ]
@@ -206,6 +210,8 @@ test-suite "asio" :
   [ run read_until.cpp : : : $(USE_SELECT) : read_until_select ]
   [ link readable_pipe.cpp ]
   [ link readable_pipe.cpp : $(USE_SELECT) : readable_pipe_select ]
+  [ run recycling_allocator.cpp ]
+  [ run recycling_allocator.cpp : : : $(USE_SELECT) : recycling_allocator_select ]
   [ link redirect_error.cpp ]
   [ link redirect_error.cpp : $(USE_SELECT) : redirect_error_select ]
   [ link registered_buffer.cpp ]

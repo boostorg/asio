@@ -2,7 +2,7 @@
 // asio.hpp
 // ~~~~~~~~
 //
-// Copyright (c) 2003-2021 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2022 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -42,6 +42,7 @@
 #include <boost/asio/basic_streambuf.hpp>
 #include <boost/asio/basic_waitable_timer.hpp>
 #include <boost/asio/basic_writable_pipe.hpp>
+#include <boost/asio/bind_allocator.hpp>
 #include <boost/asio/bind_cancellation_slot.hpp>
 #include <boost/asio/bind_executor.hpp>
 #include <boost/asio/buffer.hpp>
@@ -160,6 +161,7 @@
 #include <boost/asio/read_at.hpp>
 #include <boost/asio/read_until.hpp>
 #include <boost/asio/readable_pipe.hpp>
+#include <boost/asio/recycling_allocator.hpp>
 #include <boost/asio/redirect_error.hpp>
 #include <boost/asio/registered_buffer.hpp>
 #include <boost/asio/require.hpp>

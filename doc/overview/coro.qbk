@@ -1,6 +1,6 @@
 [/
- / Copyright (c) 2021 Klemens D. Morgenstern
- /                    (klemens dot morgenstern at gmx dot net)
+ / Copyright (c) 2021-2022 Klemens D. Morgenstern
+ /                         (klemens dot morgenstern at gmx dot net)
  /
  / Distributed under the Boost Software License, Version 1.0. (See accompanying
  / file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -253,8 +253,8 @@ flow. For example:
 
 [link boost_asio.reference.co_spawn co_spawn],
 [link boost_asio.reference.experimental__coro experimental::coro],
-[link boost_asio.overview.core.cpp20_coroutines C++20 Coroutines],
-[link boost_asio.overview.core.spawn Stackful Coroutines],
-[link boost_asio.overview.core.coroutine Stackless Coroutines].
+[link boost_asio.overview.composition.cpp20_coroutines C++20 Coroutines],
+[link boost_asio.overview.composition.spawn Stackful Coroutines],
+[link boost_asio.overview.composition.coroutine Stackless Coroutines].
 
 [endsect]

@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2003-2021 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+# Copyright (c) 2003-2022 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 #
 # Distributed under the Boost Software License, Version 1.0. (See accompanying
 # file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -63,6 +63,38 @@ exe stream_client
 
 exe stream_server
   : stream_server.cpp
+    /boost/system//boost_system
+  : <define>BOOST_ALL_NO_LIB=1
+    <threading>multi
+    <target-os>solaris:<library>socket
+    <target-os>solaris:<library>nsl
+    <target-os>windows:<define>_WIN32_WINNT=0x0501
+    <target-os>windows,<toolset>gcc:<library>ws2_32
+    <target-os>windows,<toolset>gcc:<library>mswsock
+    <target-os>windows,<toolset>gcc-cygwin:<define>__USE_W32_SOCKETS
+    <target-os>hpux,<toolset>gcc:<define>_XOPEN_SOURCE_EXTENDED
+    <target-os>hpux:<library>ipv6
+    <target-os>haiku:<library>network
+  ;
+
+exe fd_passing_stream_client
+  : fd_passing_stream_client.cpp
+    /boost/system//boost_system
+  : <define>BOOST_ALL_NO_LIB=1
+    <threading>multi
+    <target-os>solaris:<library>socket
+    <target-os>solaris:<library>nsl
+    <target-os>windows:<define>_WIN32_WINNT=0x0501
+    <target-os>windows,<toolset>gcc:<library>ws2_32
+    <target-os>windows,<toolset>gcc:<library>mswsock
+    <target-os>windows,<toolset>gcc-cygwin:<define>__USE_W32_SOCKETS
+    <target-os>hpux,<toolset>gcc:<define>_XOPEN_SOURCE_EXTENDED
+    <target-os>hpux:<library>ipv6
+    <target-os>haiku:<library>network
+  ;
+
+exe fd_passing_stream_server
+  : fd_passing_stream_server.cpp
     /boost/system//boost_system
   : <define>BOOST_ALL_NO_LIB=1
     <threading>multi

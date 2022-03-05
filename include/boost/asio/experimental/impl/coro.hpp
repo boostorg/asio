@@ -2,8 +2,8 @@
 // experimental/impl/coro.hpp
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2021 Klemens D. Morgenstern
-//                    (klemens dot morgenstern at gmx dot net)
+// Copyright (c) 2021-2022 Klemens D. Morgenstern
+//                         (klemens dot morgenstern at gmx dot net)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -213,7 +213,7 @@ struct coro_with_arg
 
           void operator()(cancellation_type ct)
           {
-            boost::asio::dispatch(e, [ct, p = coro_, st = st]() mutable
+            boost::asio::dispatch(e, [ct, st = st]() mutable
             {
               auto & [sig, state] = *st;
               sig.emit(ct);

@@ -1,5 +1,5 @@
 [/
- / Copyright (c) 2003-2021 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+ / Copyright (c) 2003-2022 Christopher M. Kohlhoff (chris at kohlhoff dot com)
  /
  / Distributed under the Boost Software License, Version 1.0. (See accompanying
  / file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -8,8 +8,19 @@
 [section:overview Overview]
 
 * [link boost_asio.overview.rationale Rationale]
+* [link boost_asio.overview.basics Basic Boost.Asio Anatomy]
+* [link boost_asio.overview.model Asynchronous Model]
+  * [link boost_asio.overview.model.async_ops Asynchronous Operations]
+  * [link boost_asio.overview.model.async_agents Asynchronous Agents]
+  * [link boost_asio.overview.model.associators Associated Characteristics and Associators]
+  * [link boost_asio.overview.model.child_agents Child Agents]
+  * [link boost_asio.overview.model.executors Executors]
+  * [link boost_asio.overview.model.allocators Allocators]
+  * [link boost_asio.overview.model.cancellation Cancellation]
+  * [link boost_asio.overview.model.completion_tokens Completion Tokens]
+  * [link boost_asio.overview.model.library_elements Supporting Library Elements]
+  * [link boost_asio.overview.model.higher_levels Higher Level Abstractions]
 * [link boost_asio.overview.core Core Concepts and Functionality]
-  * [link boost_asio.overview.core.basics Basic Boost.Asio Anatomy]
   * [link boost_asio.overview.core.async The Proactor Design Pattern: Concurrency Without Threads]
   * [link boost_asio.overview.core.threads Threads and Boost.Asio]
   * [link boost_asio.overview.core.strands Strands: Use Threads Without Explicit Locking]
@@ -21,10 +32,11 @@
   * [link boost_asio.overview.core.cancellation Per-Operation Cancellation]
   * [link boost_asio.overview.core.handler_tracking Handler Tracking]
   * [link boost_asio.overview.core.concurrency_hint Concurrency Hints]
-  * [link boost_asio.overview.core.coroutine Stackless Coroutines]
-  * [link boost_asio.overview.core.spawn Stackful Coroutines]
-  * [link boost_asio.overview.core.cpp20_coroutines C++20 Coroutines Support]
-  * [link boost_asio.overview.core.coro Resumable C++20 Coroutines (experimental)]
+* [link boost_asio.overview.composition Composition and Completion Tokens]
+  * [link boost_asio.overview.composition.coroutine Stackless Coroutines]
+  * [link boost_asio.overview.composition.spawn Stackful Coroutines]
+  * [link boost_asio.overview.composition.cpp20_coroutines C++20 Coroutines Support]
+  * [link boost_asio.overview.composition.coro Resumable C++20 Coroutines (experimental)]
 * [link boost_asio.overview.networking Networking]
   * [link boost_asio.overview.networking.protocols TCP, UDP and ICMP]
   * [link boost_asio.overview.networking.other_protocols Support for Other Protocols]
@@ -54,10 +66,11 @@
 * [link boost_asio.overview.implementation Platform-Specific Implementation Notes]
 
 [include overview/rationale.qbk]
+[include overview/basics.qbk]
+[include overview/model.qbk]
 
 [section:core Core Concepts and Functionality]
 
-* [link boost_asio.overview.core.basics Basic Boost.Asio Anatomy]
 * [link boost_asio.overview.core.async The Proactor Design Pattern: Concurrency Without Threads]
 * [link boost_asio.overview.core.threads Threads and Boost.Asio]
 * [link boost_asio.overview.core.strands Strands: Use Threads Without Explicit Locking]
@@ -69,12 +82,7 @@
 * [link boost_asio.overview.core.cancellation Per-Operation Cancellation]
 * [link boost_asio.overview.core.handler_tracking Handler Tracking]
 * [link boost_asio.overview.core.concurrency_hint Concurrency Hints]
-* [link boost_asio.overview.core.coroutine Stackless Coroutines]
-* [link boost_asio.overview.core.spawn Stackful Coroutines]
-* [link boost_asio.overview.core.cpp20_coroutines C++20 Coroutines Support]
-* [link boost_asio.overview.core.coro Resumable C++20 Coroutines (experimental)]
 
-[include overview/basics.qbk]
 [include overview/async.qbk]
 [include overview/threads.qbk]
 [include overview/strands.qbk]
@@ -86,6 +94,16 @@
 [include overview/cancellation.qbk]
 [include overview/handler_tracking.qbk]
 [include overview/concurrency_hint.qbk]
+
+[endsect]
+
+[section:composition Composition and Completion Tokens]
+
+* [link boost_asio.overview.composition.coroutine Stackless Coroutines]
+* [link boost_asio.overview.composition.spawn Stackful Coroutines]
+* [link boost_asio.overview.composition.cpp20_coroutines C++20 Coroutines Support]
+* [link boost_asio.overview.composition.coro Resumable C++20 Coroutines (experimental)]
+
 [include overview/coroutine.qbk]
 [include overview/spawn.qbk]
 [include overview/cpp20_coroutines.qbk]

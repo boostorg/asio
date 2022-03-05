@@ -1,5 +1,5 @@
 [/
- / Copyright (c) 2003-2021 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+ / Copyright (c) 2003-2022 Christopher M. Kohlhoff (chris at kohlhoff dot com)
  /
  / Distributed under the Boost Software License, Version 1.0. (See accompanying
  / file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -39,8 +39,8 @@ synchronous manner, as shown in the following example:
 
 The first argument to `spawn()` may be a
 [link boost_asio.reference.io_context__strand `strand`],
-[link boost_asio.reference.io_context `io_context`], or
-[link boost_asio.reference.CompletionHandler completion handler].
+[link boost_asio.reference.io_context `io_context`], or a
+[link boost_asio.reference.Handler completion handler].
 This argument determines the context in which the coroutine is permitted to
 execute. For example, a server's per-client object may consist of multiple
 coroutines; they should all run on the same `strand` so that no explicit
@@ -97,6 +97,6 @@ exception, associate the output variable with the `yield_context` as follows:
 [link boost_asio.reference.basic_yield_context basic_yield_context],
 [link boost_asio.examples.cpp03_examples.spawn Spawn example (C++03)],
 [link boost_asio.examples.cpp11_examples.spawn Spawn example (C++11)],
-[link boost_asio.overview.core.coroutine Stackless Coroutines].
+[link boost_asio.overview.composition.coroutine Stackless Coroutines].
 
 [endsect]

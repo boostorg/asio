@@ -2,8 +2,8 @@
 // promise.cpp
 // ~~~~~~~~~~~
 //
-// Copyright (c) 2021 Klemens D. Morgenstern
-//                    (klemens dot morgenstern at gmx dot net)
+// Copyright (c) 2021-2022 Klemens D. Morgenstern
+//                         (klemens dot morgenstern at gmx dot net)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -17,6 +17,8 @@
 // Test that header file is self-contained.
 #include <boost/asio/experimental/promise.hpp>
 
+#include <array>
+#include <vector>
 #include <boost/asio/steady_timer.hpp>
 #include "../unit_test.hpp"
 
@@ -176,7 +178,7 @@ void promise_race_ranged_tester()
         BOOST_ASIO_CHECK(!ec);
       });
 
-  std::array<experimental::promise<void()>, 0u> arr;
+  std::vector<experimental::promise<void()>> arr;
 
   experimental::promise<>::race(
       ctx.get_executor(), std::move(arr)
@@ -241,7 +243,7 @@ void promise_all_ranged_tester()
         called = true;
       });
 
-  std::array<experimental::promise<void()>, 0u> arr;
+  std::vector<experimental::promise<void()>> arr;
   experimental::promise<>::all(
       ctx.get_executor(), std::move(arr)
     ).async_wait(
