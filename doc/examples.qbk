@@ -594,6 +594,10 @@ Examples showing how to implement composed asynchronous operations as reusable l
 * [@boost_asio/example/cpp14/operations/composed_7.cpp]
 * [@boost_asio/example/cpp14/operations/composed_8.cpp]
 
+Examples showing how to expose callback-based APIs as asynchronous operations.
+
+* [@boost_asio/example/cpp14/operations/callback_wrapper.cpp]
+* [@boost_asio/example/cpp14/operations/c_callback_wrapper.cpp]
 
 [heading Parallel Groups]
 

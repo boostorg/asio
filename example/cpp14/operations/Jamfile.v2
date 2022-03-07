@@ -29,6 +29,8 @@ project
     <target-os>haiku:<library>network
   ;
 
+exe callback_wrapper : callback_wrapper.cpp ;
+exe c_callback_wrapper : c_callback_wrapper.cpp ;
 exe composed_1 : composed_1.cpp ;
 exe composed_2 : composed_2.cpp ;
 exe composed_3 : composed_3.cpp ;
