@@ -20,12 +20,18 @@ class sender
 {
 public:
   sender(boost::asio::io_context& io_context,
+      const boost::asio::ip::address& listen_address,
       const boost::asio::ip::address& multicast_address)
     : endpoint_(multicast_address, multicast_port),
       socket_(io_context, endpoint_.protocol()),
       timer_(io_context),
       message_count_(0)
   {
+    if (listen_address.is_v6())
+      socket_.set_option(boost::asio::ip::multicast::outbound_interface(listen_address.to_v6().scope_id()));
+    else
+      socket_.set_option(boost::asio::ip::multicast::outbound_interface(listen_address.to_v4()));
+
     do_send();
   }
 
@@ -68,18 +74,27 @@ int main(int argc, char* argv[])
 {
   try
   {
-    if (argc != 2)
+    if (argc != 3)
     {
       std::cerr << "Usage: sender <multicast_address>\n";
       std::cerr << "  For IPv4, try:\n";
-      std::cerr << "    sender 239.255.0.1\n";
+      std::cerr << "    sender 0.0.0.0 239.255.0.1\n";
       std::cerr << "  For IPv6, try:\n";
-      std::cerr << "    sender ff31::8000:1234\n";
+      std::cerr << "    sender 0::0 ff31::8000:1234\n";
       return 1;
     }
 
     boost::asio::io_context io_context;
-    sender s(io_context, boost::asio::ip::make_address(argv[1]));
+    boost::asio::ip::address listen_address(boost::asio::ip::make_address(argv[1]));
+    boost::asio::ip::address multicast_address(boost::asio::ip::make_address(argv[2]));
+    if ((listen_address.is_v4() && !multicast_address.is_v4())
+      || (!listen_address.is_v4() && multicast_address.is_v4()))
+    {
+      std::cerr << "Error: both addresses have to be IPv4 or IPv6." << std::endl;
+      return 1;
+    }
+
+    sender s(io_context, listen_address, multicast_address);
     io_context.run();
   }
   catch (std::exception& e)
