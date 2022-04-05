@@ -31,13 +31,6 @@ with Boost.Asio's needs.
     [`BOOST_ASIO_DISABLE_ALIAS_TEMPLATES`]
   ]
   [
-    [`BOOST_ASIO_HAS_ALIGNED_NEW`]
-    [
-      Support for operator new with alignment argument.
-    ]
-    [`BOOST_ASIO_DISABLE_ALIGNED_NEW`]
-  ]
-  [
     [`BOOST_ASIO_HAS_ALIGNOF`]
     [
       Support for the alignof operator.
@@ -82,7 +75,7 @@ with Boost.Asio's needs.
   [
     [`BOOST_ASIO_HAS_BOOST_CONFIG`]
     [
-      
+      Boost.Config library is available.
     ]
     []
   ]
@@ -199,6 +192,13 @@ with Boost.Asio's needs.
     [`BOOST_ASIO_DISABLE_DEV_POLL`]
   ]
   [
+    [`BOOST_ASIO_HAS_ENUM_CLASS`]
+    [
+      Support enum classes on compilers known to allow them.
+    ]
+    [`BOOST_ASIO_DISABLE_ENUM_CLASS`]
+  ]
+  [
     [`BOOST_ASIO_HAS_EPOLL`]
     [
       Linux: epoll, eventfd and timerfd.
@@ -211,6 +211,13 @@ with Boost.Asio's needs.
       Linux: epoll, eventfd and timerfd.
     ]
     [`BOOST_ASIO_DISABLE_EVENTFD`]
+  ]
+  [
+    [`BOOST_ASIO_HAS_FILE`]
+    [
+      Files.
+    ]
+    [`BOOST_ASIO_DISABLE_FILE`]
   ]
   [
     [`BOOST_ASIO_HAS_GETADDRINFO`]
@@ -232,6 +239,13 @@ with Boost.Asio's needs.
       Windows: IO Completion Ports.
     ]
     [`BOOST_ASIO_DISABLE_IOCP`]
+  ]
+  [
+    [`BOOST_ASIO_HAS_IO_URING_AS_DEFAULT`]
+    [
+      Linux: io_uring is used instead of epoll.
+    ]
+    []
   ]
   [
     [`BOOST_ASIO_HAS_KQUEUE`]
@@ -269,11 +283,25 @@ with Boost.Asio's needs.
     [`BOOST_ASIO_DISABLE_NOEXCEPT`]
   ]
   [
+    [`BOOST_ASIO_HAS_NOEXCEPT_FUNCTION_TYPE`]
+    [
+      Support noexcept on function types on compilers known to allow it.
+    ]
+    [`BOOST_ASIO_DISABLE_NOEXCEPT_FUNCTION_TYPE`]
+  ]
+  [
     [`BOOST_ASIO_HAS_NULLPTR`]
     [
       Standard library support for the nullptr_t type.
     ]
     [`BOOST_ASIO_DISABLE_NULLPTR`]
+  ]
+  [
+    [`BOOST_ASIO_HAS_PIPE`]
+    [
+      Pipes.
+    ]
+    [`BOOST_ASIO_DISABLE_PIPE`]
   ]
   [
     [`BOOST_ASIO_HAS_POSIX_STREAM_DESCRIPTOR`]
@@ -358,6 +386,13 @@ with Boost.Asio's needs.
       Standard library support for addressof.
     ]
     [`BOOST_ASIO_DISABLE_STD_ADDRESSOF`]
+  ]
+  [
+    [`BOOST_ASIO_HAS_STD_ALIGNED_ALLOC`]
+    [
+      Standard library support for aligned allocation.
+    ]
+    [`BOOST_ASIO_DISABLE_STD_ALIGNED_ALLOC`]
   ]
   [
     [`BOOST_ASIO_HAS_STD_ALLOCATOR_ARG`]
