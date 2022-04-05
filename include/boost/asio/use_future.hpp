@@ -38,8 +38,8 @@ class packaged_handler;
 
 } // namespace detail
 
-/// A completion token type that causes an asynchronous operation to return a
-/// future.
+/// A @ref completion_token type that causes an asynchronous operation to return
+/// a future.
 /**
  * The use_future_t class is a completion token type that is used to indicate
  * that an asynchronous operation should return a std::future object. A
@@ -141,8 +141,8 @@ private:
     std_allocator_void, Allocator>::type allocator_;
 };
 
-/// A completion token object that causes an asynchronous operation to return a
-/// future.
+/// A @ref completion_token object that causes an asynchronous operation to
+/// return a future.
 /**
  * See the documentation for boost::asio::use_future_t for a usage example.
  */

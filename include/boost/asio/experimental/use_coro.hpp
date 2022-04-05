@@ -32,7 +32,7 @@ class any_io_executor;
 
 namespace experimental {
 
-/// A completion token that represents the currently executing resumable
+/// A @ref completion_token that represents the currently executing resumable
 /// coroutine.
 /**
  * The @c use_coro_t class, with its value @c use_coro, is used to represent an
@@ -146,8 +146,8 @@ struct use_coro_t
 #endif // defined(BOOST_ASIO_ENABLE_HANDLER_TRACKING)
 };
 
-/// A completion token object that represents the currently executing resumable
-/// coroutine.
+/// A @ref completion_token object that represents the currently executing
+/// resumable coroutine.
 /**
  * See the documentation for boost::asio::use_coro_t for a usage example.
  */
