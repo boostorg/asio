@@ -47,6 +47,7 @@
   * [link boost_asio.overview.networking.iostreams Socket Iostreams]
   * [link boost_asio.overview.networking.bsd_sockets The BSD Socket API and Boost.Asio]
 * [link boost_asio.overview.timers Timers]
+* [link boost_asio.overview.files Files]
 * [link boost_asio.overview.serial_ports Serial Ports]
 * [link boost_asio.overview.signals Signal Handling]
 * [link boost_asio.overview.posix POSIX-Specific Functionality]
@@ -137,6 +138,7 @@
 [endsect]
 
 [include overview/timers.qbk]
+[include overview/files.qbk]
 [include overview/serial_ports.qbk]
 [include overview/signals.qbk]
 [include overview/posix.qbk]
