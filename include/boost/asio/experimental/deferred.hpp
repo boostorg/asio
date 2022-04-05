@@ -474,7 +474,7 @@ struct is_deferred<deferred_conditional<OnTrue, OnFalse> > : true_type
  * operation, typically using the special value @c boost::asio::deferred. For
  * example:
  *
- * @code auto my_sender
+ * @code auto my_deferred_op
  *   = my_socket.async_read_some(my_buffer,
  *       boost::asio::experimental::deferred); @endcode
  *
