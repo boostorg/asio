@@ -94,7 +94,8 @@ All programs that use asio need to have at least one I/O execution context, such
 
 
 
-Next we declare an object of type boost::asio::steady\_timer. The core asio classes that provide I/O functionality (or as in this case timer functionality) always take a reference to an io\_context as their first constructor argument. The second argument to the constructor sets the timer to expire 5 seconds from now.
+Next we declare an object of type boost::asio::steady\_timer. The core asio classes that provide I/O functionality (or as in this case timer functionality) always take an executor, or a reference to an execution context (such as 
+[link boost_asio.reference.io_context io_context]), as their first constructor argument. The second argument to the constructor sets the timer to expire 5 seconds from now.
 
 
 
