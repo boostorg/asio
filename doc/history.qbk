@@ -7,7 +7,32 @@
 
 [section:history Revision History]
 
-[heading Asio 1.22.1 / Boost 1.79 beta]
+[heading Asio 1.22.2 / Boost 1.79]
+
+* On Windows, changed the file support to open files using the same sharing mode
+  as `fopen()`.
+* On Linux, fixed the UNIX domain sockets implementation to correctly handle
+  `EAGAIN` as an indication of an in-progress connect operation.
+* Fixed `experimental::basic_channel::reset()` and
+  `experimental::basic_concurrent_channel::reset()` so that they work correctly
+  for an unclosed channel.
+* Fixed potential undefined behaviour in the `experimental::promise` operations
+  `race()` and `all()`.
+* Changed the `co_spawn` implementation to explicitly dispatch cancellation
+  signals through the specified executor, if the the completion handler has an
+  associated executor of its own.
+* Added more detailed reference documentation to `make_strand()`,
+  `make_work_guard()`, `ip::address_v4`, `ip::address_v6`,
+  `experimental::basic_channel`, and `experimental::basic_concurrent_channel`.
+* Re-arranged and extended the Overview documentation to cover files, pipes,
+  `async_compose`, `experimental::deferred`, `experimental::parallel_group`,
+  `experimental::promise`, channels, and completion token adapters.
+* Reverted the `io_context` reference documentation to use `executor_work_guard`
+  when preventing the `io_context` from running out of work.
+* Removed references to `deadline_timer` from the Overview documentation.
+* Added reference documentation cross-references to asynchronous model elements.
+
+[heading Asio 1.22.1]
 
 * Added `bind_allocator`, to simplify associating a custom allocator with a
   completion token or handler.
@@ -1550,8 +1575,8 @@
   support for returning a C++11 `std::future` from an asynchronous
   operation's initiating function. For example:
   `future<size_t> = my_socket.async_read_some(my_buffer, asio::use_future);`.
-  For further information, see [link boost_asio.overview.cpp2011.futures C++
-  2011 Support - Futures].
+  For further information, see [link boost_asio.overview.composition.futures
+  Futures].
 * Promoted the stackless coroutine class and macros to be part of Asio's
   documented interface, rather than part of the HTTP server 4 example.
   For further information, see [link boost_asio.overview.composition.coroutine

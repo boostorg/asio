@@ -24,7 +24,7 @@ namespace boost {
 namespace asio {
 namespace experimental {
 
-/// Completion token type used to specify that the completion handler
+/// A @ref completion_token adapter used to specify that the completion handler
 /// arguments should be combined into a single tuple argument.
 /**
  * The as_tuple_t class is used to indicate that any arguments to the
@@ -112,8 +112,8 @@ public:
   CompletionToken token_;
 };
 
-/// Create a completion token to specify that the completion handler arguments
-/// should be combined into a single tuple argument.
+/// Adapt a @ref completion_token to specify that the completion handler
+/// arguments should be combined into a single tuple argument.
 template <typename CompletionToken>
 BOOST_ASIO_NODISCARD inline
 BOOST_ASIO_CONSTEXPR as_tuple_t<typename decay<CompletionToken>::type>

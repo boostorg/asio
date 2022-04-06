@@ -474,7 +474,7 @@ struct is_deferred<deferred_conditional<OnTrue, OnFalse> > : true_type
  * operation, typically using the special value @c boost::asio::deferred. For
  * example:
  *
- * @code auto my_sender
+ * @code auto my_deferred_op
  *   = my_socket.async_read_some(my_buffer,
  *       boost::asio::experimental::deferred); @endcode
  *
@@ -585,7 +585,8 @@ inline auto operator|(Head head, BOOST_ASIO_MOVE_ARG(Tail) tail)
       BOOST_ASIO_MOVE_CAST(Tail)(tail));
 }
 
-/// A special value, similar to std::nothrow.
+/// A @ref completion_token object used to specify that an asynchronous
+/// operation should return a function object to lazily launch the operation.
 /**
  * See the documentation for boost::asio::experimental::deferred_t for a usage
  * example.

@@ -24,6 +24,7 @@
 # define BOOST_ASIO_DISABLE_BOOST_THROW_EXCEPTION 1
 # define BOOST_ASIO_DISABLE_BOOST_WORKAROUND 1
 #else // defined(BOOST_ASIO_STANDALONE)
+// Boost.Config library is available.
 # include <boost/config.hpp>
 # include <boost/version.hpp>
 # define BOOST_ASIO_HAS_BOOST_CONFIG 1
