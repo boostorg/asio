@@ -225,6 +225,11 @@ enum misc_errors
   fd_set_failure
 };
 
+inline void clear(boost::system::error_code& ec)
+{
+  ec = boost::system::error_code();
+}
+
 inline const boost::system::error_category& get_system_category()
 {
   return boost::system::system_category();
