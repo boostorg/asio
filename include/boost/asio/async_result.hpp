@@ -1236,6 +1236,167 @@ BOOST_ASIO_CONCEPT completion_token_for =
 
 namespace detail {
 
+struct async_operation_probe {};
+struct async_operation_probe_result {};
+
+template <typename Call, typename = void>
+struct is_async_operation_call : false_type
+{
+};
+
+template <typename Call>
+struct is_async_operation_call<Call,
+    typename void_type<
+      typename enable_if<
+        is_same<
+          typename result_of<Call>::type,
+          async_operation_probe_result
+        >::value
+      >::type
+    >::type> : true_type
+{
+};
+
+} // namespace detail
+
+#if !defined(GENERATING_DOCUMENTATION)
+#if defined(BOOST_ASIO_HAS_VARIADIC_TEMPLATES)
+
+template <typename... Signatures>
+class async_result<detail::async_operation_probe, Signatures...>
+{
+public:
+  typedef detail::async_operation_probe_result return_type;
+
+  template <typename Initiation, typename... InitArgs>
+  static return_type initiate(BOOST_ASIO_MOVE_ARG(Initiation),
+      detail::async_operation_probe, BOOST_ASIO_MOVE_ARG(InitArgs)...)
+  {
+    return return_type();
+  }
+};
+
+#else // defined(BOOST_ASIO_HAS_VARIADIC_TEMPLATES)
+
+namespace detail {
+
+struct async_result_probe_base
+{
+  typedef detail::async_operation_probe_result return_type;
+
+  template <typename Initiation>
+  static return_type initiate(BOOST_ASIO_MOVE_ARG(Initiation),
+      detail::async_operation_probe)
+  {
+    return return_type();
+  }
+
+#define BOOST_ASIO_PRIVATE_INITIATE_DEF(n) \
+  template <typename Initiation, BOOST_ASIO_VARIADIC_TPARAMS(n)> \
+  static return_type initiate(BOOST_ASIO_MOVE_ARG(Initiation), \
+      detail::async_operation_probe, \
+      BOOST_ASIO_VARIADIC_UNNAMED_MOVE_PARAMS(n)) \
+  { \
+    return return_type(); \
+  } \
+  /**/
+  BOOST_ASIO_VARIADIC_GENERATE(BOOST_ASIO_PRIVATE_INITIATE_DEF)
+#undef BOOST_ASIO_PRIVATE_INITIATE_DEF
+};
+
+} // namespace detail
+
+template <typename Sig0>
+class async_result<detail::async_operation_probe, Sig0>
+  : public detail::async_result_probe_base {};
+
+template <typename Sig0, typename Sig1>
+class async_result<detail::async_operation_probe, Sig0, Sig1>
+  : public detail::async_result_probe_base {};
+
+template <typename Sig0, typename Sig1, typename Sig2>
+class async_result<detail::async_operation_probe, Sig0, Sig1, Sig2>
+  : public detail::async_result_probe_base {};
+
+#endif // defined(BOOST_ASIO_HAS_VARIADIC_TEMPLATES)
+#endif // !defined(GENERATING_DOCUMENTATION)
+
+#if defined(GENERATION_DOCUMENTATION)
+
+/// The is_async_operation trait detects whether a type @c T and arguments
+/// @c Args... may be used to initiate an asynchronous operation.
+/**
+ * Class template @c is_async_operation is a trait is derived from @c true_type
+ * if the expression <tt>T(Args..., token)</tt> initiates an asynchronous
+ * operation, where @c token is an unspecified completion token type. Otherwise,
+ * @c is_async_operation is derived from @c false_type.
+ */
+template <typename T, typename... Args>
+struct is_async_operation : integral_constant<bool, automatically_determined>
+{
+};
+
+#elif defined(BOOST_ASIO_HAS_VARIADIC_TEMPLATES)
+
+template <typename T, typename... Args>
+struct is_async_operation :
+  detail::is_async_operation_call<
+    T(Args..., detail::async_operation_probe)>
+{
+};
+
+#else // defined(BOOST_ASIO_HAS_VARIADIC_TEMPLATES)
+
+template <typename T, typename = void, typename = void, typename = void,
+    typename = void, typename = void, typename = void, typename = void,
+    typename = void, typename = void>
+struct is_async_operation :
+  detail::is_async_operation_call<
+    T(detail::async_operation_probe)>
+{
+};
+
+#define BOOST_ASIO_PRIVATE_IS_ASYNC_OP_DEF(n) \
+  template <typename T, BOOST_ASIO_VARIADIC_TPARAMS(n)> \
+  struct is_async_operation<T, BOOST_ASIO_VARIADIC_TARGS(n)> : \
+    detail::is_async_operation_call< \
+      T(BOOST_ASIO_VARIADIC_TARGS(n), detail::async_operation_probe)> \
+  { \
+  }; \
+  /**/
+  BOOST_ASIO_VARIADIC_GENERATE(BOOST_ASIO_PRIVATE_IS_ASYNC_OP_DEF)
+#undef BOOST_ASIO_PRIVATE_IS_ASYNC_OP_DEF
+
+#endif // defined(BOOST_ASIO_HAS_VARIADIC_TEMPLATES)
+
+#if defined(BOOST_ASIO_HAS_CONCEPTS) \
+  && defined(BOOST_ASIO_HAS_VARIADIC_TEMPLATES)
+
+template <typename T, typename... Args>
+BOOST_ASIO_CONCEPT async_operation = is_async_operation<T, Args...>::value;
+
+#define BOOST_ASIO_ASYNC_OPERATION(t) \
+  ::boost::asio::async_operation<t>
+#define BOOST_ASIO_ASYNC_OPERATION1(t, a0) \
+  ::boost::asio::async_operation<t, a0>
+#define BOOST_ASIO_ASYNC_OPERATION2(t, a0, a1) \
+  ::boost::asio::async_operation<t, a0, a1>
+#define BOOST_ASIO_ASYNC_OPERATION3(t, a0, a1, a2) \
+  ::boost::asio::async_operation<t, a0, a1, a2>
+
+#else // defined(BOOST_ASIO_HAS_CONCEPTS)
+      //   && defined(BOOST_ASIO_HAS_VARIADIC_TEMPLATES)
+
+#define BOOST_ASIO_ASYNC_OPERATION(t) typename
+#define BOOST_ASIO_ASYNC_OPERATION1(t, a0) typename
+#define BOOST_ASIO_ASYNC_OPERATION2(t, a0, a1) typename
+#define BOOST_ASIO_ASYNC_OPERATION3(t, a0, a1, a2) typename
+
+#endif // defined(BOOST_ASIO_HAS_CONCEPTS)
+       //   && defined(BOOST_ASIO_HAS_VARIADIC_TEMPLATES)
+
+namespace detail {
+
 template <typename T, typename = void>
 struct default_completion_token_impl
 {
