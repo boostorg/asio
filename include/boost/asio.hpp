@@ -157,6 +157,7 @@
 #include <boost/asio/posix/stream_descriptor.hpp>
 #include <boost/asio/post.hpp>
 #include <boost/asio/prefer.hpp>
+#include <boost/asio/prepend.hpp>
 #include <boost/asio/query.hpp>
 #include <boost/asio/random_access_file.hpp>
 #include <boost/asio/read.hpp>

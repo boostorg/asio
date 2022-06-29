@@ -1,6 +1,6 @@
 //
-// experimental/impl/prepend.hpp
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// impl/prepend.hpp
+// ~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2022 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
@@ -8,8 +8,8 @@
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
-#ifndef BOOST_ASIO_IMPL_EXPERIMENTAL_PREPEND_HPP
-#define BOOST_ASIO_IMPL_EXPERIMENTAL_PREPEND_HPP
+#ifndef BOOST_ASIO_IMPL_PREPEND_HPP
+#define BOOST_ASIO_IMPL_PREPEND_HPP
 
 #if defined(_MSC_VER) && (_MSC_VER >= 1200)
 # pragma once
@@ -30,7 +30,6 @@
 
 namespace boost {
 namespace asio {
-namespace experimental {
 namespace detail {
 
 // Class to adapt a prepend_t as a completion handler.
@@ -51,13 +50,12 @@ public:
   void operator()(BOOST_ASIO_MOVE_ARG(Args)... args)
   {
     this->invoke(
-        boost::asio::detail::index_sequence_for<Values...>{},
+        index_sequence_for<Values...>{},
         BOOST_ASIO_MOVE_CAST(Args)(args)...);
   }
 
   template <std::size_t... I, typename... Args>
-  void invoke(boost::asio::detail::index_sequence<I...>,
-      BOOST_ASIO_MOVE_ARG(Args)... args)
+  void invoke(index_sequence<I...>, BOOST_ASIO_MOVE_ARG(Args)... args)
   {
     BOOST_ASIO_MOVE_OR_LVALUE(Handler)(handler_)(
         BOOST_ASIO_MOVE_CAST(Values)(std::get<I>(values_))...,
@@ -137,18 +135,17 @@ struct prepend_signature<R(Args...), Values...>
 };
 
 } // namespace detail
-} // namespace experimental
 
 #if !defined(GENERATING_DOCUMENTATION)
 
 template <typename CompletionToken, typename... Values, typename Signature>
 struct async_result<
-    experimental::prepend_t<CompletionToken, Values...>, Signature>
+    prepend_t<CompletionToken, Values...>, Signature>
   : async_result<CompletionToken,
-      typename experimental::detail::prepend_signature<
+      typename detail::prepend_signature<
         Signature, Values...>::type>
 {
-  typedef typename experimental::detail::prepend_signature<
+  typedef typename detail::prepend_signature<
       Signature, Values...>::type signature;
 
   template <typename Initiation>
@@ -166,7 +163,7 @@ struct async_result<
         BOOST_ASIO_MOVE_ARG(Args)... args)
     {
       BOOST_ASIO_MOVE_CAST(Initiation)(initiation_)(
-          experimental::detail::prepend_handler<
+          detail::prepend_handler<
             typename decay<Handler>::type, Values...>(
               BOOST_ASIO_MOVE_CAST(Handler)(handler),
               BOOST_ASIO_MOVE_CAST(std::tuple<Values...>)(values)),
@@ -200,11 +197,11 @@ struct async_result<
 template <template <typename, typename> class Associator,
     typename Handler, typename... Values, typename DefaultCandidate>
 struct associator<Associator,
-    experimental::detail::prepend_handler<Handler, Values...>, DefaultCandidate>
+    detail::prepend_handler<Handler, Values...>, DefaultCandidate>
   : Associator<Handler, DefaultCandidate>
 {
   static typename Associator<Handler, DefaultCandidate>::type get(
-      const experimental::detail::prepend_handler<Handler, Values...>& h,
+      const detail::prepend_handler<Handler, Values...>& h,
       const DefaultCandidate& c = DefaultCandidate()) BOOST_ASIO_NOEXCEPT
   {
     return Associator<Handler, DefaultCandidate>::get(h.handler_, c);
@@ -218,4 +215,4 @@ struct associator<Associator,
 
 #include <boost/asio/detail/pop_options.hpp>
 
-#endif // BOOST_ASIO_IMPL_EXPERIMENTAL_PREPEND_HPP
+#endif // BOOST_ASIO_IMPL_PREPEND_HPP

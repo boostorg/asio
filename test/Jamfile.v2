@@ -204,6 +204,8 @@ test-suite "asio" :
   [ link posix/descriptor_base.cpp : $(USE_SELECT) : posix_descriptor_base_select ]
   [ link posix/stream_descriptor.cpp : : posix_stream_descriptor ]
   [ link posix/stream_descriptor.cpp : $(USE_SELECT) : posix_stream_descriptor_select ]
+  [ run prepend.cpp ]
+  [ run prepend.cpp : : : $(USE_SELECT) : prepend_select ]
   [ link random_access_file.cpp ]
   [ link random_access_file.cpp : $(USE_SELECT) : random_access_file_select ]
   [ run read.cpp ]
