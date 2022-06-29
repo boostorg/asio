@@ -23,6 +23,7 @@
 #include <boost/asio/detail/handler_cont_helpers.hpp>
 #include <boost/asio/detail/handler_invoke_helpers.hpp>
 #include <boost/asio/detail/type_traits.hpp>
+#include <boost/asio/detail/utility.hpp>
 #include <boost/asio/detail/variadic_templates.hpp>
 
 #include <boost/asio/detail/push_options.hpp>
@@ -50,12 +51,13 @@ public:
   void operator()(BOOST_ASIO_MOVE_ARG(Args)... args)
   {
     this->invoke(
-        std::make_index_sequence<sizeof...(Values)>{},
+        boost::asio::detail::index_sequence_for<Values...>{},
         BOOST_ASIO_MOVE_CAST(Args)(args)...);
   }
 
   template <std::size_t... I, typename... Args>
-  void invoke(std::index_sequence<I...>, BOOST_ASIO_MOVE_ARG(Args)... args)
+  void invoke(boost::asio::detail::index_sequence<I...>,
+      BOOST_ASIO_MOVE_ARG(Args)... args)
   {
     BOOST_ASIO_MOVE_OR_LVALUE(Handler)(handler_)(
         BOOST_ASIO_MOVE_CAST(Values)(std::get<I>(values_))...,

@@ -53,6 +53,6 @@ void prepend_test()
 
 BOOST_ASIO_TEST_SUITE
 (
-  "experimental/basic_channel",
+  "experimental/prepend",
   BOOST_ASIO_TEST_CASE(prepend_test)
 )
