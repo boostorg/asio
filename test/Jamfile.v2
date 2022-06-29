@@ -48,6 +48,8 @@ project
   ;
 
 test-suite "asio" :
+  [ run append.cpp ]
+  [ run append.cpp : : : $(USE_SELECT) : append_select ]
   [ run as_tuple.cpp ]
   [ run as_tuple.cpp : : : $(USE_SELECT) : as_tuple_select ]
   [ link associated_allocator.cpp ]
