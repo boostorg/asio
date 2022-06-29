@@ -16,8 +16,8 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include <boost/asio/detail/config.hpp>
-#include <utility>
 #include <boost/asio/detail/array.hpp>
+#include <boost/asio/detail/utility.hpp>
 #include <boost/asio/experimental/cancellation_condition.hpp>
 
 #include <boost/asio/detail/push_options.hpp>
@@ -94,7 +94,7 @@ struct parallel_group_signature<N, Sig0, Sig1, SigN...>
 template <typename Condition, typename Handler,
     typename... Ops, std::size_t... I>
 void parallel_group_launch(Condition cancellation_condition, Handler handler,
-    std::tuple<Ops...>& ops, std::index_sequence<I...>);
+    std::tuple<Ops...>& ops, boost::asio::detail::index_sequence<I...>);
 
 } // namespace detail
 
@@ -106,6 +106,19 @@ void parallel_group_launch(Condition cancellation_condition, Handler handler,
 template <typename... Ops>
 class parallel_group
 {
+private:
+  struct initiate_async_wait
+  {
+    template <typename Handler, typename Condition>
+    void operator()(Handler&& h, Condition&& c, std::tuple<Ops...>&& ops) const
+    {
+      detail::parallel_group_launch(std::move(c), std::move(h),
+          ops, boost::asio::detail::index_sequence_for<Ops...>());
+    }
+  };
+
+  std::tuple<Ops...> ops_;
+
 public:
   /// Constructor.
   explicit parallel_group(Ops... ops)
@@ -141,26 +154,18 @@ public:
    */
   template <typename CancellationCondition,
       BOOST_ASIO_COMPLETION_TOKEN_FOR(signature) CompletionToken>
-  auto async_wait(CancellationCondition cancellation_condition,
+  BOOST_ASIO_INITFN_AUTO_RESULT_TYPE_PREFIX(CompletionToken, signature)
+  async_wait(CancellationCondition cancellation_condition,
       CompletionToken&& token)
+    BOOST_ASIO_INITFN_AUTO_RESULT_TYPE_SUFFIX((
+      boost::asio::async_initiate<CompletionToken, signature>(
+          declval<initiate_async_wait>(), token,
+          std::move(cancellation_condition), std::move(ops_))))
   {
     return boost::asio::async_initiate<CompletionToken, signature>(
         initiate_async_wait(), token,
         std::move(cancellation_condition), std::move(ops_));
   }
-
-private:
-  struct initiate_async_wait
-  {
-    template <typename Handler, typename Condition>
-    void operator()(Handler&& h, Condition&& c, std::tuple<Ops...>&& ops) const
-    {
-      detail::parallel_group_launch(std::move(c), std::move(h),
-          ops, std::make_index_sequence<sizeof...(Ops)>());
-    }
-  };
-
-  std::tuple<Ops...> ops_;
 };
 
 /// Create a group of operations that may be launched in parallel.
