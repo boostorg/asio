@@ -162,7 +162,7 @@ public:
   {
     if (attached_thread_->entry_point()->throw_if_cancelled_)
       if (!!attached_thread_->get_cancellation_state().cancelled())
-        do_throw_error(boost::asio::error::operation_aborted, "co_await");
+        throw_error(boost::asio::error::operation_aborted, "co_await");
     return a;
   }
 

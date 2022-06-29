@@ -1344,6 +1344,28 @@
 # endif // !defined(BOOST_ASIO_DISABLE_SOURCE_LOCATION)
 #endif // !defined(BOOST_ASIO_HAS_SOURCE_LOCATION)
 
+// Boost support for source_location and system errors.
+#if !defined(BOOST_ASIO_HAS_BOOST_SOURCE_LOCATION)
+# if !defined(BOOST_ASIO_DISABLE_BOOST_SOURCE_LOCATION)
+#  if defined(BOOST_ASIO_HAS_BOOST_CONFIG) && (BOOST_VERSION >= 107900)
+#   define BOOST_ASIO_HAS_BOOST_SOURCE_LOCATION 1
+#  endif // defined(BOOST_ASIO_HAS_BOOST_CONFIG) && (BOOST_VERSION >= 107900)
+# endif // !defined(BOOST_ASIO_DISABLE_BOOST_SOURCE_LOCATION)
+#endif // !defined(BOOST_ASIO_HAS_BOOST_SOURCE_LOCATION)
+
+// Helper macros for working with Boost source locations.
+#if defined(BOOST_ASIO_HAS_BOOST_SOURCE_LOCATION)
+# define BOOST_ASIO_SOURCE_LOCATION_PARAM \
+  , const boost::source_location& loc
+# define BOOST_ASIO_SOURCE_LOCATION_DEFAULTED_PARAM \
+  , const boost::source_location& loc = BOOST_CURRENT_LOCATION
+# define BOOST_ASIO_SOURCE_LOCATION_ARG , loc
+#else // if defined(BOOST_ASIO_HAS_BOOST_SOURCE_LOCATION)
+# define BOOST_ASIO_SOURCE_LOCATION_PARAM
+# define BOOST_ASIO_SOURCE_LOCATION_DEFAULTED_PARAM
+# define BOOST_ASIO_SOURCE_LOCATION_ARG
+#endif // if defined(BOOST_ASIO_HAS_BOOST_SOURCE_LOCATION)
+
 // Standard library support for std::index_sequence.
 #if !defined(BOOST_ASIO_HAS_STD_INDEX_SEQUENCE)
 # if !defined(BOOST_ASIO_DISABLE_STD_INDEX_SEQUENCE)

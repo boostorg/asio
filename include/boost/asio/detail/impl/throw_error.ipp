@@ -26,16 +26,21 @@ namespace boost {
 namespace asio {
 namespace detail {
 
-void do_throw_error(const boost::system::error_code& err)
+void do_throw_error(
+    const boost::system::error_code& err
+    BOOST_ASIO_SOURCE_LOCATION_PARAM)
 {
   boost::system::system_error e(err);
-  boost::asio::detail::throw_exception(e);
+  boost::asio::detail::throw_exception(e BOOST_ASIO_SOURCE_LOCATION_ARG);
 }
 
-void do_throw_error(const boost::system::error_code& err, const char* location)
+void do_throw_error(
+    const boost::system::error_code& err,
+    const char* location
+    BOOST_ASIO_SOURCE_LOCATION_PARAM)
 {
   boost::system::system_error e(err, location);
-  boost::asio::detail::throw_exception(e);
+  boost::asio::detail::throw_exception(e BOOST_ASIO_SOURCE_LOCATION_ARG);
 }
 
 } // namespace detail
