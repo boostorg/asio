@@ -380,6 +380,24 @@ typedef basic_yield_context<any_io_executor> yield_context;
  * @param function The coroutine function. The function must be callable the
  * signature:
  * @code void function(basic_yield_context<Executor> yield); @endcode
+ *
+ * @param token The @ref completion_token that will handle the notification
+ * that the coroutine has completed. If the return type @c R of @c function is
+ * @c void, the function signature of the completion handler must be:
+ *
+ * @code void handler(std::exception_ptr); @endcode
+ * Otherwise, the function signature of the completion handler must be:
+ * @code void handler(std::exception_ptr, R); @endcode
+ *
+ * @par Completion Signature
+ * @code void(std::exception_ptr, R) @endcode
+ * where @c R is the return type of the function object.
+ *
+ * @par Per-Operation Cancellation
+ * The new thread of execution is created with a cancellation state that
+ * supports @c cancellation_type::terminal values only. To change the
+ * cancellation state, call the basic_yield_context member function
+ * @c reset_cancellation_state.
  */
 template <typename Executor, typename F,
     BOOST_ASIO_COMPLETION_TOKEN_FOR(typename detail::spawn_signature<
@@ -419,6 +437,24 @@ spawn(const Executor& ex, BOOST_ASIO_MOVE_ARG(F) function,
  * @param function The coroutine function. The function must be callable the
  * signature:
  * @code void function(basic_yield_context<Executor> yield); @endcode
+ *
+ * @param token The @ref completion_token that will handle the notification
+ * that the coroutine has completed. If the return type @c R of @c function is
+ * @c void, the function signature of the completion handler must be:
+ *
+ * @code void handler(std::exception_ptr); @endcode
+ * Otherwise, the function signature of the completion handler must be:
+ * @code void handler(std::exception_ptr, R); @endcode
+ *
+ * @par Completion Signature
+ * @code void(std::exception_ptr, R) @endcode
+ * where @c R is the return type of the function object.
+ *
+ * @par Per-Operation Cancellation
+ * The new thread of execution is created with a cancellation state that
+ * supports @c cancellation_type::terminal values only. To change the
+ * cancellation state, call the basic_yield_context member function
+ * @c reset_cancellation_state.
  */
 template <typename ExecutionContext, typename F,
     BOOST_ASIO_COMPLETION_TOKEN_FOR(typename detail::spawn_signature<
@@ -466,6 +502,24 @@ spawn(ExecutionContext& ctx, BOOST_ASIO_MOVE_ARG(F) function,
  * @param function The coroutine function. The function must be callable the
  * signature:
  * @code void function(basic_yield_context<Executor> yield); @endcode
+ *
+ * @param token The @ref completion_token that will handle the notification
+ * that the coroutine has completed. If the return type @c R of @c function is
+ * @c void, the function signature of the completion handler must be:
+ *
+ * @code void handler(std::exception_ptr); @endcode
+ * Otherwise, the function signature of the completion handler must be:
+ * @code void handler(std::exception_ptr, R); @endcode
+ *
+ * @par Completion Signature
+ * @code void(std::exception_ptr, R) @endcode
+ * where @c R is the return type of the function object.
+ *
+ * @par Per-Operation Cancellation
+ * The new thread of execution is created with a cancellation state that
+ * supports @c cancellation_type::terminal values only. To change the
+ * cancellation state, call the basic_yield_context member function
+ * @c reset_cancellation_state.
  */
 template <typename Executor, typename F,
     BOOST_ASIO_COMPLETION_TOKEN_FOR(typename detail::spawn_signature<
@@ -513,6 +567,24 @@ spawn(const basic_yield_context<Executor>& ctx,
  * @param function The coroutine function. The function must be callable the
  * signature:
  * @code void function(basic_yield_context<Executor> yield); @endcode
+ *
+ * @param token The @ref completion_token that will handle the notification
+ * that the coroutine has completed. If the return type @c R of @c function is
+ * @c void, the function signature of the completion handler must be:
+ *
+ * @code void handler(std::exception_ptr); @endcode
+ * Otherwise, the function signature of the completion handler must be:
+ * @code void handler(std::exception_ptr, R); @endcode
+ *
+ * @par Completion Signature
+ * @code void(std::exception_ptr, R) @endcode
+ * where @c R is the return type of the function object.
+ *
+ * @par Per-Operation Cancellation
+ * The new thread of execution is created with a cancellation state that
+ * supports @c cancellation_type::terminal values only. To change the
+ * cancellation state, call the basic_yield_context member function
+ * @c reset_cancellation_state.
  */
 template <typename Executor, typename StackAllocator, typename F,
     BOOST_ASIO_COMPLETION_TOKEN_FOR(typename detail::spawn_signature<
@@ -552,6 +624,24 @@ spawn(const Executor& ex, allocator_arg_t,
  * @param function The coroutine function. The function must be callable the
  * signature:
  * @code void function(basic_yield_context<Executor> yield); @endcode
+ *
+ * @param token The @ref completion_token that will handle the notification
+ * that the coroutine has completed. If the return type @c R of @c function is
+ * @c void, the function signature of the completion handler must be:
+ *
+ * @code void handler(std::exception_ptr); @endcode
+ * Otherwise, the function signature of the completion handler must be:
+ * @code void handler(std::exception_ptr, R); @endcode
+ *
+ * @par Completion Signature
+ * @code void(std::exception_ptr, R) @endcode
+ * where @c R is the return type of the function object.
+ *
+ * @par Per-Operation Cancellation
+ * The new thread of execution is created with a cancellation state that
+ * supports @c cancellation_type::terminal values only. To change the
+ * cancellation state, call the basic_yield_context member function
+ * @c reset_cancellation_state.
  */
 template <typename ExecutionContext, typename StackAllocator, typename F,
     BOOST_ASIO_COMPLETION_TOKEN_FOR(typename detail::spawn_signature<
@@ -583,48 +673,66 @@ spawn(ExecutionContext& ctx, allocator_arg_t,
             BOOST_ASIO_MOVE_CAST(StackAllocator)(stack_allocator),
             BOOST_ASIO_MOVE_CAST(F)(function))));
 
-  /// Start a new stackful coroutine, inheriting the executor of another.
-  /**
-   * This function is used to launch a new stackful coroutine using the
-   * specified stack allocator.
-   *
-   * @param ctx Identifies the current coroutine as a parent of the new
-   * coroutine. This specifies that the new coroutine should inherit the
-   * executor of the parent. For example, if the parent coroutine is executing
-   * in a particular strand, then the new coroutine will execute in the same
-   * strand.
-   *
-   * @param stack_allocator Denotes the allocator to be used to allocate the
-   * underlying coroutine's stack. The type must satisfy the stack-allocator
-   * concept defined by the Boost.Context library.
-   *
-   * @param function The coroutine function. The function must be callable the
-   * signature:
-   * @code void function(basic_yield_context<Executor> yield); @endcode
-   */
-  template <typename Executor, typename StackAllocator, typename F,
-      BOOST_ASIO_COMPLETION_TOKEN_FOR(typename detail::spawn_signature<
-        typename result_of<F(basic_yield_context<Executor>)>::type>::type)
-          CompletionToken BOOST_ASIO_DEFAULT_COMPLETION_TOKEN_TYPE(Executor)>
-  BOOST_ASIO_INITFN_AUTO_RESULT_TYPE_PREFIX(CompletionToken,
-      typename detail::spawn_signature<
-        typename result_of<F(basic_yield_context<Executor>)>::type>::type)
-  spawn(const basic_yield_context<Executor>& ctx, allocator_arg_t,
-      BOOST_ASIO_MOVE_ARG(StackAllocator) stack_allocator,
-      BOOST_ASIO_MOVE_ARG(F) function,
-      BOOST_ASIO_MOVE_ARG(CompletionToken) token
-      BOOST_ASIO_DEFAULT_COMPLETION_TOKEN(Executor),
-    typename constraint<
-      is_executor<Executor>::value || execution::is_executor<Executor>::value
-    >::type = 0)
-  BOOST_ASIO_INITFN_AUTO_RESULT_TYPE_SUFFIX((
-    async_initiate<CompletionToken,
-      typename detail::spawn_signature<
-        typename result_of<F(basic_yield_context<Executor>)>::type>::type>(
-          declval<detail::initiate_spawn<Executor> >(),
-          token, allocator_arg_t(),
-          BOOST_ASIO_MOVE_CAST(StackAllocator)(stack_allocator),
-          BOOST_ASIO_MOVE_CAST(F)(function))));
+/// Start a new stackful coroutine, inheriting the executor of another.
+/**
+ * This function is used to launch a new stackful coroutine using the
+ * specified stack allocator.
+ *
+ * @param ctx Identifies the current coroutine as a parent of the new
+ * coroutine. This specifies that the new coroutine should inherit the
+ * executor of the parent. For example, if the parent coroutine is executing
+ * in a particular strand, then the new coroutine will execute in the same
+ * strand.
+ *
+ * @param stack_allocator Denotes the allocator to be used to allocate the
+ * underlying coroutine's stack. The type must satisfy the stack-allocator
+ * concept defined by the Boost.Context library.
+ *
+ * @param function The coroutine function. The function must be callable the
+ * signature:
+ * @code void function(basic_yield_context<Executor> yield); @endcode
+ *
+ * @param token The @ref completion_token that will handle the notification
+ * that the coroutine has completed. If the return type @c R of @c function is
+ * @c void, the function signature of the completion handler must be:
+ *
+ * @code void handler(std::exception_ptr); @endcode
+ * Otherwise, the function signature of the completion handler must be:
+ * @code void handler(std::exception_ptr, R); @endcode
+ *
+ * @par Completion Signature
+ * @code void(std::exception_ptr, R) @endcode
+ * where @c R is the return type of the function object.
+ *
+ * @par Per-Operation Cancellation
+ * The new thread of execution is created with a cancellation state that
+ * supports @c cancellation_type::terminal values only. To change the
+ * cancellation state, call the basic_yield_context member function
+ * @c reset_cancellation_state.
+ */
+template <typename Executor, typename StackAllocator, typename F,
+    BOOST_ASIO_COMPLETION_TOKEN_FOR(typename detail::spawn_signature<
+      typename result_of<F(basic_yield_context<Executor>)>::type>::type)
+        CompletionToken BOOST_ASIO_DEFAULT_COMPLETION_TOKEN_TYPE(Executor)>
+BOOST_ASIO_INITFN_AUTO_RESULT_TYPE_PREFIX(CompletionToken,
+    typename detail::spawn_signature<
+      typename result_of<F(basic_yield_context<Executor>)>::type>::type)
+spawn(const basic_yield_context<Executor>& ctx, allocator_arg_t,
+    BOOST_ASIO_MOVE_ARG(StackAllocator) stack_allocator,
+    BOOST_ASIO_MOVE_ARG(F) function,
+    BOOST_ASIO_MOVE_ARG(CompletionToken) token
+    BOOST_ASIO_DEFAULT_COMPLETION_TOKEN(Executor),
+  typename constraint<
+    is_executor<Executor>::value || execution::is_executor<Executor>::value
+  >::type = 0)
+BOOST_ASIO_INITFN_AUTO_RESULT_TYPE_SUFFIX((
+  async_initiate<CompletionToken,
+    typename detail::spawn_signature<
+      typename result_of<F(basic_yield_context<Executor>)>::type>::type>(
+        declval<detail::initiate_spawn<Executor> >(),
+        token, allocator_arg_t(),
+        BOOST_ASIO_MOVE_CAST(StackAllocator)(stack_allocator),
+        BOOST_ASIO_MOVE_CAST(F)(function))));
 
 #endif // defined(BOOST_ASIO_HAS_BOOST_CONTEXT_FIBER)
        //   || defined(GENERATING_DOCUMENTATION)
