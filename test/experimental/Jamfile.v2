@@ -42,8 +42,6 @@ project
 test-suite "asio-experimental" :
   [ run append.cpp ]
   [ run append.cpp : : : $(USE_SELECT) : append_select ]
-  [ run as_tuple.cpp ]
-  [ run as_tuple.cpp : : : $(USE_SELECT) : as_tuple_select ]
   [ run awaitable_operators.cpp ]
   [ run awaitable_operators.cpp : : : $(USE_SELECT) : awaitable_operators_select ]
   [ run basic_channel.cpp ]
