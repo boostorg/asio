@@ -141,6 +141,7 @@
 #include <boost/asio/ip/unicast.hpp>
 #include <boost/asio/ip/v6_only.hpp>
 #include <boost/asio/is_applicable_property.hpp>
+#include <boost/asio/is_contiguous_iterator.hpp>
 #include <boost/asio/is_executor.hpp>
 #include <boost/asio/is_read_buffered.hpp>
 #include <boost/asio/is_write_buffered.hpp>

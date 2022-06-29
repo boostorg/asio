@@ -451,6 +451,17 @@
 # endif // !defined(BOOST_ASIO_DISABLE_CONCEPTS)
 #endif // !defined(BOOST_ASIO_HAS_CONCEPTS)
 
+// Support concepts on compilers known to allow them.
+#if !defined(BOOST_ASIO_HAS_STD_CONCEPTS)
+# if !defined(BOOST_ASIO_DISABLE_STD_CONCEPTS)
+#  if defined(BOOST_ASIO_HAS_CONCEPTS)
+#   if (__cpp_lib_concepts >= 202002L)
+#    define BOOST_ASIO_HAS_STD_CONCEPTS 1
+#   endif // (__cpp_concepts >= 202002L)
+#  endif // defined(BOOST_ASIO_HAS_CONCEPTS)
+# endif // !defined(BOOST_ASIO_DISABLE_STD_CONCEPTS)
+#endif // !defined(BOOST_ASIO_HAS_STD_CONCEPTS)
+
 // Support template variables on compilers known to allow it.
 #if !defined(BOOST_ASIO_HAS_VARIABLE_TEMPLATES)
 # if !defined(BOOST_ASIO_DISABLE_VARIABLE_TEMPLATES)
@@ -2054,5 +2065,27 @@
 #  endif // defined(BOOST_ASIO_MSVC)
 # endif // !defined(BOOST_ASIO_DISABLE_STD_HASH)
 #endif // !defined(BOOST_ASIO_HAS_STD_HASH)
+
+// Standard library support for std::to_address.
+#if !defined(BOOST_ASIO_HAS_STD_TO_ADDRESS)
+# if !defined(BOOST_ASIO_DISABLE_STD_TO_ADDRESS)
+#  if defined(__clang__)
+#   if (__cplusplus >= 202002)
+#    define BOOST_ASIO_HAS_STD_TO_ADDRESS 1
+#   endif // (__cplusplus >= 202002)
+#  elif defined(__GNUC__)
+#   if (__GNUC__ >= 8)
+#    if (__cplusplus >= 202002)
+#     define BOOST_ASIO_HAS_STD_TO_ADDRESS 1
+#    endif // (__cplusplus >= 202002)
+#   endif // (__GNUC__ >= 8)
+#  endif // defined(__GNUC__)
+#  if defined(BOOST_ASIO_MSVC)
+#   if (_MSC_VER >= 1922) && (_MSVC_LANG >= 202002)
+#    define BOOST_ASIO_HAS_STD_TO_ADDRESS 1
+#   endif // (_MSC_VER >= 1922) && (_MSVC_LANG >= 202002)
+#  endif // defined(BOOST_ASIO_MSVC)
+# endif // !defined(BOOST_ASIO_DISABLE_STD_TO_ADDRESS)
+#endif // !defined(BOOST_ASIO_HAS_STD_TO_ADDRESS)
 
 #endif // BOOST_ASIO_DETAIL_CONFIG_HPP
