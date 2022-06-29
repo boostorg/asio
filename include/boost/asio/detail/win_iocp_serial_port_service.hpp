@@ -138,6 +138,7 @@ public:
       boost::system::error_code& ec)
   {
     ec = boost::asio::error::operation_not_supported;
+    BOOST_ASIO_ERROR_LOCATION(ec);
     return ec;
   }
 

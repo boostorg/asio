@@ -57,6 +57,7 @@ boost::system::error_code win_iocp_file_service::open(
   if (is_open(impl))
   {
     ec = boost::asio::error::already_open;
+    BOOST_ASIO_ERROR_LOCATION(ec);
     return ec;
   }
 
@@ -104,6 +105,7 @@ boost::system::error_code win_iocp_file_service::open(
         DWORD last_error = ::GetLastError();
         ::CloseHandle(handle);
         ec.assign(last_error, boost::asio::error::get_system_category());
+        BOOST_ASIO_ERROR_LOCATION(ec);
         return ec;
       }
     }
@@ -112,12 +114,14 @@ boost::system::error_code win_iocp_file_service::open(
     if (ec)
       ::CloseHandle(handle);
     impl.offset_ = 0;
+    BOOST_ASIO_ERROR_LOCATION(ec);
     return ec;
   }
   else
   {
     DWORD last_error = ::GetLastError();
     ec.assign(last_error, boost::asio::error::get_system_category());
+    BOOST_ASIO_ERROR_LOCATION(ec);
     return ec;
   }
 }
@@ -136,6 +140,7 @@ uint64_t win_iocp_file_service::size(
   {
     DWORD last_error = ::GetLastError();
     ec.assign(last_error, boost::asio::error::get_system_category());
+    BOOST_ASIO_ERROR_LOCATION(ec);
     return 0;
   }
 }
@@ -162,12 +167,14 @@ boost::system::error_code win_iocp_file_service::resize(
       boost::asio::error::clear(ec);
     else
       ec.assign(last_error, boost::asio::error::get_system_category());
+    BOOST_ASIO_ERROR_LOCATION(ec);
     return ec;
   }
   else
   {
     DWORD last_error = ::GetLastError();
     ec.assign(last_error, boost::asio::error::get_system_category());
+    BOOST_ASIO_ERROR_LOCATION(ec);
     return ec;
   }
 }
@@ -186,6 +193,7 @@ boost::system::error_code win_iocp_file_service::sync_all(
   {
     DWORD last_error = ::GetLastError();
     ec.assign(last_error, boost::asio::error::get_system_category());
+    BOOST_ASIO_ERROR_LOCATION(ec);
     return ec;
   }
 }
@@ -225,6 +233,7 @@ uint64_t win_iocp_file_service::seek(
     break;
   default:
     ec = boost::asio::error::invalid_argument;
+    BOOST_ASIO_ERROR_LOCATION(ec);
     return 0;
   }
 
@@ -240,6 +249,7 @@ uint64_t win_iocp_file_service::seek(
   {
     DWORD last_error = ::GetLastError();
     ec.assign(last_error, boost::asio::error::get_system_category());
+    BOOST_ASIO_ERROR_LOCATION(ec);
     return 0;
   }
 }
