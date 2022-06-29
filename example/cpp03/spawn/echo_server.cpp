@@ -8,6 +8,7 @@
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
+#include <boost/asio/detached.hpp>
 #include <boost/asio/io_context.hpp>
 #include <boost/asio/ip/tcp.hpp>
 #include <boost/asio/spawn.hpp>
@@ -39,10 +40,12 @@ public:
   {
     boost::asio::spawn(strand_,
         boost::bind(&session::echo,
-          shared_from_this(), boost::placeholders::_1));
+          shared_from_this(), boost::placeholders::_1),
+        boost::asio::detached_t());
     boost::asio::spawn(strand_,
         boost::bind(&session::timeout,
-          shared_from_this(), boost::placeholders::_1));
+          shared_from_this(), boost::placeholders::_1),
+        boost::asio::detached_t());
   }
 
 private:
@@ -108,8 +111,9 @@ int main(int argc, char* argv[])
     boost::asio::io_context io_context;
 
     boost::asio::spawn(io_context,
-        boost::bind(do_accept,
-          boost::ref(io_context), atoi(argv[1]), boost::placeholders::_1));
+        boost::bind(do_accept, boost::ref(io_context),
+          atoi(argv[1]), boost::placeholders::_1),
+        boost::asio::detached_t());
 
     io_context.run();
   }

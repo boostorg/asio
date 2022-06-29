@@ -844,6 +844,35 @@
 # endif // !defined(BOOST_ASIO_DISABLE_BOOST_DATE_TIME)
 #endif // !defined(BOOST_ASIO_HAS_BOOST_DATE_TIME)
 
+// Boost support for the Coroutine library.
+#if !defined(BOOST_ASIO_HAS_BOOST_COROUTINE)
+# if !defined(BOOST_ASIO_DISABLE_BOOST_COROUTINE)
+#  define BOOST_ASIO_HAS_BOOST_COROUTINE 1
+# endif // !defined(BOOST_ASIO_DISABLE_BOOST_COROUTINE)
+#endif // !defined(BOOST_ASIO_HAS_BOOST_COROUTINE)
+
+// Boost support for the Context library's fibers.
+#if !defined(BOOST_ASIO_HAS_BOOST_CONTEXT_FIBER)
+# if !defined(BOOST_ASIO_DISABLE_BOOST_CONTEXT_FIBER)
+#  if defined(__clang__)
+#   if (__cplusplus >= 201103)
+#    define BOOST_ASIO_HAS_BOOST_CONTEXT_FIBER 1
+#   endif // (__cplusplus >= 201103)
+#  elif defined(__GNUC__)
+#   if ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 8)) || (__GNUC__ > 4)
+#    if (__cplusplus >= 201103) || defined(__GXX_EXPERIMENTAL_CXX0X__)
+#     define BOOST_ASIO_HAS_BOOST_CONTEXT_FIBER 1
+#    endif // (__cplusplus >= 201103) || defined(__GXX_EXPERIMENTAL_CXX0X__)
+#   endif // ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 8)) || (__GNUC__ > 4)
+#  endif // defined(__GNUC__)
+#  if defined(BOOST_ASIO_MSVC)
+#   if (_MSVC_LANG >= 201103)
+#    define BOOST_ASIO_HAS_BOOST_CONTEXT_FIBER 1
+#   endif // (_MSC_LANG >= 201103)
+#  endif // defined(BOOST_ASIO_MSVC)
+# endif // !defined(BOOST_ASIO_DISABLE_BOOST_CONTEXT_FIBER)
+#endif // !defined(BOOST_ASIO_HAS_BOOST_CONTEXT_FIBER)
+
 // Standard library support for addressof.
 #if !defined(BOOST_ASIO_HAS_STD_ADDRESSOF)
 # if !defined(BOOST_ASIO_DISABLE_STD_ADDRESSOF)
