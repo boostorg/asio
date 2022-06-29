@@ -53,6 +53,6 @@ void append_test()
 
 BOOST_ASIO_TEST_SUITE
 (
-  "experimental/basic_channel",
+  "experimental/append",
   BOOST_ASIO_TEST_CASE(append_test)
 )
