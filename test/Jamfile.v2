@@ -128,6 +128,8 @@ test-suite "asio" :
   [ link coroutine.cpp : $(USE_SELECT) : coroutine_select ]
   [ run deadline_timer.cpp ]
   [ run deadline_timer.cpp : : : $(USE_SELECT) : deadline_timer_select ]
+  [ run deferred.cpp ]
+  [ run deferred.cpp : : : $(USE_SELECT) : deferred_select ]
   [ link detached.cpp ]
   [ link detached.cpp : $(USE_SELECT) : detached_select ]
   [ run error.cpp ]

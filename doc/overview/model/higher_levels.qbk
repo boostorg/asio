@@ -26,7 +26,7 @@ facilities, such as:
   [link boost_asio.overview.composition.cpp20_coroutines C++ coroutines], [link
   boost_asio.overview.composition.spawn stackful coroutines], [link
   boost_asio.overview.composition.futures futures], and [link
-  boost_asio.reference.experimental__deferred deferred operations].
+  boost_asio.reference.deferred deferred operations].
 
 * High level support for C++ coroutines that combines support executors and
   cancellation slots to allow for [link

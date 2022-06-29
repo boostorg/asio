@@ -379,11 +379,11 @@ and asynchronous operations.
 
 [heading Deferred]
 
-Examples showing how to use the [link boost_asio.reference.experimental__deferred
-`experimental::deferred`] completion token.
+Examples showing how to use the [link boost_asio.reference.deferred `deferred`]
+completion token.
 
-* [@boost_asio/example/cpp14/deferred/deferred_1.cpp]
-* [@boost_asio/example/cpp14/deferred/deferred_2.cpp]
+* [@boost_asio/example/cpp11/deferred/deferred_1.cpp]
+* [@boost_asio/example/cpp11/deferred/deferred_2.cpp]
 
 
 [heading Fork]
@@ -543,8 +543,8 @@ Examples showing how to use UNIX domain (local) sockets.
 
 [heading Deferred]
 
-Examples showing how to use the [link boost_asio.reference.experimental__deferred
-`experimental::deferred`] completion token.
+Examples showing how to use the [link boost_asio.reference.deferred `deferred`]
+completion token.
 
 * [@boost_asio/example/cpp14/deferred/deferred_1.cpp]
 * [@boost_asio/example/cpp14/deferred/deferred_2.cpp]
