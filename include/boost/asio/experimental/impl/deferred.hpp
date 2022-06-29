@@ -67,6 +67,17 @@ public:
   static auto initiate(BOOST_ASIO_MOVE_ARG(Initiation) initiation,
       experimental::deferred_function<Function> token,
       BOOST_ASIO_MOVE_ARG(InitArgs)... init_args)
+    -> decltype(
+        experimental::deferred_sequence<
+          experimental::deferred_async_operation<
+            R(Args...), Initiation, InitArgs...>,
+          Function>(experimental::deferred_init_tag{},
+            experimental::deferred_async_operation<
+              R(Args...), Initiation, InitArgs...>(
+                experimental::deferred_init_tag{},
+                BOOST_ASIO_MOVE_CAST(Initiation)(initiation),
+                BOOST_ASIO_MOVE_CAST(InitArgs)(init_args)...),
+            BOOST_ASIO_MOVE_CAST(Function)(token.function_)))
   {
     return experimental::deferred_sequence<
         experimental::deferred_async_operation<

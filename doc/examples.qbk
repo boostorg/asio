@@ -377,6 +377,15 @@ and asynchronous operations.
 * [@boost_asio/example/cpp11/echo/blocking_udp_echo_server.cpp]
 
 
+[heading Deferred]
+
+Examples showing how to use the [link boost_asio.reference.experimental__deferred
+`experimental::deferred`] completion token.
+
+* [@boost_asio/example/cpp14/deferred/deferred_1.cpp]
+* [@boost_asio/example/cpp14/deferred/deferred_2.cpp]
+
+
 [heading Fork]
 
 These POSIX-specific examples show how to use Boost.Asio in conjunction with the

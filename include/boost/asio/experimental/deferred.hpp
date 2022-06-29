@@ -20,6 +20,7 @@
 #include <boost/asio/associator.hpp>
 #include <boost/asio/async_result.hpp>
 #include <boost/asio/detail/type_traits.hpp>
+#include <boost/asio/detail/utility.hpp>
 
 #include <boost/asio/detail/push_options.hpp>
 
@@ -110,7 +111,7 @@ struct deferred_noop
 #if defined(BOOST_ASIO_HAS_REF_QUALIFIED_FUNCTIONS)
   /// No effect.
   template <typename... Args>
-  decltype(auto) operator()(BOOST_ASIO_MOVE_ARG(Args)...) const &
+  void operator()(BOOST_ASIO_MOVE_ARG(Args)...) const &
   {
   }
 #endif // defined(BOOST_ASIO_HAS_REF_QUALIFIED_FUNCTIONS)
@@ -140,9 +141,16 @@ public:
   {
   }
 
+//private:
+  Function function_;
+
+public:
   template <typename... Args>
-  decltype(auto) operator()(
+  auto operator()(
       BOOST_ASIO_MOVE_ARG(Args)... args) BOOST_ASIO_RVALUE_REF_QUAL
+    -> decltype(
+        BOOST_ASIO_MOVE_CAST(Function)(this->function_)(
+          BOOST_ASIO_MOVE_CAST(Args)(args)...))
   {
     return BOOST_ASIO_MOVE_CAST(Function)(function_)(
         BOOST_ASIO_MOVE_CAST(Args)(args)...);
@@ -150,16 +158,13 @@ public:
 
 #if defined(BOOST_ASIO_HAS_REF_QUALIFIED_FUNCTIONS)
   template <typename... Args>
-  decltype(auto) operator()(
+  auto operator()(
       BOOST_ASIO_MOVE_ARG(Args)... args) const &
+    -> decltype(Function(function_)(BOOST_ASIO_MOVE_CAST(Args)(args)...))
   {
-    return deferred_function(*this)(
-        BOOST_ASIO_MOVE_CAST(Args)(args)...);
+    return Function(function_)(BOOST_ASIO_MOVE_CAST(Args)(args)...);
   }
 #endif // defined(BOOST_ASIO_HAS_REF_QUALIFIED_FUNCTIONS)
-
-//private:
-  Function function_;
 };
 
 #if !defined(GENERATING_DOCUMENTATION)
@@ -187,14 +192,33 @@ private:
   };
 
   template <typename CompletionToken, std::size_t... I>
-  decltype(auto) invoke_helper(
+  auto invoke_helper(
       BOOST_ASIO_MOVE_ARG(CompletionToken) token,
-      std::index_sequence<I...>)
+      boost::asio::detail::index_sequence<I...>)
+    -> decltype(
+        boost::asio::async_initiate<CompletionToken, void(Values...)>(
+          initiate(), token,
+          std::get<I>(
+            BOOST_ASIO_MOVE_CAST(std::tuple<Values...>)(this->values_))...))
   {
     return boost::asio::async_initiate<CompletionToken, void(Values...)>(
         initiate(), token,
         std::get<I>(BOOST_ASIO_MOVE_CAST(std::tuple<Values...>)(values_))...);
   }
+
+#if defined(BOOST_ASIO_HAS_REF_QUALIFIED_FUNCTIONS)
+  template <typename CompletionToken, std::size_t... I>
+  auto const_invoke_helper(
+      BOOST_ASIO_MOVE_ARG(CompletionToken) token,
+      boost::asio::detail::index_sequence<I...>)
+    -> decltype(
+        boost::asio::async_initiate<CompletionToken, void(Values...)>(
+          initiate(), token, std::get<I>(values_)...))
+  {
+    return boost::asio::async_initiate<CompletionToken, void(Values...)>(
+        initiate(), token, std::get<I>(values_)...);
+  }
+#endif // defined(BOOST_ASIO_HAS_REF_QUALIFIED_FUNCTIONS)
 
 public:
   /// Construct a deferred asynchronous operation from the arguments to an
@@ -208,21 +232,30 @@ public:
 
   /// Initiate the deferred operation using the supplied completion token.
   template <BOOST_ASIO_COMPLETION_TOKEN_FOR(void(Values...)) CompletionToken>
-  decltype(auto) operator()(
+  auto operator()(
       BOOST_ASIO_MOVE_ARG(CompletionToken) token) BOOST_ASIO_RVALUE_REF_QUAL
+    -> decltype(
+        this->invoke_helper(
+          BOOST_ASIO_MOVE_CAST(CompletionToken)(token),
+          boost::asio::detail::index_sequence_for<Values...>()))
   {
     return this->invoke_helper(
         BOOST_ASIO_MOVE_CAST(CompletionToken)(token),
-        std::index_sequence_for<Values...>());
+        boost::asio::detail::index_sequence_for<Values...>());
   }
 
 #if defined(BOOST_ASIO_HAS_REF_QUALIFIED_FUNCTIONS)
   template <BOOST_ASIO_COMPLETION_TOKEN_FOR(void(Values...)) CompletionToken>
-  decltype(auto) operator()(
+  auto operator()(
       BOOST_ASIO_MOVE_ARG(CompletionToken) token) const &
+    -> decltype(
+        this->const_invoke_helper(
+          BOOST_ASIO_MOVE_CAST(CompletionToken)(token),
+          boost::asio::detail::index_sequence_for<Values...>()))
   {
-    return deferred_values(*this)(
-        BOOST_ASIO_MOVE_CAST(CompletionToken)(token));
+    return this->const_invoke_helper(
+        BOOST_ASIO_MOVE_CAST(CompletionToken)(token),
+        boost::asio::detail::index_sequence_for<Values...>());
   }
 #endif // defined(BOOST_ASIO_HAS_REF_QUALIFIED_FUNCTIONS)
 };
@@ -239,19 +272,38 @@ template <typename Signature, typename Initiation, typename... InitArgs>
 class BOOST_ASIO_NODISCARD deferred_async_operation
 {
 private:
-  typename decay<Initiation>::type initiation_;
+  typedef typename decay<Initiation>::type initiation_t;
+  initiation_t initiation_;
   typedef std::tuple<typename decay<InitArgs>::type...> init_args_t;
   init_args_t init_args_;
 
   template <typename CompletionToken, std::size_t... I>
-  decltype(auto) invoke_helper(
+  auto invoke_helper(
       BOOST_ASIO_MOVE_ARG(CompletionToken) token,
-      std::index_sequence<I...>)
+      boost::asio::detail::index_sequence<I...>)
+    -> decltype(
+        boost::asio::async_initiate<CompletionToken, Signature>(
+          BOOST_ASIO_MOVE_CAST(initiation_t)(initiation_), token,
+          std::get<I>(BOOST_ASIO_MOVE_CAST(init_args_t)(init_args_))...))
   {
     return boost::asio::async_initiate<CompletionToken, Signature>(
-        BOOST_ASIO_MOVE_CAST(typename decay<Initiation>::type)(initiation_),
-        token, std::get<I>(BOOST_ASIO_MOVE_CAST(init_args_t)(init_args_))...);
+        BOOST_ASIO_MOVE_CAST(initiation_t)(initiation_), token,
+        std::get<I>(BOOST_ASIO_MOVE_CAST(init_args_t)(init_args_))...);
   }
+
+#if defined(BOOST_ASIO_HAS_REF_QUALIFIED_FUNCTIONS)
+  template <typename CompletionToken, std::size_t... I>
+  auto const_invoke_helper(
+      BOOST_ASIO_MOVE_ARG(CompletionToken) token,
+      boost::asio::detail::index_sequence<I...>) const &
+    -> decltype(
+        boost::asio::async_initiate<CompletionToken, Signature>(
+          initiation_t(initiation_), token, std::get<I>(init_args_)...))
+    {
+    return boost::asio::async_initiate<CompletionToken, Signature>(
+        initiation_t(initiation_), token, std::get<I>(init_args_)...);
+  }
+#endif // defined(BOOST_ASIO_HAS_REF_QUALIFIED_FUNCTIONS)
 
 public:
   /// Construct a deferred asynchronous operation from the arguments to an
@@ -267,21 +319,30 @@ public:
 
   /// Initiate the asynchronous operation using the supplied completion token.
   template <BOOST_ASIO_COMPLETION_TOKEN_FOR(Signature) CompletionToken>
-  decltype(auto) operator()(
+  auto operator()(
       BOOST_ASIO_MOVE_ARG(CompletionToken) token) BOOST_ASIO_RVALUE_REF_QUAL
+    -> decltype(
+        this->invoke_helper(
+          BOOST_ASIO_MOVE_CAST(CompletionToken)(token),
+          boost::asio::detail::index_sequence_for<InitArgs...>()))
   {
     return this->invoke_helper(
         BOOST_ASIO_MOVE_CAST(CompletionToken)(token),
-        std::index_sequence_for<InitArgs...>());
+        boost::asio::detail::index_sequence_for<InitArgs...>());
   }
 
 #if defined(BOOST_ASIO_HAS_REF_QUALIFIED_FUNCTIONS)
   template <BOOST_ASIO_COMPLETION_TOKEN_FOR(Signature) CompletionToken>
-  decltype(auto) operator()(
+  auto operator()(
       BOOST_ASIO_MOVE_ARG(CompletionToken) token) const &
+    -> decltype(
+        this->const_invoke_helper(
+          BOOST_ASIO_MOVE_CAST(CompletionToken)(token),
+          boost::asio::detail::index_sequence_for<InitArgs...>()))
   {
-    return deferred_async_operation(*this)(
-        BOOST_ASIO_MOVE_CAST(CompletionToken)(token));
+    return this->const_invoke_helper(
+        BOOST_ASIO_MOVE_CAST(CompletionToken)(token),
+        boost::asio::detail::index_sequence_for<InitArgs...>());
   }
 #endif // defined(BOOST_ASIO_HAS_REF_QUALIFIED_FUNCTIONS)
 };
@@ -303,35 +364,6 @@ private:
     typename detail::deferred_signature<Head>::type, Tail>::type
       signature;
 
-public:
-  template <typename H, typename T>
-  BOOST_ASIO_CONSTEXPR explicit deferred_sequence(deferred_init_tag,
-      BOOST_ASIO_MOVE_ARG(H) head, BOOST_ASIO_MOVE_ARG(T) tail)
-    : head_(BOOST_ASIO_MOVE_CAST(H)(head)),
-      tail_(BOOST_ASIO_MOVE_CAST(T)(tail))
-  {
-  }
-
-  template <BOOST_ASIO_COMPLETION_TOKEN_FOR(signature) CompletionToken>
-  decltype(auto) operator()(
-      BOOST_ASIO_MOVE_ARG(CompletionToken) token) BOOST_ASIO_RVALUE_REF_QUAL
-  {
-    return boost::asio::async_initiate<CompletionToken, signature>(
-        initiate(), token, BOOST_ASIO_MOVE_OR_LVALUE(Head)(head_),
-        BOOST_ASIO_MOVE_OR_LVALUE(Tail)(tail_));
-  }
-
-#if defined(BOOST_ASIO_HAS_REF_QUALIFIED_FUNCTIONS)
-  template <BOOST_ASIO_COMPLETION_TOKEN_FOR(signature) CompletionToken>
-  decltype(auto) operator()(
-      BOOST_ASIO_MOVE_ARG(CompletionToken) token) const &
-  {
-    return deferred_sequence(*this)(
-        BOOST_ASIO_MOVE_CAST(CompletionToken)(token));
-  }
-#endif // defined(BOOST_ASIO_HAS_REF_QUALIFIED_FUNCTIONS)
-
-private:
   struct initiate
   {
     template <typename Handler>
@@ -349,6 +381,43 @@ private:
 
   Head head_;
   Tail tail_;
+
+public:
+  template <typename H, typename T>
+  BOOST_ASIO_CONSTEXPR explicit deferred_sequence(deferred_init_tag,
+      BOOST_ASIO_MOVE_ARG(H) head, BOOST_ASIO_MOVE_ARG(T) tail)
+    : head_(BOOST_ASIO_MOVE_CAST(H)(head)),
+      tail_(BOOST_ASIO_MOVE_CAST(T)(tail))
+  {
+  }
+
+  template <BOOST_ASIO_COMPLETION_TOKEN_FOR(signature) CompletionToken>
+  auto operator()(
+      BOOST_ASIO_MOVE_ARG(CompletionToken) token) BOOST_ASIO_RVALUE_REF_QUAL
+    -> decltype(
+        boost::asio::async_initiate<CompletionToken, signature>(
+          declval<initiate>(), token,
+          BOOST_ASIO_MOVE_OR_LVALUE(Head)(this->head_),
+          BOOST_ASIO_MOVE_OR_LVALUE(Tail)(this->tail_)))
+  {
+    return boost::asio::async_initiate<CompletionToken, signature>(
+        initiate(), token,
+        BOOST_ASIO_MOVE_OR_LVALUE(Head)(head_),
+        BOOST_ASIO_MOVE_OR_LVALUE(Tail)(tail_));
+  }
+
+#if defined(BOOST_ASIO_HAS_REF_QUALIFIED_FUNCTIONS)
+  template <BOOST_ASIO_COMPLETION_TOKEN_FOR(signature) CompletionToken>
+  auto operator()(
+      BOOST_ASIO_MOVE_ARG(CompletionToken) token) const &
+    -> decltype(
+        boost::asio::async_initiate<CompletionToken, signature>(
+          initiate(), token, head_, tail_))
+  {
+    return boost::asio::async_initiate<CompletionToken, signature>(
+        initiate(), token, head_, tail_);
+  }
+#endif // defined(BOOST_ASIO_HAS_REF_QUALIFIED_FUNCTIONS)
 };
 
 #if !defined(GENERATING_DOCUMENTATION)
@@ -363,6 +432,23 @@ template <typename OnTrue = deferred_noop,
     typename OnFalse = deferred_noop>
 class BOOST_ASIO_NODISCARD deferred_conditional
 {
+private:
+  template <typename T, typename F> friend class deferred_conditional;
+
+  // Helper constructor.
+  template <typename T, typename F>
+  explicit deferred_conditional(bool b, BOOST_ASIO_MOVE_ARG(T) on_true,
+      BOOST_ASIO_MOVE_ARG(F) on_false)
+    : on_true_(BOOST_ASIO_MOVE_CAST(T)(on_true)),
+      on_false_(BOOST_ASIO_MOVE_CAST(F)(on_false)),
+      bool_(b)
+  {
+  }
+
+  OnTrue on_true_;
+  OnFalse on_false_;
+  bool bool_;
+
 public:
   /// Construct a deferred conditional with the value to determine which branch
   /// will be executed.
@@ -376,6 +462,9 @@ public:
   /// Invoke the conditional branch bsaed on the stored alue.
   template <typename... Args>
   auto operator()(BOOST_ASIO_MOVE_ARG(Args)... args) BOOST_ASIO_RVALUE_REF_QUAL
+    -> decltype(
+        BOOST_ASIO_MOVE_OR_LVALUE(OnTrue)(on_true_)(
+          BOOST_ASIO_MOVE_CAST(Args)(args)...))
   {
     if (bool_)
     {
@@ -392,9 +481,16 @@ public:
 #if defined(BOOST_ASIO_HAS_REF_QUALIFIED_FUNCTIONS)
   template <typename... Args>
   auto operator()(BOOST_ASIO_MOVE_ARG(Args)... args) const &
+    -> decltype(on_true_(BOOST_ASIO_MOVE_CAST(Args)(args)...))
   {
-    return deferred_conditional(*this)(
-        BOOST_ASIO_MOVE_CAST(Args)(args)...);
+    if (bool_)
+    {
+      return on_true_(BOOST_ASIO_MOVE_CAST(Args)(args)...);
+    }
+    else
+    {
+      return on_false_(BOOST_ASIO_MOVE_CAST(Args)(args)...);
+    }
   }
 #endif // defined(BOOST_ASIO_HAS_REF_QUALIFIED_FUNCTIONS)
 
@@ -439,23 +535,6 @@ public:
         bool_, BOOST_ASIO_MOVE_CAST(OnTrue)(on_true_),
         BOOST_ASIO_MOVE_CAST(T)(on_false));
   }
-
-private:
-  template <typename T, typename F> friend class deferred_conditional;
-
-  // Helper constructor.
-  template <typename T, typename F>
-  explicit deferred_conditional(bool b, BOOST_ASIO_MOVE_ARG(T) on_true,
-      BOOST_ASIO_MOVE_ARG(F) on_false)
-    : on_true_(BOOST_ASIO_MOVE_CAST(T)(on_true)),
-      on_false_(BOOST_ASIO_MOVE_CAST(F)(on_false)),
-      bool_(b)
-  {
-  }
-
-  OnTrue on_true_;
-  OnFalse on_false_;
-  bool bool_;
 };
 
 #if !defined(GENERATING_DOCUMENTATION)

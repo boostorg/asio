@@ -1318,6 +1318,28 @@
 # endif // !defined(BOOST_ASIO_DISABLE_SOURCE_LOCATION)
 #endif // !defined(BOOST_ASIO_HAS_SOURCE_LOCATION)
 
+// Standard library support for std::index_sequence.
+#if !defined(BOOST_ASIO_HAS_STD_INDEX_SEQUENCE)
+# if !defined(BOOST_ASIO_DISABLE_STD_INDEX_SEQUENCE)
+#  if defined(__clang__)
+#   if (__cplusplus >= 201402)
+#    define BOOST_ASIO_HAS_STD_INDEX_SEQUENCE 1
+#   endif // (__cplusplus >= 201402)
+#  elif defined(__GNUC__)
+#   if (__GNUC__ >= 7)
+#    if (__cplusplus >= 201402)
+#     define BOOST_ASIO_HAS_STD_INDEX_SEQUENCE 1
+#    endif // (__cplusplus >= 201402)
+#   endif // (__GNUC__ >= 7)
+#  endif // defined(__GNUC__)
+#  if defined(BOOST_ASIO_MSVC)
+#   if (_MSC_VER >= 1910) && (_MSVC_LANG >= 201402)
+#    define BOOST_ASIO_HAS_STD_INDEX_SEQUENCE 1
+#   endif // (_MSC_VER >= 1910) && (_MSVC_LANG >= 201402)
+#  endif // defined(BOOST_ASIO_MSVC)
+# endif // !defined(BOOST_ASIO_DISABLE_STD_INDEX_SEQUENCE)
+#endif // !defined(BOOST_ASIO_HAS_STD_INDEX_SEQUENCE)
+
 // Windows App target. Windows but with a limited API.
 #if !defined(BOOST_ASIO_WINDOWS_APP)
 # if defined(_WIN32_WINNT) && (_WIN32_WINNT >= 0x0603)
