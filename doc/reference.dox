@@ -211,6 +211,8 @@ PREDEFINED             = GENERATING_DOCUMENTATION \
                          BOOST_ASIO_COMPLETION_SIGNATURES_TARGS=Signatures... \
                          BOOST_ASIO_INITFN_RESULT_TYPE(t,a)=void_or_deduced \
                          BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(t,a)=void_or_deduced \
+                         BOOST_ASIO_INITFN_AUTO_RESULT_TYPE_PREFIX(t,a)=void_or_deduced \
+                         BOOST_ASIO_INITFN_AUTO_RESULT_TYPE_SUFFIX(e)= \
                          BOOST_ASIO_DEFAULT_COMPLETION_TOKEN_TYPE(e)==default_token \
                          BOOST_ASIO_DEFAULT_COMPLETION_TOKEN(e)==default_token \
                          BOOST_ASIO_SVC_TPARAM= \

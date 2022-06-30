@@ -10,7 +10,6 @@
 
 #include <boost/asio.hpp>
 #include <boost/thread/thread.hpp>
-#include <boost/asio/experimental/append.hpp>
 #include <boost/asio/experimental/parallel_group.hpp>
 #include <algorithm>
 #include <chrono>
@@ -90,7 +89,7 @@ auto parallel_sort(
               [self = std::make_shared<self_type>(std::move(self))]
               {
                 boost::asio::dispatch(
-                    boost::asio::experimental::append(
+                    boost::asio::append(
                       std::move(*self), 0));
               }
             );

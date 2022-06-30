@@ -57,6 +57,7 @@ boost::system::error_code win_iocp_file_service::open(
   if (is_open(impl))
   {
     ec = boost::asio::error::already_open;
+    BOOST_ASIO_ERROR_LOCATION(ec);
     return ec;
   }
 
@@ -104,6 +105,7 @@ boost::system::error_code win_iocp_file_service::open(
         DWORD last_error = ::GetLastError();
         ::CloseHandle(handle);
         ec.assign(last_error, boost::asio::error::get_system_category());
+        BOOST_ASIO_ERROR_LOCATION(ec);
         return ec;
       }
     }
@@ -112,12 +114,14 @@ boost::system::error_code win_iocp_file_service::open(
     if (ec)
       ::CloseHandle(handle);
     impl.offset_ = 0;
+    BOOST_ASIO_ERROR_LOCATION(ec);
     return ec;
   }
   else
   {
     DWORD last_error = ::GetLastError();
     ec.assign(last_error, boost::asio::error::get_system_category());
+    BOOST_ASIO_ERROR_LOCATION(ec);
     return ec;
   }
 }
@@ -129,13 +133,14 @@ uint64_t win_iocp_file_service::size(
   LARGE_INTEGER result;
   if (::GetFileSizeEx(native_handle(impl), &result))
   {
-    ec.assign(0, ec.category());
+    boost::asio::error::clear(ec);
     return static_cast<uint64_t>(result.QuadPart);
   }
   else
   {
     DWORD last_error = ::GetLastError();
     ec.assign(last_error, boost::asio::error::get_system_category());
+    BOOST_ASIO_ERROR_LOCATION(ec);
     return 0;
   }
 }
@@ -159,15 +164,17 @@ boost::system::error_code win_iocp_file_service::resize(
     }
 
     if (result)
-      ec.assign(0, ec.category());
+      boost::asio::error::clear(ec);
     else
       ec.assign(last_error, boost::asio::error::get_system_category());
+    BOOST_ASIO_ERROR_LOCATION(ec);
     return ec;
   }
   else
   {
     DWORD last_error = ::GetLastError();
     ec.assign(last_error, boost::asio::error::get_system_category());
+    BOOST_ASIO_ERROR_LOCATION(ec);
     return ec;
   }
 }
@@ -179,13 +186,14 @@ boost::system::error_code win_iocp_file_service::sync_all(
   BOOL result = ::FlushFileBuffers(native_handle(impl));
   if (result)
   {
-    ec.assign(0, ec.category());
+    boost::asio::error::clear(ec);
     return ec;
   }
   else
   {
     DWORD last_error = ::GetLastError();
     ec.assign(last_error, boost::asio::error::get_system_category());
+    BOOST_ASIO_ERROR_LOCATION(ec);
     return ec;
   }
 }
@@ -200,7 +208,7 @@ boost::system::error_code win_iocp_file_service::sync_data(
     if (!nt_flush_buffers_file_ex_(native_handle(impl),
           flush_flags_file_data_sync_only, 0, 0, &status))
     {
-      ec.assign(0, ec.category());
+      boost::asio::error::clear(ec);
       return ec;
     }
   }
@@ -225,6 +233,7 @@ uint64_t win_iocp_file_service::seek(
     break;
   default:
     ec = boost::asio::error::invalid_argument;
+    BOOST_ASIO_ERROR_LOCATION(ec);
     return 0;
   }
 
@@ -233,13 +242,14 @@ uint64_t win_iocp_file_service::seek(
   if (::SetFilePointerEx(native_handle(impl), distance, &new_offset, method))
   {
     impl.offset_ = new_offset.QuadPart;
-    ec.assign(0, ec.category());
+    boost::asio::error::clear(ec);
     return impl.offset_;
   }
   else
   {
     DWORD last_error = ::GetLastError();
     ec.assign(last_error, boost::asio::error::get_system_category());
+    BOOST_ASIO_ERROR_LOCATION(ec);
     return 0;
   }
 }

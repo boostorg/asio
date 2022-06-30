@@ -48,6 +48,10 @@ project
   ;
 
 test-suite "asio" :
+  [ run append.cpp ]
+  [ run append.cpp : : : $(USE_SELECT) : append_select ]
+  [ run as_tuple.cpp ]
+  [ run as_tuple.cpp : : : $(USE_SELECT) : as_tuple_select ]
   [ link associated_allocator.cpp ]
   [ link associated_allocator.cpp : $(USE_SELECT) : associated_allocator_select ]
   [ link associated_cancellation_slot.cpp ]
@@ -124,6 +128,8 @@ test-suite "asio" :
   [ link coroutine.cpp : $(USE_SELECT) : coroutine_select ]
   [ run deadline_timer.cpp ]
   [ run deadline_timer.cpp : : : $(USE_SELECT) : deadline_timer_select ]
+  [ run deferred.cpp ]
+  [ run deferred.cpp : : : $(USE_SELECT) : deferred_select ]
   [ link detached.cpp ]
   [ link detached.cpp : $(USE_SELECT) : detached_select ]
   [ run error.cpp ]
@@ -200,6 +206,8 @@ test-suite "asio" :
   [ link posix/descriptor_base.cpp : $(USE_SELECT) : posix_descriptor_base_select ]
   [ link posix/stream_descriptor.cpp : : posix_stream_descriptor ]
   [ link posix/stream_descriptor.cpp : $(USE_SELECT) : posix_stream_descriptor_select ]
+  [ run prepend.cpp ]
+  [ run prepend.cpp : : : $(USE_SELECT) : prepend_select ]
   [ link random_access_file.cpp ]
   [ link random_access_file.cpp : $(USE_SELECT) : random_access_file_select ]
   [ run read.cpp ]

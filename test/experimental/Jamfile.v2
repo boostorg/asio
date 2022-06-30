@@ -40,10 +40,6 @@ project
   ;
 
 test-suite "asio-experimental" :
-  [ run append.cpp ]
-  [ run append.cpp : : : $(USE_SELECT) : append_select ]
-  [ run as_tuple.cpp ]
-  [ run as_tuple.cpp : : : $(USE_SELECT) : as_tuple_select ]
   [ run awaitable_operators.cpp ]
   [ run awaitable_operators.cpp : : : $(USE_SELECT) : awaitable_operators_select ]
   [ run basic_channel.cpp ]
@@ -56,10 +52,6 @@ test-suite "asio-experimental" :
   [ run channel_traits.cpp : : : $(USE_SELECT) : channel_traits_select ]
   [ run concurrent_channel.cpp ]
   [ run concurrent_channel.cpp : : : $(USE_SELECT) : concurrent_channel_select ]
-  [ run deferred.cpp ]
-  [ run deferred.cpp : : : $(USE_SELECT) : deferred_select ]
-  [ run prepend.cpp ]
-  [ run prepend.cpp : : : $(USE_SELECT) : prepend_select ]
   [ run promise.cpp ]
   [ run promise.cpp : : : $(USE_SELECT) : promise_select ]
   ;

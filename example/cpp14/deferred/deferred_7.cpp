@@ -9,12 +9,10 @@
 //
 
 #include <boost/asio.hpp>
-#include <boost/asio/experimental/append.hpp>
-#include <boost/asio/experimental/deferred.hpp>
 #include <iostream>
 
-using boost::asio::experimental::append;
-using boost::asio::experimental::deferred;
+using boost::asio::append;
+using boost::asio::deferred;
 
 template <typename CompletionToken>
 auto async_wait_twice(boost::asio::steady_timer& timer, CompletionToken&& token)

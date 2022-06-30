@@ -223,11 +223,10 @@
           <bridgehead renderas="sect3">Free Functions</bridgehead>
           <simplelist type="vert" columns="1">
             <member><link linkend="boost_asio.reference.execution_context.add_service">add_service</link></member>
-            <member><link linkend="boost_asio.reference.experimental__append">experimental::append</link></member>
+            <member><link linkend="boost_asio.reference.append">append</link></member>
+            <member><link linkend="boost_asio.reference.as_tuple">as_tuple</link></member>
             <member><link linkend="boost_asio.reference.experimental__as_single">experimental::as_single</link></member>
-            <member><link linkend="boost_asio.reference.experimental__as_tuple">experimental::as_tuple</link></member>
             <member><link linkend="boost_asio.reference.experimental__make_parallel_group">experimental::make_parallel_group</link></member>
-            <member><link linkend="boost_asio.reference.experimental__prepend">experimental::prepend</link></member>
             <member><link linkend="boost_asio.reference.asio_handler_allocate">asio_handler_allocate</link> (deprecated)</member>
             <member><link linkend="boost_asio.reference.asio_handler_deallocate">asio_handler_deallocate</link> (deprecated)</member>
             <member><link linkend="boost_asio.reference.asio_handler_invoke">asio_handler_invoke</link> (deprecated)</member>
@@ -247,6 +246,7 @@
             <member><link linkend="boost_asio.reference.make_strand">make_strand</link></member>
             <member><link linkend="boost_asio.reference.make_work_guard">make_work_guard</link></member>
             <member><link linkend="boost_asio.reference.post">post</link></member>
+            <member><link linkend="boost_asio.reference.prepend">prepend</link></member>
             <member><link linkend="boost_asio.reference.redirect_error">redirect_error</link></member>
             <member><link linkend="boost_asio.reference.spawn">spawn</link></member>
             <member><link linkend="boost_asio.reference.this_coro__reset_cancellation_state">this_coro::reset_cancellation_state</link></member>
@@ -257,6 +257,8 @@
         <entry valign="top">
           <bridgehead renderas="sect3">Class Templates</bridgehead>
           <simplelist type="vert" columns="1">
+            <member><link linkend="boost_asio.reference.append_t">append_t</link></member>
+            <member><link linkend="boost_asio.reference.as_tuple_t">as_tuple_t</link></member>
             <member><link linkend="boost_asio.reference.async_completion">async_completion</link></member>
             <member><link linkend="boost_asio.reference.awaitable">awaitable</link></member>
             <member><link linkend="boost_asio.reference.basic_io_object">basic_io_object</link></member>
@@ -264,18 +266,15 @@
             <member><link linkend="boost_asio.reference.basic_yield_context">basic_yield_context</link></member>
             <member><link linkend="boost_asio.reference.cancellation_filter">cancellation_filter</link></member>
             <member><link linkend="boost_asio.reference.cancellation_slot_binder">cancellation_slot_binder</link></member>
-            <member><link linkend="boost_asio.reference.experimental__deferred_t">experimental::deferred_t</link></member>
+            <member><link linkend="boost_asio.reference.deferred_t">deferred_t</link></member>
             <member><link linkend="boost_asio.reference.executor_binder">executor_binder</link></member>
             <member><link linkend="boost_asio.reference.executor_work_guard">executor_work_guard</link></member>
-            <member><link linkend="boost_asio.reference.experimental__append_t">experimental::append_t</link></member>
             <member><link linkend="boost_asio.reference.experimental__as_single_t">experimental::as_single_t</link></member>
-            <member><link linkend="boost_asio.reference.experimental__as_tuple_t">experimental::as_tuple_t</link></member>
             <member><link linkend="boost_asio.reference.experimental__basic_channel">experimental::basic_channel</link></member>
             <member><link linkend="boost_asio.reference.experimental__basic_concurrent_channel">experimental::basic_concurrent_channel</link></member>
             <member><link linkend="boost_asio.reference.experimental__channel_traits">experimental::channel_traits</link></member>
             <member><link linkend="boost_asio.reference.experimental__coro">experimental::coro</link></member>
             <member><link linkend="boost_asio.reference.experimental__parallel_group">experimental::parallel_group</link></member>
-            <member><link linkend="boost_asio.reference.experimental__prepend_t">experimental::prepend_t</link></member>
             <member><link linkend="boost_asio.reference.experimental__promise_lt__void_lp_Ts_ellipsis__rp__comma__Executor__gt_">experimental::promise</link></member>
             <member><link linkend="boost_asio.reference.experimental__use_coro_t">experimental::use_coro_t</link></member>
             <member><link linkend="boost_asio.reference.experimental__wait_for_all">experimental::wait_for_all</link></member>
@@ -283,6 +282,7 @@
             <member><link linkend="boost_asio.reference.experimental__wait_for_one_error">experimental::wait_for_one_error</link></member>
             <member><link linkend="boost_asio.reference.experimental__wait_for_one_success">experimental::wait_for_one_success</link></member>
             <member><link linkend="boost_asio.reference.io_context__basic_executor_type">io_context::basic_executor_type</link></member>
+            <member><link linkend="boost_asio.reference.prepend_t">prepend_t</link></member>
             <member><link linkend="boost_asio.reference.recycling_allocator">recycling_allocator</link></member>
             <member><link linkend="boost_asio.reference.redirect_error_t">redirect_error_t</link></member>
             <member><link linkend="boost_asio.reference.strand">strand</link></member>
@@ -294,7 +294,7 @@
           <simplelist type="vert" columns="1">
             <member><link linkend="boost_asio.reference.detached">detached</link></member>
             <member><link linkend="boost_asio.reference.executor_arg">executor_arg</link></member>
-            <member><link linkend="boost_asio.reference.experimental__deferred">experimental::deferred</link></member>
+            <member><link linkend="boost_asio.reference.deferred">deferred</link></member>
             <member><link linkend="boost_asio.reference.experimental__use_coro">experimental::use_coro</link></member>
             <member><link linkend="boost_asio.reference.this_coro__cancellation_state">this_coro::cancellation_state</link></member>
             <member><link linkend="boost_asio.reference.this_coro__executor">this_coro::executor</link></member>
@@ -326,7 +326,9 @@
             <member><link linkend="boost_asio.reference.associated_executor">associated_executor</link></member>
             <member><link linkend="boost_asio.reference.associator">associator</link></member>
             <member><link linkend="boost_asio.reference.async_result">async_result</link></member>
+            <member><link linkend="boost_asio.reference.completion_signature_of">completion_signature_of</link></member>
             <member><link linkend="boost_asio.reference.default_completion_token">default_completion_token</link></member>
+            <member><link linkend="boost_asio.reference.is_async_operation">is_async_operation</link></member>
             <member><link linkend="boost_asio.reference.is_executor">is_executor</link></member>
             <member><link linkend="boost_asio.reference.uses_executor">uses_executor</link></member>
           </simplelist>

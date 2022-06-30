@@ -94,11 +94,9 @@ expression will no longer throw an exception on resumption.
 
 [heading as_tuple]
 
-[note This is an experimental feature.]
-
-The [link boost_asio.reference.experimental__as_tuple `experimental::as_tuple`]
-adapter can be used to specify that the completion handler arguments should be
-combined into a single tuple argument.
+The [link boost_asio.reference.as_tuple `as_tuple`] adapter can be used to specify
+that the completion handler arguments should be combined into a single tuple
+argument.
 
 For example, the `as_tuple` adapter may be used in conjunction with [link
 boost_asio.reference.use_awaitable `use_awaitable`] and structured bindings as
@@ -106,11 +104,11 @@ follows:
 
   auto [e, n] =
     co_await my_socket.async_read_some(my_buffer,
-      boost::asio::experimental::as_tuple(boost::asio::use_awaitable));
+      boost::asio::as_tuple(boost::asio::use_awaitable));
 
 This adapter may also be used as a default completion token:
 
-  using default_token = boost::asio::experimental::as_tuple_t<boost::asio::use_awaitable_t<>>;
+  using default_token = boost::asio::as_tuple_t<boost::asio::use_awaitable_t<>>;
   using tcp_socket = default_token::as_default_on_t<tcp::socket>;
   // ...
   boost::asio::awaitable<void> do_read(tcp_socket my_socket)
@@ -152,16 +150,14 @@ specifies two parameters, the handler is passed the result as a tuple:
 
 [heading append]
 
-[note This is an experimental feature.]
-
-The [link boost_asio.reference.experimental__append `experimental::append`]
-completion token adapter can be used to pass additional completion handler
-arguments at the end of the completion signature.
+The [link boost_asio.reference.append `append`] completion token adapter can be
+used to pass additional completion handler arguments at the end of the
+completion signature.
 
 For example:
 
   timer.async_wait(
-      boost::asio::experimental::append(
+      boost::asio::append(
         [](boost::system::error_code ec, int i)
         {
           // ...
@@ -170,7 +166,7 @@ For example:
     );
 
   std::future<int> f = timer.async_wait(
-      boost::asio::experimental::append(
+      boost::asio::append(
         boost::asio::use_future,
         42
       )
@@ -178,16 +174,14 @@ For example:
 
 [heading prepend]
 
-[note This is an experimental feature.]
-
-The [link boost_asio.reference.experimental__prepend `experimental::prepend`]
-completion token adapter can be used to pass additional completion handler
-arguments before the existing completion handler arguments.
+The [link boost_asio.reference.prepend `prepend`] completion token adapter can be
+used to pass additional completion handler arguments before the existing
+completion handler arguments.
 
 For example:
 
   timer.async_wait(
-      boost::asio::experimental::prepend(
+      boost::asio::prepend(
         [](int i, boost::system::error_code ec)
         {
           // ...
@@ -196,7 +190,7 @@ For example:
     );
 
   std::future<std::tuple<int, boost::system::error_code>> f = timer.async_wait(
-      boost::asio::experimental::prepend(
+      boost::asio::prepend(
         boost::asio::use_future,
         42
       )
@@ -208,9 +202,9 @@ For example:
 [link boost_asio.reference.bind_allocator bind_allocator],
 [link boost_asio.reference.bind_cancellation_slot bind_cancellation_slot],
 [link boost_asio.reference.redirect_error redirect_error],
-[link boost_asio.reference.experimental__as_tuple experimental::as_tuple],
+[link boost_asio.reference.as_tuple as_tuple],
 [link boost_asio.reference.experimental__as_single experimental::as_single],
-[link boost_asio.reference.experimental__append experimental::append],
-[link boost_asio.reference.experimental__prepend experimental::prepend].
+[link boost_asio.reference.append append],
+[link boost_asio.reference.prepend prepend].
 
 [endsect]

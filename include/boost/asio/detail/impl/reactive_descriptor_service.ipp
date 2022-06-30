@@ -107,6 +107,7 @@ boost::system::error_code reactive_descriptor_service::assign(
   if (is_open(impl))
   {
     ec = boost::asio::error::already_open;
+    BOOST_ASIO_ERROR_LOCATION(ec);
     return ec;
   }
 
@@ -115,6 +116,7 @@ boost::system::error_code reactive_descriptor_service::assign(
   {
     ec = boost::system::error_code(err,
         boost::asio::error::get_system_category());
+    BOOST_ASIO_ERROR_LOCATION(ec);
     return ec;
   }
 
@@ -153,6 +155,7 @@ boost::system::error_code reactive_descriptor_service::close(
   // We'll just have to assume that other OSes follow the same behaviour.)
   construct(impl);
 
+  BOOST_ASIO_ERROR_LOCATION(ec);
   return ec;
 }
 
@@ -182,6 +185,7 @@ boost::system::error_code reactive_descriptor_service::cancel(
   if (!is_open(impl))
   {
     ec = boost::asio::error::bad_descriptor;
+    BOOST_ASIO_ERROR_LOCATION(ec);
     return ec;
   }
 

@@ -59,6 +59,9 @@ namespace asio {
 template <typename Executor = any_io_executor>
 class basic_readable_pipe
 {
+private:
+  class initiate_async_read_some;
+
 public:
   /// The type of the executor associated with the object.
   typedef Executor executor_type;
@@ -199,6 +202,53 @@ public:
   basic_readable_pipe& operator=(basic_readable_pipe&& other)
   {
     impl_ = std::move(other.impl_);
+    return *this;
+  }
+
+  // All pipes have access to each other's implementations.
+  template <typename Executor1>
+  friend class basic_readable_pipe;
+
+  /// Move-construct a basic_readable_pipe from a pipe of another executor type.
+  /**
+   * This constructor moves a pipe from one object to another.
+   *
+   * @param other The other basic_readable_pipe object from which the move will
+   * occur.
+   *
+   * @note Following the move, the moved-from object is in the same state as if
+   * constructed using the @c basic_readable_pipe(const executor_type&)
+   * constructor.
+   */
+  template <typename Executor1>
+  basic_readable_pipe(basic_readable_pipe<Executor1>&& other,
+      typename constraint<
+        is_convertible<Executor1, Executor>::value,
+        defaulted_constraint
+      >::type = defaulted_constraint())
+    : impl_(std::move(other.impl_))
+  {
+  }
+
+  /// Move-assign a basic_readable_pipe from a pipe of another executor type.
+  /**
+   * This assignment operator moves a pipe from one object to another.
+   *
+   * @param other The other basic_readable_pipe object from which the move will
+   * occur.
+   *
+   * @note Following the move, the moved-from object is in the same state as if
+   * constructed using the @c basic_readable_pipe(const executor_type&)
+   * constructor.
+   */
+  template <typename Executor1>
+  typename constraint<
+    is_convertible<Executor1, Executor>::value,
+    basic_readable_pipe&
+  >::type operator=(basic_readable_pipe<Executor1>&& other)
+  {
+    basic_readable_pipe tmp(std::move(other));
+    impl_ = std::move(tmp.impl_);
     return *this;
   }
 #endif // defined(BOOST_ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
@@ -462,11 +512,15 @@ public:
       BOOST_ASIO_COMPLETION_TOKEN_FOR(void (boost::system::error_code,
         std::size_t)) ReadToken
           BOOST_ASIO_DEFAULT_COMPLETION_TOKEN_TYPE(executor_type)>
-  BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(ReadToken,
+  BOOST_ASIO_INITFN_AUTO_RESULT_TYPE_PREFIX(ReadToken,
       void (boost::system::error_code, std::size_t))
   async_read_some(const MutableBufferSequence& buffers,
       BOOST_ASIO_MOVE_ARG(ReadToken) token
         BOOST_ASIO_DEFAULT_COMPLETION_TOKEN(executor_type))
+    BOOST_ASIO_INITFN_AUTO_RESULT_TYPE_SUFFIX((
+      async_initiate<ReadToken,
+        void (boost::system::error_code, std::size_t)>(
+          declval<initiate_async_read_some>(), token, buffers)))
   {
     return async_initiate<ReadToken,
       void (boost::system::error_code, std::size_t)>(
