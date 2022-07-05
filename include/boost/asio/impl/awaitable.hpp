@@ -397,7 +397,12 @@ public:
 
       void await_suspend(coroutine_handle<void>) noexcept
       {
-        function_(this_);
+        this_->after_suspend(
+            [](void* arg)
+            {
+              result* r = static_cast<result*>(arg);
+              r->function_(r->this_);
+            }, this);
       }
 
       void await_resume() const noexcept
@@ -461,9 +466,25 @@ public:
     caller_ = nullptr;
   }
 
+  struct resume_context
+  {
+    void (*after_suspend_fn_)(void*) = nullptr;
+    void *after_suspend_arg_ = nullptr;
+  };
+
   void resume()
   {
+    resume_context context;
+    resume_context_ = &context;
     coro_.resume();
+    if (context.after_suspend_fn_)
+      context.after_suspend_fn_(context.after_suspend_arg_);
+  }
+
+  void after_suspend(void (*fn)(void*), void* arg)
+  {
+    resume_context_->after_suspend_fn_ = fn;
+    resume_context_->after_suspend_arg_ = arg;
   }
 
   void destroy()
@@ -476,6 +497,7 @@ protected:
   awaitable_thread<Executor>* attached_thread_ = nullptr;
   awaitable_frame_base<Executor>* caller_ = nullptr;
   std::exception_ptr pending_exception_ = nullptr;
+  resume_context* resume_context_ = nullptr;
 };
 
 template <typename T, typename Executor>
@@ -1075,7 +1097,13 @@ public:
 
   void await_suspend(coroutine_handle<void>)
   {
-    std::move(op_)(handler_type(frame_->detach_thread(), result_));
+    frame_->after_suspend(
+        [](void* arg)
+        {
+          awaitable_async_op* self = static_cast<awaitable_async_op*>(arg);
+          std::move(self->op_)(
+              handler_type(self->frame_->detach_thread(), self->result_));
+        }, this);
   }
 
   auto await_resume()
