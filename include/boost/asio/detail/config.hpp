@@ -626,9 +626,11 @@
 #     define BOOST_ASIO_HAS_STD_ALIGNED_ALLOC 1
 #    endif // defined(_GLIBCXX_HAVE_ALIGNED_ALLOC)
 #   elif defined(__GNUC__)
-#    if defined(_GLIBCXX_HAVE_ALIGNED_ALLOC)
-#     define BOOST_ASIO_HAS_STD_ALIGNED_ALLOC 1
-#    endif // defined(_GLIBCXX_HAVE_ALIGNED_ALLOC)
+#    if ((__GNUC__ == 7) && (__GNUC_MINOR__ >= 4)) || (__GNUC__ > 7)
+#     if defined(_GLIBCXX_HAVE_ALIGNED_ALLOC)
+#      define BOOST_ASIO_HAS_STD_ALIGNED_ALLOC 1
+#     endif // defined(_GLIBCXX_HAVE_ALIGNED_ALLOC)
+#    endif // ((__GNUC__ == 7) && (__GNUC_MINOR__ >= 4)) || (__GNUC__ > 7)
 #   endif // defined(__GNUC__)
 #  endif // (__cplusplus >= 201703)
 # endif // !defined(BOOST_ASIO_DISABLE_STD_ALIGNED_ALLOC)
