@@ -409,6 +409,6 @@ void test()
 BOOST_ASIO_TEST_SUITE
 (
   "ip/address_v6",
-  BOOST_ASIO_TEST_CASE(ip_address_v6_compile::test)
+  BOOST_ASIO_COMPILE_TEST_CASE(ip_address_v6_compile::test)
   BOOST_ASIO_TEST_CASE(ip_address_v6_runtime::test)
 )

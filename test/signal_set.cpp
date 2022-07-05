@@ -91,5 +91,5 @@ void test()
 BOOST_ASIO_TEST_SUITE
 (
   "signal_set",
-  BOOST_ASIO_TEST_CASE(signal_set_compile::test)
+  BOOST_ASIO_COMPILE_TEST_CASE(signal_set_compile::test)
 )

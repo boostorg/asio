@@ -645,6 +645,6 @@ void test()
 BOOST_ASIO_TEST_SUITE
 (
   "socket_base",
-  BOOST_ASIO_TEST_CASE(socket_base_compile::test)
+  BOOST_ASIO_COMPILE_TEST_CASE(socket_base_compile::test)
   BOOST_ASIO_TEST_CASE(socket_base_runtime::test)
 )

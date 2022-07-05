@@ -155,5 +155,5 @@ void test()
 BOOST_ASIO_TEST_SUITE
 (
   "windows/stream_handle",
-  BOOST_ASIO_TEST_CASE(windows_stream_handle_compile::test)
+  BOOST_ASIO_COMPILE_TEST_CASE(windows_stream_handle_compile::test)
 )

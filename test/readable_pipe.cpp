@@ -135,5 +135,5 @@ void test()
 BOOST_ASIO_TEST_SUITE
 (
   "readable_pipe",
-  BOOST_ASIO_TEST_CASE(readable_pipe_compile::test)
+  BOOST_ASIO_COMPILE_TEST_CASE(readable_pipe_compile::test)
 )
