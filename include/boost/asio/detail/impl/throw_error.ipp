@@ -17,7 +17,6 @@
 
 #include <boost/asio/detail/config.hpp>
 #include <boost/asio/detail/throw_error.hpp>
-#include <boost/asio/detail/throw_exception.hpp>
 #include <boost/system/system_error.hpp>
 
 #include <boost/asio/detail/push_options.hpp>
