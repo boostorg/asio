@@ -584,6 +584,25 @@
 # endif // !defined(BOOST_ASIO_RVALUE_REF_QUAL)
 #endif // defined(BOOST_ASIO_HAS_REF_QUALIFIED_FUNCTIONS)
 
+// Support for capturing parameter packs in lambdas.
+#if !defined(BOOST_ASIO_HAS_VARIADIC_LAMBDA_CAPTURES)
+# if !defined(BOOST_ASIO_DISABLE_VARIADIC_LAMBDA_CAPTURES)
+#  if defined(__GNUC__)
+#   if (__GNUC__ >= 6)
+#    define BOOST_ASIO_HAS_VARIADIC_LAMBDA_CAPTURES 1
+#   endif // (__GNUC__ >= 6)
+#  elif defined(BOOST_ASIO_MSVC)
+#   if (_MSVC_LANG >= 201103)
+#    define BOOST_ASIO_HAS_VARIADIC_LAMBDA_CAPTURES 1
+#   endif // (_MSC_LANG >= 201103)
+#  else // defined(BOOST_ASIO_MSVC)
+#   if (__cplusplus >= 201103)
+#    define BOOST_ASIO_HAS_VARIADIC_LAMBDA_CAPTURES 1
+#   endif // (__cplusplus >= 201103)
+#  endif // defined(BOOST_ASIO_MSVC)
+# endif // !defined(BOOST_ASIO_DISABLE_VARIADIC_LAMBDA_CAPTURES)
+#endif // !defined(BOOST_ASIO_HAS_VARIADIC_LAMBDA_CAPTURES)
+
 // Support for the alignof operator.
 #if !defined(BOOST_ASIO_HAS_ALIGNOF)
 # if !defined(BOOST_ASIO_DISABLE_ALIGNOF)
@@ -626,9 +645,11 @@
 #     define BOOST_ASIO_HAS_STD_ALIGNED_ALLOC 1
 #    endif // defined(_GLIBCXX_HAVE_ALIGNED_ALLOC)
 #   elif defined(__GNUC__)
-#    if defined(_GLIBCXX_HAVE_ALIGNED_ALLOC)
-#     define BOOST_ASIO_HAS_STD_ALIGNED_ALLOC 1
-#    endif // defined(_GLIBCXX_HAVE_ALIGNED_ALLOC)
+#    if ((__GNUC__ == 7) && (__GNUC_MINOR__ >= 4)) || (__GNUC__ > 7)
+#     if defined(_GLIBCXX_HAVE_ALIGNED_ALLOC)
+#      define BOOST_ASIO_HAS_STD_ALIGNED_ALLOC 1
+#     endif // defined(_GLIBCXX_HAVE_ALIGNED_ALLOC)
+#    endif // ((__GNUC__ == 7) && (__GNUC_MINOR__ >= 4)) || (__GNUC__ > 7)
 #   endif // defined(__GNUC__)
 #  endif // (__cplusplus >= 201703)
 # endif // !defined(BOOST_ASIO_DISABLE_STD_ALIGNED_ALLOC)

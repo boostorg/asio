@@ -123,6 +123,14 @@ public:
   // Release ownership of the native descriptor representation.
   BOOST_ASIO_DECL native_handle_type release(implementation_type& impl);
 
+  // Release ownership of the native descriptor representation.
+  native_handle_type release(implementation_type& impl,
+      boost::system::error_code& ec)
+  {
+    ec = success_ec_;
+    return release(impl);
+  }
+
   // Cancel all operations associated with the descriptor.
   BOOST_ASIO_DECL boost::system::error_code cancel(implementation_type& impl,
       boost::system::error_code& ec);

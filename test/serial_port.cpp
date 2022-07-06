@@ -173,5 +173,5 @@ void test()
 BOOST_ASIO_TEST_SUITE
 (
   "serial_port",
-  BOOST_ASIO_TEST_CASE(serial_port_compile::test)
+  BOOST_ASIO_COMPILE_TEST_CASE(serial_port_compile::test)
 )

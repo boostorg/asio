@@ -108,8 +108,15 @@ void test()
     handle1.close(ec);
 
     win::stream_handle::native_handle_type native_handle4
-      = handle1.native_handle();
+      = handle1.release();
     (void)native_handle4;
+    win::stream_handle::native_handle_type native_handle5
+      = handle1.release(ec);
+    (void)native_handle5;
+
+    win::stream_handle::native_handle_type native_handle6
+      = handle1.native_handle();
+    (void)native_handle6;
 
     handle1.cancel();
     handle1.cancel(ec);
@@ -148,5 +155,5 @@ void test()
 BOOST_ASIO_TEST_SUITE
 (
   "windows/stream_handle",
-  BOOST_ASIO_TEST_CASE(windows_stream_handle_compile::test)
+  BOOST_ASIO_COMPILE_TEST_CASE(windows_stream_handle_compile::test)
 )

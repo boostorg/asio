@@ -9,6 +9,7 @@
 //
 
 #include <boost/asio/compose.hpp>
+#include <boost/asio/deferred.hpp>
 #include <boost/asio/io_context.hpp>
 #include <boost/asio/ip/tcp.hpp>
 #include <boost/asio/steady_timer.hpp>
@@ -42,15 +43,22 @@ auto async_write_messages(tcp::socket& socket,
     const T& message, std::size_t repeat_count,
     CompletionToken&& token)
   // The return type of the initiating function is deduced from the combination
-  // of CompletionToken type and the completion handler's signature. When the
-  // completion token is a simple callback, the return type is always void.
-  // In this example, when the completion token is boost::asio::yield_context
-  // (used for stackful coroutines) the return type would be also be void, as
+  // of:
+  //
+  // - the CompletionToken type,
+  // - the completion handler signature, and
+  // - the asynchronous operation's initiation function object.
+  //
+  // When the completion token is a simple callback, the return type is always
+  // void. In this example, when the completion token is boost::asio::yield_context
+  // (used for stackful coroutines) the return type would also be void, as
   // there is no non-error argument to the completion handler. When the
-  // completion token is boost::asio::use_future it would be std::future<void>.
+  // completion token is boost::asio::use_future it would be std::future<void>. When
+  // the completion token is boost::asio::deferred, the return type differs for each
+  // asynchronous operation.
   //
   // In C++14 we can omit the return type as it is automatically deduced from
-  // the return type of boost::asio::async_initiate.
+  // the return type of boost::asio::async_compose.
 {
   // Encode the message and copy it into an allocated buffer. The buffer will
   // be maintained for the lifetime of the composed asynchronous operation.
@@ -183,6 +191,39 @@ void test_callback()
 
 //------------------------------------------------------------------------------
 
+void test_deferred()
+{
+  boost::asio::io_context io_context;
+
+  tcp::acceptor acceptor(io_context, {tcp::v4(), 55555});
+  tcp::socket socket = acceptor.accept();
+
+  // Test our asynchronous operation using the deferred completion token. This
+  // token causes the operation's initiating function to package up the
+  // operation with its arguments to return a function object, which may then be
+  // used to launch the asynchronous operation.
+  auto op = async_write_messages(socket,
+      "Testing deferred\r\n", 5, boost::asio::deferred);
+
+  // Launch the operation using a lambda as a callback.
+  std::move(op)(
+      [](const boost::system::error_code& error)
+      {
+        if (!error)
+        {
+          std::cout << "Messages sent\n";
+        }
+        else
+        {
+          std::cout << "Error: " << error.message() << "\n";
+        }
+      });
+
+  io_context.run();
+}
+
+//------------------------------------------------------------------------------
+
 void test_future()
 {
   boost::asio::io_context io_context;
@@ -215,5 +256,6 @@ void test_future()
 int main()
 {
   test_callback();
+  test_deferred();
   test_future();
 }

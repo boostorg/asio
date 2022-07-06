@@ -309,6 +309,6 @@ void test()
 BOOST_ASIO_TEST_SUITE
 (
   "ip/network_v4",
-  BOOST_ASIO_TEST_CASE(ip_network_v4_compile::test)
+  BOOST_ASIO_COMPILE_TEST_CASE(ip_network_v4_compile::test)
   BOOST_ASIO_TEST_CASE(ip_network_v4_runtime::test)
 )

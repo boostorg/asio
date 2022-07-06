@@ -130,5 +130,5 @@ void test()
 BOOST_ASIO_TEST_SUITE
 (
   "windows/object_handle",
-  BOOST_ASIO_TEST_CASE(windows_object_handle_compile::test)
+  BOOST_ASIO_COMPILE_TEST_CASE(windows_object_handle_compile::test)
 )

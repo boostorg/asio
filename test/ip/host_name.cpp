@@ -51,5 +51,5 @@ void test()
 BOOST_ASIO_TEST_SUITE
 (
   "ip/host_name",
-  BOOST_ASIO_TEST_CASE(ip_host_name_compile::test)
+  BOOST_ASIO_COMPILE_TEST_CASE(ip_host_name_compile::test)
 )

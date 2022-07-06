@@ -109,8 +109,15 @@ void test()
     handle1.close(ec);
 
     win::random_access_handle::native_handle_type native_handle4
-      = handle1.native_handle();
+      = handle1.release();
     (void)native_handle4;
+    win::random_access_handle::native_handle_type native_handle5
+      = handle1.release(ec);
+    (void)native_handle5;
+
+    win::random_access_handle::native_handle_type native_handle6
+      = handle1.native_handle();
+    (void)native_handle6;
 
     handle1.cancel();
     handle1.cancel(ec);
@@ -155,5 +162,5 @@ void test()
 BOOST_ASIO_TEST_SUITE
 (
   "windows/random_access_handle",
-  BOOST_ASIO_TEST_CASE(windows_random_access_handle_compile::test)
+  BOOST_ASIO_COMPILE_TEST_CASE(windows_random_access_handle_compile::test)
 )

@@ -115,5 +115,5 @@ void test()
 BOOST_ASIO_TEST_SUITE
 (
   "windows/overlapped_ptr",
-  BOOST_ASIO_TEST_CASE(windows_overlapped_ptr_compile::test)
+  BOOST_ASIO_COMPILE_TEST_CASE(windows_overlapped_ptr_compile::test)
 )

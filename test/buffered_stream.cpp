@@ -358,7 +358,7 @@ void test_async_operations()
 BOOST_ASIO_TEST_SUITE
 (
   "buffered_stream",
-  BOOST_ASIO_TEST_CASE(test_compile)
+  BOOST_ASIO_COMPILE_TEST_CASE(test_compile)
   BOOST_ASIO_TEST_CASE(test_sync_operations)
   BOOST_ASIO_TEST_CASE(test_async_operations)
 )
