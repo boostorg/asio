@@ -28,6 +28,7 @@
 #include <boost/asio/detail/memory.hpp>
 #include <boost/asio/detail/noncopyable.hpp>
 #include <boost/asio/detail/type_traits.hpp>
+#include <boost/asio/detail/utility.hpp>
 #include <boost/asio/detail/variadic_templates.hpp>
 #include <boost/system/system_error.hpp>
 
@@ -183,7 +184,7 @@ public:
         BOOST_ASIO_MOVE_CAST(StackAllocator)(stack_allocator),
         entry_point<typename decay<F>::type>(
           BOOST_ASIO_MOVE_CAST(F)(f), &spawned_thread));
-    callee = BOOST_ASIO_MOVE_CAST(fiber_type)(callee).resume();
+    callee = fiber_type(BOOST_ASIO_MOVE_CAST(fiber_type)(callee)).resume();
     spawned_thread->callee_ = BOOST_ASIO_MOVE_CAST(fiber_type)(callee);
     spawned_thread->parent_cancellation_slot_ = parent_cancel_slot;
     spawned_thread->cancellation_state_ = cancel_state;
@@ -201,7 +202,7 @@ public:
 
   void resume()
   {
-    callee_ = BOOST_ASIO_MOVE_CAST(fiber_type)(callee_).resume();
+    callee_ = fiber_type(BOOST_ASIO_MOVE_CAST(fiber_type)(callee_)).resume();
     if (on_suspend_fn_)
     {
       void (*fn)(void*) = on_suspend_fn_;
@@ -219,7 +220,7 @@ public:
     has_context_switched_ = true;
     on_suspend_fn_ = fn;
     on_suspend_arg_ = arg;
-    caller_ = BOOST_ASIO_MOVE_CAST(fiber_type)(caller_).resume();
+    caller_ = fiber_type(BOOST_ASIO_MOVE_CAST(fiber_type)(caller_)).resume();
   }
 
   void destroy()
@@ -759,6 +760,7 @@ public:
   typedef typename handler_type::return_type return_type;
 
 #if defined(BOOST_ASIO_HAS_VARIADIC_TEMPLATES)
+# if defined(BOOST_ASIO_HAS_VARIADIC_LAMBDA_CAPTURES)
 
   template <typename Initiation, typename... InitArgs>
   static return_type initiate(BOOST_ASIO_MOVE_ARG(Initiation) init,
@@ -779,6 +781,48 @@ public:
     return handler_type::on_resume(result);
   }
 
+# else // defined(BOOST_ASIO_HAS_VARIADIC_LAMBDA_CAPTURES)
+
+  template <typename Initiation, typename... InitArgs>
+  struct suspend_with_helper
+  {
+    typename handler_type::result_type& result_;
+    BOOST_ASIO_MOVE_ARG(Initiation) init_;
+    const basic_yield_context<Executor>& yield_;
+    std::tuple<BOOST_ASIO_MOVE_ARG(InitArgs)...> init_args_;
+
+    template <std::size_t... I>
+    void do_invoke(detail::index_sequence<I...>)
+    {
+      BOOST_ASIO_MOVE_CAST(Initiation)(init_)(
+          handler_type(yield_, result_),
+          BOOST_ASIO_MOVE_CAST(InitArgs)(std::get<I>(init_args_))...);
+    }
+
+    void operator()()
+    {
+      this->do_invoke(detail::make_index_sequence<sizeof...(InitArgs)>());
+    }
+  };
+
+  template <typename Initiation, typename... InitArgs>
+  static return_type initiate(BOOST_ASIO_MOVE_ARG(Initiation) init,
+      const basic_yield_context<Executor>& yield,
+      BOOST_ASIO_MOVE_ARG(InitArgs)... init_args)
+  {
+    typename handler_type::result_type result
+      = typename handler_type::result_type();
+
+    yield.spawned_thread_->suspend_with(
+      suspend_with_helper<Initiation, InitArgs...>{
+          result, BOOST_ASIO_MOVE_CAST(Initiation)(init), yield,
+          std::tuple<BOOST_ASIO_MOVE_ARG(InitArgs)...>(
+            BOOST_ASIO_MOVE_CAST(InitArgs)(init_args)...)});
+
+    return handler_type::on_resume(result);
+  }
+
+# endif // defined(BOOST_ASIO_HAS_VARIADIC_LAMBDA_CAPTURES)
 #else // defined(BOOST_ASIO_HAS_VARIADIC_TEMPLATES)
 
   template <typename Initiation>
