@@ -17,24 +17,24 @@
 
 #include <boost/asio/detail/config.hpp>
 
-#if defined(BOOST_ASIO_HAS_STD_EXCEPTION)
+#if defined(BOOST_ASIO_HAS_STD_EXCEPTION_PTR)
 # include <exception>
-#else // defined(BOOST_ASIO_HAS_STD_EXCEPTION)
+#else // defined(BOOST_ASIO_HAS_STD_EXCEPTION_PTR)
 # include <boost/exception_ptr.hpp>
-#endif // defined(BOOST_ASIO_HAS_STD_EXCEPTION)
+#endif // defined(BOOST_ASIO_HAS_STD_EXCEPTION_PTR)
 
 namespace boost {
 namespace asio {
 
-#if defined(BOOST_ASIO_HAS_STD_EXCEPTION)
+#if defined(BOOST_ASIO_HAS_STD_EXCEPTION_PTR)
 using std::exception_ptr;
 using std::current_exception;
 using std::rethrow_exception;
-#else // defined(BOOST_ASIO_HAS_STD_EXCEPTION)
+#else // defined(BOOST_ASIO_HAS_STD_EXCEPTION_PTR)
 using boost::exception_ptr;
 using boost::current_exception;
 using boost::rethrow_exception;
-#endif // defined(BOOST_ASIO_HAS_STD_EXCEPTION)
+#endif // defined(BOOST_ASIO_HAS_STD_EXCEPTION_PTR)
 
 } // namespace asio
 } // namespace boost
