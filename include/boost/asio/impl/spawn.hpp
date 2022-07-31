@@ -276,6 +276,57 @@ typedef spawned_coroutine_thread default_spawned_thread_type;
 # error No spawn() implementation available
 #endif
 
+// Helper class to perform the initial resume on the correct executor.
+class spawned_thread_resumer
+{
+public:
+  explicit spawned_thread_resumer(spawned_thread_base* spawned_thread)
+    : spawned_thread_(spawned_thread)
+  {
+#if !defined(BOOST_ASIO_HAS_MOVE)
+    spawned_thread->detach();
+    spawned_thread->attach(&spawned_thread_);
+#endif // !defined(BOOST_ASIO_HAS_MOVE)
+  }
+
+#if defined(BOOST_ASIO_HAS_MOVE)
+
+  spawned_thread_resumer(spawned_thread_resumer&& other) BOOST_ASIO_NOEXCEPT
+    : spawned_thread_(other.spawned_thread_)
+  {
+    other.spawned_thread_ = 0;
+  }
+
+#else // defined(BOOST_ASIO_HAS_MOVE)
+
+  spawned_thread_resumer(
+      const spawned_thread_resumer& other) BOOST_ASIO_NOEXCEPT
+    : spawned_thread_(other.spawned_thread_)
+  {
+    spawned_thread_->detach();
+    spawned_thread_->attach(&spawned_thread_);
+  }
+
+#endif // defined(BOOST_ASIO_HAS_MOVE)
+
+  ~spawned_thread_resumer()
+  {
+    if (spawned_thread_)
+      spawned_thread_->destroy();
+  }
+
+  void operator()()
+  {
+#if defined(BOOST_ASIO_HAS_MOVE)
+    spawned_thread_->attach(&spawned_thread_);
+#endif // defined(BOOST_ASIO_HAS_MOVE)
+    spawned_thread_->resume();
+  }
+
+private:
+  spawned_thread_base* spawned_thread_;
+};
+
 // Helper class to ensure spawned threads are destroyed on the correct executor.
 class spawned_thread_destroyer
 {
@@ -389,33 +440,15 @@ public:
 
   void resume()
   {
-#if defined(BOOST_ASIO_HAS_MOVE)
-    spawned_thread_->attach(&spawned_thread_);
-#endif // defined(BOOST_ASIO_HAS_MOVE)
-    spawned_thread_->resume();
+    spawned_thread_resumer resumer(spawned_thread_);
+    spawned_thread_ = 0;
+    resumer();
   }
 
 protected:
   Executor executor_;
   spawned_thread_base* spawned_thread_;
   boost::system::error_code* ec_;
-};
-
-// Helper class to perform the initial resume on the correct executor.
-template <typename Executor>
-class spawn_launcher
-  : public spawn_handler_base<Executor>
-{
-public:
-  spawn_launcher(const basic_yield_context<Executor>& yield)
-    : spawn_handler_base<Executor>(yield)
-  {
-  }
-
-  void operator()()
-  {
-    this->resume();
-  }
 };
 
 // Completion handlers for when basic_yield_context is used as a token.
@@ -1128,13 +1161,12 @@ public:
     cancellation_state cancel_state(proxy_slot);
 
     (dispatch)(executor_,
-        spawn_launcher<Executor>(
-          basic_yield_context<Executor>(
-            default_spawned_thread_type::spawn(
-              spawn_entry_point<Executor, function_type, handler_type>(
-                executor_, BOOST_ASIO_MOVE_CAST(F)(f),
-                BOOST_ASIO_MOVE_CAST(Handler)(handler)),
-              proxy_slot, cancel_state), executor_)));
+        spawned_thread_resumer(
+          default_spawned_thread_type::spawn(
+            spawn_entry_point<Executor, function_type, handler_type>(
+              executor_, BOOST_ASIO_MOVE_CAST(F)(f),
+              BOOST_ASIO_MOVE_CAST(Handler)(handler)),
+            proxy_slot, cancel_state)));
   }
 
 #if defined(BOOST_ASIO_HAS_BOOST_CONTEXT_FIBER)
@@ -1164,14 +1196,13 @@ public:
     cancellation_state cancel_state(proxy_slot);
 
     (dispatch)(executor_,
-        spawn_launcher<Executor>(
-          basic_yield_context<Executor>(
-            spawned_fiber_thread::spawn(allocator_arg_t(),
-              BOOST_ASIO_MOVE_CAST(StackAllocator)(stack_allocator),
-              spawn_entry_point<Executor, function_type, handler_type>(
-                executor_, BOOST_ASIO_MOVE_CAST(F)(f),
-                BOOST_ASIO_MOVE_CAST(Handler)(handler)),
-              proxy_slot, cancel_state), executor_)));
+        spawned_thread_resumer(
+          spawned_fiber_thread::spawn(allocator_arg_t(),
+            BOOST_ASIO_MOVE_CAST(StackAllocator)(stack_allocator),
+            spawn_entry_point<Executor, function_type, handler_type>(
+              executor_, BOOST_ASIO_MOVE_CAST(F)(f),
+              BOOST_ASIO_MOVE_CAST(Handler)(handler)),
+            proxy_slot, cancel_state)));
   }
 
 #endif // defined(BOOST_ASIO_HAS_BOOST_CONTEXT_FIBER)
@@ -1455,13 +1486,12 @@ void spawn(BOOST_ASIO_MOVE_ARG(Handler) handler,
   executor_type ex((get_associated_executor)(handler));
 
   (dispatch)(ex,
-      detail::spawn_launcher<executor_type>(
-        basic_yield_context<executor_type>(
-          detail::spawned_coroutine_thread::spawn(
-            detail::old_spawn_entry_point<executor_type,
-              function_type, void (*)()>(
-                ex, BOOST_ASIO_MOVE_CAST(Function)(function),
-                &detail::default_spawn_handler), attributes), ex)));
+      detail::spawned_thread_resumer(
+        detail::spawned_coroutine_thread::spawn(
+          detail::old_spawn_entry_point<executor_type,
+            function_type, void (*)()>(
+              ex, BOOST_ASIO_MOVE_CAST(Function)(function),
+              &detail::default_spawn_handler), attributes)));
 }
 
 template <typename Executor, typename Function>
@@ -1472,14 +1502,12 @@ void spawn(basic_yield_context<Executor> ctx,
   typedef typename decay<Function>::type function_type;
 
   (dispatch)(ctx.get_executor(),
-      detail::spawn_launcher<Executor>(
-        basic_yield_context<Executor>(
-          detail::spawned_coroutine_thread::spawn(
-            detail::old_spawn_entry_point<Executor,
-              function_type, void (*)()>(ctx.get_executor(),
-                BOOST_ASIO_MOVE_CAST(Function)(function),
-                &detail::default_spawn_handler), attributes),
-          ctx.get_executor())));
+      detail::spawned_thread_resumer(
+        detail::spawned_coroutine_thread::spawn(
+          detail::old_spawn_entry_point<Executor,
+            function_type, void (*)()>(ctx.get_executor(),
+              BOOST_ASIO_MOVE_CAST(Function)(function),
+              &detail::default_spawn_handler), attributes)));
 }
 
 template <typename Function, typename Executor>
