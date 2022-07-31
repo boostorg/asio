@@ -388,9 +388,8 @@ public:
   typedef cancellation_slot cancellation_slot_type;
 
   spawn_handler_base(const basic_yield_context<Executor>& yield)
-    : executor_(yield.executor_),
-      spawned_thread_(yield.spawned_thread_),
-      ec_(yield.ec_)
+    : yield_(yield),
+      spawned_thread_(yield.spawned_thread_)
   {
     spawned_thread_->detach();
 #if !defined(BOOST_ASIO_HAS_MOVE)
@@ -401,20 +400,18 @@ public:
 #if defined(BOOST_ASIO_HAS_MOVE)
 
   spawn_handler_base(spawn_handler_base&& other) BOOST_ASIO_NOEXCEPT
-    : executor_(BOOST_ASIO_MOVE_CAST(Executor)(other.executor_)),
-      spawned_thread_(other.spawned_thread_),
-      ec_(other.ec_)
+    : yield_(other.yield_),
+      spawned_thread_(other.spawned_thread_)
+
   {
     other.spawned_thread_ = 0;
-    other.ec_ = 0;
   }
 
 #else // defined(BOOST_ASIO_HAS_MOVE)
 
   spawn_handler_base(const spawn_handler_base& other) BOOST_ASIO_NOEXCEPT
-    : executor_(other.executor_),
-      spawned_thread_(other.spawned_thread_),
-      ec_(other.ec_)
+    : yield_(other.yield_),
+      spawned_thread_(other.spawned_thread_)
   {
     spawned_thread_->detach();
     spawned_thread_->attach(&spawned_thread_);
@@ -425,12 +422,12 @@ public:
   ~spawn_handler_base()
   {
     if (spawned_thread_)
-      (post)(executor_, spawned_thread_destroyer(spawned_thread_));
+      (post)(yield_.executor_, spawned_thread_destroyer(spawned_thread_));
   }
 
   executor_type get_executor() const BOOST_ASIO_NOEXCEPT
   {
-    return executor_;
+    return yield_.executor_;
   }
 
   cancellation_slot_type get_cancellation_slot() const BOOST_ASIO_NOEXCEPT
@@ -446,9 +443,8 @@ public:
   }
 
 protected:
-  Executor executor_;
+  const basic_yield_context<Executor>& yield_;
   spawned_thread_base* spawned_thread_;
-  boost::system::error_code* ec_;
 };
 
 // Completion handlers for when basic_yield_context is used as a token.
@@ -495,9 +491,9 @@ public:
 
   void operator()(boost::system::error_code ec)
   {
-    if (this->ec_)
+    if (this->yield_.ec_)
     {
-      *this->ec_ = ec;
+      *this->yield_.ec_ = ec;
       result_ = 0;
     }
     else
@@ -595,9 +591,9 @@ public:
 
   void operator()(boost::system::error_code ec, T value)
   {
-    if (this->ec_)
+    if (this->yield_.ec_)
     {
-      *this->ec_ = ec;
+      *this->yield_.ec_ = ec;
       result_.ec_ = 0;
     }
     else
@@ -713,9 +709,9 @@ public:
       BOOST_ASIO_MOVE_ARG(Args)... args)
   {
     return_type value(BOOST_ASIO_MOVE_CAST(Args)(args)...);
-    if (this->ec_)
+    if (this->yield_.ec_)
     {
-      *this->ec_ = ec;
+      *this->yield_.ec_ = ec;
       result_.ec_ = 0;
     }
     else
