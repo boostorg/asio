@@ -7,7 +7,7 @@
 
 [section:history Revision History]
 
-[heading Asio 1.23.0 / Boost 1.80 beta]
+[heading Asio 1.24.0 / Boost 1.80]
 
 * Added a deduced trailing return type, using `decltype`, to all asynchronous
   operations' initiating functions when using C++11. This change enables the
@@ -148,6 +148,12 @@
 * Fixed detection of `std::aligned_alloc` with [^gcc] 7.
 * Changed to avoid using the soon-to-be-deprecated `std::aligned_storage` on
   newer compilers.
+* Fixed detection of `std::aligned_alloc` for older Apple platforms.
+* Removed faulty assertions from `experimental::coro` implementation.
+* Added defence against Qt-defined macros when building with Intel C++.
+* Changed the implementation of the `select_reactor`, on Windows, to ensure that
+  any exception resulting from failure to recreate its interrupter's sockets
+  will be allowed to propagate out through `io_context::run()`.
 * Fixed various compiler warnings.
 * Updated all composed operations examples, and the C++11 timeouts example, to
   use the new `async_result` form.
