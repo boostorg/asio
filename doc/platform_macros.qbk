@@ -80,6 +80,20 @@ with Boost.Asio's needs.
     []
   ]
   [
+    [`BOOST_ASIO_HAS_BOOST_CONTEXT_FIBER`]
+    [
+      Boost support for the Context library's fibers.
+    ]
+    [`BOOST_ASIO_DISABLE_BOOST_CONTEXT_FIBER`]
+  ]
+  [
+    [`BOOST_ASIO_HAS_BOOST_COROUTINE`]
+    [
+      Boost support for the Coroutine library.
+    ]
+    [`BOOST_ASIO_DISABLE_BOOST_COROUTINE`]
+  ]
+  [
     [`BOOST_ASIO_HAS_BOOST_DATE_TIME`]
     [
       Boost support for the DateTime library.
@@ -99,6 +113,13 @@ with Boost.Asio's needs.
       Boost regex library.
     ]
     [`BOOST_ASIO_DISABLE_BOOST_REGEX`]
+  ]
+  [
+    [`BOOST_ASIO_HAS_BOOST_SOURCE_LOCATION`]
+    [
+      Boost support for source_location and system errors.
+    ]
+    [`BOOST_ASIO_DISABLE_BOOST_SOURCE_LOCATION`]
   ]
   [
     [`BOOST_ASIO_HAS_BOOST_THROW_EXCEPTION`]
@@ -448,6 +469,13 @@ with Boost.Asio's needs.
     []
   ]
   [
+    [`BOOST_ASIO_HAS_STD_CONCEPTS`]
+    [
+      Support concepts on compilers known to allow them.
+    ]
+    [`BOOST_ASIO_DISABLE_STD_CONCEPTS`]
+  ]
+  [
     [`BOOST_ASIO_HAS_STD_COROUTINE`]
     [
       Standard library support for coroutines.
@@ -495,6 +523,13 @@ with Boost.Asio's needs.
       Standard library support for std::hash.
     ]
     [`BOOST_ASIO_DISABLE_STD_HASH`]
+  ]
+  [
+    [`BOOST_ASIO_HAS_STD_INDEX_SEQUENCE`]
+    [
+      Standard library support for std::index_sequence.
+    ]
+    [`BOOST_ASIO_DISABLE_STD_INDEX_SEQUENCE`]
   ]
   [
     [`BOOST_ASIO_HAS_STD_INVOKE_RESULT`]
@@ -560,6 +595,20 @@ with Boost.Asio's needs.
     [`BOOST_ASIO_DISABLE_STD_THREAD`]
   ]
   [
+    [`BOOST_ASIO_HAS_STD_TO_ADDRESS`]
+    [
+      Standard library support for std::to_address.
+    ]
+    [`BOOST_ASIO_DISABLE_STD_TO_ADDRESS`]
+  ]
+  [
+    [`BOOST_ASIO_HAS_STD_TUPLE`]
+    [
+      Standard library support for std::tuple.
+    ]
+    [`BOOST_ASIO_DISABLE_STD_TUPLE`]
+  ]
+  [
     [`BOOST_ASIO_HAS_STD_TYPE_TRAITS`]
     [
       Standard library support for type traits.
@@ -609,6 +658,13 @@ with Boost.Asio's needs.
       Support template variables on compilers known to allow it.
     ]
     [`BOOST_ASIO_DISABLE_VARIABLE_TEMPLATES`]
+  ]
+  [
+    [`BOOST_ASIO_HAS_VARIADIC_LAMBDA_CAPTURES`]
+    [
+      Support for capturing parameter packs in lambdas.
+    ]
+    [`BOOST_ASIO_DISABLE_VARIADIC_LAMBDA_CAPTURES`]
   ]
   [
     [`BOOST_ASIO_HAS_VARIADIC_TEMPLATES`]
