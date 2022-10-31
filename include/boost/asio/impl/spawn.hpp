@@ -47,7 +47,7 @@ namespace asio {
 namespace detail {
 
 #if !defined(BOOST_ASIO_NO_EXCEPTIONS)
-static void spawned_thread_rethrow(void* ex)
+inline void spawned_thread_rethrow(void* ex)
 {
   if (*static_cast<exception_ptr*>(ex))
     rethrow_exception(*static_cast<exception_ptr*>(ex));
