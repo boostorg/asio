@@ -50,6 +50,8 @@ test-suite "asio-experimental" :
   [ run channel.cpp : : : $(USE_SELECT) : channel_select ]
   [ run channel_traits.cpp ]
   [ run channel_traits.cpp : : : $(USE_SELECT) : channel_traits_select ]
+  [ run co_composed.cpp ]
+  [ run co_composed.cpp : : : $(USE_SELECT) : co_composed_select ]
   [ run concurrent_channel.cpp ]
   [ run concurrent_channel.cpp : : : $(USE_SELECT) : concurrent_channel_select ]
   [ run promise.cpp ]
