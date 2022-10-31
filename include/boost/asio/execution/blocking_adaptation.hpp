@@ -605,10 +605,18 @@ public:
 
   template <typename Function>
   typename enable_if<
+#if defined(BOOST_ASIO_NO_DEPRECATED)
+    traits::execute_member<const Executor&, Function>::is_valid
+#else // defined(BOOST_ASIO_NO_DEPRECATED)
     execution::can_execute<const Executor&, Function>::value
+#endif // defined(BOOST_ASIO_NO_DEPRECATED)
   >::type execute(BOOST_ASIO_MOVE_ARG(Function) f) const
   {
+#if defined(BOOST_ASIO_NO_DEPRECATED)
+    executor_.execute(BOOST_ASIO_MOVE_CAST(Function)(f));
+#else // defined(BOOST_ASIO_NO_DEPRECATED)
     execution::execute(executor_, BOOST_ASIO_MOVE_CAST(Function)(f));
+#endif // defined(BOOST_ASIO_NO_DEPRECATED)
   }
 
   friend bool operator==(const adapter& a, const adapter& b) BOOST_ASIO_NOEXCEPT
@@ -733,7 +741,11 @@ public:
   void execute_and_wait(BOOST_ASIO_MOVE_ARG(Executor) ex)
   {
     handler h = { this };
+#if defined(BOOST_ASIO_NO_DEPRECATED)
+    ex.execute(h);
+#else // defined(BOOST_ASIO_NO_DEPRECATED)
     execution::execute(BOOST_ASIO_MOVE_CAST(Executor)(ex), h);
+#endif // defined(BOOST_ASIO_NO_DEPRECATED)
     boost::asio::detail::mutex::scoped_lock lock(mutex_);
     while (!is_complete_)
       event_.wait(lock);

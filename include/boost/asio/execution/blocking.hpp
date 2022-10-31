@@ -25,6 +25,7 @@
 #include <boost/asio/prefer.hpp>
 #include <boost/asio/query.hpp>
 #include <boost/asio/require.hpp>
+#include <boost/asio/traits/execute_member.hpp>
 #include <boost/asio/traits/query_free.hpp>
 #include <boost/asio/traits/query_member.hpp>
 #include <boost/asio/traits/query_static_constexpr_member.hpp>
@@ -743,7 +744,11 @@ public:
 
   template <typename Function>
   typename enable_if<
+#if defined(BOOST_ASIO_NO_DEPRECATED)
+    traits::execute_member<const Executor&, Function>::is_valid
+#else // defined(BOOST_ASIO_NO_DEPRECATED)
     execution::can_execute<const Executor&, Function>::value
+#endif // defined(BOOST_ASIO_NO_DEPRECATED)
   >::type execute(BOOST_ASIO_MOVE_ARG(Function) f) const
   {
     blocking_adaptation::blocking_execute(

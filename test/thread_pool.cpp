@@ -231,67 +231,57 @@ void thread_pool_executor_execute_test()
   int count = 0;
   thread_pool pool(1);
 
-  boost::asio::execution::execute(pool.executor(),
-      bindns::bind(increment, &count));
+  pool.executor().execute(bindns::bind(increment, &count));
 
-  boost::asio::execution::execute(
-      boost::asio::require(pool.executor(),
-        boost::asio::execution::blocking.possibly),
-      bindns::bind(increment, &count));
+  boost::asio::require(pool.executor(),
+      boost::asio::execution::blocking.possibly
+    ).execute(bindns::bind(increment, &count));
 
-  boost::asio::execution::execute(
-      boost::asio::require(pool.executor(),
-        boost::asio::execution::blocking.always),
-      bindns::bind(increment, &count));
+  boost::asio::require(pool.executor(),
+      boost::asio::execution::blocking.always
+    ).execute(bindns::bind(increment, &count));
 
-  boost::asio::execution::execute(
-      boost::asio::require(pool.executor(),
-        boost::asio::execution::blocking.never),
-      bindns::bind(increment, &count));
+  boost::asio::require(pool.executor(),
+      boost::asio::execution::blocking.never
+    ).execute(bindns::bind(increment, &count));
 
-  boost::asio::execution::execute(
-      boost::asio::require(pool.executor(),
-        boost::asio::execution::blocking.never,
-        boost::asio::execution::outstanding_work.tracked),
-      bindns::bind(increment, &count));
+  boost::asio::require(pool.executor(),
+      boost::asio::execution::blocking.never,
+      boost::asio::execution::outstanding_work.tracked
+    ).execute(bindns::bind(increment, &count));
 
-  boost::asio::execution::execute(
-      boost::asio::require(pool.executor(),
-        boost::asio::execution::blocking.never,
-        boost::asio::execution::outstanding_work.untracked),
-      bindns::bind(increment, &count));
+  boost::asio::require(pool.executor(),
+      boost::asio::execution::blocking.never,
+      boost::asio::execution::outstanding_work.untracked
+    ).execute(bindns::bind(increment, &count));
 
-  boost::asio::execution::execute(
-      boost::asio::require(pool.executor(),
-        boost::asio::execution::blocking.never,
-        boost::asio::execution::outstanding_work.untracked,
-        boost::asio::execution::relationship.fork),
-      bindns::bind(increment, &count));
+  boost::asio::require(pool.executor(),
+      boost::asio::execution::blocking.never,
+      boost::asio::execution::outstanding_work.untracked,
+      boost::asio::execution::relationship.fork
+    ).execute(bindns::bind(increment, &count));
 
-  boost::asio::execution::execute(
+  boost::asio::require(pool.executor(),
+      boost::asio::execution::blocking.never,
+      boost::asio::execution::outstanding_work.untracked,
+      boost::asio::execution::relationship.continuation
+    ).execute(bindns::bind(increment, &count));
+
+  boost::asio::prefer(
       boost::asio::require(pool.executor(),
         boost::asio::execution::blocking.never,
         boost::asio::execution::outstanding_work.untracked,
         boost::asio::execution::relationship.continuation),
-      bindns::bind(increment, &count));
+      boost::asio::execution::allocator(std::allocator<void>())
+    ).execute(bindns::bind(increment, &count));
 
-  boost::asio::execution::execute(
-      boost::asio::prefer(
-        boost::asio::require(pool.executor(),
-          boost::asio::execution::blocking.never,
-          boost::asio::execution::outstanding_work.untracked,
-          boost::asio::execution::relationship.continuation),
-        boost::asio::execution::allocator(std::allocator<void>())),
-      bindns::bind(increment, &count));
-
-  boost::asio::execution::execute(
-      boost::asio::prefer(
-        boost::asio::require(pool.executor(),
-          boost::asio::execution::blocking.never,
-          boost::asio::execution::outstanding_work.untracked,
-          boost::asio::execution::relationship.continuation),
-        boost::asio::execution::allocator),
-      bindns::bind(increment, &count));
+  boost::asio::prefer(
+      boost::asio::require(pool.executor(),
+        boost::asio::execution::blocking.never,
+        boost::asio::execution::outstanding_work.untracked,
+        boost::asio::execution::relationship.continuation),
+      boost::asio::execution::allocator
+    ).execute(bindns::bind(increment, &count));
 
   pool.wait();
 

@@ -1191,37 +1191,29 @@ void any_executor_execute_test()
       execution::relationship_t::continuation_t>
     ex(pool.executor());
 
-  boost::asio::execution::execute(pool.executor(),
+  ex.execute(bindns::bind(increment, &count));
+
+  boost::asio::require(ex, boost::asio::execution::blocking.possibly).execute(
       bindns::bind(increment, &count));
 
-  boost::asio::execution::execute(
-      boost::asio::require(pool.executor(),
-        boost::asio::execution::blocking.possibly),
+  boost::asio::require(ex, boost::asio::execution::blocking.never).execute(
       bindns::bind(increment, &count));
 
-  boost::asio::execution::execute(
-      boost::asio::require(pool.executor(),
-        boost::asio::execution::blocking.never),
-      bindns::bind(increment, &count));
+  boost::asio::require(ex,
+      boost::asio::execution::blocking.never,
+      boost::asio::execution::outstanding_work.tracked
+    ).execute(bindns::bind(increment, &count));
 
-  boost::asio::execution::execute(
-      boost::asio::require(pool.executor(),
-        boost::asio::execution::blocking.never,
-        boost::asio::execution::outstanding_work.tracked),
-      bindns::bind(increment, &count));
+  boost::asio::require(ex,
+      boost::asio::execution::blocking.never,
+      boost::asio::execution::outstanding_work.untracked
+    ).execute(bindns::bind(increment, &count));
 
-  boost::asio::execution::execute(
-      boost::asio::require(pool.executor(),
-        boost::asio::execution::blocking.never,
-        boost::asio::execution::outstanding_work.untracked),
-      bindns::bind(increment, &count));
-
-  boost::asio::execution::execute(
-      boost::asio::require(pool.executor(),
-        boost::asio::execution::blocking.never,
-        boost::asio::execution::outstanding_work.untracked,
-        boost::asio::execution::relationship.continuation),
-      bindns::bind(increment, &count));
+  boost::asio::require(ex,
+      boost::asio::execution::blocking.never,
+      boost::asio::execution::outstanding_work.untracked,
+      boost::asio::execution::relationship.continuation
+    ).execute(bindns::bind(increment, &count));
 
   pool.wait();
 

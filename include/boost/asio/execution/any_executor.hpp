@@ -143,13 +143,6 @@ public:
 
   /// Execute the function on the target executor.
   /**
-   * Do not call this function directly. It is intended for use with the
-   * execution::execute customisation point.
-   *
-   * For example:
-   * @code execution::any_executor<> ex = ...;
-   * execution::execute(ex, my_function_object); @endcode
-   *
    * Throws boost::asio::bad_executor if the polymorphic wrapper has no target.
    */
   template <typename Function>
@@ -1007,13 +1000,21 @@ protected:
   static void execute_ex(const any_executor_base& ex,
       BOOST_ASIO_MOVE_ARG(function) f)
   {
+#if defined(BOOST_ASIO_NO_DEPRECATED)
+    ex.target<Ex>()->execute(BOOST_ASIO_MOVE_CAST(function)(f));
+#else // defined(BOOST_ASIO_NO_DEPRECATED)
     execution::execute(*ex.target<Ex>(), BOOST_ASIO_MOVE_CAST(function)(f));
+#endif // defined(BOOST_ASIO_NO_DEPRECATED)
   }
 
   template <typename Ex>
   static void blocking_execute_ex(const any_executor_base& ex, function_view f)
   {
+#if defined(BOOST_ASIO_NO_DEPRECATED)
+    ex.target<Ex>()->execute(f);
+#else // defined(BOOST_ASIO_NO_DEPRECATED)
     execution::execute(*ex.target<Ex>(), f);
+#endif // defined(BOOST_ASIO_NO_DEPRECATED)
   }
 
   template <typename Ex>

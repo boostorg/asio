@@ -40,7 +40,7 @@ public:
             char data[128];
             for (;;)
             {
-              timer_.expires_from_now(std::chrono::seconds(10));
+              timer_.expires_after(std::chrono::seconds(10));
               std::size_t n = socket_.async_read_some(boost::asio::buffer(data), yield);
               boost::asio::async_write(socket_, boost::asio::buffer(data, n), yield);
             }
@@ -59,7 +59,7 @@ public:
           {
             boost::system::error_code ignored_ec;
             timer_.async_wait(yield[ignored_ec]);
-            if (timer_.expires_from_now() <= std::chrono::seconds(0))
+            if (timer_.expiry() <= boost::asio::steady_timer::clock_type::now())
               socket_.close();
           }
         }, boost::asio::detached);

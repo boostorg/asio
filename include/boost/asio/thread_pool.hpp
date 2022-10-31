@@ -166,7 +166,7 @@ template <typename Allocator, unsigned int Bits>
 class thread_pool::basic_executor_type : detail::thread_pool_bits
 {
 public:
-  /// The sender type, when this type is used as a scheduler.
+  /// (Deprecated.) The sender type, when this type is used as a scheduler.
   typedef basic_executor_type sender_type;
 
   /// The bulk execution shape type.
@@ -592,20 +592,7 @@ public:
       || a.bits_ != b.bits_;
   }
 
-#if !defined(GENERATING_DOCUMENTATION)
-private:
-  friend struct boost_asio_execution_execute_fn::impl;
-#endif // !defined(GENERATING_DOCUMENTATION)
-
   /// Execution function.
-  /**
-   * Do not call this function directly. It is intended for use with the
-   * execution::execute customisation point.
-   *
-   * For example:
-   * @code auto ex = my_thread_pool.executor();
-   * execution::execute(ex, my_function_object); @endcode
-   */
   template <typename Function>
   void execute(BOOST_ASIO_MOVE_ARG(Function) f) const
   {
@@ -614,7 +601,7 @@ private:
   }
 
 public:
-  /// Bulk execution function.
+  /// (Deprecated.) Bulk execution function.
   template <typename Function>
   void bulk_execute(BOOST_ASIO_MOVE_ARG(Function) f, std::size_t n) const
   {
@@ -622,7 +609,7 @@ public:
         integral_constant<bool, (Bits & blocking_always) != 0>());
   }
 
-  /// Schedule function.
+  /// (Deprecated.) Schedule function.
   /**
    * Do not call this function directly. It is intended for use with the
    * execution::schedule customisation point.
@@ -634,7 +621,7 @@ public:
     return *this;
   }
 
-  /// Connect function.
+  /// (Deprecated.) Connect function.
   /**
    * Do not call this function directly. It is intended for use with the
    * execution::connect customisation point.
