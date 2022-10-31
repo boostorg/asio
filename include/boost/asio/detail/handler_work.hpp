@@ -97,13 +97,11 @@ public:
   {
 #if defined(BOOST_ASIO_NO_DEPRECATED)
     boost::asio::prefer(executor_,
-        execution::blocking.possibly,
         execution::allocator((get_associated_allocator)(handler))
       ).execute(BOOST_ASIO_MOVE_CAST(Function)(function));
 #else // defined(BOOST_ASIO_NO_DEPRECATED)
     execution::execute(
         boost::asio::prefer(executor_,
-          execution::blocking.possibly,
           execution::allocator((get_associated_allocator)(handler))),
         BOOST_ASIO_MOVE_CAST(Function)(function));
 #endif // defined(BOOST_ASIO_NO_DEPRECATED)
@@ -369,12 +367,9 @@ public:
   void dispatch(Function& function, Handler&)
   {
 #if defined(BOOST_ASIO_NO_DEPRECATED)
-    boost::asio::prefer(executor_, execution::blocking.possibly).execute(
-        BOOST_ASIO_MOVE_CAST(Function)(function));
+    executor_.execute(BOOST_ASIO_MOVE_CAST(Function)(function));
 #else // defined(BOOST_ASIO_NO_DEPRECATED)
-    execution::execute(
-        boost::asio::prefer(executor_, execution::blocking.possibly),
-        BOOST_ASIO_MOVE_CAST(Function)(function));
+    execution::execute(executor_, BOOST_ASIO_MOVE_CAST(Function)(function));
 #endif // defined(BOOST_ASIO_NO_DEPRECATED)
   }
 
@@ -449,12 +444,9 @@ public:
   void dispatch(Function& function, Handler&)
   {
 #if defined(BOOST_ASIO_NO_DEPRECATED)
-    boost::asio::prefer(executor_, execution::blocking.possibly).execute(
-        BOOST_ASIO_MOVE_CAST(Function)(function));
+    executor_.execute(BOOST_ASIO_MOVE_CAST(Function)(function));
 #else // defined(BOOST_ASIO_NO_DEPRECATED)
-    execution::execute(
-        boost::asio::prefer(executor_, execution::blocking.possibly),
-        BOOST_ASIO_MOVE_CAST(Function)(function));
+    execution::execute(executor_, BOOST_ASIO_MOVE_CAST(Function)(function));
 #endif // defined(BOOST_ASIO_NO_DEPRECATED)
   }
 
