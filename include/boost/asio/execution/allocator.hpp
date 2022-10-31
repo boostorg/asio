@@ -83,6 +83,7 @@ struct allocator_t
   BOOST_ASIO_STATIC_CONSTEXPR(bool,
     is_applicable_property_v = (
       is_executor<T>::value
+#if !defined(BOOST_ASIO_NO_DEPRECATED)
         || conditional<
             is_executor<T>::value,
             false_type,
@@ -92,7 +93,9 @@ struct allocator_t
             is_executor<T>::value,
             false_type,
             is_scheduler<T>
-          >::type::value));
+          >::type::value
+#endif // !defined(BOOST_ASIO_NO_DEPRECATED)
+      ));
 #endif // defined(BOOST_ASIO_HAS_VARIABLE_TEMPLATES)
 
   BOOST_ASIO_STATIC_CONSTEXPR(bool, is_requirable = true);
@@ -177,6 +180,7 @@ struct allocator_t<void>
   BOOST_ASIO_STATIC_CONSTEXPR(bool,
     is_applicable_property_v = (
       is_executor<T>::value
+#if !defined(BOOST_ASIO_NO_DEPRECATED)
         || conditional<
             is_executor<T>::value,
             false_type,
@@ -186,7 +190,9 @@ struct allocator_t<void>
             is_executor<T>::value,
             false_type,
             is_scheduler<T>
-          >::type::value));
+          >::type::value
+#endif // !defined(BOOST_ASIO_NO_DEPRECATED)
+      ));
 #endif // defined(BOOST_ASIO_HAS_VARIABLE_TEMPLATES)
 
   BOOST_ASIO_STATIC_CONSTEXPR(bool, is_requirable = true);
@@ -284,6 +290,7 @@ template <typename T, typename ProtoAllocator>
 struct is_applicable_property<T, execution::allocator_t<ProtoAllocator> >
   : integral_constant<bool,
       execution::is_executor<T>::value
+#if !defined(BOOST_ASIO_NO_DEPRECATED)
         || conditional<
             execution::is_executor<T>::value,
             false_type,
@@ -293,7 +300,9 @@ struct is_applicable_property<T, execution::allocator_t<ProtoAllocator> >
             execution::is_executor<T>::value,
             false_type,
             execution::is_scheduler<T>
-          >::type::value>
+          >::type::value
+#endif // !defined(BOOST_ASIO_NO_DEPRECATED)
+    >
 {
 };
 

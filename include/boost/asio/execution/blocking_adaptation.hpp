@@ -169,6 +169,7 @@ struct blocking_adaptation_t
   BOOST_ASIO_STATIC_CONSTEXPR(bool,
     is_applicable_property_v = (
       is_executor<T>::value
+#if !defined(BOOST_ASIO_NO_DEPRECATED)
         || conditional<
             is_executor<T>::value,
             false_type,
@@ -178,7 +179,9 @@ struct blocking_adaptation_t
             is_executor<T>::value,
             false_type,
             is_scheduler<T>
-          >::type::value));
+          >::type::value
+#endif // !defined(BOOST_ASIO_NO_DEPRECATED)
+      ));
 #endif // defined(BOOST_ASIO_HAS_VARIABLE_TEMPLATES)
 
   BOOST_ASIO_STATIC_CONSTEXPR(bool, is_requirable = false);
@@ -421,6 +424,7 @@ struct disallowed_t
   BOOST_ASIO_STATIC_CONSTEXPR(bool,
     is_applicable_property_v = (
       is_executor<T>::value
+#if !defined(BOOST_ASIO_NO_DEPRECATED)
         || conditional<
             is_executor<T>::value,
             false_type,
@@ -430,7 +434,9 @@ struct disallowed_t
             is_executor<T>::value,
             false_type,
             is_scheduler<T>
-          >::type::value));
+          >::type::value
+#endif // !defined(BOOST_ASIO_NO_DEPRECATED)
+      ));
 #endif // defined(BOOST_ASIO_HAS_VARIABLE_TEMPLATES)
 
   BOOST_ASIO_STATIC_CONSTEXPR(bool, is_requirable = true);
@@ -641,6 +647,7 @@ struct allowed_t
   BOOST_ASIO_STATIC_CONSTEXPR(bool,
     is_applicable_property_v = (
       is_executor<T>::value
+#if !defined(BOOST_ASIO_NO_DEPRECATED)
         || conditional<
             is_executor<T>::value,
             false_type,
@@ -650,7 +657,9 @@ struct allowed_t
             is_executor<T>::value,
             false_type,
             is_scheduler<T>
-          >::type::value));
+          >::type::value
+#endif // !defined(BOOST_ASIO_NO_DEPRECATED)
+      ));
 #endif // defined(BOOST_ASIO_HAS_VARIABLE_TEMPLATES)
 
   BOOST_ASIO_STATIC_CONSTEXPR(bool, is_requirable = true);
@@ -810,6 +819,7 @@ template <typename T>
 struct is_applicable_property<T, execution::blocking_adaptation_t>
   : integral_constant<bool,
       execution::is_executor<T>::value
+#if !defined(BOOST_ASIO_NO_DEPRECATED)
         || conditional<
             execution::is_executor<T>::value,
             false_type,
@@ -819,7 +829,9 @@ struct is_applicable_property<T, execution::blocking_adaptation_t>
             execution::is_executor<T>::value,
             false_type,
             execution::is_scheduler<T>
-          >::type::value>
+          >::type::value
+#endif // !defined(BOOST_ASIO_NO_DEPRECATED)
+    >
 {
 };
 
@@ -827,6 +839,7 @@ template <typename T>
 struct is_applicable_property<T, execution::blocking_adaptation_t::disallowed_t>
   : integral_constant<bool,
       execution::is_executor<T>::value
+#if !defined(BOOST_ASIO_NO_DEPRECATED)
         || conditional<
             execution::is_executor<T>::value,
             false_type,
@@ -836,7 +849,9 @@ struct is_applicable_property<T, execution::blocking_adaptation_t::disallowed_t>
             execution::is_executor<T>::value,
             false_type,
             execution::is_scheduler<T>
-          >::type::value>
+          >::type::value
+#endif // !defined(BOOST_ASIO_NO_DEPRECATED)
+    >
 {
 };
 
@@ -844,6 +859,7 @@ template <typename T>
 struct is_applicable_property<T, execution::blocking_adaptation_t::allowed_t>
   : integral_constant<bool,
       execution::is_executor<T>::value
+#if !defined(BOOST_ASIO_NO_DEPRECATED)
         || conditional<
             execution::is_executor<T>::value,
             false_type,
@@ -853,7 +869,9 @@ struct is_applicable_property<T, execution::blocking_adaptation_t::allowed_t>
             execution::is_executor<T>::value,
             false_type,
             execution::is_scheduler<T>
-          >::type::value>
+          >::type::value
+#endif // !defined(BOOST_ASIO_NO_DEPRECATED)
+    >
 {
 };
 

@@ -20,6 +20,8 @@
 #include <boost/system/error_code.hpp>
 #include "../unit_test.hpp"
 
+#if !defined(BOOST_ASIO_NO_DEPRECATED)
+
 struct not_a_receiver
 {
 };
@@ -555,3 +557,13 @@ BOOST_ASIO_TEST_SUITE
   BOOST_ASIO_TEST_CASE(is_receiver_of_test)
   BOOST_ASIO_TEST_CASE(is_nothrow_receiver_of_test)
 )
+
+#else // !defined(BOOST_ASIO_NO_DEPRECATED)
+
+BOOST_ASIO_TEST_SUITE
+(
+  "receiver",
+  BOOST_ASIO_TEST_CASE(null_test)
+)
+
+#endif // !defined(BOOST_ASIO_NO_DEPRECATED)

@@ -166,8 +166,10 @@ template <typename Allocator, unsigned int Bits>
 class thread_pool::basic_executor_type : detail::thread_pool_bits
 {
 public:
+#if !defined(BOOST_ASIO_NO_DEPRECATED)
   /// (Deprecated.) The sender type, when this type is used as a scheduler.
   typedef basic_executor_type sender_type;
+#endif // !defined(BOOST_ASIO_NO_DEPRECATED)
 
   /// The bulk execution shape type.
   typedef std::size_t shape_type;
@@ -404,7 +406,8 @@ private:
   friend struct boost::asio::execution::detail::outstanding_work_t<0>;
 #endif // !defined(GENERATING_DOCUMENTATION)
 
-  /// Query the current value of the @c bulk_guarantee property.
+#if !defined(BOOST_ASIO_NO_DEPRECATED)
+  /// (Deprecated.) Query the current value of the @c bulk_guarantee property.
   /**
    * Do not call this function directly. It is intended for use with the
    * boost::asio::query customisation point.
@@ -420,6 +423,7 @@ private:
   {
     return execution::bulk_guarantee.parallel;
   }
+#endif // !defined(BOOST_ASIO_NO_DEPRECATED)
 
   /// Query the current value of the @c mapping property.
   /**
@@ -601,6 +605,7 @@ public:
   }
 
 public:
+#if !defined(BOOST_ASIO_NO_DEPRECATED)
   /// (Deprecated.) Bulk execution function.
   template <typename Function>
   void bulk_execute(BOOST_ASIO_MOVE_ARG(Function) f, std::size_t n) const
@@ -640,6 +645,7 @@ public:
     return execution::detail::as_operation<basic_executor_type, Receiver>(
         *this, BOOST_ASIO_MOVE_CAST(Receiver)(r));
   }
+#endif // !defined(BOOST_ASIO_NO_DEPRECATED)
 
 #if !defined(BOOST_ASIO_NO_TS_EXECUTORS)
   /// Obtain the underlying execution context.
@@ -806,6 +812,8 @@ struct execute_member<
 
 #if !defined(BOOST_ASIO_HAS_DEDUCED_SCHEDULE_MEMBER_TRAIT)
 
+#if !defined(BOOST_ASIO_NO_DEPRECATED)
+
 template <typename Allocator, unsigned int Bits>
 struct schedule_member<
     const boost::asio::thread_pool::basic_executor_type<Allocator, Bits>
@@ -817,9 +825,13 @@ struct schedule_member<
       Allocator, Bits> result_type;
 };
 
+#endif // !defined(BOOST_ASIO_NO_DEPRECATED)
+
 #endif // !defined(BOOST_ASIO_HAS_DEDUCED_SCHEDULE_MEMBER_TRAIT)
 
 #if !defined(BOOST_ASIO_HAS_DEDUCED_CONNECT_MEMBER_TRAIT)
+
+#if !defined(BOOST_ASIO_NO_DEPRECATED)
 
 template <typename Allocator, unsigned int Bits, typename Receiver>
 struct connect_member<
@@ -833,6 +845,8 @@ struct connect_member<
       boost::asio::thread_pool::basic_executor_type<Allocator, Bits>,
       Receiver> result_type;
 };
+
+#endif // !defined(BOOST_ASIO_NO_DEPRECATED)
 
 #endif // !defined(BOOST_ASIO_HAS_DEDUCED_CONNECT_MEMBER_TRAIT)
 
@@ -951,6 +965,8 @@ struct require_member<
 
 #if !defined(BOOST_ASIO_HAS_DEDUCED_QUERY_STATIC_CONSTEXPR_MEMBER_TRAIT)
 
+#if !defined(BOOST_ASIO_NO_DEPRECATED)
+
 template <typename Allocator, unsigned int Bits, typename Property>
 struct query_static_constexpr_member<
     boost::asio::thread_pool::basic_executor_type<Allocator, Bits>,
@@ -972,6 +988,8 @@ struct query_static_constexpr_member<
     return result_type();
   }
 };
+
+#endif // !defined(BOOST_ASIO_NO_DEPRECATED)
 
 template <typename Allocator, unsigned int Bits, typename Property>
 struct query_static_constexpr_member<
