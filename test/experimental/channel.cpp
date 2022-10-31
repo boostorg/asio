@@ -157,9 +157,65 @@ void buffered_channel_test()
   BOOST_ASIO_CHECK(!ec2);
 };
 
+void buffered_error_channel_test()
+{
+  io_context ctx;
+
+  channel<void(boost::system::error_code)> ch1(ctx, 1);
+
+  BOOST_ASIO_CHECK(ch1.is_open());
+  BOOST_ASIO_CHECK(!ch1.ready());
+
+  bool b1 = ch1.try_send(boost::asio::error::eof);
+
+  BOOST_ASIO_CHECK(b1);
+
+  bool b2 = ch1.try_send(boost::asio::error::eof);
+
+  BOOST_ASIO_CHECK(!b2);
+
+  boost::system::error_code ec1;
+  ch1.async_receive(
+      [&](boost::system::error_code ec)
+      {
+        ec1 = ec;
+      });
+
+  ctx.run();
+
+  BOOST_ASIO_CHECK(ec1 == boost::asio::error::eof);
+
+  bool b4 = ch1.try_receive([](boost::system::error_code){});
+
+  BOOST_ASIO_CHECK(!b4);
+
+  boost::system::error_code ec2 = boost::asio::error::would_block;
+  ch1.async_send(boost::asio::error::eof,
+      [&](boost::system::error_code ec)
+      {
+        ec2 = ec;
+      });
+
+  boost::system::error_code ec3;
+  bool b5 = ch1.try_receive(
+      [&](boost::system::error_code ec)
+      {
+        ec3 = ec;
+      });
+
+  BOOST_ASIO_CHECK(b5);
+  BOOST_ASIO_CHECK(ec3 == boost::asio::error::eof);
+
+  ctx.restart();
+  ctx.run();
+
+  BOOST_ASIO_CHECK(!ec2);
+};
+
 BOOST_ASIO_TEST_SUITE
 (
   "experimental/channel",
   BOOST_ASIO_TEST_CASE(unbuffered_channel_test)
   BOOST_ASIO_TEST_CASE(buffered_channel_test)
+  BOOST_ASIO_TEST_CASE(buffered_error_channel_test)
 )
