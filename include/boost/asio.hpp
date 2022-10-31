@@ -66,6 +66,7 @@
 #include <boost/asio/compose.hpp>
 #include <boost/asio/connect.hpp>
 #include <boost/asio/connect_pipe.hpp>
+#include <boost/asio/consign.hpp>
 #include <boost/asio/coroutine.hpp>
 #include <boost/asio/deadline_timer.hpp>
 #include <boost/asio/defer.hpp>
