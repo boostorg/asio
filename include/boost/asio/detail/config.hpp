@@ -371,6 +371,17 @@
 #  endif // defined(BOOST_ASIO_MSVC)
 # endif // !defined(BOOST_ASIO_DISABLE_DECLTYPE)
 #endif // !defined(BOOST_ASIO_HAS_DECLTYPE)
+#if defined(BOOST_ASIO_HAS_DECLTYPE)
+# define BOOST_ASIO_AUTO_RETURN_TYPE_PREFIX(t) auto
+# define BOOST_ASIO_AUTO_RETURN_TYPE_PREFIX2(t0, t1) auto
+# define BOOST_ASIO_AUTO_RETURN_TYPE_PREFIX3(t0, t1, t2) auto
+# define BOOST_ASIO_AUTO_RETURN_TYPE_SUFFIX(expr) -> decltype expr
+#else // defined(BOOST_ASIO_HAS_DECLTYPE)
+# define BOOST_ASIO_AUTO_RETURN_TYPE_PREFIX(t) t
+# define BOOST_ASIO_AUTO_RETURN_TYPE_PREFIX2(t0, t1) t0, t1
+# define BOOST_ASIO_AUTO_RETURN_TYPE_PREFIX3(t0, t1, t2) t0, t1, t2
+# define BOOST_ASIO_AUTO_RETURN_TYPE_SUFFIX(expr)
+#endif // defined(BOOST_ASIO_HAS_DECLTYPE)
 
 // Support alias templates on compilers known to allow it.
 #if !defined(BOOST_ASIO_HAS_ALIAS_TEMPLATES)
