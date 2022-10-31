@@ -686,6 +686,30 @@
 # endif // !defined(BOOST_ASIO_DISABLE_STD_ALIGNED_ALLOC)
 #endif // !defined(BOOST_ASIO_HAS_STD_ALIGNED_ALLOC)
 
+// Standard library support for std::align.
+#if !defined(BOOST_ASIO_HAS_STD_ALIGN)
+# if !defined(BOOST_ASIO_DISABLE_STD_ALIGN)
+#  if defined(__clang__)
+#   if defined(BOOST_ASIO_HAS_CLANG_LIBCXX)
+#    define BOOST_ASIO_HAS_STD_ALIGN 1
+#   elif (__cplusplus >= 201103)
+#    define BOOST_ASIO_HAS_STD_ALIGN 1
+#   endif // (__cplusplus >= 201103)
+#  elif defined(__GNUC__)
+#   if (__GNUC__ >= 6)
+#    if (__cplusplus >= 201103) || defined(__GXX_EXPERIMENTAL_CXX0X__)
+#     define BOOST_ASIO_HAS_STD_ALIGN 1
+#    endif // (__cplusplus >= 201103) || defined(__GXX_EXPERIMENTAL_CXX0X__)
+#   endif // (__GNUC__ >= 6)
+#  endif // defined(__GNUC__)
+#  if defined(BOOST_ASIO_MSVC)
+#   if (_MSC_VER >= 1700)
+#    define BOOST_ASIO_HAS_STD_ALIGN 1
+#   endif // (_MSC_VER >= 1700)
+#  endif // defined(BOOST_ASIO_MSVC)
+# endif // !defined(BOOST_ASIO_DISABLE_STD_ALIGN)
+#endif // !defined(BOOST_ASIO_HAS_STD_ALIGN)
+
 // Standard library support for system errors.
 # if !defined(BOOST_ASIO_DISABLE_STD_SYSTEM_ERROR)
 #  if defined(__clang__)
