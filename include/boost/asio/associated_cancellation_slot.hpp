@@ -18,6 +18,7 @@
 #include <boost/asio/detail/config.hpp>
 #include <boost/asio/associator.hpp>
 #include <boost/asio/cancellation_signal.hpp>
+#include <boost/asio/detail/functional.hpp>
 #include <boost/asio/detail/type_traits.hpp>
 
 #include <boost/asio/detail/push_options.hpp>
@@ -172,6 +173,34 @@ struct associated_cancellation_slot_forwarding_base<T, S,
 };
 
 } // namespace detail
+
+#if defined(BOOST_ASIO_HAS_STD_REFERENCE_WRAPPER) \
+  || defined(GENERATING_DOCUMENTATION)
+
+/// Specialisation of associated_cancellation_slot for @c
+/// std::reference_wrapper.
+template <typename T, typename CancellationSlot>
+struct associated_cancellation_slot<reference_wrapper<T>, CancellationSlot>
+#if !defined(GENERATING_DOCUMENTATION)
+  : detail::associated_cancellation_slot_forwarding_base<T, CancellationSlot>
+#endif // !defined(GENERATING_DOCUMENTATION)
+{
+  /// Forwards @c type to the associator specialisation for the unwrapped type
+  /// @c T.
+  typedef typename associated_cancellation_slot<T, CancellationSlot>::type type;
+
+  /// Forwards the request to get the cancellation slot to the associator
+  /// specialisation for the unwrapped type @c T.
+  static type get(reference_wrapper<T> t,
+      const CancellationSlot& s = CancellationSlot()) BOOST_ASIO_NOEXCEPT
+  {
+    return associated_cancellation_slot<T, CancellationSlot>::get(t.get(), s);
+  }
+};
+
+#endif // defined(BOOST_ASIO_HAS_STD_REFERENCE_WRAPPER)
+       //   || defined(GENERATING_DOCUMENTATION)
+
 } // namespace asio
 } // namespace boost
 
