@@ -409,8 +409,7 @@ void io_context_executor_execute_test()
   io_context ioc;
   int count = 0;
 
-  boost::asio::execution::execute(ioc.get_executor(),
-      bindns::bind(increment, &count));
+  ioc.get_executor().execute(bindns::bind(increment, &count));
 
   // No handlers can be called until run() is called.
   BOOST_ASIO_CHECK(!ioc.stopped());
@@ -424,10 +423,9 @@ void io_context_executor_execute_test()
 
   count = 0;
   ioc.restart();
-  boost::asio::execution::execute(
-      boost::asio::require(ioc.get_executor(),
-        boost::asio::execution::blocking.possibly),
-      bindns::bind(increment, &count));
+  boost::asio::require(ioc.get_executor(),
+      boost::asio::execution::blocking.possibly
+    ).execute(bindns::bind(increment, &count));
 
   // No handlers can be called until run() is called.
   BOOST_ASIO_CHECK(!ioc.stopped());
@@ -441,10 +439,9 @@ void io_context_executor_execute_test()
 
   count = 0;
   ioc.restart();
-  boost::asio::execution::execute(
-      boost::asio::require(ioc.get_executor(),
-        boost::asio::execution::blocking.never),
-      bindns::bind(increment, &count));
+  boost::asio::require(ioc.get_executor(),
+      boost::asio::execution::blocking.never
+    ).execute(bindns::bind(increment, &count));
 
   // No handlers can be called until run() is called.
   BOOST_ASIO_CHECK(!ioc.stopped());
@@ -460,11 +457,10 @@ void io_context_executor_execute_test()
   ioc.restart();
   BOOST_ASIO_CHECK(!ioc.stopped());
 
-  boost::asio::execution::execute(
-      boost::asio::require(ioc.get_executor(),
-        boost::asio::execution::blocking.never,
-        boost::asio::execution::outstanding_work.tracked),
-      bindns::bind(increment, &count));
+  boost::asio::require(ioc.get_executor(),
+      boost::asio::execution::blocking.never,
+      boost::asio::execution::outstanding_work.tracked
+    ).execute(bindns::bind(increment, &count));
 
   // No handlers can be called until run() is called.
   BOOST_ASIO_CHECK(!ioc.stopped());
@@ -478,11 +474,10 @@ void io_context_executor_execute_test()
 
   count = 0;
   ioc.restart();
-  boost::asio::execution::execute(
-      boost::asio::require(ioc.get_executor(),
-        boost::asio::execution::blocking.never,
-        boost::asio::execution::outstanding_work.untracked),
-      bindns::bind(increment, &count));
+  boost::asio::require(ioc.get_executor(),
+      boost::asio::execution::blocking.never,
+      boost::asio::execution::outstanding_work.untracked
+    ).execute(bindns::bind(increment, &count));
 
   // No handlers can be called until run() is called.
   BOOST_ASIO_CHECK(!ioc.stopped());
@@ -496,12 +491,11 @@ void io_context_executor_execute_test()
 
   count = 0;
   ioc.restart();
-  boost::asio::execution::execute(
-      boost::asio::require(ioc.get_executor(),
-        boost::asio::execution::blocking.never,
-        boost::asio::execution::outstanding_work.untracked,
-        boost::asio::execution::relationship.fork),
-      bindns::bind(increment, &count));
+  boost::asio::require(ioc.get_executor(),
+      boost::asio::execution::blocking.never,
+      boost::asio::execution::outstanding_work.untracked,
+      boost::asio::execution::relationship.fork
+    ).execute(bindns::bind(increment, &count));
 
   // No handlers can be called until run() is called.
   BOOST_ASIO_CHECK(!ioc.stopped());
@@ -515,12 +509,31 @@ void io_context_executor_execute_test()
 
   count = 0;
   ioc.restart();
-  boost::asio::execution::execute(
+  boost::asio::require(ioc.get_executor(),
+      boost::asio::execution::blocking.never,
+      boost::asio::execution::outstanding_work.untracked,
+      boost::asio::execution::relationship.continuation
+    ).execute(bindns::bind(increment, &count));
+
+  // No handlers can be called until run() is called.
+  BOOST_ASIO_CHECK(!ioc.stopped());
+  BOOST_ASIO_CHECK(count == 0);
+
+  ioc.run();
+
+  // The run() call will not return until all work has finished.
+  BOOST_ASIO_CHECK(ioc.stopped());
+  BOOST_ASIO_CHECK(count == 1);
+
+  count = 0;
+  ioc.restart();
+  boost::asio::prefer(
       boost::asio::require(ioc.get_executor(),
         boost::asio::execution::blocking.never,
         boost::asio::execution::outstanding_work.untracked,
         boost::asio::execution::relationship.continuation),
-      bindns::bind(increment, &count));
+      boost::asio::execution::allocator(std::allocator<void>())
+    ).execute(bindns::bind(increment, &count));
 
   // No handlers can be called until run() is called.
   BOOST_ASIO_CHECK(!ioc.stopped());
@@ -534,35 +547,13 @@ void io_context_executor_execute_test()
 
   count = 0;
   ioc.restart();
-  boost::asio::execution::execute(
-      boost::asio::prefer(
-        boost::asio::require(ioc.get_executor(),
-          boost::asio::execution::blocking.never,
-          boost::asio::execution::outstanding_work.untracked,
-          boost::asio::execution::relationship.continuation),
-        boost::asio::execution::allocator(std::allocator<void>())),
-      bindns::bind(increment, &count));
-
-  // No handlers can be called until run() is called.
-  BOOST_ASIO_CHECK(!ioc.stopped());
-  BOOST_ASIO_CHECK(count == 0);
-
-  ioc.run();
-
-  // The run() call will not return until all work has finished.
-  BOOST_ASIO_CHECK(ioc.stopped());
-  BOOST_ASIO_CHECK(count == 1);
-
-  count = 0;
-  ioc.restart();
-  boost::asio::execution::execute(
-      boost::asio::prefer(
-        boost::asio::require(ioc.get_executor(),
-          boost::asio::execution::blocking.never,
-          boost::asio::execution::outstanding_work.untracked,
-          boost::asio::execution::relationship.continuation),
-        boost::asio::execution::allocator),
-      bindns::bind(increment, &count));
+  boost::asio::prefer(
+      boost::asio::require(ioc.get_executor(),
+        boost::asio::execution::blocking.never,
+        boost::asio::execution::outstanding_work.untracked,
+        boost::asio::execution::relationship.continuation),
+      boost::asio::execution::allocator
+    ).execute(bindns::bind(increment, &count));
 
   // No handlers can be called until run() is called.
   BOOST_ASIO_CHECK(!ioc.stopped());

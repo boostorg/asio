@@ -124,6 +124,8 @@ test-suite "asio" :
   [ link connect.cpp : $(USE_SELECT) : connect_select ]
   [ run connect_pipe.cpp ]
   [ run connect_pipe.cpp : : : $(USE_SELECT) : connect_pipe_select ]
+  [ run consign.cpp ]
+  [ run consign.cpp : : : $(USE_SELECT) : consign_select ]
   [ link coroutine.cpp ]
   [ link coroutine.cpp : $(USE_SELECT) : coroutine_select ]
   [ run deadline_timer.cpp ]

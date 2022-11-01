@@ -19,6 +19,8 @@
 #include <boost/system/error_code.hpp>
 #include "../unit_test.hpp"
 
+#if !defined(BOOST_ASIO_NO_DEPRECATED)
+
 namespace exec = boost::asio::execution;
 
 struct not_a_sender
@@ -235,3 +237,13 @@ BOOST_ASIO_TEST_SUITE
   BOOST_ASIO_TEST_CASE(test_is_sender)
   BOOST_ASIO_TEST_CASE(test_is_typed_sender)
 )
+
+#else // !defined(BOOST_ASIO_NO_DEPRECATED)
+
+BOOST_ASIO_TEST_SUITE
+(
+  "sender",
+  BOOST_ASIO_TEST_CASE(null_test)
+)
+
+#endif // !defined(BOOST_ASIO_NO_DEPRECATED)

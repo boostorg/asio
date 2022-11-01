@@ -19,6 +19,8 @@
 #include <boost/system/error_code.hpp>
 #include "../unit_test.hpp"
 
+#if !defined(BOOST_ASIO_NO_DEPRECATED)
+
 namespace exec = boost::asio::execution;
 
 static int call_count = 0;
@@ -234,3 +236,13 @@ BOOST_ASIO_TEST_SUITE
   BOOST_ASIO_TEST_CASE(test_can_start)
   BOOST_ASIO_TEST_CASE(test_start)
 )
+
+#else // !defined(BOOST_ASIO_NO_DEPRECATED)
+
+BOOST_ASIO_TEST_SUITE
+(
+  "start",
+  BOOST_ASIO_TEST_CASE(null_test)
+)
+
+#endif // !defined(BOOST_ASIO_NO_DEPRECATED)

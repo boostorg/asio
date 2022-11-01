@@ -234,7 +234,11 @@ PREDEFINED             = GENERATING_DOCUMENTATION \
                          BOOST_ASIO_EXECUTION_EXECUTOR=typename \
                          BOOST_ASIO_EXECUTION_RECEIVER_ERROR_DEFAULT==std::exception_ptr \
                          BOOST_ASIO_EXECUTION_RECEIVER_OF_0=typename \
-                         BOOST_ASIO_NOEXCEPT_IF(c)=
+                         BOOST_ASIO_NOEXCEPT_IF(c)= \
+                         BOOST_ASIO_AUTO_RETURN_TYPE_PREFIX(t)=auto \
+                         BOOST_ASIO_AUTO_RETURN_TYPE_PREFIX2(t0,t1)=auto \
+                         BOOST_ASIO_AUTO_RETURN_TYPE_PREFIX3(t0,t1,t2)=auto \
+                         BOOST_ASIO_AUTO_RETURN_TYPE_SUFFIX(t)=
 EXPAND_AS_DEFINED      = 
 SKIP_FUNCTION_MACROS   = YES
 #---------------------------------------------------------------------------

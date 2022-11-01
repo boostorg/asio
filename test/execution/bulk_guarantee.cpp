@@ -21,6 +21,8 @@
 #include <boost/asio/require.hpp>
 #include "../unit_test.hpp"
 
+#if !defined(BOOST_ASIO_NO_DEPRECATED)
+
 namespace exec = boost::asio::execution;
 
 typedef exec::bulk_guarantee_t s;
@@ -1998,3 +2000,13 @@ BOOST_ASIO_TEST_SUITE
 
   BOOST_ASIO_TEST_CASE(test_vars)
 )
+
+#else // !defined(BOOST_ASIO_NO_DEPRECATED)
+
+BOOST_ASIO_TEST_SUITE
+(
+  "bulk_guarantee",
+  BOOST_ASIO_TEST_CASE(null_test)
+)
+
+#endif // !defined(BOOST_ASIO_NO_DEPRECATED)

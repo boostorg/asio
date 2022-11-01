@@ -46,6 +46,14 @@ namespace boost {
 namespace asio {
 namespace detail {
 
+#if !defined(BOOST_ASIO_NO_EXCEPTIONS)
+inline void spawned_thread_rethrow(void* ex)
+{
+  if (*static_cast<exception_ptr*>(ex))
+    rethrow_exception(*static_cast<exception_ptr*>(ex));
+}
+#endif // !defined(BOOST_ASIO_NO_EXCEPTIONS)
+
 #if defined(BOOST_ASIO_HAS_BOOST_COROUTINE)
 
 // Spawned thread implementation using Boost.Coroutine.
@@ -118,6 +126,8 @@ public:
   {
     callee_type callee;
     callee.swap(callee_);
+    if (terminal_)
+      callee();
   }
 
 private:
@@ -140,8 +150,26 @@ private:
       *spawned_thread_out_ = &spawned_thread;
       spawned_thread_out_ = 0;
       spawned_thread.suspend();
-      function(&spawned_thread);
-      spawned_thread.suspend();
+#if !defined(BOOST_ASIO_NO_EXCEPTIONS)
+      try
+#endif // !defined(BOOST_ASIO_NO_EXCEPTIONS)
+      {
+        function(&spawned_thread);
+        spawned_thread.terminal_ = true;
+        spawned_thread.suspend();
+      }
+#if !defined(BOOST_ASIO_NO_EXCEPTIONS)
+      catch (const boost::coroutines::detail::forced_unwind&)
+      {
+        throw;
+      }
+      catch (...)
+      {
+        exception_ptr ex = current_exception();
+        spawned_thread.terminal_ = true;
+        spawned_thread.suspend_with(spawned_thread_rethrow, &ex);
+      }
+#endif // !defined(BOOST_ASIO_NO_EXCEPTIONS)
     }
 
   private:
@@ -226,7 +254,8 @@ public:
   void destroy()
   {
     fiber_type callee = BOOST_ASIO_MOVE_CAST(fiber_type)(callee_);
-    (void)callee;
+    if (terminal_)
+      fiber_type(BOOST_ASIO_MOVE_CAST(fiber_type)(callee)).resume();
   }
 
 private:
@@ -250,9 +279,27 @@ private:
       *spawned_thread_out_ = &spawned_thread;
       spawned_thread_out_ = 0;
       spawned_thread.suspend();
-      function(&spawned_thread);
-      spawned_thread.suspend();
-      return {};
+#if !defined(BOOST_ASIO_NO_EXCEPTIONS)
+      try
+#endif // !defined(BOOST_ASIO_NO_EXCEPTIONS)
+      {
+        function(&spawned_thread);
+        spawned_thread.terminal_ = true;
+        spawned_thread.suspend();
+      }
+#if !defined(BOOST_ASIO_NO_EXCEPTIONS)
+      catch (const boost::context::detail::forced_unwind&)
+      {
+        throw;
+      }
+      catch (...)
+      {
+        exception_ptr ex = current_exception();
+        spawned_thread.terminal_ = true;
+        spawned_thread.suspend_with(spawned_thread_rethrow, &ex);
+      }
+#endif // !defined(BOOST_ASIO_NO_EXCEPTIONS)
+      return BOOST_ASIO_MOVE_CAST(fiber_type)(spawned_thread.caller_);
     }
 
   private:

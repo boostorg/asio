@@ -19,6 +19,8 @@
 #include <boost/asio/execution.hpp>
 #include "../unit_test.hpp"
 
+#if !defined(BOOST_ASIO_NO_DEPRECATED)
+
 namespace exec = boost::asio::execution;
 
 int call_count = 0;
@@ -301,6 +303,7 @@ void test_bulk_execute()
   exec::bulk_execute(free_bulk_execute(), handler, 2);
   BOOST_ASIO_CHECK(call_count == 1);
 
+#if !defined(BOOST_ASIO_NO_DEPRECATED)
   call_count = 0;
   executor ex5;
   exec::execute(
@@ -320,6 +323,7 @@ void test_bulk_execute()
       exec::bulk_execute(executor(), counting_handler, 10u),
       completion_handler);
   BOOST_ASIO_CHECK(call_count == 11);
+#endif // !defined(BOOST_ASIO_NO_DEPRECATED)
 }
 
 BOOST_ASIO_TEST_SUITE
@@ -328,3 +332,13 @@ BOOST_ASIO_TEST_SUITE
   BOOST_ASIO_TEST_CASE(test_can_bulk_execute)
   BOOST_ASIO_TEST_CASE(test_bulk_execute)
 )
+
+#else // !defined(BOOST_ASIO_NO_DEPRECATED)
+
+BOOST_ASIO_TEST_SUITE
+(
+  "bulk_execute",
+  BOOST_ASIO_TEST_CASE(null_test)
+)
+
+#endif // !defined(BOOST_ASIO_NO_DEPRECATED)

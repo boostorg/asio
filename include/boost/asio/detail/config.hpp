@@ -371,6 +371,17 @@
 #  endif // defined(BOOST_ASIO_MSVC)
 # endif // !defined(BOOST_ASIO_DISABLE_DECLTYPE)
 #endif // !defined(BOOST_ASIO_HAS_DECLTYPE)
+#if defined(BOOST_ASIO_HAS_DECLTYPE)
+# define BOOST_ASIO_AUTO_RETURN_TYPE_PREFIX(t) auto
+# define BOOST_ASIO_AUTO_RETURN_TYPE_PREFIX2(t0, t1) auto
+# define BOOST_ASIO_AUTO_RETURN_TYPE_PREFIX3(t0, t1, t2) auto
+# define BOOST_ASIO_AUTO_RETURN_TYPE_SUFFIX(expr) -> decltype expr
+#else // defined(BOOST_ASIO_HAS_DECLTYPE)
+# define BOOST_ASIO_AUTO_RETURN_TYPE_PREFIX(t) t
+# define BOOST_ASIO_AUTO_RETURN_TYPE_PREFIX2(t0, t1) t0, t1
+# define BOOST_ASIO_AUTO_RETURN_TYPE_PREFIX3(t0, t1, t2) t0, t1, t2
+# define BOOST_ASIO_AUTO_RETURN_TYPE_SUFFIX(expr)
+#endif // defined(BOOST_ASIO_HAS_DECLTYPE)
 
 // Support alias templates on compilers known to allow it.
 #if !defined(BOOST_ASIO_HAS_ALIAS_TEMPLATES)
@@ -674,6 +685,30 @@
 #  endif // (__cplusplus >= 201703)
 # endif // !defined(BOOST_ASIO_DISABLE_STD_ALIGNED_ALLOC)
 #endif // !defined(BOOST_ASIO_HAS_STD_ALIGNED_ALLOC)
+
+// Standard library support for std::align.
+#if !defined(BOOST_ASIO_HAS_STD_ALIGN)
+# if !defined(BOOST_ASIO_DISABLE_STD_ALIGN)
+#  if defined(__clang__)
+#   if defined(BOOST_ASIO_HAS_CLANG_LIBCXX)
+#    define BOOST_ASIO_HAS_STD_ALIGN 1
+#   elif (__cplusplus >= 201103)
+#    define BOOST_ASIO_HAS_STD_ALIGN 1
+#   endif // (__cplusplus >= 201103)
+#  elif defined(__GNUC__)
+#   if (__GNUC__ >= 6)
+#    if (__cplusplus >= 201103) || defined(__GXX_EXPERIMENTAL_CXX0X__)
+#     define BOOST_ASIO_HAS_STD_ALIGN 1
+#    endif // (__cplusplus >= 201103) || defined(__GXX_EXPERIMENTAL_CXX0X__)
+#   endif // (__GNUC__ >= 6)
+#  endif // defined(__GNUC__)
+#  if defined(BOOST_ASIO_MSVC)
+#   if (_MSC_VER >= 1700)
+#    define BOOST_ASIO_HAS_STD_ALIGN 1
+#   endif // (_MSC_VER >= 1700)
+#  endif // defined(BOOST_ASIO_MSVC)
+# endif // !defined(BOOST_ASIO_DISABLE_STD_ALIGN)
+#endif // !defined(BOOST_ASIO_HAS_STD_ALIGN)
 
 // Standard library support for system errors.
 # if !defined(BOOST_ASIO_DISABLE_STD_SYSTEM_ERROR)

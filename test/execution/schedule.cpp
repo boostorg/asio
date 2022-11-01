@@ -24,6 +24,8 @@
 #include <boost/asio/traits/submit_member.hpp>
 #include "../unit_test.hpp"
 
+#if !defined(BOOST_ASIO_NO_DEPRECATED)
+
 namespace exec = boost::asio::execution;
 
 struct operation_state
@@ -504,3 +506,13 @@ BOOST_ASIO_TEST_SUITE
   BOOST_ASIO_TEST_CASE(test_can_schedule)
   BOOST_ASIO_TEST_CASE(test_schedule)
 )
+
+#else // !defined(BOOST_ASIO_NO_DEPRECATED)
+
+BOOST_ASIO_TEST_SUITE
+(
+  "schedule",
+  BOOST_ASIO_TEST_CASE(null_test)
+)
+
+#endif // !defined(BOOST_ASIO_NO_DEPRECATED)
