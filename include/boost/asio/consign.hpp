@@ -32,7 +32,7 @@ namespace asio {
 /// Completion token type used to specify that the completion handler should
 /// carry additional values along with it.
 /**
- * This completion token adapter is typically used to keepat least one copy of
+ * This completion token adapter is typically used to keep at least one copy of
  * an object, such as a smart pointer, alive until the completion handler is
  * called.
  */
@@ -50,7 +50,9 @@ public:
   {
   }
 
-//private:
+#if defined(GENERATING_DOCUMENTATION)
+private:
+#endif // defined(GENERATING_DOCUMENTATION)
   CompletionToken token_;
   std::tuple<Values...> values_;
 };
@@ -58,7 +60,7 @@ public:
 /// Completion token adapter used to specify that the completion handler should
 /// carry additional values along with it.
 /**
- * This completion token adapter is typically used to keepat least one copy of
+ * This completion token adapter is typically used to keep at least one copy of
  * an object, such as a smart pointer, alive until the completion handler is
  * called.
  */
