@@ -19,8 +19,10 @@
 #include <boost/asio/async_result.hpp>
 #include <boost/asio/detail/type_traits.hpp>
 #include <boost/asio/execution_context.hpp>
+#include <boost/asio/execution/blocking.hpp>
 #include <boost/asio/execution/executor.hpp>
 #include <boost/asio/is_executor.hpp>
+#include <boost/asio/require.hpp>
 
 #include <boost/asio/detail/push_options.hpp>
 
@@ -164,7 +166,9 @@ BOOST_ASIO_INITFN_AUTO_RESULT_TYPE_PREFIX(NullaryToken, void()) post(
     BOOST_ASIO_MOVE_ARG(NullaryToken) token
       BOOST_ASIO_DEFAULT_COMPLETION_TOKEN(Executor),
     typename constraint<
-      execution::is_executor<Executor>::value || is_executor<Executor>::value
+      (execution::is_executor<Executor>::value
+          && can_require<Executor, execution::blocking_t::never_t>::value)
+        || is_executor<Executor>::value
     >::type = 0)
   BOOST_ASIO_INITFN_AUTO_RESULT_TYPE_SUFFIX((
     async_initiate<NullaryToken, void()>(
