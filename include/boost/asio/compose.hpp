@@ -72,11 +72,16 @@ public:
   }
 #endif // defined(BOOST_ASIO_HAS_MOVE)
 
-  typedef typename associated_executor<Handler,
-      typename composed_work_guard<
-        typename Work::head_type
-      >::executor_type
-    >::type executor_type;
+  typedef typename composed_work_guard<
+    typename Work::head_type>::executor_type io_executor_type;
+
+  io_executor_type get_io_executor() const BOOST_ASIO_NOEXCEPT
+  {
+    return work_.head_.get_executor();
+  }
+
+  typedef typename associated_executor<Handler, io_executor_type>::type
+    executor_type;
 
   executor_type get_executor() const BOOST_ASIO_NOEXCEPT
   {
@@ -167,6 +172,11 @@ public:
     base_from_cancellation_state<Handler>::reset_cancellation_state(handler_,
         BOOST_ASIO_MOVE_CAST(InFilter)(in_filter),
         BOOST_ASIO_MOVE_CAST(OutFilter)(out_filter));
+  }
+
+  cancellation_type_t cancelled() const BOOST_ASIO_NOEXCEPT
+  {
+    return base_from_cancellation_state<Handler>::cancelled();
   }
 
 //private:

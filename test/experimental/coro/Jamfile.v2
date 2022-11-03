@@ -40,6 +40,8 @@ project
   ;
 
 test-suite "asio-experimental-coro" :
+  [ run allocator.cpp ]
+  [ run allocator.cpp : : : $(USE_SELECT) : allocator_select ]
   [ run cancel.cpp ]
   [ run cancel.cpp : : : $(USE_SELECT) : cancel_select ]
   [ run co_spawn.cpp ]

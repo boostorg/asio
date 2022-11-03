@@ -28,7 +28,7 @@ void partial()
 {
   boost::asio::io_context ctx;
   bool ran = false;
-  auto p = detail::post_coroutine(ctx, [&]{ran = true;});
+  auto p = detail::post_coroutine(ctx, [&]{ran = true;}).handle;
   BOOST_ASIO_CHECK(!ran);
   p.resume();
   BOOST_ASIO_CHECK(!ran);

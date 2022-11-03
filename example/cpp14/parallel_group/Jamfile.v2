@@ -30,6 +30,7 @@ project
   ;
 
 exe parallel_sort : parallel_sort.cpp ;
+exe ranged_wait_for_all : ranged_wait_for_all.cpp ;
 exe wait_for_all : wait_for_all.cpp ;
 exe wait_for_one : wait_for_one.cpp ;
 exe wait_for_one_error : wait_for_one_error.cpp ;
