@@ -169,6 +169,11 @@ public:
         BOOST_ASIO_MOVE_CAST(OutFilter)(out_filter));
   }
 
+  cancellation_type_t cancelled() const BOOST_ASIO_NOEXCEPT
+  {
+    return base_from_cancellation_state<Handler>::cancelled();
+  }
+
 //private:
   Impl impl_;
   Work work_;
