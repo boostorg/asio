@@ -17,6 +17,7 @@
 // Test that header file is self-contained.
 #include <boost/asio/experimental/coro.hpp>
 #include <iostream>
+#include <boost/asio/bind_cancellation_slot.hpp>
 #include <boost/asio/io_context.hpp>
 #include <boost/asio/steady_timer.hpp>
 #include <boost/asio/this_coro.hpp>
