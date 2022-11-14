@@ -1081,8 +1081,7 @@ struct associator<Associator,
 
 #if !defined(GENERATING_DOCUMENTATION)
 # if defined(BOOST_ASIO_HAS_STD_COROUTINE)
-namespace boost {
-namespace system {
+namespace std {
 # else // defined(BOOST_ASIO_HAS_STD_COROUTINE)
 namespace std { namespace experimental {
 # endif // defined(BOOST_ASIO_HAS_STD_COROUTINE)
@@ -1124,8 +1123,7 @@ struct coroutine_traits<void,
 };
 
 # if defined(BOOST_ASIO_HAS_STD_COROUTINE)
-} // namespace system
-} // namespace boost
+} // namespace std
 # else // defined(BOOST_ASIO_HAS_STD_COROUTINE)
 }} // namespace std::experimental
 # endif // defined(BOOST_ASIO_HAS_STD_COROUTINE)
