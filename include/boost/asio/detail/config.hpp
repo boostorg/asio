@@ -2193,4 +2193,15 @@
 # endif // !defined(BOOST_ASIO_DISABLE_STD_TO_ADDRESS)
 #endif // !defined(BOOST_ASIO_HAS_STD_TO_ADDRESS)
 
+// Standard library support for snprintf.
+#if !defined(BOOST_ASIO_HAS_SNPRINTF)
+# if !defined(BOOST_ASIO_DISABLE_SNPRINTF)
+#  if defined(__apple_build_version__)
+#    if (__clang_major__ >= 14)
+#     define BOOST_ASIO_HAS_SNPRINTF 1
+#    endif // (__clang_major__ >= 14)
+#  endif // defined(__apple_build_version__)
+# endif // !defined(BOOST_ASIO_DISABLE_SNPRINTF)
+#endif // !defined(BOOST_ASIO_HAS_SNPRINTF)
+
 #endif // BOOST_ASIO_DETAIL_CONFIG_HPP
