@@ -19,6 +19,7 @@
 #include <boost/asio/detail/config.hpp>
 #include <memory>
 #include <boost/asio/deferred.hpp>
+#include <boost/asio/detail/source_location.hpp>
 
 #include <boost/asio/detail/push_options.hpp>
 
