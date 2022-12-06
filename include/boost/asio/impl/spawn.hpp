@@ -1113,8 +1113,8 @@ template <typename Handler, typename Executor, typename = void>
 class spawn_cancellation_handler
 {
 public:
-  spawn_cancellation_handler(const Handler& handler, const Executor& ex)
-    : ex_(boost::asio::get_associated_executor(handler, ex))
+  spawn_cancellation_handler(const Handler&, const Executor& ex)
+    : ex_(ex)
   {
   }
 
@@ -1131,7 +1131,7 @@ public:
 
 private:
   cancellation_signal signal_;
-  typename associated_executor<Handler, Executor>::type ex_;
+  Executor ex_;
 };
 
 
