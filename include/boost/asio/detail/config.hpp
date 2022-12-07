@@ -418,7 +418,11 @@
 #   if (__cpp_return_type_deduction >= 201304)
 #    define BOOST_ASIO_HAS_RETURN_TYPE_DEDUCTION 1
 #   endif // (__cpp_return_type_deduction >= 201304)
-#  endif // defined(__cpp_return_type_deduction)
+#  elif defined(BOOST_ASIO_MSVC)
+#   if (_MSC_VER >= 1900 && _MSVC_LANG >= 201402)
+#    define BOOST_ASIO_HAS_RETURN_TYPE_DEDUCTION 1
+#   endif // (_MSC_VER >= 1900 && _MSVC_LANG >= 201402)
+#  endif // defined(BOOST_ASIO_MSVC)
 # endif // !defined(BOOST_ASIO_DISABLE_RETURN_TYPE_DEDUCTION)
 #endif // !defined(BOOST_ASIO_HAS_RETURN_TYPE_DEDUCTION)
 
@@ -1346,14 +1350,11 @@
 #   if (_MSC_VER >= 1911 && _MSVC_LANG >= 201703)
 #    define BOOST_ASIO_HAS_STD_INVOKE_RESULT 1
 #   endif // (_MSC_VER >= 1911 && _MSVC_LANG >= 201703)
+#  else // defined(BOOST_ASIO_MSVC)
+#   if (__cplusplus >= 201703)
+#    define BOOST_ASIO_HAS_STD_INVOKE_RESULT 1
+#   endif // (__cplusplus >= 201703)
 #  endif // defined(BOOST_ASIO_MSVC)
-#  if defined(BOOST_ASIO_HAS_CLANG_LIBCXX)
-#   if (_LIBCPP_VERSION >= 13000)
-#    if (__cplusplus >= 201703)
-#     define BOOST_ASIO_HAS_STD_INVOKE_RESULT 1
-#    endif // (__cplusplus >= 201703)
-#   endif // (_LIBCPP_VERSION >= 13000)
-#  endif // defined(BOOST_ASIO_HAS_CLANG_LIBCXX)
 # endif // !defined(BOOST_ASIO_DISABLE_STD_INVOKE_RESULT)
 #endif // !defined(BOOST_ASIO_HAS_STD_INVOKE_RESULT)
 
@@ -2089,11 +2090,23 @@
 #    endif // defined(_RESUMABLE_FUNCTIONS_SUPPORTED)
 #   endif // (_MSC_FULL_VER >= 190023506)
 #  elif defined(__clang__)
-#   if (__cplusplus >= 201703) && (__cpp_coroutines >= 201703)
-#    if __has_include(<experimental/coroutine>)
-#     define BOOST_ASIO_HAS_CO_AWAIT 1
-#    endif // __has_include(<experimental/coroutine>)
-#   endif // (__cplusplus >= 201703) && (__cpp_coroutines >= 201703)
+#   if (__clang_major__ >= 14)
+#    if (__cplusplus >= 202002) && (__cpp_impl_coroutine >= 201902)
+#     if __has_include(<coroutine>)
+#      define BOOST_ASIO_HAS_CO_AWAIT 1
+#     endif // __has_include(<coroutine>)
+#    elif (__cplusplus >= 201703) && (__cpp_coroutines >= 201703)
+#     if __has_include(<experimental/coroutine>)
+#      define BOOST_ASIO_HAS_CO_AWAIT 1
+#     endif // __has_include(<experimental/coroutine>)
+#    endif // (__cplusplus >= 201703) && (__cpp_coroutines >= 201703)
+#   else // (__clang_major__ >= 14)
+#    if (__cplusplus >= 201703) && (__cpp_coroutines >= 201703)
+#     if __has_include(<experimental/coroutine>)
+#      define BOOST_ASIO_HAS_CO_AWAIT 1
+#     endif // __has_include(<experimental/coroutine>)
+#    endif // (__cplusplus >= 201703) && (__cpp_coroutines >= 201703)
+#   endif // (__clang_major__ >= 14)
 #  elif defined(__GNUC__)
 #   if (__cplusplus >= 201709) && (__cpp_impl_coroutine >= 201902)
 #    if __has_include(<coroutine>)
@@ -2111,8 +2124,15 @@
 #   if (_MSC_VER >= 1928) && (_MSVC_LANG >= 201705)
 #    define BOOST_ASIO_HAS_STD_COROUTINE 1
 #   endif // (_MSC_VER >= 1928) && (_MSVC_LANG >= 201705)
-#  endif // defined(BOOST_ASIO_MSVC)
-#  if defined(__GNUC__)
+#  elif defined(__clang__)
+#   if (__clang_major__ >= 14)
+#    if (__cplusplus >= 202002) && (__cpp_impl_coroutine >= 201902)
+#     if __has_include(<coroutine>)
+#      define BOOST_ASIO_HAS_STD_COROUTINE 1
+#     endif // __has_include(<coroutine>)
+#    endif // (__cplusplus >= 202002) && (__cpp_impl_coroutine >= 201902)
+#   endif // (__clang_major__ >= 14)
+#  elif defined(__GNUC__)
 #   if (__cplusplus >= 201709) && (__cpp_impl_coroutine >= 201902)
 #    if __has_include(<coroutine>)
 #     define BOOST_ASIO_HAS_STD_COROUTINE 1
@@ -2192,5 +2212,16 @@
 #  endif // defined(BOOST_ASIO_MSVC)
 # endif // !defined(BOOST_ASIO_DISABLE_STD_TO_ADDRESS)
 #endif // !defined(BOOST_ASIO_HAS_STD_TO_ADDRESS)
+
+// Standard library support for snprintf.
+#if !defined(BOOST_ASIO_HAS_SNPRINTF)
+# if !defined(BOOST_ASIO_DISABLE_SNPRINTF)
+#  if defined(__apple_build_version__)
+#    if (__clang_major__ >= 14)
+#     define BOOST_ASIO_HAS_SNPRINTF 1
+#    endif // (__clang_major__ >= 14)
+#  endif // defined(__apple_build_version__)
+# endif // !defined(BOOST_ASIO_DISABLE_SNPRINTF)
+#endif // !defined(BOOST_ASIO_HAS_SNPRINTF)
 
 #endif // BOOST_ASIO_DETAIL_CONFIG_HPP
