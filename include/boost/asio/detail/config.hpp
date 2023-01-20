@@ -1664,6 +1664,11 @@
 #   endif // (__GLIBC__ > 2) || (__GLIBC__ == 2 && __GLIBC_MINOR__ >= 8)
 #  endif // defined(BOOST_ASIO_HAS_EPOLL)
 # endif // !defined(BOOST_ASIO_HAS_TIMERFD)
+# if !defined(BOOST_ASIO_HAS_VM_SOCKETS)
+#  if LINUX_VERSION_CODE >= KERNEL_VERSION(5,6,0)
+#   define BOOST_ASIO_HAS_VM_SOCKETS 1
+#  endif // LINUX_VERSION_CODE >= KERNEL_VERSION(5,6,0)
+# endif // !defined(BOOST_ASIO_HAS_VM_SOCKETS)
 #endif // defined(__linux__)
 
 // Linux: io_uring is used instead of epoll.

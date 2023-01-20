@@ -89,6 +89,10 @@
 #  include <sys/filio.h>
 #  include <sys/sockio.h>
 # endif
+# if defined(__linux__)
+#  include <sys/socket.h>
+#  include <linux/vm_sockets.h>
+# endif
 #endif
 
 #include <boost/asio/detail/push_options.hpp>
@@ -314,6 +318,9 @@ typedef ipv6_mreq in6_mreq_type;
 typedef sockaddr_in6 sockaddr_in6_type;
 typedef sockaddr_storage sockaddr_storage_type;
 typedef sockaddr_un sockaddr_un_type;
+# if defined(__linux__)
+typedef sockaddr_vm sockaddr_vm_type;
+# endif
 typedef addrinfo addrinfo_type;
 typedef ::linger linger_type;
 typedef int ioctl_arg_type;
