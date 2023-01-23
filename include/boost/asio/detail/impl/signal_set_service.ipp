@@ -47,6 +47,14 @@ struct signal_state
   // The write end of the pipe used for signal notifications.
   int write_descriptor_;
 
+#if !defined(BOOST_ASIO_WINDOWS) \
+  && !defined(BOOST_ASIO_WINDOWS_RUNTIME) \
+  && !defined(__CYGWIN__)
+  // Our own PID. We need it so we can detect if we had recently
+  // fork()'ed but not yet been notified.
+  pid_t pid_;
+#endif
+
   // Whether the signal state has been prepared for a fork.
   bool fork_prepared_;
 
@@ -60,7 +68,13 @@ struct signal_state
 signal_state* get_signal_state()
 {
   static signal_state state = {
-    BOOST_ASIO_STATIC_MUTEX_INIT, -1, -1, false, 0, { 0 } };
+    BOOST_ASIO_STATIC_MUTEX_INIT, -1, -1,
+#if !defined(BOOST_ASIO_WINDOWS) \
+  && !defined(BOOST_ASIO_WINDOWS_RUNTIME) \
+  && !defined(__CYGWIN__)
+    ::getpid(),
+#endif
+    false, 0, { 0 } };
   return &state;
 }
 
@@ -75,6 +89,18 @@ void boost_asio_signal_handler(int signal_number)
       //   || defined(__CYGWIN__)
   int saved_errno = errno;
   signal_state* state = get_signal_state();
+  pid_t pid = ::getpid();
+  if (state->pid_ != pid)
+  {
+    // There is a small window between ::fork() and notify_fork() where
+    // we need to make sure we don't accidently deliver that signal to
+    // the parent process. If this happened, we'll close the pipes
+    // and create new ones immediately. This is safe to do inside
+    // the signal handler.
+    state->pid_ = pid;
+    signal_set_service::close_descriptors();
+    signal_set_service::open_descriptors();
+  }
   signed_size_type result = ::write(state->write_descriptor_,
       &signal_number, sizeof(signal_number));
   (void)result;
@@ -265,8 +291,17 @@ void signal_set_service::notify_fork(execution_context::fork_event fork_ev)
     if (state->fork_prepared_)
     {
       boost::asio::detail::signal_blocker blocker;
-      close_descriptors();
-      open_descriptors();
+      pid_t pid = ::getpid();
+      if (state->pid_ != pid)
+      {
+        // There is a small chance this was already done by a signal
+        // that was delivered between ::fork() and notify_fork(). If
+        // so, we don't want to re-open the pipe as we would lose that
+        // signal.
+        state->pid_ = pid;
+        close_descriptors();
+        open_descriptors();
+      }
       int read_descriptor = state->read_descriptor_;
       state->fork_prepared_ = false;
       lock.unlock();
