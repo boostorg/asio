@@ -194,6 +194,10 @@
 #include <boost/asio/use_future.hpp>
 #include <boost/asio/uses_executor.hpp>
 #include <boost/asio/version.hpp>
+#include <boost/asio/vm/basic_endpoint.hpp>
+#include <boost/asio/vm/cid.hpp>
+#include <boost/asio/vm/datagram_protocol.hpp>
+#include <boost/asio/vm/stream_protocol.hpp>
 #include <boost/asio/wait_traits.hpp>
 #include <boost/asio/windows/basic_object_handle.hpp>
 #include <boost/asio/windows/basic_overlapped_handle.hpp>
