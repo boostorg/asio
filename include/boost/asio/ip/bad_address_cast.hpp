@@ -37,7 +37,7 @@ public:
   bad_address_cast() {}
 
   /// Destructor.
-  virtual ~bad_address_cast() BOOST_ASIO_NOEXCEPT_OR_NOTHROW {}
+  BOOST_DEFAULTED_FUNCTION(virtual ~bad_address_cast() BOOST_ASIO_NOEXCEPT_OR_NOTHROW, {})
 
   /// Get the message associated with the exception.
   virtual const char* what() const BOOST_ASIO_NOEXCEPT_OR_NOTHROW
