@@ -44,7 +44,6 @@ struct strand_service::on_do_complete_exit
 
 strand_service::strand_service(boost::asio::io_context& io_context)
   : boost::asio::detail::service_base<strand_service>(io_context),
-    io_context_(io_context),
     io_context_impl_(boost::asio::use_service<io_context_impl>(io_context)),
     mutex_(),
     salt_(0)
