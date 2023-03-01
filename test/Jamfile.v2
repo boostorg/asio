@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2003-2022 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+# Copyright (c) 2003-2023 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 #
 # Distributed under the Boost Software License, Version 1.0. (See accompanying
 # file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -58,6 +58,8 @@ test-suite "asio" :
   [ link associated_cancellation_slot.cpp : $(USE_SELECT) : associated_cancellation_slot_select ]
   [ link associated_executor.cpp ]
   [ link associated_executor.cpp : $(USE_SELECT) : associated_executor_select ]
+  [ link associated_immediate_executor.cpp ]
+  [ link associated_immediate_executor.cpp : $(USE_SELECT) : associated_immediate_executor_select ]
   [ link associator.cpp ]
   [ link associator.cpp : $(USE_SELECT) : associator_select ]
   [ link awaitable.cpp ]
@@ -96,6 +98,8 @@ test-suite "asio" :
   [ run bind_cancellation_slot.cpp : : : $(USE_SELECT) : bind_cancellation_slot_select ]
   [ run bind_executor.cpp ]
   [ run bind_executor.cpp : : : $(USE_SELECT) : bind_executor_select ]
+  [ run bind_immediate_executor.cpp ]
+  [ run bind_immediate_executor.cpp : : : $(USE_SELECT) : bind_immediate_executor_select ]
   [ run buffer.cpp ]
   [ run buffer.cpp : : : $(USE_SELECT) : buffer_select ]
   [ link buffer_registration.cpp ]
@@ -196,6 +200,8 @@ test-suite "asio" :
   [ link local/connect_pair.cpp : $(USE_SELECT) : local_connect_pair_select ]
   [ link local/datagram_protocol.cpp : : local_datagram_protocol ]
   [ link local/datagram_protocol.cpp : $(USE_SELECT) : local_datagram_protocol_select ]
+  [ link local/seq_packet_protocol.cpp : : local_seq_packet_protocol ]
+  [ link local/seq_packet_protocol.cpp : $(USE_SELECT) : local_seq_packet_protocol_select ]
   [ link local/stream_protocol.cpp : : local_stream_protocol ]
   [ link local/stream_protocol.cpp : $(USE_SELECT) : local_stream_protocol_select ]
   [ link placeholders.cpp ]

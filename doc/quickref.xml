@@ -2,7 +2,7 @@
 <!DOCTYPE library PUBLIC "-//Boost//DTD BoostBook XML V1.0//EN" "../../../tools/boostbook/dtd/boostbook.dtd">
 
 <!--
-  Copyright (c) 2003-2022 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+  Copyright (c) 2003-2023 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 
   Distributed under the Boost Software License, Version 1.0. (See accompanying
   file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -237,6 +237,7 @@
             <member><link linkend="boost_asio.reference.bind_allocator">bind_allocator</link></member>
             <member><link linkend="boost_asio.reference.bind_cancellation_slot">bind_cancellation_slot</link></member>
             <member><link linkend="boost_asio.reference.bind_executor">bind_executor</link></member>
+            <member><link linkend="boost_asio.reference.bind_immediate_executor">bind_immediate_executor</link></member>
             <member><link linkend="boost_asio.reference.co_spawn">co_spawn</link></member>
             <member><link linkend="boost_asio.reference.consign">consign</link></member>
             <member><link linkend="boost_asio.reference.dispatch">dispatch</link></member>
@@ -245,6 +246,7 @@
             <member><link linkend="boost_asio.reference.get_associated_allocator">get_associated_allocator</link></member>
             <member><link linkend="boost_asio.reference.get_associated_cancellation_slot">get_associated_cancellation_slot</link></member>
             <member><link linkend="boost_asio.reference.get_associated_executor">get_associated_executor</link></member>
+            <member><link linkend="boost_asio.reference.get_associated_immediate_executor">get_associated_immediate_executor</link></member>
             <member><link linkend="boost_asio.reference.execution_context.has_service">has_service</link></member>
             <member><link linkend="boost_asio.reference.make_strand">make_strand</link></member>
             <member><link linkend="boost_asio.reference.make_work_guard">make_work_guard</link></member>
@@ -332,6 +334,7 @@
             <member><link linkend="boost_asio.reference.associated_allocator">associated_allocator</link></member>
             <member><link linkend="boost_asio.reference.associated_cancellation_slot">associated_cancellation_slot</link></member>
             <member><link linkend="boost_asio.reference.associated_executor">associated_executor</link></member>
+            <member><link linkend="boost_asio.reference.associated_immediate_executor">associated_immediate_executor</link></member>
             <member><link linkend="boost_asio.reference.associator">associator</link></member>
             <member><link linkend="boost_asio.reference.async_result">async_result</link></member>
             <member><link linkend="boost_asio.reference.completion_signature_of">completion_signature_of</link></member>
@@ -773,6 +776,10 @@
         <entry valign="top">
           <bridgehead renderas="sect3">Classes</bridgehead>
           <simplelist type="vert" columns="1">
+            <member><link linkend="boost_asio.reference.local__seq_packet_protocol">local::seq_packet_protocol</link></member>
+            <member><link linkend="boost_asio.reference.local__seq_packet_protocol.acceptor">local::seq_packet_protocol::acceptor</link></member>
+            <member><link linkend="boost_asio.reference.local__seq_packet_protocol.endpoint">local::seq_packet_protocol::endpoint</link></member>
+            <member><link linkend="boost_asio.reference.local__seq_packet_protocol.socket">local::seq_packet_protocol::socket</link></member>
             <member><link linkend="boost_asio.reference.local__stream_protocol">local::stream_protocol</link></member>
             <member><link linkend="boost_asio.reference.local__stream_protocol.acceptor">local::stream_protocol::acceptor</link></member>
             <member><link linkend="boost_asio.reference.local__stream_protocol.endpoint">local::stream_protocol::endpoint</link></member>

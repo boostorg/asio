@@ -2,7 +2,7 @@
 // buffer.cpp
 // ~~~~~~~~~~
 //
-// Copyright (c) 2003-2022 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2023 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -24,6 +24,7 @@
 
 #if defined(BOOST_ASIO_HAS_STD_ARRAY)
 # include <array>
+# include <cstring>
 #endif // defined(BOOST_ASIO_HAS_STD_ARRAY)
 
 //------------------------------------------------------------------------------
@@ -867,6 +868,64 @@ void test()
 
 } // namespace buffer_sequence
 
+namespace buffer_literals {
+
+void test()
+{
+#if (defined(BOOST_ASIO_HAS_USER_DEFINED_LITERALS) \
+    && defined(BOOST_ASIO_HAS_VARIADIC_TEMPLATES))
+  using namespace boost::asio::buffer_literals;
+  using namespace std; // For memcmp.
+
+  boost::asio::const_buffer b1 = ""_buf;
+  BOOST_ASIO_CHECK(b1.size() == 0);
+
+  boost::asio::const_buffer b2 = "hello"_buf;
+  BOOST_ASIO_CHECK(b2.size() == 5);
+  BOOST_ASIO_CHECK(memcmp(b2.data(), "hello", 5) == 0);
+
+  boost::asio::const_buffer b3 = 0x00_buf;
+  BOOST_ASIO_CHECK(b3.size() == 1);
+  BOOST_ASIO_CHECK(memcmp(b3.data(), "\x00", 1) == 0);
+
+  boost::asio::const_buffer b4 = 0X01_buf;
+  BOOST_ASIO_CHECK(b4.size() == 1);
+  BOOST_ASIO_CHECK(memcmp(b4.data(), "\x01", 1) == 0);
+
+  boost::asio::const_buffer b5 = 0xaB_buf;
+  BOOST_ASIO_CHECK(b5.size() == 1);
+  BOOST_ASIO_CHECK(memcmp(b5.data(), "\xab", 1) == 0);
+
+  boost::asio::const_buffer b6 = 0xABcd_buf;
+  BOOST_ASIO_CHECK(b6.size() == 2);
+  BOOST_ASIO_CHECK(memcmp(b6.data(), "\xab\xcd", 2) == 0);
+
+  boost::asio::const_buffer b7 = 0x01ab01cd01ef01ba01dc01fe_buf;
+  BOOST_ASIO_CHECK(b7.size() == 12);
+  BOOST_ASIO_CHECK(memcmp(b7.data(),
+        "\x01\xab\x01\xcd\x01\xef\x01\xba\x01\xdc\x01\xfe", 12) == 0);
+
+  boost::asio::const_buffer b8 = 0b00000000_buf;
+  BOOST_ASIO_CHECK(b8.size() == 1);
+  BOOST_ASIO_CHECK(memcmp(b8.data(), "\x00", 1) == 0);
+
+  boost::asio::const_buffer b9 = 0B00000001_buf;
+  BOOST_ASIO_CHECK(b9.size() == 1);
+  BOOST_ASIO_CHECK(memcmp(b9.data(), "\x01", 1) == 0);
+
+  boost::asio::const_buffer b10 = 0B11111111_buf;
+  BOOST_ASIO_CHECK(b10.size() == 1);
+  BOOST_ASIO_CHECK(memcmp(b10.data(), "\xFF", 1) == 0);
+
+  boost::asio::const_buffer b11 = 0b1111000000001111_buf;
+  BOOST_ASIO_CHECK(b11.size() == 2);
+  BOOST_ASIO_CHECK(memcmp(b11.data(), "\xF0\x0F", 2) == 0);
+#endif // (defined(BOOST_ASIO_HAS_USER_DEFINED_LITERALS)
+       //   && defined(BOOST_ASIO_HAS_VARIADIC_TEMPLATES))
+}
+
+} // namespace buffer_literals
+
 //------------------------------------------------------------------------------
 
 BOOST_ASIO_TEST_SUITE
@@ -875,4 +934,5 @@ BOOST_ASIO_TEST_SUITE
   BOOST_ASIO_COMPILE_TEST_CASE(buffer_compile::test)
   BOOST_ASIO_TEST_CASE(buffer_copy_runtime::test)
   BOOST_ASIO_TEST_CASE(buffer_sequence::test)
+  BOOST_ASIO_TEST_CASE(buffer_literals::test)
 )
