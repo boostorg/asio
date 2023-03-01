@@ -23,8 +23,9 @@
 #include <boost/asio/append.hpp>
 #include <boost/asio/as_tuple.hpp>
 #include <boost/asio/associated_allocator.hpp>
-#include <boost/asio/associated_executor.hpp>
 #include <boost/asio/associated_cancellation_slot.hpp>
+#include <boost/asio/associated_executor.hpp>
+#include <boost/asio/associated_immediate_executor.hpp>
 #include <boost/asio/associator.hpp>
 #include <boost/asio/async_result.hpp>
 #include <boost/asio/awaitable.hpp>

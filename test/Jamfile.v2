@@ -58,6 +58,8 @@ test-suite "asio" :
   [ link associated_cancellation_slot.cpp : $(USE_SELECT) : associated_cancellation_slot_select ]
   [ link associated_executor.cpp ]
   [ link associated_executor.cpp : $(USE_SELECT) : associated_executor_select ]
+  [ link associated_immediate_executor.cpp ]
+  [ link associated_immediate_executor.cpp : $(USE_SELECT) : associated_immediate_executor_select ]
   [ link associator.cpp ]
   [ link associator.cpp : $(USE_SELECT) : associator_select ]
   [ link awaitable.cpp ]
