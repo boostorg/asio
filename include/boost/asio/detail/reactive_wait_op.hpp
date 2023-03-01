@@ -34,6 +34,9 @@ template <typename Handler, typename IoExecutor>
 class reactive_wait_op : public reactor_op
 {
 public:
+  typedef Handler handler_type;
+  typedef IoExecutor io_executor_type;
+
   BOOST_ASIO_DEFINE_HANDLER_PTR(reactive_wait_op);
 
   reactive_wait_op(const boost::system::error_code& success_ec,
@@ -84,6 +87,35 @@ public:
       w.complete(handler, handler.handler_);
       BOOST_ASIO_HANDLER_INVOCATION_END;
     }
+  }
+
+  static void do_immediate(operation* base, bool, const void* io_ex)
+  {
+    // Take ownership of the handler object.
+    reactive_wait_op* o(static_cast<reactive_wait_op*>(base));
+    ptr p = { boost::asio::detail::addressof(o->handler_), o, o };
+
+    BOOST_ASIO_HANDLER_COMPLETION((*o));
+
+    // Take ownership of the operation's outstanding work.
+    immediate_handler_work<Handler, IoExecutor> w(
+        BOOST_ASIO_MOVE_CAST2(handler_work<Handler, IoExecutor>)(
+          o->work_));
+
+    // Make a copy of the handler so that the memory can be deallocated before
+    // the upcall is made. Even if we're not about to make an upcall, a
+    // sub-object of the handler may be the true owner of the memory associated
+    // with the handler. Consequently, a local copy of the handler is required
+    // to ensure that any owning sub-object remains valid until after we have
+    // deallocated the memory here.
+    detail::binder1<Handler, boost::system::error_code>
+      handler(o->handler_, o->ec_);
+    p.h = boost::asio::detail::addressof(handler.handler_);
+    p.reset();
+
+    BOOST_ASIO_HANDLER_INVOCATION_BEGIN((handler.arg1_));
+    w.complete(handler, handler.handler_, io_ex);
+    BOOST_ASIO_HANDLER_INVOCATION_END;
   }
 
 private:
