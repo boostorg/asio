@@ -200,6 +200,8 @@ test-suite "asio" :
   [ link local/connect_pair.cpp : $(USE_SELECT) : local_connect_pair_select ]
   [ link local/datagram_protocol.cpp : : local_datagram_protocol ]
   [ link local/datagram_protocol.cpp : $(USE_SELECT) : local_datagram_protocol_select ]
+  [ link local/seq_packet_protocol.cpp : : local_seq_packet_protocol ]
+  [ link local/seq_packet_protocol.cpp : $(USE_SELECT) : local_seq_packet_protocol_select ]
   [ link local/stream_protocol.cpp : : local_stream_protocol ]
   [ link local/stream_protocol.cpp : $(USE_SELECT) : local_stream_protocol_select ]
   [ link placeholders.cpp ]

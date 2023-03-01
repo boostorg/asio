@@ -154,6 +154,7 @@
 #include <boost/asio/local/basic_endpoint.hpp>
 #include <boost/asio/local/connect_pair.hpp>
 #include <boost/asio/local/datagram_protocol.hpp>
+#include <boost/asio/local/seq_packet_protocol.hpp>
 #include <boost/asio/local/stream_protocol.hpp>
 #include <boost/asio/multiple_exceptions.hpp>
 #include <boost/asio/packaged_task.hpp>
