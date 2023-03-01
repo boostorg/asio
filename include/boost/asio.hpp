@@ -51,6 +51,7 @@
 #include <boost/asio/bind_allocator.hpp>
 #include <boost/asio/bind_cancellation_slot.hpp>
 #include <boost/asio/bind_executor.hpp>
+#include <boost/asio/bind_immediate_executor.hpp>
 #include <boost/asio/buffer.hpp>
 #include <boost/asio/buffer_registration.hpp>
 #include <boost/asio/buffered_read_stream_fwd.hpp>
