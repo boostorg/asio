@@ -645,6 +645,19 @@
 # define BOOST_ASIO_DEFAULT_ALIGN 1
 #endif // defined(BOOST_ASIO_HAS_ALIGNOF)
 
+// Support for user-defined literals.
+#if !defined(BOOST_ASIO_HAS_USER_DEFINED_LITERALS)
+# if !defined(BOOST_ASIO_DISABLE_USER_DEFINED_LITERALS)
+#  if (__cplusplus >= 201103)
+#   define BOOST_ASIO_HAS_USER_DEFINED_LITERALS 1
+#  elif defined(BOOST_ASIO_MSVC)
+#   if (_MSC_VER >= 1900 && _MSVC_LANG >= 201103)
+#    define BOOST_ASIO_HAS_USER_DEFINED_LITERALS 1
+#   endif // (_MSC_VER >= 1900 && _MSVC_LANG >= 201103)
+#  endif // defined(BOOST_ASIO_MSVC)
+# endif // !defined(BOOST_ASIO_DISABLE_USER_DEFINED_LITERALS)
+#endif // !defined(BOOST_ASIO_HAS_USER_DEFINED_LITERALS)
+
 // Standard library support for aligned allocation.
 #if !defined(BOOST_ASIO_HAS_STD_ALIGNED_ALLOC)
 # if !defined(BOOST_ASIO_DISABLE_STD_ALIGNED_ALLOC)
