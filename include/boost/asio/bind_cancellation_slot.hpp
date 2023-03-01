@@ -692,17 +692,18 @@ template <template <typename, typename> class Associator,
 struct associator<Associator,
     cancellation_slot_binder<T, CancellationSlot>,
     DefaultCandidate>
+  : Associator<T, DefaultCandidate>
 {
-  typedef typename Associator<T, DefaultCandidate>::type type;
-
-  static type get(const cancellation_slot_binder<T, CancellationSlot>& b)
+  static typename Associator<T, DefaultCandidate>::type
+  get(const cancellation_slot_binder<T, CancellationSlot>& b)
     BOOST_ASIO_NOEXCEPT
   {
     return Associator<T, DefaultCandidate>::get(b.get());
   }
 
-  static BOOST_ASIO_AUTO_RETURN_TYPE_PREFIX(type) get(
-      const cancellation_slot_binder<T, CancellationSlot>& b,
+  static BOOST_ASIO_AUTO_RETURN_TYPE_PREFIX2(
+      typename Associator<T, DefaultCandidate>::type)
+  get(const cancellation_slot_binder<T, CancellationSlot>& b,
       const DefaultCandidate& c) BOOST_ASIO_NOEXCEPT
     BOOST_ASIO_AUTO_RETURN_TYPE_SUFFIX((
       Associator<T, DefaultCandidate>::get(b.get(), c)))
