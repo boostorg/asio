@@ -99,6 +99,7 @@ thread_pool::~thread_pool()
 {
   stop();
   join();
+  shutdown();
 }
 
 void thread_pool::stop()
