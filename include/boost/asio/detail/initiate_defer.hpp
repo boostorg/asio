@@ -1,6 +1,6 @@
 //
-// impl/defer.hpp
-// ~~~~~~~~~~~~~~
+// detail/initiate_defer.hpp
+// ~~~~~~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2023 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
@@ -8,8 +8,8 @@
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
-#ifndef BOOST_ASIO_IMPL_DEFER_HPP
-#define BOOST_ASIO_IMPL_DEFER_HPP
+#ifndef BOOST_ASIO_DETAIL_INITIATE_DEFER_HPP
+#define BOOST_ASIO_DETAIL_INITIATE_DEFER_HPP
 
 #if defined(_MSC_VER) && (_MSC_VER >= 1200)
 # pragma once
@@ -246,55 +246,9 @@ private:
 };
 
 } // namespace detail
-
-template <BOOST_ASIO_COMPLETION_TOKEN_FOR(void()) NullaryToken>
-BOOST_ASIO_INITFN_AUTO_RESULT_TYPE_PREFIX(NullaryToken, void()) defer(
-    BOOST_ASIO_MOVE_ARG(NullaryToken) token)
-  BOOST_ASIO_INITFN_AUTO_RESULT_TYPE_SUFFIX((
-    async_initiate<NullaryToken, void()>(
-        declval<detail::initiate_defer>(), token)))
-{
-  return async_initiate<NullaryToken, void()>(
-      detail::initiate_defer(), token);
-}
-
-template <typename Executor,
-    BOOST_ASIO_COMPLETION_TOKEN_FOR(void()) NullaryToken>
-BOOST_ASIO_INITFN_AUTO_RESULT_TYPE_PREFIX(NullaryToken, void()) defer(
-    const Executor& ex, BOOST_ASIO_MOVE_ARG(NullaryToken) token,
-    typename constraint<
-      (execution::is_executor<Executor>::value
-          && can_require<Executor, execution::blocking_t::never_t>::value)
-        || is_executor<Executor>::value
-    >::type)
-  BOOST_ASIO_INITFN_AUTO_RESULT_TYPE_SUFFIX((
-    async_initiate<NullaryToken, void()>(
-        declval<detail::initiate_defer_with_executor<Executor> >(), token)))
-{
-  return async_initiate<NullaryToken, void()>(
-      detail::initiate_defer_with_executor<Executor>(ex), token);
-}
-
-template <typename ExecutionContext,
-    BOOST_ASIO_COMPLETION_TOKEN_FOR(void()) NullaryToken>
-inline BOOST_ASIO_INITFN_AUTO_RESULT_TYPE_PREFIX(NullaryToken, void()) defer(
-    ExecutionContext& ctx, BOOST_ASIO_MOVE_ARG(NullaryToken) token,
-    typename constraint<is_convertible<
-      ExecutionContext&, execution_context&>::value>::type)
-  BOOST_ASIO_INITFN_AUTO_RESULT_TYPE_SUFFIX((
-    async_initiate<NullaryToken, void()>(
-        declval<detail::initiate_defer_with_executor<
-          typename ExecutionContext::executor_type> >(), token)))
-{
-  return async_initiate<NullaryToken, void()>(
-      detail::initiate_defer_with_executor<
-        typename ExecutionContext::executor_type>(
-          ctx.get_executor()), token);
-}
-
 } // namespace asio
 } // namespace boost
 
 #include <boost/asio/detail/pop_options.hpp>
 
-#endif // BOOST_ASIO_IMPL_DEFER_HPP
+#endif // BOOST_ASIO_DETAIL_INITIATE_DEFER_HPP
