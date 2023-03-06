@@ -23,6 +23,7 @@
 #include <boost/asio/cancellation_type.hpp>
 #include <boost/asio/error.hpp>
 #include <boost/asio/execution_context.hpp>
+#include <boost/asio/signal_set_base.hpp>
 #include <boost/asio/detail/handler_alloc_helpers.hpp>
 #include <boost/asio/detail/memory.hpp>
 #include <boost/asio/detail/op_queue.hpp>
@@ -141,8 +142,16 @@ public:
   BOOST_ASIO_DECL void destroy(implementation_type& impl);
 
   // Add a signal to a signal_set.
+  boost::system::error_code add(implementation_type& impl,
+      int signal_number, boost::system::error_code& ec)
+  {
+    return add(impl, signal_number, signal_set_base::flags::dont_care, ec);
+  }
+
+  // Add a signal to a signal_set with the specified flags.
   BOOST_ASIO_DECL boost::system::error_code add(implementation_type& impl,
-      int signal_number, boost::system::error_code& ec);
+      int signal_number, signal_set_base::flags_t f,
+      boost::system::error_code& ec);
 
   // Remove a signal to a signal_set.
   BOOST_ASIO_DECL boost::system::error_code remove(implementation_type& impl,
