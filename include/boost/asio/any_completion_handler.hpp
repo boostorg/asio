@@ -580,7 +580,8 @@ public:
   any_completion_handler& operator=(
       any_completion_handler&& other) BOOST_ASIO_NOEXCEPT
   {
-    any_completion_handler(other).swap(*this);
+    any_completion_handler(
+        BOOST_ASIO_MOVE_CAST(any_completion_handler)(other)).swap(*this);
     return *this;
   }
 
