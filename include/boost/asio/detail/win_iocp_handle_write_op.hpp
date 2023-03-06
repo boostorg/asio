@@ -57,6 +57,7 @@ public:
     boost::system::error_code ec(result_ec);
 
     // Take ownership of the operation object.
+    BOOST_ASIO_ASSUME(base != 0);
     win_iocp_handle_write_op* o(static_cast<win_iocp_handle_write_op*>(base));
     ptr p = { boost::asio::detail::addressof(o->handler_), o, o };
 

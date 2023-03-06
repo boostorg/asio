@@ -78,6 +78,7 @@ public:
       const boost::system::error_code& /*ec*/,
       std::size_t /*bytes_transferred*/)
   {
+    BOOST_ASIO_ASSUME(base != 0);
     blocking_executor_op* o(static_cast<blocking_executor_op*>(base));
 
     typename blocking_executor_op_base<Operation>::do_complete_cleanup

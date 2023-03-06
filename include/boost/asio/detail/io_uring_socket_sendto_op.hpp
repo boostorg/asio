@@ -61,6 +61,7 @@ public:
 
   static void do_prepare(io_uring_operation* base, ::io_uring_sqe* sqe)
   {
+    BOOST_ASIO_ASSUME(base != 0);
     io_uring_socket_sendto_op_base* o(
         static_cast<io_uring_socket_sendto_op_base*>(base));
 
@@ -76,6 +77,7 @@ public:
 
   static bool do_perform(io_uring_operation* base, bool after_completion)
   {
+    BOOST_ASIO_ASSUME(base != 0);
     io_uring_socket_sendto_op_base* o(
         static_cast<io_uring_socket_sendto_op_base*>(base));
 
@@ -143,6 +145,7 @@ public:
       std::size_t /*bytes_transferred*/)
   {
     // Take ownership of the handler object.
+    BOOST_ASIO_ASSUME(base != 0);
     io_uring_socket_sendto_op* o
       (static_cast<io_uring_socket_sendto_op*>(base));
     ptr p = { boost::asio::detail::addressof(o->handler_), o, o };

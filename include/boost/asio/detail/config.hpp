@@ -2091,6 +2091,20 @@
 # define BOOST_ASIO_UNUSED_VARIABLE
 #endif // !defined(BOOST_ASIO_UNUSED_VARIABLE)
 
+// Helper macro to tell the optimiser what may be assumed to be true.
+#if defined(BOOST_ASIO_MSVC)
+# define BOOST_ASIO_ASSUME(expr) __assume(expr)
+#elif defined(__clang__)
+# if __has_builtin(__builtin_assume)
+#  define BOOST_ASIO_ASSUME(expr) __builtin_assume(expr)
+# endif // __has_builtin(__builtin_assume)
+#elif defined(__GNUC__)
+# define BOOST_ASIO_ASSUME(expr) if (expr) {} else { __builtin_unreachable(); }
+#endif // defined(__GNUC__)
+#if !defined(BOOST_ASIO_ASSUME)
+# define BOOST_ASIO_ASSUME (void)0
+#endif // !defined(BOOST_ASIO_ASSUME)
+
 // Support the co_await keyword on compilers known to allow it.
 #if !defined(BOOST_ASIO_HAS_CO_AWAIT)
 # if !defined(BOOST_ASIO_DISABLE_CO_AWAIT)
