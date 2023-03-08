@@ -64,6 +64,7 @@ public:
       const boost::system::error_code&, std::size_t)
   {
     // Take ownership of the operation object.
+    BOOST_ASIO_ASSUME(base != 0);
     winrt_resolve_op* o(static_cast<winrt_resolve_op*>(base));
     ptr p = { boost::asio::detail::addressof(o->handler_), o, o };
 

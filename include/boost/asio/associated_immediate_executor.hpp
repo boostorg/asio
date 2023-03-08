@@ -222,15 +222,11 @@ get_associated_immediate_executor(const T& t, const Executor& ex,
  * ExecutionContext::executor_type>::get(t, ctx.get_executor())</tt>
  */
 template <typename T, typename ExecutionContext>
-BOOST_ASIO_NODISCARD inline BOOST_ASIO_AUTO_RETURN_TYPE_PREFIX2(
-    typename associated_immediate_executor<T,
-      typename ExecutionContext::executor_type>::type)
+BOOST_ASIO_NODISCARD inline typename associated_immediate_executor<T,
+    typename ExecutionContext::executor_type>::type
 get_associated_immediate_executor(const T& t, ExecutionContext& ctx,
     typename constraint<is_convertible<ExecutionContext&,
       execution_context&>::value>::type = 0) BOOST_ASIO_NOEXCEPT
-  BOOST_ASIO_AUTO_RETURN_TYPE_SUFFIX((
-    associated_immediate_executor<T,
-      typename ExecutionContext::executor_type>::get(t, ctx.get_executor())))
 {
   return associated_immediate_executor<T,
     typename ExecutionContext::executor_type>::get(t, ctx.get_executor());

@@ -18,6 +18,7 @@
 #include <boost/asio/detail/config.hpp>
 #include <tuple>
 #include <boost/asio/detail/type_traits.hpp>
+#include <boost/asio/detail/utility.hpp>
 
 #include <boost/asio/detail/push_options.hpp>
 
@@ -105,11 +106,17 @@ public:
   template <typename Handler>
   void receive(Handler& h)
   {
-    std::apply(BOOST_ASIO_MOVE_OR_LVALUE(Handler)(h),
-        BOOST_ASIO_MOVE_CAST(args_type)(args_));
+    this->do_receive(h, boost::asio::detail::index_sequence_for<Args...>());
   }
 
 private:
+  template <typename Handler, std::size_t... I>
+  void do_receive(Handler& h, boost::asio::detail::index_sequence<I...>)
+  {
+    BOOST_ASIO_MOVE_OR_LVALUE(Handler)(h)(
+        std::get<I>(BOOST_ASIO_MOVE_CAST(args_type)(args_))...);
+  }
+
   typedef std::tuple<typename decay<Args>::type...> args_type;
   args_type args_;
 };

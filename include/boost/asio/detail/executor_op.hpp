@@ -47,6 +47,7 @@ public:
       std::size_t /*bytes_transferred*/)
   {
     // Take ownership of the handler object.
+    BOOST_ASIO_ASSUME(base != 0);
     executor_op* o(static_cast<executor_op*>(base));
     Alloc allocator(o->allocator_);
     ptr p = { detail::addressof(allocator), o, o };

@@ -186,7 +186,6 @@ public:
   bool try_receive(implementation_type<Traits, Signatures...>& impl,
       BOOST_ASIO_MOVE_ARG(Handler) handler);
 
-  // Asynchronously send a new value into the channel.
   // Asynchronously receive a value from the channel.
   template <typename Traits, typename... Signatures,
       typename Handler, typename IoExecutor>
@@ -537,6 +536,7 @@ struct channel_service<Mutex>::implementation_type<
   implementation_type()
     : size_(0)
   {
+    first_.count_ = 0;
   }
 
   // Move from another buffer.
@@ -637,7 +637,7 @@ private:
   struct buffered_value
   {
     boost::system::error_code value_;
-    std::size_t count_ = 0;
+    std::size_t count_;
   };
 
   struct value_handler

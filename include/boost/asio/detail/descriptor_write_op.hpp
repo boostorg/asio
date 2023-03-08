@@ -49,6 +49,7 @@ public:
 
   static status do_perform(reactor_op* base)
   {
+    BOOST_ASIO_ASSUME(base != 0);
     descriptor_write_op_base* o(static_cast<descriptor_write_op_base*>(base));
 
     typedef buffer_sequence_adapter<boost::asio::const_buffer,
@@ -106,6 +107,7 @@ public:
       std::size_t /*bytes_transferred*/)
   {
     // Take ownership of the handler object.
+    BOOST_ASIO_ASSUME(base != 0);
     descriptor_write_op* o(static_cast<descriptor_write_op*>(base));
     ptr p = { boost::asio::detail::addressof(o->handler_), o, o };
 
@@ -142,6 +144,7 @@ public:
   static void do_immediate(operation* base, bool, const void* io_ex)
   {
     // Take ownership of the handler object.
+    BOOST_ASIO_ASSUME(base != 0);
     descriptor_write_op* o(static_cast<descriptor_write_op*>(base));
     ptr p = { boost::asio::detail::addressof(o->handler_), o, o };
 

@@ -234,6 +234,8 @@ test-suite "asio" :
   [ link registered_buffer.cpp : $(USE_SELECT) : registered_buffer_select ]
   [ run signal_set.cpp ]
   [ run signal_set.cpp : : : $(USE_SELECT) : signal_set_select ]
+  [ link signal_set_base.cpp ]
+  [ link signal_set_base.cpp : $(USE_SELECT) : signal_set_base_select ]
   [ run socket_base.cpp ]
   [ run socket_base.cpp : : : $(USE_SELECT) : socket_base_select ]
   [ run static_thread_pool.cpp ]
