@@ -1443,6 +1443,30 @@
 # endif // !defined(BOOST_ASIO_DISABLE_STD_ANY)
 #endif // !defined(BOOST_ASIO_HAS_STD_ANY)
 
+// Standard library support for std::variant.
+#if !defined(BOOST_ASIO_HAS_STD_VARIANT)
+# if !defined(BOOST_ASIO_DISABLE_STD_VARIANT)
+#  if defined(__clang__)
+#   if (__cplusplus >= 201703)
+#    if __has_include(<variant>)
+#     define BOOST_ASIO_HAS_STD_VARIANT 1
+#    endif // __has_include(<variant>)
+#   endif // (__cplusplus >= 201703)
+#  elif defined(__GNUC__)
+#   if (__GNUC__ >= 7)
+#    if (__cplusplus >= 201703)
+#     define BOOST_ASIO_HAS_STD_VARIANT 1
+#    endif // (__cplusplus >= 201703)
+#   endif // (__GNUC__ >= 7)
+#  endif // defined(__GNUC__)
+#  if defined(BOOST_ASIO_MSVC)
+#   if (_MSC_VER >= 1910) && (_MSVC_LANG >= 201703)
+#    define BOOST_ASIO_HAS_STD_VARIANT 1
+#   endif // (_MSC_VER >= 1910) && (_MSVC_LANG >= 201703)
+#  endif // defined(BOOST_ASIO_MSVC)
+# endif // !defined(BOOST_ASIO_DISABLE_STD_VARIANT)
+#endif // !defined(BOOST_ASIO_HAS_STD_VARIANT)
+
 // Standard library support for std::source_location.
 #if !defined(BOOST_ASIO_HAS_STD_SOURCE_LOCATION)
 # if !defined(BOOST_ASIO_DISABLE_STD_SOURCE_LOCATION)
