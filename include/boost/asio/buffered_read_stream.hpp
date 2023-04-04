@@ -73,16 +73,17 @@ public:
 
   /// Construct, passing the specified argument to initialise the next layer.
   template <typename Arg>
-  explicit buffered_read_stream(Arg& a)
-    : next_layer_(a),
+  explicit buffered_read_stream(BOOST_ASIO_MOVE_OR_LVALUE_ARG(Arg) a)
+    : next_layer_(BOOST_ASIO_MOVE_OR_LVALUE(Arg)(a)),
       storage_(default_buffer_size)
   {
   }
 
   /// Construct, passing the specified argument to initialise the next layer.
   template <typename Arg>
-  buffered_read_stream(Arg& a, std::size_t buffer_size)
-    : next_layer_(a),
+  buffered_read_stream(BOOST_ASIO_MOVE_OR_LVALUE_ARG(Arg) a,
+      std::size_t buffer_size)
+    : next_layer_(BOOST_ASIO_MOVE_OR_LVALUE(Arg)(a)),
       storage_(buffer_size)
   {
   }
