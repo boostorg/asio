@@ -1569,6 +1569,14 @@ BOOST_ASIO_NODISCARD inline BOOST_ASIO_MUTABLE_BUFFER buffer(
       defaulted_constraint
     >::type = defaulted_constraint(),
     typename constraint<
+      !is_convertible<T, const_buffer>::value,
+      defaulted_constraint
+    >::type = defaulted_constraint(),
+    typename constraint<
+      !is_convertible<T, mutable_buffer>::value,
+      defaulted_constraint
+    >::type = defaulted_constraint(),
+    typename constraint<
       !is_const<
         typename remove_reference<
           typename std::iterator_traits<typename T::iterator>::reference
@@ -1596,6 +1604,14 @@ BOOST_ASIO_NODISCARD inline BOOST_ASIO_MUTABLE_BUFFER buffer(
     T& data, std::size_t max_size_in_bytes,
     typename constraint<
       is_contiguous_iterator<typename T::iterator>::value,
+      defaulted_constraint
+    >::type = defaulted_constraint(),
+    typename constraint<
+      !is_convertible<T, const_buffer>::value,
+      defaulted_constraint
+    >::type = defaulted_constraint(),
+    typename constraint<
+      !is_convertible<T, mutable_buffer>::value,
       defaulted_constraint
     >::type = defaulted_constraint(),
     typename constraint<
@@ -1628,6 +1644,14 @@ BOOST_ASIO_NODISCARD inline BOOST_ASIO_CONST_BUFFER buffer(
       defaulted_constraint
     >::type = defaulted_constraint(),
     typename constraint<
+      !is_convertible<T, const_buffer>::value,
+      defaulted_constraint
+    >::type = defaulted_constraint(),
+    typename constraint<
+      !is_convertible<T, mutable_buffer>::value,
+      defaulted_constraint
+    >::type = defaulted_constraint(),
+    typename constraint<
       is_const<
         typename remove_reference<
           typename std::iterator_traits<typename T::iterator>::reference
@@ -1658,6 +1682,14 @@ BOOST_ASIO_NODISCARD inline BOOST_ASIO_CONST_BUFFER buffer(
       defaulted_constraint
     >::type = defaulted_constraint(),
     typename constraint<
+      !is_convertible<T, const_buffer>::value,
+      defaulted_constraint
+    >::type = defaulted_constraint(),
+    typename constraint<
+      !is_convertible<T, mutable_buffer>::value,
+      defaulted_constraint
+    >::type = defaulted_constraint(),
+    typename constraint<
       is_const<
         typename remove_reference<
           typename std::iterator_traits<typename T::iterator>::reference
@@ -1685,6 +1717,14 @@ BOOST_ASIO_NODISCARD inline BOOST_ASIO_CONST_BUFFER buffer(
     typename constraint<
       is_contiguous_iterator<typename T::const_iterator>::value,
       defaulted_constraint
+    >::type = defaulted_constraint(),
+    typename constraint<
+      !is_convertible<T, const_buffer>::value,
+      defaulted_constraint
+    >::type = defaulted_constraint(),
+    typename constraint<
+      !is_convertible<T, mutable_buffer>::value,
+      defaulted_constraint
     >::type = defaulted_constraint()) BOOST_ASIO_NOEXCEPT
 {
   return BOOST_ASIO_CONST_BUFFER(
@@ -1706,6 +1746,14 @@ BOOST_ASIO_NODISCARD inline BOOST_ASIO_CONST_BUFFER buffer(
     const T& data, std::size_t max_size_in_bytes,
     typename constraint<
       is_contiguous_iterator<typename T::const_iterator>::value,
+      defaulted_constraint
+    >::type = defaulted_constraint(),
+    typename constraint<
+      !is_convertible<T, const_buffer>::value,
+      defaulted_constraint
+    >::type = defaulted_constraint(),
+    typename constraint<
+      !is_convertible<T, mutable_buffer>::value,
       defaulted_constraint
     >::type = defaulted_constraint()) BOOST_ASIO_NOEXCEPT
 {
