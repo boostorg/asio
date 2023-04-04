@@ -2123,10 +2123,12 @@
 #  define BOOST_ASIO_ASSUME(expr) __builtin_assume(expr)
 # endif // __has_builtin(__builtin_assume)
 #elif defined(__GNUC__)
-# define BOOST_ASIO_ASSUME(expr) if (expr) {} else { __builtin_unreachable(); }
+# if ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 5)) || (__GNUC__ > 4)
+#  define BOOST_ASIO_ASSUME(expr) if (expr) {} else { __builtin_unreachable(); }
+# endif // ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 5)) || (__GNUC__ > 4)
 #endif // defined(__GNUC__)
 #if !defined(BOOST_ASIO_ASSUME)
-# define BOOST_ASIO_ASSUME (void)0
+# define BOOST_ASIO_ASSUME(expr) (void)0
 #endif // !defined(BOOST_ASIO_ASSUME)
 
 // Support the co_await keyword on compilers known to allow it.
