@@ -194,7 +194,7 @@ template <typename Filter>
 struct reset_cancellation_state_1_t
 {
   template <typename F>
-  BOOST_ASIO_CONSTEXPR reset_cancellation_state_1_t(
+  explicit BOOST_ASIO_CONSTEXPR reset_cancellation_state_1_t(
       BOOST_ASIO_MOVE_ARG(F) filt)
     : filter(BOOST_ASIO_MOVE_CAST(F)(filt))
   {
@@ -257,7 +257,7 @@ throw_if_cancelled()
 
 struct throw_if_cancelled_1_t
 {
-  BOOST_ASIO_CONSTEXPR throw_if_cancelled_1_t(bool val)
+  explicit BOOST_ASIO_CONSTEXPR throw_if_cancelled_1_t(bool val)
     : value(val)
   {
   }
