@@ -96,7 +96,7 @@ struct async_result<
       boost::asio::associated_executor_t<Initiation>, Allocator>
   {
     co_await deferred_async_operation<
-      R(boost::system::error_code), Initiation, InitArgs...>(
+      R(std::exception_ptr), Initiation, InitArgs...>(
         deferred_init_tag{}, std::move(initiation), std::move(args)...);
   }
 
@@ -126,7 +126,7 @@ struct async_result<experimental::use_coro_t<Allocator>, R(T)>
     -> experimental::coro<void() noexcept, T,
       boost::asio::associated_executor_t<Initiation>, Allocator>
   {
-    co_return co_await deferred_async_operation<R(), Initiation, InitArgs...>(
+    co_return co_await deferred_async_operation<R(T), Initiation, InitArgs...>(
         deferred_init_tag{}, std::move(initiation), std::move(args)...);
   }
 
@@ -156,7 +156,7 @@ struct async_result<
       boost::asio::associated_executor_t<Initiation>, Allocator>
   {
     co_return co_await deferred_async_operation<
-      R(boost::system::error_code), Initiation, InitArgs...>(
+      R(boost::system::error_code, T), Initiation, InitArgs...>(
         deferred_init_tag{}, std::move(initiation), std::move(args)...);
   }
 
@@ -187,7 +187,7 @@ struct async_result<
       boost::asio::associated_executor_t<Initiation>, Allocator>
   {
     co_return co_await deferred_async_operation<
-      R(boost::system::error_code), Initiation, InitArgs...>(
+      R(std::exception_ptr, T), Initiation, InitArgs...>(
         deferred_init_tag{}, std::move(initiation), std::move(args)...);
   }
 
