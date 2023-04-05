@@ -16,10 +16,112 @@
 // Test that header file is self-contained.
 #include <boost/asio/redirect_error.hpp>
 
+#include <boost/asio/bind_executor.hpp>
+#include <boost/asio/deferred.hpp>
+#include <boost/asio/io_context.hpp>
+#include <boost/asio/post.hpp>
+#include <boost/asio/system_timer.hpp>
+#include <boost/asio/use_future.hpp>
 #include "unit_test.hpp"
+
+struct redirect_error_handler
+{
+  int* count_;
+
+  explicit redirect_error_handler(int* c)
+    : count_(c)
+  {
+  }
+
+  void operator()()
+  {
+    ++(*count_);
+  }
+};
+
+void redirect_error_test()
+{
+  boost::asio::io_context io1;
+  boost::asio::io_context io2;
+  boost::asio::system_timer timer1(io1);
+  boost::system::error_code ec = boost::asio::error::would_block;
+  int count = 0;
+
+  timer1.expires_after(boost::asio::chrono::seconds(0));
+  timer1.async_wait(
+      boost::asio::redirect_error(
+        boost::asio::bind_executor(io2.get_executor(),
+          redirect_error_handler(&count)), ec));
+
+  BOOST_ASIO_CHECK(ec == boost::asio::error::would_block);
+  BOOST_ASIO_CHECK(count == 0);
+
+  io1.run();
+
+  BOOST_ASIO_CHECK(ec == boost::asio::error::would_block);
+  BOOST_ASIO_CHECK(count == 0);
+
+  io2.run();
+
+  BOOST_ASIO_CHECK(!ec);
+  BOOST_ASIO_CHECK(count == 1);
+
+#if defined(BOOST_ASIO_HAS_STD_TUPLE) \
+  && defined(BOOST_ASIO_HAS_DECLTYPE) \
+  && defined(BOOST_ASIO_HAS_VARIADIC_TEMPLATES)
+  ec = boost::asio::error::would_block;
+  timer1.async_wait(
+      boost::asio::redirect_error(
+        boost::asio::bind_executor(io2.get_executor(),
+          boost::asio::deferred), ec))(redirect_error_handler(&count));
+
+  BOOST_ASIO_CHECK(ec == boost::asio::error::would_block);
+  BOOST_ASIO_CHECK(count == 1);
+
+  io1.restart();
+  io1.run();
+
+  BOOST_ASIO_CHECK(ec == boost::asio::error::would_block);
+  BOOST_ASIO_CHECK(count == 1);
+
+  io2.restart();
+  io2.run();
+
+  BOOST_ASIO_CHECK(!ec);
+  BOOST_ASIO_CHECK(count == 2);
+#endif // defined(BOOST_ASIO_HAS_STD_TUPLE)
+       //   && defined(BOOST_ASIO_HAS_DECLTYPE)
+       //   && defined(BOOST_ASIO_HAS_VARIADIC_TEMPLATES)
+
+#if defined(BOOST_ASIO_HAS_STD_FUTURE_CLASS)
+  ec = boost::asio::error::would_block;
+  std::future<void> f = timer1.async_wait(
+      boost::asio::redirect_error(
+        boost::asio::bind_executor(io2.get_executor(),
+          boost::asio::use_future), ec));
+
+  BOOST_ASIO_CHECK(ec == boost::asio::error::would_block);
+  BOOST_ASIO_CHECK(f.wait_for(std::chrono::seconds(0))
+      == std::future_status::timeout);
+
+  io1.restart();
+  io1.run();
+
+  BOOST_ASIO_CHECK(ec == boost::asio::error::would_block);
+  BOOST_ASIO_CHECK(f.wait_for(std::chrono::seconds(0))
+      == std::future_status::timeout);
+
+  io2.restart();
+  io2.run();
+
+  BOOST_ASIO_CHECK(!ec);
+  BOOST_ASIO_CHECK(f.wait_for(std::chrono::seconds(0))
+      == std::future_status::ready);
+#endif // defined(BOOST_ASIO_HAS_STD_FUTURE_CLASS)
+}
 
 BOOST_ASIO_TEST_SUITE
 (
   "redirect_error",
-  BOOST_ASIO_TEST_CASE(null_test)
+  BOOST_ASIO_TEST_CASE(redirect_error_test)
 )

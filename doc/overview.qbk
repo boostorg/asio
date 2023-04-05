@@ -43,6 +43,8 @@
   * [link boost_asio.overview.composition.parallel_group Co-ordinating Parallel Operations (experimental)]
   * [link boost_asio.overview.composition.compose Compositions as Asynchronous Operations]
   * [link boost_asio.overview.composition.token_adapters Completion Token Adapters]
+  * [link boost_asio.overview.composition.type_erasure Type Erasure, Separate Compilation and Virtual Functions]
+  * [link boost_asio.overview.composition.immediate_completion Customising Immediate Completion]
 * [link boost_asio.overview.networking Networking]
   * [link boost_asio.overview.networking.protocols TCP, UDP and ICMP]
   * [link boost_asio.overview.networking.other_protocols Support for Other Protocols]
@@ -117,6 +119,8 @@
 * [link boost_asio.overview.composition.parallel_group Co-ordinating Parallel Operations (experimental)]
 * [link boost_asio.overview.composition.compose Compositions as Asynchronous Operations]
 * [link boost_asio.overview.composition.token_adapters Completion Token Adapters]
+* [link boost_asio.overview.composition.type_erasure Type Erasure, Separate Compilation and Virtual Functions]
+* [link boost_asio.overview.composition.immediate_completion Customising Immediate Completion]
 
 [include overview/coroutine.qbk]
 [include overview/spawn.qbk]
@@ -128,6 +132,8 @@
 [include overview/parallel_group.qbk]
 [include overview/compose.qbk]
 [include overview/token_adapters.qbk]
+[include overview/type_erasure.qbk]
+[include overview/immediate_completion.qbk]
 
 [endsect]
 

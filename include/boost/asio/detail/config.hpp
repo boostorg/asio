@@ -135,6 +135,7 @@
 # define BOOST_ASIO_MOVE_CAST(type) static_cast<type&&>
 # define BOOST_ASIO_MOVE_CAST2(type1, type2) static_cast<type1, type2&&>
 # define BOOST_ASIO_MOVE_OR_LVALUE(type) static_cast<type&&>
+# define BOOST_ASIO_MOVE_OR_LVALUE_ARG(type) type&&
 # define BOOST_ASIO_MOVE_OR_LVALUE_TYPE(type) type
 #endif // defined(BOOST_ASIO_HAS_MOVE) && !defined(BOOST_ASIO_MOVE_CAST)
 
@@ -163,6 +164,7 @@
 # define BOOST_ASIO_MOVE_CAST(type) static_cast<const type&>
 # define BOOST_ASIO_MOVE_CAST2(type1, type2) static_cast<const type1, type2&>
 # define BOOST_ASIO_MOVE_OR_LVALUE(type)
+# define BOOST_ASIO_MOVE_OR_LVALUE_ARG(type) type&
 # define BOOST_ASIO_MOVE_OR_LVALUE_TYPE(type) type&
 #endif // !defined(BOOST_ASIO_MOVE_CAST)
 
@@ -2123,10 +2125,12 @@
 #  define BOOST_ASIO_ASSUME(expr) __builtin_assume(expr)
 # endif // __has_builtin(__builtin_assume)
 #elif defined(__GNUC__)
-# define BOOST_ASIO_ASSUME(expr) if (expr) {} else { __builtin_unreachable(); }
+# if ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 5)) || (__GNUC__ > 4)
+#  define BOOST_ASIO_ASSUME(expr) if (expr) {} else { __builtin_unreachable(); }
+# endif // ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 5)) || (__GNUC__ > 4)
 #endif // defined(__GNUC__)
 #if !defined(BOOST_ASIO_ASSUME)
-# define BOOST_ASIO_ASSUME (void)0
+# define BOOST_ASIO_ASSUME(expr) (void)0
 #endif // !defined(BOOST_ASIO_ASSUME)
 
 // Support the co_await keyword on compilers known to allow it.

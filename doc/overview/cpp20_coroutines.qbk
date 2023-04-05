@@ -220,6 +220,47 @@ namespace into scope:
 
   using namespace boost::asio::experimental::awaitable_operators;
 
+[heading Lightweight Coroutines Implementing Asynchonous Operations]
+
+The `experimental::co_composed` template facilitates a lightweight
+implementation of user-defined asynchronous operations using C++20 coroutines.
+The following example illustrates a simple asynchronous operation that
+implements an echo protocol in terms of a coroutine:
+
+  template <typename CompletionToken>
+  auto async_echo(tcp::socket& socket,
+      CompletionToken&& token)
+  {
+    return boost::asio::async_initiate<
+      CompletionToken, void(boost::system::error_code)>(
+        boost::asio::experimental::co_composed<
+          void(boost::system::error_code)>(
+            [](auto state, tcp::socket& socket) -> void
+            {
+              try
+              {
+                state.throw_if_cancelled(true);
+                state.reset_cancellation_state(
+                  boost::asio::enable_terminal_cancellation());
+
+                for (;;)
+                {
+                  char data[1024];
+                  std::size_t n = co_await socket.async_read_some(
+                      boost::asio::buffer(data), boost::asio::deferred);
+
+                  co_await boost::asio::async_write(socket,
+                      boost::asio::buffer(data, n), boost::asio::deferred);
+                }
+              }
+              catch (const boost::system::system_error& e)
+              {
+                co_return {e.code()};
+              }
+            }, socket),
+        token, std::ref(socket));
+  }
+
 [heading See Also]
 
 [link boost_asio.reference.co_spawn co_spawn],
@@ -230,7 +271,7 @@ namespace into scope:
 [link boost_asio.reference.use_awaitable_t use_awaitable_t],
 [link boost_asio.reference.use_awaitable use_awaitable],
 [link boost_asio.reference.this_coro__executor this_coro::executor],
-[link boost_asio.reference.experimental__coro experimental::coro],
+[link boost_asio.reference.experimental__co_composed experimental::co_composed],
 [link boost_asio.examples.cpp17_examples.coroutines_ts_support Coroutines examples],
 [link boost_asio.overview.composition.coro Resumable C++20 Coroutines],
 [link boost_asio.overview.composition.spawn Stackful Coroutines],
