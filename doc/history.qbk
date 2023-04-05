@@ -44,7 +44,7 @@
 
   asio::const_buffer b1 = "hello"_buf;
   asio::const_buffer b2 = 0xdeadbeef_buf;
-  asio::const_buffer b3 = 0x01234567'89abcdef'01234567'89abcdef_buf;
+  asio::const_buffer b3 = 0x0123456789abcdef0123456789abcdef_buf;
   asio::const_buffer b4 = 0b1010101011001100_buf;
   ``[br]
   The memory associated with a buffer literal is valid for the lifetime of the
