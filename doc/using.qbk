@@ -145,6 +145,11 @@ defined to build a separately-compiled Boost.Asio as part of a shared library.
 If using Boost.Asio's SSL support, you will also need to add `#include
 <boost/asio/ssl/impl/src.hpp>`.
 
+[heading Debugger support]
+
+Some debugger extensions for use with Asio may be found at
+[@https://github.com/chriskohlhoff/asio-debugger-extensions].
+
 [heading Macros]
 
 The macros listed in the table below may be used to control the interface,
