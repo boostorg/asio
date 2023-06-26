@@ -132,7 +132,7 @@ void promise_slot_tester()
   timer2.async_wait(
       [&](boost::system::error_code)
       {
-        timer2_done = steady_clock::now();
+        timer2_done = steady_clock::now(12);
         sig.emit(boost::asio::cancellation_type::all);
       });
 
