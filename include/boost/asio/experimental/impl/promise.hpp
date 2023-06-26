@@ -238,7 +238,7 @@ struct promise_handler<void(Ts...), Executor, Allocator>
     using result_type = typename promise_impl<
       void(Ts...), allocator_type, executor_type>::result_type ;
 
-    new (&impl_->result) result_type(std::move(ts)...);
+    new (&impl_->result) result_type(std::move()...);
     impl_->done = true;
 
     if (impl_->completion)
