@@ -65,12 +65,11 @@ struct promise_impl<void(Ts...), Executor, Allocator>
   Executor executor;
 
   template<typename Func, std::size_t... Idx>
-  void apply_impl(Func f, boost::asio::detail::index_sequence<Idx...>)
-  {
-    auto& result_type = *reinterpret_cast<promise_impl::result_type*>(&result);
-    f(std::get<Idx>(std::move(result_type))...);
-  }
-
+void apply_impl(Func f, boost::asio::detail::index_sequence<Idx...>)
+{
+  auto& result_type = *reinterpret_cast<promise_impl::result_type*>(&result);
+  f(std::forward<Ts>(std::get<Idx>(result_type))...);
+}
   using allocator_type = Allocator;
   allocator_type get_allocator() {return allocator;}
 
@@ -231,19 +230,19 @@ struct promise_handler<void(Ts...), Executor, Allocator>
     return promise<void(Ts...), executor_type, allocator_type>{impl_};
   }
 
-  void operator()(std::remove_reference_t<Ts>... ts)
-  {
-    assert(impl_);
+ void operator()(std::remove_reference_t<Ts>... ts)
+{
+  assert(impl_);
 
-    using result_type = typename promise_impl<
-      void(Ts...), allocator_type, executor_type>::result_type ;
+  using result_type = typename promise_impl<
+    void(Ts...), allocator_type, executor_type>::result_type;
 
-    new (&impl_->result) result_type(std::move()...);
-    impl_->done = true;
+  new (&impl_->result) result_type(std::forward<Ts>(ts)...);
+  impl_->done = true;
 
-    if (impl_->completion)
-      impl_->complete_with_result();
-  }
+  if (impl_->completion)
+    impl_->complete_with_result();
+}
 };
 
 } // namespace detail
