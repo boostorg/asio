@@ -48,6 +48,12 @@ project
   ;
 
 test-suite "asio" :
+  [ run any_completion_executor.cpp ]
+  [ run any_completion_executor.cpp : : : $(USE_SELECT) : any_completion_executor_select ]
+  [ run any_completion_handler.cpp ]
+  [ run any_completion_handler.cpp : : : $(USE_SELECT) : any_completion_handler_select ]
+  [ run any_io_executor.cpp ]
+  [ run any_io_executor.cpp : : : $(USE_SELECT) : any_io_executor_select ]
   [ run append.cpp ]
   [ run append.cpp : : : $(USE_SELECT) : append_select ]
   [ run as_tuple.cpp ]
