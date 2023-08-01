@@ -677,6 +677,8 @@ Coroutines TS.
 
 Example showing how to use a channel in conjunction with C++20 coroutines.
 
+* [@boost_asio/example/cpp20/channels/mutual_exclusion_1.cpp]
+* [@boost_asio/example/cpp20/channels/mutual_exclusion_2.cpp]
 * [@boost_asio/example/cpp20/channels/throttling_proxy.cpp]
 
 
