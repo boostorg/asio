@@ -18,6 +18,8 @@
 #include <boost/asio/detail/config.hpp>
 #include <boost/asio/associated_cancellation_slot.hpp>
 #include <boost/asio/awaitable.hpp>
+#include <boost/asio/detail/memory.hpp>
+#include <boost/asio/detail/recycling_allocator.hpp>
 #include <boost/asio/dispatch.hpp>
 #include <boost/asio/execution/outstanding_work.hpp>
 #include <boost/asio/post.hpp>
@@ -230,26 +232,28 @@ class co_spawn_cancellation_handler
 {
 public:
   co_spawn_cancellation_handler(const Handler&, const Executor& ex)
-    : ex_(ex)
+    : signal_(detail::allocate_shared<cancellation_signal>(
+          detail::recycling_allocator<cancellation_signal,
+            detail::thread_info_base::cancellation_signal_tag>())),
+      ex_(ex)
   {
   }
 
   cancellation_slot slot()
   {
-    return signal_.slot();
+    return signal_->slot();
   }
 
   void operator()(cancellation_type_t type)
   {
-    cancellation_signal* sig = &signal_;
+    shared_ptr<cancellation_signal> sig = signal_;
     boost::asio::dispatch(ex_, [sig, type]{ sig->emit(type); });
   }
 
 private:
-  cancellation_signal signal_;
+  shared_ptr<cancellation_signal> signal_;
   Executor ex_;
 };
-
 
 template <typename Handler, typename Executor>
 class co_spawn_cancellation_handler<Handler, Executor,

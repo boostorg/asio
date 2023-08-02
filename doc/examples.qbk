@@ -677,6 +677,8 @@ Coroutines TS.
 
 Example showing how to use a channel in conjunction with C++20 coroutines.
 
+* [@boost_asio/example/cpp20/channels/mutual_exclusion_1.cpp]
+* [@boost_asio/example/cpp20/channels/mutual_exclusion_2.cpp]
 * [@boost_asio/example/cpp20/channels/throttling_proxy.cpp]
 
 
@@ -694,6 +696,14 @@ Coroutines.
 * [@boost_asio/example/cpp20/coroutines/refactored_echo_server.cpp]
 * [@boost_asio/example/cpp20/coroutines/chat_server.cpp]
 * [@boost_asio/example/cpp20/coroutines/timeout.cpp]
+
+
+[heading Invocation]
+
+This example shows how to customise handler invocation using a user-defined
+completion executor.
+
+* [@boost_asio/example/cpp20/invocation/completion_executor.cpp]
 
 
 [heading Operations]

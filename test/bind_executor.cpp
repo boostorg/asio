@@ -139,7 +139,9 @@ template <>
 class async_result<incrementer_token_v2, void(boost::system::error_code)>
 {
 public:
+#if !defined(BOOST_ASIO_HAS_RETURN_TYPE_DEDUCTION)
   typedef void return_type;
+#endif // !defined(BOOST_ASIO_HAS_RETURN_TYPE_DEDUCTION)
 
 #if defined(BOOST_ASIO_HAS_VARIADIC_TEMPLATES)
 
