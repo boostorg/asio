@@ -29,7 +29,6 @@
 #include <boost/asio/detail/throw_exception.hpp>
 #include <boost/asio/execution/bad_executor.hpp>
 #include <boost/asio/execution/blocking.hpp>
-#include <boost/asio/execution/execute.hpp>
 #include <boost/asio/execution/executor.hpp>
 #include <boost/asio/prefer.hpp>
 #include <boost/asio/query.hpp>
@@ -908,11 +907,7 @@ protected:
   {
     const Ex* p = ex.target<Ex>();
     BOOST_ASIO_ASSUME(p != 0);
-#if defined(BOOST_ASIO_NO_DEPRECATED)
     p->execute(static_cast<function&&>(f));
-#else // defined(BOOST_ASIO_NO_DEPRECATED)
-    execution::execute(*p, static_cast<function&&>(f));
-#endif // defined(BOOST_ASIO_NO_DEPRECATED)
   }
 
   template <typename Ex>
@@ -920,11 +915,7 @@ protected:
   {
     const Ex* p = ex.target<Ex>();
     BOOST_ASIO_ASSUME(p != 0);
-#if defined(BOOST_ASIO_NO_DEPRECATED)
     p->execute(f);
-#else // defined(BOOST_ASIO_NO_DEPRECATED)
-    execution::execute(*p, f);
-#endif // defined(BOOST_ASIO_NO_DEPRECATED)
   }
 
   template <typename Ex>

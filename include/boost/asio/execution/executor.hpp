@@ -21,16 +21,10 @@
 #include <boost/asio/traits/equality_comparable.hpp>
 #include <boost/asio/traits/execute_member.hpp>
 
-#if !defined(BOOST_ASIO_NO_DEPRECATED)
-# include <boost/asio/execution/execute.hpp>
-#endif // !defined(BOOST_ASIO_NO_DEPRECATED)
-
-#if defined(BOOST_ASIO_HAS_DEDUCED_EXECUTE_FREE_TRAIT) \
-  && defined(BOOST_ASIO_HAS_DEDUCED_EXECUTE_MEMBER_TRAIT) \
+#if defined(BOOST_ASIO_HAS_DEDUCED_EXECUTE_MEMBER_TRAIT) \
   && defined(BOOST_ASIO_HAS_DEDUCED_EQUALITY_COMPARABLE_TRAIT)
 # define BOOST_ASIO_HAS_DEDUCED_EXECUTION_IS_EXECUTOR_TRAIT 1
-#endif // defined(BOOST_ASIO_HAS_DEDUCED_EXECUTE_FREE_TRAIT)
-       //   && defined(BOOST_ASIO_HAS_DEDUCED_EXECUTE_MEMBER_TRAIT)
+#endif // defined(BOOST_ASIO_HAS_DEDUCED_EXECUTE_MEMBER_TRAIT)
        //   && defined(BOOST_ASIO_HAS_DEDUCED_EQUALITY_COMPARABLE_TRAIT)
 
 #include <boost/asio/detail/push_options.hpp>
@@ -49,15 +43,9 @@ struct is_executor_of_impl : false_type
 
 template <typename T, typename F>
 struct is_executor_of_impl<T, F,
-#if defined(BOOST_ASIO_NO_DEPRECATED)
   enable_if_t<
     traits::execute_member<add_const_t<T>, F>::is_valid
   >,
-#else // defined(BOOST_ASIO_NO_DEPRECATED)
-  enable_if_t<
-    can_execute<add_const_t<T>, F>::value
-  >,
-#endif // defined(BOOST_ASIO_NO_DEPRECATED)
   void_t<
     result_of_t<decay_t<F>&()>
   >,
@@ -80,30 +68,6 @@ struct is_executor_of_impl<T, F,
     traits::equality_comparable<T>::is_noexcept
   >> : true_type
 {
-};
-
-template <typename T, typename = void>
-struct executor_shape
-{
-  typedef std::size_t type;
-};
-
-template <typename T>
-struct executor_shape<T, void_t<typename T::shape_type>>
-{
-  typedef typename T::shape_type type;
-};
-
-template <typename T, typename Default, typename = void>
-struct executor_index
-{
-  typedef Default type;
-};
-
-template <typename T, typename Default>
-struct executor_index<T, Default, void_t<typename T::index_type>>
-{
-  typedef typename T::index_type type;
 };
 
 } // namespace detail
@@ -144,93 +108,6 @@ BOOST_ASIO_CONCEPT executor = is_executor<T>::value;
 #define BOOST_ASIO_EXECUTION_EXECUTOR typename
 
 #endif // defined(BOOST_ASIO_HAS_CONCEPTS)
-
-/// The is_executor_of trait detects whether a type T satisfies the
-/// execution::executor_of concept for some set of value arguments.
-/**
- * Class template @c is_executor_of is a type trait that is derived from @c
- * true_type if the type @c T meets the concept definition for an executor
- * that is invocable with a function object of type @c F, otherwise @c
- * false_type.
- */
-template <typename T, typename F>
-struct is_executor_of :
-#if defined(GENERATING_DOCUMENTATION)
-  integral_constant<bool, automatically_determined>
-#else // defined(GENERATING_DOCUMENTATION)
-  integral_constant<bool,
-    is_executor<T>::value && detail::is_executor_of_impl<T, F>::value
-  >
-#endif // defined(GENERATING_DOCUMENTATION)
-{
-};
-
-#if defined(BOOST_ASIO_HAS_VARIABLE_TEMPLATES)
-
-template <typename T, typename F>
-constexpr const bool is_executor_of_v =
-  is_executor_of<T, F>::value;
-
-#endif // defined(BOOST_ASIO_HAS_VARIABLE_TEMPLATES)
-
-#if defined(BOOST_ASIO_HAS_CONCEPTS)
-
-template <typename T, typename F>
-BOOST_ASIO_CONCEPT executor_of = is_executor_of<T, F>::value;
-
-#define BOOST_ASIO_EXECUTION_EXECUTOR_OF(f) \
-  ::boost::asio::execution::executor_of<f>
-
-#else // defined(BOOST_ASIO_HAS_CONCEPTS)
-
-#define BOOST_ASIO_EXECUTION_EXECUTOR_OF typename
-
-#endif // defined(BOOST_ASIO_HAS_CONCEPTS)
-
-/// The executor_shape trait detects the type used by an executor to represent
-/// the shape of a bulk operation.
-/**
- * Class template @c executor_shape is a type trait with a nested type alias
- * @c type whose type is @c T::shape_type if @c T::shape_type is valid,
- * otherwise @c std::size_t.
- */
-template <typename T>
-struct executor_shape
-#if !defined(GENERATING_DOCUMENTATION)
-  : detail::executor_shape<T>
-#endif // !defined(GENERATING_DOCUMENTATION)
-{
-#if defined(GENERATING_DOCUMENTATION)
- /// @c T::shape_type if @c T::shape_type is valid, otherwise @c std::size_t.
- typedef automatically_determined type;
-#endif // defined(GENERATING_DOCUMENTATION)
-};
-
-template <typename T>
-using executor_shape_t = typename executor_shape<T>::type;
-
-/// The executor_index trait detects the type used by an executor to represent
-/// an index within a bulk operation.
-/**
- * Class template @c executor_index is a type trait with a nested type alias
- * @c type whose type is @c T::index_type if @c T::index_type is valid,
- * otherwise @c executor_shape_t<T>.
- */
-template <typename T>
-struct executor_index
-#if !defined(GENERATING_DOCUMENTATION)
-  : detail::executor_index<T, typename executor_shape<T>::type>
-#endif // !defined(GENERATING_DOCUMENTATION)
-{
-#if defined(GENERATING_DOCUMENTATION)
- /// @c T::index_type if @c T::index_type is valid, otherwise
- /// @c executor_shape_t<T>.
- typedef automatically_determined type;
-#endif // defined(GENERATING_DOCUMENTATION)
-};
-
-template <typename T>
-using executor_index_t = typename executor_index<T>::type;
 
 } // namespace execution
 } // namespace asio

@@ -25,7 +25,6 @@
 #include <boost/asio/detail/work_dispatcher.hpp>
 #include <boost/asio/execution/allocator.hpp>
 #include <boost/asio/execution/blocking.hpp>
-#include <boost/asio/execution/execute.hpp>
 #include <boost/asio/execution/executor.hpp>
 #include <boost/asio/execution/outstanding_work.hpp>
 #include <boost/asio/executor_work_guard.hpp>
@@ -89,16 +88,9 @@ public:
   template <typename Function, typename Handler>
   void dispatch(Function& function, Handler& handler)
   {
-#if defined(BOOST_ASIO_NO_DEPRECATED)
     boost::asio::prefer(executor_,
         execution::allocator((get_associated_allocator)(handler))
       ).execute(static_cast<Function&&>(function));
-#else // defined(BOOST_ASIO_NO_DEPRECATED)
-    execution::execute(
-        boost::asio::prefer(executor_,
-          execution::allocator((get_associated_allocator)(handler))),
-        static_cast<Function&&>(function));
-#endif // defined(BOOST_ASIO_NO_DEPRECATED)
   }
 
 private:
@@ -335,11 +327,7 @@ public:
   template <typename Function, typename Handler>
   void dispatch(Function& function, Handler&)
   {
-#if defined(BOOST_ASIO_NO_DEPRECATED)
     executor_.execute(static_cast<Function&&>(function));
-#else // defined(BOOST_ASIO_NO_DEPRECATED)
-    execution::execute(executor_, static_cast<Function&&>(function));
-#endif // defined(BOOST_ASIO_NO_DEPRECATED)
   }
 
 private:
@@ -409,11 +397,7 @@ public:
   template <typename Function, typename Handler>
   void dispatch(Function& function, Handler&)
   {
-#if defined(BOOST_ASIO_NO_DEPRECATED)
     executor_.execute(static_cast<Function&&>(function));
-#else // defined(BOOST_ASIO_NO_DEPRECATED)
-    execution::execute(executor_, static_cast<Function&&>(function));
-#endif // defined(BOOST_ASIO_NO_DEPRECATED)
   }
 
 private:

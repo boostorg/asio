@@ -262,14 +262,7 @@ public:
    */
   template <typename Function>
   constraint_t<
-#if defined(BOOST_ASIO_NO_DEPRECATED) \
-  || defined(GENERATING_DOCUMENTATION)
     traits::execute_member<const Executor&, Function>::is_valid,
-#else // defined(BOOST_ASIO_NO_DEPRECATED)
-      //   || defined(GENERATING_DOCUMENTATION)
-    execution::can_execute<const Executor&, Function>::value,
-#endif // defined(BOOST_ASIO_NO_DEPRECATED)
-       //   || defined(GENERATING_DOCUMENTATION)
     void
   > execute(Function&& f) const
   {
@@ -484,11 +477,7 @@ struct equality_comparable<strand<Executor>>
 template <typename Executor, typename Function>
 struct execute_member<strand<Executor>, Function,
     enable_if_t<
-#if defined(BOOST_ASIO_NO_DEPRECATED)
       traits::execute_member<const Executor&, Function>::is_valid
-#else // defined(BOOST_ASIO_NO_DEPRECATED)
-      execution::can_execute<const Executor&, Function>::value
-#endif // defined(BOOST_ASIO_NO_DEPRECATED)
     >>
 {
   static constexpr bool is_valid = true;

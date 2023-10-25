@@ -46,16 +46,9 @@ public:
     associated_allocator_t<decay_t<CompletionHandler>> alloc(
         (get_associated_allocator)(handler));
 
-#if defined(BOOST_ASIO_NO_DEPRECATED)
     boost::asio::prefer(ex, execution::allocator(alloc)).execute(
         boost::asio::detail::bind_handler(
           static_cast<CompletionHandler&&>(handler)));
-#else // defined(BOOST_ASIO_NO_DEPRECATED)
-    execution::execute(
-        boost::asio::prefer(ex, execution::allocator(alloc)),
-        boost::asio::detail::bind_handler(
-          static_cast<CompletionHandler&&>(handler)));
-#endif // defined(BOOST_ASIO_NO_DEPRECATED)
   }
 
   template <typename CompletionHandler>
@@ -110,16 +103,9 @@ public:
     associated_allocator_t<decay_t<CompletionHandler>> alloc(
         (get_associated_allocator)(handler));
 
-#if defined(BOOST_ASIO_NO_DEPRECATED)
     boost::asio::prefer(ex_, execution::allocator(alloc)).execute(
         boost::asio::detail::bind_handler(
           static_cast<CompletionHandler&&>(handler)));
-#else // defined(BOOST_ASIO_NO_DEPRECATED)
-    execution::execute(
-        boost::asio::prefer(ex_, execution::allocator(alloc)),
-        boost::asio::detail::bind_handler(
-          static_cast<CompletionHandler&&>(handler)));
-#endif // defined(BOOST_ASIO_NO_DEPRECATED)
   }
 
   template <typename CompletionHandler>
@@ -144,16 +130,9 @@ public:
     associated_allocator_t<handler_t> alloc(
         (get_associated_allocator)(handler));
 
-#if defined(BOOST_ASIO_NO_DEPRECATED)
     boost::asio::prefer(ex_, execution::allocator(alloc)).execute(
         detail::work_dispatcher<handler_t, handler_ex_t>(
           static_cast<CompletionHandler&&>(handler), handler_ex));
-#else // defined(BOOST_ASIO_NO_DEPRECATED)
-    execution::execute(
-        boost::asio::prefer(ex_, execution::allocator(alloc)),
-        detail::work_dispatcher<handler_t, handler_ex_t>(
-          static_cast<CompletionHandler&&>(handler), handler_ex));
-#endif // defined(BOOST_ASIO_NO_DEPRECATED)
   }
 
   template <typename CompletionHandler>

@@ -19,10 +19,7 @@
 #include <boost/asio/detail/event.hpp>
 #include <boost/asio/detail/mutex.hpp>
 #include <boost/asio/detail/type_traits.hpp>
-#include <boost/asio/execution/execute.hpp>
 #include <boost/asio/execution/executor.hpp>
-#include <boost/asio/execution/scheduler.hpp>
-#include <boost/asio/execution/sender.hpp>
 #include <boost/asio/is_applicable_property.hpp>
 #include <boost/asio/prefer.hpp>
 #include <boost/asio/query.hpp>
@@ -48,11 +45,9 @@ namespace execution {
 /// allowed in order to apply the blocking_adaptation_t::allowed_t property.
 struct blocking_adaptation_t
 {
-  /// The blocking_adaptation_t property applies to executors, senders, and
-  /// schedulers.
+  /// The blocking_adaptation_t property applies to executors.
   template <typename T>
-  static constexpr bool is_applicable_property_v =
-    is_executor_v<T> || is_sender_v<T> || is_scheduler_v<T>;
+  static constexpr bool is_applicable_property_v = is_executor_v<T>;
 
   /// The top-level blocking_adaptation_t property cannot be required.
   static constexpr bool is_requirable = false;
@@ -66,11 +61,9 @@ struct blocking_adaptation_t
   /// A sub-property that indicates that automatic adaptation is not allowed.
   struct disallowed_t
   {
-    /// The blocking_adaptation_t::disallowed_t property applies to executors,
-    /// senders, and schedulers.
+    /// The blocking_adaptation_t::disallowed_t property applies to executors.
     template <typename T>
-    static constexpr bool is_applicable_property_v =
-      is_executor_v<T> || is_sender_v<T> || is_scheduler_v<T>;
+    static constexpr bool is_applicable_property_v = is_executor_v<T>;
 
     /// The blocking_adaptation_t::disallowed_t property can be required.
     static constexpr bool is_requirable = true;
@@ -94,11 +87,9 @@ struct blocking_adaptation_t
   /// A sub-property that indicates that automatic adaptation is allowed.
   struct allowed_t
   {
-    /// The blocking_adaptation_t::allowed_t property applies to executors,
-    /// senders, and schedulers.
+    /// The blocking_adaptation_t::allowed_t property applies to executors.
     template <typename T>
-    static constexpr bool is_applicable_property_v =
-      is_executor_v<T> || is_sender_v<T> || is_scheduler_v<T>;
+    static constexpr bool is_applicable_property_v = is_executor_v<T>;
 
     /// The blocking_adaptation_t::allowed_t property can be required.
     static constexpr bool is_requirable = true;
@@ -165,24 +156,8 @@ template <int I = 0>
 struct blocking_adaptation_t
 {
 #if defined(BOOST_ASIO_HAS_VARIABLE_TEMPLATES)
-# if defined(BOOST_ASIO_NO_DEPRECATED)
   template <typename T>
   static constexpr bool is_applicable_property_v = is_executor<T>::value;
-# else // defined(BOOST_ASIO_NO_DEPRECATED)
-  template <typename T>
-  static constexpr bool is_applicable_property_v =
-      is_executor<T>::value
-        || conditional_t<
-            is_executor<T>::value,
-            false_type,
-            is_sender<T>
-          >::value
-        || conditional_t<
-            is_executor<T>::value,
-            false_type,
-            is_scheduler<T>
-          >::value;
-# endif // defined(BOOST_ASIO_NO_DEPRECATED)
 #endif // defined(BOOST_ASIO_HAS_VARIABLE_TEMPLATES)
 
   static constexpr bool is_requirable = false;
@@ -404,24 +379,8 @@ template <int I = 0>
 struct disallowed_t
 {
 #if defined(BOOST_ASIO_HAS_VARIABLE_TEMPLATES)
-# if defined(BOOST_ASIO_NO_DEPRECATED)
   template <typename T>
   static constexpr bool is_applicable_property_v = is_executor<T>::value;
-# else // defined(BOOST_ASIO_NO_DEPRECATED)
-  template <typename T>
-  static constexpr bool is_applicable_property_v =
-      is_executor<T>::value
-        || conditional_t<
-            is_executor<T>::value,
-            false_type,
-            is_sender<T>
-          >::value
-        || conditional_t<
-            is_executor<T>::value,
-            false_type,
-            is_scheduler<T>
-          >::value;
-# endif // defined(BOOST_ASIO_NO_DEPRECATED)
 #endif // defined(BOOST_ASIO_HAS_VARIABLE_TEMPLATES)
 
   static constexpr bool is_requirable = true;
@@ -581,18 +540,10 @@ public:
 
   template <typename Function>
   enable_if_t<
-#if defined(BOOST_ASIO_NO_DEPRECATED)
     traits::execute_member<const Executor&, Function>::is_valid
-#else // defined(BOOST_ASIO_NO_DEPRECATED)
-    execution::can_execute<const Executor&, Function>::value
-#endif // defined(BOOST_ASIO_NO_DEPRECATED)
   > execute(Function&& f) const
   {
-#if defined(BOOST_ASIO_NO_DEPRECATED)
     executor_.execute(static_cast<Function&&>(f));
-#else // defined(BOOST_ASIO_NO_DEPRECATED)
-    execution::execute(executor_, static_cast<Function&&>(f));
-#endif // defined(BOOST_ASIO_NO_DEPRECATED)
   }
 
   friend bool operator==(const adapter& a, const adapter& b) noexcept
@@ -613,24 +564,8 @@ template <int I = 0>
 struct allowed_t
 {
 #if defined(BOOST_ASIO_HAS_VARIABLE_TEMPLATES)
-# if defined(BOOST_ASIO_NO_DEPRECATED)
   template <typename T>
   static constexpr bool is_applicable_property_v = is_executor<T>::value;
-# else // defined(BOOST_ASIO_NO_DEPRECATED)
-  template <typename T>
-  static constexpr bool is_applicable_property_v =
-      is_executor<T>::value
-        || conditional_t<
-            is_executor<T>::value,
-            false_type,
-            is_sender<T>
-          >::value
-        || conditional_t<
-            is_executor<T>::value,
-            false_type,
-            is_scheduler<T>
-          >::value;
-# endif // defined(BOOST_ASIO_NO_DEPRECATED)
 #endif // defined(BOOST_ASIO_HAS_VARIABLE_TEMPLATES)
 
   static constexpr bool is_requirable = true;
@@ -716,11 +651,7 @@ public:
   void execute_and_wait(Executor&& ex)
   {
     handler h = { this };
-#if defined(BOOST_ASIO_NO_DEPRECATED)
     ex.execute(h);
-#else // defined(BOOST_ASIO_NO_DEPRECATED)
-    execution::execute(static_cast<Executor&&>(ex), h);
-#endif // defined(BOOST_ASIO_NO_DEPRECATED)
     boost::asio::detail::mutex::scoped_lock lock(mutex_);
     while (!is_complete_)
       event_.wait(lock);
@@ -778,61 +709,19 @@ constexpr blocking_adaptation_t blocking_adaptation;
 
 template <typename T>
 struct is_applicable_property<T, execution::blocking_adaptation_t>
-  : integral_constant<bool,
-      execution::is_executor<T>::value
-#if !defined(BOOST_ASIO_NO_DEPRECATED)
-        || conditional_t<
-            execution::is_executor<T>::value,
-            false_type,
-            execution::is_sender<T>
-          >::value
-        || conditional_t<
-            execution::is_executor<T>::value,
-            false_type,
-            execution::is_scheduler<T>
-          >::value
-#endif // !defined(BOOST_ASIO_NO_DEPRECATED)
-    >
+  : integral_constant<bool, execution::is_executor<T>::value>
 {
 };
 
 template <typename T>
 struct is_applicable_property<T, execution::blocking_adaptation_t::disallowed_t>
-  : integral_constant<bool,
-      execution::is_executor<T>::value
-#if !defined(BOOST_ASIO_NO_DEPRECATED)
-        || conditional_t<
-            execution::is_executor<T>::value,
-            false_type,
-            execution::is_sender<T>
-          >::value
-        || conditional_t<
-            execution::is_executor<T>::value,
-            false_type,
-            execution::is_scheduler<T>
-          >::value
-#endif // !defined(BOOST_ASIO_NO_DEPRECATED)
-    >
+  : integral_constant<bool, execution::is_executor<T>::value>
 {
 };
 
 template <typename T>
 struct is_applicable_property<T, execution::blocking_adaptation_t::allowed_t>
-  : integral_constant<bool,
-      execution::is_executor<T>::value
-#if !defined(BOOST_ASIO_NO_DEPRECATED)
-        || conditional_t<
-            execution::is_executor<T>::value,
-            false_type,
-            execution::is_sender<T>
-          >::value
-        || conditional_t<
-            execution::is_executor<T>::value,
-            false_type,
-            execution::is_scheduler<T>
-          >::value
-#endif // !defined(BOOST_ASIO_NO_DEPRECATED)
-    >
+  : integral_constant<bool, execution::is_executor<T>::value>
 {
 };
 

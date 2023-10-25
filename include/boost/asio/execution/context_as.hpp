@@ -19,8 +19,6 @@
 #include <boost/asio/detail/type_traits.hpp>
 #include <boost/asio/execution/context.hpp>
 #include <boost/asio/execution/executor.hpp>
-#include <boost/asio/execution/scheduler.hpp>
-#include <boost/asio/execution/sender.hpp>
 #include <boost/asio/is_applicable_property.hpp>
 #include <boost/asio/query.hpp>
 #include <boost/asio/traits/query_static_constexpr_member.hpp>
@@ -40,10 +38,9 @@ namespace execution {
 template <typename U>
 struct context_as_t
 {
-  /// The context_as_t property applies to executors, senders, and schedulers.
+  /// The context_as_t property applies to executors.
   template <typename T>
-  static constexpr bool is_applicable_property_v =
-    is_executor_v<T> || is_sender_v<T> || is_scheduler_v<T>;
+  static constexpr bool is_applicable_property_v = is_executor_v<T>;
 
   /// The context_t property cannot be required.
   static constexpr bool is_requirable = false;
@@ -69,24 +66,8 @@ template <typename T>
 struct context_as_t
 {
 #if defined(BOOST_ASIO_HAS_VARIABLE_TEMPLATES)
-# if defined(BOOST_ASIO_NO_DEPRECATED)
   template <typename U>
   static constexpr bool is_applicable_property_v = is_executor<U>::value;
-# else // defined(BOOST_ASIO_NO_DEPRECATED)
-  template <typename U>
-  static constexpr bool is_applicable_property_v =
-      is_executor<U>::value
-        || conditional_t<
-            is_executor<U>::value,
-            false_type,
-            is_sender<U>
-          >::value
-        || conditional_t<
-            is_executor<U>::value,
-            false_type,
-            is_scheduler<U>
-          >::value;
-# endif // defined(BOOST_ASIO_NO_DEPRECATED)
 #endif // defined(BOOST_ASIO_HAS_VARIABLE_TEMPLATES)
 
   static constexpr bool is_requirable = false;
@@ -160,21 +141,7 @@ constexpr context_as_t<T> context_as{};
 
 template <typename T, typename U>
 struct is_applicable_property<T, execution::context_as_t<U>>
-  : integral_constant<bool,
-      execution::is_executor<T>::value
-#if !defined(BOOST_ASIO_NO_DEPRECATED)
-        || conditional_t<
-            execution::is_executor<T>::value,
-            false_type,
-            execution::is_sender<T>
-          >::value
-        || conditional_t<
-            execution::is_executor<T>::value,
-            false_type,
-            execution::is_scheduler<T>
-          >::value
-#endif // !defined(BOOST_ASIO_NO_DEPRECATED)
-    >
+  : integral_constant<bool, execution::is_executor<T>::value>
 {
 };
 
