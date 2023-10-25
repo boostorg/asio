@@ -16,7 +16,6 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include <boost/asio/detail/fenced_block.hpp>
-#include <boost/asio/detail/handler_invoke_helpers.hpp>
 #include <boost/asio/detail/recycling_allocator.hpp>
 #include <boost/asio/executor_work_guard.hpp>
 #include <boost/asio/defer.hpp>
@@ -231,7 +230,7 @@ void strand_executor_service::do_execute(const implementation_type& impl,
     function_type tmp(static_cast<Function&&>(function));
 
     fenced_block b(fenced_block::full);
-    boost_asio_handler_invoke_helpers::invoke(tmp, tmp);
+    static_cast<function_type&&>(tmp)();
     return;
   }
 
@@ -265,7 +264,7 @@ void strand_executor_service::dispatch(const implementation_type& impl,
     function_type tmp(static_cast<Function&&>(function));
 
     fenced_block b(fenced_block::full);
-    boost_asio_handler_invoke_helpers::invoke(tmp, tmp);
+    static_cast<function_type&&>(tmp)();
     return;
   }
 

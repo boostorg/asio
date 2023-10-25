@@ -55,7 +55,7 @@ basic_system_executor<Blocking, Relationship, Allocator>::do_execute(
   {
 #endif// !defined(BOOST_ASIO_NO_EXCEPTIONS)
     detail::fenced_block b(detail::fenced_block::full);
-    boost_asio_handler_invoke_helpers::invoke(f2.value, f2.value);
+    static_cast<decay_t<Function>&&>(f2.value)();
 #if !defined(BOOST_ASIO_NO_EXCEPTIONS)
   }
   catch (...)
@@ -79,7 +79,7 @@ basic_system_executor<Blocking, Relationship, Allocator>::do_execute(
   {
 #endif// !defined(BOOST_ASIO_NO_EXCEPTIONS)
     detail::fenced_block b(detail::fenced_block::full);
-    boost_asio_handler_invoke_helpers::invoke(f2.value, f2.value);
+    static_cast<decay_t<Function>&&>(f2.value)();
 #if !defined(BOOST_ASIO_NO_EXCEPTIONS)
   }
   catch (...)
@@ -131,8 +131,7 @@ template <typename Function, typename OtherAllocator>
 void basic_system_executor<Blocking, Relationship, Allocator>::dispatch(
     Function&& f, const OtherAllocator&) const
 {
-  decay_t<Function> tmp(static_cast<Function&&>(f));
-  boost_asio_handler_invoke_helpers::invoke(tmp, tmp);
+  decay_t<Function>(static_cast<Function&&>(f))();
 }
 
 template <typename Blocking, typename Relationship, typename Allocator>

@@ -19,7 +19,6 @@
 #include <boost/asio/associator.hpp>
 #include <boost/asio/detail/handler_alloc_helpers.hpp>
 #include <boost/asio/detail/handler_cont_helpers.hpp>
-#include <boost/asio/detail/handler_invoke_helpers.hpp>
 #include <boost/asio/detail/type_traits.hpp>
 
 #include <boost/asio/detail/push_options.hpp>
@@ -99,30 +98,6 @@ inline bool asio_handler_is_continuation(
 {
   return boost_asio_handler_cont_helpers::is_continuation(
       this_handler->handler_);
-}
-
-template <typename Function, typename Handler>
-inline asio_handler_invoke_is_deprecated
-asio_handler_invoke(Function& function,
-    binder0<Handler>* this_handler)
-{
-  boost_asio_handler_invoke_helpers::invoke(
-      function, this_handler->handler_);
-#if defined(BOOST_ASIO_NO_DEPRECATED)
-  return asio_handler_invoke_is_no_longer_used();
-#endif // defined(BOOST_ASIO_NO_DEPRECATED)
-}
-
-template <typename Function, typename Handler>
-inline asio_handler_invoke_is_deprecated
-asio_handler_invoke(const Function& function,
-    binder0<Handler>* this_handler)
-{
-  boost_asio_handler_invoke_helpers::invoke(
-      function, this_handler->handler_);
-#if defined(BOOST_ASIO_NO_DEPRECATED)
-  return asio_handler_invoke_is_no_longer_used();
-#endif // defined(BOOST_ASIO_NO_DEPRECATED)
 }
 
 template <typename Handler>
@@ -210,30 +185,6 @@ inline bool asio_handler_is_continuation(
 {
   return boost_asio_handler_cont_helpers::is_continuation(
       this_handler->handler_);
-}
-
-template <typename Function, typename Handler, typename Arg1>
-inline asio_handler_invoke_is_deprecated
-asio_handler_invoke(Function& function,
-    binder1<Handler, Arg1>* this_handler)
-{
-  boost_asio_handler_invoke_helpers::invoke(
-      function, this_handler->handler_);
-#if defined(BOOST_ASIO_NO_DEPRECATED)
-  return asio_handler_invoke_is_no_longer_used();
-#endif // defined(BOOST_ASIO_NO_DEPRECATED)
-}
-
-template <typename Function, typename Handler, typename Arg1>
-inline asio_handler_invoke_is_deprecated
-asio_handler_invoke(const Function& function,
-    binder1<Handler, Arg1>* this_handler)
-{
-  boost_asio_handler_invoke_helpers::invoke(
-      function, this_handler->handler_);
-#if defined(BOOST_ASIO_NO_DEPRECATED)
-  return asio_handler_invoke_is_no_longer_used();
-#endif // defined(BOOST_ASIO_NO_DEPRECATED)
 }
 
 template <typename Handler, typename Arg1>
@@ -328,30 +279,6 @@ inline bool asio_handler_is_continuation(
 {
   return boost_asio_handler_cont_helpers::is_continuation(
       this_handler->handler_);
-}
-
-template <typename Function, typename Handler, typename Arg1, typename Arg2>
-inline asio_handler_invoke_is_deprecated
-asio_handler_invoke(Function& function,
-    binder2<Handler, Arg1, Arg2>* this_handler)
-{
-  boost_asio_handler_invoke_helpers::invoke(
-      function, this_handler->handler_);
-#if defined(BOOST_ASIO_NO_DEPRECATED)
-  return asio_handler_invoke_is_no_longer_used();
-#endif // defined(BOOST_ASIO_NO_DEPRECATED)
-}
-
-template <typename Function, typename Handler, typename Arg1, typename Arg2>
-inline asio_handler_invoke_is_deprecated
-asio_handler_invoke(const Function& function,
-    binder2<Handler, Arg1, Arg2>* this_handler)
-{
-  boost_asio_handler_invoke_helpers::invoke(
-      function, this_handler->handler_);
-#if defined(BOOST_ASIO_NO_DEPRECATED)
-  return asio_handler_invoke_is_no_longer_used();
-#endif // defined(BOOST_ASIO_NO_DEPRECATED)
 }
 
 template <typename Handler, typename Arg1, typename Arg2>
@@ -453,32 +380,6 @@ inline bool asio_handler_is_continuation(
 {
   return boost_asio_handler_cont_helpers::is_continuation(
       this_handler->handler_);
-}
-
-template <typename Function, typename Handler,
-    typename Arg1, typename Arg2, typename Arg3>
-inline asio_handler_invoke_is_deprecated
-asio_handler_invoke(Function& function,
-    binder3<Handler, Arg1, Arg2, Arg3>* this_handler)
-{
-  boost_asio_handler_invoke_helpers::invoke(
-      function, this_handler->handler_);
-#if defined(BOOST_ASIO_NO_DEPRECATED)
-  return asio_handler_invoke_is_no_longer_used();
-#endif // defined(BOOST_ASIO_NO_DEPRECATED)
-}
-
-template <typename Function, typename Handler,
-    typename Arg1, typename Arg2, typename Arg3>
-inline asio_handler_invoke_is_deprecated
-asio_handler_invoke(const Function& function,
-    binder3<Handler, Arg1, Arg2, Arg3>* this_handler)
-{
-  boost_asio_handler_invoke_helpers::invoke(
-      function, this_handler->handler_);
-#if defined(BOOST_ASIO_NO_DEPRECATED)
-  return asio_handler_invoke_is_no_longer_used();
-#endif // defined(BOOST_ASIO_NO_DEPRECATED)
 }
 
 template <typename Handler, typename Arg1, typename Arg2, typename Arg3>
@@ -591,32 +492,6 @@ inline bool asio_handler_is_continuation(
 {
   return boost_asio_handler_cont_helpers::is_continuation(
       this_handler->handler_);
-}
-
-template <typename Function, typename Handler, typename Arg1,
-    typename Arg2, typename Arg3, typename Arg4>
-inline asio_handler_invoke_is_deprecated
-asio_handler_invoke(Function& function,
-    binder4<Handler, Arg1, Arg2, Arg3, Arg4>* this_handler)
-{
-  boost_asio_handler_invoke_helpers::invoke(
-      function, this_handler->handler_);
-#if defined(BOOST_ASIO_NO_DEPRECATED)
-  return asio_handler_invoke_is_no_longer_used();
-#endif // defined(BOOST_ASIO_NO_DEPRECATED)
-}
-
-template <typename Function, typename Handler, typename Arg1,
-    typename Arg2, typename Arg3, typename Arg4>
-inline asio_handler_invoke_is_deprecated
-asio_handler_invoke(const Function& function,
-    binder4<Handler, Arg1, Arg2, Arg3, Arg4>* this_handler)
-{
-  boost_asio_handler_invoke_helpers::invoke(
-      function, this_handler->handler_);
-#if defined(BOOST_ASIO_NO_DEPRECATED)
-  return asio_handler_invoke_is_no_longer_used();
-#endif // defined(BOOST_ASIO_NO_DEPRECATED)
 }
 
 template <typename Handler, typename Arg1,
@@ -738,32 +613,6 @@ inline bool asio_handler_is_continuation(
       this_handler->handler_);
 }
 
-template <typename Function, typename Handler, typename Arg1,
-    typename Arg2, typename Arg3, typename Arg4, typename Arg5>
-inline asio_handler_invoke_is_deprecated
-asio_handler_invoke(Function& function,
-    binder5<Handler, Arg1, Arg2, Arg3, Arg4, Arg5>* this_handler)
-{
-  boost_asio_handler_invoke_helpers::invoke(
-      function, this_handler->handler_);
-#if defined(BOOST_ASIO_NO_DEPRECATED)
-  return asio_handler_invoke_is_no_longer_used();
-#endif // defined(BOOST_ASIO_NO_DEPRECATED)
-}
-
-template <typename Function, typename Handler, typename Arg1,
-    typename Arg2, typename Arg3, typename Arg4, typename Arg5>
-inline asio_handler_invoke_is_deprecated
-asio_handler_invoke(const Function& function,
-    binder5<Handler, Arg1, Arg2, Arg3, Arg4, Arg5>* this_handler)
-{
-  boost_asio_handler_invoke_helpers::invoke(
-      function, this_handler->handler_);
-#if defined(BOOST_ASIO_NO_DEPRECATED)
-  return asio_handler_invoke_is_no_longer_used();
-#endif // defined(BOOST_ASIO_NO_DEPRECATED)
-}
-
 template <typename Handler, typename Arg1, typename Arg2,
     typename Arg3, typename Arg4, typename Arg5>
 inline binder5<decay_t<Handler>, Arg1, Arg2, Arg3, Arg4, Arg5>
@@ -836,18 +685,6 @@ inline bool asio_handler_is_continuation(
       this_handler->handler_);
 }
 
-template <typename Function, typename Handler, typename Arg1>
-inline asio_handler_invoke_is_deprecated
-asio_handler_invoke(Function&& function,
-    move_binder1<Handler, Arg1>* this_handler)
-{
-  boost_asio_handler_invoke_helpers::invoke(
-      static_cast<Function&&>(function), this_handler->handler_);
-#if defined(BOOST_ASIO_NO_DEPRECATED)
-  return asio_handler_invoke_is_no_longer_used();
-#endif // defined(BOOST_ASIO_NO_DEPRECATED)
-}
-
 template <typename Handler, typename Arg1, typename Arg2>
 class move_binder2
 {
@@ -912,18 +749,6 @@ inline bool asio_handler_is_continuation(
 {
   return boost_asio_handler_cont_helpers::is_continuation(
       this_handler->handler_);
-}
-
-template <typename Function, typename Handler, typename Arg1, typename Arg2>
-inline asio_handler_invoke_is_deprecated
-asio_handler_invoke(Function&& function,
-    move_binder2<Handler, Arg1, Arg2>* this_handler)
-{
-  boost_asio_handler_invoke_helpers::invoke(
-      static_cast<Function&&>(function), this_handler->handler_);
-#if defined(BOOST_ASIO_NO_DEPRECATED)
-  return asio_handler_invoke_is_no_longer_used();
-#endif // defined(BOOST_ASIO_NO_DEPRECATED)
 }
 
 } // namespace detail

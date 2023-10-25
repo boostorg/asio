@@ -18,7 +18,6 @@
 #include <boost/asio/detail/bind_handler.hpp>
 #include <boost/asio/detail/handler_alloc_helpers.hpp>
 #include <boost/asio/detail/handler_cont_helpers.hpp>
-#include <boost/asio/detail/handler_invoke_helpers.hpp>
 
 #include <boost/asio/detail/push_options.hpp>
 
@@ -230,34 +229,6 @@ inline bool asio_handler_is_continuation(
   return IsContinuation()(this_handler->dispatcher_, this_handler->handler_);
 }
 
-template <typename Function, typename Dispatcher,
-    typename Handler, typename IsContinuation>
-inline asio_handler_invoke_is_deprecated
-asio_handler_invoke(Function& function,
-    wrapped_handler<Dispatcher, Handler, IsContinuation>* this_handler)
-{
-  this_handler->dispatcher_.dispatch(
-      rewrapped_handler<Function, Handler>(
-        function, this_handler->handler_));
-#if defined(BOOST_ASIO_NO_DEPRECATED)
-  return asio_handler_invoke_is_no_longer_used();
-#endif // defined(BOOST_ASIO_NO_DEPRECATED)
-}
-
-template <typename Function, typename Dispatcher,
-    typename Handler, typename IsContinuation>
-inline asio_handler_invoke_is_deprecated
-asio_handler_invoke(const Function& function,
-    wrapped_handler<Dispatcher, Handler, IsContinuation>* this_handler)
-{
-  this_handler->dispatcher_.dispatch(
-      rewrapped_handler<Function, Handler>(
-        function, this_handler->handler_));
-#if defined(BOOST_ASIO_NO_DEPRECATED)
-  return asio_handler_invoke_is_no_longer_used();
-#endif // defined(BOOST_ASIO_NO_DEPRECATED)
-}
-
 template <typename Handler, typename Context>
 inline asio_handler_allocate_is_deprecated
 asio_handler_allocate(std::size_t size,
@@ -290,30 +261,6 @@ inline bool asio_handler_is_continuation(
 {
   return boost_asio_handler_cont_helpers::is_continuation(
       this_handler->context_);
-}
-
-template <typename Function, typename Handler, typename Context>
-inline asio_handler_invoke_is_deprecated
-asio_handler_invoke(Function& function,
-    rewrapped_handler<Handler, Context>* this_handler)
-{
-  boost_asio_handler_invoke_helpers::invoke(
-      function, this_handler->context_);
-#if defined(BOOST_ASIO_NO_DEPRECATED)
-  return asio_handler_invoke_is_no_longer_used();
-#endif // defined(BOOST_ASIO_NO_DEPRECATED)
-}
-
-template <typename Function, typename Handler, typename Context>
-inline asio_handler_invoke_is_deprecated
-asio_handler_invoke(const Function& function,
-    rewrapped_handler<Handler, Context>* this_handler)
-{
-  boost_asio_handler_invoke_helpers::invoke(
-      function, this_handler->context_);
-#if defined(BOOST_ASIO_NO_DEPRECATED)
-  return asio_handler_invoke_is_no_longer_used();
-#endif // defined(BOOST_ASIO_NO_DEPRECATED)
 }
 
 } // namespace detail
