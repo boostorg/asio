@@ -16,7 +16,6 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include <boost/asio/detail/bind_handler.hpp>
-#include <boost/asio/detail/handler_alloc_helpers.hpp>
 #include <boost/asio/detail/handler_cont_helpers.hpp>
 
 #include <boost/asio/detail/push_options.hpp>
@@ -197,62 +196,10 @@ public:
 };
 
 template <typename Dispatcher, typename Handler, typename IsContinuation>
-inline asio_handler_allocate_is_deprecated
-asio_handler_allocate(std::size_t size,
-    wrapped_handler<Dispatcher, Handler, IsContinuation>* this_handler)
-{
-#if defined(BOOST_ASIO_NO_DEPRECATED)
-  boost_asio_handler_alloc_helpers::allocate(size, this_handler->handler_);
-  return asio_handler_allocate_is_no_longer_used();
-#else // defined(BOOST_ASIO_NO_DEPRECATED)
-  return boost_asio_handler_alloc_helpers::allocate(
-      size, this_handler->handler_);
-#endif // defined(BOOST_ASIO_NO_DEPRECATED)
-}
-
-template <typename Dispatcher, typename Handler, typename IsContinuation>
-inline asio_handler_deallocate_is_deprecated
-asio_handler_deallocate(void* pointer, std::size_t size,
-    wrapped_handler<Dispatcher, Handler, IsContinuation>* this_handler)
-{
-  boost_asio_handler_alloc_helpers::deallocate(
-      pointer, size, this_handler->handler_);
-#if defined(BOOST_ASIO_NO_DEPRECATED)
-  return asio_handler_deallocate_is_no_longer_used();
-#endif // defined(BOOST_ASIO_NO_DEPRECATED)
-}
-
-template <typename Dispatcher, typename Handler, typename IsContinuation>
 inline bool asio_handler_is_continuation(
     wrapped_handler<Dispatcher, Handler, IsContinuation>* this_handler)
 {
   return IsContinuation()(this_handler->dispatcher_, this_handler->handler_);
-}
-
-template <typename Handler, typename Context>
-inline asio_handler_allocate_is_deprecated
-asio_handler_allocate(std::size_t size,
-    rewrapped_handler<Handler, Context>* this_handler)
-{
-#if defined(BOOST_ASIO_NO_DEPRECATED)
-  boost_asio_handler_alloc_helpers::allocate(size, this_handler->handler_);
-  return asio_handler_allocate_is_no_longer_used();
-#else // defined(BOOST_ASIO_NO_DEPRECATED)
-  return boost_asio_handler_alloc_helpers::allocate(
-      size, this_handler->handler_);
-#endif // defined(BOOST_ASIO_NO_DEPRECATED)
-}
-
-template <typename Handler, typename Context>
-inline asio_handler_deallocate_is_deprecated
-asio_handler_deallocate(void* pointer, std::size_t size,
-    rewrapped_handler<Handler, Context>* this_handler)
-{
-  boost_asio_handler_alloc_helpers::deallocate(
-      pointer, size, this_handler->context_);
-#if defined(BOOST_ASIO_NO_DEPRECATED)
-  return asio_handler_deallocate_is_no_longer_used();
-#endif // defined(BOOST_ASIO_NO_DEPRECATED)
 }
 
 template <typename Dispatcher, typename Context>

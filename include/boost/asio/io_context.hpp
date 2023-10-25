@@ -548,7 +548,7 @@ public:
    *
    * @note This function throws an exception only if:
    *
-   * @li the handler's @c asio_handler_allocate function; or
+   * @li the handler's associated allocator; or
    *
    * @li the handler's copy constructor
    *
@@ -577,7 +577,7 @@ public:
    *
    * @note This function throws an exception only if:
    *
-   * @li the handler's @c asio_handler_allocate function; or
+   * @li the handler's associated allocator; or
    *
    * @li the handler's copy constructor
    *

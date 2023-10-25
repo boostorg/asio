@@ -24,7 +24,6 @@
 #include <boost/asio/detail/bind_handler.hpp>
 #include <boost/asio/detail/consuming_buffers.hpp>
 #include <boost/asio/detail/dependent_type.hpp>
-#include <boost/asio/detail/handler_alloc_helpers.hpp>
 #include <boost/asio/detail/handler_cont_helpers.hpp>
 #include <boost/asio/detail/handler_tracking.hpp>
 #include <boost/asio/detail/handler_type_requirements.hpp>
@@ -408,38 +407,6 @@ namespace detail
   template <typename AsyncReadStream, typename MutableBufferSequence,
       typename MutableBufferIterator, typename CompletionCondition,
       typename ReadHandler>
-  inline asio_handler_allocate_is_deprecated
-  asio_handler_allocate(std::size_t size,
-      read_op<AsyncReadStream, MutableBufferSequence, MutableBufferIterator,
-        CompletionCondition, ReadHandler>* this_handler)
-  {
-#if defined(BOOST_ASIO_NO_DEPRECATED)
-    boost_asio_handler_alloc_helpers::allocate(size, this_handler->handler_);
-    return asio_handler_allocate_is_no_longer_used();
-#else // defined(BOOST_ASIO_NO_DEPRECATED)
-    return boost_asio_handler_alloc_helpers::allocate(
-        size, this_handler->handler_);
-#endif // defined(BOOST_ASIO_NO_DEPRECATED)
-  }
-
-  template <typename AsyncReadStream, typename MutableBufferSequence,
-      typename MutableBufferIterator, typename CompletionCondition,
-      typename ReadHandler>
-  inline asio_handler_deallocate_is_deprecated
-  asio_handler_deallocate(void* pointer, std::size_t size,
-      read_op<AsyncReadStream, MutableBufferSequence, MutableBufferIterator,
-        CompletionCondition, ReadHandler>* this_handler)
-  {
-    boost_asio_handler_alloc_helpers::deallocate(
-        pointer, size, this_handler->handler_);
-#if defined(BOOST_ASIO_NO_DEPRECATED)
-    return asio_handler_deallocate_is_no_longer_used();
-#endif // defined(BOOST_ASIO_NO_DEPRECATED)
-  }
-
-  template <typename AsyncReadStream, typename MutableBufferSequence,
-      typename MutableBufferIterator, typename CompletionCondition,
-      typename ReadHandler>
   inline bool asio_handler_is_continuation(
       read_op<AsyncReadStream, MutableBufferSequence, MutableBufferIterator,
         CompletionCondition, ReadHandler>* this_handler)
@@ -673,36 +640,6 @@ namespace detail
     std::size_t total_transferred_;
     ReadHandler handler_;
   };
-
-  template <typename AsyncReadStream, typename DynamicBuffer_v1,
-      typename CompletionCondition, typename ReadHandler>
-  inline asio_handler_allocate_is_deprecated
-  asio_handler_allocate(std::size_t size,
-      read_dynbuf_v1_op<AsyncReadStream, DynamicBuffer_v1,
-        CompletionCondition, ReadHandler>* this_handler)
-  {
-#if defined(BOOST_ASIO_NO_DEPRECATED)
-    boost_asio_handler_alloc_helpers::allocate(size, this_handler->handler_);
-    return asio_handler_allocate_is_no_longer_used();
-#else // defined(BOOST_ASIO_NO_DEPRECATED)
-    return boost_asio_handler_alloc_helpers::allocate(
-        size, this_handler->handler_);
-#endif // defined(BOOST_ASIO_NO_DEPRECATED)
-  }
-
-  template <typename AsyncReadStream, typename DynamicBuffer_v1,
-      typename CompletionCondition, typename ReadHandler>
-  inline asio_handler_deallocate_is_deprecated
-  asio_handler_deallocate(void* pointer, std::size_t size,
-      read_dynbuf_v1_op<AsyncReadStream, DynamicBuffer_v1,
-        CompletionCondition, ReadHandler>* this_handler)
-  {
-    boost_asio_handler_alloc_helpers::deallocate(
-        pointer, size, this_handler->handler_);
-#if defined(BOOST_ASIO_NO_DEPRECATED)
-    return asio_handler_deallocate_is_no_longer_used();
-#endif // defined(BOOST_ASIO_NO_DEPRECATED)
-  }
 
   template <typename AsyncReadStream, typename DynamicBuffer_v1,
       typename CompletionCondition, typename ReadHandler>
@@ -984,36 +921,6 @@ namespace detail
     std::size_t bytes_available_;
     ReadHandler handler_;
   };
-
-  template <typename AsyncReadStream, typename DynamicBuffer_v2,
-      typename CompletionCondition, typename ReadHandler>
-  inline asio_handler_allocate_is_deprecated
-  asio_handler_allocate(std::size_t size,
-      read_dynbuf_v2_op<AsyncReadStream, DynamicBuffer_v2,
-        CompletionCondition, ReadHandler>* this_handler)
-  {
-#if defined(BOOST_ASIO_NO_DEPRECATED)
-    boost_asio_handler_alloc_helpers::allocate(size, this_handler->handler_);
-    return asio_handler_allocate_is_no_longer_used();
-#else // defined(BOOST_ASIO_NO_DEPRECATED)
-    return boost_asio_handler_alloc_helpers::allocate(
-        size, this_handler->handler_);
-#endif // defined(BOOST_ASIO_NO_DEPRECATED)
-  }
-
-  template <typename AsyncReadStream, typename DynamicBuffer_v2,
-      typename CompletionCondition, typename ReadHandler>
-  inline asio_handler_deallocate_is_deprecated
-  asio_handler_deallocate(void* pointer, std::size_t size,
-      read_dynbuf_v2_op<AsyncReadStream, DynamicBuffer_v2,
-        CompletionCondition, ReadHandler>* this_handler)
-  {
-    boost_asio_handler_alloc_helpers::deallocate(
-        pointer, size, this_handler->handler_);
-#if defined(BOOST_ASIO_NO_DEPRECATED)
-    return asio_handler_deallocate_is_no_longer_used();
-#endif // defined(BOOST_ASIO_NO_DEPRECATED)
-  }
 
   template <typename AsyncReadStream, typename DynamicBuffer_v2,
       typename CompletionCondition, typename ReadHandler>

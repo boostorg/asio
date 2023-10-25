@@ -99,7 +99,6 @@
 #include <boost/asio/generic/raw_protocol.hpp>
 #include <boost/asio/generic/seq_packet_protocol.hpp>
 #include <boost/asio/generic/stream_protocol.hpp>
-#include <boost/asio/handler_alloc_hook.hpp>
 #include <boost/asio/handler_continuation_hook.hpp>
 #include <boost/asio/high_resolution_timer.hpp>
 #include <boost/asio/io_context.hpp>

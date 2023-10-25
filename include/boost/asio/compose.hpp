@@ -20,7 +20,6 @@
 #include <boost/asio/async_result.hpp>
 #include <boost/asio/detail/base_from_cancellation_state.hpp>
 #include <boost/asio/detail/composed_work.hpp>
-#include <boost/asio/detail/handler_alloc_helpers.hpp>
 #include <boost/asio/detail/handler_cont_helpers.hpp>
 #include <boost/asio/detail/type_traits.hpp>
 
@@ -131,32 +130,6 @@ public:
   Handler handler_;
   unsigned invocations_;
 };
-
-template <typename Impl, typename Work, typename Handler, typename Signature>
-inline asio_handler_allocate_is_deprecated
-asio_handler_allocate(std::size_t size,
-    composed_op<Impl, Work, Handler, Signature>* this_handler)
-{
-#if defined(BOOST_ASIO_NO_DEPRECATED)
-  boost_asio_handler_alloc_helpers::allocate(size, this_handler->handler_);
-  return asio_handler_allocate_is_no_longer_used();
-#else // defined(BOOST_ASIO_NO_DEPRECATED)
-  return boost_asio_handler_alloc_helpers::allocate(
-      size, this_handler->handler_);
-#endif // defined(BOOST_ASIO_NO_DEPRECATED)
-}
-
-template <typename Impl, typename Work, typename Handler, typename Signature>
-inline asio_handler_deallocate_is_deprecated
-asio_handler_deallocate(void* pointer, std::size_t size,
-    composed_op<Impl, Work, Handler, Signature>* this_handler)
-{
-  boost_asio_handler_alloc_helpers::deallocate(
-      pointer, size, this_handler->handler_);
-#if defined(BOOST_ASIO_NO_DEPRECATED)
-  return asio_handler_deallocate_is_no_longer_used();
-#endif // defined(BOOST_ASIO_NO_DEPRECATED)
-}
 
 template <typename Impl, typename Work, typename Handler, typename Signature>
 inline bool asio_handler_is_continuation(

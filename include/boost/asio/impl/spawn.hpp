@@ -24,7 +24,6 @@
 #include <boost/asio/bind_executor.hpp>
 #include <boost/asio/detail/atomic_count.hpp>
 #include <boost/asio/detail/bind_handler.hpp>
-#include <boost/asio/detail/handler_alloc_helpers.hpp>
 #include <boost/asio/detail/handler_cont_helpers.hpp>
 #include <boost/asio/detail/memory.hpp>
 #include <boost/asio/detail/noncopyable.hpp>
