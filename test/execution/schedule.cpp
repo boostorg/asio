@@ -30,7 +30,7 @@ namespace exec = boost::asio::execution;
 
 struct operation_state
 {
-  void start() BOOST_ASIO_NOEXCEPT
+  void start() noexcept
   {
   }
 };
@@ -44,8 +44,8 @@ namespace traits {
 template <>
 struct start_member<operation_state>
 {
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_noexcept = true);
+  static constexpr bool is_valid = true;
+  static constexpr bool is_noexcept = true;
   typedef void result_type;
 };
 
@@ -62,16 +62,16 @@ struct sender : exec::sender_base
   }
 
   template <typename R>
-  operation_state connect(BOOST_ASIO_MOVE_ARG(R) r) const
+  operation_state connect(R&& r) const
   {
     (void)r;
     return operation_state();
   }
 
   template <typename R>
-  void submit(BOOST_ASIO_MOVE_ARG(R) r) const
+  void submit(R&& r) const
   {
-    typename boost::asio::decay<R>::type tmp(BOOST_ASIO_MOVE_CAST(R)(r));
+    typename boost::asio::decay<R>::type tmp(static_cast<R&&>(r));
     exec::set_value(tmp);
   }
 };
@@ -85,8 +85,8 @@ namespace traits {
 template <typename R>
 struct connect_member<const sender, R>
 {
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_noexcept = false);
+  static constexpr bool is_valid = true;
+  static constexpr bool is_noexcept = false;
   typedef operation_state result_type;
 };
 
@@ -97,8 +97,8 @@ struct connect_member<const sender, R>
 template <typename R>
 struct submit_member<const sender, R>
 {
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_noexcept = false);
+  static constexpr bool is_valid = true;
+  static constexpr bool is_noexcept = false;
   typedef void result_type;
 };
 
@@ -114,7 +114,7 @@ struct no_schedule
 
 struct const_member_schedule
 {
-  sender schedule() const BOOST_ASIO_NOEXCEPT
+  sender schedule() const noexcept
   {
     return sender();
   }
@@ -129,8 +129,8 @@ namespace traits {
 template <>
 struct schedule_member<const const_member_schedule>
 {
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_noexcept = true);
+  static constexpr bool is_valid = true;
+  static constexpr bool is_noexcept = true;
   typedef sender result_type;
 };
 
@@ -143,7 +143,7 @@ struct schedule_member<const const_member_schedule>
 struct free_schedule_const_receiver
 {
   friend sender schedule(
-      const free_schedule_const_receiver&) BOOST_ASIO_NOEXCEPT
+      const free_schedule_const_receiver&) noexcept
   {
     return sender();
   }
@@ -158,8 +158,8 @@ namespace traits {
 template <>
 struct schedule_free<const free_schedule_const_receiver>
 {
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_noexcept = true);
+  static constexpr bool is_valid = true;
+  static constexpr bool is_noexcept = true;
   typedef sender result_type;
 };
 
@@ -171,7 +171,7 @@ struct schedule_free<const free_schedule_const_receiver>
 
 struct non_const_member_schedule
 {
-  sender schedule() BOOST_ASIO_NOEXCEPT
+  sender schedule() noexcept
   {
     return sender();
   }
@@ -186,8 +186,8 @@ namespace traits {
 template <>
 struct schedule_member<non_const_member_schedule>
 {
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_noexcept = true);
+  static constexpr bool is_valid = true;
+  static constexpr bool is_noexcept = true;
   typedef sender result_type;
 };
 
@@ -200,7 +200,7 @@ struct schedule_member<non_const_member_schedule>
 struct free_schedule_non_const_receiver
 {
   friend sender schedule(
-      free_schedule_non_const_receiver&) BOOST_ASIO_NOEXCEPT
+      free_schedule_non_const_receiver&) noexcept
   {
     return sender();
   }
@@ -215,8 +215,8 @@ namespace traits {
 template <>
 struct schedule_free<free_schedule_non_const_receiver>
 {
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_noexcept = true);
+  static constexpr bool is_valid = true;
+  static constexpr bool is_noexcept = true;
   typedef sender result_type;
 };
 
@@ -232,29 +232,27 @@ struct executor
   {
   }
 
-  executor(const executor&) BOOST_ASIO_NOEXCEPT
+  executor(const executor&) noexcept
   {
   }
 
-#if defined(BOOST_ASIO_HAS_MOVE)
-  executor(executor&&) BOOST_ASIO_NOEXCEPT
+  executor(executor&&) noexcept
   {
   }
-#endif // defined(BOOST_ASIO_HAS_MOVE)
 
   template <typename F>
-  void execute(BOOST_ASIO_MOVE_ARG(F) f) const BOOST_ASIO_NOEXCEPT
+  void execute(F&& f) const noexcept
   {
-    typename boost::asio::decay<F>::type tmp(BOOST_ASIO_MOVE_CAST(F)(f));
+    typename boost::asio::decay<F>::type tmp(static_cast<F&&>(f));
     tmp();
   }
 
-  bool operator==(const executor&) const BOOST_ASIO_NOEXCEPT
+  bool operator==(const executor&) const noexcept
   {
     return true;
   }
 
-  bool operator!=(const executor&) const BOOST_ASIO_NOEXCEPT
+  bool operator!=(const executor&) const noexcept
   {
     return false;
   }
@@ -269,8 +267,8 @@ namespace traits {
 template <typename F>
 struct execute_member<executor, F>
 {
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_noexcept = true);
+  static constexpr bool is_valid = true;
+  static constexpr bool is_noexcept = true;
   typedef void result_type;
 };
 
@@ -280,8 +278,8 @@ struct execute_member<executor, F>
 template <>
 struct equality_comparable<executor>
 {
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_noexcept = true);
+  static constexpr bool is_valid = true;
+  static constexpr bool is_noexcept = true;
 };
 
 #endif // !defined(BOOST_ASIO_HAS_DEDUCED_EQUALITY_COMPARABLE_TRAIT)
@@ -292,51 +290,51 @@ struct equality_comparable<executor>
 
 void test_can_schedule()
 {
-  BOOST_ASIO_CONSTEXPR bool b1 = exec::can_schedule<
+  constexpr bool b1 = exec::can_schedule<
       no_schedule&>::value;
   BOOST_ASIO_CHECK(b1 == false);
 
-  BOOST_ASIO_CONSTEXPR bool b2 = exec::can_schedule<
+  constexpr bool b2 = exec::can_schedule<
       const no_schedule&>::value;
   BOOST_ASIO_CHECK(b2 == false);
 
-  BOOST_ASIO_CONSTEXPR bool b3 = exec::can_schedule<
+  constexpr bool b3 = exec::can_schedule<
       const_member_schedule&>::value;
   BOOST_ASIO_CHECK(b3 == true);
 
-  BOOST_ASIO_CONSTEXPR bool b4 = exec::can_schedule<
+  constexpr bool b4 = exec::can_schedule<
       const const_member_schedule&>::value;
   BOOST_ASIO_CHECK(b4 == true);
 
-  BOOST_ASIO_CONSTEXPR bool b5 = exec::can_schedule<
+  constexpr bool b5 = exec::can_schedule<
       free_schedule_const_receiver&>::value;
   BOOST_ASIO_CHECK(b5 == true);
 
-  BOOST_ASIO_CONSTEXPR bool b6 = exec::can_schedule<
+  constexpr bool b6 = exec::can_schedule<
       const free_schedule_const_receiver&>::value;
   BOOST_ASIO_CHECK(b6 == true);
 
-  BOOST_ASIO_CONSTEXPR bool b7 = exec::can_schedule<
+  constexpr bool b7 = exec::can_schedule<
       non_const_member_schedule&>::value;
   BOOST_ASIO_CHECK(b7 == true);
 
-  BOOST_ASIO_CONSTEXPR bool b8 = exec::can_schedule<
+  constexpr bool b8 = exec::can_schedule<
       const non_const_member_schedule&>::value;
   BOOST_ASIO_CHECK(b8 == false);
 
-  BOOST_ASIO_CONSTEXPR bool b9 = exec::can_schedule<
+  constexpr bool b9 = exec::can_schedule<
       free_schedule_non_const_receiver&>::value;
   BOOST_ASIO_CHECK(b9 == true);
 
-  BOOST_ASIO_CONSTEXPR bool b10 = exec::can_schedule<
+  constexpr bool b10 = exec::can_schedule<
       const free_schedule_non_const_receiver&>::value;
   BOOST_ASIO_CHECK(b10 == false);
 
-  BOOST_ASIO_CONSTEXPR bool b11 = exec::can_schedule<
+  constexpr bool b11 = exec::can_schedule<
       executor&>::value;
   BOOST_ASIO_CHECK(b11 == true);
 
-  BOOST_ASIO_CONSTEXPR bool b12 = exec::can_schedule<
+  constexpr bool b12 = exec::can_schedule<
       const executor&>::value;
   BOOST_ASIO_CHECK(b12 == true);
 }
@@ -350,31 +348,29 @@ struct receiver
   {
   }
 
-  receiver(const receiver& other) BOOST_ASIO_NOEXCEPT
+  receiver(const receiver& other) noexcept
     : count_(other.count_)
   {
   }
 
-#if defined(BOOST_ASIO_HAS_MOVE)
-  receiver(receiver&& other) BOOST_ASIO_NOEXCEPT
+  receiver(receiver&& other) noexcept
     : count_(other.count_)
   {
     other.count_ = 0;
   }
-#endif // defined(BOOST_ASIO_HAS_MOVE)
 
-  void set_value() BOOST_ASIO_NOEXCEPT
+  void set_value() noexcept
   {
     ++(*count_);
   }
 
   template <typename E>
-  void set_error(BOOST_ASIO_MOVE_ARG(E) e) BOOST_ASIO_NOEXCEPT
+  void set_error(E&& e) noexcept
   {
     (void)e;
   }
 
-  void set_done() BOOST_ASIO_NOEXCEPT
+  void set_done() noexcept
   {
   }
 };
@@ -388,8 +384,8 @@ namespace traits {
 template <>
 struct set_value_member<receiver, void()>
 {
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_noexcept = true);
+  static constexpr bool is_valid = true;
+  static constexpr bool is_noexcept = true;
   typedef void result_type;
 };
 
@@ -400,8 +396,8 @@ struct set_value_member<receiver, void()>
 template <typename E>
 struct set_error_member<receiver, E>
 {
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_noexcept = true);
+  static constexpr bool is_valid = true;
+  static constexpr bool is_noexcept = true;
   typedef void result_type;
 };
 
@@ -412,8 +408,8 @@ struct set_error_member<receiver, E>
 template <>
 struct set_done_member<receiver>
 {
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_noexcept = true);
+  static constexpr bool is_valid = true;
+  static constexpr bool is_noexcept = true;
   typedef void result_type;
 };
 

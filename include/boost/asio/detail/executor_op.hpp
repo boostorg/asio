@@ -35,9 +35,9 @@ public:
   BOOST_ASIO_DEFINE_HANDLER_ALLOCATOR_PTR(executor_op);
 
   template <typename H>
-  executor_op(BOOST_ASIO_MOVE_ARG(H) h, const Alloc& allocator)
+  executor_op(H&& h, const Alloc& allocator)
     : Operation(&executor_op::do_complete),
-      handler_(BOOST_ASIO_MOVE_CAST(H)(h)),
+      handler_(static_cast<H&&>(h)),
       allocator_(allocator)
   {
   }
@@ -60,7 +60,7 @@ public:
     // with the handler. Consequently, a local copy of the handler is required
     // to ensure that any owning sub-object remains valid until after we have
     // deallocated the memory here.
-    Handler handler(BOOST_ASIO_MOVE_CAST(Handler)(o->handler_));
+    Handler handler(static_cast<Handler&&>(o->handler_));
     p.reset();
 
     // Make the upcall if required.

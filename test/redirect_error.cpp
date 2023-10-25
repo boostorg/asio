@@ -66,9 +66,6 @@ void redirect_error_test()
   BOOST_ASIO_CHECK(!ec);
   BOOST_ASIO_CHECK(count == 1);
 
-#if defined(BOOST_ASIO_HAS_STD_TUPLE) \
-  && defined(BOOST_ASIO_HAS_DECLTYPE) \
-  && defined(BOOST_ASIO_HAS_VARIADIC_TEMPLATES)
   ec = boost::asio::error::would_block;
   timer1.async_wait(
       boost::asio::redirect_error(
@@ -89,9 +86,6 @@ void redirect_error_test()
 
   BOOST_ASIO_CHECK(!ec);
   BOOST_ASIO_CHECK(count == 2);
-#endif // defined(BOOST_ASIO_HAS_STD_TUPLE)
-       //   && defined(BOOST_ASIO_HAS_DECLTYPE)
-       //   && defined(BOOST_ASIO_HAS_VARIADIC_TEMPLATES)
 
 #if defined(BOOST_ASIO_HAS_STD_FUTURE_CLASS)
   ec = boost::asio::error::would_block;

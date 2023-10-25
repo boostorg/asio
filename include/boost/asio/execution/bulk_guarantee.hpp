@@ -202,52 +202,48 @@ struct bulk_guarantee_t
 #if defined(BOOST_ASIO_HAS_VARIABLE_TEMPLATES)
 # if defined(BOOST_ASIO_NO_DEPRECATED)
   template <typename T>
-  BOOST_ASIO_STATIC_CONSTEXPR(bool,
-    is_applicable_property_v = (
-      is_executor<T>::value));
+  static constexpr bool is_applicable_property_v = is_executor<T>::value;
 # else // defined(BOOST_ASIO_NO_DEPRECATED)
   template <typename T>
-  BOOST_ASIO_STATIC_CONSTEXPR(bool,
-    is_applicable_property_v = (
+  static constexpr bool is_applicable_property_v =
       is_executor<T>::value
-        || conditional<
+        || conditional_t<
             is_executor<T>::value,
             false_type,
             is_sender<T>
-          >::type::value
-        || conditional<
+          >::value
+        || conditional_t<
             is_executor<T>::value,
             false_type,
             is_scheduler<T>
-          >::type::value
-      ));
+          >::value;
 # endif // defined(BOOST_ASIO_NO_DEPRECATED)
 #endif // defined(BOOST_ASIO_HAS_VARIABLE_TEMPLATES)
 
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_requirable = false);
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_preferable = false);
+  static constexpr bool is_requirable = false;
+  static constexpr bool is_preferable = false;
   typedef bulk_guarantee_t polymorphic_query_result_type;
 
   typedef detail::bulk_guarantee::unsequenced_t<I> unsequenced_t;
   typedef detail::bulk_guarantee::sequenced_t<I> sequenced_t;
   typedef detail::bulk_guarantee::parallel_t<I> parallel_t;
 
-  BOOST_ASIO_CONSTEXPR bulk_guarantee_t()
+  constexpr bulk_guarantee_t()
     : value_(-1)
   {
   }
 
-  BOOST_ASIO_CONSTEXPR bulk_guarantee_t(unsequenced_t)
+  constexpr bulk_guarantee_t(unsequenced_t)
     : value_(0)
   {
   }
 
-  BOOST_ASIO_CONSTEXPR bulk_guarantee_t(sequenced_t)
+  constexpr bulk_guarantee_t(sequenced_t)
     : value_(1)
   {
   }
 
-  BOOST_ASIO_CONSTEXPR bulk_guarantee_t(parallel_t)
+  constexpr bulk_guarantee_t(parallel_t)
     : value_(2)
   {
   }
@@ -259,16 +255,14 @@ struct bulk_guarantee_t
     struct type
     {
       template <typename P>
-      auto query(BOOST_ASIO_MOVE_ARG(P) p) const
+      auto query(P&& p) const
         noexcept(
           noexcept(
-            declval<typename conditional<true, T, P>::type>().query(
-              BOOST_ASIO_MOVE_CAST(P)(p))
+            declval<conditional_t<true, T, P>>().query(static_cast<P&&>(p))
           )
         )
         -> decltype(
-          declval<typename conditional<true, T, P>::type>().query(
-            BOOST_ASIO_MOVE_CAST(P)(p))
+          declval<conditional_t<true, T, P>>().query(static_cast<P&&>(p))
         );
     };
 #else // defined(BOOST_ASIO_HAS_DEDUCED_QUERY_MEMBER_TRAIT)
@@ -283,17 +277,17 @@ struct bulk_guarantee_t
     struct type
     {
       template <typename P>
-      static constexpr auto query(BOOST_ASIO_MOVE_ARG(P) p)
+      static constexpr auto query(P&& p)
         noexcept(
           noexcept(
-            conditional<true, T, P>::type::query(BOOST_ASIO_MOVE_CAST(P)(p))
+            conditional_t<true, T, P>::query(static_cast<P&&>(p))
           )
         )
         -> decltype(
-          conditional<true, T, P>::type::query(BOOST_ASIO_MOVE_CAST(P)(p))
+          conditional_t<true, T, P>::query(static_cast<P&&>(p))
         )
       {
-        return T::query(BOOST_ASIO_MOVE_CAST(P)(p));
+        return T::query(static_cast<P&&>(p));
       }
     };
 #else // defined(BOOST_ASIO_HAS_DEDUCED_QUERY_STATIC_CONSTEXPR_MEMBER_TRAIT)
@@ -313,89 +307,88 @@ struct bulk_guarantee_t
 #if defined(BOOST_ASIO_HAS_DEDUCED_STATIC_QUERY_TRAIT) \
   && defined(BOOST_ASIO_HAS_SFINAE_VARIABLE_TEMPLATES)
   template <typename T>
-  static BOOST_ASIO_CONSTEXPR
+  static constexpr
   typename query_static_constexpr_member<T>::result_type
   static_query()
-    BOOST_ASIO_NOEXCEPT_IF((
-      query_static_constexpr_member<T>::is_noexcept))
+    noexcept(query_static_constexpr_member<T>::is_noexcept)
   {
     return query_static_constexpr_member<T>::value();
   }
 
   template <typename T>
-  static BOOST_ASIO_CONSTEXPR
+  static constexpr
   typename traits::static_query<T, unsequenced_t>::result_type
   static_query(
-      typename enable_if<
+      enable_if_t<
         !query_static_constexpr_member<T>::is_valid
-      >::type* = 0,
-      typename enable_if<
+      >* = 0,
+      enable_if_t<
         !query_member<T>::is_valid
-      >::type* = 0,
-      typename enable_if<
+      >* = 0,
+      enable_if_t<
         traits::static_query<T, unsequenced_t>::is_valid
-      >::type* = 0) BOOST_ASIO_NOEXCEPT
+      >* = 0) noexcept
   {
     return traits::static_query<T, unsequenced_t>::value();
   }
 
   template <typename T>
-  static BOOST_ASIO_CONSTEXPR
+  static constexpr
   typename traits::static_query<T, sequenced_t>::result_type
   static_query(
-      typename enable_if<
+      enable_if_t<
         !query_static_constexpr_member<T>::is_valid
-      >::type* = 0,
-      typename enable_if<
+      >* = 0,
+      enable_if_t<
         !query_member<T>::is_valid
-      >::type* = 0,
-      typename enable_if<
+      >* = 0,
+      enable_if_t<
         !traits::static_query<T, unsequenced_t>::is_valid
-      >::type* = 0,
-      typename enable_if<
+      >* = 0,
+      enable_if_t<
         traits::static_query<T, sequenced_t>::is_valid
-      >::type* = 0) BOOST_ASIO_NOEXCEPT
+      >* = 0) noexcept
   {
     return traits::static_query<T, sequenced_t>::value();
   }
 
   template <typename T>
-  static BOOST_ASIO_CONSTEXPR
+  static constexpr
   typename traits::static_query<T, parallel_t>::result_type
   static_query(
-      typename enable_if<
+      enable_if_t<
         !query_static_constexpr_member<T>::is_valid
-      >::type* = 0,
-      typename enable_if<
+      >* = 0,
+      enable_if_t<
         !query_member<T>::is_valid
-      >::type* = 0,
-      typename enable_if<
+      >* = 0,
+      enable_if_t<
         !traits::static_query<T, unsequenced_t>::is_valid
-      >::type* = 0,
-      typename enable_if<
+      >* = 0,
+      enable_if_t<
         !traits::static_query<T, sequenced_t>::is_valid
-      >::type* = 0,
-      typename enable_if<
+      >* = 0,
+      enable_if_t<
         traits::static_query<T, parallel_t>::is_valid
-      >::type* = 0) BOOST_ASIO_NOEXCEPT
+      >* = 0) noexcept
   {
     return traits::static_query<T, parallel_t>::value();
   }
 
   template <typename E,
       typename T = decltype(bulk_guarantee_t::static_query<E>())>
-  static BOOST_ASIO_CONSTEXPR const T static_query_v
+  static constexpr const T static_query_v
     = bulk_guarantee_t::static_query<E>();
 #endif // defined(BOOST_ASIO_HAS_DEDUCED_STATIC_QUERY_TRAIT)
        //   && defined(BOOST_ASIO_HAS_SFINAE_VARIABLE_TEMPLATES)
 
-  friend BOOST_ASIO_CONSTEXPR bool operator==(
+  friend constexpr bool operator==(
       const bulk_guarantee_t& a, const bulk_guarantee_t& b)
   {
     return a.value_ == b.value_;
   }
 
-  friend BOOST_ASIO_CONSTEXPR bool operator!=(
+  friend constexpr bool operator!=(
       const bulk_guarantee_t& a, const bulk_guarantee_t& b)
   {
     return a.value_ != b.value_;
@@ -403,23 +396,22 @@ struct bulk_guarantee_t
 
   struct convertible_from_bulk_guarantee_t
   {
-    BOOST_ASIO_CONSTEXPR convertible_from_bulk_guarantee_t(bulk_guarantee_t) {}
+    constexpr convertible_from_bulk_guarantee_t(bulk_guarantee_t) {}
   };
 
   template <typename Executor>
-  friend BOOST_ASIO_CONSTEXPR bulk_guarantee_t query(
+  friend constexpr bulk_guarantee_t query(
       const Executor& ex, convertible_from_bulk_guarantee_t,
-      typename enable_if<
+      enable_if_t<
         can_query<const Executor&, unsequenced_t>::value
-      >::type* = 0)
+      >* = 0)
 #if !defined(__clang__) // Clang crashes if noexcept is used here.
 #if defined(BOOST_ASIO_MSVC) // Visual C++ wants the type to be qualified.
-    BOOST_ASIO_NOEXCEPT_IF((
+    noexcept(
       is_nothrow_query<const Executor&,
-        bulk_guarantee_t<>::unsequenced_t>::value))
+        bulk_guarantee_t<>::unsequenced_t>::value)
 #else // defined(BOOST_ASIO_MSVC)
-    BOOST_ASIO_NOEXCEPT_IF((
-      is_nothrow_query<const Executor&, unsequenced_t>::value))
+    noexcept(is_nothrow_query<const Executor&, unsequenced_t>::value)
 #endif // defined(BOOST_ASIO_MSVC)
 #endif // !defined(__clang__)
   {
@@ -427,22 +419,21 @@ struct bulk_guarantee_t
   }
 
   template <typename Executor>
-  friend BOOST_ASIO_CONSTEXPR bulk_guarantee_t query(
+  friend constexpr bulk_guarantee_t query(
       const Executor& ex, convertible_from_bulk_guarantee_t,
-      typename enable_if<
+      enable_if_t<
         !can_query<const Executor&, unsequenced_t>::value
-      >::type* = 0,
-      typename enable_if<
+      >* = 0,
+      enable_if_t<
         can_query<const Executor&, sequenced_t>::value
-      >::type* = 0)
+      >* = 0)
 #if !defined(__clang__) // Clang crashes if noexcept is used here.
 #if defined(BOOST_ASIO_MSVC) // Visual C++ wants the type to be qualified.
-    BOOST_ASIO_NOEXCEPT_IF((
+    noexcept(
       is_nothrow_query<const Executor&,
-        bulk_guarantee_t<>::sequenced_t>::value))
+        bulk_guarantee_t<>::sequenced_t>::value)
 #else // defined(BOOST_ASIO_MSVC)
-    BOOST_ASIO_NOEXCEPT_IF((
-      is_nothrow_query<const Executor&, sequenced_t>::value))
+    noexcept(is_nothrow_query<const Executor&, sequenced_t>::value)
 #endif // defined(BOOST_ASIO_MSVC)
 #endif // !defined(__clang__)
   {
@@ -450,24 +441,23 @@ struct bulk_guarantee_t
   }
 
   template <typename Executor>
-  friend BOOST_ASIO_CONSTEXPR bulk_guarantee_t query(
+  friend constexpr bulk_guarantee_t query(
       const Executor& ex, convertible_from_bulk_guarantee_t,
-      typename enable_if<
+      enable_if_t<
         !can_query<const Executor&, unsequenced_t>::value
-      >::type* = 0,
-      typename enable_if<
+      >* = 0,
+      enable_if_t<
         !can_query<const Executor&, sequenced_t>::value
-      >::type* = 0,
-      typename enable_if<
+      >* = 0,
+      enable_if_t<
         can_query<const Executor&, parallel_t>::value
-      >::type* = 0)
+      >* = 0)
 #if !defined(__clang__) // Clang crashes if noexcept is used here.
 #if defined(BOOST_ASIO_MSVC) // Visual C++ wants the type to be qualified.
-    BOOST_ASIO_NOEXCEPT_IF((
-      is_nothrow_query<const Executor&, bulk_guarantee_t<>::parallel_t>::value))
+    noexcept(
+      is_nothrow_query<const Executor&, bulk_guarantee_t<>::parallel_t>::value)
 #else // defined(BOOST_ASIO_MSVC)
-    BOOST_ASIO_NOEXCEPT_IF((
-      is_nothrow_query<const Executor&, parallel_t>::value))
+    noexcept(is_nothrow_query<const Executor&, parallel_t>::value)
 #endif // defined(BOOST_ASIO_MSVC)
 #endif // !defined(__clang__)
   {
@@ -477,10 +467,6 @@ struct bulk_guarantee_t
   BOOST_ASIO_STATIC_CONSTEXPR_DEFAULT_INIT(unsequenced_t, unsequenced);
   BOOST_ASIO_STATIC_CONSTEXPR_DEFAULT_INIT(sequenced_t, sequenced);
   BOOST_ASIO_STATIC_CONSTEXPR_DEFAULT_INIT(parallel_t, parallel);
-
-#if !defined(BOOST_ASIO_HAS_CONSTEXPR)
-  static const bulk_guarantee_t instance;
-#endif // !defined(BOOST_ASIO_HAS_CONSTEXPR)
 
 private:
   int value_;
@@ -492,11 +478,6 @@ template <int I> template <typename E, typename T>
 const T bulk_guarantee_t<I>::static_query_v;
 #endif // defined(BOOST_ASIO_HAS_DEDUCED_STATIC_QUERY_TRAIT)
        //   && defined(BOOST_ASIO_HAS_SFINAE_VARIABLE_TEMPLATES)
-
-#if !defined(BOOST_ASIO_HAS_CONSTEXPR)
-template <int I>
-const bulk_guarantee_t<I> bulk_guarantee_t<I>::instance;
-#endif
 
 template <int I>
 const typename bulk_guarantee_t<I>::unsequenced_t
@@ -518,33 +499,29 @@ struct unsequenced_t
 #if defined(BOOST_ASIO_HAS_VARIABLE_TEMPLATES)
 # if defined(BOOST_ASIO_NO_DEPRECATED)
   template <typename T>
-  BOOST_ASIO_STATIC_CONSTEXPR(bool,
-    is_applicable_property_v = (
-      is_executor<T>::value));
+  static constexpr bool is_applicable_property_v = is_executor<T>::value;
 # else // defined(BOOST_ASIO_NO_DEPRECATED)
   template <typename T>
-  BOOST_ASIO_STATIC_CONSTEXPR(bool,
-    is_applicable_property_v = (
+  static constexpr bool is_applicable_property_v =
       is_executor<T>::value
-        || conditional<
+        || conditional_t<
             is_executor<T>::value,
             false_type,
             is_sender<T>
-          >::type::value
-        || conditional<
+          >::value
+        || conditional_t<
             is_executor<T>::value,
             false_type,
             is_scheduler<T>
-          >::type::value
-      ));
+          >::value;
 # endif // defined(BOOST_ASIO_NO_DEPRECATED)
 #endif // defined(BOOST_ASIO_HAS_VARIABLE_TEMPLATES)
 
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_requirable = true);
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_preferable = true);
+  static constexpr bool is_requirable = true;
+  static constexpr bool is_preferable = true;
   typedef bulk_guarantee_t<I> polymorphic_query_result_type;
 
-  BOOST_ASIO_CONSTEXPR unsequenced_t()
+  constexpr unsequenced_t()
   {
   }
 
@@ -563,78 +540,77 @@ struct unsequenced_t
 #if defined(BOOST_ASIO_HAS_DEDUCED_STATIC_QUERY_TRAIT) \
   && defined(BOOST_ASIO_HAS_SFINAE_VARIABLE_TEMPLATES)
   template <typename T>
-  static BOOST_ASIO_CONSTEXPR
+  static constexpr
   typename query_static_constexpr_member<T>::result_type
   static_query()
-    BOOST_ASIO_NOEXCEPT_IF((
-      query_static_constexpr_member<T>::is_noexcept))
+    noexcept(query_static_constexpr_member<T>::is_noexcept)
   {
     return query_static_constexpr_member<T>::value();
   }
 
   template <typename T>
-  static BOOST_ASIO_CONSTEXPR unsequenced_t static_query(
-      typename enable_if<
+  static constexpr unsequenced_t static_query(
+      enable_if_t<
         !query_static_constexpr_member<T>::is_valid
-      >::type* = 0,
-      typename enable_if<
+      >* = 0,
+      enable_if_t<
         !query_member<T>::is_valid
-      >::type* = 0,
-      typename enable_if<
+      >* = 0,
+      enable_if_t<
         !traits::query_free<T, unsequenced_t>::is_valid
-      >::type* = 0,
-      typename enable_if<
-        !can_query<T, sequenced_t<I> >::value
-      >::type* = 0,
-      typename enable_if<
-        !can_query<T, parallel_t<I> >::value
-      >::type* = 0) BOOST_ASIO_NOEXCEPT
+      >* = 0,
+      enable_if_t<
+        !can_query<T, sequenced_t<I>>::value
+      >* = 0,
+      enable_if_t<
+        !can_query<T, parallel_t<I>>::value
+      >* = 0) noexcept
   {
     return unsequenced_t();
   }
 
   template <typename E, typename T = decltype(unsequenced_t::static_query<E>())>
-  static BOOST_ASIO_CONSTEXPR const T static_query_v
+  static constexpr const T static_query_v
     = unsequenced_t::static_query<E>();
 #endif // defined(BOOST_ASIO_HAS_DEDUCED_STATIC_QUERY_TRAIT)
        //   && defined(BOOST_ASIO_HAS_SFINAE_VARIABLE_TEMPLATES)
 
-  static BOOST_ASIO_CONSTEXPR bulk_guarantee_t<I> value()
+  static constexpr bulk_guarantee_t<I> value()
   {
     return unsequenced_t();
   }
 
-  friend BOOST_ASIO_CONSTEXPR bool operator==(
+  friend constexpr bool operator==(
       const unsequenced_t&, const unsequenced_t&)
   {
     return true;
   }
 
-  friend BOOST_ASIO_CONSTEXPR bool operator!=(
+  friend constexpr bool operator!=(
       const unsequenced_t&, const unsequenced_t&)
   {
     return false;
   }
 
-  friend BOOST_ASIO_CONSTEXPR bool operator==(
+  friend constexpr bool operator==(
       const unsequenced_t&, const sequenced_t<I>&)
   {
     return false;
   }
 
-  friend BOOST_ASIO_CONSTEXPR bool operator!=(
+  friend constexpr bool operator!=(
       const unsequenced_t&, const sequenced_t<I>&)
   {
     return true;
   }
 
-  friend BOOST_ASIO_CONSTEXPR bool operator==(
+  friend constexpr bool operator==(
       const unsequenced_t&, const parallel_t<I>&)
   {
     return false;
   }
 
-  friend BOOST_ASIO_CONSTEXPR bool operator!=(
+  friend constexpr bool operator!=(
       const unsequenced_t&, const parallel_t<I>&)
   {
     return true;
@@ -654,33 +630,29 @@ struct sequenced_t
 #if defined(BOOST_ASIO_HAS_VARIABLE_TEMPLATES)
 # if defined(BOOST_ASIO_NO_DEPRECATED)
   template <typename T>
-  BOOST_ASIO_STATIC_CONSTEXPR(bool,
-    is_applicable_property_v = (
-      is_executor<T>::value));
+  static constexpr bool is_applicable_property_v = is_executor<T>::value;
 # else // defined(BOOST_ASIO_NO_DEPRECATED)
   template <typename T>
-  BOOST_ASIO_STATIC_CONSTEXPR(bool,
-    is_applicable_property_v = (
+  static constexpr bool is_applicable_property_v =
       is_executor<T>::value
-        || conditional<
+        || conditional_t<
             is_executor<T>::value,
             false_type,
             is_sender<T>
-          >::type::value
-        || conditional<
+          >::value
+        || conditional_t<
             is_executor<T>::value,
             false_type,
             is_scheduler<T>
-          >::type::value
-      ));
+          >::value;
 # endif // defined(BOOST_ASIO_NO_DEPRECATED)
 #endif // defined(BOOST_ASIO_HAS_VARIABLE_TEMPLATES)
 
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_requirable = true);
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_preferable = true);
+  static constexpr bool is_requirable = true;
+  static constexpr bool is_preferable = true;
   typedef bulk_guarantee_t<I> polymorphic_query_result_type;
 
-  BOOST_ASIO_CONSTEXPR sequenced_t()
+  constexpr sequenced_t()
   {
   }
 
@@ -699,57 +671,56 @@ struct sequenced_t
 #if defined(BOOST_ASIO_HAS_DEDUCED_STATIC_QUERY_TRAIT) \
   && defined(BOOST_ASIO_HAS_SFINAE_VARIABLE_TEMPLATES)
   template <typename T>
-  static BOOST_ASIO_CONSTEXPR
+  static constexpr
   typename query_static_constexpr_member<T>::result_type
   static_query()
-    BOOST_ASIO_NOEXCEPT_IF((
-      query_static_constexpr_member<T>::is_noexcept))
+    noexcept(query_static_constexpr_member<T>::is_noexcept)
   {
     return query_static_constexpr_member<T>::value();
   }
 
   template <typename E, typename T = decltype(sequenced_t::static_query<E>())>
-  static BOOST_ASIO_CONSTEXPR const T static_query_v
+  static constexpr const T static_query_v
     = sequenced_t::static_query<E>();
 #endif // defined(BOOST_ASIO_HAS_DEDUCED_STATIC_QUERY_TRAIT)
        //   && defined(BOOST_ASIO_HAS_SFINAE_VARIABLE_TEMPLATES)
 
-  static BOOST_ASIO_CONSTEXPR bulk_guarantee_t<I> value()
+  static constexpr bulk_guarantee_t<I> value()
   {
     return sequenced_t();
   }
 
-  friend BOOST_ASIO_CONSTEXPR bool operator==(
+  friend constexpr bool operator==(
       const sequenced_t&, const sequenced_t&)
   {
     return true;
   }
 
-  friend BOOST_ASIO_CONSTEXPR bool operator!=(
+  friend constexpr bool operator!=(
       const sequenced_t&, const sequenced_t&)
   {
     return false;
   }
 
-  friend BOOST_ASIO_CONSTEXPR bool operator==(
+  friend constexpr bool operator==(
       const sequenced_t&, const unsequenced_t<I>&)
   {
     return false;
   }
 
-  friend BOOST_ASIO_CONSTEXPR bool operator!=(
+  friend constexpr bool operator!=(
       const sequenced_t&, const unsequenced_t<I>&)
   {
     return true;
   }
 
-  friend BOOST_ASIO_CONSTEXPR bool operator==(
+  friend constexpr bool operator==(
       const sequenced_t&, const parallel_t<I>&)
   {
     return false;
   }
 
-  friend BOOST_ASIO_CONSTEXPR bool operator!=(
+  friend constexpr bool operator!=(
       const sequenced_t&, const parallel_t<I>&)
   {
     return true;
@@ -769,33 +740,29 @@ struct parallel_t
 #if defined(BOOST_ASIO_HAS_VARIABLE_TEMPLATES)
 # if defined(BOOST_ASIO_NO_DEPRECATED)
   template <typename T>
-  BOOST_ASIO_STATIC_CONSTEXPR(bool,
-    is_applicable_property_v = (
-      is_executor<T>::value));
+  static constexpr bool is_applicable_property_v = is_executor<T>::value;
 # else // defined(BOOST_ASIO_NO_DEPRECATED)
   template <typename T>
-  BOOST_ASIO_STATIC_CONSTEXPR(bool,
-    is_applicable_property_v = (
+  static constexpr bool is_applicable_property_v =
       is_executor<T>::value
-        || conditional<
+        || conditional_t<
             is_executor<T>::value,
             false_type,
             is_sender<T>
-          >::type::value
-        || conditional<
+          >::value
+        || conditional_t<
             is_executor<T>::value,
             false_type,
             is_scheduler<T>
-          >::type::value
-      ));
+          >::value;
 # endif // defined(BOOST_ASIO_NO_DEPRECATED)
 #endif // defined(BOOST_ASIO_HAS_VARIABLE_TEMPLATES)
 
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_requirable = true);
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_preferable = true);
+  static constexpr bool is_requirable = true;
+  static constexpr bool is_preferable = true;
   typedef bulk_guarantee_t<I> polymorphic_query_result_type;
 
-  BOOST_ASIO_CONSTEXPR parallel_t()
+  constexpr parallel_t()
   {
   }
 
@@ -814,57 +781,55 @@ struct parallel_t
 #if defined(BOOST_ASIO_HAS_DEDUCED_STATIC_QUERY_TRAIT) \
   && defined(BOOST_ASIO_HAS_SFINAE_VARIABLE_TEMPLATES)
   template <typename T>
-  static BOOST_ASIO_CONSTEXPR
+  static constexpr
   typename query_static_constexpr_member<T>::result_type
   static_query()
-    BOOST_ASIO_NOEXCEPT_IF((
-      query_static_constexpr_member<T>::is_noexcept))
+    noexcept(query_static_constexpr_member<T>::is_noexcept)
   {
     return query_static_constexpr_member<T>::value();
   }
 
   template <typename E, typename T = decltype(parallel_t::static_query<E>())>
-  static BOOST_ASIO_CONSTEXPR const T static_query_v
-    = parallel_t::static_query<E>();
+  static constexpr const T static_query_v = parallel_t::static_query<E>();
 #endif // defined(BOOST_ASIO_HAS_DEDUCED_STATIC_QUERY_TRAIT)
        //   && defined(BOOST_ASIO_HAS_SFINAE_VARIABLE_TEMPLATES)
 
-  static BOOST_ASIO_CONSTEXPR bulk_guarantee_t<I> value()
+  static constexpr bulk_guarantee_t<I> value()
   {
     return parallel_t();
   }
 
-  friend BOOST_ASIO_CONSTEXPR bool operator==(
+  friend constexpr bool operator==(
       const parallel_t&, const parallel_t&)
   {
     return true;
   }
 
-  friend BOOST_ASIO_CONSTEXPR bool operator!=(
+  friend constexpr bool operator!=(
       const parallel_t&, const parallel_t&)
   {
     return false;
   }
 
-  friend BOOST_ASIO_CONSTEXPR bool operator==(
+  friend constexpr bool operator==(
       const parallel_t&, const unsequenced_t<I>&)
   {
     return false;
   }
 
-  friend BOOST_ASIO_CONSTEXPR bool operator!=(
+  friend constexpr bool operator!=(
       const parallel_t&, const unsequenced_t<I>&)
   {
     return true;
   }
 
-  friend BOOST_ASIO_CONSTEXPR bool operator==(
+  friend constexpr bool operator==(
       const parallel_t&, const sequenced_t<I>&)
   {
     return false;
   }
 
-  friend BOOST_ASIO_CONSTEXPR bool operator!=(
+  friend constexpr bool operator!=(
       const parallel_t&, const sequenced_t<I>&)
   {
     return true;
@@ -883,12 +848,7 @@ const T parallel_t<I>::static_query_v;
 
 typedef detail::bulk_guarantee_t<> bulk_guarantee_t;
 
-#if defined(BOOST_ASIO_HAS_CONSTEXPR) || defined(GENERATING_DOCUMENTATION)
 constexpr bulk_guarantee_t bulk_guarantee;
-#else // defined(BOOST_ASIO_HAS_CONSTEXPR) || defined(GENERATING_DOCUMENTATION)
-namespace { static const bulk_guarantee_t&
-  bulk_guarantee = bulk_guarantee_t::instance; }
-#endif
 
 } // namespace execution
 
@@ -898,16 +858,16 @@ template <typename T>
 struct is_applicable_property<T, execution::bulk_guarantee_t>
   : integral_constant<bool,
       execution::is_executor<T>::value
-        || conditional<
+        || conditional_t<
             execution::is_executor<T>::value,
             false_type,
             execution::is_sender<T>
-          >::type::value
-        || conditional<
+          >::value
+        || conditional_t<
             execution::is_executor<T>::value,
             false_type,
             execution::is_scheduler<T>
-          >::type::value>
+          >::value>
 {
 };
 
@@ -915,16 +875,16 @@ template <typename T>
 struct is_applicable_property<T, execution::bulk_guarantee_t::unsequenced_t>
   : integral_constant<bool,
       execution::is_executor<T>::value
-        || conditional<
+        || conditional_t<
             execution::is_executor<T>::value,
             false_type,
             execution::is_sender<T>
-          >::type::value
-        || conditional<
+          >::value
+        || conditional_t<
             execution::is_executor<T>::value,
             false_type,
             execution::is_scheduler<T>
-          >::type::value>
+          >::value>
 {
 };
 
@@ -932,16 +892,16 @@ template <typename T>
 struct is_applicable_property<T, execution::bulk_guarantee_t::sequenced_t>
   : integral_constant<bool,
       execution::is_executor<T>::value
-        || conditional<
+        || conditional_t<
             execution::is_executor<T>::value,
             false_type,
             execution::is_sender<T>
-          >::type::value
-        || conditional<
+          >::value
+        || conditional_t<
             execution::is_executor<T>::value,
             false_type,
             execution::is_scheduler<T>
-          >::type::value>
+          >::value>
 {
 };
 
@@ -949,16 +909,16 @@ template <typename T>
 struct is_applicable_property<T, execution::bulk_guarantee_t::parallel_t>
   : integral_constant<bool,
       execution::is_executor<T>::value
-        || conditional<
+        || conditional_t<
             execution::is_executor<T>::value,
             false_type,
             execution::is_sender<T>
-          >::type::value
-        || conditional<
+          >::value
+        || conditional_t<
             execution::is_executor<T>::value,
             false_type,
             execution::is_scheduler<T>
-          >::type::value>
+          >::value>
 {
 };
 
@@ -970,42 +930,42 @@ namespace traits {
 
 template <typename T>
 struct query_free_default<T, execution::bulk_guarantee_t,
-  typename enable_if<
+  enable_if_t<
     can_query<T, execution::bulk_guarantee_t::unsequenced_t>::value
-  >::type>
+  >>
 {
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_noexcept =
-    (is_nothrow_query<T, execution::bulk_guarantee_t::unsequenced_t>::value));
+  static constexpr bool is_valid = true;
+  static constexpr bool is_noexcept =
+    is_nothrow_query<T, execution::bulk_guarantee_t::unsequenced_t>::value;
 
   typedef execution::bulk_guarantee_t result_type;
 };
 
 template <typename T>
 struct query_free_default<T, execution::bulk_guarantee_t,
-  typename enable_if<
+  enable_if_t<
     !can_query<T, execution::bulk_guarantee_t::unsequenced_t>::value
       && can_query<T, execution::bulk_guarantee_t::sequenced_t>::value
-  >::type>
+  >>
 {
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_noexcept =
-    (is_nothrow_query<T, execution::bulk_guarantee_t::sequenced_t>::value));
+  static constexpr bool is_valid = true;
+  static constexpr bool is_noexcept =
+    is_nothrow_query<T, execution::bulk_guarantee_t::sequenced_t>::value;
 
   typedef execution::bulk_guarantee_t result_type;
 };
 
 template <typename T>
 struct query_free_default<T, execution::bulk_guarantee_t,
-  typename enable_if<
+  enable_if_t<
     !can_query<T, execution::bulk_guarantee_t::unsequenced_t>::value
       && !can_query<T, execution::bulk_guarantee_t::sequenced_t>::value
       && can_query<T, execution::bulk_guarantee_t::parallel_t>::value
-  >::type>
+  >>
 {
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_noexcept =
-    (is_nothrow_query<T, execution::bulk_guarantee_t::parallel_t>::value));
+  static constexpr bool is_valid = true;
+  static constexpr bool is_noexcept =
+    is_nothrow_query<T, execution::bulk_guarantee_t::parallel_t>::value;
 
   typedef execution::bulk_guarantee_t result_type;
 };
@@ -1017,18 +977,18 @@ struct query_free_default<T, execution::bulk_guarantee_t,
 
 template <typename T>
 struct static_query<T, execution::bulk_guarantee_t,
-  typename enable_if<
+  enable_if_t<
     execution::detail::bulk_guarantee_t<0>::
       query_static_constexpr_member<T>::is_valid
-  >::type>
+  >>
 {
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_noexcept = true);
+  static constexpr bool is_valid = true;
+  static constexpr bool is_noexcept = true;
 
   typedef typename execution::detail::bulk_guarantee_t<0>::
     query_static_constexpr_member<T>::result_type result_type;
 
-  static BOOST_ASIO_CONSTEXPR result_type value()
+  static constexpr result_type value()
   {
     return execution::detail::bulk_guarantee_t<0>::
       query_static_constexpr_member<T>::value();
@@ -1037,22 +997,22 @@ struct static_query<T, execution::bulk_guarantee_t,
 
 template <typename T>
 struct static_query<T, execution::bulk_guarantee_t,
-  typename enable_if<
+  enable_if_t<
     !execution::detail::bulk_guarantee_t<0>::
         query_static_constexpr_member<T>::is_valid
       && !execution::detail::bulk_guarantee_t<0>::
         query_member<T>::is_valid
       && traits::static_query<T,
         execution::bulk_guarantee_t::unsequenced_t>::is_valid
-  >::type>
+  >>
 {
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_noexcept = true);
+  static constexpr bool is_valid = true;
+  static constexpr bool is_noexcept = true;
 
   typedef typename traits::static_query<T,
     execution::bulk_guarantee_t::unsequenced_t>::result_type result_type;
 
-  static BOOST_ASIO_CONSTEXPR result_type value()
+  static constexpr result_type value()
   {
     return traits::static_query<T,
         execution::bulk_guarantee_t::unsequenced_t>::value();
@@ -1061,7 +1021,7 @@ struct static_query<T, execution::bulk_guarantee_t,
 
 template <typename T>
 struct static_query<T, execution::bulk_guarantee_t,
-  typename enable_if<
+  enable_if_t<
     !execution::detail::bulk_guarantee_t<0>::
         query_static_constexpr_member<T>::is_valid
       && !execution::detail::bulk_guarantee_t<0>::
@@ -1070,15 +1030,15 @@ struct static_query<T, execution::bulk_guarantee_t,
         execution::bulk_guarantee_t::unsequenced_t>::is_valid
       && traits::static_query<T,
         execution::bulk_guarantee_t::sequenced_t>::is_valid
-  >::type>
+  >>
 {
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_noexcept = true);
+  static constexpr bool is_valid = true;
+  static constexpr bool is_noexcept = true;
 
   typedef typename traits::static_query<T,
     execution::bulk_guarantee_t::sequenced_t>::result_type result_type;
 
-  static BOOST_ASIO_CONSTEXPR result_type value()
+  static constexpr result_type value()
   {
     return traits::static_query<T,
         execution::bulk_guarantee_t::sequenced_t>::value();
@@ -1087,7 +1047,7 @@ struct static_query<T, execution::bulk_guarantee_t,
 
 template <typename T>
 struct static_query<T, execution::bulk_guarantee_t,
-  typename enable_if<
+  enable_if_t<
     !execution::detail::bulk_guarantee_t<0>::
         query_static_constexpr_member<T>::is_valid
       && !execution::detail::bulk_guarantee_t<0>::
@@ -1098,15 +1058,15 @@ struct static_query<T, execution::bulk_guarantee_t,
         execution::bulk_guarantee_t::sequenced_t>::is_valid
       && traits::static_query<T,
         execution::bulk_guarantee_t::parallel_t>::is_valid
-  >::type>
+  >>
 {
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_noexcept = true);
+  static constexpr bool is_valid = true;
+  static constexpr bool is_noexcept = true;
 
   typedef typename traits::static_query<T,
     execution::bulk_guarantee_t::parallel_t>::result_type result_type;
 
-  static BOOST_ASIO_CONSTEXPR result_type value()
+  static constexpr result_type value()
   {
     return traits::static_query<T,
         execution::bulk_guarantee_t::parallel_t>::value();
@@ -1115,18 +1075,18 @@ struct static_query<T, execution::bulk_guarantee_t,
 
 template <typename T>
 struct static_query<T, execution::bulk_guarantee_t::unsequenced_t,
-  typename enable_if<
+  enable_if_t<
     execution::detail::bulk_guarantee::unsequenced_t<0>::
       query_static_constexpr_member<T>::is_valid
-  >::type>
+  >>
 {
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_noexcept = true);
+  static constexpr bool is_valid = true;
+  static constexpr bool is_noexcept = true;
 
   typedef typename execution::detail::bulk_guarantee::unsequenced_t<0>::
     query_static_constexpr_member<T>::result_type result_type;
 
-  static BOOST_ASIO_CONSTEXPR result_type value()
+  static constexpr result_type value()
   {
     return execution::detail::bulk_guarantee::unsequenced_t<0>::
       query_static_constexpr_member<T>::value();
@@ -1135,7 +1095,7 @@ struct static_query<T, execution::bulk_guarantee_t::unsequenced_t,
 
 template <typename T>
 struct static_query<T, execution::bulk_guarantee_t::unsequenced_t,
-  typename enable_if<
+  enable_if_t<
     !execution::detail::bulk_guarantee::unsequenced_t<0>::
         query_static_constexpr_member<T>::is_valid
       && !execution::detail::bulk_guarantee::unsequenced_t<0>::
@@ -1144,14 +1104,14 @@ struct static_query<T, execution::bulk_guarantee_t::unsequenced_t,
         execution::bulk_guarantee_t::unsequenced_t>::is_valid
       && !can_query<T, execution::bulk_guarantee_t::sequenced_t>::value
       && !can_query<T, execution::bulk_guarantee_t::parallel_t>::value
-  >::type>
+  >>
 {
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_noexcept = true);
+  static constexpr bool is_valid = true;
+  static constexpr bool is_noexcept = true;
 
   typedef execution::bulk_guarantee_t::unsequenced_t result_type;
 
-  static BOOST_ASIO_CONSTEXPR result_type value()
+  static constexpr result_type value()
   {
     return result_type();
   }
@@ -1159,18 +1119,18 @@ struct static_query<T, execution::bulk_guarantee_t::unsequenced_t,
 
 template <typename T>
 struct static_query<T, execution::bulk_guarantee_t::sequenced_t,
-  typename enable_if<
+  enable_if_t<
     execution::detail::bulk_guarantee::sequenced_t<0>::
       query_static_constexpr_member<T>::is_valid
-  >::type>
+  >>
 {
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_noexcept = true);
+  static constexpr bool is_valid = true;
+  static constexpr bool is_noexcept = true;
 
   typedef typename execution::detail::bulk_guarantee::sequenced_t<0>::
     query_static_constexpr_member<T>::result_type result_type;
 
-  static BOOST_ASIO_CONSTEXPR result_type value()
+  static constexpr result_type value()
   {
     return execution::detail::bulk_guarantee::sequenced_t<0>::
       query_static_constexpr_member<T>::value();
@@ -1179,18 +1139,18 @@ struct static_query<T, execution::bulk_guarantee_t::sequenced_t,
 
 template <typename T>
 struct static_query<T, execution::bulk_guarantee_t::parallel_t,
-  typename enable_if<
+  enable_if_t<
     execution::detail::bulk_guarantee::parallel_t<0>::
       query_static_constexpr_member<T>::is_valid
-  >::type>
+  >>
 {
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_noexcept = true);
+  static constexpr bool is_valid = true;
+  static constexpr bool is_noexcept = true;
 
   typedef typename execution::detail::bulk_guarantee::parallel_t<0>::
     query_static_constexpr_member<T>::result_type result_type;
 
-  static BOOST_ASIO_CONSTEXPR result_type value()
+  static constexpr result_type value()
   {
     return execution::detail::bulk_guarantee::parallel_t<0>::
       query_static_constexpr_member<T>::value();
@@ -1199,46 +1159,6 @@ struct static_query<T, execution::bulk_guarantee_t::parallel_t,
 
 #endif // !defined(BOOST_ASIO_HAS_DEDUCED_STATIC_QUERY_TRAIT)
        //   || !defined(BOOST_ASIO_HAS_SFINAE_VARIABLE_TEMPLATES)
-
-#if !defined(BOOST_ASIO_HAS_DEDUCED_STATIC_REQUIRE_TRAIT)
-
-template <typename T>
-struct static_require<T, execution::bulk_guarantee_t::unsequenced_t,
-  typename enable_if<
-    static_query<T, execution::bulk_guarantee_t::unsequenced_t>::is_valid
-  >::type>
-{
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_valid =
-    (is_same<typename static_query<T,
-      execution::bulk_guarantee_t::unsequenced_t>::result_type,
-        execution::bulk_guarantee_t::unsequenced_t>::value));
-};
-
-template <typename T>
-struct static_require<T, execution::bulk_guarantee_t::sequenced_t,
-  typename enable_if<
-    static_query<T, execution::bulk_guarantee_t::sequenced_t>::is_valid
-  >::type>
-{
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_valid =
-    (is_same<typename static_query<T,
-      execution::bulk_guarantee_t::sequenced_t>::result_type,
-        execution::bulk_guarantee_t::sequenced_t>::value));
-};
-
-template <typename T>
-struct static_require<T, execution::bulk_guarantee_t::parallel_t,
-  typename enable_if<
-    static_query<T, execution::bulk_guarantee_t::parallel_t>::is_valid
-  >::type>
-{
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_valid =
-    (is_same<typename static_query<T,
-      execution::bulk_guarantee_t::parallel_t>::result_type,
-        execution::bulk_guarantee_t::parallel_t>::value));
-};
-
-#endif // !defined(BOOST_ASIO_HAS_DEDUCED_STATIC_REQUIRE_TRAIT)
 
 } // namespace traits
 

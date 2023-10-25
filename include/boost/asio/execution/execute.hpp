@@ -87,7 +87,7 @@ struct is_sender_to;
 namespace detail {
 
 template <typename S, typename R>
-void submit_helper(BOOST_ASIO_MOVE_ARG(S) s, BOOST_ASIO_MOVE_ARG(R) r);
+void submit_helper(S&& s, R&& r);
 
 } // namespace detail
 } // namespace execution
@@ -95,19 +95,19 @@ void submit_helper(BOOST_ASIO_MOVE_ARG(S) s, BOOST_ASIO_MOVE_ARG(R) r);
 } // namespace boost
 namespace boost_asio_execution_execute_fn {
 
-using boost::asio::conditional;
-using boost::asio::decay;
+using boost::asio::conditional_t;
+using boost::asio::decay_t;
 using boost::asio::declval;
-using boost::asio::enable_if;
+using boost::asio::enable_if_t;
 using boost::asio::execution::detail::as_receiver;
 using boost::asio::execution::detail::is_as_invocable;
 using boost::asio::execution::is_sender_to;
 using boost::asio::false_type;
-using boost::asio::result_of;
+using boost::asio::result_of_t;
 using boost::asio::traits::execute_free;
 using boost::asio::traits::execute_member;
 using boost::asio::true_type;
-using boost::asio::void_type;
+using boost::asio::void_t;
 
 void execute();
 
@@ -123,53 +123,53 @@ template <typename Impl, typename T, typename F, typename = void,
     typename = void, typename = void, typename = void, typename = void>
 struct call_traits
 {
-  BOOST_ASIO_STATIC_CONSTEXPR(overload_type, overload = ill_formed);
+  static constexpr overload_type overload = ill_formed;
 };
 
 template <typename Impl, typename T, typename F>
 struct call_traits<Impl, T, void(F),
-  typename enable_if<
+  enable_if_t<
     execute_member<typename Impl::template proxy<T>::type, F>::is_valid
-  >::type> :
+  >> :
   execute_member<typename Impl::template proxy<T>::type, F>
 {
-  BOOST_ASIO_STATIC_CONSTEXPR(overload_type, overload = call_member);
+  static constexpr overload_type overload = call_member;
 };
 
 template <typename Impl, typename T, typename F>
 struct call_traits<Impl, T, void(F),
-  typename enable_if<
+  enable_if_t<
     !execute_member<typename Impl::template proxy<T>, F>::is_valid
-  >::type,
-  typename enable_if<
+  >,
+  enable_if_t<
     execute_free<T, F>::is_valid
-  >::type> :
+  >> :
   execute_free<T, F>
 {
-  BOOST_ASIO_STATIC_CONSTEXPR(overload_type, overload = call_free);
+  static constexpr overload_type overload = call_free;
 };
 
 template <typename Impl, typename T, typename F>
 struct call_traits<Impl, T, void(F),
-  typename enable_if<
+  enable_if_t<
     !execute_member<typename Impl::template proxy<T>::type, F>::is_valid
-  >::type,
-  typename enable_if<
+  >,
+  enable_if_t<
     !execute_free<T, F>::is_valid
-  >::type,
-  typename void_type<
-   typename result_of<typename decay<F>::type&()>::type
-  >::type,
-  typename enable_if<
-    !is_as_invocable<typename decay<F>::type>::value
-  >::type,
-  typename enable_if<
-    is_sender_to<T, as_receiver<typename decay<F>::type, T> >::value
-  >::type>
+  >,
+  void_t<
+   result_of_t<decay_t<F>&()>
+  >,
+  enable_if_t<
+    !is_as_invocable<decay_t<F>>::value
+  >,
+  enable_if_t<
+    is_sender_to<T, as_receiver<decay_t<F>, T>>::value
+  >>
 {
-  BOOST_ASIO_STATIC_CONSTEXPR(overload_type, overload = adapter);
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_noexcept = false);
+  static constexpr overload_type overload = adapter;
+  static constexpr bool is_valid = true;
+  static constexpr bool is_noexcept = false;
   typedef void result_type;
 };
 
@@ -182,16 +182,14 @@ struct impl
     struct type
     {
       template <typename F>
-      auto execute(BOOST_ASIO_MOVE_ARG(F) f)
+      auto execute(F&& f)
         noexcept(
           noexcept(
-            declval<typename conditional<true, T, F>::type>().execute(
-              BOOST_ASIO_MOVE_CAST(F)(f))
+            declval<conditional_t<true, T, F>>().execute(static_cast<F&&>(f))
           )
         )
         -> decltype(
-          declval<typename conditional<true, T, F>::type>().execute(
-            BOOST_ASIO_MOVE_CAST(F)(f))
+          declval<conditional_t<true, T, F>>().execute(static_cast<F&&>(f))
         );
     };
 #else // defined(BOOST_ASIO_HAS_DEDUCED_EXECUTE_MEMBER_TRAIT)
@@ -200,48 +198,37 @@ struct impl
   };
 
   template <typename T, typename F>
-  BOOST_ASIO_CONSTEXPR typename enable_if<
+  constexpr enable_if_t<
     call_traits<impl, T, void(F)>::overload == call_member,
     typename call_traits<impl, T, void(F)>::result_type
-  >::type
-  operator()(
-      BOOST_ASIO_MOVE_ARG(T) t,
-      BOOST_ASIO_MOVE_ARG(F) f) const
-    BOOST_ASIO_NOEXCEPT_IF((
-      call_traits<impl, T, void(F)>::is_noexcept))
+  >
+  operator()(T&& t, F&& f) const
+    noexcept(call_traits<impl, T, void(F)>::is_noexcept)
   {
-    return BOOST_ASIO_MOVE_CAST(T)(t).execute(BOOST_ASIO_MOVE_CAST(F)(f));
+    return static_cast<T&&>(t).execute(static_cast<F&&>(f));
   }
 
   template <typename T, typename F>
-  BOOST_ASIO_CONSTEXPR typename enable_if<
+  constexpr enable_if_t<
     call_traits<impl, T, void(F)>::overload == call_free,
     typename call_traits<impl, T, void(F)>::result_type
-  >::type
-  operator()(
-      BOOST_ASIO_MOVE_ARG(T) t,
-      BOOST_ASIO_MOVE_ARG(F) f) const
-    BOOST_ASIO_NOEXCEPT_IF((
-      call_traits<impl, T, void(F)>::is_noexcept))
+  >
+  operator()(T&& t, F&& f) const
+    noexcept(call_traits<impl, T, void(F)>::is_noexcept)
   {
-    return execute(BOOST_ASIO_MOVE_CAST(T)(t), BOOST_ASIO_MOVE_CAST(F)(f));
+    return execute(static_cast<T&&>(t), static_cast<F&&>(f));
   }
 
   template <typename T, typename F>
-  BOOST_ASIO_CONSTEXPR typename enable_if<
+  constexpr enable_if_t<
     call_traits<impl, T, void(F)>::overload == adapter,
     typename call_traits<impl, T, void(F)>::result_type
-  >::type
-  operator()(
-      BOOST_ASIO_MOVE_ARG(T) t,
-      BOOST_ASIO_MOVE_ARG(F) f) const
-    BOOST_ASIO_NOEXCEPT_IF((
-      call_traits<impl, T, void(F)>::is_noexcept))
+  >
+  operator()(T&& t, F&& f) const
+    noexcept(call_traits<impl, T, void(F)>::is_noexcept)
   {
-    return boost::asio::execution::detail::submit_helper(
-        BOOST_ASIO_MOVE_CAST(T)(t),
-        as_receiver<typename decay<F>::type, T>(
-          BOOST_ASIO_MOVE_CAST(F)(f), 0));
+    return boost::asio::execution::detail::submit_helper(static_cast<T&&>(t),
+        as_receiver<decay_t<F>, T>(static_cast<F&&>(f), 0));
   }
 };
 
@@ -260,7 +247,7 @@ namespace asio {
 namespace execution {
 namespace {
 
-static BOOST_ASIO_CONSTEXPR const boost_asio_execution_execute_fn::impl&
+static constexpr const boost_asio_execution_execute_fn::impl&
   execute = boost_asio_execution_execute_fn::static_instance<>::instance;
 
 } // namespace

@@ -28,28 +28,26 @@ struct executor
   {
   }
 
-  executor(const executor&) BOOST_ASIO_NOEXCEPT
+  executor(const executor&) noexcept
   {
   }
 
-#if defined(BOOST_ASIO_HAS_MOVE)
-  executor(executor&&) BOOST_ASIO_NOEXCEPT
+  executor(executor&&) noexcept
   {
   }
-#endif // defined(BOOST_ASIO_HAS_MOVE)
 
   template <typename F>
-  void execute(BOOST_ASIO_MOVE_ARG(F) f) const BOOST_ASIO_NOEXCEPT
+  void execute(F&& f) const noexcept
   {
     (void)f;
   }
 
-  bool operator==(const executor&) const BOOST_ASIO_NOEXCEPT
+  bool operator==(const executor&) const noexcept
   {
     return true;
   }
 
-  bool operator!=(const executor&) const BOOST_ASIO_NOEXCEPT
+  bool operator!=(const executor&) const noexcept
   {
     return false;
   }
@@ -64,8 +62,8 @@ namespace traits {
 template <typename F>
 struct execute_member<executor, F>
 {
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_noexcept = true);
+  static constexpr bool is_valid = true;
+  static constexpr bool is_noexcept = true;
   typedef void result_type;
 };
 
@@ -75,8 +73,8 @@ struct execute_member<executor, F>
 template <>
 struct equality_comparable<executor>
 {
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_noexcept = true);
+  static constexpr bool is_valid = true;
+  static constexpr bool is_noexcept = true;
 };
 
 #endif // !defined(BOOST_ASIO_HAS_DEDUCED_EQUALITY_COMPARABLE_TRAIT)

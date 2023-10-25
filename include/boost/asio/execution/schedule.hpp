@@ -74,9 +74,9 @@ struct can_schedule :
 
 namespace boost_asio_execution_schedule_fn {
 
-using boost::asio::decay;
+using boost::asio::decay_t;
 using boost::asio::declval;
-using boost::asio::enable_if;
+using boost::asio::enable_if_t;
 using boost::asio::execution::is_executor;
 using boost::asio::traits::schedule_free;
 using boost::asio::traits::schedule_member;
@@ -94,143 +94,86 @@ enum overload_type
 template <typename S, typename = void, typename = void, typename = void>
 struct call_traits
 {
-  BOOST_ASIO_STATIC_CONSTEXPR(overload_type, overload = ill_formed);
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_noexcept = false);
+  static constexpr overload_type overload = ill_formed;
+  static constexpr bool is_noexcept = false;
   typedef void result_type;
 };
 
 template <typename S>
 struct call_traits<S,
-  typename enable_if<
+  enable_if_t<
     schedule_member<S>::is_valid
-  >::type> :
+  >> :
   schedule_member<S>
 {
-  BOOST_ASIO_STATIC_CONSTEXPR(overload_type, overload = call_member);
+  static constexpr overload_type overload = call_member;
 };
 
 template <typename S>
 struct call_traits<S,
-  typename enable_if<
+  enable_if_t<
     !schedule_member<S>::is_valid
-  >::type,
-  typename enable_if<
+  >,
+  enable_if_t<
     schedule_free<S>::is_valid
-  >::type> :
+  >> :
   schedule_free<S>
 {
-  BOOST_ASIO_STATIC_CONSTEXPR(overload_type, overload = call_free);
+  static constexpr overload_type overload = call_free;
 };
 
 template <typename S>
 struct call_traits<S,
-  typename enable_if<
+  enable_if_t<
     !schedule_member<S>::is_valid
-  >::type,
-  typename enable_if<
+  >,
+  enable_if_t<
     !schedule_free<S>::is_valid
-  >::type,
-  typename enable_if<
-    is_executor<typename decay<S>::type>::value
-  >::type>
+  >,
+  enable_if_t<
+    is_executor<decay_t<S>>::value
+  >>
 {
-  BOOST_ASIO_STATIC_CONSTEXPR(overload_type, overload = identity);
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_noexcept = true);
+  static constexpr overload_type overload = identity;
+  static constexpr bool is_noexcept = true;
 
-#if defined(BOOST_ASIO_HAS_MOVE)
-  typedef BOOST_ASIO_MOVE_ARG(S) result_type;
-#else // defined(BOOST_ASIO_HAS_MOVE)
-  typedef BOOST_ASIO_MOVE_ARG(typename decay<S>::type) result_type;
-#endif // defined(BOOST_ASIO_HAS_MOVE)
+  typedef S&& result_type;
 };
 
 struct impl
 {
   template <typename S>
-  BOOST_ASIO_CONSTEXPR typename enable_if<
+  constexpr enable_if_t<
     call_traits<S>::overload == identity,
     typename call_traits<S>::result_type
-  >::type
-  operator()(BOOST_ASIO_MOVE_ARG(S) s) const
-    BOOST_ASIO_NOEXCEPT_IF((
-      call_traits<S>::is_noexcept))
+  >
+  operator()(S&& s) const
+    noexcept(call_traits<S>::is_noexcept)
   {
-    return BOOST_ASIO_MOVE_CAST(S)(s);
+    return static_cast<S&&>(s);
   }
 
-#if defined(BOOST_ASIO_HAS_MOVE)
   template <typename S>
-  BOOST_ASIO_CONSTEXPR typename enable_if<
+  constexpr enable_if_t<
     call_traits<S>::overload == call_member,
     typename call_traits<S>::result_type
-  >::type
+  >
   operator()(S&& s) const
-    BOOST_ASIO_NOEXCEPT_IF((
-      call_traits<S>::is_noexcept))
+    noexcept(call_traits<S>::is_noexcept)
   {
-    return BOOST_ASIO_MOVE_CAST(S)(s).schedule();
+    return static_cast<S&&>(s).schedule();
   }
 
   template <typename S>
-  BOOST_ASIO_CONSTEXPR typename enable_if<
+  constexpr enable_if_t<
     call_traits<S>::overload == call_free,
     typename call_traits<S>::result_type
-  >::type
+  >
   operator()(S&& s) const
-    BOOST_ASIO_NOEXCEPT_IF((
-      call_traits<S>::is_noexcept))
+    noexcept(call_traits<S>::is_noexcept)
   {
-    return schedule(BOOST_ASIO_MOVE_CAST(S)(s));
+    return schedule(static_cast<S&&>(s));
   }
-#else // defined(BOOST_ASIO_HAS_MOVE)
-  template <typename S>
-  BOOST_ASIO_CONSTEXPR typename enable_if<
-    call_traits<S&>::overload == call_member,
-    typename call_traits<S&>::result_type
-  >::type
-  operator()(S& s) const
-    BOOST_ASIO_NOEXCEPT_IF((
-      call_traits<S&>::is_noexcept))
-  {
-    return s.schedule();
-  }
-
-  template <typename S>
-  BOOST_ASIO_CONSTEXPR typename enable_if<
-    call_traits<const S&>::overload == call_member,
-    typename call_traits<const S&>::result_type
-  >::type
-  operator()(const S& s) const
-    BOOST_ASIO_NOEXCEPT_IF((
-      call_traits<const S&>::is_noexcept))
-  {
-    return s.schedule();
-  }
-
-  template <typename S>
-  BOOST_ASIO_CONSTEXPR typename enable_if<
-    call_traits<S&>::overload == call_free,
-    typename call_traits<S&>::result_type
-  >::type
-  operator()(S& s) const
-    BOOST_ASIO_NOEXCEPT_IF((
-      call_traits<S&>::is_noexcept))
-  {
-    return schedule(s);
-  }
-
-  template <typename S>
-  BOOST_ASIO_CONSTEXPR typename enable_if<
-    call_traits<const S&>::overload == call_free,
-    typename call_traits<const S&>::result_type
-  >::type
-  operator()(const S& s) const
-    BOOST_ASIO_NOEXCEPT_IF((
-      call_traits<const S&>::is_noexcept))
-  {
-    return schedule(s);
-  }
-#endif // defined(BOOST_ASIO_HAS_MOVE)
 };
 
 template <typename T = impl>
@@ -248,7 +191,7 @@ namespace asio {
 namespace execution {
 namespace {
 
-static BOOST_ASIO_CONSTEXPR const boost_asio_execution_schedule_fn::impl&
+static constexpr const boost_asio_execution_schedule_fn::impl&
   schedule = boost_asio_execution_schedule_fn::static_instance<>::instance;
 
 } // namespace
@@ -278,8 +221,7 @@ struct is_nothrow_schedule :
 #if defined(BOOST_ASIO_HAS_VARIABLE_TEMPLATES)
 
 template <typename S>
-constexpr bool is_nothrow_schedule_v
-  = is_nothrow_schedule<S>::value;
+constexpr bool is_nothrow_schedule_v = is_nothrow_schedule<S>::value;
 
 #endif // defined(BOOST_ASIO_HAS_VARIABLE_TEMPLATES)
 

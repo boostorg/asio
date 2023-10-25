@@ -36,19 +36,17 @@ struct receiver
   {
   }
 
-#if defined(BOOST_ASIO_HAS_MOVE)
   receiver(receiver&&)
   {
   }
-#endif // defined(BOOST_ASIO_HAS_MOVE)
 
   template <typename E>
-  void set_error(BOOST_ASIO_MOVE_ARG(E) e) BOOST_ASIO_NOEXCEPT
+  void set_error(E&& e) noexcept
   {
     (void)e;
   }
 
-  void set_done() BOOST_ASIO_NOEXCEPT
+  void set_done() noexcept
   {
   }
 };
@@ -62,8 +60,8 @@ namespace traits {
 template <typename E>
 struct set_error_member<receiver, E>
 {
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_noexcept = true);
+  static constexpr bool is_valid = true;
+  static constexpr bool is_noexcept = true;
   typedef void result_type;
 };
 
@@ -73,8 +71,8 @@ struct set_error_member<receiver, E>
 template <>
 struct set_done_member<receiver>
 {
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_noexcept = true);
+  static constexpr bool is_valid = true;
+  static constexpr bool is_noexcept = true;
   typedef void result_type;
 };
 
@@ -94,19 +92,17 @@ struct receiver_of_0
   {
   }
 
-#if defined(BOOST_ASIO_HAS_MOVE)
   receiver_of_0(receiver_of_0&&)
   {
   }
-#endif // defined(BOOST_ASIO_HAS_MOVE)
 
   template <typename E>
-  void set_error(BOOST_ASIO_MOVE_ARG(E) e) BOOST_ASIO_NOEXCEPT
+  void set_error(E&& e) noexcept
   {
     (void)e;
   }
 
-  void set_done() BOOST_ASIO_NOEXCEPT
+  void set_done() noexcept
   {
   }
 
@@ -124,8 +120,8 @@ namespace traits {
 template <typename E>
 struct set_error_member<receiver_of_0, E>
 {
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_noexcept = true);
+  static constexpr bool is_valid = true;
+  static constexpr bool is_noexcept = true;
   typedef void result_type;
 };
 
@@ -135,8 +131,8 @@ struct set_error_member<receiver_of_0, E>
 template <>
 struct set_done_member<receiver_of_0>
 {
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_noexcept = true);
+  static constexpr bool is_valid = true;
+  static constexpr bool is_noexcept = true;
   typedef void result_type;
 };
 
@@ -146,8 +142,8 @@ struct set_done_member<receiver_of_0>
 template <>
 struct set_value_member<receiver_of_0, void()>
 {
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_noexcept = false);
+  static constexpr bool is_valid = true;
+  static constexpr bool is_noexcept = false;
   typedef void result_type;
 };
 
@@ -167,23 +163,21 @@ struct receiver_of_1
   {
   }
 
-#if defined(BOOST_ASIO_HAS_MOVE)
   receiver_of_1(receiver_of_1&&)
   {
   }
-#endif // defined(BOOST_ASIO_HAS_MOVE)
 
   template <typename E>
-  void set_error(BOOST_ASIO_MOVE_ARG(E) e) BOOST_ASIO_NOEXCEPT
+  void set_error(E&& e) noexcept
   {
     (void)e;
   }
 
-  void set_done() BOOST_ASIO_NOEXCEPT
+  void set_done() noexcept
   {
   }
 
-  void set_value(int) BOOST_ASIO_NOEXCEPT
+  void set_value(int) noexcept
   {
   }
 };
@@ -197,8 +191,8 @@ namespace traits {
 template <typename E>
 struct set_error_member<receiver_of_1, E>
 {
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_noexcept = true);
+  static constexpr bool is_valid = true;
+  static constexpr bool is_noexcept = true;
   typedef void result_type;
 };
 
@@ -208,8 +202,8 @@ struct set_error_member<receiver_of_1, E>
 template <>
 struct set_done_member<receiver_of_1>
 {
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_noexcept = true);
+  static constexpr bool is_valid = true;
+  static constexpr bool is_noexcept = true;
   typedef void result_type;
 };
 
@@ -219,8 +213,8 @@ struct set_done_member<receiver_of_1>
 template <>
 struct set_value_member<receiver_of_1, void(int)>
 {
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_noexcept = true);
+  static constexpr bool is_valid = true;
+  static constexpr bool is_noexcept = true;
   typedef void result_type;
 };
 
@@ -240,19 +234,17 @@ struct receiver_of_2
   {
   }
 
-#if defined(BOOST_ASIO_HAS_MOVE)
   receiver_of_2(receiver_of_2&&)
   {
   }
-#endif // defined(BOOST_ASIO_HAS_MOVE)
 
   template <typename E>
-  void set_error(BOOST_ASIO_MOVE_ARG(E) e) BOOST_ASIO_NOEXCEPT
+  void set_error(E&& e) noexcept
   {
     (void)e;
   }
 
-  void set_done() BOOST_ASIO_NOEXCEPT
+  void set_done() noexcept
   {
   }
 
@@ -270,8 +262,8 @@ namespace traits {
 template <typename E>
 struct set_error_member<receiver_of_2, E>
 {
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_noexcept = true);
+  static constexpr bool is_valid = true;
+  static constexpr bool is_noexcept = true;
   typedef void result_type;
 };
 
@@ -281,8 +273,8 @@ struct set_error_member<receiver_of_2, E>
 template <>
 struct set_done_member<receiver_of_2>
 {
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_noexcept = true);
+  static constexpr bool is_valid = true;
+  static constexpr bool is_noexcept = true;
   typedef void result_type;
 };
 
@@ -292,8 +284,8 @@ struct set_done_member<receiver_of_2>
 template <>
 struct set_value_member<receiver_of_2, void(int, std::string)>
 {
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_noexcept = false);
+  static constexpr bool is_valid = true;
+  static constexpr bool is_noexcept = false;
   typedef void result_type;
 };
 

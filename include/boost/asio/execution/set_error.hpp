@@ -73,9 +73,9 @@ struct can_set_error :
 
 namespace boost_asio_execution_set_error_fn {
 
-using boost::asio::decay;
+using boost::asio::decay_t;
 using boost::asio::declval;
-using boost::asio::enable_if;
+using boost::asio::enable_if_t;
 using boost::asio::traits::set_error_free;
 using boost::asio::traits::set_error_member;
 
@@ -91,109 +91,57 @@ enum overload_type
 template <typename R, typename E, typename = void, typename = void>
 struct call_traits
 {
-  BOOST_ASIO_STATIC_CONSTEXPR(overload_type, overload = ill_formed);
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_noexcept = false);
+  static constexpr overload_type overload = ill_formed;
+  static constexpr bool is_noexcept = false;
   typedef void result_type;
 };
 
 template <typename R, typename E>
 struct call_traits<R, void(E),
-  typename enable_if<
+  enable_if_t<
     set_error_member<R, E>::is_valid
-  >::type> :
+  >> :
   set_error_member<R, E>
 {
-  BOOST_ASIO_STATIC_CONSTEXPR(overload_type, overload = call_member);
+  static constexpr overload_type overload = call_member;
 };
 
 template <typename R, typename E>
 struct call_traits<R, void(E),
-  typename enable_if<
+  enable_if_t<
     !set_error_member<R, E>::is_valid
-  >::type,
-  typename enable_if<
+  >,
+  enable_if_t<
     set_error_free<R, E>::is_valid
-  >::type> :
+  >> :
   set_error_free<R, E>
 {
-  BOOST_ASIO_STATIC_CONSTEXPR(overload_type, overload = call_free);
+  static constexpr overload_type overload = call_free;
 };
 
 struct impl
 {
-#if defined(BOOST_ASIO_HAS_MOVE)
   template <typename R, typename E>
-  BOOST_ASIO_CONSTEXPR typename enable_if<
+  constexpr enable_if_t<
     call_traits<R, void(E)>::overload == call_member,
     typename call_traits<R, void(E)>::result_type
-  >::type
+  >
   operator()(R&& r, E&& e) const
-    BOOST_ASIO_NOEXCEPT_IF((
-      call_traits<R, void(E)>::is_noexcept))
+    noexcept(call_traits<R, void(E)>::is_noexcept)
   {
-    return BOOST_ASIO_MOVE_CAST(R)(r).set_error(BOOST_ASIO_MOVE_CAST(E)(e));
+    return static_cast<R&&>(r).set_error(static_cast<E&&>(e));
   }
 
   template <typename R, typename E>
-  BOOST_ASIO_CONSTEXPR typename enable_if<
+  constexpr enable_if_t<
     call_traits<R, void(E)>::overload == call_free,
     typename call_traits<R, void(E)>::result_type
-  >::type
+  >
   operator()(R&& r, E&& e) const
-    BOOST_ASIO_NOEXCEPT_IF((
-      call_traits<R, void(E)>::is_noexcept))
+    noexcept(call_traits<R, void(E)>::is_noexcept)
   {
-    return set_error(BOOST_ASIO_MOVE_CAST(R)(r), BOOST_ASIO_MOVE_CAST(E)(e));
+    return set_error(static_cast<R&&>(r), static_cast<E&&>(e));
   }
-#else // defined(BOOST_ASIO_HAS_MOVE)
-  template <typename R, typename E>
-  BOOST_ASIO_CONSTEXPR typename enable_if<
-    call_traits<R&, void(const E&)>::overload == call_member,
-    typename call_traits<R&, void(const E&)>::result_type
-  >::type
-  operator()(R& r, const E& e) const
-    BOOST_ASIO_NOEXCEPT_IF((
-      call_traits<R&, void(const E&)>::is_noexcept))
-  {
-    return r.set_error(e);
-  }
-
-  template <typename R, typename E>
-  BOOST_ASIO_CONSTEXPR typename enable_if<
-    call_traits<const R&, void(const E&)>::overload == call_member,
-    typename call_traits<const R&, void(const E&)>::result_type
-  >::type
-  operator()(const R& r, const E& e) const
-    BOOST_ASIO_NOEXCEPT_IF((
-      call_traits<const R&, void(const E&)>::is_noexcept))
-  {
-    return r.set_error(e);
-  }
-
-  template <typename R, typename E>
-  BOOST_ASIO_CONSTEXPR typename enable_if<
-    call_traits<R&, void(const E&)>::overload == call_free,
-    typename call_traits<R&, void(const E&)>::result_type
-  >::type
-  operator()(R& r, const E& e) const
-    BOOST_ASIO_NOEXCEPT_IF((
-      call_traits<R&, void(const E&)>::is_noexcept))
-  {
-    return set_error(r, e);
-  }
-
-  template <typename R, typename E>
-  BOOST_ASIO_CONSTEXPR typename enable_if<
-    call_traits<const R&, void(const E&)>::overload == call_free,
-    typename call_traits<const R&, void(const E&)>::result_type
-  >::type
-  operator()(const R& r, const E& e) const
-    BOOST_ASIO_NOEXCEPT_IF((
-      call_traits<const R&, void(const E&)>::is_noexcept))
-  {
-    return set_error(r, e);
-  }
-#endif // defined(BOOST_ASIO_HAS_MOVE)
 };
 
 template <typename T = impl>
@@ -211,7 +159,7 @@ namespace asio {
 namespace execution {
 namespace {
 
-static BOOST_ASIO_CONSTEXPR const boost_asio_execution_set_error_fn::impl&
+static constexpr const boost_asio_execution_set_error_fn::impl&
   set_error = boost_asio_execution_set_error_fn::static_instance<>::instance;
 
 } // namespace
@@ -241,8 +189,7 @@ struct is_nothrow_set_error :
 #if defined(BOOST_ASIO_HAS_VARIABLE_TEMPLATES)
 
 template <typename R, typename E>
-constexpr bool is_nothrow_set_error_v
-  = is_nothrow_set_error<R, E>::value;
+constexpr bool is_nothrow_set_error_v = is_nothrow_set_error<R, E>::value;
 
 #endif // defined(BOOST_ASIO_HAS_VARIABLE_TEMPLATES)
 

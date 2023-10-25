@@ -29,19 +29,19 @@ namespace boost {
 namespace asio {
 
 inline thread_pool::executor_type
-thread_pool::get_executor() BOOST_ASIO_NOEXCEPT
+thread_pool::get_executor() noexcept
 {
   return executor_type(*this);
 }
 
 inline thread_pool::executor_type
-thread_pool::executor() BOOST_ASIO_NOEXCEPT
+thread_pool::executor() noexcept
 {
   return executor_type(*this);
 }
 
 inline thread_pool::scheduler_type
-thread_pool::scheduler() BOOST_ASIO_NOEXCEPT
+thread_pool::scheduler() noexcept
 {
   return scheduler_type(*this);
 }
@@ -49,7 +49,7 @@ thread_pool::scheduler() BOOST_ASIO_NOEXCEPT
 template <typename Allocator, unsigned int Bits>
 thread_pool::basic_executor_type<Allocator, Bits>&
 thread_pool::basic_executor_type<Allocator, Bits>::operator=(
-    const basic_executor_type& other) BOOST_ASIO_NOEXCEPT
+    const basic_executor_type& other) noexcept
 {
   if (this != &other)
   {
@@ -68,11 +68,10 @@ thread_pool::basic_executor_type<Allocator, Bits>::operator=(
   return *this;
 }
 
-#if defined(BOOST_ASIO_HAS_MOVE)
 template <typename Allocator, unsigned int Bits>
 thread_pool::basic_executor_type<Allocator, Bits>&
 thread_pool::basic_executor_type<Allocator, Bits>::operator=(
-    basic_executor_type&& other) BOOST_ASIO_NOEXCEPT
+    basic_executor_type&& other) noexcept
 {
   if (this != &other)
   {
@@ -89,11 +88,10 @@ thread_pool::basic_executor_type<Allocator, Bits>::operator=(
   }
   return *this;
 }
-#endif // defined(BOOST_ASIO_HAS_MOVE)
 
 template <typename Allocator, unsigned int Bits>
 inline bool thread_pool::basic_executor_type<Allocator,
-    Bits>::running_in_this_thread() const BOOST_ASIO_NOEXCEPT
+    Bits>::running_in_this_thread() const noexcept
 {
   return pool_->scheduler_.can_dispatch();
 }
@@ -101,43 +99,39 @@ inline bool thread_pool::basic_executor_type<Allocator,
 template <typename Allocator, unsigned int Bits>
 template <typename Function>
 void thread_pool::basic_executor_type<Allocator,
-    Bits>::do_execute(BOOST_ASIO_MOVE_ARG(Function) f, false_type) const
+    Bits>::do_execute(Function&& f, false_type) const
 {
-  typedef typename decay<Function>::type function_type;
+  typedef decay_t<Function> function_type;
 
   // Invoke immediately if the blocking.possibly property is enabled and we are
   // already inside the thread pool.
   if ((bits_ & blocking_never) == 0 && pool_->scheduler_.can_dispatch())
   {
     // Make a local, non-const copy of the function.
-    function_type tmp(BOOST_ASIO_MOVE_CAST(Function)(f));
+    function_type tmp(static_cast<Function&&>(f));
 
-#if defined(BOOST_ASIO_HAS_STD_EXCEPTION_PTR) \
-  && !defined(BOOST_ASIO_NO_EXCEPTIONS)
+#if !defined(BOOST_ASIO_NO_EXCEPTIONS)
     try
     {
-#endif // defined(BOOST_ASIO_HAS_STD_EXCEPTION_PTR)
-       //   && !defined(BOOST_ASIO_NO_EXCEPTIONS)
+#endif // !defined(BOOST_ASIO_NO_EXCEPTIONS)
       detail::fenced_block b(detail::fenced_block::full);
       boost_asio_handler_invoke_helpers::invoke(tmp, tmp);
       return;
-#if defined(BOOST_ASIO_HAS_STD_EXCEPTION_PTR) \
-  && !defined(BOOST_ASIO_NO_EXCEPTIONS)
+#if !defined(BOOST_ASIO_NO_EXCEPTIONS)
     }
     catch (...)
     {
       pool_->scheduler_.capture_current_exception();
       return;
     }
-#endif // defined(BOOST_ASIO_HAS_STD_EXCEPTION_PTR)
-       //   && !defined(BOOST_ASIO_NO_EXCEPTIONS)
+#endif // !defined(BOOST_ASIO_NO_EXCEPTIONS)
   }
 
   // Allocate and construct an operation to wrap the function.
   typedef detail::executor_op<function_type, Allocator> op;
   typename op::ptr p = { detail::addressof(allocator_),
       op::ptr::allocate(allocator_), 0 };
-  p.p = new (p.v) op(BOOST_ASIO_MOVE_CAST(Function)(f), allocator_);
+  p.p = new (p.v) op(static_cast<Function&&>(f), allocator_);
 
   if ((bits_ & relationship_continuation) != 0)
   {
@@ -158,7 +152,7 @@ void thread_pool::basic_executor_type<Allocator,
 template <typename Allocator, unsigned int Bits>
 template <typename Function>
 void thread_pool::basic_executor_type<Allocator,
-    Bits>::do_execute(BOOST_ASIO_MOVE_ARG(Function) f, true_type) const
+    Bits>::do_execute(Function&& f, true_type) const
 {
   // Obtain a non-const instance of the function.
   detail::non_const_lvalue<Function> f2(f);
@@ -183,7 +177,7 @@ void thread_pool::basic_executor_type<Allocator,
   }
 
   // Construct an operation to wrap the function.
-  typedef typename decay<Function>::type function_type;
+  typedef decay_t<Function> function_type;
   detail::blocking_executor_op<function_type> op(f2.value);
 
   BOOST_ASIO_HANDLER_CREATION((*pool_, op,
@@ -196,9 +190,9 @@ void thread_pool::basic_executor_type<Allocator,
 template <typename Allocator, unsigned int Bits>
 template <typename Function>
 void thread_pool::basic_executor_type<Allocator, Bits>::do_bulk_execute(
-    BOOST_ASIO_MOVE_ARG(Function) f, std::size_t n, false_type) const
+    Function&& f, std::size_t n, false_type) const
 {
-  typedef typename decay<Function>::type function_type;
+  typedef decay_t<Function> function_type;
   typedef detail::bulk_executor_op<function_type, Allocator> op;
 
   // Allocate and construct operations to wrap the function.
@@ -207,7 +201,7 @@ void thread_pool::basic_executor_type<Allocator, Bits>::do_bulk_execute(
   {
     typename op::ptr p = { detail::addressof(allocator_),
         op::ptr::allocate(allocator_), 0 };
-    p.p = new (p.v) op(BOOST_ASIO_MOVE_CAST(Function)(f), allocator_, i);
+    p.p = new (p.v) op(static_cast<Function&&>(f), allocator_, i);
     ops.push(p.p);
 
     if ((bits_ & relationship_continuation) != 0)
@@ -231,7 +225,7 @@ void thread_pool::basic_executor_type<Allocator, Bits>::do_bulk_execute(
 template <typename Function>
 struct thread_pool_always_blocking_function_adapter
 {
-  typename decay<Function>::type* f;
+  decay_t<Function>* f;
   std::size_t n;
 
   void operator()()
@@ -246,7 +240,7 @@ struct thread_pool_always_blocking_function_adapter
 template <typename Allocator, unsigned int Bits>
 template <typename Function>
 void thread_pool::basic_executor_type<Allocator, Bits>::do_bulk_execute(
-    BOOST_ASIO_MOVE_ARG(Function) f, std::size_t n, true_type) const
+    Function&& f, std::size_t n, true_type) const
 {
   // Obtain a non-const instance of the function.
   detail::non_const_lvalue<Function> f2(f);
@@ -260,21 +254,21 @@ void thread_pool::basic_executor_type<Allocator, Bits>::do_bulk_execute(
 #if !defined(BOOST_ASIO_NO_TS_EXECUTORS)
 template <typename Allocator, unsigned int Bits>
 inline thread_pool& thread_pool::basic_executor_type<
-    Allocator, Bits>::context() const BOOST_ASIO_NOEXCEPT
+    Allocator, Bits>::context() const noexcept
 {
   return *pool_;
 }
 
 template <typename Allocator, unsigned int Bits>
 inline void thread_pool::basic_executor_type<Allocator,
-    Bits>::on_work_started() const BOOST_ASIO_NOEXCEPT
+    Bits>::on_work_started() const noexcept
 {
   pool_->scheduler_.work_started();
 }
 
 template <typename Allocator, unsigned int Bits>
 inline void thread_pool::basic_executor_type<Allocator,
-    Bits>::on_work_finished() const BOOST_ASIO_NOEXCEPT
+    Bits>::on_work_finished() const noexcept
 {
   pool_->scheduler_.work_finished();
 }
@@ -282,15 +276,15 @@ inline void thread_pool::basic_executor_type<Allocator,
 template <typename Allocator, unsigned int Bits>
 template <typename Function, typename OtherAllocator>
 void thread_pool::basic_executor_type<Allocator, Bits>::dispatch(
-    BOOST_ASIO_MOVE_ARG(Function) f, const OtherAllocator& a) const
+    Function&& f, const OtherAllocator& a) const
 {
-  typedef typename decay<Function>::type function_type;
+  typedef decay_t<Function> function_type;
 
   // Invoke immediately if we are already inside the thread pool.
   if (pool_->scheduler_.can_dispatch())
   {
     // Make a local, non-const copy of the function.
-    function_type tmp(BOOST_ASIO_MOVE_CAST(Function)(f));
+    function_type tmp(static_cast<Function&&>(f));
 
     detail::fenced_block b(detail::fenced_block::full);
     boost_asio_handler_invoke_helpers::invoke(tmp, tmp);
@@ -300,7 +294,7 @@ void thread_pool::basic_executor_type<Allocator, Bits>::dispatch(
   // Allocate and construct an operation to wrap the function.
   typedef detail::executor_op<function_type, OtherAllocator> op;
   typename op::ptr p = { detail::addressof(a), op::ptr::allocate(a), 0 };
-  p.p = new (p.v) op(BOOST_ASIO_MOVE_CAST(Function)(f), a);
+  p.p = new (p.v) op(static_cast<Function&&>(f), a);
 
   BOOST_ASIO_HANDLER_CREATION((*pool_, *p.p,
         "thread_pool", pool_, 0, "dispatch"));
@@ -312,14 +306,14 @@ void thread_pool::basic_executor_type<Allocator, Bits>::dispatch(
 template <typename Allocator, unsigned int Bits>
 template <typename Function, typename OtherAllocator>
 void thread_pool::basic_executor_type<Allocator, Bits>::post(
-    BOOST_ASIO_MOVE_ARG(Function) f, const OtherAllocator& a) const
+    Function&& f, const OtherAllocator& a) const
 {
-  typedef typename decay<Function>::type function_type;
+  typedef decay_t<Function> function_type;
 
   // Allocate and construct an operation to wrap the function.
   typedef detail::executor_op<function_type, OtherAllocator> op;
   typename op::ptr p = { detail::addressof(a), op::ptr::allocate(a), 0 };
-  p.p = new (p.v) op(BOOST_ASIO_MOVE_CAST(Function)(f), a);
+  p.p = new (p.v) op(static_cast<Function&&>(f), a);
 
   BOOST_ASIO_HANDLER_CREATION((*pool_, *p.p,
         "thread_pool", pool_, 0, "post"));
@@ -331,14 +325,14 @@ void thread_pool::basic_executor_type<Allocator, Bits>::post(
 template <typename Allocator, unsigned int Bits>
 template <typename Function, typename OtherAllocator>
 void thread_pool::basic_executor_type<Allocator, Bits>::defer(
-    BOOST_ASIO_MOVE_ARG(Function) f, const OtherAllocator& a) const
+    Function&& f, const OtherAllocator& a) const
 {
-  typedef typename decay<Function>::type function_type;
+  typedef decay_t<Function> function_type;
 
   // Allocate and construct an operation to wrap the function.
   typedef detail::executor_op<function_type, OtherAllocator> op;
   typename op::ptr p = { detail::addressof(a), op::ptr::allocate(a), 0 };
-  p.p = new (p.v) op(BOOST_ASIO_MOVE_CAST(Function)(f), a);
+  p.p = new (p.v) op(static_cast<Function&&>(f), a);
 
   BOOST_ASIO_HANDLER_CREATION((*pool_, *p.p,
         "thread_pool", pool_, 0, "defer"));

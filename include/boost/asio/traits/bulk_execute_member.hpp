@@ -18,13 +18,9 @@
 #include <boost/asio/detail/config.hpp>
 #include <boost/asio/detail/type_traits.hpp>
 
-#if defined(BOOST_ASIO_HAS_DECLTYPE) \
-  && defined(BOOST_ASIO_HAS_NOEXCEPT) \
-  && defined(BOOST_ASIO_HAS_WORKING_EXPRESSION_SFINAE)
+#if defined(BOOST_ASIO_HAS_WORKING_EXPRESSION_SFINAE)
 # define BOOST_ASIO_HAS_DEDUCED_BULK_EXECUTE_MEMBER_TRAIT 1
-#endif // defined(BOOST_ASIO_HAS_DECLTYPE)
-       //   && defined(BOOST_ASIO_HAS_NOEXCEPT)
-       //   && defined(BOOST_ASIO_HAS_WORKING_EXPRESSION_SFINAE)
+#endif // defined(BOOST_ASIO_HAS_WORKING_EXPRESSION_SFINAE)
 
 #include <boost/asio/detail/push_options.hpp>
 
@@ -43,8 +39,8 @@ namespace detail {
 
 struct no_bulk_execute_member
 {
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_valid = false);
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_noexcept = false);
+  static constexpr bool is_valid = false;
+  static constexpr bool is_noexcept = false;
 };
 
 #if defined(BOOST_ASIO_HAS_DEDUCED_BULK_EXECUTE_MEMBER_TRAIT)
@@ -56,37 +52,37 @@ struct bulk_execute_member_trait : no_bulk_execute_member
 
 template <typename T, typename F, typename N>
 struct bulk_execute_member_trait<T, F, N,
-  typename void_type<
+  void_t<
     decltype(declval<T>().bulk_execute(declval<F>(), declval<N>()))
-  >::type>
+  >>
 {
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
+  static constexpr bool is_valid = true;
 
   using result_type = decltype(
     declval<T>().bulk_execute(declval<F>(), declval<N>()));
 
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_noexcept = noexcept(
-    declval<T>().bulk_execute(declval<F>(), declval<N>())));
+  static constexpr bool is_noexcept =
+    noexcept(declval<T>().bulk_execute(declval<F>(), declval<N>()));
 };
 
 #else // defined(BOOST_ASIO_HAS_DEDUCED_BULK_EXECUTE_MEMBER_TRAIT)
 
 template <typename T, typename F, typename N, typename = void>
 struct bulk_execute_member_trait :
-  conditional<
-    is_same<T, typename remove_reference<T>::type>::value
-      && is_same<F, typename decay<F>::type>::value
-      && is_same<N, typename decay<N>::type>::value,
-    typename conditional<
-      is_same<T, typename add_const<T>::type>::value,
+  conditional_t<
+    is_same<T, remove_reference_t<T>>::value
+      && is_same<F, decay_t<F>>::value
+      && is_same<N, decay_t<N>>::value,
+    conditional_t<
+      is_same<T, add_const_t<T>>::value,
       no_bulk_execute_member,
-      traits::bulk_execute_member<typename add_const<T>::type, F, N>
-    >::type,
+      traits::bulk_execute_member<add_const_t<T>, F, N>
+    >,
     traits::bulk_execute_member<
-      typename remove_reference<T>::type,
-      typename decay<F>::type,
-      typename decay<N>::type>
-  >::type
+      remove_reference_t<T>,
+      decay_t<F>,
+      decay_t<N>>
+  >
 {
 };
 

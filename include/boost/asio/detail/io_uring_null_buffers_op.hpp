@@ -42,7 +42,7 @@ public:
         &io_uring_null_buffers_op::do_prepare,
         &io_uring_null_buffers_op::do_perform,
         &io_uring_null_buffers_op::do_complete),
-      handler_(BOOST_ASIO_MOVE_CAST(Handler)(handler)),
+      handler_(static_cast<Handler&&>(handler)),
       work_(handler_, io_ex),
       descriptor_(descriptor),
       poll_flags_(poll_flags)
@@ -75,7 +75,7 @@ public:
 
     // Take ownership of the operation's outstanding work.
     handler_work<Handler, IoExecutor> w(
-        BOOST_ASIO_MOVE_CAST2(handler_work<Handler, IoExecutor>)(
+        static_cast<handler_work<Handler, IoExecutor>&&>(
           o->work_));
 
     BOOST_ASIO_ERROR_LOCATION(o->ec_);

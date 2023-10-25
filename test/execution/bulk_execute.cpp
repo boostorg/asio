@@ -27,7 +27,7 @@ int call_count = 0;
 
 struct operation_state
 {
-  void start() BOOST_ASIO_NOEXCEPT
+  void start() noexcept
   {
   }
 };
@@ -41,8 +41,8 @@ namespace traits {
 template <>
 struct start_member<operation_state>
 {
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_noexcept = true);
+  static constexpr bool is_valid = true;
+  static constexpr bool is_noexcept = true;
   typedef void result_type;
 };
 
@@ -59,7 +59,7 @@ struct sender : exec::sender_base
   }
 
   template <typename R>
-  operation_state connect(BOOST_ASIO_MOVE_ARG(R) r) const
+  operation_state connect(R&& r) const
   {
     (void)r;
     return operation_state();
@@ -75,8 +75,8 @@ namespace traits {
 template <typename R>
 struct connect_member<const sender, R>
 {
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_noexcept = false);
+  static constexpr bool is_valid = true;
+  static constexpr bool is_noexcept = false;
   typedef operation_state result_type;
 };
 
@@ -97,7 +97,7 @@ struct const_member_bulk_execute
   }
 
   template <typename F>
-  sender bulk_execute(BOOST_ASIO_MOVE_ARG(F), std::size_t) const
+  sender bulk_execute(F&&, std::size_t) const
   {
     ++call_count;
     return sender();
@@ -113,8 +113,8 @@ namespace traits {
 template <typename F, typename N>
 struct bulk_execute_member<const const_member_bulk_execute, F, N>
 {
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_noexcept = false);
+  static constexpr bool is_valid = true;
+  static constexpr bool is_noexcept = false;
   typedef sender result_type;
 };
 
@@ -132,7 +132,7 @@ struct free_bulk_execute
 
   template <typename F>
   friend sender bulk_execute(const free_bulk_execute&,
-      BOOST_ASIO_MOVE_ARG(F), std::size_t)
+      F&&, std::size_t)
   {
     ++call_count;
     return sender();
@@ -148,8 +148,8 @@ namespace traits {
 template <typename F, typename N>
 struct bulk_execute_free<const free_bulk_execute, F, N>
 {
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_noexcept = false);
+  static constexpr bool is_valid = true;
+  static constexpr bool is_noexcept = false;
   typedef sender result_type;
 };
 
@@ -165,29 +165,27 @@ struct executor
   {
   }
 
-  executor(const executor&) BOOST_ASIO_NOEXCEPT
+  executor(const executor&) noexcept
   {
   }
 
-#if defined(BOOST_ASIO_HAS_MOVE)
-  executor(executor&&) BOOST_ASIO_NOEXCEPT
+  executor(executor&&) noexcept
   {
   }
-#endif // defined(BOOST_ASIO_HAS_MOVE)
 
   template <typename F>
-  void execute(BOOST_ASIO_MOVE_ARG(F) f) const BOOST_ASIO_NOEXCEPT
+  void execute(F&& f) const noexcept
   {
-    typename boost::asio::decay<F>::type tmp(BOOST_ASIO_MOVE_CAST(F)(f));
+    typename boost::asio::decay<F>::type tmp(static_cast<F&&>(f));
     tmp();
   }
 
-  bool operator==(const executor&) const BOOST_ASIO_NOEXCEPT
+  bool operator==(const executor&) const noexcept
   {
     return true;
   }
 
-  bool operator!=(const executor&) const BOOST_ASIO_NOEXCEPT
+  bool operator!=(const executor&) const noexcept
   {
     return false;
   }
@@ -202,8 +200,8 @@ namespace traits {
 template <typename F>
 struct execute_member<executor, F>
 {
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_noexcept = true);
+  static constexpr bool is_valid = true;
+  static constexpr bool is_noexcept = true;
   typedef void result_type;
 };
 
@@ -213,8 +211,8 @@ struct execute_member<executor, F>
 template <>
 struct equality_comparable<executor>
 {
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_noexcept = true);
+  static constexpr bool is_valid = true;
+  static constexpr bool is_noexcept = true;
 };
 
 #endif // !defined(BOOST_ASIO_HAS_DEDUCED_EQUALITY_COMPARABLE_TRAIT)
@@ -225,36 +223,36 @@ struct equality_comparable<executor>
 
 void test_can_bulk_execute()
 {
-  BOOST_ASIO_CONSTEXPR bool b1 = exec::can_bulk_execute<
+  constexpr bool b1 = exec::can_bulk_execute<
       no_bulk_execute&, exec::invocable_archetype, std::size_t>::value;
   BOOST_ASIO_CHECK(b1 == false);
 
-  BOOST_ASIO_CONSTEXPR bool b2 = exec::can_bulk_execute<
+  constexpr bool b2 = exec::can_bulk_execute<
       const no_bulk_execute&, exec::invocable_archetype, std::size_t>::value;
   BOOST_ASIO_CHECK(b2 == false);
 
-  BOOST_ASIO_CONSTEXPR bool b3 = exec::can_bulk_execute<
+  constexpr bool b3 = exec::can_bulk_execute<
       const_member_bulk_execute&, exec::invocable_archetype, std::size_t>::value;
   BOOST_ASIO_CHECK(b3 == true);
 
-  BOOST_ASIO_CONSTEXPR bool b4 = exec::can_bulk_execute<
+  constexpr bool b4 = exec::can_bulk_execute<
       const const_member_bulk_execute&,
       exec::invocable_archetype, std::size_t>::value;
   BOOST_ASIO_CHECK(b4 == true);
 
-  BOOST_ASIO_CONSTEXPR bool b5 = exec::can_bulk_execute<
+  constexpr bool b5 = exec::can_bulk_execute<
       free_bulk_execute&, exec::invocable_archetype, std::size_t>::value;
   BOOST_ASIO_CHECK(b5 == true);
 
-  BOOST_ASIO_CONSTEXPR bool b6 = exec::can_bulk_execute<
+  constexpr bool b6 = exec::can_bulk_execute<
       const free_bulk_execute&, exec::invocable_archetype, std::size_t>::value;
   BOOST_ASIO_CHECK(b6 == true);
 
-  BOOST_ASIO_CONSTEXPR bool b7 = exec::can_bulk_execute<
+  constexpr bool b7 = exec::can_bulk_execute<
       executor&, exec::invocable_archetype, std::size_t>::value;
   BOOST_ASIO_CHECK(b7 == true);
 
-  BOOST_ASIO_CONSTEXPR bool b8 = exec::can_bulk_execute<
+  constexpr bool b8 = exec::can_bulk_execute<
       const executor&, exec::invocable_archetype, std::size_t>::value;
   BOOST_ASIO_CHECK(b8 == true);
 }

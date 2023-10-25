@@ -27,15 +27,9 @@
 
 #include <boost/asio/detail/push_options.hpp>
 
-#if defined(BOOST_ASIO_HAS_ALIAS_TEMPLATES) \
-  && defined(BOOST_ASIO_HAS_VARIADIC_TEMPLATES) \
-  && defined(BOOST_ASIO_HAS_DECLTYPE) \
-  && !defined(BOOST_ASIO_MSVC) || (_MSC_VER >= 1910)
+#if !defined(BOOST_ASIO_MSVC) || (_MSC_VER >= 1910)
 # define BOOST_ASIO_HAS_DEDUCED_EXECUTION_IS_TYPED_SENDER_TRAIT 1
-#endif // defined(BOOST_ASIO_HAS_ALIAS_TEMPLATES)
-       //   && defined(BOOST_ASIO_HAS_VARIADIC_TEMPLATES)
-       //   && defined(BOOST_ASIO_HAS_DECLTYPE)
-       //   && !defined(BOOST_ASIO_MSVC) || (_MSC_VER >= 1910)
+#endif // !defined(BOOST_ASIO_MSVC) || (_MSC_VER >= 1910)
 
 namespace boost {
 namespace asio {
@@ -52,9 +46,9 @@ struct sender_traits_base
 
 template <typename S>
 struct sender_traits_base<S,
-    typename enable_if<
+    enable_if_t<
       is_base_of<sender_base_ns::sender_base, S>::value
-    >::type>
+    >>
 {
 };
 
@@ -88,15 +82,12 @@ template <typename S>
 struct has_sender_types<S,
     typename has_value_types<S::template value_types>::type,
     typename has_error_types<S::template error_types>::type,
-    typename conditional<S::sends_done, void, void>::type> : true_type
+    conditional_t<S::sends_done, void, void>> : true_type
 {
 };
 
 template <typename S>
-struct sender_traits_base<S,
-    typename enable_if<
-      has_sender_types<S>::value
-    >::type>
+struct sender_traits_base<S, enable_if_t<has_sender_types<S>::value>>
 {
   template <
       template <typename...> class Tuple,
@@ -106,21 +97,20 @@ struct sender_traits_base<S,
   template <template <typename...> class Variant>
   using error_types = typename S::template error_types<Variant>;
 
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, sends_done = S::sends_done);
+  static constexpr bool sends_done = S::sends_done;
 };
 
 #endif // defined(BOOST_ASIO_HAS_DEDUCED_EXECUTION_IS_TYPED_SENDER_TRAIT)
 
 template <typename S>
 struct sender_traits_base<S,
-    typename enable_if<
+    enable_if_t<
       !has_sender_types<S>::value
         && detail::is_executor_of_impl<S,
-          as_invocable<void_receiver, S> >::value
-    >::type>
+          as_invocable<void_receiver, S>>::value
+    >>
 {
-#if defined(BOOST_ASIO_HAS_DEDUCED_EXECUTION_IS_TYPED_SENDER_TRAIT) \
-  && defined(BOOST_ASIO_HAS_STD_EXCEPTION_PTR)
+#if defined(BOOST_ASIO_HAS_DEDUCED_EXECUTION_IS_TYPED_SENDER_TRAIT)
 
   template <
       template <typename...> class Tuple,
@@ -130,10 +120,9 @@ struct sender_traits_base<S,
   template <template <typename...> class Variant>
   using error_types = Variant<std::exception_ptr>;
 
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, sends_done = true);
+  static constexpr bool sends_done = true;
 
 #endif // defined(BOOST_ASIO_HAS_DEDUCED_EXECUTION_IS_TYPED_SENDER_TRAIT)
-       //   && defined(BOOST_ASIO_HAS_STD_EXCEPTION_PTR)
 };
 
 } // namespace detail
@@ -163,13 +152,14 @@ struct has_sender_traits : true_type
 
 template <typename S>
 struct has_sender_traits<S,
-    typename enable_if<
+    enable_if_t<
       is_same<
         typename boost::asio::execution::sender_traits<
           S>::asio_execution_sender_traits_base_is_unspecialised,
         void
       >::value
-    >::type> : false_type
+    >
+  > : false_type
 {
 };
 
@@ -189,8 +179,8 @@ struct is_sender :
   integral_constant<bool, automatically_determined>
 #else // defined(GENERATING_DOCUMENTATION)
   conditional<
-    detail::has_sender_traits<typename remove_cvref<T>::type>::value,
-    is_move_constructible<typename remove_cvref<T>::type>,
+    detail::has_sender_traits<remove_cvref_t<T>>::value,
+    is_move_constructible<remove_cvref_t<T>>,
     false_type
   >::type
 #endif // defined(GENERATING_DOCUMENTATION)
@@ -200,7 +190,7 @@ struct is_sender :
 #if defined(BOOST_ASIO_HAS_VARIABLE_TEMPLATES)
 
 template <typename T>
-BOOST_ASIO_CONSTEXPR const bool is_sender_v = is_sender<T>::value;
+constexpr const bool is_sender_v = is_sender<T>::value;
 
 #endif // defined(BOOST_ASIO_HAS_VARIABLE_TEMPLATES)
 
@@ -244,7 +234,7 @@ struct is_sender_to :
 #if defined(BOOST_ASIO_HAS_VARIABLE_TEMPLATES)
 
 template <typename T, typename R>
-BOOST_ASIO_CONSTEXPR const bool is_sender_to_v =
+constexpr const bool is_sender_to_v =
   is_sender_to<T, R>::value;
 
 #endif // defined(BOOST_ASIO_HAS_VARIABLE_TEMPLATES)
@@ -277,8 +267,7 @@ struct is_typed_sender :
 #else // defined(GENERATING_DOCUMENTATION)
   integral_constant<bool,
     is_sender<T>::value
-      && detail::has_sender_types<
-        sender_traits<typename remove_cvref<T>::type> >::value
+      && detail::has_sender_types<sender_traits<remove_cvref_t<T>>>::value
   >
 #endif // defined(GENERATING_DOCUMENTATION)
 {
@@ -287,7 +276,7 @@ struct is_typed_sender :
 #if defined(BOOST_ASIO_HAS_VARIABLE_TEMPLATES)
 
 template <typename T>
-BOOST_ASIO_CONSTEXPR const bool is_typed_sender_v = is_typed_sender<T>::value;
+constexpr const bool is_typed_sender_v = is_typed_sender<T>::value;
 
 #endif // defined(BOOST_ASIO_HAS_VARIABLE_TEMPLATES)
 

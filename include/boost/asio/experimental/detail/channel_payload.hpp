@@ -45,7 +45,7 @@ public:
   template <typename Handler>
   void receive(Handler& handler)
   {
-    BOOST_ASIO_MOVE_OR_LVALUE(Handler)(handler)();
+    static_cast<Handler&&>(handler)();
   }
 };
 
@@ -53,8 +53,8 @@ template <typename Signature>
 class channel_payload<Signature>
 {
 public:
-  channel_payload(BOOST_ASIO_MOVE_ARG(channel_message<Signature>) m)
-    : message_(BOOST_ASIO_MOVE_CAST(channel_message<Signature>)(m))
+  channel_payload(channel_message<Signature>&& m)
+    : message_(static_cast<channel_message<Signature>&&>(m))
   {
   }
 
@@ -75,8 +75,8 @@ class channel_payload
 {
 public:
   template <typename Signature>
-  channel_payload(BOOST_ASIO_MOVE_ARG(channel_message<Signature>) m)
-    : message_(BOOST_ASIO_MOVE_CAST(channel_message<Signature>)(m))
+  channel_payload(channel_message<Signature>&& m)
+    : message_(static_cast<channel_message<Signature>&&>(m))
   {
   }
 
@@ -103,14 +103,14 @@ public:
   typedef channel_message<R1()> void_message_type;
   typedef channel_message<R2(boost::system::error_code)> error_message_type;
 
-  channel_payload(BOOST_ASIO_MOVE_ARG(void_message_type))
+  channel_payload(void_message_type&&)
     : message_(0, boost::system::error_code()),
       empty_(true)
   {
   }
 
-  channel_payload(BOOST_ASIO_MOVE_ARG(error_message_type) m)
-    : message_(BOOST_ASIO_MOVE_CAST(error_message_type)(m)),
+  channel_payload(error_message_type&& m)
+    : message_(static_cast<error_message_type&&>(m)),
       empty_(false)
   {
   }

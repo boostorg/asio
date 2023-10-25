@@ -19,7 +19,7 @@
 #include <string>
 #include "unit_test.hpp"
 
-#if defined(BOOST_ASIO_HAS_STD_FUTURE)
+#if defined(BOOST_ASIO_HAS_STD_FUTURE_CLASS)
 
 #include "archetypes/async_ops.hpp"
 
@@ -659,7 +659,7 @@ BOOST_ASIO_TEST_SUITE
   BOOST_ASIO_TEST_CASE(use_future_package_3_test)
 )
 
-#else // defined(BOOST_ASIO_HAS_STD_FUTURE)
+#else // defined(BOOST_ASIO_HAS_STD_FUTURE_CLASS)
 
 BOOST_ASIO_TEST_SUITE
 (
@@ -667,4 +667,4 @@ BOOST_ASIO_TEST_SUITE
   BOOST_ASIO_TEST_CASE(null_test)
 )
 
-#endif // defined(BOOST_ASIO_HAS_STD_FUTURE)
+#endif // defined(BOOST_ASIO_HAS_STD_FUTURE_CLASS)

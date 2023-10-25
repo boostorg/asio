@@ -18,13 +18,9 @@
 #include <boost/asio/detail/config.hpp>
 #include <boost/asio/detail/type_traits.hpp>
 
-#if defined(BOOST_ASIO_HAS_DECLTYPE) \
-  && defined(BOOST_ASIO_HAS_NOEXCEPT) \
-  && defined(BOOST_ASIO_HAS_WORKING_EXPRESSION_SFINAE)
+#if defined(BOOST_ASIO_HAS_WORKING_EXPRESSION_SFINAE)
 # define BOOST_ASIO_HAS_DEDUCED_START_FREE_TRAIT 1
-#endif // defined(BOOST_ASIO_HAS_DECLTYPE)
-       //   && defined(BOOST_ASIO_HAS_NOEXCEPT)
-       //   && defined(BOOST_ASIO_HAS_WORKING_EXPRESSION_SFINAE)
+#endif // defined(BOOST_ASIO_HAS_WORKING_EXPRESSION_SFINAE)
 
 #include <boost/asio/detail/push_options.hpp>
 
@@ -43,8 +39,8 @@ namespace detail {
 
 struct no_start_free
 {
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_valid = false);
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_noexcept = false);
+  static constexpr bool is_valid = false;
+  static constexpr bool is_noexcept = false;
 };
 
 #if defined(BOOST_ASIO_HAS_DEDUCED_START_FREE_TRAIT)
@@ -56,31 +52,30 @@ struct start_free_trait : no_start_free
 
 template <typename T>
 struct start_free_trait<T,
-  typename void_type<
+  void_t<
     decltype(start(declval<T>()))
-  >::type>
+  >>
 {
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
+  static constexpr bool is_valid = true;
 
   using result_type = decltype(start(declval<T>()));
 
-  BOOST_ASIO_STATIC_CONSTEXPR(bool,
-    is_noexcept = noexcept(start(declval<T>())));
+  static constexpr bool is_noexcept = noexcept(start(declval<T>()));
 };
 
 #else // defined(BOOST_ASIO_HAS_DEDUCED_START_FREE_TRAIT)
 
 template <typename T, typename = void>
 struct start_free_trait :
-  conditional<
-    is_same<T, typename remove_reference<T>::type>::value,
-    typename conditional<
-      is_same<T, typename add_const<T>::type>::value,
+  conditional_t<
+    is_same<T, remove_reference_t<T>>::value,
+    conditional_t<
+      is_same<T, add_const_t<T>>::value,
       no_start_free,
-      traits::start_free<typename add_const<T>::type>
-    >::type,
-    traits::start_free<typename remove_reference<T>::type>
-  >::type
+      traits::start_free<add_const_t<T>>
+    >,
+    traits::start_free<remove_reference_t<T>>
+  >
 {
 };
 

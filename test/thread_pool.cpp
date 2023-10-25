@@ -16,23 +16,13 @@
 // Test that header file is self-contained.
 #include <boost/asio/thread_pool.hpp>
 
+#include <functional>
 #include <boost/asio/dispatch.hpp>
 #include <boost/asio/post.hpp>
 #include "unit_test.hpp"
 
-#if defined(BOOST_ASIO_HAS_BOOST_BIND)
-# include <boost/bind/bind.hpp>
-#else // defined(BOOST_ASIO_HAS_BOOST_BIND)
-# include <functional>
-#endif // defined(BOOST_ASIO_HAS_BOOST_BIND)
-
 using namespace boost::asio;
-
-#if defined(BOOST_ASIO_HAS_BOOST_BIND)
-namespace bindns = boost;
-#else // defined(BOOST_ASIO_HAS_BOOST_BIND)
 namespace bindns = std;
-#endif
 
 void increment(int* count)
 {
@@ -301,31 +291,29 @@ struct receiver
   {
   }
 
-  receiver(const receiver& other) BOOST_ASIO_NOEXCEPT
+  receiver(const receiver& other) noexcept
     : count_(other.count_)
   {
   }
 
-#if defined(BOOST_ASIO_HAS_MOVE)
-  receiver(receiver&& other) BOOST_ASIO_NOEXCEPT
+  receiver(receiver&& other) noexcept
     : count_(other.count_)
   {
     other.count_ = 0;
   }
-#endif // defined(BOOST_ASIO_HAS_MOVE)
 
-  void set_value() BOOST_ASIO_NOEXCEPT
+  void set_value() noexcept
   {
     ++(*count_);
   }
 
   template <typename E>
-  void set_error(BOOST_ASIO_MOVE_ARG(E) e) BOOST_ASIO_NOEXCEPT
+  void set_error(E&& e) noexcept
   {
     (void)e;
   }
 
-  void set_done() BOOST_ASIO_NOEXCEPT
+  void set_done() noexcept
   {
   }
 };
@@ -339,8 +327,8 @@ namespace traits {
 template <>
 struct set_value_member<receiver, void()>
 {
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_noexcept = true);
+  static constexpr bool is_valid = true;
+  static constexpr bool is_noexcept = true;
   typedef void result_type;
 };
 
@@ -351,8 +339,8 @@ struct set_value_member<receiver, void()>
 template <typename E>
 struct set_error_member<receiver, E>
 {
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_noexcept = true);
+  static constexpr bool is_valid = true;
+  static constexpr bool is_noexcept = true;
   typedef void result_type;
 };
 
@@ -363,8 +351,8 @@ struct set_error_member<receiver, E>
 template <>
 struct set_done_member<receiver>
 {
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_noexcept = true);
+  static constexpr bool is_valid = true;
+  static constexpr bool is_noexcept = true;
   typedef void result_type;
 };
 

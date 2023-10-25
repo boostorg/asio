@@ -17,18 +17,13 @@
 #include <boost/asio/ip/udp.hpp>
 
 #include <cstring>
+#include <functional>
 #include <boost/asio/io_context.hpp>
 #include "../unit_test.hpp"
 #include "../archetypes/async_result.hpp"
 #include "../archetypes/gettable_socket_option.hpp"
 #include "../archetypes/io_control_command.hpp"
 #include "../archetypes/settable_socket_option.hpp"
-
-#if defined(BOOST_ASIO_HAS_BOOST_BIND)
-# include <boost/bind/bind.hpp>
-#else // defined(BOOST_ASIO_HAS_BOOST_BIND)
-# include <functional>
-#endif // defined(BOOST_ASIO_HAS_BOOST_BIND)
 
 //------------------------------------------------------------------------------
 
@@ -43,44 +38,36 @@ struct connect_handler
 {
   connect_handler() {}
   void operator()(const boost::system::error_code&) {}
-#if defined(BOOST_ASIO_HAS_MOVE)
   connect_handler(connect_handler&&) {}
 private:
   connect_handler(const connect_handler&);
-#endif // defined(BOOST_ASIO_HAS_MOVE)
 };
 
 struct wait_handler
 {
   wait_handler() {}
   void operator()(const boost::system::error_code&) {}
-#if defined(BOOST_ASIO_HAS_MOVE)
   wait_handler(wait_handler&&) {}
 private:
   wait_handler(const wait_handler&);
-#endif // defined(BOOST_ASIO_HAS_MOVE)
 };
 
 struct send_handler
 {
   send_handler() {}
   void operator()(const boost::system::error_code&, std::size_t) {}
-#if defined(BOOST_ASIO_HAS_MOVE)
   send_handler(send_handler&&) {}
 private:
   send_handler(const send_handler&);
-#endif // defined(BOOST_ASIO_HAS_MOVE)
 };
 
 struct receive_handler
 {
   receive_handler() {}
   void operator()(const boost::system::error_code&, std::size_t) {}
-#if defined(BOOST_ASIO_HAS_MOVE)
   receive_handler(receive_handler&&) {}
 private:
   receive_handler(const receive_handler&);
-#endif // defined(BOOST_ASIO_HAS_MOVE)
 };
 
 void test()
@@ -130,16 +117,12 @@ void test()
     ip::udp::socket socket12(ioc_ex, ip::udp::v4(), native_socket2);
 #endif // !defined(BOOST_ASIO_WINDOWS_RUNTIME)
 
-#if defined(BOOST_ASIO_HAS_MOVE)
     ip::udp::socket socket13(std::move(socket6));
-#endif // defined(BOOST_ASIO_HAS_MOVE)
 
     // basic_datagram_socket operators.
 
-#if defined(BOOST_ASIO_HAS_MOVE)
     socket1 = ip::udp::socket(ioc);
     socket1 = std::move(socket2);
-#endif // defined(BOOST_ASIO_HAS_MOVE)
 
     // basic_io_object functions.
 
@@ -522,11 +505,7 @@ void test()
   using namespace boost::asio;
   namespace ip = boost::asio::ip;
 
-#if defined(BOOST_ASIO_HAS_BOOST_BIND)
-  namespace bindns = boost;
-#else // defined(BOOST_ASIO_HAS_BOOST_BIND)
   namespace bindns = std;
-#endif // defined(BOOST_ASIO_HAS_BOOST_BIND)
   using bindns::placeholders::_1;
   using bindns::placeholders::_2;
 
@@ -579,11 +558,9 @@ struct resolve_handler
   resolve_handler() {}
   void operator()(const boost::system::error_code&,
       boost::asio::ip::udp::resolver::results_type) {}
-#if defined(BOOST_ASIO_HAS_MOVE)
   resolve_handler(resolve_handler&&) {}
 private:
   resolve_handler(const resolve_handler&);
-#endif // defined(BOOST_ASIO_HAS_MOVE)
 };
 
 void test()
@@ -607,16 +584,12 @@ void test()
     ip::udp::resolver resolver(ioc);
     ip::udp::resolver resolver2(ioc_ex);
 
-#if defined(BOOST_ASIO_HAS_MOVE)
     ip::udp::resolver resolver3(std::move(resolver));
-#endif // defined(BOOST_ASIO_HAS_MOVE)
 
     // basic_resolver operators.
 
-#if defined(BOOST_ASIO_HAS_MOVE)
     resolver = ip::udp::resolver(ioc);
     resolver = std::move(resolver3);
-#endif // defined(BOOST_ASIO_HAS_MOVE)
 
     // basic_io_object functions.
 

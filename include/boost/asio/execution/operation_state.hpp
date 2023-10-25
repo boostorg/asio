@@ -58,12 +58,12 @@ struct is_operation_state :
 #if defined(GENERATING_DOCUMENTATION)
   integral_constant<bool, automatically_determined>
 #else // defined(GENERATING_DOCUMENTATION)
-  conditional<
-    can_start<typename add_lvalue_reference<T>::type>::value
-      && is_nothrow_start<typename add_lvalue_reference<T>::type>::value,
+  conditional_t<
+    can_start<add_lvalue_reference_t<T>>::value
+      && is_nothrow_start<add_lvalue_reference_t<T>>::value,
     detail::is_operation_state_base<T>,
     false_type
-  >::type
+  >
 #endif // defined(GENERATING_DOCUMENTATION)
 {
 };
@@ -71,8 +71,7 @@ struct is_operation_state :
 #if defined(BOOST_ASIO_HAS_VARIABLE_TEMPLATES)
 
 template <typename T>
-BOOST_ASIO_CONSTEXPR const bool is_operation_state_v =
-  is_operation_state<T>::value;
+constexpr const bool is_operation_state_v = is_operation_state<T>::value;
 
 #endif // defined(BOOST_ASIO_HAS_VARIABLE_TEMPLATES)
 

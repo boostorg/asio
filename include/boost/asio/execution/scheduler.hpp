@@ -33,8 +33,8 @@ namespace detail {
 template <typename T>
 struct is_scheduler_base :
   integral_constant<bool,
-    is_copy_constructible<typename remove_cvref<T>::type>::value
-      && traits::equality_comparable<typename remove_cvref<T>::type>::is_valid
+    is_copy_constructible<remove_cvref_t<T>>::value
+      && traits::equality_comparable<remove_cvref_t<T>>::is_valid
   >
 {
 };
@@ -65,7 +65,7 @@ struct is_scheduler :
 #if defined(BOOST_ASIO_HAS_VARIABLE_TEMPLATES)
 
 template <typename T>
-BOOST_ASIO_CONSTEXPR const bool is_scheduler_v = is_scheduler<T>::value;
+constexpr const bool is_scheduler_v = is_scheduler<T>::value;
 
 #endif // defined(BOOST_ASIO_HAS_VARIABLE_TEMPLATES)
 

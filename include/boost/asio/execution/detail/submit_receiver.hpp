@@ -17,7 +17,6 @@
 
 #include <boost/asio/detail/config.hpp>
 #include <boost/asio/detail/type_traits.hpp>
-#include <boost/asio/detail/variadic_templates.hpp>
 #include <boost/asio/execution/connect.hpp>
 #include <boost/asio/execution/receiver.hpp>
 #include <boost/asio/execution/set_done.hpp>
@@ -47,67 +46,29 @@ struct submit_receiver_wrapper
   {
   }
 
-#if defined(BOOST_ASIO_HAS_VARIADIC_TEMPLATES)
-
   template <typename... Args>
-  typename enable_if<is_receiver_of<Receiver, Args...>::value>::type
-  set_value(BOOST_ASIO_MOVE_ARG(Args)... args) BOOST_ASIO_RVALUE_REF_QUAL
-    BOOST_ASIO_NOEXCEPT_IF((is_nothrow_receiver_of<Receiver, Args...>::value))
+  enable_if_t<is_receiver_of<Receiver, Args...>::value>
+  set_value(Args&&... args) &&
+    noexcept(is_nothrow_receiver_of<Receiver, Args...>::value)
   {
     execution::set_value(
-        BOOST_ASIO_MOVE_OR_LVALUE(
-          typename remove_cvref<Receiver>::type)(p_->r_),
-        BOOST_ASIO_MOVE_CAST(Args)(args)...);
+        static_cast<remove_cvref_t<Receiver>&&>(p_->r_),
+        static_cast<Args&&>(args)...);
     delete p_;
   }
-
-#else // defined(BOOST_ASIO_HAS_VARIADIC_TEMPLATES)
-
-  void set_value() BOOST_ASIO_RVALUE_REF_QUAL
-    BOOST_ASIO_NOEXCEPT_IF((is_nothrow_receiver_of<Receiver>::value))
-  {
-    execution::set_value(
-        BOOST_ASIO_MOVE_OR_LVALUE(
-          typename remove_cvref<Receiver>::type)(p_->r_));
-    delete p_;
-  }
-
-#define BOOST_ASIO_PRIVATE_SUBMIT_RECEIVER_SET_VALUE_DEF(n) \
-  template <BOOST_ASIO_VARIADIC_TPARAMS(n)> \
-  typename enable_if<is_receiver_of<Receiver, \
-    BOOST_ASIO_VARIADIC_TARGS(n)>::value>::type \
-  set_value(BOOST_ASIO_VARIADIC_MOVE_PARAMS(n)) BOOST_ASIO_RVALUE_REF_QUAL \
-    BOOST_ASIO_NOEXCEPT_IF((is_nothrow_receiver_of< \
-      Receiver, BOOST_ASIO_VARIADIC_TARGS(n)>::value)) \
-  { \
-    execution::set_value( \
-        BOOST_ASIO_MOVE_OR_LVALUE( \
-          typename remove_cvref<Receiver>::type)(p_->r_), \
-        BOOST_ASIO_VARIADIC_MOVE_ARGS(n)); \
-    delete p_; \
-  } \
-  /**/
-BOOST_ASIO_VARIADIC_GENERATE(BOOST_ASIO_PRIVATE_SUBMIT_RECEIVER_SET_VALUE_DEF)
-#undef BOOST_ASIO_PRIVATE_SUBMIT_RECEIVER_SET_VALUE_DEF
-
-#endif // defined(BOOST_ASIO_HAS_VARIADIC_TEMPLATES)
 
   template <typename E>
-  void set_error(BOOST_ASIO_MOVE_ARG(E) e)
-    BOOST_ASIO_RVALUE_REF_QUAL BOOST_ASIO_NOEXCEPT
+  void set_error(E&& e) && noexcept
   {
     execution::set_error(
-        BOOST_ASIO_MOVE_OR_LVALUE(
-          typename remove_cvref<Receiver>::type)(p_->r_),
-        BOOST_ASIO_MOVE_CAST(E)(e));
+        static_cast<remove_cvref_t<Receiver>&&>(p_->r_),
+        static_cast<E&&>(e));
     delete p_;
   }
 
-  void set_done() BOOST_ASIO_RVALUE_REF_QUAL BOOST_ASIO_NOEXCEPT
+  void set_done() && noexcept
   {
-    execution::set_done(
-        BOOST_ASIO_MOVE_OR_LVALUE(
-          typename remove_cvref<Receiver>::type)(p_->r_));
+    execution::set_done(static_cast<remove_cvref_t<Receiver>&&>(p_->r_));
     delete p_;
   }
 };
@@ -115,31 +76,16 @@ BOOST_ASIO_VARIADIC_GENERATE(BOOST_ASIO_PRIVATE_SUBMIT_RECEIVER_SET_VALUE_DEF)
 template <typename Sender, typename Receiver>
 struct submit_receiver
 {
-  typename remove_cvref<Receiver>::type r_;
-#if defined(BOOST_ASIO_HAS_MOVE)
-  typename connect_result<Sender,
-      submit_receiver_wrapper<Sender, Receiver> >::type state_;
-#else // defined(BOOST_ASIO_HAS_MOVE)
-  typename connect_result<Sender,
-      const submit_receiver_wrapper<Sender, Receiver>& >::type state_;
-#endif // defined(BOOST_ASIO_HAS_MOVE)
+  remove_cvref_t<Receiver> r_;
+  connect_result_t<Sender, submit_receiver_wrapper<Sender, Receiver>> state_;
 
-#if defined(BOOST_ASIO_HAS_MOVE)
   template <typename S, typename R>
-  explicit submit_receiver(BOOST_ASIO_MOVE_ARG(S) s, BOOST_ASIO_MOVE_ARG(R) r)
-    : r_(BOOST_ASIO_MOVE_CAST(R)(r)),
-      state_(execution::connect(BOOST_ASIO_MOVE_CAST(S)(s),
+  explicit submit_receiver(S&& s, R&& r)
+    : r_(static_cast<R&&>(r)),
+      state_(execution::connect(static_cast<S&&>(s),
             submit_receiver_wrapper<Sender, Receiver>(this)))
   {
   }
-#else // defined(BOOST_ASIO_HAS_MOVE)
-  explicit submit_receiver(Sender s, Receiver r)
-    : r_(r),
-      state_(execution::connect(s,
-            submit_receiver_wrapper<Sender, Receiver>(this)))
-  {
-  }
-#endif // defined(BOOST_ASIO_HAS_MOVE)
 };
 
 } // namespace detail
@@ -148,53 +94,17 @@ namespace traits {
 
 #if !defined(BOOST_ASIO_HAS_DEDUCED_SET_VALUE_MEMBER_TRAIT)
 
-#if defined(BOOST_ASIO_HAS_VARIADIC_TEMPLATES)
-
 template <typename Sender, typename Receiver, typename... Args>
 struct set_value_member<
     boost::asio::execution::detail::submit_receiver_wrapper<
       Sender, Receiver>,
     void(Args...)>
 {
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_noexcept =
-    (boost::asio::execution::is_nothrow_receiver_of<Receiver, Args...>::value));
+  static constexpr bool is_valid = true;
+  static constexpr bool is_noexcept =
+    boost::asio::execution::is_nothrow_receiver_of<Receiver, Args...>::value;
   typedef void result_type;
 };
-
-#else // defined(BOOST_ASIO_HAS_VARIADIC_TEMPLATES)
-
-template <typename Sender, typename Receiver>
-struct set_value_member<
-    boost::asio::execution::detail::submit_receiver_wrapper<
-      Sender, Receiver>,
-    void()>
-{
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_noexcept =
-    boost::asio::execution::is_nothrow_receiver_of<Receiver>::value);
-  typedef void result_type;
-};
-
-#define BOOST_ASIO_PRIVATE_SUBMIT_RECEIVER_TRAIT_DEF(n) \
-  template <typename Sender, typename Receiver, \
-      BOOST_ASIO_VARIADIC_TPARAMS(n)> \
-  struct set_value_member< \
-      boost::asio::execution::detail::submit_receiver_wrapper< \
-        Sender, Receiver>, \
-      void(BOOST_ASIO_VARIADIC_TARGS(n))> \
-  { \
-    BOOST_ASIO_STATIC_CONSTEXPR(bool, is_valid = true); \
-    BOOST_ASIO_STATIC_CONSTEXPR(bool, is_noexcept = \
-      (boost::asio::execution::is_nothrow_receiver_of<Receiver, \
-        BOOST_ASIO_VARIADIC_TARGS(n)>::value)); \
-    typedef void result_type; \
-  }; \
-  /**/
-BOOST_ASIO_VARIADIC_GENERATE(BOOST_ASIO_PRIVATE_SUBMIT_RECEIVER_TRAIT_DEF)
-#undef BOOST_ASIO_PRIVATE_SUBMIT_RECEIVER_TRAIT_DEF
-
-#endif // defined(BOOST_ASIO_HAS_VARIADIC_TEMPLATES)
 
 #endif // !defined(BOOST_ASIO_HAS_DEDUCED_SET_VALUE_MEMBER_TRAIT)
 
@@ -205,8 +115,8 @@ struct set_error_member<
     boost::asio::execution::detail::submit_receiver_wrapper<
       Sender, Receiver>, E>
 {
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_noexcept = true);
+  static constexpr bool is_valid = true;
+  static constexpr bool is_noexcept = true;
   typedef void result_type;
 };
 
@@ -217,10 +127,10 @@ struct set_error_member<
 template <typename Sender, typename Receiver>
 struct set_done_member<
     boost::asio::execution::detail::submit_receiver_wrapper<
-      Sender, Receiver> >
+      Sender, Receiver>>
 {
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_noexcept = true);
+  static constexpr bool is_valid = true;
+  static constexpr bool is_noexcept = true;
   typedef void result_type;
 };
 

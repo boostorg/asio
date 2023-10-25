@@ -18,13 +18,9 @@
 #include <boost/asio/detail/config.hpp>
 #include <boost/asio/detail/type_traits.hpp>
 
-#if defined(BOOST_ASIO_HAS_DECLTYPE) \
-  && defined(BOOST_ASIO_HAS_NOEXCEPT) \
-  && defined(BOOST_ASIO_HAS_WORKING_EXPRESSION_SFINAE)
+#if defined(BOOST_ASIO_HAS_WORKING_EXPRESSION_SFINAE)
 # define BOOST_ASIO_HAS_DEDUCED_SCHEDULE_MEMBER_TRAIT 1
-#endif // defined(BOOST_ASIO_HAS_DECLTYPE)
-       //   && defined(BOOST_ASIO_HAS_NOEXCEPT)
-       //   && defined(BOOST_ASIO_HAS_WORKING_EXPRESSION_SFINAE)
+#endif // defined(BOOST_ASIO_HAS_WORKING_EXPRESSION_SFINAE)
 
 #include <boost/asio/detail/push_options.hpp>
 
@@ -43,8 +39,8 @@ namespace detail {
 
 struct no_schedule_member
 {
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_valid = false);
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_noexcept = false);
+  static constexpr bool is_valid = false;
+  static constexpr bool is_noexcept = false;
 };
 
 #if defined(BOOST_ASIO_HAS_DEDUCED_SCHEDULE_MEMBER_TRAIT)
@@ -56,31 +52,30 @@ struct schedule_member_trait : no_schedule_member
 
 template <typename T>
 struct schedule_member_trait<T,
-  typename void_type<
+  void_t<
     decltype(declval<T>().schedule())
-  >::type>
+  >>
 {
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
+  static constexpr bool is_valid = true;
 
   using result_type = decltype(declval<T>().schedule());
 
-  BOOST_ASIO_STATIC_CONSTEXPR(bool,
-    is_noexcept = noexcept(declval<T>().schedule()));
+  static constexpr bool is_noexcept = noexcept(declval<T>().schedule());
 };
 
 #else // defined(BOOST_ASIO_HAS_DEDUCED_SCHEDULE_MEMBER_TRAIT)
 
 template <typename T, typename = void>
 struct schedule_member_trait :
-  conditional<
-    is_same<T, typename remove_reference<T>::type>::value,
-    typename conditional<
-      is_same<T, typename add_const<T>::type>::value,
+  conditional_t<
+    is_same<T, remove_reference_t<T>>::value,
+    conditional_t<
+      is_same<T, add_const_t<T>>::value,
       no_schedule_member,
-      traits::schedule_member<typename add_const<T>::type>
-    >::type,
-    traits::schedule_member<typename remove_reference<T>::type>
-  >::type
+      traits::schedule_member<add_const_t<T>>
+    >,
+    traits::schedule_member<remove_reference_t<T>>
+  >
 {
 };
 

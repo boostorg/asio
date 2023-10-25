@@ -16,23 +16,13 @@
 // Test that header file is self-contained.
 #include <boost/asio/connect.hpp>
 
+#include <functional>
 #include <vector>
 #include <boost/asio/detail/thread.hpp>
 #include <boost/asio/ip/tcp.hpp>
-
-#if defined(BOOST_ASIO_HAS_BOOST_BIND)
-# include <boost/bind/bind.hpp>
-#else // defined(BOOST_ASIO_HAS_BOOST_BIND)
-# include <functional>
-#endif // defined(BOOST_ASIO_HAS_BOOST_BIND)
-
 #include "unit_test.hpp"
 
-#if defined(BOOST_ASIO_HAS_BOOST_BIND)
-namespace bindns = boost;
-#else // defined(BOOST_ASIO_HAS_BOOST_BIND)
 namespace bindns = std;
-#endif // defined(BOOST_ASIO_HAS_BOOST_BIND)
 using bindns::placeholders::_1;
 using bindns::placeholders::_2;
 

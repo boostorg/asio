@@ -36,16 +36,16 @@ namespace detail {
 template <typename Receiver, typename Function, typename Number, typename Index>
 struct bulk_receiver
 {
-  typename remove_cvref<Receiver>::type receiver_;
-  typename decay<Function>::type f_;
-  typename decay<Number>::type n_;
+  remove_cvref_t<Receiver> receiver_;
+  decay_t<Function> f_;
+  decay_t<Number> n_;
 
   template <typename R, typename F, typename N>
-  explicit bulk_receiver(BOOST_ASIO_MOVE_ARG(R) r,
-      BOOST_ASIO_MOVE_ARG(F) f, BOOST_ASIO_MOVE_ARG(N) n)
-    : receiver_(BOOST_ASIO_MOVE_CAST(R)(r)),
-      f_(BOOST_ASIO_MOVE_CAST(F)(f)),
-      n_(BOOST_ASIO_MOVE_CAST(N)(n))
+  explicit bulk_receiver(R&& r,
+      F&& f, N&& n)
+    : receiver_(static_cast<R&&>(r)),
+      f_(static_cast<F&&>(f)),
+      n_(static_cast<N&&>(n))
   {
   }
 
@@ -54,25 +54,19 @@ struct bulk_receiver
     for (Index i = 0; i < n_; ++i)
       f_(i);
 
-    execution::set_value(
-        BOOST_ASIO_MOVE_OR_LVALUE(
-          typename remove_cvref<Receiver>::type)(receiver_));
+    execution::set_value(static_cast<remove_cvref_t<Receiver>&&>(receiver_));
   }
 
   template <typename Error>
-  void set_error(BOOST_ASIO_MOVE_ARG(Error) e) BOOST_ASIO_NOEXCEPT
+  void set_error(Error&& e) noexcept
   {
-    execution::set_error(
-        BOOST_ASIO_MOVE_OR_LVALUE(
-          typename remove_cvref<Receiver>::type)(receiver_),
-        BOOST_ASIO_MOVE_CAST(Error)(e));
+    execution::set_error(static_cast<remove_cvref_t<Receiver>&&>(receiver_),
+        static_cast<Error&&>(e));
   }
 
-  void set_done() BOOST_ASIO_NOEXCEPT
+  void set_done() noexcept
   {
-    execution::set_done(
-        BOOST_ASIO_MOVE_OR_LVALUE(
-          typename remove_cvref<Receiver>::type)(receiver_));
+    execution::set_done(static_cast<remove_cvref_t<Receiver>&&>(receiver_));
   }
 };
 
@@ -83,76 +77,72 @@ struct bulk_receiver_traits
   typedef bulk_receiver<
       Receiver, Function, Number,
       typename execution::executor_index<
-        typename remove_cvref<Sender>::type
+        remove_cvref_t<Sender>
       >::type
     > type;
 
-#if defined(BOOST_ASIO_HAS_MOVE)
   typedef type arg_type;
-#else // defined(BOOST_ASIO_HAS_MOVE)
-  typedef const type& arg_type;
-#endif // defined(BOOST_ASIO_HAS_MOVE)
 };
 
 template <typename Sender, typename Function, typename Number>
 struct bulk_sender : sender_base
 {
-  typename remove_cvref<Sender>::type sender_;
-  typename decay<Function>::type f_;
-  typename decay<Number>::type n_;
+  remove_cvref_t<Sender> sender_;
+  decay_t<Function> f_;
+  decay_t<Number> n_;
 
   template <typename S, typename F, typename N>
-  explicit bulk_sender(BOOST_ASIO_MOVE_ARG(S) s,
-      BOOST_ASIO_MOVE_ARG(F) f, BOOST_ASIO_MOVE_ARG(N) n)
-    : sender_(BOOST_ASIO_MOVE_CAST(S)(s)),
-      f_(BOOST_ASIO_MOVE_CAST(F)(f)),
-      n_(BOOST_ASIO_MOVE_CAST(N)(n))
+  explicit bulk_sender(S&& s,
+      F&& f, N&& n)
+    : sender_(static_cast<S&&>(s)),
+      f_(static_cast<F&&>(f)),
+      n_(static_cast<N&&>(n))
   {
   }
 
   template <typename Receiver>
-  typename connect_result<
-      BOOST_ASIO_MOVE_OR_LVALUE_TYPE(typename remove_cvref<Sender>::type),
+  connect_result_t<
+      remove_cvref_t<Sender>,
       typename bulk_receiver_traits<
         Sender, Receiver, Function, Number
       >::arg_type
-  >::type connect(BOOST_ASIO_MOVE_ARG(Receiver) r,
-      typename enable_if<
+  > connect(Receiver&& r,
+      enable_if_t<
         can_connect<
-          typename remove_cvref<Sender>::type,
+          remove_cvref_t<Sender>&&,
           typename bulk_receiver_traits<
             Sender, Receiver, Function, Number
           >::arg_type
         >::value
-      >::type* = 0) BOOST_ASIO_RVALUE_REF_QUAL BOOST_ASIO_NOEXCEPT
+      >* = 0) && noexcept
   {
     return execution::connect(
-        BOOST_ASIO_MOVE_OR_LVALUE(typename remove_cvref<Sender>::type)(sender_),
+        static_cast<remove_cvref_t<Sender>&&>(sender_),
         typename bulk_receiver_traits<Sender, Receiver, Function, Number>::type(
-          BOOST_ASIO_MOVE_CAST(Receiver)(r),
-          BOOST_ASIO_MOVE_CAST(typename decay<Function>::type)(f_),
-          BOOST_ASIO_MOVE_CAST(typename decay<Number>::type)(n_)));
+          static_cast<Receiver&&>(r),
+          static_cast<decay_t<Function>&&>(f_),
+          static_cast<decay_t<Number>&&>(n_)));
   }
 
   template <typename Receiver>
-  typename connect_result<
-      const typename remove_cvref<Sender>::type&,
+  connect_result_t<
+      const remove_cvref_t<Sender>&,
       typename bulk_receiver_traits<
         Sender, Receiver, Function, Number
       >::arg_type
-  >::type connect(BOOST_ASIO_MOVE_ARG(Receiver) r,
-      typename enable_if<
+  > connect(Receiver&& r,
+      enable_if_t<
         can_connect<
-          const typename remove_cvref<Sender>::type&,
+          const remove_cvref_t<Sender>&,
           typename bulk_receiver_traits<
             Sender, Receiver, Function, Number
           >::arg_type
         >::value
-      >::type* = 0) const BOOST_ASIO_LVALUE_REF_QUAL BOOST_ASIO_NOEXCEPT
+      >* = 0) const & noexcept
   {
     return execution::connect(sender_,
         typename bulk_receiver_traits<Sender, Receiver, Function, Number>::type(
-          BOOST_ASIO_MOVE_CAST(Receiver)(r), f_, n_));
+          static_cast<Receiver&&>(r), f_, n_));
   }
 };
 
@@ -167,8 +157,8 @@ struct set_value_member<
     execution::detail::bulk_receiver<Receiver, Function, Number, Index>,
     void()>
 {
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_noexcept = false);
+  static constexpr bool is_valid = true;
+  static constexpr bool is_noexcept = false;
   typedef void result_type;
 };
 
@@ -182,8 +172,8 @@ struct set_error_member<
     execution::detail::bulk_receiver<Receiver, Function, Number, Index>,
     Error>
 {
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_noexcept = true);
+  static constexpr bool is_valid = true;
+  static constexpr bool is_noexcept = true;
   typedef void result_type;
 };
 
@@ -193,10 +183,10 @@ struct set_error_member<
 
 template <typename Receiver, typename Function, typename Number, typename Index>
 struct set_done_member<
-    execution::detail::bulk_receiver<Receiver, Function, Number, Index> >
+    execution::detail::bulk_receiver<Receiver, Function, Number, Index>>
 {
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_noexcept = true);
+  static constexpr bool is_valid = true;
+  static constexpr bool is_noexcept = true;
   typedef void result_type;
 };
 
@@ -209,23 +199,23 @@ template <typename Sender, typename Function,
 struct connect_member<
     execution::detail::bulk_sender<Sender, Function, Number>,
     Receiver,
-    typename enable_if<
+    enable_if_t<
       execution::can_connect<
-        BOOST_ASIO_MOVE_OR_LVALUE_TYPE(typename remove_cvref<Sender>::type),
+        remove_cvref_t<Sender>,
         typename execution::detail::bulk_receiver_traits<
           Sender, Receiver, Function, Number
         >::arg_type
       >::value
-    >::type>
+    >>
 {
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_noexcept = false);
-  typedef typename execution::connect_result<
-      BOOST_ASIO_MOVE_OR_LVALUE_TYPE(typename remove_cvref<Sender>::type),
+  static constexpr bool is_valid = true;
+  static constexpr bool is_noexcept = false;
+  typedef execution::connect_result_t<
+      remove_cvref_t<Sender>,
       typename execution::detail::bulk_receiver_traits<
         Sender, Receiver, Function, Number
       >::arg_type
-    >::type result_type;
+    > result_type;
 };
 
 template <typename Sender, typename Function,
@@ -233,23 +223,23 @@ template <typename Sender, typename Function,
 struct connect_member<
     const execution::detail::bulk_sender<Sender, Function, Number>,
     Receiver,
-    typename enable_if<
+    enable_if_t<
       execution::can_connect<
-        const typename remove_cvref<Sender>::type&,
+        const remove_cvref_t<Sender>&,
         typename execution::detail::bulk_receiver_traits<
           Sender, Receiver, Function, Number
         >::arg_type
       >::value
-    >::type>
+    >>
 {
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_noexcept = false);
-  typedef typename execution::connect_result<
-      const typename remove_cvref<Sender>::type&,
+  static constexpr bool is_valid = true;
+  static constexpr bool is_noexcept = false;
+  typedef execution::connect_result_t<
+      const remove_cvref_t<Sender>&,
       typename execution::detail::bulk_receiver_traits<
         Sender, Receiver, Function, Number
       >::arg_type
-    >::type result_type;
+    > result_type;
 };
 
 #endif // !defined(BOOST_ASIO_HAS_DEDUCED_CONNECT_MEMBER_TRAIT)

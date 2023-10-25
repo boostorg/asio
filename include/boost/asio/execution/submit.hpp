@@ -115,7 +115,7 @@ struct can_submit :
 namespace boost_asio_execution_submit_fn {
 
 using boost::asio::declval;
-using boost::asio::enable_if;
+using boost::asio::enable_if_t;
 using boost::asio::execution::is_sender_to;
 using boost::asio::traits::submit_free;
 using boost::asio::traits::submit_member;
@@ -134,250 +134,93 @@ template <typename S, typename R, typename = void,
     typename = void, typename = void>
 struct call_traits
 {
-  BOOST_ASIO_STATIC_CONSTEXPR(overload_type, overload = ill_formed);
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_noexcept = false);
+  static constexpr overload_type overload = ill_formed;
+  static constexpr bool is_noexcept = false;
   typedef void result_type;
 };
 
 template <typename S, typename R>
 struct call_traits<S, void(R),
-  typename enable_if<
+  enable_if_t<
     submit_member<S, R>::is_valid
-  >::type,
-  typename enable_if<
+  >,
+  enable_if_t<
     is_sender_to<S, R>::value
-  >::type> :
+  >> :
   submit_member<S, R>
 {
-  BOOST_ASIO_STATIC_CONSTEXPR(overload_type, overload = call_member);
+  static constexpr overload_type overload = call_member;
 };
 
 template <typename S, typename R>
 struct call_traits<S, void(R),
-  typename enable_if<
+  enable_if_t<
     !submit_member<S, R>::is_valid
-  >::type,
-  typename enable_if<
+  >,
+  enable_if_t<
     submit_free<S, R>::is_valid
-  >::type,
-  typename enable_if<
+  >,
+  enable_if_t<
     is_sender_to<S, R>::value
-  >::type> :
+  >> :
   submit_free<S, R>
 {
-  BOOST_ASIO_STATIC_CONSTEXPR(overload_type, overload = call_free);
+  static constexpr overload_type overload = call_free;
 };
 
 template <typename S, typename R>
 struct call_traits<S, void(R),
-  typename enable_if<
+  enable_if_t<
     !submit_member<S, R>::is_valid
-  >::type,
-  typename enable_if<
+  >,
+  enable_if_t<
     !submit_free<S, R>::is_valid
-  >::type,
-  typename enable_if<
+  >,
+  enable_if_t<
     is_sender_to<S, R>::value
-  >::type>
+  >>
 {
-  BOOST_ASIO_STATIC_CONSTEXPR(overload_type, overload = adapter);
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_noexcept = false);
+  static constexpr overload_type overload = adapter;
+  static constexpr bool is_noexcept = false;
   typedef void result_type;
 };
 
 struct impl
 {
-#if defined(BOOST_ASIO_HAS_MOVE)
   template <typename S, typename R>
-  BOOST_ASIO_CONSTEXPR typename enable_if<
+  constexpr enable_if_t<
     call_traits<S, void(R)>::overload == call_member,
     typename call_traits<S, void(R)>::result_type
-  >::type
+  >
   operator()(S&& s, R&& r) const
-    BOOST_ASIO_NOEXCEPT_IF((
-      call_traits<S, void(R)>::is_noexcept))
+    noexcept(call_traits<S, void(R)>::is_noexcept)
   {
-    return BOOST_ASIO_MOVE_CAST(S)(s).submit(BOOST_ASIO_MOVE_CAST(R)(r));
+    return static_cast<S&&>(s).submit(static_cast<R&&>(r));
   }
 
   template <typename S, typename R>
-  BOOST_ASIO_CONSTEXPR typename enable_if<
+  constexpr enable_if_t<
     call_traits<S, void(R)>::overload == call_free,
     typename call_traits<S, void(R)>::result_type
-  >::type
+  >
   operator()(S&& s, R&& r) const
-    BOOST_ASIO_NOEXCEPT_IF((
-      call_traits<S, void(R)>::is_noexcept))
+    noexcept(call_traits<S, void(R)>::is_noexcept)
   {
-    return submit(BOOST_ASIO_MOVE_CAST(S)(s), BOOST_ASIO_MOVE_CAST(R)(r));
+    return submit(static_cast<S&&>(s), static_cast<R&&>(r));
   }
 
   template <typename S, typename R>
-  BOOST_ASIO_CONSTEXPR typename enable_if<
+  constexpr enable_if_t<
     call_traits<S, void(R)>::overload == adapter,
     typename call_traits<S, void(R)>::result_type
-  >::type
+  >
   operator()(S&& s, R&& r) const
-    BOOST_ASIO_NOEXCEPT_IF((
-      call_traits<S, void(R)>::is_noexcept))
+    noexcept(call_traits<S, void(R)>::is_noexcept)
   {
     return boost::asio::execution::start(
         (new boost::asio::execution::detail::submit_receiver<S, R>(
-          BOOST_ASIO_MOVE_CAST(S)(s), BOOST_ASIO_MOVE_CAST(R)(r)))->state_);
+          static_cast<S&&>(s), static_cast<R&&>(r)))->state_);
   }
-#else // defined(BOOST_ASIO_HAS_MOVE)
-  template <typename S, typename R>
-  BOOST_ASIO_CONSTEXPR typename enable_if<
-    call_traits<S&, void(R&)>::overload == call_member,
-    typename call_traits<S&, void(R&)>::result_type
-  >::type
-  operator()(S& s, R& r) const
-    BOOST_ASIO_NOEXCEPT_IF((
-      call_traits<S&, void(R&)>::is_noexcept))
-  {
-    return s.submit(r);
-  }
-
-  template <typename S, typename R>
-  BOOST_ASIO_CONSTEXPR typename enable_if<
-    call_traits<const S&, void(R&)>::overload == call_member,
-    typename call_traits<const S&, void(R&)>::result_type
-  >::type
-  operator()(const S& s, R& r) const
-    BOOST_ASIO_NOEXCEPT_IF((
-      call_traits<const S&, void(R&)>::is_noexcept))
-  {
-    return s.submit(r);
-  }
-
-  template <typename S, typename R>
-  BOOST_ASIO_CONSTEXPR typename enable_if<
-    call_traits<S&, void(R&)>::overload == call_free,
-    typename call_traits<S&, void(R&)>::result_type
-  >::type
-  operator()(S& s, R& r) const
-    BOOST_ASIO_NOEXCEPT_IF((
-      call_traits<S&, void(R&)>::is_noexcept))
-  {
-    return submit(s, r);
-  }
-
-  template <typename S, typename R>
-  BOOST_ASIO_CONSTEXPR typename enable_if<
-    call_traits<const S&, void(R&)>::overload == call_free,
-    typename call_traits<const S&, void(R&)>::result_type
-  >::type
-  operator()(const S& s, R& r) const
-    BOOST_ASIO_NOEXCEPT_IF((
-      call_traits<const S&, void(R&)>::is_noexcept))
-  {
-    return submit(s, r);
-  }
-
-  template <typename S, typename R>
-  BOOST_ASIO_CONSTEXPR typename enable_if<
-    call_traits<S&, void(R&)>::overload == adapter,
-    typename call_traits<S&, void(R&)>::result_type
-  >::type
-  operator()(S& s, R& r) const
-    BOOST_ASIO_NOEXCEPT_IF((
-      call_traits<S&, void(R&)>::is_noexcept))
-  {
-    return boost::asio::execution::start(
-        (new boost::asio::execution::detail::submit_receiver<
-          S&, R&>(s, r))->state_);
-  }
-
-  template <typename S, typename R>
-  BOOST_ASIO_CONSTEXPR typename enable_if<
-    call_traits<const S&, void(R&)>::overload == adapter,
-    typename call_traits<const S&, void(R&)>::result_type
-  >::type
-  operator()(const S& s, R& r) const
-    BOOST_ASIO_NOEXCEPT_IF((
-      call_traits<const S&, void(R&)>::is_noexcept))
-  {
-    boost::asio::execution::start(
-        (new boost::asio::execution::detail::submit_receiver<
-          const S&, R&>(s, r))->state_);
-  }
-
-  template <typename S, typename R>
-  BOOST_ASIO_CONSTEXPR typename enable_if<
-    call_traits<S&, void(const R&)>::overload == call_member,
-    typename call_traits<S&, void(const R&)>::result_type
-  >::type
-  operator()(S& s, const R& r) const
-    BOOST_ASIO_NOEXCEPT_IF((
-      call_traits<S&, void(const R&)>::is_noexcept))
-  {
-    return s.submit(r);
-  }
-
-  template <typename S, typename R>
-  BOOST_ASIO_CONSTEXPR typename enable_if<
-    call_traits<const S&, void(const R&)>::overload == call_member,
-    typename call_traits<const S&, void(const R&)>::result_type
-  >::type
-  operator()(const S& s, const R& r) const
-    BOOST_ASIO_NOEXCEPT_IF((
-      call_traits<const S&, void(const R&)>::is_noexcept))
-  {
-    return s.submit(r);
-  }
-
-  template <typename S, typename R>
-  BOOST_ASIO_CONSTEXPR typename enable_if<
-    call_traits<S&, void(const R&)>::overload == call_free,
-    typename call_traits<S&, void(const R&)>::result_type
-  >::type
-  operator()(S& s, const R& r) const
-    BOOST_ASIO_NOEXCEPT_IF((
-      call_traits<S&, void(const R&)>::is_noexcept))
-  {
-    return submit(s, r);
-  }
-
-  template <typename S, typename R>
-  BOOST_ASIO_CONSTEXPR typename enable_if<
-    call_traits<const S&, void(const R&)>::overload == call_free,
-    typename call_traits<const S&, void(const R&)>::result_type
-  >::type
-  operator()(const S& s, const R& r) const
-    BOOST_ASIO_NOEXCEPT_IF((
-      call_traits<const S&, void(const R&)>::is_noexcept))
-  {
-    return submit(s, r);
-  }
-
-  template <typename S, typename R>
-  BOOST_ASIO_CONSTEXPR typename enable_if<
-    call_traits<S&, void(const R&)>::overload == adapter,
-    typename call_traits<S&, void(const R&)>::result_type
-  >::type
-  operator()(S& s, const R& r) const
-    BOOST_ASIO_NOEXCEPT_IF((
-      call_traits<S&, void(const R&)>::is_noexcept))
-  {
-    boost::asio::execution::start(
-        (new boost::asio::execution::detail::submit_receiver<
-          S&, const R&>(s, r))->state_);
-  }
-
-  template <typename S, typename R>
-  BOOST_ASIO_CONSTEXPR typename enable_if<
-    call_traits<const S&, void(const R&)>::overload == adapter,
-    typename call_traits<const S&, void(const R&)>::result_type
-  >::type
-  operator()(const S& s, const R& r) const
-    BOOST_ASIO_NOEXCEPT_IF((
-      call_traits<const S&, void(const R&)>::is_noexcept))
-  {
-    boost::asio::execution::start(
-        (new boost::asio::execution::detail::submit_receiver<
-          const S&, const R&>(s, r))->state_);
-  }
-#endif // defined(BOOST_ASIO_HAS_MOVE)
 };
 
 template <typename T = impl>
@@ -395,7 +238,7 @@ namespace asio {
 namespace execution {
 namespace {
 
-static BOOST_ASIO_CONSTEXPR const boost_asio_execution_submit_fn::impl&
+static constexpr const boost_asio_execution_submit_fn::impl&
   submit = boost_asio_execution_submit_fn::static_instance<>::instance;
 
 } // namespace
@@ -440,9 +283,9 @@ struct submit_result
 namespace detail {
 
 template <typename S, typename R>
-void submit_helper(BOOST_ASIO_MOVE_ARG(S) s, BOOST_ASIO_MOVE_ARG(R) r)
+void submit_helper(S&& s, R&& r)
 {
-  execution::submit(BOOST_ASIO_MOVE_CAST(S)(s), BOOST_ASIO_MOVE_CAST(R)(r));
+  execution::submit(static_cast<S&&>(s), static_cast<R&&>(r));
 }
 
 } // namespace detail

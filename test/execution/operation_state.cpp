@@ -42,8 +42,8 @@ namespace traits {
 template <>
 struct start_member<not_an_operation_state_2>
 {
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_noexcept = false);
+  static constexpr bool is_valid = true;
+  static constexpr bool is_noexcept = false;
   typedef void result_type;
 };
 
@@ -55,7 +55,7 @@ struct start_member<not_an_operation_state_2>
 
 struct operation_state
 {
-  void start() BOOST_ASIO_NOEXCEPT
+  void start() noexcept
   {
   }
 };
@@ -69,8 +69,8 @@ namespace traits {
 template <>
 struct start_member<operation_state>
 {
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_noexcept = true);
+  static constexpr bool is_valid = true;
+  static constexpr bool is_noexcept = true;
   typedef void result_type;
 };
 

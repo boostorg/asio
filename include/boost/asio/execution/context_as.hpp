@@ -71,75 +71,68 @@ struct context_as_t
 #if defined(BOOST_ASIO_HAS_VARIABLE_TEMPLATES)
 # if defined(BOOST_ASIO_NO_DEPRECATED)
   template <typename U>
-  BOOST_ASIO_STATIC_CONSTEXPR(bool,
-    is_applicable_property_v = (
-      is_executor<U>::value));
+  static constexpr bool is_applicable_property_v = is_executor<U>::value;
 # else // defined(BOOST_ASIO_NO_DEPRECATED)
   template <typename U>
-  BOOST_ASIO_STATIC_CONSTEXPR(bool,
-    is_applicable_property_v = (
+  static constexpr bool is_applicable_property_v =
       is_executor<U>::value
-        || conditional<
+        || conditional_t<
             is_executor<U>::value,
             false_type,
             is_sender<U>
-          >::type::value
-        || conditional<
+          >::value
+        || conditional_t<
             is_executor<U>::value,
             false_type,
             is_scheduler<U>
-          >::type::value
-      ));
+          >::value;
 # endif // defined(BOOST_ASIO_NO_DEPRECATED)
 #endif // defined(BOOST_ASIO_HAS_VARIABLE_TEMPLATES)
 
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_requirable = false);
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_preferable = false);
+  static constexpr bool is_requirable = false;
+  static constexpr bool is_preferable = false;
 
   typedef T polymorphic_query_result_type;
 
-  BOOST_ASIO_CONSTEXPR context_as_t()
+  constexpr context_as_t()
   {
   }
 
-  BOOST_ASIO_CONSTEXPR context_as_t(context_t)
+  constexpr context_as_t(context_t)
   {
   }
 
 #if defined(BOOST_ASIO_HAS_DEDUCED_STATIC_QUERY_TRAIT) \
   && defined(BOOST_ASIO_HAS_SFINAE_VARIABLE_TEMPLATES)
   template <typename E>
-  static BOOST_ASIO_CONSTEXPR
+  static constexpr
   typename context_t::query_static_constexpr_member<E>::result_type
   static_query()
-    BOOST_ASIO_NOEXCEPT_IF((
-      context_t::query_static_constexpr_member<E>::is_noexcept))
+    noexcept(context_t::query_static_constexpr_member<E>::is_noexcept)
   {
     return context_t::query_static_constexpr_member<E>::value();
   }
 
   template <typename E, typename U = decltype(context_as_t::static_query<E>())>
-  static BOOST_ASIO_CONSTEXPR const U static_query_v
+  static constexpr const U static_query_v
     = context_as_t::static_query<E>();
 #endif // defined(BOOST_ASIO_HAS_DEDUCED_STATIC_QUERY_TRAIT)
        //   && defined(BOOST_ASIO_HAS_SFINAE_VARIABLE_TEMPLATES)
 
   template <typename Executor, typename U>
-  friend BOOST_ASIO_CONSTEXPR U query(
+  friend constexpr U query(
       const Executor& ex, const context_as_t<U>&,
-      typename enable_if<
+      enable_if_t<
         is_same<T, U>::value
-      >::type* = 0,
-      typename enable_if<
+      >* = 0,
+      enable_if_t<
         can_query<const Executor&, const context_t&>::value
-      >::type* = 0)
+      >* = 0)
 #if !defined(__clang__) // Clang crashes if noexcept is used here.
 #if defined(BOOST_ASIO_MSVC) // Visual C++ wants the type to be qualified.
-    BOOST_ASIO_NOEXCEPT_IF((
-      is_nothrow_query<const Executor&, const context_t&>::value))
+    noexcept(is_nothrow_query<const Executor&, const context_t&>::value)
 #else // defined(BOOST_ASIO_MSVC)
-    BOOST_ASIO_NOEXCEPT_IF((
-      is_nothrow_query<const Executor&, const context_t&>::value))
+    noexcept(is_nothrow_query<const Executor&, const context_t&>::value)
 #endif // defined(BOOST_ASIO_MSVC)
 #endif // !defined(__clang__)
   {
@@ -154,13 +147,11 @@ const U context_as_t<T>::static_query_v;
 #endif // defined(BOOST_ASIO_HAS_DEDUCED_STATIC_QUERY_TRAIT)
        //   && defined(BOOST_ASIO_HAS_SFINAE_VARIABLE_TEMPLATES)
 
-#if (defined(BOOST_ASIO_HAS_VARIABLE_TEMPLATES) \
-    && defined(BOOST_ASIO_HAS_CONSTEXPR)) \
+#if defined(BOOST_ASIO_HAS_VARIABLE_TEMPLATES) \
   || defined(GENERATING_DOCUMENTATION)
 template <typename T>
 constexpr context_as_t<T> context_as{};
-#endif // (defined(BOOST_ASIO_HAS_VARIABLE_TEMPLATES)
-       //     && defined(BOOST_ASIO_HAS_CONSTEXPR))
+#endif // defined(BOOST_ASIO_HAS_VARIABLE_TEMPLATES)
        //   || defined(GENERATING_DOCUMENTATION)
 
 } // namespace execution
@@ -168,20 +159,20 @@ constexpr context_as_t<T> context_as{};
 #if !defined(BOOST_ASIO_HAS_VARIABLE_TEMPLATES)
 
 template <typename T, typename U>
-struct is_applicable_property<T, execution::context_as_t<U> >
+struct is_applicable_property<T, execution::context_as_t<U>>
   : integral_constant<bool,
       execution::is_executor<T>::value
 #if !defined(BOOST_ASIO_NO_DEPRECATED)
-        || conditional<
+        || conditional_t<
             execution::is_executor<T>::value,
             false_type,
             execution::is_sender<T>
-          >::type::value
-        || conditional<
+          >::value
+        || conditional_t<
             execution::is_executor<T>::value,
             false_type,
             execution::is_scheduler<T>
-          >::type::value
+          >::value
 #endif // !defined(BOOST_ASIO_NO_DEPRECATED)
     >
 {
@@ -196,9 +187,9 @@ namespace traits {
 
 template <typename T, typename U>
 struct static_query<T, execution::context_as_t<U>,
-  typename enable_if<
+  enable_if_t<
     static_query<T, execution::context_t>::is_valid
-  >::type> : static_query<T, execution::context_t>
+  >> : static_query<T, execution::context_t>
 {
 };
 
@@ -209,13 +200,13 @@ struct static_query<T, execution::context_as_t<U>,
 
 template <typename T, typename U>
 struct query_free<T, execution::context_as_t<U>,
-    typename enable_if<
-      can_query<const T&, const execution::context_t&>::value
-    >::type>
+  enable_if_t<
+    can_query<const T&, const execution::context_t&>::value
+  >>
 {
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_noexcept =
-    (is_nothrow_query<const T&, const execution::context_t&>::value));
+  static constexpr bool is_valid = true;
+  static constexpr bool is_noexcept =
+    is_nothrow_query<const T&, const execution::context_t&>::value;
 
   typedef U result_type;
 };

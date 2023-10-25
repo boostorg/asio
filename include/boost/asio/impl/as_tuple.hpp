@@ -16,16 +16,13 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include <boost/asio/detail/config.hpp>
-
 #include <tuple>
-
 #include <boost/asio/associator.hpp>
 #include <boost/asio/async_result.hpp>
 #include <boost/asio/detail/handler_alloc_helpers.hpp>
 #include <boost/asio/detail/handler_cont_helpers.hpp>
 #include <boost/asio/detail/handler_invoke_helpers.hpp>
 #include <boost/asio/detail/type_traits.hpp>
-#include <boost/asio/detail/variadic_templates.hpp>
 
 #include <boost/asio/detail/push_options.hpp>
 
@@ -42,21 +39,21 @@ public:
 
   template <typename CompletionToken>
   as_tuple_handler(as_tuple_t<CompletionToken> e)
-    : handler_(BOOST_ASIO_MOVE_CAST(CompletionToken)(e.token_))
+    : handler_(static_cast<CompletionToken&&>(e.token_))
   {
   }
 
   template <typename RedirectedHandler>
-  as_tuple_handler(BOOST_ASIO_MOVE_ARG(RedirectedHandler) h)
-    : handler_(BOOST_ASIO_MOVE_CAST(RedirectedHandler)(h))
+  as_tuple_handler(RedirectedHandler&& h)
+    : handler_(static_cast<RedirectedHandler&&>(h))
   {
   }
 
   template <typename... Args>
-  void operator()(BOOST_ASIO_MOVE_ARG(Args)... args)
+  void operator()(Args&&... args)
   {
-    BOOST_ASIO_MOVE_OR_LVALUE(Handler)(handler_)(
-        std::make_tuple(BOOST_ASIO_MOVE_CAST(Args)(args)...));
+    static_cast<Handler&&>(handler_)(
+        std::make_tuple(static_cast<Args&&>(args)...));
   }
 
 //private:
@@ -127,45 +124,42 @@ struct as_tuple_signature;
 template <typename R, typename... Args>
 struct as_tuple_signature<R(Args...)>
 {
-  typedef R type(std::tuple<typename decay<Args>::type...>);
+  typedef R type(std::tuple<decay_t<Args>...>);
 };
-
-#if defined(BOOST_ASIO_HAS_REF_QUALIFIED_FUNCTIONS)
 
 template <typename R, typename... Args>
 struct as_tuple_signature<R(Args...) &>
 {
-  typedef R type(std::tuple<typename decay<Args>::type...>) &;
+  typedef R type(std::tuple<decay_t<Args>...>) &;
 };
 
 template <typename R, typename... Args>
 struct as_tuple_signature<R(Args...) &&>
 {
-  typedef R type(std::tuple<typename decay<Args>::type...>) &&;
+  typedef R type(std::tuple<decay_t<Args>...>) &&;
 };
 
-# if defined(BOOST_ASIO_HAS_NOEXCEPT_FUNCTION_TYPE)
+#if defined(BOOST_ASIO_HAS_NOEXCEPT_FUNCTION_TYPE)
 
 template <typename R, typename... Args>
 struct as_tuple_signature<R(Args...) noexcept>
 {
-  typedef R type(std::tuple<typename decay<Args>::type...>) noexcept;
+  typedef R type(std::tuple<decay_t<Args>...>) noexcept;
 };
 
 template <typename R, typename... Args>
 struct as_tuple_signature<R(Args...) & noexcept>
 {
-  typedef R type(std::tuple<typename decay<Args>::type...>) & noexcept;
+  typedef R type(std::tuple<decay_t<Args>...>) & noexcept;
 };
 
 template <typename R, typename... Args>
 struct as_tuple_signature<R(Args...) && noexcept>
 {
-  typedef R type(std::tuple<typename decay<Args>::type...>) && noexcept;
+  typedef R type(std::tuple<decay_t<Args>...>) && noexcept;
 };
 
-# endif // defined(BOOST_ASIO_HAS_NOEXCEPT_FUNCTION_TYPE)
-#endif // defined(BOOST_ASIO_HAS_REF_QUALIFIED_FUNCTIONS)
+#endif // defined(BOOST_ASIO_HAS_NOEXCEPT_FUNCTION_TYPE)
 
 } // namespace detail
 
@@ -180,50 +174,43 @@ struct async_result<as_tuple_t<CompletionToken>, Signatures...>
   struct init_wrapper
   {
     init_wrapper(Initiation init)
-      : initiation_(BOOST_ASIO_MOVE_CAST(Initiation)(init))
+      : initiation_(static_cast<Initiation&&>(init))
     {
     }
 
     template <typename Handler, typename... Args>
-    void operator()(
-        BOOST_ASIO_MOVE_ARG(Handler) handler,
-        BOOST_ASIO_MOVE_ARG(Args)... args)
+    void operator()(Handler&& handler, Args&&... args)
     {
-      BOOST_ASIO_MOVE_CAST(Initiation)(initiation_)(
-          detail::as_tuple_handler<
-            typename decay<Handler>::type>(
-              BOOST_ASIO_MOVE_CAST(Handler)(handler)),
-          BOOST_ASIO_MOVE_CAST(Args)(args)...);
+      static_cast<Initiation&&>(initiation_)(
+          detail::as_tuple_handler<decay_t<Handler>>(
+            static_cast<Handler&&>(handler)),
+          static_cast<Args&&>(args)...);
     }
 
     Initiation initiation_;
   };
 
   template <typename Initiation, typename RawCompletionToken, typename... Args>
-  static BOOST_ASIO_INITFN_AUTO_RESULT_TYPE_PREFIX(CompletionToken,
-      typename detail::as_tuple_signature<Signatures>::type...)
-  initiate(
-      BOOST_ASIO_MOVE_ARG(Initiation) initiation,
-      BOOST_ASIO_MOVE_ARG(RawCompletionToken) token,
-      BOOST_ASIO_MOVE_ARG(Args)... args)
-    BOOST_ASIO_INITFN_AUTO_RESULT_TYPE_SUFFIX((
+  static auto initiate(Initiation&& initiation,
+      RawCompletionToken&& token, Args&&... args)
+    -> decltype(
       async_initiate<
-        typename conditional<
-          is_const<typename remove_reference<RawCompletionToken>::type>::value,
-            const CompletionToken, CompletionToken>::type,
+        conditional_t<
+          is_const<remove_reference_t<RawCompletionToken>>::value,
+            const CompletionToken, CompletionToken>,
         typename detail::as_tuple_signature<Signatures>::type...>(
-          init_wrapper<typename decay<Initiation>::type>(
-            BOOST_ASIO_MOVE_CAST(Initiation)(initiation)),
-          token.token_, BOOST_ASIO_MOVE_CAST(Args)(args)...)))
+          init_wrapper<decay_t<Initiation>>(
+            static_cast<Initiation&&>(initiation)),
+          token.token_, static_cast<Args&&>(args)...))
   {
     return async_initiate<
-      typename conditional<
-        is_const<typename remove_reference<RawCompletionToken>::type>::value,
-          const CompletionToken, CompletionToken>::type,
+      conditional_t<
+        is_const<remove_reference_t<RawCompletionToken>>::value,
+          const CompletionToken, CompletionToken>,
       typename detail::as_tuple_signature<Signatures>::type...>(
-        init_wrapper<typename decay<Initiation>::type>(
-          BOOST_ASIO_MOVE_CAST(Initiation)(initiation)),
-        token.token_, BOOST_ASIO_MOVE_CAST(Args)(args)...);
+        init_wrapper<decay_t<Initiation>>(
+          static_cast<Initiation&&>(initiation)),
+        token.token_, static_cast<Args&&>(args)...);
   }
 };
 
@@ -240,50 +227,43 @@ struct async_result<as_tuple_t<CompletionToken>, Signature>
   struct init_wrapper
   {
     init_wrapper(Initiation init)
-      : initiation_(BOOST_ASIO_MOVE_CAST(Initiation)(init))
+      : initiation_(static_cast<Initiation&&>(init))
     {
     }
 
     template <typename Handler, typename... Args>
-    void operator()(
-        BOOST_ASIO_MOVE_ARG(Handler) handler,
-        BOOST_ASIO_MOVE_ARG(Args)... args)
+    void operator()(Handler&& handler, Args&&... args)
     {
-      BOOST_ASIO_MOVE_CAST(Initiation)(initiation_)(
-          detail::as_tuple_handler<
-            typename decay<Handler>::type>(
-              BOOST_ASIO_MOVE_CAST(Handler)(handler)),
-          BOOST_ASIO_MOVE_CAST(Args)(args)...);
+      static_cast<Initiation&&>(initiation_)(
+          detail::as_tuple_handler<decay_t<Handler>>(
+            static_cast<Handler&&>(handler)),
+          static_cast<Args&&>(args)...);
     }
 
     Initiation initiation_;
   };
 
   template <typename Initiation, typename RawCompletionToken, typename... Args>
-  static BOOST_ASIO_INITFN_AUTO_RESULT_TYPE_PREFIX(CompletionToken,
-      typename detail::as_tuple_signature<Signatures>::type...)
-  initiate(
-      BOOST_ASIO_MOVE_ARG(Initiation) initiation,
-      BOOST_ASIO_MOVE_ARG(RawCompletionToken) token,
-      BOOST_ASIO_MOVE_ARG(Args)... args)
-    BOOST_ASIO_INITFN_AUTO_RESULT_TYPE_SUFFIX((
+  static auto initiate(Initiation&& initiation,
+      RawCompletionToken&& token, Args&&... args)
+    -> decltype(
       async_initiate<
-        typename conditional<
-          is_const<typename remove_reference<RawCompletionToken>::type>::value,
-            const CompletionToken, CompletionToken>::type,
+        conditional_t<
+          is_const<remove_reference_t<RawCompletionToken>>::value,
+            const CompletionToken, CompletionToken>,
         typename detail::as_tuple_signature<Signature>::type>(
-          init_wrapper<typename decay<Initiation>::type>(
-            BOOST_ASIO_MOVE_CAST(Initiation)(initiation)),
-          token.token_, BOOST_ASIO_MOVE_CAST(Args)(args)...)))
+          init_wrapper<decay_t<Initiation>>(
+            static_cast<Initiation&&>(initiation)),
+          token.token_, static_cast<Args&&>(args)...))
   {
     return async_initiate<
-      typename conditional<
-        is_const<typename remove_reference<RawCompletionToken>::type>::value,
-          const CompletionToken, CompletionToken>::type,
+      conditional_t<
+        is_const<remove_reference_t<RawCompletionToken>>::value,
+          const CompletionToken, CompletionToken>,
       typename detail::as_tuple_signature<Signature>::type>(
-        init_wrapper<typename decay<Initiation>::type>(
-          BOOST_ASIO_MOVE_CAST(Initiation)(initiation)),
-        token.token_, BOOST_ASIO_MOVE_CAST(Args)(args)...);
+        init_wrapper<decay_t<Initiation>>(
+          static_cast<Initiation&&>(initiation)),
+        token.token_, static_cast<Args&&>(args)...);
   }
 };
 
@@ -295,18 +275,15 @@ struct associator<Associator,
     detail::as_tuple_handler<Handler>, DefaultCandidate>
   : Associator<Handler, DefaultCandidate>
 {
-  static typename Associator<Handler, DefaultCandidate>::type
-  get(const detail::as_tuple_handler<Handler>& h) BOOST_ASIO_NOEXCEPT
+  static typename Associator<Handler, DefaultCandidate>::type get(
+      const detail::as_tuple_handler<Handler>& h) noexcept
   {
     return Associator<Handler, DefaultCandidate>::get(h.handler_);
   }
 
-  static BOOST_ASIO_AUTO_RETURN_TYPE_PREFIX2(
-      typename Associator<Handler, DefaultCandidate>::type)
-  get(const detail::as_tuple_handler<Handler>& h,
-      const DefaultCandidate& c) BOOST_ASIO_NOEXCEPT
-    BOOST_ASIO_AUTO_RETURN_TYPE_SUFFIX((
-      Associator<Handler, DefaultCandidate>::get(h.handler_, c)))
+  static auto get(const detail::as_tuple_handler<Handler>& h,
+      const DefaultCandidate& c) noexcept
+    -> decltype(Associator<Handler, DefaultCandidate>::get(h.handler_, c))
   {
     return Associator<Handler, DefaultCandidate>::get(h.handler_, c);
   }
