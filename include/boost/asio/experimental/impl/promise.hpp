@@ -18,6 +18,8 @@
 #include <boost/asio/detail/config.hpp>
 #include <boost/asio/cancellation_signal.hpp>
 #include <boost/asio/detail/utility.hpp>
+#include <boost/asio/error.hpp>
+#include <boost/system/system_error.hpp>
 #include <tuple>
 
 #include <boost/asio/detail/push_options.hpp>

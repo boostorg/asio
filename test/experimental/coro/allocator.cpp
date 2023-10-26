@@ -17,6 +17,7 @@
 // Test that header file is self-contained.
 #include <boost/asio/experimental/coro.hpp>
 
+#include <vector>
 #include <boost/asio/io_context.hpp>
 #include "../../unit_test.hpp"
 
