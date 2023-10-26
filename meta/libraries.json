@@ -12,5 +12,5 @@
     "maintainers": [
         "Chris Kohlhoff <chris -at- kohlhoff.com>"
     ],
-    "cxxstd": "03"
+    "cxxstd": "11"
 }
