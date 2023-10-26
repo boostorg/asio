@@ -21,23 +21,14 @@
 // Test that header file is self-contained.
 #include <boost/asio/system_executor.hpp>
 
+#include <functional>
 #include <boost/asio/dispatch.hpp>
 #include <boost/asio/post.hpp>
 #include "unit_test.hpp"
 
-#if defined(BOOST_ASIO_HAS_BOOST_BIND)
-# include <boost/bind/bind.hpp>
-#else // defined(BOOST_ASIO_HAS_BOOST_BIND)
-# include <functional>
-#endif // defined(BOOST_ASIO_HAS_BOOST_BIND)
-
 using namespace boost::asio;
 
-#if defined(BOOST_ASIO_HAS_BOOST_BIND)
-namespace bindns = boost;
-#else // defined(BOOST_ASIO_HAS_BOOST_BIND)
 namespace bindns = std;
-#endif
 
 void increment(boost::asio::detail::atomic_count* count)
 {
@@ -80,13 +71,6 @@ void system_executor_query_test()
       boost::asio::query(system_executor(),
         boost::asio::execution::relationship.fork)
       == boost::asio::execution::relationship.fork);
-
-#if !defined(BOOST_ASIO_NO_DEPRECATED)
-  BOOST_ASIO_CHECK(
-      boost::asio::query(system_executor(),
-        boost::asio::execution::bulk_guarantee)
-      == boost::asio::execution::bulk_guarantee.unsequenced);
-#endif // !defined(BOOST_ASIO_NO_DEPRECATED)
 
   BOOST_ASIO_CHECK(
       boost::asio::query(system_executor(),

@@ -69,10 +69,8 @@ void recycling_allocator_test()
 
   a1.deallocate(p, 42);
 
-#if defined(BOOST_ASIO_HAS_CXX11_ALLOCATORS)
   std::vector<int, boost::asio::recycling_allocator<int> > v(42);
   BOOST_ASIO_CHECK(v.size() == 42);
-#endif // defined(BOOST_ASIO_HAS_CXX11_ALLOCATORS)
 }
 
 BOOST_ASIO_TEST_SUITE

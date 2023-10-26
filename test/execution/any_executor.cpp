@@ -17,27 +17,17 @@
 #include <boost/asio/execution/any_executor.hpp>
 
 #include <cstring>
+#include <functional>
 #include <boost/asio/thread_pool.hpp>
 #include "../unit_test.hpp"
 
-#if defined(BOOST_ASIO_HAS_BOOST_BIND)
-# include <boost/bind/bind.hpp>
-#else // defined(BOOST_ASIO_HAS_BOOST_BIND)
-# include <functional>
-#endif // defined(BOOST_ASIO_HAS_BOOST_BIND)
-
 using namespace boost::asio;
-
-#if defined(BOOST_ASIO_HAS_BOOST_BIND)
-namespace bindns = boost;
-#else // defined(BOOST_ASIO_HAS_BOOST_BIND)
 namespace bindns = std;
-#endif
 
 static bool next_nothrow_new_fails = false;
 
 void* operator new(std::size_t n,
-    const std::nothrow_t&) BOOST_ASIO_NOEXCEPT_OR_NOTHROW
+    const std::nothrow_t&) noexcept
 {
   if (next_nothrow_new_fails)
   {
@@ -66,13 +56,13 @@ struct fat_executor
   }
 
   friend bool operator==(const fat_executor& a,
-      const fat_executor& b) BOOST_ASIO_NOEXCEPT
+      const fat_executor& b) noexcept
   {
     return a.id_ == b.id_;
   }
 
   friend bool operator!=(const fat_executor& a,
-      const fat_executor& b) BOOST_ASIO_NOEXCEPT
+      const fat_executor& b) noexcept
   {
     return a.id_ != b.id_;
   }
@@ -90,8 +80,8 @@ namespace traits {
 template <typename F>
 struct execute_member<fat_executor, F>
 {
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_noexcept = true);
+  static constexpr bool is_valid = true;
+  static constexpr bool is_noexcept = true;
   typedef void result_type;
 };
 
@@ -102,8 +92,8 @@ struct execute_member<fat_executor, F>
 template <>
 struct query_member<fat_executor, execution::occupancy_t>
 {
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_noexcept = false);
+  static constexpr bool is_valid = true;
+  static constexpr bool is_noexcept = false;
   typedef std::size_t result_type;
 };
 
@@ -114,8 +104,8 @@ struct query_member<fat_executor, execution::occupancy_t>
 template <>
 struct equality_comparable<fat_executor>
 {
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_noexcept = true);
+  static constexpr bool is_valid = true;
+  static constexpr bool is_noexcept = true;
 };
 
 #endif // !defined(BOOST_ASIO_HAS_DEDUCED_EQUALITY_COMPARABLE_TRAIT)
@@ -204,7 +194,6 @@ void any_executor_construction_test()
   BOOST_ASIO_CHECK(ex_two_props_9 == ex_two_props_7);
   BOOST_ASIO_CHECK(ex_two_props_9 != ex_two_props_8);
 
-#if defined(BOOST_ASIO_HAS_MOVE)
   ex_two_props_t ex_two_props_10(std::move(ex_two_props_1));
 
   BOOST_ASIO_CHECK(ex_two_props_10.target<void>() == 0);
@@ -228,7 +217,6 @@ void any_executor_construction_test()
   BOOST_ASIO_CHECK(ex_two_props_7 == null_ptr);
   BOOST_ASIO_CHECK(ex_two_props_12 == ex_two_props_6);
   BOOST_ASIO_CHECK(ex_two_props_12 != ex_two_props_8);
-#endif // defined(BOOST_ASIO_HAS_MOVE)
 
   ex_one_prop_t ex_one_prop_1;
 
@@ -289,7 +277,6 @@ void any_executor_construction_test()
   BOOST_ASIO_CHECK(ex_one_prop_9 == ex_one_prop_7);
   BOOST_ASIO_CHECK(ex_one_prop_9 != ex_one_prop_8);
 
-#if defined(BOOST_ASIO_HAS_MOVE)
   ex_one_prop_t ex_one_prop_10(std::move(ex_one_prop_1));
 
   BOOST_ASIO_CHECK(ex_one_prop_10.target<void>() == 0);
@@ -313,7 +300,6 @@ void any_executor_construction_test()
   BOOST_ASIO_CHECK(ex_one_prop_7 == null_ptr);
   BOOST_ASIO_CHECK(ex_one_prop_12 == ex_one_prop_6);
   BOOST_ASIO_CHECK(ex_one_prop_12 != ex_one_prop_8);
-#endif // defined(BOOST_ASIO_HAS_MOVE)
 
   ex_one_prop_t ex_one_prop_13(ex_two_props_1);
 
@@ -389,7 +375,6 @@ void any_executor_construction_test()
   BOOST_ASIO_CHECK(ex_no_props_9 == ex_no_props_7);
   BOOST_ASIO_CHECK(ex_no_props_9 != ex_no_props_8);
 
-#if defined(BOOST_ASIO_HAS_MOVE)
   ex_no_props_t ex_no_props_10(std::move(ex_no_props_1));
 
   BOOST_ASIO_CHECK(ex_no_props_10.target<void>() == 0);
@@ -413,7 +398,6 @@ void any_executor_construction_test()
   BOOST_ASIO_CHECK(ex_no_props_7 == null_ptr);
   BOOST_ASIO_CHECK(ex_no_props_12 == ex_no_props_6);
   BOOST_ASIO_CHECK(ex_no_props_12 != ex_no_props_8);
-#endif // defined(BOOST_ASIO_HAS_MOVE)
 
   ex_no_props_t ex_no_props_13(ex_two_props_1);
 
@@ -521,7 +505,6 @@ void any_executor_nothrow_construction_test()
   BOOST_ASIO_CHECK(ex_two_props_9 == ex_two_props_7);
   BOOST_ASIO_CHECK(ex_two_props_9 != ex_two_props_8);
 
-#if defined(BOOST_ASIO_HAS_MOVE)
   ex_two_props_t ex_two_props_10(std::nothrow, std::move(ex_two_props_1));
 
   BOOST_ASIO_CHECK(ex_two_props_10.target<void>() == 0);
@@ -545,7 +528,6 @@ void any_executor_nothrow_construction_test()
   BOOST_ASIO_CHECK(ex_two_props_7 == null_ptr);
   BOOST_ASIO_CHECK(ex_two_props_12 == ex_two_props_6);
   BOOST_ASIO_CHECK(ex_two_props_12 != ex_two_props_8);
-#endif // defined(BOOST_ASIO_HAS_MOVE)
 
   next_nothrow_new_fails = true;
   ex_two_props_t ex_two_props_13(std::nothrow, fat_executor(3));
@@ -613,7 +595,6 @@ void any_executor_nothrow_construction_test()
   BOOST_ASIO_CHECK(ex_one_prop_9 == ex_one_prop_7);
   BOOST_ASIO_CHECK(ex_one_prop_9 != ex_one_prop_8);
 
-#if defined(BOOST_ASIO_HAS_MOVE)
   ex_one_prop_t ex_one_prop_10(std::nothrow, std::move(ex_one_prop_1));
 
   BOOST_ASIO_CHECK(ex_one_prop_10.target<void>() == 0);
@@ -637,7 +618,6 @@ void any_executor_nothrow_construction_test()
   BOOST_ASIO_CHECK(ex_one_prop_7 == null_ptr);
   BOOST_ASIO_CHECK(ex_one_prop_12 == ex_one_prop_6);
   BOOST_ASIO_CHECK(ex_one_prop_12 != ex_one_prop_8);
-#endif // defined(BOOST_ASIO_HAS_MOVE)
 
   ex_one_prop_t ex_one_prop_13(std::nothrow, ex_two_props_1);
 
@@ -720,7 +700,6 @@ void any_executor_nothrow_construction_test()
   BOOST_ASIO_CHECK(ex_no_props_9 == ex_no_props_7);
   BOOST_ASIO_CHECK(ex_no_props_9 != ex_no_props_8);
 
-#if defined(BOOST_ASIO_HAS_MOVE)
   ex_no_props_t ex_no_props_10(std::nothrow, std::move(ex_no_props_1));
 
   BOOST_ASIO_CHECK(ex_no_props_10.target<void>() == 0);
@@ -744,7 +723,6 @@ void any_executor_nothrow_construction_test()
   BOOST_ASIO_CHECK(ex_no_props_7 == null_ptr);
   BOOST_ASIO_CHECK(ex_no_props_12 == ex_no_props_6);
   BOOST_ASIO_CHECK(ex_no_props_12 != ex_no_props_8);
-#endif // defined(BOOST_ASIO_HAS_MOVE)
 
   ex_no_props_t ex_no_props_13(std::nothrow, ex_two_props_1);
 
@@ -854,7 +832,6 @@ void any_executor_assignment_test()
   BOOST_ASIO_CHECK(ex_two_props_7 == ex_two_props_5);
   BOOST_ASIO_CHECK(ex_two_props_7 != ex_two_props_6);
 
-#if defined(BOOST_ASIO_HAS_MOVE)
   ex_two_props_t ex_two_props_8;
   ex_two_props_8 = std::move(ex_two_props_1);
 
@@ -872,7 +849,6 @@ void any_executor_assignment_test()
   BOOST_ASIO_CHECK(ex_two_props_8.target<void>() != 0);
   BOOST_ASIO_CHECK(ex_two_props_5.target<void>() == 0);
   BOOST_ASIO_CHECK(ex_two_props_8 == ex_two_props_7);
-#endif // defined(BOOST_ASIO_HAS_MOVE)
 
   ex_one_prop_t ex_one_prop_1;
 
@@ -928,7 +904,6 @@ void any_executor_assignment_test()
   BOOST_ASIO_CHECK(ex_one_prop_7 == ex_one_prop_5);
   BOOST_ASIO_CHECK(ex_one_prop_7 != ex_one_prop_6);
 
-#if defined(BOOST_ASIO_HAS_MOVE)
   ex_one_prop_t ex_one_prop_8;
   ex_one_prop_8 = std::move(ex_one_prop_1);
 
@@ -946,7 +921,6 @@ void any_executor_assignment_test()
   BOOST_ASIO_CHECK(ex_one_prop_8.target<void>() != 0);
   BOOST_ASIO_CHECK(ex_one_prop_5.target<void>() == 0);
   BOOST_ASIO_CHECK(ex_one_prop_8 == ex_one_prop_7);
-#endif // defined(BOOST_ASIO_HAS_MOVE)
 
   ex_one_prop_t ex_one_prop_9;
   ex_one_prop_9 = ex_two_props_1;
@@ -1015,7 +989,6 @@ void any_executor_assignment_test()
   BOOST_ASIO_CHECK(ex_no_props_7 == ex_no_props_5);
   BOOST_ASIO_CHECK(ex_no_props_7 != ex_no_props_6);
 
-#if defined(BOOST_ASIO_HAS_MOVE)
   ex_no_props_t ex_no_props_8;
   ex_no_props_8 = std::move(ex_no_props_1);
 
@@ -1033,7 +1006,6 @@ void any_executor_assignment_test()
   BOOST_ASIO_CHECK(ex_no_props_8.target<void>() != 0);
   BOOST_ASIO_CHECK(ex_no_props_5.target<void>() == 0);
   BOOST_ASIO_CHECK(ex_no_props_8 == ex_no_props_7);
-#endif // defined(BOOST_ASIO_HAS_MOVE)
 
   ex_no_props_t ex_no_props_9;
   ex_no_props_9 = ex_two_props_1;

@@ -16,24 +16,14 @@
 // Test that header file is self-contained.
 #include <boost/asio/execution/context_as.hpp>
 
+#include <functional>
 #include <boost/asio/execution/any_executor.hpp>
 #include <boost/asio/io_context.hpp>
 #include <boost/asio/static_thread_pool.hpp>
 #include "../unit_test.hpp"
 
-#if defined(BOOST_ASIO_HAS_BOOST_BIND)
-# include <boost/bind/bind.hpp>
-#else // defined(BOOST_ASIO_HAS_BOOST_BIND)
-# include <functional>
-#endif // defined(BOOST_ASIO_HAS_BOOST_BIND)
-
 using namespace boost::asio;
-
-#if defined(BOOST_ASIO_HAS_BOOST_BIND)
-namespace bindns = boost;
-#else // defined(BOOST_ASIO_HAS_BOOST_BIND)
 namespace bindns = std;
-#endif
 
 void context_as_executor_query_test()
 {

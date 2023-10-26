@@ -16,19 +16,13 @@
 // Test that header file is self-contained.
 #include <boost/asio/compose.hpp>
 
-#include "unit_test.hpp"
-
+#include <functional>
 #include <boost/asio/bind_cancellation_slot.hpp>
 #include <boost/asio/cancellation_signal.hpp>
 #include <boost/asio/io_context.hpp>
 #include <boost/asio/post.hpp>
 #include <boost/asio/system_timer.hpp>
-
-#if defined(BOOST_ASIO_HAS_BOOST_BIND)
-# include <boost/bind/bind.hpp>
-#else // defined(BOOST_ASIO_HAS_BOOST_BIND)
-# include <functional>
-#endif // defined(BOOST_ASIO_HAS_BOOST_BIND)
+#include "unit_test.hpp"
 
 //------------------------------------------------------------------------------
 
@@ -48,7 +42,7 @@ public:
     {
     case starting:
       state_ = posting;
-      boost::asio::post(ioc_, BOOST_ASIO_MOVE_CAST(Self)(self));
+      boost::asio::post(ioc_, static_cast<Self&&>(self));
       break;
     case posting:
       self.complete();
@@ -66,7 +60,7 @@ private:
 template <typename CompletionToken>
 BOOST_ASIO_INITFN_RESULT_TYPE(CompletionToken, void())
 async_0_completion_args(boost::asio::io_context& ioc,
-    BOOST_ASIO_MOVE_ARG(CompletionToken) token)
+    CompletionToken&& token)
 {
   return boost::asio::async_compose<CompletionToken, void()>(
       impl_0_completion_args(ioc), token);
@@ -89,11 +83,7 @@ struct compose_0_args_lvalue_handler
 
 void compose_0_completion_args_test()
 {
-#if defined(BOOST_ASIO_HAS_BOOST_BIND)
-  namespace bindns = boost;
-#else // defined(BOOST_ASIO_HAS_BOOST_BIND)
   namespace bindns = std;
-#endif // defined(BOOST_ASIO_HAS_BOOST_BIND)
 
   boost::asio::io_context ioc;
   int count = 0;
@@ -145,7 +135,7 @@ public:
     {
     case starting:
       state_ = posting;
-      boost::asio::post(ioc_, BOOST_ASIO_MOVE_CAST(Self)(self));
+      boost::asio::post(ioc_, static_cast<Self&&>(self));
       break;
     case posting:
       self.complete(42);
@@ -163,7 +153,7 @@ private:
 template <typename CompletionToken>
 BOOST_ASIO_INITFN_RESULT_TYPE(CompletionToken, void(int))
 async_1_completion_arg(boost::asio::io_context& ioc,
-    BOOST_ASIO_MOVE_ARG(CompletionToken) token)
+    CompletionToken&& token)
 {
   return boost::asio::async_compose<CompletionToken, void(int)>(
       impl_1_completion_arg(ioc), token);
@@ -189,11 +179,7 @@ struct compose_1_arg_lvalue_handler
 
 void compose_1_completion_arg_test()
 {
-#if defined(BOOST_ASIO_HAS_BOOST_BIND)
-  namespace bindns = boost;
-#else // defined(BOOST_ASIO_HAS_BOOST_BIND)
   namespace bindns = std;
-#endif // defined(BOOST_ASIO_HAS_BOOST_BIND)
   using bindns::placeholders::_1;
 
   boost::asio::io_context ioc;
@@ -262,7 +248,7 @@ public:
         self.reset_cancellation_state(cancellation_filter_);
       state_ = waiting;
       timer_.expires_after(boost::asio::chrono::milliseconds(100));
-      timer_.async_wait(BOOST_ASIO_MOVE_CAST(Self)(self));
+      timer_.async_wait(static_cast<Self&&>(self));
       break;
     case waiting:
       self.complete(!ec);
@@ -282,7 +268,7 @@ template <typename CancellationFilter, typename CompletionToken>
 BOOST_ASIO_INITFN_RESULT_TYPE(CompletionToken, void(bool))
 async_cancellable(CancellationFilter cancellation_filter,
     boost::asio::system_timer& timer,
-    BOOST_ASIO_MOVE_ARG(CompletionToken) token)
+    CompletionToken&& token)
 {
   return boost::asio::async_compose<CompletionToken, void(bool)>(
       impl_cancellable<CancellationFilter>(cancellation_filter, timer), token);
@@ -297,11 +283,7 @@ void compose_partial_cancellation_handler(
 
 void compose_default_cancellation_test()
 {
-#if defined(BOOST_ASIO_HAS_BOOST_BIND)
-  namespace bindns = boost;
-#else // defined(BOOST_ASIO_HAS_BOOST_BIND)
   namespace bindns = std;
-#endif // defined(BOOST_ASIO_HAS_BOOST_BIND)
   using bindns::placeholders::_1;
 
   boost::asio::io_context ioc;
@@ -379,11 +361,7 @@ void compose_default_cancellation_test()
 
 void compose_partial_cancellation_test()
 {
-#if defined(BOOST_ASIO_HAS_BOOST_BIND)
-  namespace bindns = boost;
-#else // defined(BOOST_ASIO_HAS_BOOST_BIND)
   namespace bindns = std;
-#endif // defined(BOOST_ASIO_HAS_BOOST_BIND)
   using bindns::placeholders::_1;
 
   boost::asio::io_context ioc;
@@ -461,11 +439,7 @@ void compose_partial_cancellation_test()
 
 void compose_total_cancellation_test()
 {
-#if defined(BOOST_ASIO_HAS_BOOST_BIND)
-  namespace bindns = boost;
-#else // defined(BOOST_ASIO_HAS_BOOST_BIND)
   namespace bindns = std;
-#endif // defined(BOOST_ASIO_HAS_BOOST_BIND)
   using bindns::placeholders::_1;
 
   boost::asio::io_context ioc;

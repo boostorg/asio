@@ -26,8 +26,6 @@
 
 void as_tuple_test()
 {
-#if defined(BOOST_ASIO_HAS_STD_TUPLE) \
-  && defined(BOOST_ASIO_HAS_VARIADIC_TEMPLATES)
   boost::asio::io_context io1;
   boost::asio::io_context io2;
   boost::asio::system_timer timer1(io1);
@@ -52,7 +50,6 @@ void as_tuple_test()
 
   BOOST_ASIO_CHECK(count == 1);
 
-# if defined(BOOST_ASIO_HAS_DECLTYPE)
   timer1.async_wait(
       boost::asio::as_tuple(
         boost::asio::bind_executor(io2.get_executor(),
@@ -73,7 +70,6 @@ void as_tuple_test()
   io2.run();
 
   BOOST_ASIO_CHECK(count == 2);
-# endif // defined(BOOST_ASIO_HAS_DECLTYPE)
 
 # if defined(BOOST_ASIO_HAS_STD_FUTURE_CLASS)
   std::future<std::tuple<boost::system::error_code> > f = timer1.async_wait(
@@ -96,14 +92,10 @@ void as_tuple_test()
   BOOST_ASIO_CHECK(f.wait_for(std::chrono::seconds(0))
       == std::future_status::ready);
 # endif // defined(BOOST_ASIO_HAS_STD_FUTURE_CLASS)
-#endif // defined(BOOST_ASIO_HAS_STD_TUPLE)
-       //   && defined(BOOST_ASIO_HAS_VARIADIC_TEMPLATES)
 }
 
 void as_tuple_constness_test()
 {
-#if defined(BOOST_ASIO_HAS_STD_TUPLE) \
-  && defined(BOOST_ASIO_HAS_VARIADIC_TEMPLATES)
 # if defined(BOOST_ASIO_HAS_STD_FUTURE_CLASS)
   boost::asio::io_context io1;
   boost::asio::system_timer timer1(io1);
@@ -116,14 +108,10 @@ void as_tuple_constness_test()
   (void)timer1.async_wait(tok2);
   (void)timer1.async_wait(std::move(tok2));
 
-#  if defined(BOOST_ASIO_HAS_CONSTEXPR)
   constexpr auto tok3 = boost::asio::as_tuple(boost::asio::use_future);
   (void)timer1.async_wait(tok3);
   (void)timer1.async_wait(std::move(tok3));
-#  endif // defined(BOOST_ASIO_HAS_CONSTEXPR)
 # endif // defined(BOOST_ASIO_HAS_STD_FUTURE_CLASS)
-#endif // defined(BOOST_ASIO_HAS_STD_TUPLE)
-       //   && defined(BOOST_ASIO_HAS_VARIADIC_TEMPLATES)
 }
 
 BOOST_ASIO_TEST_SUITE
