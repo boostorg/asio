@@ -232,10 +232,22 @@ std::size_t read_until(SyncReadStream& s,
 #if !defined(BOOST_ASIO_NO_EXTENSIONS)
 #if defined(BOOST_ASIO_HAS_BOOST_REGEX)
 
-template <typename SyncReadStream, typename DynamicBuffer_v1>
-inline std::size_t read_until(SyncReadStream& s,
-    DynamicBuffer_v1&& buffers,
-    const boost::regex& expr,
+namespace detail {
+
+struct regex_match_flags
+{
+  template <typename T>
+  operator T() const
+  {
+    return T::match_default | T::match_partial;
+  }
+};
+
+} // namespace detail
+
+template <typename SyncReadStream, typename DynamicBuffer_v1, typename Traits>
+inline std::size_t read_until(SyncReadStream& s, DynamicBuffer_v1&& buffers,
+    const boost::basic_regex<char, Traits>& expr,
     constraint_t<
       is_dynamic_buffer_v1<decay_t<DynamicBuffer_v1>>::value
     >,
@@ -250,10 +262,9 @@ inline std::size_t read_until(SyncReadStream& s,
   return bytes_transferred;
 }
 
-template <typename SyncReadStream, typename DynamicBuffer_v1>
-std::size_t read_until(SyncReadStream& s,
-    DynamicBuffer_v1&& buffers,
-    const boost::regex& expr, boost::system::error_code& ec,
+template <typename SyncReadStream, typename DynamicBuffer_v1, typename Traits>
+std::size_t read_until(SyncReadStream& s, DynamicBuffer_v1&& buffers,
+    const boost::basic_regex<char, Traits>& expr, boost::system::error_code& ec,
     constraint_t<
       is_dynamic_buffer_v1<decay_t<DynamicBuffer_v1>>::value
     >,
@@ -279,8 +290,8 @@ std::size_t read_until(SyncReadStream& s,
     boost::match_results<iterator,
       typename std::vector<boost::sub_match<iterator>>::allocator_type>
         match_results;
-    if (regex_search(start_pos, end, match_results, expr,
-          boost::match_default | boost::match_partial))
+    if (regex_search(start_pos, end, match_results,
+          expr, detail::regex_match_flags()))
     {
       if (match_results[0].matched)
       {
@@ -442,16 +453,18 @@ inline std::size_t read_until(SyncReadStream& s,
 
 #if defined(BOOST_ASIO_HAS_BOOST_REGEX)
 
-template <typename SyncReadStream, typename Allocator>
+template <typename SyncReadStream, typename Allocator, typename Traits>
 inline std::size_t read_until(SyncReadStream& s,
-    boost::asio::basic_streambuf<Allocator>& b, const boost::regex& expr)
+    boost::asio::basic_streambuf<Allocator>& b,
+    const boost::basic_regex<char, Traits>& expr)
 {
   return read_until(s, basic_streambuf_ref<Allocator>(b), expr);
 }
 
-template <typename SyncReadStream, typename Allocator>
+template <typename SyncReadStream, typename Allocator, typename Traits>
 inline std::size_t read_until(SyncReadStream& s,
-    boost::asio::basic_streambuf<Allocator>& b, const boost::regex& expr,
+    boost::asio::basic_streambuf<Allocator>& b,
+    const boost::basic_regex<char, Traits>& expr,
     boost::system::error_code& ec)
 {
   return read_until(s, basic_streambuf_ref<Allocator>(b), expr, ec);
@@ -630,9 +643,9 @@ std::size_t read_until(SyncReadStream& s, DynamicBuffer_v2 buffers,
 #if !defined(BOOST_ASIO_NO_EXTENSIONS)
 #if defined(BOOST_ASIO_HAS_BOOST_REGEX)
 
-template <typename SyncReadStream, typename DynamicBuffer_v2>
-inline std::size_t read_until(SyncReadStream& s,
-    DynamicBuffer_v2 buffers, const boost::regex& expr,
+template <typename SyncReadStream, typename DynamicBuffer_v2, typename Traits>
+inline std::size_t read_until(SyncReadStream& s, DynamicBuffer_v2 buffers,
+    const boost::basic_regex<char, Traits>& expr,
     constraint_t<
       is_dynamic_buffer_v2<DynamicBuffer_v2>::value
     >)
@@ -644,9 +657,9 @@ inline std::size_t read_until(SyncReadStream& s,
   return bytes_transferred;
 }
 
-template <typename SyncReadStream, typename DynamicBuffer_v2>
+template <typename SyncReadStream, typename DynamicBuffer_v2, typename Traits>
 std::size_t read_until(SyncReadStream& s, DynamicBuffer_v2 buffers,
-    const boost::regex& expr, boost::system::error_code& ec,
+    const boost::basic_regex<char, Traits>& expr, boost::system::error_code& ec,
     constraint_t<
       is_dynamic_buffer_v2<DynamicBuffer_v2>::value
     >)
@@ -669,8 +682,8 @@ std::size_t read_until(SyncReadStream& s, DynamicBuffer_v2 buffers,
     boost::match_results<iterator,
       typename std::vector<boost::sub_match<iterator>>::allocator_type>
         match_results;
-    if (regex_search(start_pos, end, match_results, expr,
-          boost::match_default | boost::match_partial))
+    if (regex_search(start_pos, end, match_results,
+          expr, detail::regex_match_flags()))
     {
       if (match_results[0].matched)
       {
@@ -1304,10 +1317,9 @@ namespace detail
     : public base_from_cancellation_state<ReadHandler>
   {
   public:
-    template <typename BufferSequence>
-    read_until_expr_op_v1(AsyncReadStream& stream,
-        BufferSequence&& buffers,
-        const boost::regex& expr, ReadHandler& handler)
+    template <typename BufferSequence, typename Traits>
+    read_until_expr_op_v1(AsyncReadStream& stream, BufferSequence&& buffers,
+        const boost::basic_regex<char, Traits>& expr, ReadHandler& handler)
       : base_from_cancellation_state<ReadHandler>(
           handler, enable_partial_cancellation()),
         stream_(stream),
@@ -1366,8 +1378,8 @@ namespace detail
             boost::match_results<iterator,
               typename std::vector<boost::sub_match<iterator>>::allocator_type>
                 match_results;
-            bool match = regex_search(start_pos, end, match_results, expr_,
-                boost::match_default | boost::match_partial);
+            bool match = regex_search(start_pos, end,
+                match_results, expr_, regex_match_flags());
             if (match && match_results[0].matched)
             {
               // Full match. We're done.
@@ -1526,11 +1538,11 @@ struct associator<Associator,
 
 #endif // !defined(GENERATING_DOCUMENTATION)
 
-template <typename AsyncReadStream, typename DynamicBuffer_v1,
+template <typename AsyncReadStream, typename DynamicBuffer_v1, typename Traits,
     BOOST_ASIO_COMPLETION_TOKEN_FOR(void (boost::system::error_code,
       std::size_t)) ReadToken>
 inline auto async_read_until(AsyncReadStream& s, DynamicBuffer_v1&& buffers,
-    const boost::regex& expr, ReadToken&& token,
+    const boost::basic_regex<char, Traits>& expr, ReadToken&& token,
     constraint_t<
       is_dynamic_buffer_v1<decay_t<DynamicBuffer_v1>>::value
     >,
@@ -1850,12 +1862,12 @@ inline auto async_read_until(AsyncReadStream& s,
 
 #if defined(BOOST_ASIO_HAS_BOOST_REGEX)
 
-template <typename AsyncReadStream, typename Allocator,
+template <typename AsyncReadStream, typename Allocator, typename Traits,
     BOOST_ASIO_COMPLETION_TOKEN_FOR(void (boost::system::error_code,
       std::size_t)) ReadToken>
 inline auto async_read_until(AsyncReadStream& s,
     boost::asio::basic_streambuf<Allocator>& b,
-    const boost::regex& expr, ReadToken&& token)
+    const boost::basic_regex<char, Traits>& expr, ReadToken&& token)
   -> decltype(
     async_initiate<ReadToken,
       void (boost::system::error_code, std::size_t)>(
@@ -2408,10 +2420,9 @@ namespace detail
     : public base_from_cancellation_state<ReadHandler>
   {
   public:
-    template <typename BufferSequence>
-    read_until_expr_op_v2(AsyncReadStream& stream,
-        BufferSequence&& buffers,
-        const boost::regex& expr, ReadHandler& handler)
+    template <typename BufferSequence, typename Traits>
+    read_until_expr_op_v2(AsyncReadStream& stream, BufferSequence&& buffers,
+        const boost::basic_regex<char, Traits>& expr, ReadHandler& handler)
       : base_from_cancellation_state<ReadHandler>(
           handler, enable_partial_cancellation()),
         stream_(stream),
@@ -2475,8 +2486,8 @@ namespace detail
             boost::match_results<iterator,
               typename std::vector<boost::sub_match<iterator>>::allocator_type>
                 match_results;
-            bool match = regex_search(start_pos, end, match_results, expr_,
-                boost::match_default | boost::match_partial);
+            bool match = regex_search(start_pos, end,
+                match_results, expr_, regex_match_flags());
             if (match && match_results[0].matched)
             {
               // Full match. We're done.
@@ -2639,11 +2650,11 @@ struct associator<Associator,
 
 #endif // !defined(GENERATING_DOCUMENTATION)
 
-template <typename AsyncReadStream, typename DynamicBuffer_v2,
+template <typename AsyncReadStream, typename DynamicBuffer_v2, typename Traits,
     BOOST_ASIO_COMPLETION_TOKEN_FOR(void (boost::system::error_code,
       std::size_t)) ReadToken>
 inline auto async_read_until(AsyncReadStream& s, DynamicBuffer_v2 buffers,
-    const boost::regex& expr, ReadToken&& token,
+    const boost::basic_regex<char, Traits>& expr, ReadToken&& token,
     constraint_t<
       is_dynamic_buffer_v2<DynamicBuffer_v2>::value
     >)
