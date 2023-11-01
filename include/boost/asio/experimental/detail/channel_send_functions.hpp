@@ -44,7 +44,19 @@ public:
     typedef typename detail::channel_message<R(Args...)> message_type;
     Derived* self = static_cast<Derived*>(this);
     return self->service_->template try_send<message_type>(
-        self->impl_, static_cast<Args2&&>(args)...);
+        self->impl_, false, static_cast<Args2&&>(args)...);
+  }
+
+  template <typename... Args2>
+  enable_if_t<
+    is_constructible<detail::channel_message<R(Args...)>, int, Args2...>::value,
+    bool
+  > try_send_via_dispatch(Args2&&... args)
+  {
+    typedef typename detail::channel_message<R(Args...)> message_type;
+    Derived* self = static_cast<Derived*>(this);
+    return self->service_->template try_send<message_type>(
+        self->impl_, true, static_cast<Args2&&>(args)...);
   }
 
   template <typename... Args2>
@@ -56,7 +68,19 @@ public:
     typedef typename detail::channel_message<R(Args...)> message_type;
     Derived* self = static_cast<Derived*>(this);
     return self->service_->template try_send_n<message_type>(
-        self->impl_, count, static_cast<Args2&&>(args)...);
+        self->impl_, count, false, static_cast<Args2&&>(args)...);
+  }
+
+  template <typename... Args2>
+  enable_if_t<
+    is_constructible<detail::channel_message<R(Args...)>, int, Args2...>::value,
+    std::size_t
+  > try_send_n_via_dispatch(std::size_t count, Args2&&... args)
+  {
+    typedef typename detail::channel_message<R(Args...)> message_type;
+    Derived* self = static_cast<Derived*>(this);
+    return self->service_->template try_send_n<message_type>(
+        self->impl_, count, true, static_cast<Args2&&>(args)...);
   }
 
   template <
@@ -99,7 +123,19 @@ public:
     typedef typename detail::channel_message<R(Args...)> message_type;
     Derived* self = static_cast<Derived*>(this);
     return self->service_->template try_send<message_type>(
-        self->impl_, static_cast<Args2&&>(args)...);
+        self->impl_, false, static_cast<Args2&&>(args)...);
+  }
+
+  template <typename... Args2>
+  enable_if_t<
+    is_constructible<detail::channel_message<R(Args...)>, int, Args2...>::value,
+    bool
+  > try_send_via_dispatch(Args2&&... args)
+  {
+    typedef typename detail::channel_message<R(Args...)> message_type;
+    Derived* self = static_cast<Derived*>(this);
+    return self->service_->template try_send<message_type>(
+        self->impl_, true, static_cast<Args2&&>(args)...);
   }
 
   template <typename... Args2>
@@ -111,7 +147,19 @@ public:
     typedef typename detail::channel_message<R(Args...)> message_type;
     Derived* self = static_cast<Derived*>(this);
     return self->service_->template try_send_n<message_type>(
-        self->impl_, count, static_cast<Args2&&>(args)...);
+        self->impl_, count, false, static_cast<Args2&&>(args)...);
+  }
+
+  template <typename... Args2>
+  enable_if_t<
+    is_constructible<detail::channel_message<R(Args...)>, int, Args2...>::value,
+    std::size_t
+  > try_send_n_via_dispatch(std::size_t count, Args2&&... args)
+  {
+    typedef typename detail::channel_message<R(Args...)> message_type;
+    Derived* self = static_cast<Derived*>(this);
+    return self->service_->template try_send_n<message_type>(
+        self->impl_, count, true, static_cast<Args2&&>(args)...);
   }
 
   template <
