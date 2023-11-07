@@ -521,7 +521,7 @@ public:
 
   static return_type on_resume(result_type& result)
   {
-    if (result)
+    if (*result)
       rethrow_exception(*result);
   }
 
@@ -629,7 +629,7 @@ public:
 
   static return_type on_resume(result_type& result)
   {
-    if (result.ex_)
+    if (*result.ex_)
       rethrow_exception(*result.ex_);
     return static_cast<return_type&&>(*result.value_);
   }
@@ -746,7 +746,7 @@ public:
 
   static return_type on_resume(result_type& result)
   {
-    if (result.ex_)
+    if (*result.ex_)
       rethrow_exception(*result.ex_);
     return static_cast<return_type&&>(*result.value_);
   }
