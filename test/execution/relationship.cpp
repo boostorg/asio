@@ -740,8 +740,12 @@ void test_prefer()
 void test_vars()
 {
   BOOST_ASIO_CHECK(s() == exec::relationship);
+  BOOST_ASIO_CHECK(s() != exec::relationship.fork);
+  BOOST_ASIO_CHECK(s() != exec::relationship.continuation);
   BOOST_ASIO_CHECK(n1() == exec::relationship.fork);
+  BOOST_ASIO_CHECK(n1() != exec::relationship.continuation);
   BOOST_ASIO_CHECK(n2() == exec::relationship.continuation);
+  BOOST_ASIO_CHECK(n2() != exec::relationship.fork);
 }
 
 BOOST_ASIO_TEST_SUITE
