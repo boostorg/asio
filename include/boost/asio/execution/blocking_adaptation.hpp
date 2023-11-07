@@ -443,16 +443,24 @@ struct disallowed_t
     return disallowed_t();
   }
 
-  friend constexpr bool operator==(
-      const disallowed_t&, const disallowed_t&)
+  friend constexpr bool operator==(const disallowed_t&, const disallowed_t&)
   {
     return true;
   }
 
-  friend constexpr bool operator!=(
-      const disallowed_t&, const disallowed_t&)
+  friend constexpr bool operator!=(const disallowed_t&, const disallowed_t&)
   {
     return false;
+  }
+
+  friend constexpr bool operator==(const disallowed_t&, const allowed_t<I>&)
+  {
+    return false;
+  }
+
+  friend constexpr bool operator!=(const disallowed_t&, const allowed_t<I>&)
+  {
+    return true;
   }
 };
 
@@ -616,6 +624,16 @@ struct allowed_t
   friend constexpr bool operator!=(const allowed_t&, const allowed_t&)
   {
     return false;
+  }
+
+  friend constexpr bool operator==(const allowed_t&, const disallowed_t<I>&)
+  {
+    return false;
+  }
+
+  friend constexpr bool operator!=(const allowed_t&, const disallowed_t<I>&)
+  {
+    return true;
   }
 
   template <typename Executor>

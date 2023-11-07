@@ -808,8 +808,12 @@ void test_prefer()
 void test_vars()
 {
   BOOST_ASIO_CHECK(s() == exec::blocking_adaptation);
+  BOOST_ASIO_CHECK(s() != exec::blocking_adaptation.disallowed);
+  BOOST_ASIO_CHECK(s() != exec::blocking_adaptation.allowed);
   BOOST_ASIO_CHECK(n1() == exec::blocking_adaptation.disallowed);
+  BOOST_ASIO_CHECK(n1() != exec::blocking_adaptation.allowed);
   BOOST_ASIO_CHECK(n2() == exec::blocking_adaptation.allowed);
+  BOOST_ASIO_CHECK(n2() != exec::blocking_adaptation.disallowed);
 }
 
 BOOST_ASIO_TEST_SUITE
