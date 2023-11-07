@@ -17,6 +17,7 @@
 #include <boost/asio/experimental/channel.hpp>
 
 #include <utility>
+#include <boost/asio/any_completion_handler.hpp>
 #include <boost/asio/bind_executor.hpp>
 #include <boost/asio/bind_immediate_executor.hpp>
 #include <boost/asio/error.hpp>
@@ -826,6 +827,42 @@ void implicit_error_signature_channel_test()
   BOOST_ASIO_CHECK(ec5 == boost::asio::experimental::channel_errc::channel_closed);
 }
 
+void channel_with_any_completion_handler_test()
+{
+  io_context ctx;
+
+  channel<void(boost::system::error_code, std::string)> ch1(ctx);
+
+  boost::system::error_code ec1 = boost::asio::error::would_block;
+  std::string s1;
+  ch1.async_receive(
+      boost::asio::any_completion_handler<
+        void(boost::system::error_code, std::string)>(
+          [&](boost::system::error_code ec, std::string s)
+          {
+            ec1 = ec;
+            s1 = std::move(s);
+          }));
+
+  boost::system::error_code ec2 = boost::asio::error::would_block;
+  std::string s2 = "zyxwvutsrqponmlkjihgfedcba";
+  ch1.async_send(boost::asio::error::eof, std::move(s2),
+      boost::asio::any_completion_handler<void(boost::system::error_code)>(
+        [&](boost::system::error_code ec)
+        {
+          ec2 = ec;
+        }));
+
+  BOOST_ASIO_CHECK(ec1 == boost::asio::error::would_block);
+  BOOST_ASIO_CHECK(ec2 == boost::asio::error::would_block);
+
+  ctx.run();
+
+  BOOST_ASIO_CHECK(ec1 == boost::asio::error::eof);
+  BOOST_ASIO_CHECK(s1 == "zyxwvutsrqponmlkjihgfedcba");
+  BOOST_ASIO_CHECK(!ec2);
+}
+
 BOOST_ASIO_TEST_SUITE
 (
   "experimental/channel",
@@ -847,4 +884,5 @@ BOOST_ASIO_TEST_SUITE
   BOOST_ASIO_TEST_CASE(try_send_via_dispatch)
   BOOST_ASIO_TEST_CASE(try_send_n_via_dispatch)
   BOOST_ASIO_TEST_CASE(implicit_error_signature_channel_test)
+  BOOST_ASIO_TEST_CASE(channel_with_any_completion_handler_test)
 )
