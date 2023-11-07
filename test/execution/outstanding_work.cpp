@@ -740,8 +740,12 @@ void test_prefer()
 void test_vars()
 {
   BOOST_ASIO_CHECK(s() == exec::outstanding_work);
+  BOOST_ASIO_CHECK(s() != exec::outstanding_work.untracked);
+  BOOST_ASIO_CHECK(s() != exec::outstanding_work.tracked);
   BOOST_ASIO_CHECK(n1() == exec::outstanding_work.untracked);
+  BOOST_ASIO_CHECK(n1() != exec::outstanding_work.tracked);
   BOOST_ASIO_CHECK(n2() == exec::outstanding_work.tracked);
+  BOOST_ASIO_CHECK(n2() != exec::outstanding_work.untracked);
 }
 
 BOOST_ASIO_TEST_SUITE
