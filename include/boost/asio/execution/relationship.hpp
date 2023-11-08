@@ -442,6 +442,16 @@ struct fork_t
   {
     return false;
   }
+
+  friend constexpr bool operator==(const fork_t&, const continuation_t<I>&)
+  {
+    return false;
+  }
+
+  friend constexpr bool operator!=(const fork_t&, const continuation_t<I>&)
+  {
+    return true;
+  }
 };
 
 #if defined(BOOST_ASIO_HAS_DEDUCED_STATIC_QUERY_TRAIT) \
@@ -508,6 +518,16 @@ struct continuation_t
   friend constexpr bool operator!=(const continuation_t&, const continuation_t&)
   {
     return false;
+  }
+
+  friend constexpr bool operator==(const continuation_t&, const fork_t<I>&)
+  {
+    return false;
+  }
+
+  friend constexpr bool operator!=(const continuation_t&, const fork_t<I>&)
+  {
+    return true;
   }
 };
 

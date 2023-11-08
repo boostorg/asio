@@ -40,7 +40,7 @@ namespace detail {
 class channel_operation BOOST_ASIO_INHERIT_TRACKED_HANDLER
 {
 public:
-  template <typename Executor, typename = void>
+  template <typename Executor, typename = void, typename = void>
   class handler_work_base;
 
   template <typename Handler, typename IoExecutor, typename = void>
@@ -85,7 +85,7 @@ public:
   void* cancellation_key_;
 };
 
-template <typename Executor, typename>
+template <typename Executor, typename, typename>
 class channel_operation::handler_work_base
 {
 public:
@@ -105,8 +105,57 @@ public:
     return executor_;
   }
 
+  template <typename IoExecutor, typename Function, typename Handler>
+  void post(const IoExecutor& io_exec, Function& function, Handler&)
+  {
+    (boost::asio::detail::initiate_post_with_executor<IoExecutor>(io_exec))(
+        static_cast<Function&&>(function));
+  }
+
   template <typename Function, typename Handler>
-  void post(Function& function, Handler& handler)
+  void dispatch(Function& function, Handler& handler)
+  {
+    associated_allocator_t<Handler> allocator =
+      (get_associated_allocator)(handler);
+
+    boost::asio::prefer(executor_,
+        execution::allocator(allocator)
+      ).execute(static_cast<Function&&>(function));
+  }
+
+private:
+  executor_type executor_;
+};
+
+template <typename Executor>
+class channel_operation::handler_work_base<Executor,
+    enable_if_t<
+      execution::is_executor<Executor>::value
+    >,
+    enable_if_t<
+      can_require<Executor, execution::blocking_t::never_t>::value
+    >
+  >
+{
+public:
+  typedef decay_t<
+      prefer_result_t<Executor,
+        execution::outstanding_work_t::tracked_t
+      >
+    > executor_type;
+
+  handler_work_base(int, const Executor& ex)
+    : executor_(boost::asio::prefer(ex, execution::outstanding_work.tracked))
+  {
+  }
+
+  const executor_type& get_executor() const noexcept
+  {
+    return executor_;
+  }
+
+  template <typename IoExecutor, typename Function, typename Handler>
+  void post(const IoExecutor&, Function& function, Handler& handler)
   {
     associated_allocator_t<Handler> allocator =
       (get_associated_allocator)(handler);
@@ -138,7 +187,8 @@ template <typename Executor>
 class channel_operation::handler_work_base<Executor,
     enable_if_t<
       !execution::is_executor<Executor>::value
-    >>
+    >
+  >
 {
 public:
   typedef Executor executor_type;
@@ -153,8 +203,8 @@ public:
     return work_.get_executor();
   }
 
-  template <typename Function, typename Handler>
-  void post(Function& function, Handler& handler)
+  template <typename IoExecutor, typename Function, typename Handler>
+  void post(const IoExecutor&, Function& function, Handler& handler)
   {
     associated_allocator_t<Handler> allocator =
       (get_associated_allocator)(handler);
@@ -201,7 +251,7 @@ public:
   template <typename Function>
   void post(Function& function, Handler& handler)
   {
-    base2_type::post(function, handler);
+    base2_type::post(base1_type::get_executor(), function, handler);
   }
 
   template <typename Function>
@@ -251,7 +301,8 @@ class channel_operation::handler_work<
           IoExecutor>::asio_associated_executor_is_unspecialised,
         void
       >::value
-    >> : handler_work_base<IoExecutor>
+    >
+  > : handler_work_base<IoExecutor>
 {
 public:
   typedef channel_operation::handler_work_base<IoExecutor> base1_type;
@@ -264,7 +315,7 @@ public:
   template <typename Function>
   void post(Function& function, Handler& handler)
   {
-    base1_type::post(function, handler);
+    base1_type::post(base1_type::get_executor(), function, handler);
   }
 
   template <typename Function>
@@ -298,7 +349,7 @@ public:
         >::value
       >*)
   {
-    base1_type::post(function, handler);
+    base1_type::post(base1_type::get_executor(), function, handler);
   }
 };
 

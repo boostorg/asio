@@ -445,6 +445,16 @@ struct untracked_t
   {
     return false;
   }
+
+  friend constexpr bool operator==(const untracked_t&, const tracked_t<I>&)
+  {
+    return false;
+  }
+
+  friend constexpr bool operator!=(const untracked_t&, const tracked_t<I>&)
+  {
+    return true;
+  }
 };
 
 #if defined(BOOST_ASIO_HAS_DEDUCED_STATIC_QUERY_TRAIT) \
@@ -510,6 +520,16 @@ struct tracked_t
   friend constexpr bool operator!=(const tracked_t&, const tracked_t&)
   {
     return false;
+  }
+
+  friend constexpr bool operator==(const tracked_t&, const untracked_t<I>&)
+  {
+    return false;
+  }
+
+  friend constexpr bool operator!=(const tracked_t&, const untracked_t<I>&)
+  {
+    return true;
   }
 };
 

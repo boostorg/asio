@@ -439,26 +439,10 @@ public:
       boost::asio::detail::ref_count_up(impl_->ref_count_);
   }
 
-  shared_target_executor& operator=(
-      const shared_target_executor& other) noexcept
-  {
-    impl_ = other.impl_;
-    if (impl_)
-      boost::asio::detail::ref_count_up(impl_->ref_count_);
-    return *this;
-  }
-
   shared_target_executor(shared_target_executor&& other) noexcept
     : impl_(other.impl_)
   {
     other.impl_ = 0;
-  }
-
-  shared_target_executor& operator=(shared_target_executor&& other) noexcept
-  {
-    impl_ = other.impl_;
-    other.impl_ = 0;
-    return *this;
   }
 
   ~shared_target_executor()
@@ -474,6 +458,12 @@ public:
   }
 
 private:
+  shared_target_executor& operator=(
+      const shared_target_executor& other) = delete;
+
+  shared_target_executor& operator=(
+      shared_target_executor&& other) = delete;
+
   struct impl_base
   {
     impl_base() : ref_count_(1) {}

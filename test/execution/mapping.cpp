@@ -741,9 +741,18 @@ void test_prefer()
 void test_vars()
 {
   BOOST_ASIO_CHECK(s() == exec::mapping);
+  BOOST_ASIO_CHECK(s() != exec::mapping.thread);
+  BOOST_ASIO_CHECK(s() != exec::mapping.new_thread);
+  BOOST_ASIO_CHECK(s() != exec::mapping.other);
   BOOST_ASIO_CHECK(n1() == exec::mapping.thread);
+  BOOST_ASIO_CHECK(n1() != exec::mapping.new_thread);
+  BOOST_ASIO_CHECK(n1() != exec::mapping.other);
   BOOST_ASIO_CHECK(n2() == exec::mapping.new_thread);
+  BOOST_ASIO_CHECK(n2() != exec::mapping.thread);
+  BOOST_ASIO_CHECK(n2() != exec::mapping.other);
   BOOST_ASIO_CHECK(n3() == exec::mapping.other);
+  BOOST_ASIO_CHECK(n3() != exec::mapping.thread);
+  BOOST_ASIO_CHECK(n3() != exec::mapping.new_thread);
 }
 
 BOOST_ASIO_TEST_SUITE
