@@ -24,15 +24,20 @@ public:
     : socket_(io_context)
   {
     // Create the socket so that multiple may be bound to the same address.
-    boost::asio::ip::udp::endpoint listen_endpoint(
-        listen_address, multicast_port);
+    boost::asio::ip::udp::endpoint listen_endpoint(((listen_address.is_v6())
+            ? boost::asio::ip::udp::v6() : boost::asio::ip::udp::v4()),
+        multicast_port);
     socket_.open(listen_endpoint.protocol());
     socket_.set_option(boost::asio::ip::udp::socket::reuse_address(true));
     socket_.bind(listen_endpoint);
 
     // Join the multicast group.
-    socket_.set_option(
-        boost::asio::ip::multicast::join_group(multicast_address));
+    if (listen_address.is_v6())
+        socket_.set_option(boost::asio::ip::multicast::join_group(
+            multicast_address.to_v6(), listen_address.to_v6().scope_id()));
+    else
+        socket_.set_option(boost::asio::ip::multicast::join_group(
+            multicast_address.to_v4(), listen_address.to_v4()));
 
     do_receive();
   }
@@ -74,9 +79,16 @@ int main(int argc, char* argv[])
     }
 
     boost::asio::io_context io_context;
-    receiver r(io_context,
-        boost::asio::ip::make_address(argv[1]),
-        boost::asio::ip::make_address(argv[2]));
+    boost::asio::ip::address listen_address(boost::asio::ip::make_address(argv[1]));
+    boost::asio::ip::address multicast_address(boost::asio::ip::make_address(argv[2]));
+    if ((listen_address.is_v4() && !multicast_address.is_v4())
+      || (!listen_address.is_v4() && multicast_address.is_v4()))
+    {
+      std::cerr << "Error: both addresses have to be IPv4 or IPv6." << std::endl;
+      return 1;
+    }
+
+    receiver r(io_context, listen_address, multicast_address);
     io_context.run();
   }
   catch (std::exception& e)
