@@ -19,6 +19,7 @@
 
 #if !defined(BOOST_ASIO_NO_TS_EXECUTORS)
 
+#include <new>
 #include <boost/asio/detail/atomic_count.hpp>
 #include <boost/asio/detail/global.hpp>
 #include <boost/asio/detail/memory.hpp>
@@ -46,6 +47,11 @@ public:
     impl* p = new (mem.ptr_) impl(e, a);
     mem.ptr_ = 0;
     return p;
+  }
+
+  static impl_base* create(std::nothrow_t, const Executor& e) noexcept
+  {
+    return new (std::nothrow) impl(e, std::allocator<void>());
   }
 
   impl(const Executor& e, const Allocator& a) noexcept
@@ -168,6 +174,11 @@ public:
     return &detail::global<impl<system_executor, std::allocator<void>> >();
   }
 
+  static impl_base* create(std::nothrow_t, const system_executor&) noexcept
+  {
+    return &detail::global<impl<system_executor, std::allocator<void>> >();
+  }
+
   impl()
     : impl_base(true)
   {
@@ -242,6 +253,12 @@ private:
 template <typename Executor>
 executor::executor(Executor e)
   : impl_(impl<Executor, std::allocator<void>>::create(e))
+{
+}
+
+template <typename Executor>
+executor::executor(std::nothrow_t, Executor e) noexcept
+  : impl_(impl<Executor, std::allocator<void>>::create(std::nothrow, e))
 {
 }
 
