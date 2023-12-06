@@ -35,20 +35,16 @@ install images
     <location>html/boost_asio
   ;
 
-local example-names = cpp03/allocation cpp03/buffers cpp03/chat cpp03/echo
-  cpp03/fork cpp03/http/client cpp03/http/server cpp03/http/server2
-  cpp03/http/server3 cpp03/http/server4 cpp03/icmp cpp03/invocation
-  cpp03/iostreams cpp03/local cpp03/multicast cpp03/nonblocking
-  cpp03/porthopper cpp03/serialization cpp03/services cpp03/socks4 cpp03/spawn
-  cpp03/ssl cpp03/timeouts cpp03/timers cpp03/windows cpp11/allocation
-  cpp11/buffers cpp11/chat cpp11/deferred cpp11/echo cpp11/executors cpp11/fork
-  cpp11/futures cpp11/handler_tracking cpp11/http/server cpp11/invocation
-  cpp11/local cpp11/multicast cpp11/nonblocking cpp11/operations
-  cpp11/parallel_group cpp11/socks4 cpp11/ssl cpp11/timeouts cpp11/timers
-  cpp11/spawn cpp11/type_erasure cpp14/deferred cpp14/echo cpp14/executors
-  cpp14/iostreams cpp14/operations cpp14/parallel_group cpp17/coroutines_ts
-  cpp20/channels cpp20/coroutines cpp20/invocation cpp20/operations
-  cpp20/type_erasure ;
+local example-names = cpp11/allocation cpp11/buffers cpp11/chat cpp11/deferred
+  cpp11/echo cpp11/executors cpp11/fork cpp11/futures cpp11/handler_tracking
+  cpp11/http/client cpp11/http/server cpp11/http/server2 cpp11/http/server3
+  cpp11/http/server4 cpp11/icmp cpp11/invocation cpp11/iostreams cpp11/local
+  cpp11/multicast cpp11/nonblocking cpp11/operations cpp11/parallel_group
+  cpp11/porthopper cpp11/serialization cpp11/services cpp11/socks4 cpp11/spawn
+  cpp11/ssl cpp11/timeouts cpp11/timers cpp11/type_erasure cpp11/windows
+  cpp14/deferred cpp14/echo cpp14/executors cpp14/iostreams cpp14/operations
+  cpp14/parallel_group cpp17/coroutines_ts cpp20/channels cpp20/coroutines
+  cpp20/invocation cpp20/operations cpp20/type_erasure ;
 
 for local l in $(example-names)
 {

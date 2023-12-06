@@ -104,7 +104,7 @@ public:
     }
 
     // If the operation failed, throw an exception. Otherwise return the result.
-    return error ? throw std::system_error(error) : result;
+    return error ? throw boost::system::system_error(error) : result;
   }
 };
 

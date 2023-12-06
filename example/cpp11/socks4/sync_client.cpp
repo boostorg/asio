@@ -83,7 +83,7 @@ int main(int argc, char* argv[])
           boost::asio::buffer(response), error))
       std::cout.write(response.data(), s);
     if (error != boost::asio::error::eof)
-      throw std::system_error(error);
+      throw boost::system::system_error(error);
   }
   catch (std::exception& e)
   {

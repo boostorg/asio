@@ -19,6 +19,7 @@
 
 #if !defined(BOOST_ASIO_NO_TS_EXECUTORS)
 
+#include <new>
 #include <typeinfo>
 #include <boost/asio/detail/cstddef.hpp>
 #include <boost/asio/detail/executor_function.hpp>
@@ -76,6 +77,25 @@ public:
   /// Construct a polymorphic wrapper for the specified executor.
   template <typename Executor>
   executor(Executor e);
+
+  /// Construct a polymorphic executor that points to the same target as
+  /// another polymorphic executor.
+  executor(std::nothrow_t, const executor& other) noexcept
+    : impl_(other.clone())
+  {
+  }
+
+  /// Construct a polymorphic executor that moves the target from another
+  /// polymorphic executor.
+  executor(std::nothrow_t, executor&& other) noexcept
+    : impl_(other.impl_)
+  {
+    other.impl_ = 0;
+  }
+
+  /// Construct a polymorphic wrapper for the specified executor.
+  template <typename Executor>
+  executor(std::nothrow_t, Executor e) noexcept;
 
   /// Allocator-aware constructor to create a polymorphic wrapper for the
   /// specified executor.

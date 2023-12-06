@@ -7,7 +7,17 @@
 
 [section:history Revision History]
 
-[heading Asio 1.29.0 / Boost 1.84 beta]
+[heading Asio 1.30.0 / Boost 1.84]
+
+* Fixed compatibility between `any_completion_handler` and compilation using
+  `BOOST_ASIO_USE_TS_EXECUTOR_AS_DEFAULT`.
+* Fixed a crash that may occur when attempting to access a default-constructed
+  `any_completion_handler` object's associators.
+* Fixed `ssl::stream<>` class's `async_handshake` operation so that it works
+  with a defaulted completion token.
+* Updated all examples to use C++11 as the minimum language standard.
+
+[heading Asio 1.29.0]
 
 * Changed to require C++11 as the minimum language standard.
 * Removed deprecated functionality from the `boost::asio::execution` namespace.

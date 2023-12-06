@@ -109,6 +109,6 @@ completion handler we would simply write:
 [link boost_asio.reference.strand strand],
 [link boost_asio.reference.io_context__strand io_context::strand],
 [link boost_asio.tutorial.tuttimer5 tutorial Timer.5],
-[link boost_asio.examples.cpp03_examples.http_server_3 HTTP server 3 example].
+[link boost_asio.examples.cpp11_examples.http_server_3 HTTP server 3 example].
 
 [endsect]

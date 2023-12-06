@@ -32,7 +32,7 @@ void session(tcp::socket sock)
       if (error == boost::asio::stream_errc::eof)
         break; // Connection closed cleanly by peer.
       else if (error)
-        throw std::system_error(error); // Some other error.
+        throw boost::system::system_error(error); // Some other error.
 
       boost::asio::write(sock, boost::asio::buffer(data, length));
     }
