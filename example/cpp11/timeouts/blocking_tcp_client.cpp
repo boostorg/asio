@@ -59,7 +59,7 @@ public:
 
     // Determine whether a connection was successfully established.
     if (error)
-      throw std::system_error(error);
+      throw boost::system::system_error(error);
   }
 
   std::string read_line(std::chrono::steady_clock::duration timeout)
@@ -84,7 +84,7 @@ public:
 
     // Determine whether the read completed successfully.
     if (error)
-      throw std::system_error(error);
+      throw boost::system::system_error(error);
 
     std::string line(input_buffer_.substr(0, n - 1));
     input_buffer_.erase(0, n);
@@ -113,7 +113,7 @@ public:
 
     // Determine whether the read completed successfully.
     if (error)
-      throw std::system_error(error);
+      throw boost::system::system_error(error);
   }
 
 private:

@@ -15,6 +15,7 @@ lib network ; # HAIKU
 project
   : requirements
     <library>/boost/system//boost_system
+    <library>/boost/chrono//boost_chrono
     <define>BOOST_ALL_NO_LIB=1
     <threading>multi
     <target-os>solaris:<library>socket
@@ -28,4 +29,6 @@ project
     <target-os>haiku:<library>network
   ;
 
+exe daytime_client : daytime_client.cpp ;
+exe daytime_server : daytime_server.cpp ;
 exe http_client : http_client.cpp ;

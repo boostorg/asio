@@ -89,7 +89,6 @@ responsible for providing the necessary thread safety guarantees.)
 
 [link boost_asio.reference.associated_allocator associated_allocator],
 [link boost_asio.reference.get_associated_allocator get_associated_allocator],
-[link boost_asio.examples.cpp03_examples.allocation custom memory allocation example (C++03)],
 [link boost_asio.examples.cpp11_examples.allocation custom memory allocation example (C++11)].
 
 [endsect]

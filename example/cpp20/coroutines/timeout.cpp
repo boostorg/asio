@@ -37,7 +37,7 @@ awaitable<void> watchdog(time_point& deadline)
     co_await timer.async_wait(use_awaitable);
     now = std::chrono::steady_clock::now();
   }
-  throw std::system_error(std::make_error_code(std::errc::timed_out));
+  throw boost::system::system_error(std::make_error_code(std::errc::timed_out));
 }
 
 awaitable<void> handle_connection(tcp::socket sock)

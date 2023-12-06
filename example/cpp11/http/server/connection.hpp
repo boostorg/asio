@@ -11,9 +11,9 @@
 #ifndef HTTP_CONNECTION_HPP
 #define HTTP_CONNECTION_HPP
 
+#include <boost/asio.hpp>
 #include <array>
 #include <memory>
-#include <boost/asio.hpp>
 #include "reply.hpp"
 #include "request.hpp"
 #include "request_handler.hpp"
