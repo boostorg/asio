@@ -2,7 +2,7 @@
 // buffer.cpp
 // ~~~~~~~~~~
 //
-// Copyright (c) 2003-2022 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2023 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -16,15 +16,13 @@
 // Test that header file is self-contained.
 #include <boost/asio/buffer.hpp>
 
+#include <array>
+#include <cstring>
 #include "unit_test.hpp"
 
 #if defined(BOOST_ASIO_HAS_BOOST_ARRAY)
 # include <boost/array.hpp>
 #endif // defined(BOOST_ASIO_HAS_BOOST_ARRAY)
-
-#if defined(BOOST_ASIO_HAS_STD_ARRAY)
-# include <array>
-#endif // defined(BOOST_ASIO_HAS_STD_ARRAY)
 
 //------------------------------------------------------------------------------
 
@@ -86,11 +84,9 @@ void test()
     const boost::array<char, 1024>& const_array_data_1 = array_data;
     boost::array<const char, 1024> const_array_data_2 = { { 0 } };
 #endif // defined(BOOST_ASIO_HAS_BOOST_ARRAY)
-#if defined(BOOST_ASIO_HAS_STD_ARRAY)
     std::array<char, 1024> std_array_data;
     const std::array<char, 1024>& const_std_array_data_1 = std_array_data;
     std::array<const char, 1024> const_std_array_data_2 = { { 0 } };
-#endif // defined(BOOST_ASIO_HAS_STD_ARRAY)
     std::vector<char> vector_data(1024);
     const std::vector<char>& const_vector_data = vector_data;
     std::string string_data(1024, ' ');
@@ -229,14 +225,12 @@ void test()
     cb1 = buffer(const_array_data_2);
     cb1 = buffer(const_array_data_2, 1024);
 #endif // defined(BOOST_ASIO_HAS_BOOST_ARRAY)
-#if defined(BOOST_ASIO_HAS_STD_ARRAY)
     mb1 = buffer(std_array_data);
     mb1 = buffer(std_array_data, 1024);
     cb1 = buffer(const_std_array_data_1);
     cb1 = buffer(const_std_array_data_1, 1024);
     cb1 = buffer(const_std_array_data_2);
     cb1 = buffer(const_std_array_data_2, 1024);
-#endif // defined(BOOST_ASIO_HAS_STD_ARRAY)
     mb1 = buffer(vector_data);
     mb1 = buffer(vector_data, 1024);
     cb1 = buffer(const_vector_data);
@@ -648,13 +642,11 @@ struct valid_const_a
   const_buffer* end() const { return 0; }
 };
 
-#if defined(BOOST_ASIO_HAS_DECLTYPE)
 struct valid_const_b
 {
   const_buffer* begin() const { return 0; }
   const_buffer* end() const { return 0; }
 };
-#endif // defined(BOOST_ASIO_HAS_DECLTYPE)
 
 struct valid_mutable_a
 {
@@ -664,13 +656,11 @@ struct valid_mutable_a
   mutable_buffer* end() const { return 0; }
 };
 
-#if defined(BOOST_ASIO_HAS_DECLTYPE)
 struct valid_mutable_b
 {
   mutable_buffer* begin() const { return 0; }
   mutable_buffer* end() const { return 0; }
 };
-#endif // defined(BOOST_ASIO_HAS_DECLTYPE)
 
 struct invalid_const_a
 {
@@ -691,7 +681,6 @@ struct invalid_const_c
   const_buffer* end() const { return 0; }
 };
 
-#if defined(BOOST_ASIO_HAS_DECLTYPE)
 struct invalid_const_d
 {
   int* begin() const { return 0; }
@@ -707,7 +696,6 @@ struct invalid_const_f
 {
   const_buffer* end() const { return 0; }
 };
-#endif // defined(BOOST_ASIO_HAS_DECLTYPE)
 
 struct invalid_mutable_a
 {
@@ -728,7 +716,6 @@ struct invalid_mutable_c
   mutable_buffer* end() const { return 0; }
 };
 
-#if defined(BOOST_ASIO_HAS_DECLTYPE)
 struct invalid_mutable_d
 {
   int* begin() const { return 0; }
@@ -744,7 +731,6 @@ struct invalid_mutable_f
 {
   mutable_buffer* end() const { return 0; }
 };
-#endif // defined(BOOST_ASIO_HAS_DECLTYPE)
 
 void test()
 {
@@ -799,14 +785,12 @@ void test()
   BOOST_ASIO_CHECK(buffer_sequence_begin(b7) == b7.begin());
   BOOST_ASIO_CHECK(buffer_sequence_end(b7) == b7.end());
 
-#if defined(BOOST_ASIO_HAS_DECLTYPE)
   BOOST_ASIO_CHECK(is_const_buffer_sequence<valid_const_b>::value);
   BOOST_ASIO_CHECK(!is_mutable_buffer_sequence<valid_const_b>::value);
 
   valid_const_b b8;
   BOOST_ASIO_CHECK(buffer_sequence_begin(b8) == b8.begin());
   BOOST_ASIO_CHECK(buffer_sequence_end(b8) == b8.end());
-#endif // defined(BOOST_ASIO_HAS_DECLTYPE)
 
   BOOST_ASIO_CHECK(is_const_buffer_sequence<valid_mutable_a>::value);
   BOOST_ASIO_CHECK(is_mutable_buffer_sequence<valid_mutable_a>::value);
@@ -815,14 +799,12 @@ void test()
   BOOST_ASIO_CHECK(buffer_sequence_begin(b9) == b9.begin());
   BOOST_ASIO_CHECK(buffer_sequence_end(b9) == b9.end());
 
-#if defined(BOOST_ASIO_HAS_DECLTYPE)
   BOOST_ASIO_CHECK(is_const_buffer_sequence<valid_mutable_b>::value);
   BOOST_ASIO_CHECK(is_mutable_buffer_sequence<valid_mutable_b>::value);
 
   valid_mutable_b b10;
   BOOST_ASIO_CHECK(buffer_sequence_begin(b10) == b10.begin());
   BOOST_ASIO_CHECK(buffer_sequence_end(b10) == b10.end());
-#endif // defined(BOOST_ASIO_HAS_DECLTYPE)
 
   BOOST_ASIO_CHECK(!is_const_buffer_sequence<invalid_const_a>::value);
   BOOST_ASIO_CHECK(!is_mutable_buffer_sequence<invalid_const_a>::value);
@@ -833,7 +815,6 @@ void test()
   BOOST_ASIO_CHECK(!is_const_buffer_sequence<invalid_const_c>::value);
   BOOST_ASIO_CHECK(!is_mutable_buffer_sequence<invalid_const_c>::value);
 
-#if defined(BOOST_ASIO_HAS_DECLTYPE)
   BOOST_ASIO_CHECK(!is_const_buffer_sequence<invalid_const_d>::value);
   BOOST_ASIO_CHECK(!is_mutable_buffer_sequence<invalid_const_d>::value);
 
@@ -842,7 +823,6 @@ void test()
 
   BOOST_ASIO_CHECK(!is_const_buffer_sequence<invalid_const_f>::value);
   BOOST_ASIO_CHECK(!is_mutable_buffer_sequence<invalid_const_f>::value);
-#endif // defined(BOOST_ASIO_HAS_DECLTYPE)
 
   BOOST_ASIO_CHECK(!is_mutable_buffer_sequence<invalid_mutable_a>::value);
   BOOST_ASIO_CHECK(!is_mutable_buffer_sequence<invalid_mutable_a>::value);
@@ -853,7 +833,6 @@ void test()
   BOOST_ASIO_CHECK(!is_mutable_buffer_sequence<invalid_mutable_c>::value);
   BOOST_ASIO_CHECK(!is_mutable_buffer_sequence<invalid_mutable_c>::value);
 
-#if defined(BOOST_ASIO_HAS_DECLTYPE)
   BOOST_ASIO_CHECK(!is_mutable_buffer_sequence<invalid_mutable_d>::value);
   BOOST_ASIO_CHECK(!is_mutable_buffer_sequence<invalid_mutable_d>::value);
 
@@ -862,10 +841,65 @@ void test()
 
   BOOST_ASIO_CHECK(!is_mutable_buffer_sequence<invalid_mutable_f>::value);
   BOOST_ASIO_CHECK(!is_mutable_buffer_sequence<invalid_mutable_f>::value);
-#endif // defined(BOOST_ASIO_HAS_DECLTYPE)
 }
 
 } // namespace buffer_sequence
+
+namespace buffer_literals {
+
+void test()
+{
+#if defined(BOOST_ASIO_HAS_USER_DEFINED_LITERALS)
+  using namespace boost::asio::buffer_literals;
+  using namespace std; // For memcmp.
+
+  boost::asio::const_buffer b1 = ""_buf;
+  BOOST_ASIO_CHECK(b1.size() == 0);
+
+  boost::asio::const_buffer b2 = "hello"_buf;
+  BOOST_ASIO_CHECK(b2.size() == 5);
+  BOOST_ASIO_CHECK(memcmp(b2.data(), "hello", 5) == 0);
+
+  boost::asio::const_buffer b3 = 0x00_buf;
+  BOOST_ASIO_CHECK(b3.size() == 1);
+  BOOST_ASIO_CHECK(memcmp(b3.data(), "\x00", 1) == 0);
+
+  boost::asio::const_buffer b4 = 0X01_buf;
+  BOOST_ASIO_CHECK(b4.size() == 1);
+  BOOST_ASIO_CHECK(memcmp(b4.data(), "\x01", 1) == 0);
+
+  boost::asio::const_buffer b5 = 0xaB_buf;
+  BOOST_ASIO_CHECK(b5.size() == 1);
+  BOOST_ASIO_CHECK(memcmp(b5.data(), "\xab", 1) == 0);
+
+  boost::asio::const_buffer b6 = 0xABcd_buf;
+  BOOST_ASIO_CHECK(b6.size() == 2);
+  BOOST_ASIO_CHECK(memcmp(b6.data(), "\xab\xcd", 2) == 0);
+
+  boost::asio::const_buffer b7 = 0x01ab01cd01ef01ba01dc01fe_buf;
+  BOOST_ASIO_CHECK(b7.size() == 12);
+  BOOST_ASIO_CHECK(memcmp(b7.data(),
+        "\x01\xab\x01\xcd\x01\xef\x01\xba\x01\xdc\x01\xfe", 12) == 0);
+
+  boost::asio::const_buffer b8 = 0b00000000_buf;
+  BOOST_ASIO_CHECK(b8.size() == 1);
+  BOOST_ASIO_CHECK(memcmp(b8.data(), "\x00", 1) == 0);
+
+  boost::asio::const_buffer b9 = 0B00000001_buf;
+  BOOST_ASIO_CHECK(b9.size() == 1);
+  BOOST_ASIO_CHECK(memcmp(b9.data(), "\x01", 1) == 0);
+
+  boost::asio::const_buffer b10 = 0B11111111_buf;
+  BOOST_ASIO_CHECK(b10.size() == 1);
+  BOOST_ASIO_CHECK(memcmp(b10.data(), "\xFF", 1) == 0);
+
+  boost::asio::const_buffer b11 = 0b1111000000001111_buf;
+  BOOST_ASIO_CHECK(b11.size() == 2);
+  BOOST_ASIO_CHECK(memcmp(b11.data(), "\xF0\x0F", 2) == 0);
+#endif // (defined(BOOST_ASIO_HAS_USER_DEFINED_LITERALS)
+}
+
+} // namespace buffer_literals
 
 //------------------------------------------------------------------------------
 
@@ -875,4 +909,5 @@ BOOST_ASIO_TEST_SUITE
   BOOST_ASIO_COMPILE_TEST_CASE(buffer_compile::test)
   BOOST_ASIO_TEST_CASE(buffer_copy_runtime::test)
   BOOST_ASIO_TEST_CASE(buffer_sequence::test)
+  BOOST_ASIO_TEST_CASE(buffer_literals::test)
 )

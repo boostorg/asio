@@ -2,7 +2,7 @@
 // udp.cpp
 // ~~~~~~~
 //
-// Copyright (c) 2003-2022 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2023 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -17,18 +17,13 @@
 #include <boost/asio/ip/udp.hpp>
 
 #include <cstring>
+#include <functional>
 #include <boost/asio/io_context.hpp>
 #include "../unit_test.hpp"
 #include "../archetypes/async_result.hpp"
 #include "../archetypes/gettable_socket_option.hpp"
 #include "../archetypes/io_control_command.hpp"
 #include "../archetypes/settable_socket_option.hpp"
-
-#if defined(BOOST_ASIO_HAS_BOOST_BIND)
-# include <boost/bind/bind.hpp>
-#else // defined(BOOST_ASIO_HAS_BOOST_BIND)
-# include <functional>
-#endif // defined(BOOST_ASIO_HAS_BOOST_BIND)
 
 //------------------------------------------------------------------------------
 
@@ -43,44 +38,36 @@ struct connect_handler
 {
   connect_handler() {}
   void operator()(const boost::system::error_code&) {}
-#if defined(BOOST_ASIO_HAS_MOVE)
   connect_handler(connect_handler&&) {}
 private:
   connect_handler(const connect_handler&);
-#endif // defined(BOOST_ASIO_HAS_MOVE)
 };
 
 struct wait_handler
 {
   wait_handler() {}
   void operator()(const boost::system::error_code&) {}
-#if defined(BOOST_ASIO_HAS_MOVE)
   wait_handler(wait_handler&&) {}
 private:
   wait_handler(const wait_handler&);
-#endif // defined(BOOST_ASIO_HAS_MOVE)
 };
 
 struct send_handler
 {
   send_handler() {}
   void operator()(const boost::system::error_code&, std::size_t) {}
-#if defined(BOOST_ASIO_HAS_MOVE)
   send_handler(send_handler&&) {}
 private:
   send_handler(const send_handler&);
-#endif // defined(BOOST_ASIO_HAS_MOVE)
 };
 
 struct receive_handler
 {
   receive_handler() {}
   void operator()(const boost::system::error_code&, std::size_t) {}
-#if defined(BOOST_ASIO_HAS_MOVE)
   receive_handler(receive_handler&&) {}
 private:
   receive_handler(const receive_handler&);
-#endif // defined(BOOST_ASIO_HAS_MOVE)
 };
 
 void test()
@@ -102,6 +89,7 @@ void test()
     archetypes::gettable_socket_option<int> gettable_socket_option2;
     archetypes::gettable_socket_option<double> gettable_socket_option3;
     archetypes::io_control_command io_control_command;
+    archetypes::immediate_handler immediate;
     archetypes::lazy_handler lazy;
     boost::system::error_code ec;
 
@@ -129,16 +117,12 @@ void test()
     ip::udp::socket socket12(ioc_ex, ip::udp::v4(), native_socket2);
 #endif // !defined(BOOST_ASIO_WINDOWS_RUNTIME)
 
-#if defined(BOOST_ASIO_HAS_MOVE)
     ip::udp::socket socket13(std::move(socket6));
-#endif // defined(BOOST_ASIO_HAS_MOVE)
 
     // basic_datagram_socket operators.
 
-#if defined(BOOST_ASIO_HAS_MOVE)
     socket1 = ip::udp::socket(ioc);
     socket1 = std::move(socket2);
-#endif // defined(BOOST_ASIO_HAS_MOVE)
 
     // basic_io_object functions.
 
@@ -209,6 +193,8 @@ void test()
         connect_handler());
     socket1.async_connect(ip::udp::endpoint(ip::udp::v6(), 0),
         connect_handler());
+    socket1.async_connect(ip::udp::endpoint(ip::udp::v4(), 0), immediate);
+    socket1.async_connect(ip::udp::endpoint(ip::udp::v6(), 0), immediate);
     int i1 = socket1.async_connect(ip::udp::endpoint(ip::udp::v4(), 0), lazy);
     (void)i1;
     int i2 = socket1.async_connect(ip::udp::endpoint(ip::udp::v6(), 0), lazy);
@@ -258,6 +244,7 @@ void test()
     socket1.wait(socket_base::wait_write, ec);
 
     socket1.async_wait(socket_base::wait_read, wait_handler());
+    socket1.async_wait(socket_base::wait_read, immediate);
     int i3 = socket1.async_wait(socket_base::wait_write, lazy);
     (void)i3;
 
@@ -279,6 +266,12 @@ void test()
     socket1.async_send(buffer(mutable_char_buffer), in_flags, send_handler());
     socket1.async_send(buffer(const_char_buffer), in_flags, send_handler());
     socket1.async_send(null_buffers(), in_flags, send_handler());
+    socket1.async_send(buffer(mutable_char_buffer), immediate);
+    socket1.async_send(buffer(const_char_buffer), immediate);
+    socket1.async_send(null_buffers(), immediate);
+    socket1.async_send(buffer(mutable_char_buffer), in_flags, immediate);
+    socket1.async_send(buffer(const_char_buffer), in_flags, immediate);
+    socket1.async_send(null_buffers(), in_flags, immediate);
     int i4 = socket1.async_send(buffer(mutable_char_buffer), lazy);
     (void)i4;
     int i5 = socket1.async_send(buffer(const_char_buffer), lazy);
@@ -353,6 +346,30 @@ void test()
         ip::udp::endpoint(ip::udp::v4(), 0), in_flags, send_handler());
     socket1.async_send_to(null_buffers(),
         ip::udp::endpoint(ip::udp::v6(), 0), in_flags, send_handler());
+    socket1.async_send_to(buffer(mutable_char_buffer),
+        ip::udp::endpoint(ip::udp::v4(), 0), immediate);
+    socket1.async_send_to(buffer(mutable_char_buffer),
+        ip::udp::endpoint(ip::udp::v6(), 0), immediate);
+    socket1.async_send_to(buffer(const_char_buffer),
+        ip::udp::endpoint(ip::udp::v4(), 0), immediate);
+    socket1.async_send_to(buffer(const_char_buffer),
+        ip::udp::endpoint(ip::udp::v6(), 0), immediate);
+    socket1.async_send_to(null_buffers(),
+        ip::udp::endpoint(ip::udp::v4(), 0), immediate);
+    socket1.async_send_to(null_buffers(),
+        ip::udp::endpoint(ip::udp::v6(), 0), immediate);
+    socket1.async_send_to(buffer(mutable_char_buffer),
+        ip::udp::endpoint(ip::udp::v4(), 0), in_flags, immediate);
+    socket1.async_send_to(buffer(mutable_char_buffer),
+        ip::udp::endpoint(ip::udp::v6(), 0), in_flags, immediate);
+    socket1.async_send_to(buffer(const_char_buffer),
+        ip::udp::endpoint(ip::udp::v4(), 0), in_flags, immediate);
+    socket1.async_send_to(buffer(const_char_buffer),
+        ip::udp::endpoint(ip::udp::v6(), 0), in_flags, immediate);
+    socket1.async_send_to(null_buffers(),
+        ip::udp::endpoint(ip::udp::v4(), 0), in_flags, immediate);
+    socket1.async_send_to(null_buffers(),
+        ip::udp::endpoint(ip::udp::v6(), 0), in_flags, immediate);
     int i10 = socket1.async_send_to(buffer(mutable_char_buffer),
         ip::udp::endpoint(ip::udp::v4(), 0), lazy);
     (void)i10;
@@ -402,6 +419,10 @@ void test()
     socket1.async_receive(buffer(mutable_char_buffer), in_flags,
         receive_handler());
     socket1.async_receive(null_buffers(), in_flags, receive_handler());
+    socket1.async_receive(buffer(mutable_char_buffer), immediate);
+    socket1.async_receive(null_buffers(), immediate);
+    socket1.async_receive(buffer(mutable_char_buffer), in_flags, immediate);
+    socket1.async_receive(null_buffers(), in_flags, immediate);
     int i22 = socket1.async_receive(buffer(mutable_char_buffer), lazy);
     (void)i22;
     int i23 = socket1.async_receive(null_buffers(), lazy);
@@ -428,6 +449,14 @@ void test()
         endpoint, in_flags, receive_handler());
     socket1.async_receive_from(null_buffers(),
         endpoint, in_flags, receive_handler());
+    socket1.async_receive_from(buffer(mutable_char_buffer),
+        endpoint, immediate);
+    socket1.async_receive_from(null_buffers(),
+        endpoint, immediate);
+    socket1.async_receive_from(buffer(mutable_char_buffer),
+        endpoint, in_flags, immediate);
+    socket1.async_receive_from(null_buffers(),
+        endpoint, in_flags, immediate);
     int i26 = socket1.async_receive_from(buffer(mutable_char_buffer),
         endpoint, lazy);
     (void)i26;
@@ -476,11 +505,7 @@ void test()
   using namespace boost::asio;
   namespace ip = boost::asio::ip;
 
-#if defined(BOOST_ASIO_HAS_BOOST_BIND)
-  namespace bindns = boost;
-#else // defined(BOOST_ASIO_HAS_BOOST_BIND)
   namespace bindns = std;
-#endif // defined(BOOST_ASIO_HAS_BOOST_BIND)
   using bindns::placeholders::_1;
   using bindns::placeholders::_2;
 
@@ -533,11 +558,9 @@ struct resolve_handler
   resolve_handler() {}
   void operator()(const boost::system::error_code&,
       boost::asio::ip::udp::resolver::results_type) {}
-#if defined(BOOST_ASIO_HAS_MOVE)
   resolve_handler(resolve_handler&&) {}
 private:
   resolve_handler(const resolve_handler&);
-#endif // defined(BOOST_ASIO_HAS_MOVE)
 };
 
 void test()
@@ -561,16 +584,12 @@ void test()
     ip::udp::resolver resolver(ioc);
     ip::udp::resolver resolver2(ioc_ex);
 
-#if defined(BOOST_ASIO_HAS_MOVE)
     ip::udp::resolver resolver3(std::move(resolver));
-#endif // defined(BOOST_ASIO_HAS_MOVE)
 
     // basic_resolver operators.
 
-#if defined(BOOST_ASIO_HAS_MOVE)
     resolver = ip::udp::resolver(ioc);
     resolver = std::move(resolver3);
-#endif // defined(BOOST_ASIO_HAS_MOVE)
 
     // basic_io_object functions.
 

@@ -2,7 +2,7 @@
 // recycling_allocator.cpp
 // ~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2022 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2023 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -69,10 +69,8 @@ void recycling_allocator_test()
 
   a1.deallocate(p, 42);
 
-#if defined(BOOST_ASIO_HAS_CXX11_ALLOCATORS)
   std::vector<int, boost::asio::recycling_allocator<int> > v(42);
   BOOST_ASIO_CHECK(v.size() == 42);
-#endif // defined(BOOST_ASIO_HAS_CXX11_ALLOCATORS)
 }
 
 BOOST_ASIO_TEST_SUITE

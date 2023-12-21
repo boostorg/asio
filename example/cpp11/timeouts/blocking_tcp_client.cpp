@@ -2,7 +2,7 @@
 // blocking_tcp_client.cpp
 // ~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2022 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2023 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -59,7 +59,7 @@ public:
 
     // Determine whether a connection was successfully established.
     if (error)
-      throw std::system_error(error);
+      throw boost::system::system_error(error);
   }
 
   std::string read_line(std::chrono::steady_clock::duration timeout)
@@ -84,7 +84,7 @@ public:
 
     // Determine whether the read completed successfully.
     if (error)
-      throw std::system_error(error);
+      throw boost::system::system_error(error);
 
     std::string line(input_buffer_.substr(0, n - 1));
     input_buffer_.erase(0, n);
@@ -113,7 +113,7 @@ public:
 
     // Determine whether the read completed successfully.
     if (error)
-      throw std::system_error(error);
+      throw boost::system::system_error(error);
   }
 
 private:

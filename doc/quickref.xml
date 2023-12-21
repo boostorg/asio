@@ -2,7 +2,7 @@
 <!DOCTYPE library PUBLIC "-//Boost//DTD BoostBook XML V1.0//EN" "../../../tools/boostbook/dtd/boostbook.dtd">
 
 <!--
-  Copyright (c) 2003-2022 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+  Copyright (c) 2003-2023 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 
   Distributed under the Boost Software License, Version 1.0. (See accompanying
   file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -59,7 +59,6 @@
           <simplelist type="vert" columns="1">
             <member><link linkend="boost_asio.reference.execution__bad_executor">execution::bad_executor</link></member>
             <member><link linkend="boost_asio.reference.execution__invocable_archetype">execution::invocable_archetype</link></member>
-            <member><link linkend="boost_asio.reference.execution__receiver_invocation_error">execution::receiver_invocation_error</link> (deprecated)</member>
           </simplelist>
           <bridgehead renderas="sect3">Properties</bridgehead>
           <simplelist type="vert" columns="1">
@@ -71,10 +70,6 @@
             <member><link linkend="boost_asio.reference.execution__blocking_adaptation_t">execution::blocking_adaptation_t</link></member>
             <member><link linkend="boost_asio.reference.execution__blocking_adaptation_t__disallowed_t">execution::blocking_adaptation_t::disallowed_t</link></member>
             <member><link linkend="boost_asio.reference.execution__blocking_adaptation_t__allowed_t">execution::blocking_adaptation_t::allowed_t</link></member>
-            <member><link linkend="boost_asio.reference.execution__bulk_guarantee_t">execution::bulk_guarantee_t</link> (deprecated)</member>
-            <member><link linkend="boost_asio.reference.execution__bulk_guarantee_t__unsequenced_t">execution::bulk_guarantee_t::unsequenced_t</link> (deprecated)</member>
-            <member><link linkend="boost_asio.reference.execution__bulk_guarantee_t__sequenced_t">execution::bulk_guarantee_t::sequenced_t</link> (deprecated)</member>
-            <member><link linkend="boost_asio.reference.execution__bulk_guarantee_t__parallel_t">execution::bulk_guarantee_t::parallel_t</link> (deprecated)</member>
             <member><link linkend="boost_asio.reference.execution__context_t">execution::context_t</link></member>
             <member><link linkend="boost_asio.reference.execution__context_as_t">execution::context_as_t</link></member>
             <member><link linkend="boost_asio.reference.execution__mapping_t">execution::mapping_t</link></member>
@@ -92,20 +87,8 @@
           </simplelist>
         </entry>
         <entry valign="top">
-          <bridgehead renderas="sect3">Customisation Points</bridgehead>
-          <simplelist type="vert" columns="1">
-            <member><link linkend="boost_asio.reference.execution__bulk_execute">execution::bulk_execute</link> (deprecated)</member>
-            <member><link linkend="boost_asio.reference.execution__connect">execution::connect</link> (deprecated)</member>
-            <member><link linkend="boost_asio.reference.execution__execute">execution::execute</link> (deprecated)</member>
-            <member><link linkend="boost_asio.reference.execution__schedule">execution::schedule</link> (deprecated)</member>
-            <member><link linkend="boost_asio.reference.execution__set_done">execution::set_done</link> (deprecated)</member>
-            <member><link linkend="boost_asio.reference.execution__set_error">execution::set_error</link> (deprecated)</member>
-            <member><link linkend="boost_asio.reference.execution__set_value">execution::set_value</link> (deprecated)</member>
-            <member><link linkend="boost_asio.reference.execution__start">execution::start</link> (deprecated)</member>
-            <member><link linkend="boost_asio.reference.execution__submit">execution::submit</link> (deprecated)</member>
-          </simplelist>
           <bridgehead renderas="sect3">Property Objects</bridgehead>
-          <simplelist type="vert" columns="1">
+          <simplelist type="vert" columns="2">
             <member><link linkend="boost_asio.reference.execution__allocator">execution::allocator</link></member>
             <member><link linkend="boost_asio.reference.execution__blocking">execution::blocking</link></member>
             <member><link linkend="boost_asio.reference.execution__blocking_t.possibly">execution::blocking.possibly</link></member>
@@ -114,10 +97,6 @@
             <member><link linkend="boost_asio.reference.execution__blocking_adaptation">execution::blocking_adaptation</link></member>
             <member><link linkend="boost_asio.reference.execution__blocking_adaptation_t.disallowed">execution::blocking_adaptation.disallowed</link></member>
             <member><link linkend="boost_asio.reference.execution__blocking_adaptation_t.allowed">execution::blocking_adaptation.allowed</link></member>
-            <member><link linkend="boost_asio.reference.execution__bulk_guarantee">execution::bulk_guarantee</link> (deprecated)</member>
-            <member><link linkend="boost_asio.reference.execution__bulk_guarantee_t.unsequenced">execution::bulk_guarantee.unsequenced</link> (deprecated)</member>
-            <member><link linkend="boost_asio.reference.execution__bulk_guarantee_t.sequenced">execution::bulk_guarantee.sequenced</link> (deprecated)</member>
-            <member><link linkend="boost_asio.reference.execution__bulk_guarantee_t.parallel">execution::bulk_guarantee.parallel</link> (deprecated)</member>
             <member><link linkend="boost_asio.reference.execution__context">execution::context</link></member>
             <member><link linkend="boost_asio.reference.execution__context_as">execution::context_as</link></member>
             <member><link linkend="boost_asio.reference.execution__mapping">execution::mapping</link></member>
@@ -136,37 +115,11 @@
         <entry valign="top">
           <bridgehead renderas="sect3">Type Traits</bridgehead>
           <simplelist type="vert" columns="1">
-            <member><link linkend="boost_asio.reference.execution__can_bulk_execute">execution::can_bulk_execute</link> (deprecated)</member>
-            <member><link linkend="boost_asio.reference.execution__can_connect">execution::can_connect</link> (deprecated)</member>
-            <member><link linkend="boost_asio.reference.execution__can_execute">execution::can_execute</link> (deprecated)</member>
-            <member><link linkend="boost_asio.reference.execution__can_schedule">execution::can_schedule</link> (deprecated)</member>
-            <member><link linkend="boost_asio.reference.execution__can_set_done">execution::can_set_done</link> (deprecated)</member>
-            <member><link linkend="boost_asio.reference.execution__can_set_error">execution::can_set_error</link> (deprecated)</member>
-            <member><link linkend="boost_asio.reference.execution__can_set_value">execution::can_set_value</link> (deprecated)</member>
-            <member><link linkend="boost_asio.reference.execution__can_start">execution::can_start</link> (deprecated)></member>
-            <member><link linkend="boost_asio.reference.execution__can_submit">execution::can_submit</link> (deprecated)</member>
-            <member><link linkend="boost_asio.reference.execution__connect_result">execution::connect_result</link> (deprecated)</member>
             <member><link linkend="boost_asio.reference.execution__is_executor">execution::is_executor</link></member>
-            <member><link linkend="boost_asio.reference.execution__is_executor_of">execution::is_executor_of</link></member>
-            <member><link linkend="boost_asio.reference.execution__is_nothrow_receiver_of">execution::is_nothrow_receiver_of</link> (deprecated)</member>
-            <member><link linkend="boost_asio.reference.execution__is_receiver">execution::is_receiver</link> (deprecated)</member>
-            <member><link linkend="boost_asio.reference.execution__is_receiver_of">execution::is_receiver_of</link> (deprecated)</member>
-            <member><link linkend="boost_asio.reference.execution__is_sender">execution::is_sender</link> (deprecated)</member>
-            <member><link linkend="boost_asio.reference.execution__is_sender_to">execution::is_sender_to</link> (deprecated)</member>
-            <member><link linkend="boost_asio.reference.execution__is_typed_sender">execution::is_typed_sender</link> (deprecated)</member>
-            <member><link linkend="boost_asio.reference.execution__sender_traits">execution::sender_traits</link> (deprecated)</member>
           </simplelist>
           <bridgehead renderas="sect3">Concepts</bridgehead>
           <simplelist type="vert" columns="1">
             <member><link linkend="boost_asio.reference.Executor1.standard_executors">executor</link></member>
-            <member><link linkend="boost_asio.reference.Executor1.standard_executors">executor_of</link></member>
-            <member><link linkend="boost_asio.reference.OperationState">operation_state</link> (deprecated)</member>
-            <member><link linkend="boost_asio.reference.Receiver">receiver</link> (deprecated)</member>
-            <member><link linkend="boost_asio.reference.Receiver">receiver_of</link> (deprecated)</member>
-            <member><link linkend="boost_asio.reference.Scheduler">scheduler</link> (deprecated)</member>
-            <member><link linkend="boost_asio.reference.Sender">sender</link> (deprecated)</member>
-            <member><link linkend="boost_asio.reference.Sender">sender_to</link> (deprecated)</member>
-            <member><link linkend="boost_asio.reference.Sender.typed_sender">typed_sender</link> (deprecated)</member>
           </simplelist>
         </entry>
       </row>
@@ -228,15 +181,13 @@
             <member><link linkend="boost_asio.reference.as_tuple">as_tuple</link></member>
             <member><link linkend="boost_asio.reference.experimental__as_single">experimental::as_single</link></member>
             <member><link linkend="boost_asio.reference.experimental__make_parallel_group">experimental::make_parallel_group</link></member>
-            <member><link linkend="boost_asio.reference.asio_handler_allocate">asio_handler_allocate</link> (deprecated)</member>
-            <member><link linkend="boost_asio.reference.asio_handler_deallocate">asio_handler_deallocate</link> (deprecated)</member>
-            <member><link linkend="boost_asio.reference.asio_handler_invoke">asio_handler_invoke</link> (deprecated)</member>
             <member><link linkend="boost_asio.reference.asio_handler_is_continuation">asio_handler_is_continuation</link></member>
             <member><link linkend="boost_asio.reference.async_compose">async_compose</link></member>
             <member><link linkend="boost_asio.reference.async_initiate">async_initiate</link></member>
             <member><link linkend="boost_asio.reference.bind_allocator">bind_allocator</link></member>
             <member><link linkend="boost_asio.reference.bind_cancellation_slot">bind_cancellation_slot</link></member>
             <member><link linkend="boost_asio.reference.bind_executor">bind_executor</link></member>
+            <member><link linkend="boost_asio.reference.bind_immediate_executor">bind_immediate_executor</link></member>
             <member><link linkend="boost_asio.reference.co_spawn">co_spawn</link></member>
             <member><link linkend="boost_asio.reference.consign">consign</link></member>
             <member><link linkend="boost_asio.reference.dispatch">dispatch</link></member>
@@ -245,6 +196,7 @@
             <member><link linkend="boost_asio.reference.get_associated_allocator">get_associated_allocator</link></member>
             <member><link linkend="boost_asio.reference.get_associated_cancellation_slot">get_associated_cancellation_slot</link></member>
             <member><link linkend="boost_asio.reference.get_associated_executor">get_associated_executor</link></member>
+            <member><link linkend="boost_asio.reference.get_associated_immediate_executor">get_associated_immediate_executor</link></member>
             <member><link linkend="boost_asio.reference.execution_context.has_service">has_service</link></member>
             <member><link linkend="boost_asio.reference.make_strand">make_strand</link></member>
             <member><link linkend="boost_asio.reference.make_work_guard">make_work_guard</link></member>
@@ -261,6 +213,7 @@
           <bridgehead renderas="sect3">Class Templates</bridgehead>
           <simplelist type="vert" columns="1">
             <member><link linkend="boost_asio.reference.any_completion_handler">any_completion_handler</link></member>
+            <member><link linkend="boost_asio.reference.any_completion_handler_allocator">any_completion_handler_allocator</link></member>
             <member><link linkend="boost_asio.reference.append_t">append_t</link></member>
             <member><link linkend="boost_asio.reference.as_tuple_t">as_tuple_t</link></member>
             <member><link linkend="boost_asio.reference.async_completion">async_completion</link></member>
@@ -280,7 +233,7 @@
             <member><link linkend="boost_asio.reference.experimental__channel_traits">experimental::channel_traits</link></member>
             <member><link linkend="boost_asio.reference.experimental__coro">experimental::coro</link></member>
             <member><link linkend="boost_asio.reference.experimental__parallel_group">experimental::parallel_group</link></member>
-            <member><link linkend="boost_asio.reference.experimental__promise_lt__void_lp_Ts_ellipsis__rp__comma__Executor__gt_">experimental::promise</link></member>
+            <member><link linkend="boost_asio.reference.experimental__promise">experimental::promise</link></member>
             <member><link linkend="boost_asio.reference.experimental__ranged_parallel_group">experimental::ranged_parallel_group</link></member>
             <member><link linkend="boost_asio.reference.experimental__use_coro_t">experimental::use_coro_t</link></member>
             <member><link linkend="boost_asio.reference.experimental__use_promise_t">experimental::use_promise_t</link></member>
@@ -332,6 +285,7 @@
             <member><link linkend="boost_asio.reference.associated_allocator">associated_allocator</link></member>
             <member><link linkend="boost_asio.reference.associated_cancellation_slot">associated_cancellation_slot</link></member>
             <member><link linkend="boost_asio.reference.associated_executor">associated_executor</link></member>
+            <member><link linkend="boost_asio.reference.associated_immediate_executor">associated_immediate_executor</link></member>
             <member><link linkend="boost_asio.reference.associator">associator</link></member>
             <member><link linkend="boost_asio.reference.async_result">async_result</link></member>
             <member><link linkend="boost_asio.reference.completion_signature_of">completion_signature_of</link></member>
@@ -773,6 +727,10 @@
         <entry valign="top">
           <bridgehead renderas="sect3">Classes</bridgehead>
           <simplelist type="vert" columns="1">
+            <member><link linkend="boost_asio.reference.local__seq_packet_protocol">local::seq_packet_protocol</link></member>
+            <member><link linkend="boost_asio.reference.local__seq_packet_protocol.acceptor">local::seq_packet_protocol::acceptor</link></member>
+            <member><link linkend="boost_asio.reference.local__seq_packet_protocol.endpoint">local::seq_packet_protocol::endpoint</link></member>
+            <member><link linkend="boost_asio.reference.local__seq_packet_protocol.socket">local::seq_packet_protocol::socket</link></member>
             <member><link linkend="boost_asio.reference.local__stream_protocol">local::stream_protocol</link></member>
             <member><link linkend="boost_asio.reference.local__stream_protocol.acceptor">local::stream_protocol::acceptor</link></member>
             <member><link linkend="boost_asio.reference.local__stream_protocol.endpoint">local::stream_protocol::endpoint</link></member>

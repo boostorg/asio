@@ -2,7 +2,7 @@
 // relationship.cpp
 // ~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2022 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2023 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -34,12 +34,12 @@ struct ex_nq_nr
   {
   }
 
-  friend bool operator==(const ex_nq_nr&, const ex_nq_nr&) BOOST_ASIO_NOEXCEPT
+  friend bool operator==(const ex_nq_nr&, const ex_nq_nr&) noexcept
   {
     return true;
   }
 
-  friend bool operator!=(const ex_nq_nr&, const ex_nq_nr&) BOOST_ASIO_NOEXCEPT
+  friend bool operator!=(const ex_nq_nr&, const ex_nq_nr&) noexcept
   {
     return false;
   }
@@ -65,7 +65,7 @@ struct is_executor<ex_nq_nr> : boost::asio::true_type
 template <typename ResultType, typename ParamType, typename Result>
 struct ex_cq_nr
 {
-  static BOOST_ASIO_CONSTEXPR ResultType query(ParamType) BOOST_ASIO_NOEXCEPT
+  static constexpr ResultType query(ParamType) noexcept
   {
     return Result();
   }
@@ -75,12 +75,12 @@ struct ex_cq_nr
   {
   }
 
-  friend bool operator==(const ex_cq_nr&, const ex_cq_nr&) BOOST_ASIO_NOEXCEPT
+  friend bool operator==(const ex_cq_nr&, const ex_cq_nr&) noexcept
   {
     return true;
   }
 
-  friend bool operator!=(const ex_cq_nr&, const ex_cq_nr&) BOOST_ASIO_NOEXCEPT
+  friend bool operator!=(const ex_cq_nr&, const ex_cq_nr&) noexcept
   {
     return false;
   }
@@ -118,12 +118,12 @@ struct query_static_constexpr_member<
     boost::asio::is_convertible<Param, ParamType>::value
   >::type>
 {
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_noexcept = true);
+  static constexpr bool is_valid = true;
+  static constexpr bool is_noexcept = true;
 
   typedef Result result_type; // Must return raw result type.
 
-  static BOOST_ASIO_CONSTEXPR result_type value()
+  static constexpr result_type value()
   {
     return Result();
   }
@@ -138,7 +138,7 @@ struct query_static_constexpr_member<
 template <typename ResultType, typename ParamType, typename Result>
 struct ex_mq_nr
 {
-  ResultType query(ParamType) const BOOST_ASIO_NOEXCEPT
+  ResultType query(ParamType) const noexcept
   {
     return Result();
   }
@@ -148,12 +148,12 @@ struct ex_mq_nr
   {
   }
 
-  friend bool operator==(const ex_mq_nr&, const ex_mq_nr&) BOOST_ASIO_NOEXCEPT
+  friend bool operator==(const ex_mq_nr&, const ex_mq_nr&) noexcept
   {
     return true;
   }
 
-  friend bool operator!=(const ex_mq_nr&, const ex_mq_nr&) BOOST_ASIO_NOEXCEPT
+  friend bool operator!=(const ex_mq_nr&, const ex_mq_nr&) noexcept
   {
     return false;
   }
@@ -191,8 +191,8 @@ struct query_member<
     boost::asio::is_convertible<Param, ParamType>::value
   >::type>
 {
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_noexcept = true);
+  static constexpr bool is_valid = true;
+  static constexpr bool is_noexcept = true;
 
   typedef ResultType result_type;
 };
@@ -206,7 +206,7 @@ struct query_member<
 template <typename ResultType, typename ParamType, typename Result>
 struct ex_fq_nr
 {
-  friend ResultType query(const ex_fq_nr&, ParamType) BOOST_ASIO_NOEXCEPT
+  friend ResultType query(const ex_fq_nr&, ParamType) noexcept
   {
     return Result();
   }
@@ -216,12 +216,12 @@ struct ex_fq_nr
   {
   }
 
-  friend bool operator==(const ex_fq_nr&, const ex_fq_nr&) BOOST_ASIO_NOEXCEPT
+  friend bool operator==(const ex_fq_nr&, const ex_fq_nr&) noexcept
   {
     return true;
   }
 
-  friend bool operator!=(const ex_fq_nr&, const ex_fq_nr&) BOOST_ASIO_NOEXCEPT
+  friend bool operator!=(const ex_fq_nr&, const ex_fq_nr&) noexcept
   {
     return false;
   }
@@ -259,8 +259,8 @@ struct query_free<
     boost::asio::is_convertible<Param, ParamType>::value
   >::type>
 {
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_noexcept = true);
+  static constexpr bool is_valid = true;
+  static constexpr bool is_noexcept = true;
 
   typedef ResultType result_type;
 };
@@ -274,24 +274,24 @@ struct query_free<
 template <typename CurrentType, typename OtherType>
 struct ex_mq_mr
 {
-  CurrentType query(CurrentType) const BOOST_ASIO_NOEXCEPT
+  CurrentType query(CurrentType) const noexcept
   {
     return CurrentType();
   }
 
-  CurrentType query(OtherType) const BOOST_ASIO_NOEXCEPT
+  CurrentType query(OtherType) const noexcept
   {
     return CurrentType();
   }
 
   ex_mq_mr<CurrentType, OtherType> require(
-      CurrentType) const BOOST_ASIO_NOEXCEPT
+      CurrentType) const noexcept
   {
     return ex_mq_mr<CurrentType, OtherType>();
   }
 
   ex_mq_mr<OtherType, CurrentType> require(
-      OtherType) const BOOST_ASIO_NOEXCEPT
+      OtherType) const noexcept
   {
     return ex_mq_mr<OtherType, CurrentType>();
   }
@@ -301,12 +301,12 @@ struct ex_mq_mr
   {
   }
 
-  friend bool operator==(const ex_mq_mr&, const ex_mq_mr&) BOOST_ASIO_NOEXCEPT
+  friend bool operator==(const ex_mq_mr&, const ex_mq_mr&) noexcept
   {
     return true;
   }
 
-  friend bool operator!=(const ex_mq_mr&, const ex_mq_mr&) BOOST_ASIO_NOEXCEPT
+  friend bool operator!=(const ex_mq_mr&, const ex_mq_mr&) noexcept
   {
     return false;
   }
@@ -315,13 +315,13 @@ struct ex_mq_mr
 template <typename CurrentType>
 struct ex_mq_mr<CurrentType, CurrentType>
 {
-  CurrentType query(CurrentType) const BOOST_ASIO_NOEXCEPT
+  CurrentType query(CurrentType) const noexcept
   {
     return CurrentType();
   }
 
   ex_mq_mr<CurrentType, CurrentType> require(
-      CurrentType) const BOOST_ASIO_NOEXCEPT
+      CurrentType) const noexcept
   {
     return ex_mq_mr<CurrentType, CurrentType>();
   }
@@ -331,12 +331,12 @@ struct ex_mq_mr<CurrentType, CurrentType>
   {
   }
 
-  friend bool operator==(const ex_mq_mr&, const ex_mq_mr&) BOOST_ASIO_NOEXCEPT
+  friend bool operator==(const ex_mq_mr&, const ex_mq_mr&) noexcept
   {
     return true;
   }
 
-  friend bool operator!=(const ex_mq_mr&, const ex_mq_mr&) BOOST_ASIO_NOEXCEPT
+  friend bool operator!=(const ex_mq_mr&, const ex_mq_mr&) noexcept
   {
     return false;
   }
@@ -374,8 +374,8 @@ struct query_member<
       || boost::asio::is_convertible<Param, OtherType>::value
   >::type>
 {
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_noexcept = true);
+  static constexpr bool is_valid = true;
+  static constexpr bool is_noexcept = true;
 
   typedef CurrentType result_type;
 };
@@ -391,8 +391,8 @@ struct require_member<
     boost::asio::is_convertible<Param, CurrentType>::value
   >::type>
 {
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_noexcept = true);
+  static constexpr bool is_valid = true;
+  static constexpr bool is_noexcept = true;
 
   typedef ex_mq_mr<CurrentType, OtherType> result_type;
 };
@@ -405,8 +405,8 @@ struct require_member<
       && !boost::asio::is_same<CurrentType, OtherType>::value
   >::type>
 {
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_noexcept = true);
+  static constexpr bool is_valid = true;
+  static constexpr bool is_noexcept = true;
 
   typedef ex_mq_mr<OtherType, CurrentType> result_type;
 };
@@ -420,36 +420,36 @@ struct require_member<
 template <typename CurrentType, typename OtherType>
 struct ex_fq_fr
 {
-  friend CurrentType query(const ex_fq_fr&, CurrentType) BOOST_ASIO_NOEXCEPT
+  friend CurrentType query(const ex_fq_fr&, CurrentType) noexcept
   {
     return CurrentType();
   }
 
-  friend CurrentType query(const ex_fq_fr&, OtherType) BOOST_ASIO_NOEXCEPT
+  friend CurrentType query(const ex_fq_fr&, OtherType) noexcept
   {
     return CurrentType();
   }
 
   friend ex_fq_fr<CurrentType, OtherType> require(
-      const ex_fq_fr&, CurrentType) BOOST_ASIO_NOEXCEPT
+      const ex_fq_fr&, CurrentType) noexcept
   {
     return ex_fq_fr<CurrentType, OtherType>();
   }
 
   friend ex_fq_fr<OtherType, CurrentType> require(
-      const ex_fq_fr&, OtherType) BOOST_ASIO_NOEXCEPT
+      const ex_fq_fr&, OtherType) noexcept
   {
     return ex_fq_fr<OtherType, CurrentType>();
   }
 
   friend ex_fq_fr<CurrentType, OtherType> prefer(
-      const ex_fq_fr&, CurrentType) BOOST_ASIO_NOEXCEPT
+      const ex_fq_fr&, CurrentType) noexcept
   {
     return ex_fq_fr<CurrentType, OtherType>();
   }
 
   friend ex_fq_fr<OtherType, CurrentType> prefer(
-      const ex_fq_fr&, OtherType) BOOST_ASIO_NOEXCEPT
+      const ex_fq_fr&, OtherType) noexcept
   {
     return ex_fq_fr<OtherType, CurrentType>();
   }
@@ -459,12 +459,12 @@ struct ex_fq_fr
   {
   }
 
-  friend bool operator==(const ex_fq_fr&, const ex_fq_fr&) BOOST_ASIO_NOEXCEPT
+  friend bool operator==(const ex_fq_fr&, const ex_fq_fr&) noexcept
   {
     return true;
   }
 
-  friend bool operator!=(const ex_fq_fr&, const ex_fq_fr&) BOOST_ASIO_NOEXCEPT
+  friend bool operator!=(const ex_fq_fr&, const ex_fq_fr&) noexcept
   {
     return false;
   }
@@ -473,19 +473,19 @@ struct ex_fq_fr
 template <typename CurrentType>
 struct ex_fq_fr<CurrentType, CurrentType>
 {
-  friend CurrentType query(const ex_fq_fr&, CurrentType) BOOST_ASIO_NOEXCEPT
+  friend CurrentType query(const ex_fq_fr&, CurrentType) noexcept
   {
     return CurrentType();
   }
 
   friend ex_fq_fr<CurrentType, CurrentType> require(
-      const ex_fq_fr&, CurrentType) BOOST_ASIO_NOEXCEPT
+      const ex_fq_fr&, CurrentType) noexcept
   {
     return ex_fq_fr<CurrentType, CurrentType>();
   }
 
   friend ex_fq_fr<CurrentType, CurrentType> prefer(
-      const ex_fq_fr&, CurrentType) BOOST_ASIO_NOEXCEPT
+      const ex_fq_fr&, CurrentType) noexcept
   {
     return ex_fq_fr<CurrentType, CurrentType>();
   }
@@ -495,12 +495,12 @@ struct ex_fq_fr<CurrentType, CurrentType>
   {
   }
 
-  friend bool operator==(const ex_fq_fr&, const ex_fq_fr&) BOOST_ASIO_NOEXCEPT
+  friend bool operator==(const ex_fq_fr&, const ex_fq_fr&) noexcept
   {
     return true;
   }
 
-  friend bool operator!=(const ex_fq_fr&, const ex_fq_fr&) BOOST_ASIO_NOEXCEPT
+  friend bool operator!=(const ex_fq_fr&, const ex_fq_fr&) noexcept
   {
     return false;
   }
@@ -538,8 +538,8 @@ struct query_free<
       || boost::asio::is_convertible<Param, OtherType>::value
   >::type>
 {
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_noexcept = true);
+  static constexpr bool is_valid = true;
+  static constexpr bool is_noexcept = true;
 
   typedef CurrentType result_type;
 };
@@ -555,8 +555,8 @@ struct require_free<
     boost::asio::is_convertible<Param, CurrentType>::value
   >::type>
 {
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_noexcept = true);
+  static constexpr bool is_valid = true;
+  static constexpr bool is_noexcept = true;
 
   typedef ex_fq_fr<CurrentType, OtherType> result_type;
 };
@@ -569,8 +569,8 @@ struct require_free<
       && !boost::asio::is_same<CurrentType, OtherType>::value
   >::type>
 {
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_noexcept = true);
+  static constexpr bool is_valid = true;
+  static constexpr bool is_noexcept = true;
 
   typedef ex_fq_fr<OtherType, CurrentType> result_type;
 };
@@ -586,8 +586,8 @@ struct prefer_free<
     boost::asio::is_convertible<Param, CurrentType>::value
   >::type>
 {
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_noexcept = true);
+  static constexpr bool is_valid = true;
+  static constexpr bool is_noexcept = true;
 
   typedef ex_fq_fr<CurrentType, OtherType> result_type;
 };
@@ -600,8 +600,8 @@ struct prefer_free<
       && !boost::asio::is_same<CurrentType, OtherType>::value
   >::type>
 {
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
-  BOOST_ASIO_STATIC_CONSTEXPR(bool, is_noexcept = true);
+  static constexpr bool is_valid = true;
+  static constexpr bool is_noexcept = true;
 
   typedef ex_fq_fr<OtherType, CurrentType> result_type;
 };
@@ -615,19 +615,19 @@ struct prefer_free<
 template <typename Executor, typename Param, bool ExpectedResult>
 void test_can_query()
 {
-  BOOST_ASIO_CONSTEXPR bool b1 =
+  constexpr bool b1 =
     boost::asio::can_query<Executor, Param>::value;
   BOOST_ASIO_CHECK(b1 == ExpectedResult);
 
-  BOOST_ASIO_CONSTEXPR bool b2 =
+  constexpr bool b2 =
     boost::asio::can_query<const Executor, Param>::value;
   BOOST_ASIO_CHECK(b2 == ExpectedResult);
 
-  BOOST_ASIO_CONSTEXPR bool b3 =
+  constexpr bool b3 =
     boost::asio::can_query<Executor&, Param>::value;
   BOOST_ASIO_CHECK(b3 == ExpectedResult);
 
-  BOOST_ASIO_CONSTEXPR bool b4 =
+  constexpr bool b4 =
     boost::asio::can_query<const Executor&, Param>::value;
   BOOST_ASIO_CHECK(b4 == ExpectedResult);
 }
@@ -650,29 +650,27 @@ void test_query()
 template <typename Executor, typename Param, typename ExpectedResult>
 void test_constexpr_query()
 {
-#if defined(BOOST_ASIO_HAS_CONSTEXPR)
   constexpr Executor ex1 = {};
   constexpr exec::relationship_t result1 = boost::asio::query(ex1, Param());
   BOOST_ASIO_CHECK(result1 == ExpectedResult());
-#endif // defined(BOOST_ASIO_HAS_CONSTEXPR)
 }
 
 template <typename Executor, typename Param, bool ExpectedResult>
 void test_can_require()
 {
-  BOOST_ASIO_CONSTEXPR bool b1 =
+  constexpr bool b1 =
     boost::asio::can_require<Executor, Param>::value;
   BOOST_ASIO_CHECK(b1 == ExpectedResult);
 
-  BOOST_ASIO_CONSTEXPR bool b2 =
+  constexpr bool b2 =
     boost::asio::can_require<const Executor, Param>::value;
   BOOST_ASIO_CHECK(b2 == ExpectedResult);
 
-  BOOST_ASIO_CONSTEXPR bool b3 =
+  constexpr bool b3 =
     boost::asio::can_require<Executor&, Param>::value;
   BOOST_ASIO_CHECK(b3 == ExpectedResult);
 
-  BOOST_ASIO_CONSTEXPR bool b4 =
+  constexpr bool b4 =
     boost::asio::can_require<const Executor&, Param>::value;
   BOOST_ASIO_CHECK(b4 == ExpectedResult);
 }
@@ -701,19 +699,19 @@ void test_require()
 template <typename Executor, typename Param, bool ExpectedResult>
 void test_can_prefer()
 {
-  BOOST_ASIO_CONSTEXPR bool b1 =
+  constexpr bool b1 =
     boost::asio::can_prefer<Executor, Param>::value;
   BOOST_ASIO_CHECK(b1 == ExpectedResult);
 
-  BOOST_ASIO_CONSTEXPR bool b2 =
+  constexpr bool b2 =
     boost::asio::can_prefer<const Executor, Param>::value;
   BOOST_ASIO_CHECK(b2 == ExpectedResult);
 
-  BOOST_ASIO_CONSTEXPR bool b3 =
+  constexpr bool b3 =
     boost::asio::can_prefer<Executor&, Param>::value;
   BOOST_ASIO_CHECK(b3 == ExpectedResult);
 
-  BOOST_ASIO_CONSTEXPR bool b4 =
+  constexpr bool b4 =
     boost::asio::can_prefer<const Executor&, Param>::value;
   BOOST_ASIO_CHECK(b4 == ExpectedResult);
 }
@@ -742,8 +740,12 @@ void test_prefer()
 void test_vars()
 {
   BOOST_ASIO_CHECK(s() == exec::relationship);
+  BOOST_ASIO_CHECK(s() != exec::relationship.fork);
+  BOOST_ASIO_CHECK(s() != exec::relationship.continuation);
   BOOST_ASIO_CHECK(n1() == exec::relationship.fork);
+  BOOST_ASIO_CHECK(n1() != exec::relationship.continuation);
   BOOST_ASIO_CHECK(n2() == exec::relationship.continuation);
+  BOOST_ASIO_CHECK(n2() != exec::relationship.fork);
 }
 
 BOOST_ASIO_TEST_SUITE

@@ -2,7 +2,7 @@
 // experimental/impl/promise.hpp
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2021-2022 Klemens D. Morgenstern
+// Copyright (c) 2021-2023 Klemens D. Morgenstern
 //                         (klemens dot morgenstern at gmx dot net)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
@@ -18,6 +18,8 @@
 #include <boost/asio/detail/config.hpp>
 #include <boost/asio/cancellation_signal.hpp>
 #include <boost/asio/detail/utility.hpp>
+#include <boost/asio/error.hpp>
+#include <boost/system/system_error.hpp>
 #include <tuple>
 
 #include <boost/asio/detail/push_options.hpp>
@@ -57,8 +59,7 @@ struct promise_impl<void(Ts...), Executor, Allocator>
       reinterpret_cast<result_type*>(&result)->~result_type();
   }
 
-  typename aligned_storage<sizeof(result_type),
-    alignof(result_type)>::type result;
+  aligned_storage_t<sizeof(result_type), alignof(result_type)> result;
   std::atomic<bool> done{false};
   cancellation_signal cancel;
   Allocator allocator;
@@ -142,6 +143,19 @@ struct promise_impl<void(Ts...), Executor, Allocator>
   {
     assert(completion);
     std::exchange(completion, nullptr)->invoke(std::forward<T_>(ts)...);
+  }
+
+  template<std::size_t... Idx>
+  void complete_with_result_impl(boost::asio::detail::index_sequence<Idx...>)
+  {
+    auto& result_type = *reinterpret_cast<promise_impl::result_type*>(&result);
+    this->complete(std::get<Idx>(std::move(result_type))...);
+  }
+
+  void complete_with_result()
+  {
+    complete_with_result_impl(
+        boost::asio::detail::make_index_sequence<sizeof...(Ts)>{});
   }
 
   template<typename... T_>
@@ -229,7 +243,7 @@ struct promise_handler<void(Ts...), Executor, Allocator>
     impl_->done = true;
 
     if (impl_->completion)
-      impl_->complete(std::move(ts)...);
+      impl_->complete_with_result();
   }
 };
 

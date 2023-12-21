@@ -2,7 +2,7 @@
 // any_completion_handler.hpp
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2022 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2023 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -12,20 +12,16 @@
 #define BOOST_ASIO_ANY_COMPLETION_HANDLER_HPP
 
 #include <boost/asio/detail/config.hpp>
-
-#if (defined(BOOST_ASIO_HAS_STD_TUPLE) \
-    && defined(BOOST_ASIO_HAS_MOVE) \
-    && defined(BOOST_ASIO_HAS_VARIADIC_TEMPLATES)) \
-  || defined(GENERATING_DOCUMENTATION)
-
 #include <cstring>
 #include <functional>
 #include <memory>
 #include <utility>
 #include <boost/asio/any_completion_executor.hpp>
+#include <boost/asio/any_io_executor.hpp>
 #include <boost/asio/associated_allocator.hpp>
 #include <boost/asio/associated_cancellation_slot.hpp>
 #include <boost/asio/associated_executor.hpp>
+#include <boost/asio/associated_immediate_executor.hpp>
 #include <boost/asio/cancellation_state.hpp>
 #include <boost/asio/recycling_allocator.hpp>
 
@@ -40,11 +36,11 @@ class any_completion_handler_impl_base
 public:
   template <typename S>
   explicit any_completion_handler_impl_base(S&& slot)
-    : cancel_state_(BOOST_ASIO_MOVE_CAST(S)(slot), enable_total_cancellation())
+    : cancel_state_(static_cast<S&&>(slot), enable_total_cancellation())
   {
   }
 
-  cancellation_slot get_cancellation_slot() const BOOST_ASIO_NOEXCEPT
+  cancellation_slot get_cancellation_slot() const noexcept
   {
     return cancel_state_.slot();
   }
@@ -60,8 +56,8 @@ class any_completion_handler_impl :
 public:
   template <typename S, typename H>
   any_completion_handler_impl(S&& slot, H&& h)
-    : any_completion_handler_impl_base(BOOST_ASIO_MOVE_CAST(S)(slot)),
-      handler_(BOOST_ASIO_MOVE_CAST(H)(h))
+    : any_completion_handler_impl_base(static_cast<S&&>(slot)),
+      handler_(static_cast<H&&>(h))
   {
   }
 
@@ -104,7 +100,7 @@ public:
 
     any_completion_handler_impl* ptr =
       new (uninit_ptr.get()) any_completion_handler_impl(
-        BOOST_ASIO_MOVE_CAST(S)(slot), BOOST_ASIO_MOVE_CAST(H)(h));
+        static_cast<S&&>(slot), static_cast<H&&>(h));
 
     uninit_ptr.release();
     return ptr;
@@ -120,10 +116,17 @@ public:
   }
 
   any_completion_executor executor(
-      const any_completion_executor& candidate) const BOOST_ASIO_NOEXCEPT
+      const any_completion_executor& candidate) const noexcept
   {
     return any_completion_executor(std::nothrow,
         (get_associated_executor)(handler_, candidate));
+  }
+
+  any_completion_executor immediate_executor(
+      const any_io_executor& candidate) const noexcept
+  {
+    return any_completion_executor(std::nothrow,
+        (get_associated_immediate_executor)(handler_, candidate));
   }
 
   void* allocate(std::size_t size, std::size_t align) const
@@ -181,11 +184,11 @@ public:
           boost::asio::recycling_allocator<void>())};
 
     std::unique_ptr<any_completion_handler_impl, deleter> ptr(this, d);
-    Handler handler(BOOST_ASIO_MOVE_CAST(Handler)(handler_));
+    Handler handler(static_cast<Handler&&>(handler_));
     ptr.reset();
 
-    BOOST_ASIO_MOVE_CAST(Handler)(handler)(
-        BOOST_ASIO_MOVE_CAST(Args)(args)...);
+    static_cast<Handler&&>(handler)(
+        static_cast<Args&&>(args)...);
   }
 
 private:
@@ -208,14 +211,14 @@ public:
 
   void call(any_completion_handler_impl_base* impl, Args... args) const
   {
-    call_fn_(impl, BOOST_ASIO_MOVE_CAST(Args)(args)...);
+    call_fn_(impl, static_cast<Args&&>(args)...);
   }
 
   template <typename Handler>
   static void impl(any_completion_handler_impl_base* impl, Args... args)
   {
     static_cast<any_completion_handler_impl<Handler>*>(impl)->call(
-        BOOST_ASIO_MOVE_CAST(Args)(args)...);
+        static_cast<Args&&>(args)...);
   }
 
 private:
@@ -306,6 +309,36 @@ private:
   type executor_fn_;
 };
 
+class any_completion_handler_immediate_executor_fn
+{
+public:
+  using type = any_completion_executor(*)(
+      any_completion_handler_impl_base*, const any_io_executor&);
+
+  constexpr any_completion_handler_immediate_executor_fn(type fn)
+    : immediate_executor_fn_(fn)
+  {
+  }
+
+  any_completion_executor immediate_executor(
+      any_completion_handler_impl_base* impl,
+      const any_io_executor& candidate) const
+  {
+    return immediate_executor_fn_(impl, candidate);
+  }
+
+  template <typename Handler>
+  static any_completion_executor impl(any_completion_handler_impl_base* impl,
+      const any_io_executor& candidate)
+  {
+    return static_cast<any_completion_handler_impl<Handler>*>(
+        impl)->immediate_executor(candidate);
+  }
+
+private:
+  type immediate_executor_fn_;
+};
+
 class any_completion_handler_allocate_fn
 {
 public:
@@ -368,6 +401,7 @@ template <typename... Signatures>
 class any_completion_handler_fn_table
   : private any_completion_handler_destroy_fn,
     private any_completion_handler_executor_fn,
+    private any_completion_handler_immediate_executor_fn,
     private any_completion_handler_allocate_fn,
     private any_completion_handler_deallocate_fn,
     private any_completion_handler_call_fns<Signatures...>
@@ -377,11 +411,13 @@ public:
   constexpr any_completion_handler_fn_table(
       any_completion_handler_destroy_fn::type destroy_fn,
       any_completion_handler_executor_fn::type executor_fn,
+      any_completion_handler_immediate_executor_fn::type immediate_executor_fn,
       any_completion_handler_allocate_fn::type allocate_fn,
       any_completion_handler_deallocate_fn::type deallocate_fn,
       CallFns... call_fns)
     : any_completion_handler_destroy_fn(destroy_fn),
       any_completion_handler_executor_fn(executor_fn),
+      any_completion_handler_immediate_executor_fn(immediate_executor_fn),
       any_completion_handler_allocate_fn(allocate_fn),
       any_completion_handler_deallocate_fn(deallocate_fn),
       any_completion_handler_call_fns<Signatures...>(call_fns...)
@@ -390,6 +426,7 @@ public:
 
   using any_completion_handler_destroy_fn::destroy;
   using any_completion_handler_executor_fn::executor;
+  using any_completion_handler_immediate_executor_fn::immediate_executor;
   using any_completion_handler_allocate_fn::allocate;
   using any_completion_handler_deallocate_fn::deallocate;
   using any_completion_handler_call_fns<Signatures...>::call;
@@ -402,6 +439,7 @@ struct any_completion_handler_fn_table_instance
     value = any_completion_handler_fn_table<Signatures...>(
         &any_completion_handler_destroy_fn::impl<Handler>,
         &any_completion_handler_executor_fn::impl<Handler>,
+        &any_completion_handler_immediate_executor_fn::impl<Handler>,
         &any_completion_handler_allocate_fn::impl<Handler>,
         &any_completion_handler_deallocate_fn::impl<Handler>,
         &any_completion_handler_call_fn<Signatures>::template impl<Handler>...);
@@ -416,6 +454,8 @@ any_completion_handler_fn_table_instance<Handler, Signatures...>::value;
 template <typename... Signatures>
 class any_completion_handler;
 
+/// An allocator type that forwards memory allocation operations through an
+/// instance of @c any_completion_handler.
 template <typename T, typename... Signatures>
 class any_completion_handler_allocator
 {
@@ -430,55 +470,72 @@ private:
   detail::any_completion_handler_impl_base* impl_;
 
   constexpr any_completion_handler_allocator(int,
-      const any_completion_handler<Signatures...>& h) BOOST_ASIO_NOEXCEPT
+      const any_completion_handler<Signatures...>& h) noexcept
     : fn_table_(h.fn_table_),
       impl_(h.impl_)
   {
   }
 
 public:
+  /// The type of objects that may be allocated by the allocator.
   typedef T value_type;
 
+  /// Rebinds an allocator to another value type.
   template <typename U>
   struct rebind
   {
+    /// Specifies the type of the rebound allocator.
     typedef any_completion_handler_allocator<U, Signatures...> other;
   };
 
+  /// Construct from another @c any_completion_handler_allocator.
   template <typename U>
   constexpr any_completion_handler_allocator(
       const any_completion_handler_allocator<U, Signatures...>& a)
-    BOOST_ASIO_NOEXCEPT
+    noexcept
     : fn_table_(a.fn_table_),
       impl_(a.impl_)
   {
   }
 
+  /// Equality operator.
   constexpr bool operator==(
-      const any_completion_handler_allocator& other) const BOOST_ASIO_NOEXCEPT
+      const any_completion_handler_allocator& other) const noexcept
   {
     return fn_table_ == other.fn_table_ && impl_ == other.impl_;
   }
 
+  /// Inequality operator.
   constexpr bool operator!=(
-      const any_completion_handler_allocator& other) const BOOST_ASIO_NOEXCEPT
+      const any_completion_handler_allocator& other) const noexcept
   {
     return fn_table_ != other.fn_table_ || impl_ != other.impl_;
   }
 
+  /// Allocate space for @c n objects of the allocator's value type.
   T* allocate(std::size_t n) const
   {
-    return static_cast<T*>(
-        fn_table_->allocate(
-          impl_, sizeof(T) * n, alignof(T)));
+    if (fn_table_)
+    {
+      return static_cast<T*>(
+          fn_table_->allocate(
+            impl_, sizeof(T) * n, alignof(T)));
+    }
+    std::bad_alloc ex;
+    boost::asio::detail::throw_exception(ex);
+    return nullptr;
   }
 
+  /// Deallocate space for @c n objects of the allocator's value type.
   void deallocate(T* p, std::size_t n) const
   {
     fn_table_->deallocate(impl_, p, sizeof(T) * n, alignof(T));
   }
 };
 
+/// A protoco-allocator type that may be rebound to obtain an allocator that
+/// forwards memory allocation operations through an instance of
+/// @c any_completion_handler.
 template <typename... Signatures>
 class any_completion_handler_allocator<void, Signatures...>
 {
@@ -493,46 +550,70 @@ private:
   detail::any_completion_handler_impl_base* impl_;
 
   constexpr any_completion_handler_allocator(int,
-      const any_completion_handler<Signatures...>& h) BOOST_ASIO_NOEXCEPT
+      const any_completion_handler<Signatures...>& h) noexcept
     : fn_table_(h.fn_table_),
       impl_(h.impl_)
   {
   }
 
 public:
+  /// @c void as no objects can be allocated through a proto-allocator.
   typedef void value_type;
 
+  /// Rebinds an allocator to another value type.
   template <typename U>
   struct rebind
   {
+    /// Specifies the type of the rebound allocator.
     typedef any_completion_handler_allocator<U, Signatures...> other;
   };
 
+  /// Construct from another @c any_completion_handler_allocator.
   template <typename U>
   constexpr any_completion_handler_allocator(
       const any_completion_handler_allocator<U, Signatures...>& a)
-    BOOST_ASIO_NOEXCEPT
+    noexcept
     : fn_table_(a.fn_table_),
       impl_(a.impl_)
   {
   }
 
+  /// Equality operator.
   constexpr bool operator==(
-      const any_completion_handler_allocator& other) const BOOST_ASIO_NOEXCEPT
+      const any_completion_handler_allocator& other) const noexcept
   {
     return fn_table_ == other.fn_table_ && impl_ == other.impl_;
   }
 
+  /// Inequality operator.
   constexpr bool operator!=(
-      const any_completion_handler_allocator& other) const BOOST_ASIO_NOEXCEPT
+      const any_completion_handler_allocator& other) const noexcept
   {
     return fn_table_ != other.fn_table_ || impl_ != other.impl_;
   }
 };
 
+/// Polymorphic wrapper for completion handlers.
+/**
+ * The @c any_completion_handler class template is a polymorphic wrapper for
+ * completion handlers that propagates the associated executor, associated
+ * allocator, and associated cancellation slot through a type-erasing interface.
+ *
+ * When using @c any_completion_handler, specify one or more completion
+ * signatures as template parameters. These will dictate the arguments that may
+ * be passed to the handler through the polymorphic interface.
+ *
+ * Typical uses for @c any_completion_handler include:
+ *
+ * @li Separate compilation of asynchronous operation implementations.
+ *
+ * @li Enabling interoperability between asynchronous operations and virtual
+ *     functions.
+ */
 template <typename... Signatures>
 class any_completion_handler
 {
+#if !defined(GENERATING_DOCUMENTATION)
 private:
   template <typename, typename...>
   friend class any_completion_handler_allocator;
@@ -540,36 +621,55 @@ private:
   template <typename, typename>
   friend struct associated_executor;
 
+  template <typename, typename>
+  friend struct associated_immediate_executor;
+
   const detail::any_completion_handler_fn_table<Signatures...>* fn_table_;
   detail::any_completion_handler_impl_base* impl_;
+#endif // !defined(GENERATING_DOCUMENTATION)
 
 public:
+  /// The associated allocator type.
   using allocator_type = any_completion_handler_allocator<void, Signatures...>;
+
+  /// The associated cancellation slot type.
   using cancellation_slot_type = cancellation_slot;
 
+  /// Construct an @c any_completion_handler in an empty state, without a target
+  /// object.
   constexpr any_completion_handler()
     : fn_table_(nullptr),
       impl_(nullptr)
   {
   }
 
+  /// Construct an @c any_completion_handler in an empty state, without a target
+  /// object.
   constexpr any_completion_handler(nullptr_t)
     : fn_table_(nullptr),
       impl_(nullptr)
   {
   }
 
-  template <typename H, typename Handler = typename decay<H>::type>
-  any_completion_handler(H&& h)
+  /// Construct an @c any_completion_handler to contain the specified target.
+  template <typename H, typename Handler = decay_t<H>>
+  any_completion_handler(H&& h,
+      constraint_t<
+        !is_same<decay_t<H>, any_completion_handler>::value
+      > = 0)
     : fn_table_(
         &detail::any_completion_handler_fn_table_instance<
           Handler, Signatures...>::value),
       impl_(detail::any_completion_handler_impl<Handler>::create(
-            (get_associated_cancellation_slot)(h), BOOST_ASIO_MOVE_CAST(H)(h)))
+            (get_associated_cancellation_slot)(h), static_cast<H&&>(h)))
   {
   }
 
-  any_completion_handler(any_completion_handler&& other) BOOST_ASIO_NOEXCEPT
+  /// Move-construct an @c any_completion_handler from another.
+  /**
+   * After the operation, the moved-from object @c other has no target.
+   */
+  any_completion_handler(any_completion_handler&& other) noexcept
     : fn_table_(other.fn_table_),
       impl_(other.impl_)
   {
@@ -577,84 +677,109 @@ public:
     other.impl_ = nullptr;
   }
 
+  /// Move-assign an @c any_completion_handler from another.
+  /**
+   * After the operation, the moved-from object @c other has no target.
+   */
   any_completion_handler& operator=(
-      any_completion_handler&& other) BOOST_ASIO_NOEXCEPT
+      any_completion_handler&& other) noexcept
   {
-    any_completion_handler(other).swap(*this);
+    any_completion_handler(
+        static_cast<any_completion_handler&&>(other)).swap(*this);
     return *this;
   }
 
-  any_completion_handler& operator=(nullptr_t) BOOST_ASIO_NOEXCEPT
+  /// Assignment operator that sets the polymorphic wrapper to the empty state.
+  any_completion_handler& operator=(nullptr_t) noexcept
   {
     any_completion_handler().swap(*this);
     return *this;
   }
 
+  /// Destructor.
   ~any_completion_handler()
   {
     if (impl_)
       fn_table_->destroy(impl_);
   }
 
-  constexpr explicit operator bool() const BOOST_ASIO_NOEXCEPT
+  /// Test if the polymorphic wrapper is empty.
+  constexpr explicit operator bool() const noexcept
   {
     return impl_ != nullptr;
   }
 
-  constexpr bool operator!() const BOOST_ASIO_NOEXCEPT
+  /// Test if the polymorphic wrapper is non-empty.
+  constexpr bool operator!() const noexcept
   {
     return impl_ == nullptr;
   }
 
-  void swap(any_completion_handler& other) BOOST_ASIO_NOEXCEPT
+  /// Swap the content of an @c any_completion_handler with another.
+  void swap(any_completion_handler& other) noexcept
   {
     std::swap(fn_table_, other.fn_table_);
     std::swap(impl_, other.impl_);
   }
 
-  allocator_type get_allocator() const BOOST_ASIO_NOEXCEPT
+  /// Get the associated allocator.
+  allocator_type get_allocator() const noexcept
   {
     return allocator_type(0, *this);
   }
 
-  cancellation_slot_type get_cancellation_slot() const BOOST_ASIO_NOEXCEPT
+  /// Get the associated cancellation slot.
+  cancellation_slot_type get_cancellation_slot() const noexcept
   {
-    return impl_->get_cancellation_slot();
+    return impl_ ? impl_->get_cancellation_slot() : cancellation_slot_type();
   }
 
+  /// Function call operator.
+  /**
+   * Invokes target completion handler with the supplied arguments.
+   *
+   * This function may only be called once, as the target handler is moved from.
+   * The polymorphic wrapper is left in an empty state.
+   *
+   * Throws @c std::bad_function_call if the polymorphic wrapper is empty.
+   */
   template <typename... Args>
   auto operator()(Args&&... args)
-    -> decltype(fn_table_->call(impl_, BOOST_ASIO_MOVE_CAST(Args)(args)...))
+    -> decltype(fn_table_->call(impl_, static_cast<Args&&>(args)...))
   {
     if (detail::any_completion_handler_impl_base* impl = impl_)
     {
       impl_ = nullptr;
-      return fn_table_->call(impl, BOOST_ASIO_MOVE_CAST(Args)(args)...);
+      return fn_table_->call(impl, static_cast<Args&&>(args)...);
     }
     std::bad_function_call ex;
     boost::asio::detail::throw_exception(ex);
   }
 
+  /// Equality operator.
   friend constexpr bool operator==(
-      const any_completion_handler& a, nullptr_t) BOOST_ASIO_NOEXCEPT
+      const any_completion_handler& a, nullptr_t) noexcept
   {
     return a.impl_ == nullptr;
   }
 
+  /// Equality operator.
   friend constexpr bool operator==(
-      nullptr_t, const any_completion_handler& b) BOOST_ASIO_NOEXCEPT
+      nullptr_t, const any_completion_handler& b) noexcept
   {
     return nullptr == b.impl_;
   }
 
+  /// Inequality operator.
   friend constexpr bool operator!=(
-      const any_completion_handler& a, nullptr_t) BOOST_ASIO_NOEXCEPT
+      const any_completion_handler& a, nullptr_t) noexcept
   {
     return a.impl_ != nullptr;
   }
 
+  /// Inequality operator.
   friend constexpr bool operator!=(
-      nullptr_t, const any_completion_handler& b) BOOST_ASIO_NOEXCEPT
+      nullptr_t, const any_completion_handler& b) noexcept
   {
     return nullptr != b.impl_;
   }
@@ -666,10 +791,28 @@ struct associated_executor<any_completion_handler<Signatures...>, Candidate>
   using type = any_completion_executor;
 
   static type get(const any_completion_handler<Signatures...>& handler,
-      const Candidate& candidate = Candidate()) BOOST_ASIO_NOEXCEPT
+      const Candidate& candidate = Candidate()) noexcept
   {
-    return handler.fn_table_->executor(handler.impl_,
-        any_completion_executor(std::nothrow, candidate));
+    any_completion_executor any_candidate(std::nothrow, candidate);
+    return handler.fn_table_
+      ? handler.fn_table_->executor(handler.impl_, any_candidate)
+      : any_candidate;
+  }
+};
+
+template <typename... Signatures, typename Candidate>
+struct associated_immediate_executor<
+    any_completion_handler<Signatures...>, Candidate>
+{
+  using type = any_completion_executor;
+
+  static type get(const any_completion_handler<Signatures...>& handler,
+      const Candidate& candidate = Candidate()) noexcept
+  {
+    any_io_executor any_candidate(std::nothrow, candidate);
+    return handler.fn_table_
+      ? handler.fn_table_->immediate_executor(handler.impl_, any_candidate)
+      : any_candidate;
   }
 };
 
@@ -677,10 +820,5 @@ struct associated_executor<any_completion_handler<Signatures...>, Candidate>
 } // namespace boost
 
 #include <boost/asio/detail/pop_options.hpp>
-
-#endif // (defined(BOOST_ASIO_HAS_STD_TUPLE)
-       //     && defined(BOOST_ASIO_HAS_MOVE)
-       //     && defined(BOOST_ASIO_HAS_VARIADIC_TEMPLATES))
-       //   || defined(GENERATING_DOCUMENTATION)
 
 #endif // BOOST_ASIO_ANY_COMPLETION_HANDLER_HPP

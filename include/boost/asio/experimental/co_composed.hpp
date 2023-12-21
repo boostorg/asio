@@ -2,7 +2,7 @@
 // experimental/co_composed.hpp
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2022 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2023 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -43,8 +43,9 @@ namespace experimental {
  * which outstanding work must be maintained while the operation is incomplete.
  *
  * @par Per-Operation Cancellation
- * By default, per-operation cancellation is disabled for composed operations
- * that use experimental::co_composed. It must be explicitly enabled by calling
+ * By default, terminal per-operation cancellation is enabled for composed
+ * operations that use experimental::co_composed. To disable cancellation for
+ * the composed operation, or to alter its supported cancellation types, call
  * the state's @c reset_cancellation_state function.
  *
  * @par Examples
@@ -122,7 +123,7 @@ namespace experimental {
  *                     boost::asio::buffer(data, n), boost::asio::deferred);
  *               }
  *             }
- *             catch (const std::system_error& e)
+ *             catch (const boost::system::system_error& e)
  *             {
  *               co_return {e.code()};
  *             }

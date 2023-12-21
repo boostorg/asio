@@ -2,7 +2,7 @@
 // sync_client.cpp
 // ~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2022 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2023 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -83,7 +83,7 @@ int main(int argc, char* argv[])
           boost::asio::buffer(response), error))
       std::cout.write(response.data(), s);
     if (error != boost::asio::error::eof)
-      throw std::system_error(error);
+      throw boost::system::system_error(error);
   }
   catch (std::exception& e)
   {

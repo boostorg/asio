@@ -2,7 +2,7 @@
 // buffers_iterator.cpp
 // ~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2022 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2023 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -16,16 +16,9 @@
 // Test that header file is self-contained.
 #include <boost/asio/buffers_iterator.hpp>
 
+#include <array>
 #include <boost/asio/buffer.hpp>
 #include "unit_test.hpp"
-
-#if defined(BOOST_ASIO_HAS_BOOST_ARRAY)
-# include <boost/array.hpp>
-#endif // defined(BOOST_ASIO_HAS_BOOST_ARRAY)
-
-#if defined(BOOST_ASIO_HAS_STD_ARRAY)
-# include <array>
-#endif // defined(BOOST_ASIO_HAS_STD_ARRAY)
 
 //------------------------------------------------------------------------------
 
@@ -36,11 +29,7 @@
 
 namespace buffers_iterator_compile {
 
-#if defined(BOOST_ASIO_HAS_BOOST_ARRAY)
-using boost::array;
-#elif defined(BOOST_ASIO_HAS_STD_ARRAY)
 using std::array;
-#endif // defined(BOOST_ASIO_HAS_BOOST_ARRAY)
 using std::vector;
 using namespace boost::asio;
 

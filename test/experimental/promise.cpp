@@ -2,7 +2,7 @@
 // promise.cpp
 // ~~~~~~~~~~~
 //
-// Copyright (c) 2021-2022 Klemens D. Morgenstern
+// Copyright (c) 2021-2023 Klemens D. Morgenstern
 //                         (klemens dot morgenstern at gmx dot net)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
@@ -17,6 +17,7 @@
 // Test that header file is self-contained.
 #include <boost/asio/experimental/promise.hpp>
 
+#include <boost/asio/append.hpp>
 #include <boost/asio/bind_cancellation_slot.hpp>
 #include <boost/asio/compose.hpp>
 #include <boost/asio/deferred.hpp>
@@ -38,13 +39,13 @@ void promise_tester()
   const auto started_when = steady_clock::now();
   timer1.expires_at(started_when + milliseconds(5000));
   timer2.expires_at(started_when + milliseconds(1000));
-  auto p = timer1.async_wait(experimental::use_promise);
+  auto p1 = timer1.async_wait(experimental::use_promise);
 
   steady_clock::time_point completed_when;
   boost::system::error_code ec;
   bool called = false;
 
-  p([&](boost::system::error_code ec_)
+  p1([&](boost::system::error_code ec_)
       {
         ec = ec_;
         called = true;
@@ -56,19 +57,46 @@ void promise_tester()
       [&](boost::system::error_code)
       {
         timer2_done = steady_clock::now();
-        p.cancel();
+        p1.cancel();
       });
 
   ctx.run();
 
   static_assert(
-      boost::asio::is_async_operation<decltype(p)>::value,
+      boost::asio::is_async_operation<decltype(p1)>::value,
       "promise is async_op");
 
   BOOST_ASIO_CHECK(timer2_done + milliseconds(1) > started_when);
   BOOST_ASIO_CHECK(completed_when > timer2_done);
   BOOST_ASIO_CHECK(called);
   BOOST_ASIO_CHECK(ec == error::operation_aborted);
+
+  timer1.expires_after(milliseconds(0));
+  auto p2 = timer1.async_wait(
+      boost::asio::append(experimental::use_promise, 123));
+
+  ec = boost::asio::error::would_block;
+  called = false;
+
+  p2([&](boost::system::error_code ec_, int i)
+      {
+        BOOST_ASIO_CHECK(i == 123);
+        ec = ec_;
+        called = true;
+      });
+
+  BOOST_ASIO_CHECK(ec == boost::asio::error::would_block);
+  BOOST_ASIO_CHECK(!called);
+
+  ctx.restart();
+  ctx.run();
+
+  static_assert(
+      boost::asio::is_async_operation<decltype(p2)>::value,
+      "promise is async_op");
+
+  BOOST_ASIO_CHECK(!ec);
+  BOOST_ASIO_CHECK(called);
 }
 
 void promise_slot_tester()

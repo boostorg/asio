@@ -2,7 +2,7 @@
 // append.cpp
 // ~~~~~~~~~~
 //
-// Copyright (c) 2003-2022 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2023 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -24,8 +24,6 @@
 
 void append_test()
 {
-#if defined(BOOST_ASIO_HAS_STD_TUPLE) \
-  && defined(BOOST_ASIO_HAS_VARIADIC_TEMPLATES)
   boost::asio::io_context io1;
   boost::asio::io_context io2;
   boost::asio::system_timer timer1(io1);
@@ -51,8 +49,6 @@ void append_test()
   io2.run();
 
   BOOST_ASIO_CHECK(count == 1);
-#endif // defined(BOOST_ASIO_HAS_STD_TUPLE)
-       //   && defined(BOOST_ASIO_HAS_VARIADIC_TEMPLATES)
 }
 
 BOOST_ASIO_TEST_SUITE

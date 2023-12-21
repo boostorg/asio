@@ -2,7 +2,7 @@
 // post.hpp
 // ~~~~~~~~
 //
-// Copyright (c) 2003-2022 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2023 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -17,6 +17,7 @@
 
 #include <boost/asio/detail/config.hpp>
 #include <boost/asio/async_result.hpp>
+#include <boost/asio/detail/initiate_post.hpp>
 #include <boost/asio/detail/type_traits.hpp>
 #include <boost/asio/execution_context.hpp>
 #include <boost/asio/execution/blocking.hpp>
@@ -28,12 +29,6 @@
 
 namespace boost {
 namespace asio {
-namespace detail {
-
-class initiate_post;
-template <typename> class initiate_post_with_executor;
-
-} // namespace detail
 
 /// Submits a completion token or function object for execution.
 /**
@@ -83,11 +78,14 @@ template <typename> class initiate_post_with_executor;
  * @code void() @endcode
  */
 template <BOOST_ASIO_COMPLETION_TOKEN_FOR(void()) NullaryToken>
-BOOST_ASIO_INITFN_AUTO_RESULT_TYPE_PREFIX(NullaryToken, void()) post(
-    BOOST_ASIO_MOVE_ARG(NullaryToken) token)
-  BOOST_ASIO_INITFN_AUTO_RESULT_TYPE_SUFFIX((
+inline auto post(NullaryToken&& token)
+  -> decltype(
     async_initiate<NullaryToken, void()>(
-        declval<detail::initiate_post>(), token)));
+      declval<detail::initiate_post>(), token))
+{
+  return async_initiate<NullaryToken, void()>(
+      detail::initiate_post(), token);
+}
 
 /// Submits a completion token or function object for execution.
 /**
@@ -160,19 +158,21 @@ BOOST_ASIO_INITFN_AUTO_RESULT_TYPE_PREFIX(NullaryToken, void()) post(
  */
 template <typename Executor,
     BOOST_ASIO_COMPLETION_TOKEN_FOR(void()) NullaryToken
-      BOOST_ASIO_DEFAULT_COMPLETION_TOKEN_TYPE(Executor)>
-BOOST_ASIO_INITFN_AUTO_RESULT_TYPE_PREFIX(NullaryToken, void()) post(
-    const Executor& ex,
-    BOOST_ASIO_MOVE_ARG(NullaryToken) token
-      BOOST_ASIO_DEFAULT_COMPLETION_TOKEN(Executor),
-    typename constraint<
+      = default_completion_token_t<Executor>>
+inline auto post(const Executor& ex,
+    NullaryToken&& token = default_completion_token_t<Executor>(),
+    constraint_t<
       (execution::is_executor<Executor>::value
           && can_require<Executor, execution::blocking_t::never_t>::value)
         || is_executor<Executor>::value
-    >::type = 0)
-  BOOST_ASIO_INITFN_AUTO_RESULT_TYPE_SUFFIX((
+    > = 0)
+  -> decltype(
     async_initiate<NullaryToken, void()>(
-        declval<detail::initiate_post_with_executor<Executor> >(), token)));
+      declval<detail::initiate_post_with_executor<Executor>>(), token))
+{
+  return async_initiate<NullaryToken, void()>(
+      detail::initiate_post_with_executor<Executor>(ex), token);
+}
 
 /// Submits a completion token or function object for execution.
 /**
@@ -189,25 +189,27 @@ BOOST_ASIO_INITFN_AUTO_RESULT_TYPE_PREFIX(NullaryToken, void()) post(
  */
 template <typename ExecutionContext,
     BOOST_ASIO_COMPLETION_TOKEN_FOR(void()) NullaryToken
-      BOOST_ASIO_DEFAULT_COMPLETION_TOKEN_TYPE(
-        typename ExecutionContext::executor_type)>
-BOOST_ASIO_INITFN_AUTO_RESULT_TYPE_PREFIX(NullaryToken, void()) post(
-    ExecutionContext& ctx,
-    BOOST_ASIO_MOVE_ARG(NullaryToken) token
-      BOOST_ASIO_DEFAULT_COMPLETION_TOKEN(
-        typename ExecutionContext::executor_type),
-    typename constraint<is_convertible<
-      ExecutionContext&, execution_context&>::value>::type = 0)
-  BOOST_ASIO_INITFN_AUTO_RESULT_TYPE_SUFFIX((
+      = default_completion_token_t<typename ExecutionContext::executor_type>>
+inline auto post(ExecutionContext& ctx,
+    NullaryToken&& token = default_completion_token_t<
+      typename ExecutionContext::executor_type>(),
+    constraint_t<
+      is_convertible<ExecutionContext&, execution_context&>::value
+    > = 0)
+  -> decltype(
     async_initiate<NullaryToken, void()>(
-        declval<detail::initiate_post_with_executor<
-          typename ExecutionContext::executor_type> >(), token)));
+      declval<detail::initiate_post_with_executor<
+        typename ExecutionContext::executor_type>>(), token))
+{
+  return async_initiate<NullaryToken, void()>(
+      detail::initiate_post_with_executor<
+        typename ExecutionContext::executor_type>(
+          ctx.get_executor()), token);
+}
 
 } // namespace asio
 } // namespace boost
 
 #include <boost/asio/detail/pop_options.hpp>
-
-#include <boost/asio/impl/post.hpp>
 
 #endif // BOOST_ASIO_POST_HPP

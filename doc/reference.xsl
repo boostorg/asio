@@ -2,7 +2,7 @@
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
 
 <!--
-  Copyright (c) 2003-2022 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+  Copyright (c) 2003-2023 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 
   Distributed under the Boost Software License, Version 1.0. (See accompanying
   file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -10,7 +10,7 @@
 
 <xsl:output method="text"/>
 <xsl:strip-space elements="*"/>
-<xsl:preserve-space elements="para"/>
+<xsl:preserve-space elements="para type"/>
 
 
 <xsl:variable name="newline">
@@ -30,7 +30,7 @@
 -->
 <xsl:template match="/doxygen">
 <xsl:text>[/
- / Copyright (c) 2003-2022 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+ / Copyright (c) 2003-2023 Christopher M. Kohlhoff (chris at kohlhoff dot com)
  /
  / Distributed under the Boost Software License, Version 1.0. (See accompanying
  / file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -116,7 +116,7 @@
 
   <xsl:for-each select="
       compounddef[@kind = 'class' or @kind = 'struct'] |
-      compounddef[@kind = 'namespace']/sectiondef[1]/memberdef">
+      compounddef[@kind = 'namespace']/sectiondef[@kind = 'func' or @kind = 'var' or @kind = 'enum' or @kind = 'typedef']/memberdef">
     <xsl:sort select="concat((. | ancestor::*)/compoundname, '::', name, ':x')"/>
     <xsl:sort select="name"/>
     <xsl:choose>
@@ -133,7 +133,8 @@
             not(contains(compoundname, 'context_impl')) and
             not(contains(compoundname, 'initiate_')) and
             not(contains(compoundname, '_adapter')) and
-            not(contains(compoundname, '_is_deprecated'))">
+            not(contains(compoundname, '_is_deprecated')) or
+            contains(compoundname, 'asio::any_completion_handler')">
           <xsl:call-template name="class"/>
         </xsl:if>
       </xsl:when>
@@ -366,6 +367,12 @@
          select="concat(substring-before($name, ','), '_comma_', substring-after($name, ','))"/>
       </xsl:call-template>
     </xsl:when>
+    <xsl:when test="contains($name, '&quot;')">
+      <xsl:call-template name="make-id">
+        <xsl:with-param name="name"
+         select="concat(substring-before($name, '&quot;'), '_quot_', substring-after($name, '&quot;'))"/>
+      </xsl:call-template>
+    </xsl:when>
     <xsl:when test="contains($name, '...')">
       <xsl:call-template name="make-id">
         <xsl:with-param name="name"
@@ -438,10 +445,20 @@
 
 
 <xsl:template match="codeline" mode="codeline">
+  <xsl:variable name="code">
+    <xsl:apply-templates mode="codeline"/>
+  </xsl:variable>
   <xsl:if test="string-length(.) &gt; 0">
-    <xsl:text>  </xsl:text>
+    <xsl:choose>
+      <xsl:when test="position() = 1 and starts-with($code, ' ')">
+        <xsl:text> </xsl:text>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:text>  </xsl:text>
+      </xsl:otherwise>
+    </xsl:choose>
   </xsl:if>
-  <xsl:apply-templates mode="codeline"/>
+  <xsl:value-of select="$code"/>
   <xsl:value-of select="$newline"/>
 </xsl:template>
 
@@ -1181,11 +1198,11 @@
 ]
 </xsl:if>
 
-<xsl:if test="count(sectiondef[@kind='friend']/memberdef[not(type = 'friend class') and not(contains(name, '_helper'))]) &gt; 0">
+<xsl:if test="count(sectiondef[@kind='friend']/memberdef[not(type = 'class') and not(contains(name, '_helper'))]) &gt; 0">
 [heading Friends]
 [table
   [[Name][Description]]
-<xsl:for-each select="sectiondef[@kind='friend']/memberdef[not(type = 'friend class') and not(contains(name, '_helper'))]" mode="class-table">
+<xsl:for-each select="sectiondef[@kind='friend']/memberdef[not(type = 'class') and not(contains(name, '_helper'))]" mode="class-table">
   <xsl:sort select="name"/>
   <xsl:variable name="name">
     <xsl:value-of select="name"/>
@@ -1285,14 +1302,14 @@
 <xsl:param name="class-name"/>
 <xsl:param name="class-id"/>
 <xsl:param name="class-file"/>
-<xsl:apply-templates select="sectiondef[@kind='public-type' or @kind='public-func' or @kind='public-static-func' or @kind='public-attrib' or @kind='public-static-attrib' or @kind='protected-func' or @kind='protected-static-func' or @kind='protected-attrib' or @kind='protected-static-attrib' or @kind='friend' or @kind='related']/memberdef[not(type = 'friend class') and not(contains(name, '_helper')) and not(name = 'impl_')]" mode="class-detail">
+<xsl:apply-templates select="sectiondef[@kind='public-type' or @kind='public-func' or @kind='public-static-func' or @kind='public-attrib' or @kind='public-static-attrib' or @kind='protected-func' or @kind='protected-static-func' or @kind='protected-attrib' or @kind='protected-static-attrib' or @kind='friend' or @kind='related']/memberdef[not(type = 'class') and not(contains(name, '_helper')) and not(name = 'impl_')]" mode="class-detail">
   <xsl:sort select="name"/>
   <xsl:with-param name="class-name" select="$class-name"/>
   <xsl:with-param name="class-id" select="$class-id"/>
   <xsl:with-param name="class-file" select="$class-file"/>
 </xsl:apply-templates>
 <xsl:if test="$class-name = 'execution_context::service'">
-  <xsl:apply-templates select="sectiondef[@kind='private-func']/memberdef[not(type = 'friend class') and not(contains(name, '_helper'))]" mode="class-detail">
+  <xsl:apply-templates select="sectiondef[@kind='private-func']/memberdef[not(type = 'class') and not(contains(name, '_helper'))]" mode="class-detail">
     <xsl:sort select="name"/>
     <xsl:with-param name="class-name" select="$class-name"/>
     <xsl:with-param name="class-id" select="$class-id"/>
@@ -1529,7 +1546,7 @@
 <xsl:text>
   </xsl:text><xsl:if test="@static='yes'">static </xsl:if><xsl:value-of
  select="type"/><xsl:text> </xsl:text><xsl:value-of select="name"/>
- <xsl:if test="count(initializer) = 1"><xsl:text> =</xsl:text>
+ <xsl:if test="count(initializer) = 1"><xsl:text> </xsl:text>
  <xsl:value-of select="initializer"/></xsl:if>;
 </xsl:template>
 
@@ -1607,319 +1624,342 @@
 
 
 <xsl:template match="param" mode="class-detail-template">
+<xsl:variable name="type">
+  <xsl:choose>
+    <xsl:when test="count(declname) &gt; 0">
+      <xsl:value-of select="type"/>
+    </xsl:when>
+    <xsl:otherwise>
+      <xsl:value-of select="substring-before(type, ' ')"/>
+    </xsl:otherwise>
+  </xsl:choose>
+</xsl:variable>
+<xsl:variable name="declname">
+  <xsl:choose>
+    <xsl:when test="count(declname) &gt; 0">
+      <xsl:value-of select="declname"/>
+    </xsl:when>
+    <xsl:otherwise>
+      <xsl:value-of select="substring-after(type, ' ')"/>
+    </xsl:otherwise>
+  </xsl:choose>
+</xsl:variable>
 <xsl:text>
-      </xsl:text><xsl:value-of select="type"/><xsl:text> </xsl:text>
+      </xsl:text><xsl:value-of select="$type"/><xsl:text> </xsl:text>
       <xsl:choose>
-        <xsl:when test="declname = 'A'">
-          <xsl:value-of select="declname"/>
+        <xsl:when test="$declname = 'A'">
+          <xsl:value-of select="$declname"/>
         </xsl:when>
-        <xsl:when test="declname = 'Allocator'">
-          <xsl:value-of select="declname"/>
+        <xsl:when test="$declname = 'Allocator'">
+          <xsl:value-of select="$declname"/>
         </xsl:when>
-        <xsl:when test="declname = 'Arg'">
-          <xsl:value-of select="declname"/>
+        <xsl:when test="$declname = 'Arg'">
+          <xsl:value-of select="$declname"/>
         </xsl:when>
-        <xsl:when test="declname = 'Args'">
-          <xsl:value-of select="declname"/>
+        <xsl:when test="$declname = 'Args'">
+          <xsl:value-of select="$declname"/>
         </xsl:when>
-        <xsl:when test="declname = 'Associator'">
-          <xsl:value-of select="declname"/>
+        <xsl:when test="$declname = 'Associator'">
+          <xsl:value-of select="$declname"/>
         </xsl:when>
-        <xsl:when test="declname = 'AwaitableExecutor'">
-          <xsl:value-of select="concat('``[link boost_asio.reference.Executor1 ', declname, ']``')"/>
+        <xsl:when test="$declname = 'AwaitableExecutor'">
+          <xsl:value-of select="concat('``[link boost_asio.reference.Executor1 ', $declname, ']``')"/>
         </xsl:when>
-        <xsl:when test="declname = 'Bits'">
-          <xsl:value-of select="declname"/>
+        <xsl:when test="$declname = 'Bits'">
+          <xsl:value-of select="$declname"/>
         </xsl:when>
-        <xsl:when test="declname = 'Blocking'">
-          <xsl:value-of select="declname"/>
+        <xsl:when test="$declname = 'Blocking'">
+          <xsl:value-of select="$declname"/>
         </xsl:when>
-        <xsl:when test="declname = 'BufferSequence'">
-          <xsl:value-of select="declname"/>
+        <xsl:when test="$declname = 'BufferSequence'">
+          <xsl:value-of select="$declname"/>
         </xsl:when>
-        <xsl:when test="declname = 'ByteType'">
-          <xsl:value-of select="declname"/>
+        <xsl:when test="$declname = 'ByteType'">
+          <xsl:value-of select="$declname"/>
         </xsl:when>
-        <xsl:when test="declname = 'C'">
-          <xsl:value-of select="declname"/>
+        <xsl:when test="$declname = 'C'">
+          <xsl:value-of select="$declname"/>
         </xsl:when>
-        <xsl:when test="declname = 'CancellationCondition'">
-          <xsl:value-of select="declname"/>
+        <xsl:when test="$declname = 'CancellationCondition'">
+          <xsl:value-of select="$declname"/>
         </xsl:when>
-        <xsl:when test="declname = 'Clock'">
-          <xsl:value-of select="declname"/>
+        <xsl:when test="$declname = 'Chars'">
+          <xsl:value-of select="$declname"/>
         </xsl:when>
-        <xsl:when test="declname = 'CompletionHandler'">
-          <xsl:value-of select="declname"/>
+        <xsl:when test="$declname = 'Clock'">
+          <xsl:value-of select="$declname"/>
         </xsl:when>
-        <xsl:when test="declname = 'CompletionToken'">
-          <xsl:value-of select="declname"/>
+        <xsl:when test="$declname = 'CompletionHandler'">
+          <xsl:value-of select="$declname"/>
         </xsl:when>
-        <xsl:when test="declname = 'ConstBuffer'">
-          <xsl:value-of select="declname"/>
+        <xsl:when test="$declname = 'CompletionToken'">
+          <xsl:value-of select="$declname"/>
         </xsl:when>
-        <xsl:when test="declname = 'Context_Service'">
-          <xsl:value-of select="declname"/>
+        <xsl:when test="$declname = 'ConstBuffer'">
+          <xsl:value-of select="$declname"/>
         </xsl:when>
-        <xsl:when test="declname = 'DefaultCandidate'">
-          <xsl:value-of select="declname"/>
+        <xsl:when test="$declname = 'Context_Service'">
+          <xsl:value-of select="$declname"/>
         </xsl:when>
-        <xsl:when test="declname = 'Duration'">
-          <xsl:value-of select="declname"/>
+        <xsl:when test="$declname = 'DefaultCandidate'">
+          <xsl:value-of select="$declname"/>
         </xsl:when>
-        <xsl:when test="declname = 'DatagramSocketService1'">
-          <xsl:value-of select="concat('``[link boost_asio.reference.DatagramSocketService ', declname, ']``')"/>
+        <xsl:when test="$declname = 'Duration'">
+          <xsl:value-of select="$declname"/>
         </xsl:when>
-        <xsl:when test="declname = 'E'">
-          <xsl:value-of select="declname"/>
+        <xsl:when test="$declname = 'DatagramSocketService1'">
+          <xsl:value-of select="concat('``[link boost_asio.reference.DatagramSocketService ', $declname, ']``')"/>
         </xsl:when>
-        <xsl:when test="declname = 'Element'">
-          <xsl:value-of select="declname"/>
+        <xsl:when test="$declname = 'E'">
+          <xsl:value-of select="$declname"/>
         </xsl:when>
-        <xsl:when test="declname = 'EndpointIterator'">
-          <xsl:value-of select="declname"/>
+        <xsl:when test="$declname = 'Element'">
+          <xsl:value-of select="$declname"/>
         </xsl:when>
-        <xsl:when test="declname = 'Elem'">
-          <xsl:value-of select="declname"/>
+        <xsl:when test="$declname = 'EndpointIterator'">
+          <xsl:value-of select="$declname"/>
         </xsl:when>
-        <xsl:when test="declname = 'ErrorEnum'">
-          <xsl:value-of select="declname"/>
+        <xsl:when test="$declname = 'Elem'">
+          <xsl:value-of select="$declname"/>
         </xsl:when>
-        <xsl:when test="declname = 'ExecutionContext'">
-          <xsl:value-of select="declname"/>
+        <xsl:when test="$declname = 'ErrorEnum'">
+          <xsl:value-of select="$declname"/>
         </xsl:when>
-        <xsl:when test="declname = 'Executor'">
-          <xsl:value-of select="concat('``[link boost_asio.reference.Executor1 ', declname, ']``')"/>
+        <xsl:when test="$declname = 'ExecutionContext'">
+          <xsl:value-of select="$declname"/>
         </xsl:when>
-        <xsl:when test="declname = 'Executor2'">
-          <xsl:value-of select="concat('``[link boost_asio.reference.Executor1 ', declname, ']``')"/>
+        <xsl:when test="$declname = 'Executor'">
+          <xsl:value-of select="concat('``[link boost_asio.reference.Executor1 ', $declname, ']``')"/>
         </xsl:when>
-        <xsl:when test="declname = 'F'">
-          <xsl:value-of select="declname"/>
+        <xsl:when test="$declname = 'Executor2'">
+          <xsl:value-of select="concat('``[link boost_asio.reference.Executor1 ', $declname, ']``')"/>
         </xsl:when>
-        <xsl:when test="declname = 'F1'">
-          <xsl:value-of select="declname"/>
+        <xsl:when test="$declname = 'F'">
+          <xsl:value-of select="$declname"/>
         </xsl:when>
-        <xsl:when test="declname = 'F2'">
-          <xsl:value-of select="declname"/>
+        <xsl:when test="$declname = 'F1'">
+          <xsl:value-of select="$declname"/>
         </xsl:when>
-        <xsl:when test="declname = 'Filter'">
-          <xsl:value-of select="declname"/>
+        <xsl:when test="$declname = 'F2'">
+          <xsl:value-of select="$declname"/>
         </xsl:when>
-        <xsl:when test="declname = 'Function'">
-          <xsl:value-of select="declname"/>
+        <xsl:when test="$declname = 'Filter'">
+          <xsl:value-of select="$declname"/>
         </xsl:when>
-        <xsl:when test="declname = 'H'">
-          <xsl:value-of select="declname"/>
+        <xsl:when test="$declname = 'Function'">
+          <xsl:value-of select="$declname"/>
         </xsl:when>
-        <xsl:when test="declname = 'Head'">
-          <xsl:value-of select="declname"/>
+        <xsl:when test="$declname = 'H'">
+          <xsl:value-of select="$declname"/>
         </xsl:when>
-        <xsl:when test="declname = 'I'">
-          <xsl:value-of select="declname"/>
+        <xsl:when test="$declname = 'Head'">
+          <xsl:value-of select="$declname"/>
         </xsl:when>
-        <xsl:when test="declname = 'IoObjectService1'">
-          <xsl:value-of select="concat('``[link boost_asio.reference.IoObjectService ', declname, ']``')"/>
+        <xsl:when test="$declname = 'I'">
+          <xsl:value-of select="$declname"/>
         </xsl:when>
-        <xsl:when test="declname = 'Impl'">
-          <xsl:value-of select="declname"/>
+        <xsl:when test="$declname = 'IoObjectService1'">
+          <xsl:value-of select="concat('``[link boost_asio.reference.IoObjectService ', $declname, ']``')"/>
         </xsl:when>
-        <xsl:when test="declname = 'Implementation'">
-          <xsl:value-of select="declname"/>
+        <xsl:when test="$declname = 'Impl'">
+          <xsl:value-of select="$declname"/>
         </xsl:when>
-        <xsl:when test="declname = 'InFilter'">
-          <xsl:value-of select="declname"/>
+        <xsl:when test="$declname = 'Implementation'">
+          <xsl:value-of select="$declname"/>
         </xsl:when>
-        <xsl:when test="declname = 'InitArgs'">
-          <xsl:value-of select="declname"/>
+        <xsl:when test="$declname = 'InFilter'">
+          <xsl:value-of select="$declname"/>
         </xsl:when>
-        <xsl:when test="declname = 'Initiation'">
-          <xsl:value-of select="declname"/>
+        <xsl:when test="$declname = 'InitArgs'">
+          <xsl:value-of select="$declname"/>
         </xsl:when>
-        <xsl:when test="declname = 'InnerExecutor'">
-          <xsl:value-of select="concat('``[link boost_asio.reference.Executor1 ', declname, ']``')"/>
+        <xsl:when test="$declname = 'Initiation'">
+          <xsl:value-of select="$declname"/>
         </xsl:when>
-        <xsl:when test="declname = 'InnerExecutor1'">
-          <xsl:value-of select="concat('``[link boost_asio.reference.Executor1 ', declname, ']``')"/>
+        <xsl:when test="$declname = 'InnerExecutor'">
+          <xsl:value-of select="concat('``[link boost_asio.reference.Executor1 ', $declname, ']``')"/>
         </xsl:when>
-        <xsl:when test="declname = 'IoObjectsOrExecutors'">
-          <xsl:value-of select="declname"/>
+        <xsl:when test="$declname = 'InnerExecutor1'">
+          <xsl:value-of select="concat('``[link boost_asio.reference.Executor1 ', $declname, ']``')"/>
         </xsl:when>
-        <xsl:when test="declname = 'Iterator'">
-          <xsl:value-of select="declname"/>
+        <xsl:when test="$declname = 'IoObjectsOrExecutors'">
+          <xsl:value-of select="$declname"/>
         </xsl:when>
-        <xsl:when test="declname = 'Mask'">
-          <xsl:value-of select="declname"/>
+        <xsl:when test="$declname = 'Iterator'">
+          <xsl:value-of select="$declname"/>
         </xsl:when>
-        <xsl:when test="declname = 'MatchCondition'">
-          <xsl:value-of select="declname"/>
+        <xsl:when test="$declname = 'Mask'">
+          <xsl:value-of select="$declname"/>
         </xsl:when>
-        <xsl:when test="declname = 'MutableBuffer'">
-          <xsl:value-of select="declname"/>
+        <xsl:when test="$declname = 'MatchCondition'">
+          <xsl:value-of select="$declname"/>
         </xsl:when>
-        <xsl:when test="declname = 'N'">
-          <xsl:value-of select="declname"/>
+        <xsl:when test="$declname = 'MutableBuffer'">
+          <xsl:value-of select="$declname"/>
         </xsl:when>
-        <xsl:when test="declname = 'NewSignatures'">
-          <xsl:value-of select="declname"/>
+        <xsl:when test="$declname = 'N'">
+          <xsl:value-of select="$declname"/>
         </xsl:when>
-        <xsl:when test="declname = 'OnFalse'">
-          <xsl:value-of select="declname"/>
+        <xsl:when test="$declname = 'NewSignatures'">
+          <xsl:value-of select="$declname"/>
         </xsl:when>
-        <xsl:when test="declname = 'OnTrue'">
-          <xsl:value-of select="declname"/>
+        <xsl:when test="$declname = 'OnFalse'">
+          <xsl:value-of select="$declname"/>
         </xsl:when>
-        <xsl:when test="declname = 'Ops'">
-          <xsl:value-of select="declname"/>
+        <xsl:when test="$declname = 'OnTrue'">
+          <xsl:value-of select="$declname"/>
         </xsl:when>
-        <xsl:when test="declname = 'OtherAllocator'">
-          <xsl:value-of select="declname"/>
+        <xsl:when test="$declname = 'Ops'">
+          <xsl:value-of select="$declname"/>
         </xsl:when>
-        <xsl:when test="declname = 'OtherCancellationSlot'">
-          <xsl:value-of select="concat('``[link boost_asio.reference.CancellationSlot ', declname, ']``')"/>
+        <xsl:when test="$declname = 'OtherAllocator'">
+          <xsl:value-of select="$declname"/>
         </xsl:when>
-        <xsl:when test="declname = 'OtherExecutor'">
-          <xsl:value-of select="concat('``[link boost_asio.reference.Executor1 ', declname, ']``')"/>
+        <xsl:when test="$declname = 'OtherCancellationSlot'">
+          <xsl:value-of select="concat('``[link boost_asio.reference.CancellationSlot ', $declname, ']``')"/>
         </xsl:when>
-        <xsl:when test="declname = 'OtherHandler'">
-          <xsl:value-of select="declname"/>
+        <xsl:when test="$declname = 'OtherExecutor'">
+          <xsl:value-of select="concat('``[link boost_asio.reference.Executor1 ', $declname, ']``')"/>
         </xsl:when>
-        <xsl:when test="declname = 'OtherSupportableProperties'">
-          <xsl:value-of select="declname"/>
+        <xsl:when test="$declname = 'OtherHandler'">
+          <xsl:value-of select="$declname"/>
         </xsl:when>
-        <xsl:when test="declname = 'OutFilter'">
-          <xsl:value-of select="declname"/>
+        <xsl:when test="$declname = 'OtherSupportableProperties'">
+          <xsl:value-of select="$declname"/>
         </xsl:when>
-        <xsl:when test="declname = 'OutstandingWork'">
-          <xsl:value-of select="declname"/>
+        <xsl:when test="$declname = 'OutFilter'">
+          <xsl:value-of select="$declname"/>
         </xsl:when>
-        <xsl:when test="declname = 'PasswordCallback'">
-          <xsl:value-of select="declname"/>
+        <xsl:when test="$declname = 'OutstandingWork'">
+          <xsl:value-of select="$declname"/>
         </xsl:when>
-        <xsl:when test="declname = 'Period'">
-          <xsl:value-of select="declname"/>
+        <xsl:when test="$declname = 'PasswordCallback'">
+          <xsl:value-of select="$declname"/>
         </xsl:when>
-        <xsl:when test="declname = 'PodType'">
-          <xsl:value-of select="declname"/>
+        <xsl:when test="$declname = 'Period'">
+          <xsl:value-of select="$declname"/>
         </xsl:when>
-        <xsl:when test="declname = 'PointerToPodType'">
-          <xsl:value-of select="declname"/>
+        <xsl:when test="$declname = 'PodType'">
+          <xsl:value-of select="$declname"/>
         </xsl:when>
-        <xsl:when test="declname = 'Properties'">
-          <xsl:value-of select="declname"/>
+        <xsl:when test="$declname = 'PointerToPodType'">
+          <xsl:value-of select="$declname"/>
         </xsl:when>
-        <xsl:when test="declname = 'Property'">
-          <xsl:value-of select="declname"/>
+        <xsl:when test="$declname = 'Properties'">
+          <xsl:value-of select="$declname"/>
         </xsl:when>
-        <xsl:when test="declname = 'Protocol1'">
-          <xsl:value-of select="concat('``[link boost_asio.reference.Protocol ', declname, ']``')"/>
+        <xsl:when test="$declname = 'Property'">
+          <xsl:value-of select="$declname"/>
         </xsl:when>
-        <xsl:when test="declname = 'Ps'">
-          <xsl:value-of select="declname"/>
+        <xsl:when test="$declname = 'Protocol1'">
+          <xsl:value-of select="concat('``[link boost_asio.reference.Protocol ', $declname, ']``')"/>
         </xsl:when>
-        <xsl:when test="declname = 'R'">
-          <xsl:value-of select="declname"/>
+        <xsl:when test="$declname = 'Ps'">
+          <xsl:value-of select="$declname"/>
         </xsl:when>
-        <xsl:when test="declname = 'Range'">
-          <xsl:value-of select="declname"/>
+        <xsl:when test="$declname = 'R'">
+          <xsl:value-of select="$declname"/>
         </xsl:when>
-        <xsl:when test="declname = 'RawCompletionToken'">
-          <xsl:value-of select="declname"/>
+        <xsl:when test="$declname = 'Range'">
+          <xsl:value-of select="$declname"/>
         </xsl:when>
-        <xsl:when test="declname = 'RawSocketService1'">
-          <xsl:value-of select="concat('``[link boost_asio.reference.RawSocketService ', declname, ']``')"/>
+        <xsl:when test="$declname = 'RawCompletionToken'">
+          <xsl:value-of select="$declname"/>
         </xsl:when>
-        <xsl:when test="declname = 'Relationship'">
-          <xsl:value-of select="declname"/>
+        <xsl:when test="$declname = 'RawSocketService1'">
+          <xsl:value-of select="concat('``[link boost_asio.reference.RawSocketService ', $declname, ']``')"/>
         </xsl:when>
-        <xsl:when test="declname = 'Rep'">
-          <xsl:value-of select="declname"/>
+        <xsl:when test="$declname = 'Relationship'">
+          <xsl:value-of select="$declname"/>
         </xsl:when>
-        <xsl:when test="declname = 'Result'">
-          <xsl:value-of select="declname"/>
+        <xsl:when test="$declname = 'Rep'">
+          <xsl:value-of select="$declname"/>
         </xsl:when>
-        <xsl:when test="declname = 'Return'">
-          <xsl:value-of select="declname"/>
+        <xsl:when test="$declname = 'Result'">
+          <xsl:value-of select="$declname"/>
         </xsl:when>
-        <xsl:when test="declname = 'S'">
-          <xsl:value-of select="declname"/>
+        <xsl:when test="$declname = 'Return'">
+          <xsl:value-of select="$declname"/>
         </xsl:when>
-        <xsl:when test="declname = 'SeqPacketSocketService1'">
-          <xsl:value-of select="concat('``[link boost_asio.reference.SeqPacketSocketService ', declname, ']``')"/>
+        <xsl:when test="$declname = 'S'">
+          <xsl:value-of select="$declname"/>
         </xsl:when>
-        <xsl:when test="declname = 'Signature'">
-          <xsl:value-of select="declname"/>
+        <xsl:when test="$declname = 'SeqPacketSocketService1'">
+          <xsl:value-of select="concat('``[link boost_asio.reference.SeqPacketSocketService ', $declname, ']``')"/>
         </xsl:when>
-        <xsl:when test="declname = 'Signatures'">
-          <xsl:value-of select="declname"/>
+        <xsl:when test="$declname = 'Signature'">
+          <xsl:value-of select="$declname"/>
         </xsl:when>
-        <xsl:when test="declname = 'SocketAcceptorService1' or declname = 'SocketAcceptorService2'">
-          <xsl:value-of select="concat('``[link boost_asio.reference.SocketAcceptorService ', declname, ']``')"/>
+        <xsl:when test="$declname = 'Signatures'">
+          <xsl:value-of select="$declname"/>
         </xsl:when>
-        <xsl:when test="declname = 'SocketService1' or declname = 'SocketService2'">
-          <xsl:value-of select="concat('``[link boost_asio.reference.SocketService ', declname, ']``')"/>
+        <xsl:when test="$declname = 'SocketAcceptorService1' or $declname = 'SocketAcceptorService2'">
+          <xsl:value-of select="concat('``[link boost_asio.reference.SocketAcceptorService ', $declname, ']``')"/>
         </xsl:when>
-        <xsl:when test="declname = 'StackAllocator'">
-          <xsl:value-of select="declname"/>
+        <xsl:when test="$declname = 'SocketService1' or $declname = 'SocketService2'">
+          <xsl:value-of select="concat('``[link boost_asio.reference.SocketService ', $declname, ']``')"/>
         </xsl:when>
-        <xsl:when test="declname = 'Stream'">
-          <xsl:value-of select="declname"/>
+        <xsl:when test="$declname = 'StackAllocator'">
+          <xsl:value-of select="$declname"/>
         </xsl:when>
-        <xsl:when test="declname = 'StreamSocketService1'">
-          <xsl:value-of select="concat('``[link boost_asio.reference.StreamSocketService ', declname, ']``')"/>
+        <xsl:when test="$declname = 'Stream'">
+          <xsl:value-of select="$declname"/>
         </xsl:when>
-        <xsl:when test="declname = 'SupportableProperties'">
-          <xsl:value-of select="declname"/>
+        <xsl:when test="$declname = 'StreamSocketService1'">
+          <xsl:value-of select="concat('``[link boost_asio.reference.StreamSocketService ', $declname, ']``')"/>
         </xsl:when>
-        <xsl:when test="declname = 'T'">
-          <xsl:value-of select="declname"/>
+        <xsl:when test="$declname = 'SupportableProperties'">
+          <xsl:value-of select="$declname"/>
         </xsl:when>
-        <xsl:when test="declname = 'Tail'">
-          <xsl:value-of select="declname"/>
+        <xsl:when test="$declname = 'T'">
+          <xsl:value-of select="$declname"/>
         </xsl:when>
-        <xsl:when test="declname = 'Ts'">
-          <xsl:value-of select="declname"/>
+        <xsl:when test="$declname = 'Tail'">
+          <xsl:value-of select="$declname"/>
         </xsl:when>
-        <xsl:when test="declname = 'T1'">
-          <xsl:value-of select="declname"/>
+        <xsl:when test="$declname = 'Ts'">
+          <xsl:value-of select="$declname"/>
         </xsl:when>
-        <xsl:when test="declname = 'TN'">
-          <xsl:value-of select="declname"/>
+        <xsl:when test="$declname = 'T1'">
+          <xsl:value-of select="$declname"/>
         </xsl:when>
-        <xsl:when test="declname = 'Time'">
-          <xsl:value-of select="declname"/>
+        <xsl:when test="$declname = 'TN'">
+          <xsl:value-of select="$declname"/>
         </xsl:when>
-        <xsl:when test="declname = 'TimeType'">
-          <xsl:value-of select="declname"/>
+        <xsl:when test="$declname = 'Time'">
+          <xsl:value-of select="$declname"/>
         </xsl:when>
-        <xsl:when test="declname = 'Traits'">
-          <xsl:value-of select="declname"/>
+        <xsl:when test="$declname = 'TimeType'">
+          <xsl:value-of select="$declname"/>
         </xsl:when>
-        <xsl:when test="declname = 'U'">
-          <xsl:value-of select="declname"/>
+        <xsl:when test="$declname = 'Traits'">
+          <xsl:value-of select="$declname"/>
         </xsl:when>
-        <xsl:when test="declname = 'V'">
-          <xsl:value-of select="declname"/>
+        <xsl:when test="$declname = 'U'">
+          <xsl:value-of select="$declname"/>
         </xsl:when>
-        <xsl:when test="declname = 'Values'">
-          <xsl:value-of select="declname"/>
+        <xsl:when test="$declname = 'V'">
+          <xsl:value-of select="$declname"/>
         </xsl:when>
-        <xsl:when test="declname = 'Vs'">
-          <xsl:value-of select="declname"/>
+        <xsl:when test="$declname = 'Values'">
+          <xsl:value-of select="$declname"/>
         </xsl:when>
-        <xsl:when test="declname = 'VerifyCallback'">
-          <xsl:value-of select="declname"/>
+        <xsl:when test="$declname = 'Vs'">
+          <xsl:value-of select="$declname"/>
         </xsl:when>
-        <xsl:when test="declname = 'Y'">
-          <xsl:value-of select="declname"/>
+        <xsl:when test="$declname = 'VerifyCallback'">
+          <xsl:value-of select="$declname"/>
         </xsl:when>
-        <xsl:when test="declname = 'Yield'">
-          <xsl:value-of select="declname"/>
+        <xsl:when test="$declname = 'Y'">
+          <xsl:value-of select="$declname"/>
         </xsl:when>
-        <xsl:when test="count(declname) = 0">
+        <xsl:when test="$declname = 'Yield'">
+          <xsl:value-of select="$declname"/>
+        </xsl:when>
+        <xsl:when test="$declname = ''">
         </xsl:when>
         <xsl:otherwise>
-          <xsl:value-of select="concat('``[link boost_asio.reference.', declname, ' ', declname, ']``')"/>
+          <xsl:value-of select="concat('``[link boost_asio.reference.', $declname, ' ', $declname, ']``')"/>
         </xsl:otherwise>
       </xsl:choose>
       <xsl:if test="count(defval) > 0"> = <xsl:choose>
