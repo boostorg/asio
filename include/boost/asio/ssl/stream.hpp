@@ -56,7 +56,7 @@ namespace ssl {
  * @code
  * boost::asio::io_context my_context;
  * boost::asio::ssl::context ctx(boost::asio::ssl::context::sslv23);
- * boost::asio::ssl::stream<asio:ip::tcp::socket> sock(my_context, ctx);
+ * boost::asio::ssl::stream<boost::asio::ip::tcp::socket> sock(my_context, ctx);
  * @endcode
  *
  * @par Concepts:
