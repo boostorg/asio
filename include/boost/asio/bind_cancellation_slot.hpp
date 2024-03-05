@@ -260,7 +260,10 @@ public:
    */
   template <typename U, typename OtherCancellationSlot>
   cancellation_slot_binder(
-      const cancellation_slot_binder<U, OtherCancellationSlot>& other)
+      const cancellation_slot_binder<U, OtherCancellationSlot>& other,
+      constraint_t<is_constructible<CancellationSlot,
+        OtherCancellationSlot>::value> = 0,
+      constraint_t<is_constructible<T, U>::value> = 0)
     : slot_(other.get_cancellation_slot()),
       target_(other.get())
   {
@@ -274,7 +277,8 @@ public:
    */
   template <typename U, typename OtherCancellationSlot>
   cancellation_slot_binder(const cancellation_slot_type& s,
-      const cancellation_slot_binder<U, OtherCancellationSlot>& other)
+      const cancellation_slot_binder<U, OtherCancellationSlot>& other,
+      constraint_t<is_constructible<T, U>::value> = 0)
     : slot_(s),
       target_(other.get())
   {
@@ -300,7 +304,10 @@ public:
   /// Move construct from a different cancellation slot wrapper type.
   template <typename U, typename OtherCancellationSlot>
   cancellation_slot_binder(
-      cancellation_slot_binder<U, OtherCancellationSlot>&& other)
+      cancellation_slot_binder<U, OtherCancellationSlot>&& other,
+      constraint_t<is_constructible<CancellationSlot,
+        OtherCancellationSlot>::value> = 0,
+      constraint_t<is_constructible<T, U>::value> = 0)
     : slot_(static_cast<OtherCancellationSlot&&>(
           other.get_cancellation_slot())),
       target_(static_cast<U&&>(other.get()))
@@ -311,7 +318,8 @@ public:
   /// specify a different cancellation slot.
   template <typename U, typename OtherCancellationSlot>
   cancellation_slot_binder(const cancellation_slot_type& s,
-      cancellation_slot_binder<U, OtherCancellationSlot>&& other)
+      cancellation_slot_binder<U, OtherCancellationSlot>&& other,
+      constraint_t<is_constructible<T, U>::value> = 0)
     : slot_(s),
       target_(static_cast<U&&>(other.get()))
   {

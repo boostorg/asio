@@ -257,7 +257,9 @@ public:
    * constructible from type @c U.
    */
   template <typename U, typename OtherAllocator>
-  allocator_binder(const allocator_binder<U, OtherAllocator>& other)
+  allocator_binder(const allocator_binder<U, OtherAllocator>& other,
+      constraint_t<is_constructible<Allocator, OtherAllocator>::value> = 0,
+      constraint_t<is_constructible<T, U>::value> = 0)
     : allocator_(other.get_allocator()),
       target_(other.get())
   {
@@ -271,7 +273,8 @@ public:
    */
   template <typename U, typename OtherAllocator>
   allocator_binder(const allocator_type& s,
-      const allocator_binder<U, OtherAllocator>& other)
+      const allocator_binder<U, OtherAllocator>& other,
+      constraint_t<is_constructible<T, U>::value> = 0)
     : allocator_(s),
       target_(other.get())
   {
@@ -296,7 +299,9 @@ public:
   /// Move construct from a different allocator wrapper type.
   template <typename U, typename OtherAllocator>
   allocator_binder(
-      allocator_binder<U, OtherAllocator>&& other)
+      allocator_binder<U, OtherAllocator>&& other,
+      constraint_t<is_constructible<Allocator, OtherAllocator>::value> = 0,
+      constraint_t<is_constructible<T, U>::value> = 0)
     : allocator_(static_cast<OtherAllocator&&>(
           other.get_allocator())),
       target_(static_cast<U&&>(other.get()))
@@ -307,7 +312,8 @@ public:
   /// specify a different allocator.
   template <typename U, typename OtherAllocator>
   allocator_binder(const allocator_type& s,
-      allocator_binder<U, OtherAllocator>&& other)
+      allocator_binder<U, OtherAllocator>&& other,
+      constraint_t<is_constructible<T, U>::value> = 0)
     : allocator_(s),
       target_(static_cast<U&&>(other.get()))
   {
