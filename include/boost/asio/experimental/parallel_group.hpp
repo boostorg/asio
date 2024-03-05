@@ -17,6 +17,7 @@
 
 #include <boost/asio/detail/config.hpp>
 #include <vector>
+#include <boost/asio/async_result.hpp>
 #include <boost/asio/detail/array.hpp>
 #include <boost/asio/detail/memory.hpp>
 #include <boost/asio/detail/type_traits.hpp>
