@@ -1,0 +1,39 @@
+# Copyright René Ferdinand Rivera Morell 2023
+# Distributed under the Boost Software License, Version 1.0.
+# (See accompanying file LICENSE_1_0.txt or copy at
+# http://www.boost.org/LICENSE_1_0.txt)
+
+import project ;
+
+project /boost/asio
+    : common-requirements
+        <source>/boost/align//boost_align
+        <source>/boost/array//boost_array
+        <source>/boost/assert//boost_assert
+        <source>/boost/bind//boost_bind
+        <source>/boost/chrono//boost_chrono
+        <source>/boost/config//boost_config
+        <source>/boost/context//boost_context
+        <source>/boost/core//boost_core
+        <source>/boost/coroutine//boost_coroutine
+        <source>/boost/date_time//boost_date_time
+        <source>/boost/exception//boost_exception
+        <source>/boost/function//boost_function
+        <source>/boost/regex//boost_regex
+        <source>/boost/smart_ptr//boost_smart_ptr
+        <source>/boost/system//boost_system
+        <source>/boost/throw_exception//boost_throw_exception
+        <source>/boost/type_traits//boost_type_traits
+        <source>/boost/utility//boost_utility
+        <include>include
+    ;
+
+local examples = [ glob-tree-ex example : Jamfile.v2 ] ;
+
+explicit
+    [ alias boost_asio ]
+    [ alias all : boost_asio test $(examples:D) ]
+    ;
+
+call-if : boost-library asio
+    ;
