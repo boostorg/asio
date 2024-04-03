@@ -188,7 +188,7 @@ public:
    * suitable for passing to functions such as @c SSL_get_verify_result and
    * @c SSL_get_peer_certificate:
    * @code
-   * boost::asio::ssl::stream<asio:ip::tcp::socket> sock(my_context, ctx);
+   * boost::asio::ssl::stream<boost::asio::ip::tcp::socket> sock(io_ctx, ctx);
    *
    * // ... establish connection and perform handshake ...
    *

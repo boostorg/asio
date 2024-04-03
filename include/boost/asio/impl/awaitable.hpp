@@ -539,7 +539,7 @@ public:
   ~awaitable_frame()
   {
     if (has_result_)
-      static_cast<T*>(static_cast<void*>(result_))->~T();
+      std::launder(static_cast<T*>(static_cast<void*>(result_)))->~T();
   }
 
   awaitable<T, Executor> get_return_object() noexcept
@@ -565,7 +565,8 @@ public:
   {
     this->caller_ = nullptr;
     this->rethrow_exception();
-    return std::move(*static_cast<T*>(static_cast<void*>(result_)));
+    return std::move(*std::launder(
+          static_cast<T*>(static_cast<void*>(result_))));
   }
 
 private:
