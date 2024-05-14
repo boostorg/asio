@@ -10,23 +10,13 @@ import project ;
 project /boost/asio
     : common-requirements
         <library>/boost/align//boost_align
-        <library>/boost/array//boost_array
         <library>/boost/assert//boost_assert
-        <library>/boost/bind//boost_bind
-        <library>/boost/chrono//boost_chrono
         <library>/boost/config//boost_config
         <library>/boost/context//boost_context
-        <library>/boost/core//boost_core
         <library>/boost/coroutine//boost_coroutine
         <library>/boost/date_time//boost_date_time
-        <library>/boost/exception//boost_exception
-        <library>/boost/function//boost_function
-        <library>/boost/regex//boost_regex
-        <library>/boost/smart_ptr//boost_smart_ptr
         <library>/boost/system//boost_system
         <library>/boost/throw_exception//boost_throw_exception
-        <library>/boost/type_traits//boost_type_traits
-        <library>/boost/utility//boost_utility
         <include>include
     ;
 
