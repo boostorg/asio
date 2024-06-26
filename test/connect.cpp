@@ -802,6 +802,13 @@ void test_async_connect_range()
   io_context.run();
   BOOST_ASIO_CHECK(result == endpoints[1]);
   BOOST_ASIO_CHECK(!ec);
+
+  boost::asio::async_connect(socket, endpoints)(
+      bindns::bind(range_handler, _1, _2, &ec, &result));
+  io_context.restart();
+  io_context.run();
+  BOOST_ASIO_CHECK(result == endpoints[1]);
+  BOOST_ASIO_CHECK(!ec);
 }
 
 void test_async_connect_range_cond()
@@ -958,6 +965,13 @@ void test_async_connect_range_cond()
   io_context.run();
   BOOST_ASIO_CHECK(result == boost::asio::ip::tcp::endpoint());
   BOOST_ASIO_CHECK(ec == boost::asio::error::not_found);
+
+  boost::asio::async_connect(socket, endpoints, false_cond)(
+      bindns::bind(range_handler, _1, _2, &ec, &result));
+  io_context.restart();
+  io_context.run();
+  BOOST_ASIO_CHECK(result == boost::asio::ip::tcp::endpoint());
+  BOOST_ASIO_CHECK(ec == boost::asio::error::not_found);
 }
 
 void test_async_connect_iter()
@@ -998,6 +1012,13 @@ void test_async_connect_iter()
   endpoints.insert(endpoints.begin(), boost::asio::ip::tcp::endpoint());
 
   boost::asio::async_connect(socket, cendpoints.begin(), cendpoints.end(),
+      bindns::bind(iter_handler, _1, _2, &ec, &result));
+  io_context.restart();
+  io_context.run();
+  BOOST_ASIO_CHECK(result == cendpoints.begin() + 1);
+  BOOST_ASIO_CHECK(!ec);
+
+  boost::asio::async_connect(socket, cendpoints.begin(), cendpoints.end())(
       bindns::bind(iter_handler, _1, _2, &ec, &result));
   io_context.restart();
   io_context.run();
@@ -1156,6 +1177,14 @@ void test_async_connect_iter_cond()
 
   boost::asio::async_connect(socket, cendpoints.begin(), cendpoints.end(),
       false_cond, bindns::bind(iter_handler, _1, _2, &ec, &result));
+  io_context.restart();
+  io_context.run();
+  BOOST_ASIO_CHECK(result == cendpoints.end());
+  BOOST_ASIO_CHECK(ec == boost::asio::error::not_found);
+
+  boost::asio::async_connect(socket, cendpoints.begin(),
+      cendpoints.end(), false_cond)(
+        bindns::bind(iter_handler, _1, _2, &ec, &result));
   io_context.restart();
   io_context.run();
   BOOST_ASIO_CHECK(result == cendpoints.end());
