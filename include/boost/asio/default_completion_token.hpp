@@ -22,12 +22,15 @@
 
 namespace boost {
 namespace asio {
+
+class deferred_t;
+
 namespace detail {
 
 template <typename T, typename = void>
 struct default_completion_token_impl
 {
-  typedef void type;
+  typedef deferred_t type;
 };
 
 template <typename T>
@@ -59,7 +62,7 @@ struct default_completion_token
 {
   /// If @c T has a nested type @c default_completion_token_type,
   /// <tt>T::default_completion_token_type</tt>. Otherwise the typedef @c type
-  /// is not defined.
+  /// is boost::asio::deferred_t.
   typedef see_below type;
 };
 #else
@@ -78,9 +81,31 @@ using default_completion_token_t = typename default_completion_token<T>::type;
 #define BOOST_ASIO_DEFAULT_COMPLETION_TOKEN(e) \
   = typename ::boost::asio::default_completion_token<e>::type()
 
+namespace detail {
+
+template <typename T, typename = void>
+struct default_completion_token_or_deferred
+{
+  typedef deferred_t type;
+};
+
+template <typename T>
+struct default_completion_token_or_deferred<T,
+  typename decay_t<T>::executor_type>
+{
+  typedef default_completion_token_t<typename decay_t<T>::executor_type> type;
+};
+
+template <typename T>
+using default_completion_token_or_deferred_t
+  = typename default_completion_token_or_deferred<T>::type;
+
+} // namespace detail
 } // namespace asio
 } // namespace boost
 
 #include <boost/asio/detail/pop_options.hpp>
+
+#include <boost/asio/deferred.hpp>
 
 #endif // BOOST_ASIO_DEFAULT_COMPLETION_TOKEN_HPP
