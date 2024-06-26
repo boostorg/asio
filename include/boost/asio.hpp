@@ -61,6 +61,8 @@
 #include <boost/asio/buffered_write_stream_fwd.hpp>
 #include <boost/asio/buffered_write_stream.hpp>
 #include <boost/asio/buffers_iterator.hpp>
+#include <boost/asio/cancel_after.hpp>
+#include <boost/asio/cancel_at.hpp>
 #include <boost/asio/cancellation_signal.hpp>
 #include <boost/asio/cancellation_state.hpp>
 #include <boost/asio/cancellation_type.hpp>
