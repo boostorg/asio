@@ -16,11 +16,12 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include <boost/asio/detail/config.hpp>
-#include <boost/asio/detail/type_traits.hpp>
 #include <boost/asio/associated_executor.hpp>
 #include <boost/asio/associated_immediate_executor.hpp>
 #include <boost/asio/associator.hpp>
 #include <boost/asio/async_result.hpp>
+#include <boost/asio/detail/initiation_base.hpp>
+#include <boost/asio/detail/type_traits.hpp>
 
 #include <boost/asio/detail/push_options.hpp>
 
@@ -491,37 +492,30 @@ public:
   }
 
   template <typename Initiation>
-  struct init_wrapper
+  struct init_wrapper : detail::initiation_base<Initiation>
   {
-    template <typename Init>
-    init_wrapper(const Executor& e, Init&& init)
-      : executor_(e),
-        initiation_(static_cast<Init&&>(init))
-    {
-    }
+    using detail::initiation_base<Initiation>::initiation_base;
 
     template <typename Handler, typename... Args>
-    void operator()(Handler&& handler, Args&&... args)
+    void operator()(Handler&& handler, const Executor& e, Args&&... args) &&
     {
-      static_cast<Initiation&&>(initiation_)(
+      static_cast<Initiation&&>(*this)(
           immediate_executor_binder<
             decay_t<Handler>, Executor>(
-              executor_, static_cast<Handler&&>(handler)),
+              e, static_cast<Handler&&>(handler)),
           static_cast<Args&&>(args)...);
     }
 
     template <typename Handler, typename... Args>
-    void operator()(Handler&& handler, Args&&... args) const
+    void operator()(Handler&& handler,
+        const Executor& e, Args&&... args) const &
     {
-      initiation_(
+      static_cast<const Initiation&>(*this)(
           immediate_executor_binder<
             decay_t<Handler>, Executor>(
-              executor_, static_cast<Handler&&>(handler)),
+              e, static_cast<Handler&&>(handler)),
           static_cast<Args&&>(args)...);
     }
-
-    Executor executor_;
-    Initiation initiation_;
   };
 
   template <typename Initiation, typename RawCompletionToken, typename... Args>
@@ -533,16 +527,17 @@ public:
           is_const<remove_reference_t<RawCompletionToken>>::value, const T, T>,
         Signature>(
           declval<init_wrapper<decay_t<Initiation>>>(),
-          token.get(), static_cast<Args&&>(args)...))
+          token.get(), token.get_immediate_executor(),
+          static_cast<Args&&>(args)...))
   {
     return async_initiate<
       conditional_t<
         is_const<remove_reference_t<RawCompletionToken>>::value, const T, T>,
       Signature>(
         init_wrapper<decay_t<Initiation>>(
-          token.get_immediate_executor(),
           static_cast<Initiation&&>(initiation)),
-        token.get(), static_cast<Args&&>(args)...);
+        token.get(), token.get_immediate_executor(),
+        static_cast<Args&&>(args)...);
   }
 
 private:
