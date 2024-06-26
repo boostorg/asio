@@ -23,26 +23,17 @@ int main()
   boost::asio::posix::stream_descriptor err(ctx, ::dup(STDERR_FILENO));
 
   using op_type = decltype(
-      out.async_write_some(
-        boost::asio::buffer("", 0),
-        boost::asio::deferred
-      )
+      out.async_write_some(boost::asio::buffer("", 0))
     );
 
   std::vector<op_type> ops;
 
   ops.push_back(
-      out.async_write_some(
-        boost::asio::buffer("first\r\n", 7),
-        boost::asio::deferred
-      )
+      out.async_write_some(boost::asio::buffer("first\r\n", 7))
     );
 
   ops.push_back(
-      err.async_write_some(
-        boost::asio::buffer("second\r\n", 8),
-        boost::asio::deferred
-      )
+      err.async_write_some(boost::asio::buffer("second\r\n", 8))
     );
 
   boost::asio::experimental::make_parallel_group(ops).async_wait(
