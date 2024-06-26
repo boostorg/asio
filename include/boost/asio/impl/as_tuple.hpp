@@ -17,6 +17,7 @@
 
 #include <boost/asio/detail/config.hpp>
 #include <tuple>
+#include <boost/asio/associated_executor.hpp>
 #include <boost/asio/associator.hpp>
 #include <boost/asio/async_result.hpp>
 #include <boost/asio/detail/handler_cont_helpers.hpp>
@@ -234,6 +235,33 @@ struct associator<Associator,
     -> decltype(Associator<Handler, DefaultCandidate>::get(h.handler_, c))
   {
     return Associator<Handler, DefaultCandidate>::get(h.handler_, c);
+  }
+};
+
+template <typename... Signatures>
+struct async_result<partial_as_tuple, Signatures...>
+{
+  template <typename Initiation, typename RawCompletionToken, typename... Args>
+  static auto initiate(Initiation&& initiation,
+      RawCompletionToken&&, Args&&... args)
+    -> decltype(
+      async_initiate<
+        const as_tuple_t<
+          default_completion_token_t<associated_executor_t<Initiation>>>&,
+        Signatures...>(
+          static_cast<Initiation&&>(initiation),
+          as_tuple_t<
+            default_completion_token_t<associated_executor_t<Initiation>>>{},
+          static_cast<Args&&>(args)...))
+  {
+    return async_initiate<
+      const as_tuple_t<
+        default_completion_token_t<associated_executor_t<Initiation>>>&,
+      Signatures...>(
+        static_cast<Initiation&&>(initiation),
+        as_tuple_t<
+          default_completion_token_t<associated_executor_t<Initiation>>>{},
+        static_cast<Args&&>(args)...);
   }
 };
 
