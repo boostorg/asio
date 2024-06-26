@@ -17,6 +17,7 @@
 
 #include <boost/asio/detail/config.hpp>
 #include <boost/asio/detail/type_traits.hpp>
+#include <boost/asio/associated_executor.hpp>
 #include <boost/asio/associated_immediate_executor.hpp>
 #include <boost/asio/associator.hpp>
 #include <boost/asio/async_result.hpp>
@@ -366,6 +367,46 @@ private:
   T target_;
 };
 
+/// A function object type that adapts a @ref completion_token to specify that
+/// the completion handler should have the supplied executor as its associated
+/// immediate executor.
+/**
+ * May also be used directly as a completion token, in which case it adapts the
+ * asynchronous operation's default completion token (or boost::asio::deferred
+ * if no default is available).
+ */
+template <typename Executor>
+struct partial_immediate_executor_binder
+{
+  /// Constructor that specifies associated executor.
+  explicit partial_immediate_executor_binder(const Executor& ex)
+    : executor_(ex)
+  {
+  }
+
+  /// Adapt a @ref completion_token to specify that the completion handler
+  /// should have the executor as its associated immediate executor.
+  template <typename CompletionToken>
+  BOOST_ASIO_NODISCARD inline
+  constexpr immediate_executor_binder<decay_t<CompletionToken>, Executor>
+  operator()(CompletionToken&& completion_token) const
+  {
+    return immediate_executor_binder<decay_t<CompletionToken>, Executor>(
+        static_cast<CompletionToken&&>(completion_token), executor_);
+  }
+
+//private:
+  Executor executor_;
+};
+
+/// Create a partial completion token that associates an executor.
+template <typename Executor>
+BOOST_ASIO_NODISCARD inline partial_immediate_executor_binder<Executor>
+bind_immediate_executor(const Executor& ex)
+{
+  return partial_immediate_executor_binder<Executor>(ex);
+}
+
 /// Associate an object of type @c T with a immediate executor of type
 /// @c Executor.
 template <typename Executor, typename T>
@@ -487,11 +528,17 @@ public:
   static auto initiate(Initiation&& initiation,
       RawCompletionToken&& token, Args&&... args)
     -> decltype(
-      async_initiate<T, Signature>(
-        declval<init_wrapper<decay_t<Initiation>>>(),
-        token.get(), static_cast<Args&&>(args)...))
+      async_initiate<
+        conditional_t<
+          is_const<remove_reference_t<RawCompletionToken>>::value, const T, T>,
+        Signature>(
+          declval<init_wrapper<decay_t<Initiation>>>(),
+          token.get(), static_cast<Args&&>(args)...))
   {
-    return async_initiate<T, Signature>(
+    return async_initiate<
+      conditional_t<
+        is_const<remove_reference_t<RawCompletionToken>>::value, const T, T>,
+      Signature>(
         init_wrapper<decay_t<Initiation>>(
           token.get_immediate_executor(),
           static_cast<Initiation&&>(initiation)),
@@ -503,6 +550,39 @@ private:
   async_result& operator=(const async_result&) = delete;
 
   async_result<T, Signature> target_;
+};
+
+template <typename Executor, typename... Signatures>
+struct async_result<partial_immediate_executor_binder<Executor>, Signatures...>
+{
+  template <typename Initiation, typename RawCompletionToken, typename... Args>
+  static auto initiate(Initiation&& initiation,
+      RawCompletionToken&& token, Args&&... args)
+    -> decltype(
+      async_initiate<
+        const immediate_executor_binder<
+          default_completion_token_t<associated_executor_t<Initiation>>,
+          Executor>&,
+        Signatures...>(
+          static_cast<Initiation&&>(initiation),
+          immediate_executor_binder<
+            default_completion_token_t<associated_executor_t<Initiation>>,
+            Executor>(token.executor_,
+              default_completion_token_t<associated_executor_t<Initiation>>{}),
+          static_cast<Args&&>(args)...))
+  {
+    return async_initiate<
+      const immediate_executor_binder<
+        default_completion_token_t<associated_executor_t<Initiation>>,
+        Executor>&,
+      Signatures...>(
+        static_cast<Initiation&&>(initiation),
+        immediate_executor_binder<
+          default_completion_token_t<associated_executor_t<Initiation>>,
+          Executor>(token.executor_,
+            default_completion_token_t<associated_executor_t<Initiation>>{}),
+        static_cast<Args&&>(args)...);
+  }
 };
 
 template <template <typename, typename> class Associator,
