@@ -34,7 +34,7 @@ template <typename CompletionToken>
 class redirect_error_t
 {
 public:
-  /// Constructor. 
+  /// Constructor.
   template <typename T>
   redirect_error_t(T&& completion_token, boost::system::error_code& ec)
     : token_(static_cast<T&&>(completion_token)),

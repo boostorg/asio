@@ -28,7 +28,6 @@ namespace this_coro = boost::asio::this_coro;
 
 namespace coro {
 
-
 auto coro_simple_cancel_impl(boost::asio::io_context& ) noexcept
   -> boost::asio::experimental::coro<void() noexcept, boost::system::error_code>
 {

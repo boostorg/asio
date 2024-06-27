@@ -85,7 +85,6 @@ struct use_coro_t
   {
   }
 
-
   /// Specify an alternate allocator.
   template <typename OtherAllocator>
   use_coro_t<OtherAllocator> rebind(const OtherAllocator& allocator) const
