@@ -61,6 +61,8 @@
 #include <boost/asio/buffered_write_stream_fwd.hpp>
 #include <boost/asio/buffered_write_stream.hpp>
 #include <boost/asio/buffers_iterator.hpp>
+#include <boost/asio/cancel_after.hpp>
+#include <boost/asio/cancel_at.hpp>
 #include <boost/asio/cancellation_signal.hpp>
 #include <boost/asio/cancellation_state.hpp>
 #include <boost/asio/cancellation_type.hpp>
@@ -74,6 +76,7 @@
 #include <boost/asio/deadline_timer.hpp>
 #include <boost/asio/defer.hpp>
 #include <boost/asio/deferred.hpp>
+#include <boost/asio/default_completion_token.hpp>
 #include <boost/asio/detached.hpp>
 #include <boost/asio/dispatch.hpp>
 #include <boost/asio/error.hpp>

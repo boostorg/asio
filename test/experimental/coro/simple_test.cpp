@@ -84,7 +84,10 @@ boost::asio::experimental::coro<int> generator_impl(
 
   int i = 0;
   while (true)
-    co_yield last = ++i;
+  {
+    last = ++i;
+    co_yield last;
+  }
 }
 
 boost::asio::awaitable<void> generator_test()

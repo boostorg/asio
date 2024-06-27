@@ -824,6 +824,21 @@ void test_dynamic_string_async_read_until_char()
   BOOST_ASIO_CHECK(i == 42);
   ioc.restart();
   ioc.run();
+
+  s.reset(read_data, sizeof(read_data));
+  s.next_read_length(10);
+  ec = boost::system::error_code();
+  length = 0;
+  called = false;
+  sb2.consume(sb2.size());
+  boost::asio::async_read_until(s, sb2, 'Y')(
+      bindns::bind(async_read_handler, _1, &ec,
+        _2, &length, &called));
+  ioc.restart();
+  ioc.run();
+  BOOST_ASIO_CHECK(called);
+  BOOST_ASIO_CHECK(!ec);
+  BOOST_ASIO_CHECK(length == 25);
 }
 
 void test_streambuf_async_read_until_char()
@@ -980,6 +995,21 @@ void test_streambuf_async_read_until_char()
   BOOST_ASIO_CHECK(i == 42);
   ioc.restart();
   ioc.run();
+
+  s.reset(read_data, sizeof(read_data));
+  s.next_read_length(10);
+  ec = boost::system::error_code();
+  length = 0;
+  called = false;
+  sb2.consume(sb2.size());
+  boost::asio::async_read_until(s, sb2, 'Y')(
+      bindns::bind(async_read_handler, _1, &ec,
+        _2, &length, &called));
+  ioc.restart();
+  ioc.run();
+  BOOST_ASIO_CHECK(called);
+  BOOST_ASIO_CHECK(!ec);
+  BOOST_ASIO_CHECK(length == 25);
 #endif // !defined(BOOST_ASIO_NO_DYNAMIC_BUFFER_V1)
 }
 
@@ -1139,6 +1169,21 @@ void test_dynamic_string_async_read_until_string()
   BOOST_ASIO_CHECK(i == 42);
   ioc.restart();
   ioc.run();
+
+  s.reset(read_data, sizeof(read_data));
+  s.next_read_length(10);
+  ec = boost::system::error_code();
+  length = 0;
+  called = false;
+  sb2.consume(sb2.size());
+  boost::asio::async_read_until(s, sb2, "WXY")(
+      bindns::bind(async_read_handler, _1, &ec,
+        _2, &length, &called));
+  ioc.restart();
+  ioc.run();
+  BOOST_ASIO_CHECK(called);
+  BOOST_ASIO_CHECK(!ec);
+  BOOST_ASIO_CHECK(length == 25);
 }
 
 void test_streambuf_async_read_until_string()
@@ -1295,6 +1340,21 @@ void test_streambuf_async_read_until_string()
   BOOST_ASIO_CHECK(i == 42);
   ioc.restart();
   ioc.run();
+
+  s.reset(read_data, sizeof(read_data));
+  s.next_read_length(10);
+  ec = boost::system::error_code();
+  length = 0;
+  called = false;
+  sb2.consume(sb2.size());
+  boost::asio::async_read_until(s, sb2, "WXY")(
+      bindns::bind(async_read_handler, _1, &ec,
+        _2, &length, &called));
+  ioc.restart();
+  ioc.run();
+  BOOST_ASIO_CHECK(called);
+  BOOST_ASIO_CHECK(!ec);
+  BOOST_ASIO_CHECK(length == 25);
 #endif // !defined(BOOST_ASIO_NO_DYNAMIC_BUFFER_V1)
 }
 
@@ -1454,6 +1514,21 @@ void test_dynamic_string_async_read_until_match_condition()
   BOOST_ASIO_CHECK(i == 42);
   ioc.restart();
   ioc.run();
+
+  s.reset(read_data, sizeof(read_data));
+  s.next_read_length(10);
+  ec = boost::system::error_code();
+  length = 0;
+  called = false;
+  sb2.consume(sb2.size());
+  boost::asio::async_read_until(s, sb2, match_char('Y'))(
+      bindns::bind(async_read_handler, _1, &ec,
+        _2, &length, &called));
+  ioc.restart();
+  ioc.run();
+  BOOST_ASIO_CHECK(called);
+  BOOST_ASIO_CHECK(!ec);
+  BOOST_ASIO_CHECK(length == 25);
 }
 
 void test_streambuf_async_read_until_match_condition()
@@ -1610,6 +1685,21 @@ void test_streambuf_async_read_until_match_condition()
   BOOST_ASIO_CHECK(i == 42);
   ioc.restart();
   ioc.run();
+
+  s.reset(read_data, sizeof(read_data));
+  s.next_read_length(10);
+  ec = boost::system::error_code();
+  length = 0;
+  called = false;
+  sb2.consume(sb2.size());
+  boost::asio::async_read_until(s, sb2, match_char('Y'))(
+      bindns::bind(async_read_handler, _1, &ec,
+        _2, &length, &called));
+  ioc.restart();
+  ioc.run();
+  BOOST_ASIO_CHECK(called);
+  BOOST_ASIO_CHECK(!ec);
+  BOOST_ASIO_CHECK(length == 25);
 #endif // !defined(BOOST_ASIO_NO_DYNAMIC_BUFFER_V1)
 }
 
