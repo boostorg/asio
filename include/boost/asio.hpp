@@ -66,6 +66,7 @@
 #include <boost/asio/cancellation_signal.hpp>
 #include <boost/asio/cancellation_state.hpp>
 #include <boost/asio/cancellation_type.hpp>
+#include <boost/asio/co_composed.hpp>
 #include <boost/asio/co_spawn.hpp>
 #include <boost/asio/completion_condition.hpp>
 #include <boost/asio/compose.hpp>

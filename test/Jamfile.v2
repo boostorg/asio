@@ -128,6 +128,8 @@ test-suite "asio" :
   [ link cancellation_state.cpp : $(USE_SELECT) : cancellation_state_select ]
   [ link cancellation_type.cpp ]
   [ link cancellation_type.cpp : $(USE_SELECT) : cancellation_type_select ]
+  [ run co_composed.cpp ]
+  [ run co_composed.cpp : : : $(USE_SELECT) : co_composed_select ]
   [ link co_spawn.cpp ]
   [ link co_spawn.cpp : $(USE_SELECT) : co_spawn_select ]
   [ link completion_condition.cpp ]
