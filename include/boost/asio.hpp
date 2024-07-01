@@ -69,6 +69,7 @@
 #include <boost/asio/co_spawn.hpp>
 #include <boost/asio/completion_condition.hpp>
 #include <boost/asio/compose.hpp>
+#include <boost/asio/composed.hpp>
 #include <boost/asio/connect.hpp>
 #include <boost/asio/connect_pipe.hpp>
 #include <boost/asio/consign.hpp>
