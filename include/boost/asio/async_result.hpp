@@ -22,9 +22,6 @@
 
 namespace boost {
 namespace asio {
-
-#if defined(BOOST_ASIO_HAS_CONCEPTS)
-
 namespace detail {
 
 template <typename T>
@@ -71,6 +68,12 @@ struct are_completion_signatures : false_type
 {
 };
 
+template <>
+struct are_completion_signatures<>
+  : true_type
+{
+};
+
 template <typename T0>
 struct are_completion_signatures<T0>
   : is_completion_signature<T0>
@@ -84,6 +87,12 @@ struct are_completion_signatures<T0, TN...>
         && are_completion_signatures<TN...>::value)>
 {
 };
+
+} // namespace detail
+
+#if defined(BOOST_ASIO_HAS_CONCEPTS)
+
+namespace detail {
 
 template <typename T, typename... Args>
 BOOST_ASIO_CONCEPT callable_with = requires(T&& t, Args&&... args)
@@ -607,14 +616,36 @@ template <typename CompletionToken,
     typename Initiation, typename... Args>
 inline auto async_initiate(Initiation&& initiation,
     type_identity_t<CompletionToken>& token, Args&&... args)
-  -> constraint_t<
-    detail::async_result_has_initiate_memfn<
-      CompletionToken, Signatures...>::value,
-    decltype(
-      async_result<decay_t<CompletionToken>, Signatures...>::initiate(
-        static_cast<Initiation&&>(initiation),
-        static_cast<CompletionToken&&>(token),
-        static_cast<Args&&>(args)...))>
+  -> decltype(enable_if_t<
+    enable_if_t<
+      detail::are_completion_signatures<Signatures...>::value,
+      detail::async_result_has_initiate_memfn<
+        CompletionToken, Signatures...>>::value,
+    async_result<decay_t<CompletionToken>, Signatures...>>::initiate(
+      static_cast<Initiation&&>(initiation),
+      static_cast<CompletionToken&&>(token),
+      static_cast<Args&&>(args)...))
+{
+  return async_result<decay_t<CompletionToken>, Signatures...>::initiate(
+      static_cast<Initiation&&>(initiation),
+      static_cast<CompletionToken&&>(token),
+      static_cast<Args&&>(args)...);
+}
+
+template <
+    BOOST_ASIO_COMPLETION_SIGNATURE... Signatures,
+    typename CompletionToken, typename Initiation, typename... Args>
+inline auto async_initiate(Initiation&& initiation,
+    CompletionToken&& token, Args&&... args)
+  -> decltype(enable_if_t<
+    enable_if_t<
+      detail::are_completion_signatures<Signatures...>::value,
+      detail::async_result_has_initiate_memfn<
+        CompletionToken, Signatures...>>::value,
+    async_result<decay_t<CompletionToken>, Signatures...>>::initiate(
+      static_cast<Initiation&&>(initiation),
+      static_cast<CompletionToken&&>(token),
+      static_cast<Args&&>(args)...))
 {
   return async_result<decay_t<CompletionToken>, Signatures...>::initiate(
       static_cast<Initiation&&>(initiation),
@@ -625,12 +656,38 @@ inline auto async_initiate(Initiation&& initiation,
 template <typename CompletionToken,
     BOOST_ASIO_COMPLETION_SIGNATURE... Signatures,
     typename Initiation, typename... Args>
-inline constraint_t<
-    !detail::async_result_has_initiate_memfn<
-      CompletionToken, Signatures...>::value,
-    typename async_result<decay_t<CompletionToken>, Signatures...>::return_type>
+inline typename enable_if_t<
+    !enable_if_t<
+      detail::are_completion_signatures<Signatures...>::value,
+      detail::async_result_has_initiate_memfn<
+        CompletionToken, Signatures...>>::value,
+    async_result<decay_t<CompletionToken>, Signatures...>
+  >::return_type
 async_initiate(Initiation&& initiation,
     type_identity_t<CompletionToken>& token, Args&&... args)
+{
+  async_completion<CompletionToken, Signatures...> completion(token);
+
+  static_cast<Initiation&&>(initiation)(
+      static_cast<
+        typename async_result<decay_t<CompletionToken>,
+          Signatures...>::completion_handler_type&&>(
+            completion.completion_handler),
+      static_cast<Args&&>(args)...);
+
+  return completion.result.get();
+}
+
+template <BOOST_ASIO_COMPLETION_SIGNATURE... Signatures,
+    typename CompletionToken, typename Initiation, typename... Args>
+inline typename enable_if_t<
+    !enable_if_t<
+      detail::are_completion_signatures<Signatures...>::value,
+      detail::async_result_has_initiate_memfn<
+        CompletionToken, Signatures...>>::value,
+    async_result<decay_t<CompletionToken>, Signatures...>
+  >::return_type
+async_initiate(Initiation&& initiation, CompletionToken&& token, Args&&... args)
 {
   async_completion<CompletionToken, Signatures...> completion(token);
 

@@ -976,7 +976,6 @@ private:
   Executor ex_;
 };
 
-
 template <typename Handler, typename Executor>
 class spawn_cancellation_handler<Handler, Executor,
     enable_if_t<

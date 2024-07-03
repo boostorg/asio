@@ -141,7 +141,6 @@ struct promise<void(Ts...), Executor,  Allocator>
    */
   ~promise() { cancel(); }
 
-
 private:
 #if !defined(GENERATING_DOCUMENTATION)
   template <typename, typename, typename> friend struct promise;

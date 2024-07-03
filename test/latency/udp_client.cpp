@@ -63,7 +63,7 @@ int main(int argc, char* argv[])
 
     boost::system::error_code ec;
     socket.send_to(boost::asio::buffer(write_buf), target, 0, ec);
-    
+
     do socket.receive(boost::asio::buffer(read_buf), 0, ec);
     while (ec == boost::asio::error::would_block);
 
