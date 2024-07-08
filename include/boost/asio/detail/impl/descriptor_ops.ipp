@@ -115,7 +115,7 @@ bool set_user_non_blocking(int d, state_type& state,
   if (result >= 0)
   {
     int flag = (value ? (result | O_NONBLOCK) : (result & ~O_NONBLOCK));
-    result = ::fcntl(d, F_SETFL, flag);
+    result = (flag != result) ? ::fcntl(d, F_SETFL, flag) : 0;
     get_last_error(ec, result < 0);
   }
 #else // defined(__SYMBIAN32__) || defined(__EMSCRIPTEN__)
@@ -137,7 +137,7 @@ bool set_user_non_blocking(int d, state_type& state,
     if (result >= 0)
     {
       int flag = (value ? (result | O_NONBLOCK) : (result & ~O_NONBLOCK));
-      result = ::fcntl(d, F_SETFL, flag);
+      result = (flag != result) ? ::fcntl(d, F_SETFL, flag) : 0;
       get_last_error(ec, result < 0);
     }
   }
@@ -185,7 +185,7 @@ bool set_internal_non_blocking(int d, state_type& state,
   if (result >= 0)
   {
     int flag = (value ? (result | O_NONBLOCK) : (result & ~O_NONBLOCK));
-    result = ::fcntl(d, F_SETFL, flag);
+    result = (flag != result) ? ::fcntl(d, F_SETFL, flag) : 0;
     get_last_error(ec, result < 0);
   }
 #else // defined(__SYMBIAN32__) || defined(__EMSCRIPTEN__)
@@ -207,7 +207,7 @@ bool set_internal_non_blocking(int d, state_type& state,
     if (result >= 0)
     {
       int flag = (value ? (result | O_NONBLOCK) : (result & ~O_NONBLOCK));
-      result = ::fcntl(d, F_SETFL, flag);
+      result = (flag != result) ? ::fcntl(d, F_SETFL, flag) : 0;
       get_last_error(ec, result < 0);
     }
   }
