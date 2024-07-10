@@ -168,6 +168,8 @@ test-suite "asio" :
   [ link generic/stream_protocol.cpp : $(USE_SELECT) : generic_stream_protocol_select ]
   [ link high_resolution_timer.cpp ]
   [ link high_resolution_timer.cpp : $(USE_SELECT) : high_resolution_timer_select ]
+  [ link immediate.cpp ]
+  [ link immediate.cpp : $(USE_SELECT) : immediate_select ]
   [ run io_context.cpp ]
   [ run io_context.cpp : : : $(USE_SELECT) : io_context_select ]
   [ run io_context_strand.cpp ]

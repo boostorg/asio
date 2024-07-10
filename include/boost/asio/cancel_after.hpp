@@ -166,6 +166,14 @@ public:
 
 /// Create a partial completion token adapter that cancels an operation if not
 /// complete before the specified relative timeout has elapsed.
+/**
+ * @par Thread Safety
+ * When an asynchronous operation is used with cancel_after, a timer async_wait
+ * operation is performed in parallel to the main operation. If this parallel
+ * async_wait completes first, a cancellation request is emitted to cancel the
+ * main operation. Consequently, the application must ensure that the
+ * asynchronous operation is performed within an implicit or explicit strand.
+ */
 template <typename Rep, typename Period>
 BOOST_ASIO_NODISCARD inline partial_cancel_after<chrono::steady_clock>
 cancel_after(const chrono::duration<Rep, Period>& timeout,
@@ -176,6 +184,14 @@ cancel_after(const chrono::duration<Rep, Period>& timeout,
 
 /// Create a partial completion token adapter that cancels an operation if not
 /// complete before the specified relative timeout has elapsed.
+/**
+ * @par Thread Safety
+ * When an asynchronous operation is used with cancel_after, a timer async_wait
+ * operation is performed in parallel to the main operation. If this parallel
+ * async_wait completes first, a cancellation request is emitted to cancel the
+ * main operation. Consequently, the application must ensure that the
+ * asynchronous operation is performed within an implicit or explicit strand.
+ */
 template <typename Clock, typename WaitTraits,
     typename Executor, typename Rep, typename Period>
 BOOST_ASIO_NODISCARD inline
@@ -190,6 +206,14 @@ cancel_after(basic_waitable_timer<Clock, WaitTraits, Executor>& timer,
 
 /// Adapt a @ref completion_token to cancel an operation if not complete before
 /// the specified relative timeout has elapsed.
+/**
+ * @par Thread Safety
+ * When an asynchronous operation is used with cancel_after, a timer async_wait
+ * operation is performed in parallel to the main operation. If this parallel
+ * async_wait completes first, a cancellation request is emitted to cancel the
+ * main operation. Consequently, the application must ensure that the
+ * asynchronous operation is performed within an implicit or explicit strand.
+ */
 template <typename Rep, typename Period, typename CompletionToken>
 BOOST_ASIO_NODISCARD inline
 cancel_after_t<decay_t<CompletionToken>, chrono::steady_clock>
@@ -203,6 +227,14 @@ cancel_after(const chrono::duration<Rep, Period>& timeout,
 
 /// Adapt a @ref completion_token to cancel an operation if not complete before
 /// the specified relative timeout has elapsed.
+/**
+ * @par Thread Safety
+ * When an asynchronous operation is used with cancel_after, a timer async_wait
+ * operation is performed in parallel to the main operation. If this parallel
+ * async_wait completes first, a cancellation request is emitted to cancel the
+ * main operation. Consequently, the application must ensure that the
+ * asynchronous operation is performed within an implicit or explicit strand.
+ */
 template <typename Rep, typename Period, typename CompletionToken>
 BOOST_ASIO_NODISCARD inline
 cancel_after_t<decay_t<CompletionToken>, chrono::steady_clock>
@@ -215,6 +247,14 @@ cancel_after(const chrono::duration<Rep, Period>& timeout,
 
 /// Adapt a @ref completion_token to cancel an operation if not complete before
 /// the specified relative timeout has elapsed.
+/**
+ * @par Thread Safety
+ * When an asynchronous operation is used with cancel_after, a timer async_wait
+ * operation is performed in parallel to the main operation. If this parallel
+ * async_wait completes first, a cancellation request is emitted to cancel the
+ * main operation. Consequently, the application must ensure that the
+ * asynchronous operation is performed within an implicit or explicit strand.
+ */
 template <typename Clock, typename WaitTraits, typename Executor,
     typename Rep, typename Period, typename CompletionToken>
 BOOST_ASIO_NODISCARD inline
@@ -231,6 +271,14 @@ cancel_after(basic_waitable_timer<Clock, WaitTraits, Executor>& timer,
 
 /// Adapt a @ref completion_token to cancel an operation if not complete before
 /// the specified relative timeout has elapsed.
+/**
+ * @par Thread Safety
+ * When an asynchronous operation is used with cancel_after, a timer async_wait
+ * operation is performed in parallel to the main operation. If this parallel
+ * async_wait completes first, a cancellation request is emitted to cancel the
+ * main operation. Consequently, the application must ensure that the
+ * asynchronous operation is performed within an implicit or explicit strand.
+ */
 template <typename Clock, typename WaitTraits, typename Executor,
     typename Rep, typename Period, typename CompletionToken>
 BOOST_ASIO_NODISCARD inline
