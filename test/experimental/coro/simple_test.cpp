@@ -84,7 +84,10 @@ boost::asio::experimental::coro<int> generator_impl(
 
   int i = 0;
   while (true)
-    co_yield last = ++i;
+  {
+    last = ++i;
+    co_yield last;
+  }
 }
 
 boost::asio::awaitable<void> generator_test()
@@ -192,8 +195,7 @@ boost::asio::awaitable<void> completion_generator_test()
 
   BOOST_ASIO_CHECK(!g.is_open());
   BOOST_ASIO_CHECK((res == std::vector{0,1,2,3,4,5,6,7,8,9}));
-};
-
+}
 
 void run_completion_generator_test()
 {
@@ -245,7 +247,7 @@ boost::asio::awaitable<void> symmetrical_test()
 
   BOOST_ASIO_CHECK(45 == (co_await g.async_resume(9,
           boost::asio::use_awaitable)).value_or(-1));
-};
+}
 
 void run_symmetrical_test()
 {

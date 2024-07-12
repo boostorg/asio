@@ -17,39 +17,12 @@
 #include <boost/asio/bind_immediate_executor.hpp>
 
 #include <functional>
-#include <boost/asio/dispatch.hpp>
+#include <boost/asio/immediate.hpp>
 #include <boost/asio/io_context.hpp>
 #include "unit_test.hpp"
 
-#if defined(BOOST_ASIO_HAS_BOOST_DATE_TIME)
-# include <boost/asio/deadline_timer.hpp>
-#else // defined(BOOST_ASIO_HAS_BOOST_DATE_TIME)
-# include <boost/asio/steady_timer.hpp>
-#endif // defined(BOOST_ASIO_HAS_BOOST_DATE_TIME)
-
 using namespace boost::asio;
 namespace bindns = std;
-
-struct initiate_immediate
-{
-  template <typename Handler>
-  void operator()(Handler&& handler, io_context* ctx) const
-  {
-    typename associated_immediate_executor<
-      Handler, io_context::executor_type>::type ex =
-        get_associated_immediate_executor(handler, ctx->get_executor());
-    dispatch(ex, static_cast<Handler&&>(handler));
-  }
-};
-
-template <BOOST_ASIO_COMPLETION_TOKEN_FOR(void()) Token>
-BOOST_ASIO_INITFN_AUTO_RESULT_TYPE_PREFIX(Token, void())
-async_immediate(io_context& ctx, Token&& token)
-  BOOST_ASIO_INITFN_AUTO_RESULT_TYPE_SUFFIX((
-    async_initiate<Token, void()>(declval<initiate_immediate>(), token)))
-{
-  return async_initiate<Token, void()>(initiate_immediate(), token, &ctx);
-}
 
 void increment(int* count)
 {
@@ -76,7 +49,7 @@ void bind_immediate_executor_to_function_object_test()
 
   BOOST_ASIO_CHECK(count == 1);
 
-  async_immediate(ioc1,
+  async_immediate(ioc1.get_executor(),
       bind_immediate_executor(
         ioc2.get_executor(),
         bind_immediate_executor(
@@ -194,10 +167,43 @@ void bind_immediate_executor_to_completion_token_v2_test()
   BOOST_ASIO_CHECK(count == 1);
 }
 
+void partial_bind_immediate_executor_test()
+{
+  io_context ioc1;
+  io_context ioc2;
+
+  int count = 0;
+
+  async_immediate(ioc1, bind_immediate_executor(ioc2.get_executor()))(
+      bindns::bind(&increment, &count));
+
+  ioc1.run();
+
+  BOOST_ASIO_CHECK(count == 0);
+
+  ioc2.run();
+
+  BOOST_ASIO_CHECK(count == 1);
+
+  async_immediate(ioc1, bind_immediate_executor(ioc2.get_executor()))(
+      incrementer_token_v2(&count));
+
+  ioc1.restart();
+  ioc1.run();
+
+  BOOST_ASIO_CHECK(count == 1);
+
+  ioc2.restart();
+  ioc2.run();
+
+  BOOST_ASIO_CHECK(count == 2);
+}
+
 BOOST_ASIO_TEST_SUITE
 (
   "bind_immediate_executor",
   BOOST_ASIO_TEST_CASE(bind_immediate_executor_to_function_object_test)
   BOOST_ASIO_TEST_CASE(bind_immediate_executor_to_completion_token_v1_test)
   BOOST_ASIO_TEST_CASE(bind_immediate_executor_to_completion_token_v2_test)
+  BOOST_ASIO_TEST_CASE(partial_bind_immediate_executor_test)
 )

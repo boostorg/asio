@@ -39,7 +39,7 @@ namespace asio {
 class detached_t
 {
 public:
-  /// Constructor. 
+  /// Constructor.
   constexpr detached_t()
   {
   }
