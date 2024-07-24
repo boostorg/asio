@@ -5,25 +5,28 @@
 
 require-b2 5.2 ;
 
+constant boost_dependencies :
+    /boost/align//boost_align
+    /boost/assert//boost_assert
+    /boost/config//boost_config
+    /boost/context//boost_context
+    /boost/coroutine//boost_coroutine
+    /boost/date_time//boost_date_time
+    /boost/system//boost_system
+    /boost/throw_exception//boost_throw_exception ;
+
 project /boost/asio
     : common-requirements
-        <library>/boost/align//boost_align
-        <library>/boost/assert//boost_assert
-        <library>/boost/config//boost_config
-        <library>/boost/context//boost_context
-        <library>/boost/coroutine//boost_coroutine
-        <library>/boost/date_time//boost_date_time
-        <library>/boost/system//boost_system
-        <library>/boost/throw_exception//boost_throw_exception
         <include>include
     ;
 
 local examples = [ glob-tree-ex example : Jamfile.v2 ] ;
 
 explicit
-    [ alias boost_asio ]
+    [ alias boost_asio : : : : <library>$(boost_dependencies) ]
     [ alias all : boost_asio test $(examples:D) ]
     ;
 
 call-if : boost-library asio
     ;
+
