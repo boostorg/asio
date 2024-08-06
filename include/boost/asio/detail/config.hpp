@@ -362,7 +362,9 @@
 #    if defined(BOOST_ASIO_HAS_CLANG_LIBCXX)
 #     if (_LIBCPP_STD_VER > 14) && defined(_LIBCPP_HAS_ALIGNED_ALLOC) \
         && !defined(_LIBCPP_MSVCRT) && !defined(__MINGW32__)
-#      if defined(__APPLE__)
+#      if defined(__ANDROID__) && (__ANDROID_API__ >= 28)
+#        define BOOST_ASIO_HAS_STD_ALIGNED_ALLOC 1
+#      elif defined(__APPLE__)
 #       if defined(__MAC_OS_X_VERSION_MIN_REQUIRED)
 #        if (__MAC_OS_X_VERSION_MIN_REQUIRED >= 101500)
 #         define BOOST_ASIO_HAS_STD_ALIGNED_ALLOC 1
