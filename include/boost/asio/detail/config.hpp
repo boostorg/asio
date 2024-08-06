@@ -534,9 +534,9 @@
 #    define BOOST_ASIO_HAS_STD_INVOKE_RESULT 1
 #   endif // (_MSC_VER >= 1911 && _MSVC_LANG >= 201703)
 #  else // defined(BOOST_ASIO_MSVC)
-#   if (__cplusplus >= 201703)
+#   if (__cplusplus >= 201703) && (__cpp_lib_is_invocable >= 201703)
 #    define BOOST_ASIO_HAS_STD_INVOKE_RESULT 1
-#   endif // (__cplusplus >= 201703)
+#   endif // (__cplusplus >= 201703) && (__cpp_lib_is_invocable >= 201703)
 #  endif // defined(BOOST_ASIO_MSVC)
 # endif // !defined(BOOST_ASIO_DISABLE_STD_INVOKE_RESULT)
 #endif // !defined(BOOST_ASIO_HAS_STD_INVOKE_RESULT)
