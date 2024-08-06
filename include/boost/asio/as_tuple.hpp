@@ -142,7 +142,7 @@ struct partial_as_tuple
  * asynchronous operation's default completion token (or boost::asio::deferred
  * if no default is available).
  */
-constexpr partial_as_tuple as_tuple;
+BOOST_ASIO_INLINE_VARIABLE constexpr partial_as_tuple as_tuple;
 
 } // namespace asio
 } // namespace boost

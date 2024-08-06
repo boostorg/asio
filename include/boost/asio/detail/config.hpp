@@ -341,6 +341,19 @@
 # endif // !defined(BOOST_ASIO_DISABLE_VARIADIC_LAMBDA_CAPTURES)
 #endif // !defined(BOOST_ASIO_HAS_VARIADIC_LAMBDA_CAPTURES)
 
+// Support for inline variables.
+#if !defined(BOOST_ASIO_HAS_INLINE_VARIABLES)
+# if !defined(BOOST_ASIO_DISABLE_INLINE_VARIABLES)
+#  if (__cplusplus >= 201703) && (__cpp_inline_variables >= 201606)
+#   define BOOST_ASIO_HAS_INLINE_VARIABLES 1
+#   define BOOST_ASIO_INLINE_VARIABLE inline
+#  endif // (__cplusplus >= 201703) && (__cpp_inline_variables >= 201606)
+# endif // !defined(BOOST_ASIO_DISABLE_INLINE_VARIABLES)
+#endif // !defined(BOOST_ASIO_HAS_INLINE_VARIABLES)
+#if !defined(BOOST_ASIO_INLINE_VARIABLE)
+# define BOOST_ASIO_INLINE_VARIABLE
+#endif // !defined(BOOST_ASIO_INLINE_VARIABLE)
+
 // Default alignment.
 #if defined(__STDCPP_DEFAULT_NEW_ALIGNMENT__)
 # define BOOST_ASIO_DEFAULT_ALIGN __STDCPP_DEFAULT_NEW_ALIGNMENT__
