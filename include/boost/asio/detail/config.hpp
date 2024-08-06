@@ -1391,11 +1391,9 @@
 // Standard library support for snprintf.
 #if !defined(BOOST_ASIO_HAS_SNPRINTF)
 # if !defined(BOOST_ASIO_DISABLE_SNPRINTF)
-#  if defined(__apple_build_version__)
-#    if (__clang_major__ >= 14)
-#     define BOOST_ASIO_HAS_SNPRINTF 1
-#    endif // (__clang_major__ >= 14)
-#  endif // defined(__apple_build_version__)
+#  if defined(__APPLE__)
+#   define BOOST_ASIO_HAS_SNPRINTF 1
+#  endif // defined(__APPLE__)
 # endif // !defined(BOOST_ASIO_DISABLE_SNPRINTF)
 #endif // !defined(BOOST_ASIO_HAS_SNPRINTF)
 
