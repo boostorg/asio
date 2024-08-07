@@ -317,6 +317,7 @@ PREDEFINED             = GENERATING_DOCUMENTATION \
                          BOOST_ASIO_CONSTEXPR=constexpr \
                          BOOST_ASIO_NOEXCEPT=noexcept \
                          BOOST_ASIO_NODISCARD= \
+                         BOOST_ASIO_INLINE_VARIABLE= \
                          BOOST_ASIO_COMPLETION_SIGNATURE=typename \
                          BOOST_ASIO_COMPLETION_HANDLER_FOR(s)=typename \
                          BOOST_ASIO_COMPLETION_TOKEN_FOR(s)=typename \
