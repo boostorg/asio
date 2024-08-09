@@ -41,6 +41,10 @@
 #endif // defined(BOOST_ASIO_WINDOWS) || defined(__CYGWIN__)
        // || defined(__MACH__) && defined(__APPLE__)
 
+#if defined(_MSC_VER) && (_MSC_VER >= 1800)
+# include <malloc.h>
+#endif // defined(_MSC_VER) && (_MSC_VER >= 1800)
+
 #include <boost/asio/detail/push_options.hpp>
 
 namespace boost {
@@ -2583,9 +2587,11 @@ const char* inet_ntop(int af, const void* src, char* dest, size_t length,
         || if_indextoname(static_cast<unsigned>(scope_id), if_name + 1) == 0)
 #if defined(BOOST_ASIO_HAS_SNPRINTF)
       snprintf(if_name + 1, sizeof(if_name) - 1, "%lu", scope_id);
-#else // defined(BOOST_ASIO_HAS_SNPRINTF)
+#elif defined(BOOST_ASIO_HAS_SECURE_RTL)
+      sprintf_s(if_name + 1, sizeof(if_name) -1, "%lu", scope_id);
+#else // defined(BOOST_ASIO_HAS_SECURE_RTL)
       sprintf(if_name + 1, "%lu", scope_id);
-#endif // defined(BOOST_ASIO_HAS_SNPRINTF)
+#endif // defined(BOOST_ASIO_HAS_SECURE_RTL)
     strcat(dest, if_name);
   }
   return result;
