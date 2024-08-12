@@ -6,5 +6,6 @@
 
 project
     : requirements
+        <library>/boost/asio//boost_asio
         <cxxstd>17
     ;
