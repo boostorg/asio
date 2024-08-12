@@ -18,6 +18,8 @@ exe transmit_file
     /boost/chrono//boost_chrono
   : <define>BOOST_ALL_NO_LIB=1
     <threading>multi
+    <build>no
+    <target-os>windows:<build>yes
     <target-os>solaris:<library>socket
     <target-os>solaris:<library>nsl
     <target-os>windows:<define>_WIN32_WINNT=0x0501
