@@ -18,7 +18,6 @@ target_link_libraries(boost_asio
     Boost::assert
     Boost::config
     Boost::context
-    Boost::coroutine
     Boost::date_time
     Boost::system
     Boost::throw_exception
