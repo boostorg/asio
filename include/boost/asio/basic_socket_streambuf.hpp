@@ -108,11 +108,7 @@ class basic_socket_streambuf
   : public std::streambuf,
     private detail::socket_streambuf_io_context,
     private detail::socket_streambuf_buffers,
-#if defined(BOOST_ASIO_NO_DEPRECATED) || defined(GENERATING_DOCUMENTATION)
     private basic_socket<Protocol>
-#else // defined(BOOST_ASIO_NO_DEPRECATED) || defined(GENERATING_DOCUMENTATION)
-    public basic_socket<Protocol>
-#endif // defined(BOOST_ASIO_NO_DEPRECATED) || defined(GENERATING_DOCUMENTATION)
 {
 private:
   // These typedefs are intended keep this class's implementation independent
@@ -137,22 +133,12 @@ public:
   typedef Clock clock_type;
 
 #if defined(GENERATING_DOCUMENTATION)
-  /// (Deprecated: Use time_point.) The time type.
-  typedef typename WaitTraits::time_type time_type;
-
   /// The time type.
   typedef typename WaitTraits::time_point time_point;
-
-  /// (Deprecated: Use duration.) The duration type.
-  typedef typename WaitTraits::duration_type duration_type;
 
   /// The duration type.
   typedef typename WaitTraits::duration duration;
 #else
-# if !defined(BOOST_ASIO_NO_DEPRECATED)
-  typedef typename traits_helper::time_type time_type;
-  typedef typename traits_helper::duration_type duration_type;
-# endif // !defined(BOOST_ASIO_NO_DEPRECATED)
   typedef typename traits_helper::time_type time_point;
   typedef typename traits_helper::duration_type duration;
 #endif
@@ -281,30 +267,6 @@ public:
     return ec_;
   }
 
-#if !defined(BOOST_ASIO_NO_DEPRECATED)
-  /// (Deprecated: Use error().) Get the last error associated with the stream
-  /// buffer.
-  /**
-   * @return An \c error_code corresponding to the last error from the stream
-   * buffer.
-   */
-  const boost::system::error_code& puberror() const
-  {
-    return error();
-  }
-
-  /// (Deprecated: Use expiry().) Get the stream buffer's expiry time as an
-  /// absolute time.
-  /**
-   * @return An absolute time value representing the stream buffer's expiry
-   * time.
-   */
-  time_point expires_at() const
-  {
-    return expiry_time_;
-  }
-#endif // !defined(BOOST_ASIO_NO_DEPRECATED)
-
   /// Get the stream buffer's expiry time as an absolute time.
   /**
    * @return An absolute time value representing the stream buffer's expiry
@@ -342,33 +304,6 @@ public:
   {
     expiry_time_ = traits_helper::add(traits_helper::now(), expiry_time);
   }
-
-#if !defined(BOOST_ASIO_NO_DEPRECATED)
-  /// (Deprecated: Use expiry().) Get the stream buffer's expiry time relative
-  /// to now.
-  /**
-   * @return A relative time value representing the stream buffer's expiry time.
-   */
-  duration expires_from_now() const
-  {
-    return traits_helper::subtract(expires_at(), traits_helper::now());
-  }
-
-  /// (Deprecated: Use expires_after().) Set the stream buffer's expiry time
-  /// relative to now.
-  /**
-   * This function sets the expiry time associated with the stream. Stream
-   * operations performed after this time (where the operations cannot be
-   * completed using the internal buffers) will fail with the error
-   * boost::asio::error::operation_aborted.
-   *
-   * @param expiry_time The expiry time to be used for the timer.
-   */
-  void expires_from_now(const duration& expiry_time)
-  {
-    expiry_time_ = traits_helper::add(traits_helper::now(), expiry_time);
-  }
-#endif // !defined(BOOST_ASIO_NO_DEPRECATED)
 
 protected:
   int_type underflow()
