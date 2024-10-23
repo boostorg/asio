@@ -116,31 +116,11 @@ io_context::service::~service()
 
 void io_context::service::shutdown()
 {
-#if !defined(BOOST_ASIO_NO_DEPRECATED)
-  shutdown_service();
-#endif // !defined(BOOST_ASIO_NO_DEPRECATED)
 }
 
-#if !defined(BOOST_ASIO_NO_DEPRECATED)
-void io_context::service::shutdown_service()
+void io_context::service::notify_fork(io_context::fork_event)
 {
 }
-#endif // !defined(BOOST_ASIO_NO_DEPRECATED)
-
-void io_context::service::notify_fork(io_context::fork_event ev)
-{
-#if !defined(BOOST_ASIO_NO_DEPRECATED)
-  fork_service(ev);
-#else // !defined(BOOST_ASIO_NO_DEPRECATED)
-  (void)ev;
-#endif // !defined(BOOST_ASIO_NO_DEPRECATED)
-}
-
-#if !defined(BOOST_ASIO_NO_DEPRECATED)
-void io_context::service::fork_service(io_context::fork_event)
-{
-}
-#endif // !defined(BOOST_ASIO_NO_DEPRECATED)
 
 } // namespace asio
 } // namespace boost

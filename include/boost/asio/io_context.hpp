@@ -1007,12 +1007,6 @@ private:
   /// Destroy all user-defined handler objects owned by the service.
   BOOST_ASIO_DECL virtual void shutdown();
 
-#if !defined(BOOST_ASIO_NO_DEPRECATED)
-  /// (Deprecated: Use shutdown().) Destroy all user-defined handler objects
-  /// owned by the service.
-  BOOST_ASIO_DECL virtual void shutdown_service();
-#endif // !defined(BOOST_ASIO_NO_DEPRECATED)
-
   /// Handle notification of a fork-related event to perform any necessary
   /// housekeeping.
   /**
@@ -1021,17 +1015,6 @@ private:
    */
   BOOST_ASIO_DECL virtual void notify_fork(
       execution_context::fork_event event);
-
-#if !defined(BOOST_ASIO_NO_DEPRECATED)
-  /// (Deprecated: Use notify_fork().) Handle notification of a fork-related
-  /// event to perform any necessary housekeeping.
-  /**
-   * This function is not a pure virtual so that services only have to
-   * implement it if necessary. The default implementation does nothing.
-   */
-  BOOST_ASIO_DECL virtual void fork_service(
-      execution_context::fork_event event);
-#endif // !defined(BOOST_ASIO_NO_DEPRECATED)
 
 protected:
   /// Constructor.

@@ -281,7 +281,7 @@ public:
   test_service(boost::asio::io_context& s)
     : boost::asio::io_context::service(s) {}
 private:
-  virtual void shutdown_service() {}
+  virtual void shutdown() {}
 };
 
 boost::asio::io_context::id test_service::id;
