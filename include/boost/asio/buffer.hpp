@@ -53,6 +53,43 @@
 
 namespace boost {
 namespace asio {
+namespace detail {
+
+#if defined(BOOST_ASIO_MSVC)
+
+struct span_memfns_base
+{
+  void subspan();
+};
+
+template <typename T>
+struct span_memfns_derived : T, span_memfns_base
+{
+};
+
+template <typename T, T>
+struct span_memfns_check
+{
+};
+
+template <typename>
+char (&subspan_memfn_helper(...))[2];
+
+template <typename T>
+char subspan_memfn_helper(
+    span_memfns_check<
+      void (span_memfns_base::*)(),
+      &span_memfns_derived<T>::subspan>*);
+
+template <typename T>
+struct has_subspan_memfn :
+  integral_constant<bool, sizeof(subspan_memfn_helper<T>(0)) != 1>
+{
+};
+
+#endif // defined(BOOST_ASIO_MSVC)
+
+} // namespace detail
 
 class mutable_buffer;
 class const_buffer;
@@ -90,6 +127,34 @@ public:
   mutable_buffer(void* data, std::size_t size) noexcept
     : data_(data),
       size_(size)
+  {
+  }
+
+  /// Construct a buffer from a span of bytes.
+  template <template <typename, std::size_t> class Span,
+      typename T, std::size_t Extent>
+  mutable_buffer(const Span<T, Extent>& span,
+      constraint_t<
+        !is_const<T>::value,
+        defaulted_constraint
+      > = defaulted_constraint(),
+      constraint_t<
+        sizeof(T) == 1,
+        defaulted_constraint
+      > = defaulted_constraint(),
+      constraint_t<
+#if defined(BOOST_ASIO_MSVC)
+        detail::has_subspan_memfn<Span<T, Extent>>::value,
+#else // defined(BOOST_ASIO_MSVC)
+        is_same<
+          decltype(span.subspan(0, 0)),
+          Span<T, static_cast<std::size_t>(-1)>
+        >::value,
+#endif // defined(BOOST_ASIO_MSVC)
+        defaulted_constraint
+      > = defaulted_constraint())
+    : data_(span.data()),
+      size_(span.size())
   {
   }
 
@@ -185,6 +250,30 @@ public:
 #if defined(BOOST_ASIO_ENABLE_BUFFER_DEBUGGING)
       , debug_check_(b.get_debug_check())
 #endif // BOOST_ASIO_ENABLE_BUFFER_DEBUGGING
+  {
+  }
+
+  /// Construct a buffer from a span of bytes.
+  template <template <typename, std::size_t> class Span,
+      typename T, std::size_t Extent>
+  const_buffer(const Span<T, Extent>& span,
+      constraint_t<
+        sizeof(T) == 1,
+        defaulted_constraint
+      > = defaulted_constraint(),
+      constraint_t<
+#if defined(BOOST_ASIO_MSVC)
+        detail::has_subspan_memfn<Span<T, Extent>>::value,
+#else // defined(BOOST_ASIO_MSVC)
+        is_same<
+          decltype(span.subspan(0, 0)),
+          Span<T, static_cast<std::size_t>(-1)>
+        >::value,
+#endif // defined(BOOST_ASIO_MSVC)
+        defaulted_constraint
+      > = defaulted_constraint())
+    : data_(span.data()),
+      size_(span.size())
   {
   }
 
