@@ -18,7 +18,8 @@
 
 #include "unit_test.hpp"
 
-#if defined(BOOST_ASIO_HAS_BOOST_DATE_TIME)
+#if !defined(BOOST_ASIO_NO_DEPRECATED) \
+  && defined(BOOST_ASIO_HAS_BOOST_DATE_TIME)
 
 #include <boost/bind/bind.hpp>
 #include "archetypes/async_result.hpp"
@@ -435,10 +436,16 @@ BOOST_ASIO_TEST_SUITE
   BOOST_ASIO_TEST_CASE(deadline_timer_async_result_test)
   BOOST_ASIO_TEST_CASE(deadline_timer_move_test)
 )
-#else // defined(BOOST_ASIO_HAS_BOOST_DATE_TIME)
+
+#else // !defined(BOOST_ASIO_NO_DEPRECATED)
+      //   && defined(BOOST_ASIO_HAS_BOOST_DATE_TIME)
+
 BOOST_ASIO_TEST_SUITE
 (
   "deadline_timer",
   BOOST_ASIO_TEST_CASE(null_test)
 )
-#endif // defined(BOOST_ASIO_HAS_BOOST_DATE_TIME)
+
+#endif // !defined(BOOST_ASIO_NO_DEPRECATED)
+       //   && defined(BOOST_ASIO_HAS_BOOST_DATE_TIME)
+

@@ -17,6 +17,8 @@
 
 #include <boost/asio/detail/config.hpp>
 
+#if !defined(BOOST_ASIO_NO_DEPRECATED)
+
 #if defined(BOOST_ASIO_HAS_BOOST_DATE_TIME)
 
 #include <boost/asio/time_traits.hpp>
@@ -101,5 +103,7 @@ private:
 #endif // defined(BOOST_ASIO_HEADER_ONLY)
 
 #endif // defined(BOOST_ASIO_HAS_BOOST_DATE_TIME)
+
+#endif // !defined(BOOST_ASIO_NO_DEPRECATED)
 
 #endif // BOOST_ASIO_DETAIL_TIMER_QUEUE_PTIME_HPP
