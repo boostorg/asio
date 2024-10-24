@@ -21,25 +21,15 @@
 #include <boost/asio/bind_executor.hpp>
 #include <boost/asio/dispatch.hpp>
 #include <boost/asio/post.hpp>
+#include <boost/asio/steady_timer.hpp>
 #include <boost/asio/detail/thread.hpp>
 #include "unit_test.hpp"
-
-#if defined(BOOST_ASIO_HAS_BOOST_DATE_TIME)
-# include <boost/asio/deadline_timer.hpp>
-#else // defined(BOOST_ASIO_HAS_BOOST_DATE_TIME)
-# include <boost/asio/steady_timer.hpp>
-#endif // defined(BOOST_ASIO_HAS_BOOST_DATE_TIME)
 
 using namespace boost::asio;
 namespace bindns = std;
 
-#if defined(BOOST_ASIO_HAS_BOOST_DATE_TIME)
-typedef deadline_timer timer;
-namespace chronons = boost::posix_time;
-#else // defined(BOOST_ASIO_HAS_BOOST_DATE_TIME)
 typedef steady_timer timer;
 namespace chronons = boost::asio::chrono;
-#endif // defined(BOOST_ASIO_HAS_BOOST_DATE_TIME)
 
 void increment(int* count)
 {
@@ -281,7 +271,7 @@ public:
   test_service(boost::asio::io_context& s)
     : boost::asio::io_context::service(s) {}
 private:
-  virtual void shutdown_service() {}
+  virtual void shutdown() {}
 };
 
 boost::asio::io_context::id test_service::id;

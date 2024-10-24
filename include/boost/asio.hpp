@@ -109,8 +109,6 @@
 #include <boost/asio/immediate.hpp>
 #include <boost/asio/io_context.hpp>
 #include <boost/asio/io_context_strand.hpp>
-#include <boost/asio/io_service.hpp>
-#include <boost/asio/io_service_strand.hpp>
 #include <boost/asio/ip/address.hpp>
 #include <boost/asio/ip/address_v4.hpp>
 #include <boost/asio/ip/address_v4_iterator.hpp>

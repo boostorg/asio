@@ -74,15 +74,6 @@ public:
   {
   }
 
-#if !defined(BOOST_ASIO_NO_DEPRECATED)
-  /// (Deprecated: Use rebind().) Specify an alternate allocator.
-  template <typename OtherAllocator>
-  use_future_t<OtherAllocator> operator[](const OtherAllocator& allocator) const
-  {
-    return use_future_t<OtherAllocator>(allocator);
-  }
-#endif // !defined(BOOST_ASIO_NO_DEPRECATED)
-
   /// Specify an alternate allocator.
   template <typename OtherAllocator>
   use_future_t<OtherAllocator> rebind(const OtherAllocator& allocator) const
