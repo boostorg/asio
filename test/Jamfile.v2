@@ -152,6 +152,8 @@ test-suite "asio" :
   [ run deferred.cpp : : : $(USE_SELECT) : deferred_select ]
   [ link detached.cpp ]
   [ link detached.cpp : $(USE_SELECT) : detached_select ]
+  [ run disposition.cpp ]
+  [ run disposition.cpp : : : $(USE_SELECT) : disposition_select ]
   [ run error.cpp ]
   [ run error.cpp : : : $(USE_SELECT) : error_select ]
   [ link file_base.cpp ]
