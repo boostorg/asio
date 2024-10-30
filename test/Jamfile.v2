@@ -138,6 +138,8 @@ test-suite "asio" :
   [ run compose.cpp : : : $(USE_SELECT) : compose_select ]
   [ run composed.cpp ]
   [ run composed.cpp : : : $(USE_SELECT) : composed_select ]
+  [ run config.cpp ]
+  [ run config.cpp : : : $(USE_SELECT) : config_select ]
   [ link connect.cpp ]
   [ link connect.cpp : $(USE_SELECT) : connect_select ]
   [ run connect_pipe.cpp ]
