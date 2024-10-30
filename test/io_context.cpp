@@ -268,13 +268,55 @@ class test_service : public boost::asio::io_context::service
 {
 public:
   static boost::asio::io_context::id id;
+
   test_service(boost::asio::io_context& s)
-    : boost::asio::io_context::service(s) {}
+    : boost::asio::io_context::service(s)
+  {
+  }
+
 private:
-  virtual void shutdown() {}
+  void shutdown() override
+  {
+  }
 };
 
 boost::asio::io_context::id test_service::id;
+
+class test_context_service : public boost::asio::execution_context::service
+{
+public:
+  static boost::asio::execution_context::id id;
+
+  test_context_service(boost::asio::execution_context& c, int value = 0)
+    : boost::asio::execution_context::service(c),
+      value_(value)
+  {
+  }
+
+  int get_value() const
+  {
+    return value_;
+  }
+
+private:
+  void shutdown() override
+  {
+  }
+
+  int value_;
+};
+
+boost::asio::execution_context::id test_context_service::id;
+
+class test_context_service_maker :
+  public boost::asio::execution_context::service_maker
+{
+public:
+  void make(boost::asio::execution_context& ctx) const override
+  {
+    (void)boost::asio::make_service<test_context_service>(ctx, 42);
+  }
+};
 
 void io_context_service_test()
 {
@@ -332,6 +374,14 @@ void io_context_service_test()
   delete svc4;
 
   BOOST_ASIO_CHECK(!boost::asio::has_service<test_service>(ioc3));
+
+  // Initial service registration.
+
+  boost::asio::io_context ioc4{test_context_service_maker{}};
+
+  BOOST_ASIO_CHECK(boost::asio::has_service<test_context_service>(ioc4));
+  BOOST_ASIO_CHECK(boost::asio::use_service<test_context_service>(ioc4).get_value()
+      == 42);
 }
 
 void io_context_executor_query_test()
