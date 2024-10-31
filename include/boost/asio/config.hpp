@@ -125,7 +125,7 @@ private:
  * @par Example
  * @code boost::asio::io_context my_io_context{
  *     boost::asio::config_from_string{
- *       "scheduler.concurrency_hint=10\n
+ *       "scheduler.concurrency_hint=10\n"
  *       "scheduler.locking=1"}}; @endcode
  */
 class config_from_string : public execution_context::service_maker
