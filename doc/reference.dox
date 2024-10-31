@@ -323,6 +323,7 @@ PREDEFINED             = GENERATING_DOCUMENTATION \
                          BOOST_ASIO_COMPLETION_TOKEN_FOR(s)=typename \
                          "BOOST_ASIO_COMPLETION_SIGNATURES_TPARAMS=typename... Signatures" \
                          BOOST_ASIO_COMPLETION_SIGNATURES_TARGS=Signatures... \
+                         BOOST_ASIO_DISPOSITION=typename \
                          "BOOST_ASIO_INITFN_RESULT_TYPE(t,a)=void_or_deduced" \
                          "BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(t,a)=void_or_deduced" \
                          "BOOST_ASIO_INITFN_AUTO_RESULT_TYPE_PREFIX(t,a)=void_or_deduced" \
