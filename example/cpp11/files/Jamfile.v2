@@ -5,9 +5,9 @@
 # file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 #
 
-lib uring ; # LINUX
-lib ws2_32 ; # NT
-lib mswsock ; # NT
+searched-lib uring ; # LINUX
+searched-lib ws2_32 ; # NT
+searched-lib mswsock ; # NT
 
 project
   : requirements

@@ -14,16 +14,7 @@ lib mswsock ; # NT
 lib ipv6 ; # HPUX
 lib network ; # HAIKU
 
-if [ os.name ] = NT
-{
-  lib ssl : : <name>ssleay32 ;
-  lib crypto : : <name>libeay32  ;
-}
-else
-{
-  lib ssl ;
-  lib crypto ;
-}
+using openssl ;
 
 project
   : requirements
@@ -40,8 +31,8 @@ project
     <target-os>hpux,<toolset>gcc:<define>_XOPEN_SOURCE_EXTENDED
     <target-os>hpux:<library>ipv6
     <target-os>haiku:<library>network
-    <library>ssl
-    <library>crypto
+    <library>/openssl//ssl
+    <library>/openssl//crypto
   ;
 
 exe client : client.cpp ;
