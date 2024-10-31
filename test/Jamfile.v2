@@ -23,8 +23,7 @@ local USE_SELECT =
 
 project
   : requirements
-    <library>/boost/date_time//boost_date_time
-    <library>/boost/system//boost_system
+    <library>/boost/asio//boost_asio
     <library>/boost/chrono//boost_chrono
     <library>/boost/regex//boost_regex
     <define>BOOST_ALL_NO_LIB=1
@@ -138,6 +137,8 @@ test-suite "asio" :
   [ run compose.cpp : : : $(USE_SELECT) : compose_select ]
   [ run composed.cpp ]
   [ run composed.cpp : : : $(USE_SELECT) : composed_select ]
+  [ run config.cpp ]
+  [ run config.cpp : : : $(USE_SELECT) : config_select ]
   [ link connect.cpp ]
   [ link connect.cpp : $(USE_SELECT) : connect_select ]
   [ run connect_pipe.cpp ]
@@ -152,6 +153,8 @@ test-suite "asio" :
   [ run deferred.cpp : : : $(USE_SELECT) : deferred_select ]
   [ link detached.cpp ]
   [ link detached.cpp : $(USE_SELECT) : detached_select ]
+  [ run disposition.cpp ]
+  [ run disposition.cpp : : : $(USE_SELECT) : disposition_select ]
   [ run error.cpp ]
   [ run error.cpp : : : $(USE_SELECT) : error_select ]
   [ link file_base.cpp ]

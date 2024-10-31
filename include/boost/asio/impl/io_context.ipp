@@ -16,6 +16,7 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include <boost/asio/detail/config.hpp>
+#include <boost/asio/config.hpp>
 #include <boost/asio/io_context.hpp>
 #include <boost/asio/detail/concurrency_hint.hpp>
 #include <boost/asio/detail/limits.hpp>
@@ -35,14 +36,20 @@ namespace boost {
 namespace asio {
 
 io_context::io_context()
-  : impl_(add_impl(new impl_type(*this,
-          BOOST_ASIO_CONCURRENCY_HINT_DEFAULT, false)))
+  : execution_context(config_from_concurrency_hint()),
+    impl_(add_impl(new impl_type(*this, false)))
 {
 }
 
 io_context::io_context(int concurrency_hint)
-  : impl_(add_impl(new impl_type(*this, concurrency_hint == 1
-          ? BOOST_ASIO_CONCURRENCY_HINT_1 : concurrency_hint, false)))
+  : execution_context(config_from_concurrency_hint(concurrency_hint)),
+    impl_(add_impl(new impl_type(*this, false)))
+{
+}
+
+io_context::io_context(const execution_context::service_maker& initial_services)
+  : execution_context(initial_services),
+    impl_(add_impl(new impl_type(*this, false)))
 {
 }
 

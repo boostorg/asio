@@ -17,7 +17,7 @@
 
 #include <boost/asio/detail/config.hpp>
 
-#include <boost/asio/detail/concurrency_hint.hpp>
+#include <boost/asio/config.hpp>
 #include <boost/asio/detail/event.hpp>
 #include <boost/asio/detail/limits.hpp>
 #include <boost/asio/detail/scheduler.hpp>
@@ -110,22 +110,18 @@ struct scheduler::work_cleanup
 };
 
 scheduler::scheduler(boost::asio::execution_context& ctx,
-    int concurrency_hint, bool own_thread, get_task_func_type get_task)
+    bool own_thread, get_task_func_type get_task)
   : boost::asio::detail::execution_context_service_base<scheduler>(ctx),
-    one_thread_(concurrency_hint == 1
-        || !BOOST_ASIO_CONCURRENCY_HINT_IS_LOCKING(
-          SCHEDULER, concurrency_hint)
-        || !BOOST_ASIO_CONCURRENCY_HINT_IS_LOCKING(
-          REACTOR_IO, concurrency_hint)),
-    mutex_(BOOST_ASIO_CONCURRENCY_HINT_IS_LOCKING(
-          SCHEDULER, concurrency_hint)),
+    one_thread_(config(ctx).get("scheduler", "concurrency_hint", 0) == 1),
+    mutex_(config(ctx).get("scheduler", "locking", true)),
     task_(0),
     get_task_(get_task),
     task_interrupted_(true),
     outstanding_work_(0),
     stopped_(false),
     shutdown_(false),
-    concurrency_hint_(concurrency_hint),
+    concurrency_hint_(config(ctx).get("scheduler", "concurrency_hint", 0)),
+    task_usec_(config(ctx).get("scheduler", "task_usec", -1)),
     thread_(0)
 {
   BOOST_ASIO_HANDLER_TRACKING_INIT;
@@ -474,7 +470,8 @@ std::size_t scheduler::do_run_one(mutex::scoped_lock& lock,
         // Run the task. May throw an exception. Only block if the operation
         // queue is empty and we're not polling, otherwise we want to return
         // as soon as possible.
-        task_->run(more_handlers ? 0 : -1, this_thread.private_op_queue);
+        task_->run(more_handlers ? 0 : task_usec_,
+            this_thread.private_op_queue);
       }
       else
       {
