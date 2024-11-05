@@ -25,6 +25,7 @@ project
   : requirements
     <library>/boost/asio//boost_asio
     <library>/boost/chrono//boost_chrono
+    <library>/boost/context//boost_context
     <library>/boost/regex//boost_regex
     <define>BOOST_ALL_NO_LIB=1
     <threading>multi
@@ -257,6 +258,8 @@ test-suite "asio" :
   [ link signal_set_base.cpp : $(USE_SELECT) : signal_set_base_select ]
   [ run socket_base.cpp ]
   [ run socket_base.cpp : : : $(USE_SELECT) : socket_base_select ]
+  [ run spawn.cpp ]
+  [ run spawn.cpp : : : $(USE_SELECT) : spawn_select ]
   [ run static_thread_pool.cpp ]
   [ run static_thread_pool.cpp : : : $(USE_SELECT) : static_thread_pool_select ]
   [ link steady_timer.cpp ]
