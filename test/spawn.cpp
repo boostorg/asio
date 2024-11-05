@@ -23,6 +23,7 @@
 
 #include <memory>
 #include <stdexcept>
+#include "archetypes/async_ops.hpp"
 #include <boost/asio/any_completion_handler.hpp>
 #include <boost/asio/bind_cancellation_slot.hpp>
 #include <boost/asio/deferred.hpp>
@@ -223,6 +224,357 @@ void test_spawn_return_move_only()
   BOOST_ASIO_CHECK(*result == 42);
 }
 
+int coroutine_using_async_ops_0(boost::asio::yield_context yield)
+{
+  using namespace archetypes;
+
+  try
+  {
+    async_op_0(yield);
+  }
+  catch (...)
+  {
+    BOOST_ASIO_CHECK(false);
+  }
+
+  try
+  {
+    async_op_ec_0(true, yield);
+  }
+  catch (...)
+  {
+    BOOST_ASIO_CHECK(false);
+  }
+
+  try
+  {
+    async_op_ec_0(false, yield);
+    BOOST_ASIO_CHECK(false);
+  }
+  catch (boost::system::system_error& e)
+  {
+    BOOST_ASIO_CHECK(e.code() == boost::asio::error::operation_aborted);
+  }
+  catch (...)
+  {
+    BOOST_ASIO_CHECK(false);
+  }
+
+  try
+  {
+    async_op_ex_0(true, yield);
+  }
+  catch (...)
+  {
+    BOOST_ASIO_CHECK(false);
+  }
+
+  try
+  {
+    async_op_ex_0(false, yield);
+    BOOST_ASIO_CHECK(false);
+  }
+  catch (std::exception& e)
+  {
+    BOOST_ASIO_CHECK(e.what() == std::string("blah"));
+  }
+  catch (...)
+  {
+    BOOST_ASIO_CHECK(false);
+  }
+
+  return 123;
+}
+
+int coroutine_using_async_ops_1(boost::asio::yield_context yield)
+{
+  using namespace archetypes;
+
+  try
+  {
+    int i = async_op_1(yield);
+    BOOST_ASIO_CHECK(i == 42);
+  }
+  catch (...)
+  {
+    BOOST_ASIO_CHECK(false);
+  }
+
+  try
+  {
+    int i = async_op_ec_1(true, yield);
+    BOOST_ASIO_CHECK(i == 42);
+  }
+  catch (...)
+  {
+    BOOST_ASIO_CHECK(false);
+  }
+
+  try
+  {
+    int i = async_op_ec_1(false, yield);
+    BOOST_ASIO_CHECK(false);
+    (void)i;
+  }
+  catch (boost::system::system_error& e)
+  {
+    BOOST_ASIO_CHECK(e.code() == boost::asio::error::operation_aborted);
+  }
+  catch (...)
+  {
+    BOOST_ASIO_CHECK(false);
+  }
+
+  try
+  {
+    int i = async_op_ex_1(true, yield);
+    BOOST_ASIO_CHECK(i == 42);
+  }
+  catch (...)
+  {
+    BOOST_ASIO_CHECK(false);
+  }
+
+  try
+  {
+    int i = async_op_ex_1(false, yield);
+    BOOST_ASIO_CHECK(false);
+    (void)i;
+  }
+  catch (std::exception& e)
+  {
+    BOOST_ASIO_CHECK(e.what() == std::string("blah"));
+  }
+  catch (...)
+  {
+    BOOST_ASIO_CHECK(false);
+  }
+
+  return 234;
+}
+
+int coroutine_using_async_ops_2(boost::asio::yield_context yield)
+{
+  using namespace archetypes;
+
+  try
+  {
+    int i;
+    double d;
+    std::tie(i, d) = async_op_2(yield);
+    BOOST_ASIO_CHECK(i == 42);
+    BOOST_ASIO_CHECK(d == 2.0);
+  }
+  catch (...)
+  {
+    BOOST_ASIO_CHECK(false);
+  }
+
+  try
+  {
+    int i;
+    double d;
+    std::tie(i, d) = async_op_ec_2(true, yield);
+    BOOST_ASIO_CHECK(i == 42);
+    BOOST_ASIO_CHECK(d == 2.0);
+  }
+  catch (...)
+  {
+    BOOST_ASIO_CHECK(false);
+  }
+
+  try
+  {
+    std::tuple<int, double> t = async_op_ec_2(false, yield);
+    BOOST_ASIO_CHECK(false);
+    (void)t;
+  }
+  catch (boost::system::system_error& e)
+  {
+    BOOST_ASIO_CHECK(e.code() == boost::asio::error::operation_aborted);
+  }
+  catch (...)
+  {
+    BOOST_ASIO_CHECK(false);
+  }
+
+  try
+  {
+    int i;
+    double d;
+    std::tie(i, d) = async_op_ex_2(true, yield);
+    BOOST_ASIO_CHECK(i == 42);
+    BOOST_ASIO_CHECK(d == 2.0);
+  }
+  catch (...)
+  {
+    BOOST_ASIO_CHECK(false);
+  }
+
+  try
+  {
+    std::tuple<int, double> t = async_op_ex_2(false, yield);
+    BOOST_ASIO_CHECK(false);
+    (void)t;
+  }
+  catch (std::exception& e)
+  {
+    BOOST_ASIO_CHECK(e.what() == std::string("blah"));
+  }
+  catch (...)
+  {
+    BOOST_ASIO_CHECK(false);
+  }
+
+  return 345;
+}
+
+int coroutine_using_async_ops_3(boost::asio::yield_context yield)
+{
+  using namespace archetypes;
+
+  try
+  {
+    int i;
+    double d;
+    char c;
+    std::tie(i, d, c) = async_op_3(yield);
+    BOOST_ASIO_CHECK(i == 42);
+    BOOST_ASIO_CHECK(d == 2.0);
+    BOOST_ASIO_CHECK(c == 'a');
+  }
+  catch (...)
+  {
+    BOOST_ASIO_CHECK(false);
+  }
+
+  try
+  {
+    int i;
+    double d;
+    char c;
+    std::tie(i, d, c) = async_op_ec_3(true, yield);
+    BOOST_ASIO_CHECK(i == 42);
+    BOOST_ASIO_CHECK(d == 2.0);
+    BOOST_ASIO_CHECK(c == 'a');
+  }
+  catch (...)
+  {
+    BOOST_ASIO_CHECK(false);
+  }
+
+  try
+  {
+    std::tuple<int, double, char> t = async_op_ec_3(false, yield);
+    BOOST_ASIO_CHECK(false);
+    (void)t;
+  }
+  catch (boost::system::system_error& e)
+  {
+    BOOST_ASIO_CHECK(e.code() == boost::asio::error::operation_aborted);
+  }
+  catch (...)
+  {
+    BOOST_ASIO_CHECK(false);
+  }
+
+  try
+  {
+    int i;
+    double d;
+    char c;
+    std::tie(i, d, c) = async_op_ex_3(true, yield);
+    BOOST_ASIO_CHECK(i == 42);
+    BOOST_ASIO_CHECK(d == 2.0);
+    BOOST_ASIO_CHECK(c == 'a');
+  }
+  catch (...)
+  {
+    BOOST_ASIO_CHECK(false);
+  }
+
+  try
+  {
+    std::tuple<int, double, char> t = async_op_ex_3(false, yield);
+    BOOST_ASIO_CHECK(false);
+    (void)t;
+  }
+  catch (std::exception& e)
+  {
+    BOOST_ASIO_CHECK(e.what() == std::string("blah"));
+  }
+  catch (...)
+  {
+    BOOST_ASIO_CHECK(false);
+  }
+
+  return 456;
+}
+
+void test_spawn_async_ops()
+{
+  boost::asio::io_context ctx;
+
+  bool called = false;
+  boost::asio::spawn(ctx, coroutine_using_async_ops_0,
+      [&](std::exception_ptr, int i)
+      {
+        BOOST_ASIO_CHECK(i == 123);
+        called = true;
+      });
+
+  BOOST_ASIO_CHECK(!called);
+
+  ctx.run();
+
+  BOOST_ASIO_CHECK(called);
+
+  called = false;
+  boost::asio::spawn(ctx, coroutine_using_async_ops_1,
+      [&](std::exception_ptr, int i)
+      {
+        BOOST_ASIO_CHECK(i == 234);
+        called = true;
+      });
+
+  BOOST_ASIO_CHECK(!called);
+
+  ctx.restart();
+  ctx.run();
+
+  BOOST_ASIO_CHECK(called);
+
+  called = false;
+  boost::asio::spawn(ctx, coroutine_using_async_ops_2,
+      [&](std::exception_ptr, int i)
+      {
+        BOOST_ASIO_CHECK(i == 345);
+        called = true;
+      });
+
+  BOOST_ASIO_CHECK(!called);
+
+  ctx.restart();
+  ctx.run();
+
+  BOOST_ASIO_CHECK(called);
+
+  called = false;
+  boost::asio::spawn(ctx, coroutine_using_async_ops_3,
+      [&](std::exception_ptr, int i)
+      {
+        BOOST_ASIO_CHECK(i == 456);
+        called = true;
+      });
+
+  BOOST_ASIO_CHECK(!called);
+
+  ctx.restart();
+  ctx.run();
+
+  BOOST_ASIO_CHECK(called);
+}
+
 BOOST_ASIO_TEST_SUITE
 (
   "spawn",
@@ -231,6 +583,7 @@ BOOST_ASIO_TEST_SUITE
   BOOST_ASIO_TEST_CASE(test_spawn_cancel)
   BOOST_ASIO_TEST_CASE(test_spawn_exception)
   BOOST_ASIO_TEST_CASE(test_spawn_return_move_only)
+  BOOST_ASIO_TEST_CASE(test_spawn_async_ops)
 )
 
 #else // defined(BOOST_ASIO_HAS_BOOST_CONTEXT_FIBER)
