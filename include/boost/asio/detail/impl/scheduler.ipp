@@ -113,7 +113,8 @@ scheduler::scheduler(boost::asio::execution_context& ctx,
     bool own_thread, get_task_func_type get_task)
   : boost::asio::detail::execution_context_service_base<scheduler>(ctx),
     one_thread_(config(ctx).get("scheduler", "concurrency_hint", 0) == 1),
-    mutex_(config(ctx).get("scheduler", "locking", true)),
+    mutex_(config(ctx).get("scheduler", "locking", true),
+        config(ctx).get("scheduler", "locking_spin_count", 0)),
     task_(0),
     get_task_(get_task),
     task_interrupted_(true),
@@ -121,7 +122,8 @@ scheduler::scheduler(boost::asio::execution_context& ctx,
     stopped_(false),
     shutdown_(false),
     concurrency_hint_(config(ctx).get("scheduler", "concurrency_hint", 0)),
-    task_usec_(config(ctx).get("scheduler", "task_usec", -1)),
+    task_usec_(config(ctx).get("scheduler", "task_usec", -1L)),
+    wait_usec_(config(ctx).get("scheduler", "wait_usec", -1L)),
     thread_(0)
 {
   BOOST_ASIO_HANDLER_TRACKING_INIT;
@@ -457,9 +459,9 @@ std::size_t scheduler::do_run_one(mutex::scoped_lock& lock,
 
       if (o == &task_operation_)
       {
-        task_interrupted_ = more_handlers;
+        task_interrupted_ = more_handlers || task_usec_ == 0;
 
-        if (more_handlers && !one_thread_)
+        if (more_handlers && !one_thread_ && wait_usec_ != 0)
           wakeup_event_.unlock_and_signal_one(lock);
         else
           lock.unlock();
@@ -495,8 +497,19 @@ std::size_t scheduler::do_run_one(mutex::scoped_lock& lock,
     }
     else
     {
-      wakeup_event_.clear(lock);
-      wakeup_event_.wait(lock);
+      if (wait_usec_ == 0)
+      {
+        lock.unlock();
+        lock.lock();
+      }
+      else
+      {
+        wakeup_event_.clear(lock);
+        if (wait_usec_ > 0)
+          wakeup_event_.wait_for_usec(lock, wait_usec_);
+        else
+          wakeup_event_.wait(lock);
+      }
     }
   }
 
@@ -514,6 +527,7 @@ std::size_t scheduler::do_wait_one(mutex::scoped_lock& lock,
   if (o == 0)
   {
     wakeup_event_.clear(lock);
+    usec = (wait_usec_ >= 0 && wait_usec_ < usec) ? wait_usec_ : usec;
     wakeup_event_.wait_for_usec(lock, usec);
     usec = 0; // Wait at most once.
     o = op_queue_.front();
@@ -524,9 +538,10 @@ std::size_t scheduler::do_wait_one(mutex::scoped_lock& lock,
     op_queue_.pop();
     bool more_handlers = (!op_queue_.empty());
 
-    task_interrupted_ = more_handlers;
+    usec = (task_usec_ >= 0 && task_usec_ < usec) ? task_usec_ : usec;
+    task_interrupted_ = more_handlers || usec == 0;
 
-    if (more_handlers && !one_thread_)
+    if (more_handlers && !one_thread_ && wait_usec_ != 0)
       wakeup_event_.unlock_and_signal_one(lock);
     else
       lock.unlock();
@@ -645,7 +660,7 @@ void scheduler::stop_all_threads(
 void scheduler::wake_one_thread_and_unlock(
     mutex::scoped_lock& lock)
 {
-  if (!wakeup_event_.maybe_unlock_and_signal_one(lock))
+  if (wait_usec_ == 0 || !wakeup_event_.maybe_unlock_and_signal_one(lock))
   {
     if (!task_interrupted_ && task_)
     {
