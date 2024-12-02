@@ -100,8 +100,6 @@ void test()
   try
   {
     boost::asio::io_context io_context;
-    boost::system::error_code ec1;
-    boost::system::error_code ec2;
 
     readable_pipe p1(io_context);
     writable_pipe p2(io_context);
