@@ -236,11 +236,12 @@ class promise_handler_d_0
   : public promise_creator<void>
 {
 public:
-  void operator()(const Disposition& d)
+  void operator()(Disposition d)
   {
     if (d != no_error)
     {
-      this->p_->set_exception((to_exception_ptr)(d));
+      this->p_->set_exception(
+          (to_exception_ptr)(static_cast<Disposition&&>(d)));
     }
     else
     {
@@ -269,11 +270,12 @@ class promise_handler_d_1
 {
 public:
   template <typename Arg>
-  void operator()(const Disposition& d, Arg&& arg)
+  void operator()(Disposition d, Arg&& arg)
   {
     if (d != no_error)
     {
-      this->p_->set_exception((to_exception_ptr)(d));
+      this->p_->set_exception(
+          (to_exception_ptr)(static_cast<Disposition&&>(d)));
     }
     else
       this->p_->set_value(static_cast<Arg&&>(arg));
@@ -302,11 +304,12 @@ class promise_handler_d_n
 {
 public:
   template <typename... Args>
-  void operator()(const Disposition& d, Args&&... args)
+  void operator()(Disposition d, Args&&... args)
   {
     if (d != no_error)
     {
-      this->p_->set_exception((to_exception_ptr)(d));
+      this->p_->set_exception(
+          (to_exception_ptr)(static_cast<Disposition&&>(d)));
     }
     else
     {
