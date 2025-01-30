@@ -23,6 +23,10 @@ target_link_libraries(boost_asio
     Boost::throw_exception
 )
 
+if (MINGW)
+  target_link_libraries(boost_asio INTERFACE ws2_32)
+endif()
+
 target_compile_features(boost_asio INTERFACE cxx_std_11)
 
 if(BUILD_TESTING AND EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/test/CMakeLists.txt")
