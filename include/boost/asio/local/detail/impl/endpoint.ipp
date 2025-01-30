@@ -33,7 +33,7 @@ namespace asio {
 namespace local {
 namespace detail {
 
-endpoint::endpoint()
+endpoint::endpoint() noexcept
 {
   init("", 0);
 }

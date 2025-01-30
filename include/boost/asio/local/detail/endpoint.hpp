@@ -37,7 +37,7 @@ class endpoint
 {
 public:
   // Default constructor.
-  BOOST_ASIO_DECL endpoint();
+  BOOST_ASIO_DECL endpoint() noexcept;
 
   // Construct an endpoint using the specified path name.
   BOOST_ASIO_DECL endpoint(const char* path_name);
@@ -51,14 +51,14 @@ public:
   #endif // defined(BOOST_ASIO_HAS_STRING_VIEW)
 
   // Copy constructor.
-  endpoint(const endpoint& other)
+  endpoint(const endpoint& other) noexcept
     : data_(other.data_),
       path_length_(other.path_length_)
   {
   }
 
   // Assign from another endpoint.
-  endpoint& operator=(const endpoint& other)
+  endpoint& operator=(const endpoint& other) noexcept
   {
     data_ = other.data_;
     path_length_ = other.path_length_;
