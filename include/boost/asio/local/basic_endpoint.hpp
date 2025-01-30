@@ -86,26 +86,26 @@ public:
   #endif // defined(BOOST_ASIO_HAS_STRING_VIEW)
 
   /// Copy constructor.
-  basic_endpoint(const basic_endpoint& other)
+  basic_endpoint(const basic_endpoint& other) noexcept
     : impl_(other.impl_)
   {
   }
 
   /// Move constructor.
-  basic_endpoint(basic_endpoint&& other)
+  basic_endpoint(basic_endpoint&& other) noexcept
     : impl_(other.impl_)
   {
   }
 
   /// Assign from another endpoint.
-  basic_endpoint& operator=(const basic_endpoint& other)
+  basic_endpoint& operator=(const basic_endpoint& other) noexcept
   {
     impl_ = other.impl_;
     return *this;
   }
 
   /// Move-assign from another endpoint.
-  basic_endpoint& operator=(basic_endpoint&& other)
+  basic_endpoint& operator=(basic_endpoint&& other) noexcept
   {
     impl_ = other.impl_;
     return *this;
