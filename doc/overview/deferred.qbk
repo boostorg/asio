@@ -1,5 +1,5 @@
 [/
- / Copyright (c) 2003-2024 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+ / Copyright (c) 2003-2025 Christopher M. Kohlhoff (chris at kohlhoff dot com)
  /
  / Distributed under the Boost Software License, Version 1.0. (See accompanying
  / file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -43,6 +43,15 @@ The deferred token also supports chaining, to create simple compositions:
         });
   ...
   std::future<void> = std::move(deferred_op)(boost::asio::use_future);
+
+[heading Deferred as the Default Completion Token]
+
+Most asynchronous operations provided by Boost.Asio have a default completion token.
+Although this default token can be changed by specifying a custom executor, it
+is normally boost::asio::deferred. This means that we can omit the token and simply
+write:
+
+  auto deferred_op = timer.async_wait();
 
 [heading See Also]
 

@@ -10,7 +10,6 @@ constant boost_dependencies :
     /boost/assert//boost_assert
     /boost/config//boost_config
     /boost/context//boost_context
-    /boost/coroutine//boost_coroutine
     /boost/date_time//boost_date_time
     /boost/system//boost_system
     /boost/throw_exception//boost_throw_exception ;

@@ -2,7 +2,7 @@
 // ip/address.hpp
 // ~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2024 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2025 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -99,32 +99,6 @@ public:
 
   /// Get the address as a string.
   BOOST_ASIO_DECL std::string to_string() const;
-
-#if !defined(BOOST_ASIO_NO_DEPRECATED)
-  /// (Deprecated: Use other overload.) Get the address as a string.
-  BOOST_ASIO_DECL std::string to_string(boost::system::error_code& ec) const;
-
-  /// (Deprecated: Use make_address().) Create an address from an IPv4 address
-  /// string in dotted decimal form, or from an IPv6 address in hexadecimal
-  /// notation.
-  static address from_string(const char* str);
-
-  /// (Deprecated: Use make_address().) Create an address from an IPv4 address
-  /// string in dotted decimal form, or from an IPv6 address in hexadecimal
-  /// notation.
-  static address from_string(const char* str, boost::system::error_code& ec);
-
-  /// (Deprecated: Use make_address().) Create an address from an IPv4 address
-  /// string in dotted decimal form, or from an IPv6 address in hexadecimal
-  /// notation.
-  static address from_string(const std::string& str);
-
-  /// (Deprecated: Use make_address().) Create an address from an IPv4 address
-  /// string in dotted decimal form, or from an IPv6 address in hexadecimal
-  /// notation.
-  static address from_string(
-      const std::string& str, boost::system::error_code& ec);
-#endif // !defined(BOOST_ASIO_NO_DEPRECATED)
 
   /// Determine whether the address is a loopback address.
   BOOST_ASIO_DECL bool is_loopback() const noexcept;

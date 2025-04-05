@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2003-2024 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+# Copyright (c) 2003-2025 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 #
 # Distributed under the Boost Software License, Version 1.0. (See accompanying
 # file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -25,6 +25,7 @@ project
   : requirements
     <library>/boost/asio//boost_asio
     <library>/boost/chrono//boost_chrono
+    <library>/boost/context//boost_context
     <library>/boost/regex//boost_regex
     <define>BOOST_ALL_NO_LIB=1
     <threading>multi
@@ -137,6 +138,8 @@ test-suite "asio" :
   [ run compose.cpp : : : $(USE_SELECT) : compose_select ]
   [ run composed.cpp ]
   [ run composed.cpp : : : $(USE_SELECT) : composed_select ]
+  [ run config.cpp ]
+  [ run config.cpp : : : $(USE_SELECT) : config_select ]
   [ link connect.cpp ]
   [ link connect.cpp : $(USE_SELECT) : connect_select ]
   [ run connect_pipe.cpp ]
@@ -151,6 +154,8 @@ test-suite "asio" :
   [ run deferred.cpp : : : $(USE_SELECT) : deferred_select ]
   [ link detached.cpp ]
   [ link detached.cpp : $(USE_SELECT) : detached_select ]
+  [ run disposition.cpp ]
+  [ run disposition.cpp : : : $(USE_SELECT) : disposition_select ]
   [ run error.cpp ]
   [ run error.cpp : : : $(USE_SELECT) : error_select ]
   [ link file_base.cpp ]
@@ -253,6 +258,8 @@ test-suite "asio" :
   [ link signal_set_base.cpp : $(USE_SELECT) : signal_set_base_select ]
   [ run socket_base.cpp ]
   [ run socket_base.cpp : : : $(USE_SELECT) : socket_base_select ]
+  [ run spawn.cpp ]
+  [ run spawn.cpp : : : $(USE_SELECT) : spawn_select ]
   [ run static_thread_pool.cpp ]
   [ run static_thread_pool.cpp : : : $(USE_SELECT) : static_thread_pool_select ]
   [ link steady_timer.cpp ]

@@ -2,7 +2,7 @@
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
 
 <!--
-  Copyright (c) 2003-2024 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+  Copyright (c) 2003-2025 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 
   Distributed under the Boost Software License, Version 1.0. (See accompanying
   file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -30,7 +30,7 @@
 -->
 <xsl:template match="/doxygen">
 <xsl:text>[/
- / Copyright (c) 2003-2024 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+ / Copyright (c) 2003-2025 Christopher M. Kohlhoff (chris at kohlhoff dot com)
  /
  / Distributed under the Boost Software License, Version 1.0. (See accompanying
  / file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -60,6 +60,7 @@
 [include requirements/ConnectHandler.qbk]
 [include requirements/ConnectToken.qbk]
 [include requirements/ConstBufferSequence.qbk]
+[include requirements/Disposition.qbk]
 [include requirements/DynamicBuffer.qbk]
 [include requirements/DynamicBuffer_v1.qbk]
 [include requirements/DynamicBuffer_v2.qbk]
@@ -77,7 +78,6 @@
 [include requirements/IoObjectService.qbk]
 [include requirements/IteratorConnectHandler.qbk]
 [include requirements/IteratorConnectToken.qbk]
-[include requirements/LegacyCompletionHandler.qbk]
 [include requirements/MoveAcceptHandler.qbk]
 [include requirements/MoveAcceptToken.qbk]
 [include requirements/MutableBufferSequence.qbk]
@@ -731,6 +731,11 @@
     </xsl:when>
     <xsl:when test="@refid = 'completion_token'">
       <xsl:text>[link boost_asio.overview.model.completion_tokens </xsl:text>
+      <xsl:value-of select="."/>
+      <xsl:text>]</xsl:text>
+    </xsl:when>
+    <xsl:when test="@refid = 'async_result_requirements'">
+      <xsl:text>[link boost_asio.reference.asynchronous_operations.completion_tokens_and_handlers </xsl:text>
       <xsl:value-of select="."/>
       <xsl:text>]</xsl:text>
     </xsl:when>
@@ -1706,6 +1711,9 @@
         <xsl:when test="$declname = 'Context_Service'">
           <xsl:value-of select="$declname"/>
         </xsl:when>
+        <xsl:when test="$declname = 'ConvertibleToBuffer'">
+          <xsl:value-of select="$declname"/>
+        </xsl:when>
         <xsl:when test="$declname = 'DefaultCandidate'">
           <xsl:value-of select="$declname"/>
         </xsl:when>
@@ -1738,6 +1746,9 @@
         </xsl:when>
         <xsl:when test="$declname = 'Executor2'">
           <xsl:value-of select="concat('``[link boost_asio.reference.Executor1 ', $declname, ']``')"/>
+        </xsl:when>
+        <xsl:when test="$declname = 'Extent'">
+          <xsl:value-of select="$declname"/>
         </xsl:when>
         <xsl:when test="$declname = 'F'">
           <xsl:value-of select="$declname"/>
@@ -1903,6 +1914,9 @@
         </xsl:when>
         <xsl:when test="$declname = 'SocketService1' or $declname = 'SocketService2'">
           <xsl:value-of select="concat('``[link boost_asio.reference.SocketService ', $declname, ']``')"/>
+        </xsl:when>
+        <xsl:when test="$declname = 'Span'">
+          <xsl:value-of select="$declname"/>
         </xsl:when>
         <xsl:when test="$declname = 'StackAllocator'">
           <xsl:value-of select="$declname"/>

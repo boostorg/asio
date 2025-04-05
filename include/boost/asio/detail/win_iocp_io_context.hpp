@@ -2,7 +2,7 @@
 // detail/win_iocp_io_context.hpp
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2024 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2025 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -46,10 +46,9 @@ class win_iocp_io_context
     public thread_context
 {
 public:
-  // Constructor. Specifies a concurrency hint that is passed through to the
-  // underlying I/O completion port.
-  BOOST_ASIO_DECL win_iocp_io_context(boost::asio::execution_context& ctx,
-      int concurrency_hint = -1, bool own_thread = true);
+  // Constructor.
+  BOOST_ASIO_DECL win_iocp_io_context(
+      boost::asio::execution_context& ctx, bool own_thread = true);
 
   // Destructor.
   BOOST_ASIO_DECL ~win_iocp_io_context();
@@ -210,12 +209,6 @@ public:
       typename timer_queue<Time_Traits>::per_timer_data& to,
       typename timer_queue<Time_Traits>::per_timer_data& from);
 
-  // Get the concurrency hint that was used to initialise the io_context.
-  int concurrency_hint() const
-  {
-    return concurrency_hint_;
-  }
-
 private:
 #if defined(WINVER) && (WINVER < 0x0500)
   typedef DWORD dword_ptr_t;
@@ -265,7 +258,7 @@ private:
 
   // Flag to indicate whether there is an in-flight stop event. Every event
   // posted using PostQueuedCompletionStatus consumes non-paged pool, so to
-  // avoid exhausting this resouce we limit the number of outstanding events.
+  // avoid exhausting this resource we limit the number of outstanding events.
   long stop_event_posted_;
 
   // Flag to indicate whether the service has been shut down.

@@ -1,5 +1,5 @@
 [/
- / Copyright (c) 2003-2024 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+ / Copyright (c) 2003-2025 Christopher M. Kohlhoff (chris at kohlhoff dot com)
  /
  / Distributed under the Boost Software License, Version 1.0. (See accompanying
  / file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -31,14 +31,14 @@
   * [link boost_asio.overview.core.allocation Custom Memory Allocation]
   * [link boost_asio.overview.core.cancellation Per-Operation Cancellation]
   * [link boost_asio.overview.core.handler_tracking Handler Tracking]
-  * [link boost_asio.overview.core.concurrency_hint Concurrency Hints]
+  * [link boost_asio.overview.core.configuration Runtime Configuration and Concurrency Hints]
 * [link boost_asio.overview.composition Composition and Completion Tokens]
   * [link boost_asio.overview.composition.coroutine Stackless Coroutines]
   * [link boost_asio.overview.composition.spawn Stackful Coroutines]
   * [link boost_asio.overview.composition.futures Futures]
   * [link boost_asio.overview.composition.cpp20_coroutines C++20 Coroutines Support]
   * [link boost_asio.overview.composition.coro Resumable C++20 Coroutines (experimental)]
-  * [link boost_asio.overview.composition.deferred Deferred Operations (experimental)]
+  * [link boost_asio.overview.composition.deferred Deferred Operations]
   * [link boost_asio.overview.composition.promises Promises (experimental)]
   * [link boost_asio.overview.composition.parallel_group Co-ordinating Parallel Operations (experimental)]
   * [link boost_asio.overview.composition.compose Compositions as Asynchronous Operations]
@@ -91,7 +91,7 @@
 * [link boost_asio.overview.core.allocation Custom Memory Allocation]
 * [link boost_asio.overview.core.cancellation Per-Operation Cancellation]
 * [link boost_asio.overview.core.handler_tracking Handler Tracking]
-* [link boost_asio.overview.core.concurrency_hint Concurrency Hints]
+* [link boost_asio.overview.core.configuration Runtime Configuration and Concurrency Hints]
 
 [include overview/async.qbk]
 [include overview/threads.qbk]
@@ -103,7 +103,7 @@
 [include overview/allocation.qbk]
 [include overview/cancellation.qbk]
 [include overview/handler_tracking.qbk]
-[include overview/concurrency_hint.qbk]
+[include overview/configuration.qbk]
 
 [endsect]
 
@@ -114,7 +114,7 @@
 * [link boost_asio.overview.composition.futures Futures]
 * [link boost_asio.overview.composition.cpp20_coroutines C++20 Coroutines Support]
 * [link boost_asio.overview.composition.coro Resumable C++20 Coroutines (experimental)]
-* [link boost_asio.overview.composition.deferred Deferred Operations (experimental)]
+* [link boost_asio.overview.composition.deferred Deferred Operations]
 * [link boost_asio.overview.composition.promises Promises (experimental)]
 * [link boost_asio.overview.composition.parallel_group Co-ordinating Parallel Operations (experimental)]
 * [link boost_asio.overview.composition.compose Compositions as Asynchronous Operations]

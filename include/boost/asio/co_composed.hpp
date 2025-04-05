@@ -2,7 +2,7 @@
 // co_composed.hpp
 // ~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2024 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2025 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -846,15 +846,15 @@ public:
     throw;
   }
 
-  template <async_operation Op>
-  auto await_transform(Op&& op
+  template <BOOST_ASIO_ASYNC_OPERATION Op>
+  auto await_transform(Op&& op,
 #if defined(BOOST_ASIO_ENABLE_HANDLER_TRACKING)
 # if defined(BOOST_ASIO_HAS_SOURCE_LOCATION)
-      , boost::asio::detail::source_location location
-        = boost::asio::detail::source_location::current()
+      boost::asio::detail::source_location location
+        = boost::asio::detail::source_location::current(),
 # endif // defined(BOOST_ASIO_HAS_SOURCE_LOCATION)
 #endif // defined(BOOST_ASIO_ENABLE_HANDLER_TRACKING)
-    )
+      constraint_t<is_async_operation<Op>::value> = 0)
   {
     class [[nodiscard]] awaitable
     {

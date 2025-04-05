@@ -2,7 +2,7 @@
 // detail/config.hpp
 // ~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2024 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2025 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -438,13 +438,6 @@
 #  define BOOST_ASIO_HAS_BOOST_DATE_TIME 1
 # endif // !defined(BOOST_ASIO_DISABLE_BOOST_DATE_TIME)
 #endif // !defined(BOOST_ASIO_HAS_BOOST_DATE_TIME)
-
-// Boost support for the Coroutine library.
-#if !defined(BOOST_ASIO_HAS_BOOST_COROUTINE)
-# if !defined(BOOST_ASIO_DISABLE_BOOST_COROUTINE)
-#  define BOOST_ASIO_HAS_BOOST_COROUTINE 1
-# endif // !defined(BOOST_ASIO_DISABLE_BOOST_COROUTINE)
-#endif // !defined(BOOST_ASIO_HAS_BOOST_COROUTINE)
 
 // Boost support for the Context library's fibers.
 #if !defined(BOOST_ASIO_HAS_BOOST_CONTEXT_FIBER)

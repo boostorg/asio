@@ -2,7 +2,7 @@
 // thread_pool.cpp
 // ~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2024 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2025 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -99,6 +99,40 @@ private:
 boost::asio::execution_context::id test_service::id;
 #endif // defined(BOOST_ASIO_NO_TYPEID)
 
+class test_context_service : public boost::asio::execution_context::service
+{
+public:
+  static boost::asio::execution_context::id id;
+
+  test_context_service(boost::asio::execution_context& c, int value = 0)
+    : boost::asio::execution_context::service(c),
+      value_(value)
+  {
+  }
+
+  int get_value() const
+  {
+    return value_;
+  }
+
+private:
+  virtual void shutdown() {}
+
+  int value_;
+};
+
+boost::asio::execution_context::id test_context_service::id;
+
+class test_context_service_maker :
+  public boost::asio::execution_context::service_maker
+{
+public:
+  void make(boost::asio::execution_context& ctx) const override
+  {
+    (void)boost::asio::make_service<test_context_service>(ctx, 42);
+  }
+};
+
 void thread_pool_service_test()
 {
   boost::asio::thread_pool pool1(1);
@@ -154,6 +188,14 @@ void thread_pool_service_test()
   delete svc4;
 
   BOOST_ASIO_CHECK(!boost::asio::has_service<test_service>(pool3));
+
+  // Initial service registration.
+
+  boost::asio::thread_pool pool4{1, test_context_service_maker{}};
+
+  BOOST_ASIO_CHECK(boost::asio::has_service<test_context_service>(pool4));
+  BOOST_ASIO_CHECK(boost::asio::use_service<test_context_service>(pool4).get_value()
+      == 42);
 }
 
 void thread_pool_executor_query_test()
