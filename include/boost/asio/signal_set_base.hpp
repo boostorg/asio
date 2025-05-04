@@ -65,7 +65,9 @@ public:
     none = 0,
     restart = BOOST_ASIO_OS_DEF(SA_RESTART),
     no_child_stop = BOOST_ASIO_OS_DEF(SA_NOCLDSTOP),
+#if defined(BOOST_ASIO_OS_DEF_SA_NOCLDWAIT)
     no_child_wait = BOOST_ASIO_OS_DEF(SA_NOCLDWAIT),
+#endif
     dont_care = -1
   };
 
