@@ -414,7 +414,9 @@ const int max_iov_len = 16;
 # endif
 # define BOOST_ASIO_OS_DEF_SA_RESTART SA_RESTART
 # define BOOST_ASIO_OS_DEF_SA_NOCLDSTOP SA_NOCLDSTOP
-# define BOOST_ASIO_OS_DEF_SA_NOCLDWAIT SA_NOCLDWAIT
+# if defined(SA_NOCLDWAIT)
+#  define BOOST_ASIO_OS_DEF_SA_NOCLDWAIT SA_NOCLDWAIT
+# endif
 #endif
 const int custom_socket_option_level = 0xA5100000;
 const int enable_connection_aborted_option = 1;
