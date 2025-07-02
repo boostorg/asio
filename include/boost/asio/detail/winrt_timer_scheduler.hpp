@@ -124,7 +124,7 @@ private:
   timer_queue_set timer_queues_;
 
   // The background thread that is waiting for timers to expire.
-  boost::asio::detail::thread* thread_;
+  boost::thread thread_;
 
   // Does the background thread need to stop.
   bool stop_thread_;

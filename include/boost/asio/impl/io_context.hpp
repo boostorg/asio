@@ -15,6 +15,7 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
+#include <boost/asio/config.hpp>
 #include <boost/asio/detail/completion_handler.hpp>
 #include <boost/asio/detail/executor_op.hpp>
 #include <boost/asio/detail/fenced_block.hpp>
@@ -28,6 +29,30 @@
 
 namespace boost {
 namespace asio {
+
+template <typename Allocator>
+io_context::io_context(allocator_arg_t, const Allocator& a)
+  : execution_context(std::allocator_arg, a, config_from_concurrency_hint()),
+    impl_(boost::asio::make_service<impl_type>(*this, false))
+{
+}
+
+template <typename Allocator>
+io_context::io_context(allocator_arg_t,
+    const Allocator& a, int concurrency_hint)
+  : execution_context(std::allocator_arg, a,
+      config_from_concurrency_hint(concurrency_hint)),
+    impl_(boost::asio::make_service<impl_type>(*this, false))
+{
+}
+
+template <typename Allocator>
+io_context::io_context(allocator_arg_t, const Allocator& a,
+    const execution_context::service_maker& initial_services)
+  : execution_context(std::allocator_arg, a, initial_services),
+    impl_(boost::asio::make_service<impl_type>(*this, false))
+{
+}
 
 #if !defined(GENERATING_DOCUMENTATION)
 

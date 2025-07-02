@@ -46,7 +46,7 @@ private:
 resolver_service_base::resolver_service_base(execution_context& context)
   : scheduler_(boost::asio::use_service<scheduler_impl>(context)),
     work_scheduler_(new scheduler_impl(context, false)),
-    work_thread_(0),
+    work_thread_(),
     scheduler_locking_(config(context).get("scheduler", "locking", true))
 {
   work_scheduler_->work_started();
@@ -63,11 +63,7 @@ void resolver_service_base::base_shutdown()
   {
     work_scheduler_->work_finished();
     work_scheduler_->stop();
-    if (work_thread_.get())
-    {
-      work_thread_->join();
-      work_thread_.reset();
-    }
+    work_thread_.join();
     work_scheduler_.reset();
   }
 }
@@ -75,13 +71,12 @@ void resolver_service_base::base_shutdown()
 void resolver_service_base::base_notify_fork(
     execution_context::fork_event fork_ev)
 {
-  if (work_thread_.get())
+  if (work_thread_.joinable())
   {
     if (fork_ev == execution_context::fork_prepare)
     {
       work_scheduler_->stop();
-      work_thread_->join();
-      work_thread_.reset();
+      work_thread_.join();
     }
   }
   else if (fork_ev != execution_context::fork_prepare)
@@ -145,11 +140,8 @@ void resolver_service_base::start_resolve_op(resolve_op* op)
 void resolver_service_base::start_work_thread()
 {
   boost::asio::detail::mutex::scoped_lock lock(mutex_);
-  if (!work_thread_.get())
-  {
-    work_thread_.reset(new boost::asio::detail::thread(
-          work_scheduler_runner(*work_scheduler_)));
-  }
+  if (!work_thread_.joinable())
+    work_thread_ = thread(work_scheduler_runner(*work_scheduler_));
 }
 
 } // namespace detail

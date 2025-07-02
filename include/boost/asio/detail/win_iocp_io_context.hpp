@@ -22,7 +22,6 @@
 #include <boost/asio/detail/limits.hpp>
 #include <boost/asio/detail/mutex.hpp>
 #include <boost/asio/detail/op_queue.hpp>
-#include <boost/asio/detail/scoped_ptr.hpp>
 #include <boost/asio/detail/socket_types.hpp>
 #include <boost/asio/detail/thread.hpp>
 #include <boost/asio/detail/thread_context.hpp>
@@ -302,7 +301,7 @@ private:
   friend struct timer_thread_function;
 
   // Background thread used for processing timeouts.
-  scoped_ptr<thread> timer_thread_;
+  boost::thread timer_thread_;
 
   // A waitable timer object used for waiting for timeouts.
   auto_handle waitable_timer_;
@@ -323,7 +322,7 @@ private:
   const int concurrency_hint_;
 
   // The thread that is running the io_context.
-  scoped_ptr<thread> thread_;
+  boost::thread thread_;
 };
 
 } // namespace detail
