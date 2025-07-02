@@ -66,14 +66,14 @@ select_reactor::select_reactor(boost::asio::execution_context& ctx)
     interrupter_(),
 #if defined(BOOST_ASIO_HAS_IOCP)
     stop_thread_(false),
-    thread_(0),
+    thread_(),
     restart_reactor_(this),
 #endif // defined(BOOST_ASIO_HAS_IOCP)
     shutdown_(false)
 {
 #if defined(BOOST_ASIO_HAS_IOCP)
   boost::asio::detail::signal_blocker sb;
-  thread_ = new boost::asio::detail::thread(thread_function(this));
+  thread_ = thread(thread_function(this));
 #endif // defined(BOOST_ASIO_HAS_IOCP)
 }
 
@@ -88,18 +88,13 @@ void select_reactor::shutdown()
   shutdown_ = true;
 #if defined(BOOST_ASIO_HAS_IOCP)
   stop_thread_ = true;
-  if (thread_)
+  if (thread_.joinable())
     interrupter_.interrupt();
 #endif // defined(BOOST_ASIO_HAS_IOCP)
   lock.unlock();
 
 #if defined(BOOST_ASIO_HAS_IOCP)
-  if (thread_)
-  {
-    thread_->join();
-    delete thread_;
-    thread_ = 0;
-  }
+  thread_.join();
 #endif // defined(BOOST_ASIO_HAS_IOCP)
 
   op_queue<operation> ops;
@@ -331,12 +326,7 @@ void select_reactor::restart_reactor::do_complete(void* owner, operation* base,
   {
     select_reactor* reactor = static_cast<restart_reactor*>(base)->reactor_;
 
-    if (reactor->thread_)
-    {
-      reactor->thread_->join();
-      delete reactor->thread_;
-      reactor->thread_ = 0;
-    }
+    reactor->thread_.join();
 
     boost::asio::detail::mutex::scoped_lock lock(reactor->mutex_);
     reactor->interrupter_.recreate();
@@ -344,8 +334,7 @@ void select_reactor::restart_reactor::do_complete(void* owner, operation* base,
     lock.unlock();
 
     boost::asio::detail::signal_blocker sb;
-    reactor->thread_ =
-      new boost::asio::detail::thread(thread_function(reactor));
+    reactor->thread_ = thread(thread_function(reactor));
   }
 }
 #endif // defined(BOOST_ASIO_HAS_IOCP)

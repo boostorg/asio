@@ -16,7 +16,7 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include <boost/asio/detail/config.hpp>
-#include <boost/asio/detail/scoped_ptr.hpp>
+#include <boost/asio/detail/memory.hpp>
 #include <boost/asio/detail/thread.hpp>
 
 #include <boost/asio/detail/push_options.hpp>
@@ -25,12 +25,14 @@ namespace boost {
 namespace asio {
 namespace detail {
 
+template <typename Allocator>
 class thread_group
 {
 public:
   // Constructor initialises an empty thread group.
-  thread_group()
-    : first_(0)
+  explicit thread_group(const Allocator& a)
+    : allocator_(a),
+      first_(0)
   {
   }
 
@@ -44,7 +46,7 @@ public:
   template <typename Function>
   void create_thread(Function f)
   {
-    first_ = new item(f, first_);
+    first_ = allocate_object<item>(allocator_, allocator_, f, first_);
   }
 
   // Create new threads in the group.
@@ -63,7 +65,7 @@ public:
       first_->thread_.join();
       item* tmp = first_;
       first_ = first_->next_;
-      delete tmp;
+      deallocate_object(allocator_, tmp);
     }
   }
 
@@ -78,8 +80,8 @@ private:
   struct item
   {
     template <typename Function>
-    explicit item(Function f, item* next)
-      : thread_(f),
+    explicit item(const Allocator& a, Function f, item* next)
+      : thread_(std::allocator_arg, a, f),
         next_(next)
     {
     }
@@ -87,6 +89,9 @@ private:
     boost::asio::detail::thread thread_;
     item* next_;
   };
+
+  // The allocator to be used to create items in the group.
+  Allocator allocator_;
 
   // The first thread in the group.
   item* first_;

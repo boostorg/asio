@@ -110,7 +110,7 @@ struct scheduler::work_cleanup
 };
 
 scheduler::scheduler(boost::asio::execution_context& ctx,
-    bool own_thread, get_task_func_type get_task)
+    get_task_func_type get_task)
   : boost::asio::detail::execution_context_service_base<scheduler>(ctx),
     one_thread_(config(ctx).get("scheduler", "concurrency_hint", 0) == 1),
     mutex_(config(ctx).get("scheduler", "locking", true),
@@ -118,52 +118,40 @@ scheduler::scheduler(boost::asio::execution_context& ctx,
     task_(0),
     get_task_(get_task),
     task_interrupted_(true),
-    outstanding_work_(0),
     stopped_(false),
     shutdown_(false),
-    concurrency_hint_(config(ctx).get("scheduler", "concurrency_hint", 0)),
+    outstanding_work_(0),
     task_usec_(config(ctx).get("scheduler", "task_usec", -1L)),
-    wait_usec_(config(ctx).get("scheduler", "wait_usec", -1L)),
-    thread_(0)
+    wait_usec_(config(ctx).get("scheduler", "wait_usec", -1L))
 {
   BOOST_ASIO_HANDLER_TRACKING_INIT;
+}
 
-  if (own_thread)
-  {
-    ++outstanding_work_;
-    boost::asio::detail::signal_blocker sb;
-    thread_ = new boost::asio::detail::thread(thread_function(this));
-  }
+scheduler::scheduler(scheduler::internal, boost::asio::execution_context& ctx)
+  : boost::asio::detail::execution_context_service_base<scheduler>(ctx),
+    one_thread_(false),
+    mutex_(true, 0),
+    task_(0),
+    get_task_(&scheduler::get_default_task),
+    task_interrupted_(true),
+    stopped_(false),
+    shutdown_(false),
+    outstanding_work_(0),
+    task_usec_(-1L),
+    wait_usec_(-1L)
+{
+  BOOST_ASIO_HANDLER_TRACKING_INIT;
 }
 
 scheduler::~scheduler()
 {
-  if (thread_)
-  {
-    mutex::scoped_lock lock(mutex_);
-    shutdown_ = true;
-    stop_all_threads(lock);
-    lock.unlock();
-    thread_->join();
-    delete thread_;
-  }
 }
 
 void scheduler::shutdown()
 {
   mutex::scoped_lock lock(mutex_);
   shutdown_ = true;
-  if (thread_)
-    stop_all_threads(lock);
   lock.unlock();
-
-  // Join thread to ensure task operation is returned to queue.
-  if (thread_)
-  {
-    thread_->join();
-    delete thread_;
-    thread_ = 0;
-  }
 
   // Destroy handler objects.
   while (!op_queue_.empty())

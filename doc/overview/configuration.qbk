@@ -97,7 +97,7 @@ below.
   [
     [`reactor`]
     [`preallocated_io_objects`]
-    [`int`]
+    [`unsigned int`]
     [`0`]
     [
       The number of internal reactor I/O object states to allocate at
@@ -160,6 +160,33 @@ below.
     [
       The number of times to first attempt to acquire the reactor's per I/O
       object locks without blocking.
+    ]
+  ]
+  [
+    [`timer`]
+    [`heap_reserve`]
+    [`unsigned int`]
+    [`0`]
+    [
+      The number of entries to reserve in the internal timer queue's heap.
+
+      If an upper bound on the number of timers is known at construction
+      time, this configuration option can be set to ensure that no timer
+      allocations occur after construction is complete.
+    ]
+  ]
+  [
+    [`resolver`]
+    [`threads`]
+    [`unsigned int`]
+    [`0`]
+    [
+      The number of internal threads to be used for asynchronous name
+      resolution.
+
+      If non-zero, the specified number of threads are created when the first
+      resolver object is constructed. Otherwise, at most one thread is created
+      at the time of the first `async_resolve` call.
     ]
   ]
 ]
