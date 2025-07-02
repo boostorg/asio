@@ -46,8 +46,8 @@ class win_iocp_io_context
 {
 public:
   // Constructor.
-  BOOST_ASIO_DECL win_iocp_io_context(
-      boost::asio::execution_context& ctx, bool own_thread = true);
+  BOOST_ASIO_DECL explicit win_iocp_io_context(
+      boost::asio::execution_context& ctx);
 
   // Destructor.
   BOOST_ASIO_DECL ~win_iocp_io_context();
@@ -321,9 +321,6 @@ private:
 
   // The concurrency hint used to initialise the io_context.
   const int concurrency_hint_;
-
-  // The thread that is running the io_context.
-  boost::thread thread_;
 };
 
 } // namespace detail
