@@ -105,6 +105,32 @@ win_iocp_io_context::win_iocp_io_context(
   }
 }
 
+win_iocp_io_context::win_iocp_io_context(
+    win_iocp_io_context::internal, boost::asio::execution_context& ctx)
+  : execution_context_service_base<win_iocp_io_context>(ctx),
+    iocp_(),
+    outstanding_work_(0),
+    stopped_(0),
+    stop_event_posted_(0),
+    shutdown_(0),
+    gqcs_timeout_(get_gqcs_timeout()),
+    dispatch_required_(0),
+    concurrency_hint_(-1)
+{
+  BOOST_ASIO_HANDLER_TRACKING_INIT;
+
+  iocp_.handle = ::CreateIoCompletionPort(INVALID_HANDLE_VALUE, 0, 0,
+      static_cast<DWORD>(concurrency_hint_ >= 0
+        ? concurrency_hint_ : DWORD(~0)));
+  if (!iocp_.handle)
+  {
+    DWORD last_error = ::GetLastError();
+    boost::system::error_code ec(last_error,
+        boost::asio::error::get_system_category());
+    boost::asio::detail::throw_error(ec, "iocp");
+  }
+}
+
 win_iocp_io_context::~win_iocp_io_context()
 {
 }

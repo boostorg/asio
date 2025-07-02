@@ -18,13 +18,11 @@
 #include <boost/asio/detail/config.hpp>
 #include <boost/asio/error.hpp>
 #include <boost/asio/execution_context.hpp>
-#include <boost/asio/detail/mutex.hpp>
 #include <boost/asio/detail/noncopyable.hpp>
 #include <boost/asio/detail/resolve_op.hpp>
+#include <boost/asio/detail/resolver_thread_pool.hpp>
 #include <boost/asio/detail/socket_ops.hpp>
 #include <boost/asio/detail/socket_types.hpp>
-#include <boost/asio/detail/scoped_ptr.hpp>
-#include <boost/asio/detail/thread.hpp>
 
 #if defined(BOOST_ASIO_HAS_IOCP)
 # include <boost/asio/detail/win_iocp_io_context.hpp>
@@ -50,13 +48,6 @@ public:
 
   // Destructor.
   BOOST_ASIO_DECL ~resolver_service_base();
-
-  // Destroy all user-defined handler objects owned by the service.
-  BOOST_ASIO_DECL void base_shutdown();
-
-  // Perform any fork-related housekeeping.
-  BOOST_ASIO_DECL void base_notify_fork(
-      execution_context::fork_event fork_ev);
 
   // Construct a new resolver implementation.
   BOOST_ASIO_DECL void construct(implementation_type& impl);
@@ -92,9 +83,6 @@ public:
   BOOST_ASIO_DECL void cancel(implementation_type& impl);
 
 protected:
-  // Helper function to start an asynchronous resolve operation.
-  BOOST_ASIO_DECL void start_resolve_op(resolve_op* op);
-
 #if !defined(BOOST_ASIO_WINDOWS_RUNTIME)
   // Helper class to perform exception-safe cleanup of addrinfo objects.
   class auto_addrinfo
@@ -122,32 +110,8 @@ protected:
   };
 #endif // !defined(BOOST_ASIO_WINDOWS_RUNTIME)
 
-  // Helper class to run the work scheduler in a thread.
-  class work_scheduler_runner;
-
-  // Start the work scheduler if it's not already running.
-  BOOST_ASIO_DECL void start_work_thread();
-
-  // The scheduler implementation used to post completions.
-#if defined(BOOST_ASIO_HAS_IOCP)
-  typedef class win_iocp_io_context scheduler_impl;
-#else
-  typedef class scheduler scheduler_impl;
-#endif
-  scheduler_impl& scheduler_;
-
-private:
-  // Mutex to protect access to internal data.
-  boost::asio::detail::mutex mutex_;
-
-  // Private scheduler used for performing asynchronous host resolution.
-  boost::asio::detail::scoped_ptr<scheduler_impl> work_scheduler_;
-
-  // Thread used for running the work io_context's run loop.
-  boost::thread work_thread_;
-
-  // Whether the scheduler locking is enabled.
-  bool scheduler_locking_;
+  // Private thread pool used for performing asynchronous host resolution.
+  resolver_thread_pool& thread_pool_;
 };
 
 } // namespace detail

@@ -43,6 +43,9 @@ class scheduler
 public:
   typedef scheduler_operation operation;
 
+  // Tag type used for constructing as an internal scheduler.
+  struct internal {};
+
   // The type of a function used to obtain a task instance.
   typedef scheduler_task* (*get_task_func_type)(
       boost::asio::execution_context&);
@@ -50,6 +53,9 @@ public:
   // Constructor.
   BOOST_ASIO_DECL scheduler(boost::asio::execution_context& ctx,
       get_task_func_type get_task = &scheduler::get_default_task);
+
+  // Construct as an internal scheduler.
+  BOOST_ASIO_DECL scheduler(internal, boost::asio::execution_context& ctx);
 
   // Destructor.
   BOOST_ASIO_DECL ~scheduler();
