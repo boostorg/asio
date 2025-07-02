@@ -245,7 +245,7 @@ private:
   bool stop_thread_;
 
   // The thread that is running the reactor loop.
-  boost::thread thread_;
+  boost::asio::detail::thread thread_;
 
   // Helper class to join and restart the reactor thread.
   class restart_reactor : public operation
