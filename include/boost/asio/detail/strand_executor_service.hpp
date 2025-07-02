@@ -22,7 +22,6 @@
 #include <boost/asio/detail/mutex.hpp>
 #include <boost/asio/detail/op_queue.hpp>
 #include <boost/asio/detail/scheduler_operation.hpp>
-#include <boost/asio/detail/scoped_ptr.hpp>
 #include <boost/asio/detail/type_traits.hpp>
 #include <boost/asio/execution.hpp>
 #include <boost/asio/execution_context.hpp>
@@ -151,7 +150,7 @@ private:
   enum { num_mutexes = 193 };
 
   // Pool of mutexes.
-  scoped_ptr<mutex> mutexes_[num_mutexes];
+  shared_ptr<mutex> mutexes_[num_mutexes];
 
   // Extra value used when hashing to prevent recycled memory locations from
   // getting the same mutex.
