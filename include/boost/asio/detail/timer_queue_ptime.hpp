@@ -21,6 +21,7 @@
 
 #if defined(BOOST_ASIO_HAS_BOOST_DATE_TIME)
 
+#include <boost/asio/execution_context.hpp>
 #include <boost/asio/time_traits.hpp>
 #include <boost/asio/detail/timer_queue.hpp>
 
@@ -34,7 +35,8 @@ struct forwarding_posix_time_traits : time_traits<boost::posix_time::ptime> {};
 
 // Template specialisation for the commonly used instantiation.
 template <>
-class timer_queue<time_traits<boost::posix_time::ptime>>
+class timer_queue<time_traits<boost::posix_time::ptime>,
+    execution_context::allocator<void>>
   : public timer_queue_base
 {
 public:
@@ -45,11 +47,13 @@ public:
   typedef boost::posix_time::time_duration duration_type;
 
   // Per-timer data.
-  typedef timer_queue<forwarding_posix_time_traits>::per_timer_data
-    per_timer_data;
+  typedef timer_queue<forwarding_posix_time_traits,
+      execution_context::allocator<void>>::per_timer_data per_timer_data;
 
   // Constructor.
-  BOOST_ASIO_DECL timer_queue();
+  BOOST_ASIO_DECL timer_queue(
+      const execution_context::allocator<void>& alloc,
+      std::size_t heap_reserve);
 
   // Destructor.
   BOOST_ASIO_DECL virtual ~timer_queue();
@@ -89,7 +93,8 @@ public:
       per_timer_data& source);
 
 private:
-  timer_queue<forwarding_posix_time_traits> impl_;
+  timer_queue<forwarding_posix_time_traits,
+      execution_context::allocator<void>> impl_;
 };
 
 } // namespace detail
