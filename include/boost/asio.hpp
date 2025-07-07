@@ -30,7 +30,6 @@
 #include <boost/asio/async_result.hpp>
 #include <boost/asio/awaitable.hpp>
 #include <boost/asio/basic_datagram_socket.hpp>
-#include <boost/asio/basic_deadline_timer.hpp>
 #include <boost/asio/basic_file.hpp>
 #include <boost/asio/basic_io_object.hpp>
 #include <boost/asio/basic_random_access_file.hpp>
@@ -76,7 +75,6 @@
 #include <boost/asio/connect_pipe.hpp>
 #include <boost/asio/consign.hpp>
 #include <boost/asio/coroutine.hpp>
-#include <boost/asio/deadline_timer.hpp>
 #include <boost/asio/defer.hpp>
 #include <boost/asio/deferred.hpp>
 #include <boost/asio/default_completion_token.hpp>
@@ -182,7 +180,6 @@
 #include <boost/asio/system_timer.hpp>
 #include <boost/asio/this_coro.hpp>
 #include <boost/asio/thread_pool.hpp>
-#include <boost/asio/time_traits.hpp>
 #include <boost/asio/use_awaitable.hpp>
 #include <boost/asio/use_future.hpp>
 #include <boost/asio/uses_executor.hpp>

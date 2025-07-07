@@ -878,6 +878,15 @@
     <xsl:when test="contains($file, 'boost/asio/spawn')">
       <xsl:text>None</xsl:text>
     </xsl:when>
+    <xsl:when test="contains($file, 'boost/asio/basic_deadline_timer')">
+      <xsl:text>None</xsl:text>
+    </xsl:when>
+    <xsl:when test="contains($file, 'boost/asio/deadline_timer')">
+      <xsl:text>None</xsl:text>
+    </xsl:when>
+    <xsl:when test="contains($file, 'boost/asio/time_traits')">
+      <xsl:text>None</xsl:text>
+    </xsl:when>
     <xsl:when test="contains($file, 'boost/asio/experimental')">
       <xsl:text>None</xsl:text>
     </xsl:when>
