@@ -54,8 +54,68 @@ void config_from_string_test()
   BOOST_ASIO_CHECK(cfg2.get("reactor", "io_locking", false) == true);
 }
 
+void config_from_concurrency_hint_test()
+{
+  boost::asio::io_context ctx0;
+
+  boost::asio::config cfg0(ctx0);
+  BOOST_ASIO_CHECK(cfg0.get("scheduler", "concurrency_hint", 0) == -1);
+  BOOST_ASIO_CHECK(cfg0.get("scheduler", "locking", false) == true);
+  BOOST_ASIO_CHECK(cfg0.get("reactor", "registration_locking", true) == true);
+  BOOST_ASIO_CHECK(cfg0.get("reactor", "io_locking", false) == true);
+
+  boost::asio::io_context ctx1(0);
+
+  boost::asio::config cfg1(ctx1);
+  BOOST_ASIO_CHECK(cfg1.get("scheduler", "concurrency_hint", 0) == 0);
+  BOOST_ASIO_CHECK(cfg1.get("scheduler", "locking", false) == true);
+  BOOST_ASIO_CHECK(cfg1.get("reactor", "registration_locking", true) == true);
+  BOOST_ASIO_CHECK(cfg1.get("reactor", "io_locking", false) == true);
+
+  boost::asio::io_context ctx2(1);
+
+  boost::asio::config cfg2(ctx2);
+  BOOST_ASIO_CHECK(cfg2.get("scheduler", "concurrency_hint", 0) == 1);
+  BOOST_ASIO_CHECK(cfg2.get("scheduler", "locking", false) == true);
+  BOOST_ASIO_CHECK(cfg2.get("reactor", "registration_locking", true) == true);
+  BOOST_ASIO_CHECK(cfg2.get("reactor", "io_locking", false) == true);
+
+  boost::asio::io_context ctx3(42);
+
+  boost::asio::config cfg3(ctx3);
+  BOOST_ASIO_CHECK(cfg3.get("scheduler", "concurrency_hint", 0) == 42);
+  BOOST_ASIO_CHECK(cfg3.get("scheduler", "locking", false) == true);
+  BOOST_ASIO_CHECK(cfg3.get("reactor", "registration_locking", true) == true);
+  BOOST_ASIO_CHECK(cfg3.get("reactor", "io_locking", false) == true);
+
+  boost::asio::io_context ctx4(BOOST_ASIO_CONCURRENCY_HINT_UNSAFE);
+
+  boost::asio::config cfg4(ctx4);
+  BOOST_ASIO_CHECK(cfg4.get("scheduler", "concurrency_hint", 0) == 1);
+  BOOST_ASIO_CHECK(cfg4.get("scheduler", "locking", false) == false);
+  BOOST_ASIO_CHECK(cfg4.get("reactor", "registration_locking", true) == false);
+  BOOST_ASIO_CHECK(cfg4.get("reactor", "io_locking", false) == false);
+
+  boost::asio::io_context ctx5(BOOST_ASIO_CONCURRENCY_HINT_UNSAFE_IO);
+
+  boost::asio::config cfg5(ctx5);
+  BOOST_ASIO_CHECK(cfg5.get("scheduler", "concurrency_hint", 0) == 1);
+  BOOST_ASIO_CHECK(cfg5.get("scheduler", "locking", false) == true);
+  BOOST_ASIO_CHECK(cfg5.get("reactor", "registration_locking", true) == true);
+  BOOST_ASIO_CHECK(cfg5.get("reactor", "io_locking", false) == false);
+
+  boost::asio::io_context ctx6(BOOST_ASIO_CONCURRENCY_HINT_SAFE);
+
+  boost::asio::config cfg6(ctx6);
+  BOOST_ASIO_CHECK(cfg6.get("scheduler", "concurrency_hint", 0) == -1);
+  BOOST_ASIO_CHECK(cfg6.get("scheduler", "locking", false) == true);
+  BOOST_ASIO_CHECK(cfg6.get("reactor", "registration_locking", true) == true);
+  BOOST_ASIO_CHECK(cfg6.get("reactor", "io_locking", false) == true);
+}
+
 BOOST_ASIO_TEST_SUITE
 (
   "config",
   BOOST_ASIO_TEST_CASE(config_from_string_test)
+  BOOST_ASIO_TEST_CASE(config_from_concurrency_hint_test)
 )
