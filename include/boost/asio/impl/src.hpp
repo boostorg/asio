@@ -64,7 +64,6 @@
 #include <boost/asio/detail/impl/strand_service.ipp>
 #include <boost/asio/detail/impl/thread_context.ipp>
 #include <boost/asio/detail/impl/throw_error.ipp>
-#include <boost/asio/detail/impl/timer_queue_ptime.ipp>
 #include <boost/asio/detail/impl/timer_queue_set.ipp>
 #include <boost/asio/detail/impl/win_iocp_file_service.ipp>
 #include <boost/asio/detail/impl/win_iocp_handle_service.ipp>
