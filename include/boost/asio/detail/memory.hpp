@@ -55,7 +55,23 @@ inline const volatile T* to_address(const volatile T* p) { return p; }
 inline void* align(std::size_t alignment,
     std::size_t size, void*& ptr, std::size_t& space)
 {
+#if defined(__GNUC__) && __GNUC__ < 5
+  // copy from g++11.4.0
+  if (space < size)
+    return nullptr;
+  const auto __intptr = reinterpret_cast<uintptr_t>(ptr);
+  const auto __aligned = (__intptr - 1u + alignment) & -alignment;
+  const auto __diff = __aligned - __intptr;
+  if (__diff > (space - size))
+    return nullptr;
+  else
+  {
+    space -= __diff;
+    return ptr = reinterpret_cast<void *>(__aligned);
+  }
+#else
   return std::align(alignment, size, ptr, space);
+#endif
 }
 
 template <typename T, typename Allocator, typename... Args>
