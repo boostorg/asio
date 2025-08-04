@@ -52,6 +52,7 @@ public:
 
   // Constructor.
   BOOST_ASIO_DECL scheduler(boost::asio::execution_context& ctx,
+      bool own_thread = true,
       get_task_func_type get_task = &scheduler::get_default_task);
 
   // Construct as an internal scheduler.
@@ -226,6 +227,9 @@ private:
 
   // The time limit on waiting when the queue is empty, in microseconds.
   const long wait_usec_;
+
+  // The thread that is running the scheduler.
+  boost::asio::detail::thread thread_;
 };
 
 } // namespace detail
