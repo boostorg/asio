@@ -60,13 +60,13 @@ public:
   // Get the underlying endpoint in the native type.
   boost::asio::detail::socket_addr_type* data() noexcept
   {
-    return &data_.base;
+    return &data_.base[0];
   }
 
   // Get the underlying endpoint in the native type.
   const boost::asio::detail::socket_addr_type* data() const noexcept
   {
-    return &data_.base;
+    return &data_.base[0];
   }
 
   // Get the underlying size of the endpoint in the native type.
@@ -111,7 +111,7 @@ public:
   // Determine whether the endpoint is IPv4.
   bool is_v4() const noexcept
   {
-    return data_.base.sa_family == BOOST_ASIO_OS_DEF(AF_INET);
+    return data_.base[0].sa_family == BOOST_ASIO_OS_DEF(AF_INET);
   }
 
 #if !defined(BOOST_ASIO_NO_IOSTREAM)
@@ -123,7 +123,11 @@ private:
   // The underlying IP socket address.
   union data_union
   {
-    boost::asio::detail::socket_addr_type base;
+#if defined(_FORTIFY_SOURCE)
+    boost::asio::detail::socket_addr_type base[8];
+#else // defined(_FORTIFY_SOURCE)
+    boost::asio::detail::socket_addr_type base[1];
+#endif // defined(_FORTIFY_SOURCE)
     boost::asio::detail::sockaddr_in4_type v4;
     boost::asio::detail::sockaddr_in6_type v6;
   } data_;
