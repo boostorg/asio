@@ -138,6 +138,9 @@ private:
 #include <boost/asio/detail/pop_options.hpp>
 
 #include <boost/asio/impl/awaitable.hpp>
+#if defined(BOOST_ASIO_HEADER_ONLY)
+# include <boost/asio/impl/awaitable.ipp>
+#endif // defined(BOOST_ASIO_HEADER_ONLY)
 
 #endif // defined(BOOST_ASIO_HAS_CO_AWAIT) || defined(GENERATING_DOCUMENTATION)
 
