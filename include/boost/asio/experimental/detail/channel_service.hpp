@@ -544,10 +544,10 @@ struct channel_service<Mutex>::implementation_type<
   // Move from another buffer.
   void buffer_move_from(implementation_type& other)
   {
-    size_ = other.buffer_;
+    size_ = other.size_;
     other.size_ = 0;
     first_ = other.first_;
-    other.first.count_ = 0;
+    other.first_.count_ = 0;
     rest_ = static_cast<
         typename traits_type::template container<buffered_value>::type&&>(
           other.rest_);
@@ -631,7 +631,7 @@ struct channel_service<Mutex>::implementation_type<
   void buffer_clear()
   {
     size_ = 0;
-    first_.count_ == 0;
+    first_.count_ = 0;
     rest_.clear();
   }
 

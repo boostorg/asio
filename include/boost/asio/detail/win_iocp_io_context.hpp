@@ -49,8 +49,8 @@ public:
   struct internal {};
 
   // Constructor.
-  BOOST_ASIO_DECL explicit win_iocp_io_context(
-      boost::asio::execution_context& ctx);
+  BOOST_ASIO_DECL win_iocp_io_context(
+      boost::asio::execution_context& ctx, bool own_thread = true);
 
   // Construct as an internal scheduler.
   BOOST_ASIO_DECL win_iocp_io_context(internal,
@@ -328,6 +328,9 @@ private:
 
   // The concurrency hint used to initialise the io_context.
   const int concurrency_hint_;
+
+  // The thread that is running the io_context.
+  boost::asio::detail::thread thread_;
 };
 
 } // namespace detail

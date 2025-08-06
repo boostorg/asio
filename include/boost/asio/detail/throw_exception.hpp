@@ -31,7 +31,7 @@ using boost::throw_exception;
 
 // Declare the throw_exception function for all targets.
 template <typename Exception>
-void throw_exception(
+[[noreturn]] void throw_exception(
     const Exception& e
     BOOST_ASIO_SOURCE_LOCATION_DEFAULTED_PARAM);
 

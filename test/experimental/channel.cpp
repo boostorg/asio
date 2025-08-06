@@ -863,6 +863,19 @@ void channel_with_any_completion_handler_test()
   BOOST_ASIO_CHECK(!ec2);
 }
 
+void channel_move_test()
+{
+  io_context ctx;
+
+  channel<void(boost::system::error_code)> ch1(ctx);
+  channel<void(boost::system::error_code)> ch2 = std::move(ch1);
+  (void)ch2;
+
+  channel<void(boost::system::error_code, std::string)> ch3(ctx);
+  channel<void(boost::system::error_code, std::string)> ch4 = std::move(ch3);
+  (void)ch4;
+}
+
 BOOST_ASIO_TEST_SUITE
 (
   "experimental/channel",
@@ -885,4 +898,5 @@ BOOST_ASIO_TEST_SUITE
   BOOST_ASIO_TEST_CASE(try_send_n_via_dispatch)
   BOOST_ASIO_TEST_CASE(implicit_error_signature_channel_test)
   BOOST_ASIO_TEST_CASE(channel_with_any_completion_handler_test)
+  BOOST_ASIO_COMPILE_TEST_CASE(channel_move_test)
 )

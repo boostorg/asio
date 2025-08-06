@@ -33,7 +33,7 @@ namespace asio {
 template <typename Allocator>
 thread_pool::thread_pool(allocator_arg_t, const Allocator& a)
   : execution_context(std::allocator_arg, a),
-    scheduler_(boost::asio::make_service<detail::scheduler>(*this)),
+    scheduler_(boost::asio::make_service<detail::scheduler>(*this, false)),
     threads_(allocator<void>(*this)),
     num_threads_(default_thread_pool_size()),
     joinable_(true)
@@ -48,7 +48,7 @@ thread_pool::thread_pool(allocator_arg_t,
     const Allocator& a, std::size_t num_threads)
   : execution_context(std::allocator_arg, a,
       config_from_concurrency_hint(num_threads == 1 ? 1 : 0)),
-    scheduler_(boost::asio::make_service<detail::scheduler>(*this)),
+    scheduler_(boost::asio::make_service<detail::scheduler>(*this, false)),
     threads_(allocator<void>(*this)),
     num_threads_(clamp_thread_pool_size(num_threads)),
     joinable_(true)
@@ -61,7 +61,7 @@ thread_pool::thread_pool(allocator_arg_t,
     const Allocator& a, std::size_t num_threads,
     const execution_context::service_maker& initial_services)
   : execution_context(std::allocator_arg, a, initial_services),
-    scheduler_(boost::asio::make_service<detail::scheduler>(*this)),
+    scheduler_(boost::asio::make_service<detail::scheduler>(*this, false)),
     threads_(allocator<void>(*this)),
     num_threads_(clamp_thread_pool_size(num_threads)),
     joinable_(true)
