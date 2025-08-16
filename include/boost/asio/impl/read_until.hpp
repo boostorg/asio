@@ -934,7 +934,7 @@ namespace detail
           ? error::not_found : ec;
 
         const std::size_t result_n =
-          (ec || search_position_ == not_found)
+          ((ec && ec != boost::asio::error::eof) || search_position_ == not_found)
           ? 0 : search_position_;
 
         static_cast<ReadHandler&&>(handler_)(result_ec, result_n);
@@ -1162,7 +1162,7 @@ namespace detail
           ? error::not_found : ec;
 
         const std::size_t result_n =
-          (ec || search_position_ == not_found)
+          ((ec && ec != boost::asio::error::eof) || search_position_ == not_found)
           ? 0 : search_position_;
 
         static_cast<ReadHandler&&>(handler_)(result_ec, result_n);
@@ -1395,7 +1395,7 @@ namespace detail
           ? error::not_found : ec;
 
         const std::size_t result_n =
-          (ec || search_position_ == not_found)
+          ((ec && ec != boost::asio::error::eof) || search_position_ == not_found)
           ? 0 : search_position_;
 
         static_cast<ReadHandler&&>(handler_)(result_ec, result_n);
@@ -1623,7 +1623,7 @@ namespace detail
           ? error::not_found : ec;
 
         const std::size_t result_n =
-          (ec || search_position_ == not_found)
+          ((ec && ec != boost::asio::error::eof) || search_position_ == not_found)
           ? 0 : search_position_;
 
         static_cast<ReadHandler&&>(handler_)(result_ec, result_n);
@@ -1851,7 +1851,7 @@ namespace detail
           ? error::not_found : ec;
 
         const std::size_t result_n =
-          (ec || search_position_ == not_found)
+          ((ec && ec != boost::asio::error::eof) || search_position_ == not_found)
           ? 0 : search_position_;
 
         static_cast<ReadHandler&&>(handler_)(result_ec, result_n);
@@ -2086,7 +2086,7 @@ namespace detail
           ? error::not_found : ec;
 
         const std::size_t result_n =
-          (ec || search_position_ == not_found)
+          ((ec && ec != boost::asio::error::eof) || search_position_ == not_found)
           ? 0 : search_position_;
 
         static_cast<ReadHandler&&>(handler_)(result_ec, result_n);
@@ -2327,7 +2327,7 @@ namespace detail
           ? error::not_found : ec;
 
         const std::size_t result_n =
-          (ec || search_position_ == not_found)
+          ((ec && ec != boost::asio::error::eof) || search_position_ == not_found)
           ? 0 : search_position_;
 
         static_cast<ReadHandler&&>(handler_)(result_ec, result_n);
@@ -2564,7 +2564,7 @@ namespace detail
           ? error::not_found : ec;
 
         const std::size_t result_n =
-          (ec || search_position_ == not_found)
+          ((ec && ec != boost::asio::error::eof) || search_position_ == not_found)
           ? 0 : search_position_;
 
         static_cast<ReadHandler&&>(handler_)(result_ec, result_n);
