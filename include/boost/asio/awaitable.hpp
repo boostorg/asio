@@ -80,7 +80,8 @@ public:
   /// Move assignment.
   awaitable& operator=(awaitable&& other) noexcept
   {
-    if (this != &other) {
+    if (this != &other)
+    {
       if (frame_)
         frame_->destroy();
       frame_ = std::exchange(other.frame_, nullptr);
