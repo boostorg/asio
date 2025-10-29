@@ -17,6 +17,7 @@
 #include <boost/asio/bind_executor.hpp>
 
 #include <functional>
+#include <boost/asio/inline_executor.hpp>
 #include <boost/asio/io_context.hpp>
 #include <boost/asio/steady_timer.hpp>
 #include "unit_test.hpp"
@@ -56,7 +57,7 @@ void bind_executor_to_function_object_test()
       bind_executor(
         ioc2.get_executor(),
         bind_executor(
-          boost::asio::system_executor(),
+          boost::asio::inline_executor(),
           bindns::bind(&increment, &count))));
 
   ioc1.restart();

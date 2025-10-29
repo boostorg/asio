@@ -21,8 +21,8 @@
 #include <boost/asio/bind_executor.hpp>
 #include <boost/asio/bind_immediate_executor.hpp>
 #include <boost/asio/error.hpp>
+#include <boost/asio/inline_executor.hpp>
 #include <boost/asio/io_context.hpp>
-#include <boost/asio/system_executor.hpp>
 #include "../unit_test.hpp"
 
 using namespace boost::asio;
@@ -305,7 +305,7 @@ void unbuffered_immediate_receive()
   boost::system::error_code ec2 = boost::asio::error::would_block;
   std::string s2;
   ch1.async_receive(
-      bind_immediate_executor(system_executor(),
+      bind_immediate_executor(inline_executor(),
         [&](boost::system::error_code ec, std::string s)
         {
           ec2 = ec;
@@ -416,7 +416,7 @@ void unbuffered_immediate_send()
   boost::system::error_code ec2 = boost::asio::error::would_block;
   std::string s2 = "0123456789";
   ch1.async_send(boost::asio::error::eof, std::move(s2),
-      bind_immediate_executor(system_executor(),
+      bind_immediate_executor(inline_executor(),
         [&](boost::system::error_code ec)
         {
           ec2 = ec;
@@ -533,7 +533,7 @@ void buffered_immediate_receive()
   boost::system::error_code ec2 = boost::asio::error::would_block;
   std::string s2;
   ch1.async_receive(
-      bind_immediate_executor(system_executor(),
+      bind_immediate_executor(inline_executor(),
         [&](boost::system::error_code ec, std::string s)
         {
           ec2 = ec;
@@ -621,7 +621,7 @@ void buffered_immediate_send()
   boost::system::error_code ec1 = boost::asio::error::would_block;
   std::string s1 = "0123456789";
   ch1.async_send(boost::asio::error::eof, std::move(s1),
-      bind_immediate_executor(system_executor(),
+      bind_immediate_executor(inline_executor(),
         [&](boost::system::error_code ec)
         {
           ec1 = ec;
@@ -668,7 +668,7 @@ void try_send_via_dispatch()
   boost::system::error_code ec1 = boost::asio::error::would_block;
   std::string s1;
   ch1.async_receive(
-      bind_executor(boost::asio::system_executor(),
+      bind_executor(boost::asio::inline_executor(),
         [&](boost::system::error_code ec, std::string s)
         {
           ec1 = ec;
@@ -698,7 +698,7 @@ void try_send_n_via_dispatch()
   boost::system::error_code ec1 = boost::asio::error::would_block;
   std::string s1;
   ch1.async_receive(
-      bind_executor(boost::asio::system_executor(),
+      bind_executor(boost::asio::inline_executor(),
         [&](boost::system::error_code ec, std::string s)
         {
           ec1 = ec;
@@ -710,7 +710,7 @@ void try_send_n_via_dispatch()
   boost::system::error_code ec2 = boost::asio::error::would_block;
   std::string s2;
   ch1.async_receive(
-      bind_executor(boost::asio::system_executor(),
+      bind_executor(boost::asio::inline_executor(),
         [&](boost::system::error_code ec, std::string s)
         {
           ec2 = ec;
