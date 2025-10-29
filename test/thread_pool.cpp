@@ -244,6 +244,11 @@ void thread_pool_executor_query_test()
 
   BOOST_ASIO_CHECK(
       boost::asio::query(pool.executor(),
+        boost::asio::execution::inline_exception_handling)
+      == boost::asio::execution::inline_exception_handling.terminate);
+
+  BOOST_ASIO_CHECK(
+      boost::asio::query(pool.executor(),
         boost::asio::execution::allocator)
       == std::allocator<void>());
 

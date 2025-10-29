@@ -181,6 +181,7 @@ private:
   friend struct boost_asio_query_fn::impl;
   friend struct boost::asio::execution::detail::blocking_t<0>;
   friend struct boost::asio::execution::detail::mapping_t<0>;
+  friend struct boost::asio::execution::detail::inline_exception_handling_t<0>;
   friend struct boost::asio::execution::detail::outstanding_work_t<0>;
   friend struct boost::asio::execution::detail::relationship_t<0>;
 #endif // !defined(GENERATING_DOCUMENTATION)
@@ -200,6 +201,24 @@ private:
       execution::mapping_t) noexcept
   {
     return execution::mapping.thread;
+  }
+
+  /// Query the current value of the @c inline_exception_handling property.
+  /**
+   * Do not call this function directly. It is intended for use with the
+   * boost::asio::query customisation point.
+   *
+   * For example:
+   * @code boost::asio::system_executor ex;
+   * if (boost::asio::query(ex,
+   *       boost::asio::execution::inline_exception_handling)
+   *     == boost::asio::execution::inline_exception_handling.thread)
+   *   ... @endcode
+   */
+  static constexpr execution::inline_exception_handling_t query(
+      execution::inline_exception_handling_t) noexcept
+  {
+    return execution::inline_exception_handling.terminate;
   }
 
   /// Query the current value of the @c context property.
@@ -577,6 +596,30 @@ struct query_static_constexpr_member<
   static constexpr bool is_valid = true;
   static constexpr bool is_noexcept = true;
   typedef boost::asio::execution::mapping_t::thread_t result_type;
+
+  static constexpr result_type value() noexcept
+  {
+    return result_type();
+  }
+};
+
+template <typename Blocking, typename Relationship,
+    typename Allocator, typename Property>
+struct query_static_constexpr_member<
+    boost::asio::basic_system_executor<Blocking, Relationship, Allocator>,
+    Property,
+    typename boost::asio::enable_if<
+      boost::asio::is_convertible<
+        Property,
+        boost::asio::execution::inline_exception_handling_t
+      >::value
+    >::type
+  >
+{
+  static constexpr bool is_valid = true;
+  static constexpr bool is_noexcept = true;
+  typedef boost::asio::execution::inline_exception_handling_t::terminate_t
+    result_type;
 
   static constexpr result_type value() noexcept
   {

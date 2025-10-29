@@ -46,6 +46,7 @@ test-suite "asio" :
   [ run blocking_adaptation.cpp ]
   [ run context_as.cpp ]
   [ run executor.cpp ]
+  [ run inline_exception_handling.cpp ]
   [ run invocable_archetype.cpp ]
   [ run mapping.cpp ]
   [ run outstanding_work.cpp ]

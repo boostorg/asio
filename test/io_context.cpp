@@ -430,6 +430,11 @@ void io_context_executor_query_test()
 
   BOOST_ASIO_CHECK(
       boost::asio::query(ioc.get_executor(),
+        boost::asio::execution::inline_exception_handling)
+      == boost::asio::execution::inline_exception_handling.capture);
+
+  BOOST_ASIO_CHECK(
+      boost::asio::query(ioc.get_executor(),
         boost::asio::execution::allocator)
       == std::allocator<void>());
 }
