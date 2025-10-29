@@ -176,6 +176,8 @@ test-suite "asio" :
   [ link immediate.cpp : $(USE_SELECT) : immediate_select ]
   [ run inline_executor.cpp ]
   [ run inline_executor.cpp : : : $(USE_SELECT) : inline_executor_select ]
+  [ run inline_or_executor.cpp ]
+  [ run inline_or_executor.cpp : : : $(USE_SELECT) : inline_or_executor_select ]
   [ run io_context.cpp ]
   [ run io_context.cpp : : : $(USE_SELECT) : io_context_select ]
   [ run io_context_strand.cpp ]
