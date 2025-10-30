@@ -24,6 +24,7 @@
 #include <boost/asio/bind_executor.hpp>
 #include <boost/asio/bind_immediate_executor.hpp>
 #include <boost/asio/error.hpp>
+#include <boost/asio/inline_executor.hpp>
 #include <boost/asio/thread_pool.hpp>
 
 namespace bindns = std;
@@ -180,7 +181,7 @@ void any_completion_handler_associator_test()
       boost::asio::bind_allocator(handler_allocator<char>(&alloc_count),
         boost::asio::bind_cancellation_slot(sig.slot(),
           boost::asio::bind_executor(pool.get_executor(),
-            boost::asio::bind_immediate_executor(boost::asio::system_executor(),
+            boost::asio::bind_immediate_executor(boost::asio::inline_executor(),
               bindns::bind(&increment, &count))))));
 
   BOOST_ASIO_CHECK(alloc_count == 1);
@@ -213,7 +214,7 @@ void any_completion_handler_associator_test()
     handler_type, boost::asio::thread_pool::executor_type>::type ex2
       = boost::asio::get_associated_immediate_executor(h1, pool.get_executor());
 
-  BOOST_ASIO_CHECK(ex2 == boost::asio::system_executor());
+  BOOST_ASIO_CHECK(ex2 == boost::asio::inline_executor());
 }
 
 void increment_with_error(boost::system::error_code ec,

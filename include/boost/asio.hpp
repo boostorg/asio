@@ -107,6 +107,8 @@
 #include <boost/asio/handler_continuation_hook.hpp>
 #include <boost/asio/high_resolution_timer.hpp>
 #include <boost/asio/immediate.hpp>
+#include <boost/asio/inline_executor.hpp>
+#include <boost/asio/inline_or_executor.hpp>
 #include <boost/asio/io_context.hpp>
 #include <boost/asio/io_context_strand.hpp>
 #include <boost/asio/ip/address.hpp>

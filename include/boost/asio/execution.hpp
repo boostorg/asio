@@ -23,6 +23,7 @@
 #include <boost/asio/execution/context.hpp>
 #include <boost/asio/execution/context_as.hpp>
 #include <boost/asio/execution/executor.hpp>
+#include <boost/asio/execution/inline_exception_handling.hpp>
 #include <boost/asio/execution/invocable_archetype.hpp>
 #include <boost/asio/execution/mapping.hpp>
 #include <boost/asio/execution/occupancy.hpp>

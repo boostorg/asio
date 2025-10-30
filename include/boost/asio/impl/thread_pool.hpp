@@ -156,7 +156,7 @@ void thread_pool::basic_executor_type<Allocator,
     }
     catch (...)
     {
-      pool_->scheduler_.capture_current_exception();
+      std::terminate();
       return;
     }
 #endif // !defined(BOOST_ASIO_NO_EXCEPTIONS)
