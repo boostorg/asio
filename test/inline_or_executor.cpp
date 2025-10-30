@@ -60,11 +60,11 @@ void inline_or_executor_query_test()
 
   BOOST_ASIO_CHECK(
       boost::asio::query(s1, boost::asio::execution::blocking)
-        == boost::asio::execution::blocking.possibly);
+        == boost::asio::execution::blocking.always);
 
   BOOST_ASIO_CHECK(
-      boost::asio::query(s1, boost::asio::execution::blocking.possibly)
-        == boost::asio::execution::blocking.possibly);
+      boost::asio::query(s1, boost::asio::execution::blocking.always)
+        == boost::asio::execution::blocking.always);
 
   BOOST_ASIO_CHECK(
       boost::asio::query(s1, boost::asio::execution::outstanding_work)
