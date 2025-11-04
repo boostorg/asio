@@ -92,7 +92,7 @@ public:
     if (owner)
     {
       fenced_block b(fenced_block::half);
-      BOOST_ASIO_HANDLER_INVOCATION_BEGIN((handler.arg1_, handler.arg2_));
+      BOOST_ASIO_HANDLER_INVOCATION_BEGIN((handler.arg1_));
       w.complete(handler, handler.handler_);
       BOOST_ASIO_HANDLER_INVOCATION_END;
     }
