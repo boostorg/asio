@@ -90,7 +90,7 @@ passed back to the coroutine as a `system_error` exception.
 To perform explicit error handling, rather than the default exception-throwing
 behaviour, use the [link boost_asio.reference.as_tuple `as_tuple`],
 [link boost_asio.reference.redirect_disposition `redirect_disposition`] or
-[link boost_asio.reference.redirect_error `redirect_error`] or completion token
+[link boost_asio.reference.redirect_error `redirect_error`] completion token
 adapters.
 
 The `as_tuple` completion token adapter packages the completion
