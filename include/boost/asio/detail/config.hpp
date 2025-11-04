@@ -598,7 +598,9 @@
 // Standard library support for std::source_location.
 #if !defined(BOOST_ASIO_HAS_STD_SOURCE_LOCATION)
 # if !defined(BOOST_ASIO_DISABLE_STD_SOURCE_LOCATION)
-// ...
+#  if (__cpp_lib_source_location >= 201907)
+#   define BOOST_ASIO_HAS_STD_SOURCE_LOCATION 1
+#  endif // (__cpp_lib_source_location >= 201907)
 # endif // !defined(BOOST_ASIO_DISABLE_STD_SOURCE_LOCATION)
 #endif // !defined(BOOST_ASIO_HAS_STD_SOURCE_LOCATION)
 
