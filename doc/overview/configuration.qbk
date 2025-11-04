@@ -163,6 +163,21 @@ below.
     ]
   ]
   [
+    [`reactor`]
+    [`reset_edge_on_partial_read`]
+    [`bool`]
+    [`false`]
+    [
+      Linux [^epoll] backend only.
+
+      When `true`, a partial read on a stream-oriented socket is considered to
+      have consumed the edge-triggered readiness notification, requiring a new
+      readiness edge before further read operations are performed. When `false`
+      (the default), the socket is treated as ready-to-read until the read
+      fails with `EAGAIN`.
+    ]
+  ]
+  [
     [`timer`]
     [`heap_reserve`]
     [`unsigned int`]

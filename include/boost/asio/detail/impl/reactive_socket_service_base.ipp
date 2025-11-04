@@ -21,6 +21,7 @@
   && !defined(BOOST_ASIO_WINDOWS_RUNTIME) \
   && !defined(BOOST_ASIO_HAS_IO_URING_AS_DEFAULT)
 
+#include <boost/asio/config.hpp>
 #include <boost/asio/detail/reactive_socket_service_base.hpp>
 
 #include <boost/asio/detail/push_options.hpp>
@@ -31,7 +32,11 @@ namespace detail {
 
 reactive_socket_service_base::reactive_socket_service_base(
     execution_context& context)
-  : reactor_(use_service<reactor>(context))
+  : reactor_(use_service<reactor>(context)),
+    extra_state_(
+        boost::asio::config(context).get(
+          "reactor", "reset_edge_on_partial_read", 0)
+        ? socket_ops::reset_edge_on_partial_read : 0)
 {
   reactor_.init_task();
 }
@@ -195,9 +200,15 @@ boost::system::error_code reactive_socket_service_base::do_open(
   impl.socket_ = sock.release();
   switch (type)
   {
-  case SOCK_STREAM: impl.state_ = socket_ops::stream_oriented; break;
-  case SOCK_DGRAM: impl.state_ = socket_ops::datagram_oriented; break;
-  default: impl.state_ = 0; break;
+  case SOCK_STREAM:
+    impl.state_ = socket_ops::stream_oriented | extra_state_;
+    break;
+  case SOCK_DGRAM:
+    impl.state_ = socket_ops::datagram_oriented | extra_state_;
+    break;
+  default:
+    impl.state_ = 0;
+    break;
   }
   ec = boost::system::error_code();
   return ec;
@@ -225,9 +236,15 @@ boost::system::error_code reactive_socket_service_base::do_assign(
   impl.socket_ = native_socket;
   switch (type)
   {
-  case SOCK_STREAM: impl.state_ = socket_ops::stream_oriented; break;
-  case SOCK_DGRAM: impl.state_ = socket_ops::datagram_oriented; break;
-  default: impl.state_ = 0; break;
+  case SOCK_STREAM:
+    impl.state_ = socket_ops::stream_oriented | extra_state_;
+    break;
+  case SOCK_DGRAM:
+    impl.state_ = socket_ops::datagram_oriented | extra_state_;
+    break;
+  default:
+    impl.state_ = 0;
+    break;
   }
   impl.state_ |= socket_ops::possible_dup;
   ec = boost::system::error_code();
