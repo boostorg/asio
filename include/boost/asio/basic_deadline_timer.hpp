@@ -130,7 +130,7 @@ namespace asio {
 template <typename Time,
     typename TimeTraits = boost::asio::time_traits<Time>,
     typename Executor = any_io_executor>
-class basic_deadline_timer
+class BOOST_ASIO_DEPRECATED_MSG("Use basic_waitable_timer") basic_deadline_timer
 {
 private:
   class initiate_async_wait;
