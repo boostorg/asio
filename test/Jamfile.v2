@@ -28,6 +28,7 @@ project
     <library>/boost/context//boost_context
     <library>/boost/regex//boost_regex
     <define>BOOST_ALL_NO_LIB=1
+    <define>BOOST_ASIO_DISABLE_DEPRECATED_MSG=1
     <threading>multi
     <target-os>linux:<define>_XOPEN_SOURCE=600
     <target-os>linux:<define>_GNU_SOURCE=1
