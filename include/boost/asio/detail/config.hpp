@@ -825,11 +825,13 @@
 #  endif // !defined(BOOST_ASIO_DISABLE_EVENTFD)
 # endif // !defined(BOOST_ASIO_HAS_EVENTFD)
 # if !defined(BOOST_ASIO_HAS_TIMERFD)
-#  if defined(BOOST_ASIO_HAS_EPOLL)
-#   if (__GLIBC__ > 2) || (__GLIBC__ == 2 && __GLIBC_MINOR__ >= 8)
-#    define BOOST_ASIO_HAS_TIMERFD 1
-#   endif // (__GLIBC__ > 2) || (__GLIBC__ == 2 && __GLIBC_MINOR__ >= 8)
-#  endif // defined(BOOST_ASIO_HAS_EPOLL)
+#  if !defined(BOOST_ASIO_DISABLE_TIMERFD)
+#   if defined(BOOST_ASIO_HAS_EPOLL)
+#    if (__GLIBC__ > 2) || (__GLIBC__ == 2 && __GLIBC_MINOR__ >= 8)
+#     define BOOST_ASIO_HAS_TIMERFD 1
+#    endif // (__GLIBC__ > 2) || (__GLIBC__ == 2 && __GLIBC_MINOR__ >= 8)
+#   endif // defined(BOOST_ASIO_HAS_EPOLL)
+#  endif // !defined(BOOST_ASIO_DISABLE_TIMERFD)
 # endif // !defined(BOOST_ASIO_HAS_TIMERFD)
 # if defined(BOOST_ASIO_HAS_IO_URING)
 #  if LINUX_VERSION_CODE < KERNEL_VERSION(5,10,0)
