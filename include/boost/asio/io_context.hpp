@@ -499,6 +499,7 @@ public:
    *     boost::bind(f, a1, ... an)); @endcode
    */
   template <typename Handler>
+  BOOST_ASIO_DEPRECATED_MSG("Use boost::asio::bind_executor()")
 #if defined(GENERATING_DOCUMENTATION)
   unspecified
 #else

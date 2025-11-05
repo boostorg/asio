@@ -28,6 +28,7 @@ project
     <library>/boost/context//boost_context
     <library>/boost/regex//boost_regex
     <define>BOOST_ALL_NO_LIB=1
+    <define>BOOST_ASIO_DISABLE_DEPRECATED_MSG=1
     <threading>multi
     <target-os>linux:<define>_XOPEN_SOURCE=600
     <target-os>linux:<define>_GNU_SOURCE=1
@@ -252,6 +253,8 @@ test-suite "asio" :
   [ link readable_pipe.cpp : $(USE_SELECT) : readable_pipe_select ]
   [ run recycling_allocator.cpp ]
   [ run recycling_allocator.cpp : : : $(USE_SELECT) : recycling_allocator_select ]
+  [ link redirect_disposition.cpp ]
+  [ link redirect_disposition.cpp : $(USE_SELECT) : redirect_disposition_select ]
   [ link redirect_error.cpp ]
   [ link redirect_error.cpp : $(USE_SELECT) : redirect_error_select ]
   [ link registered_buffer.cpp ]

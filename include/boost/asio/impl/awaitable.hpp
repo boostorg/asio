@@ -34,6 +34,7 @@
 
 #if defined(BOOST_ASIO_ENABLE_HANDLER_TRACKING)
 # if defined(BOOST_ASIO_HAS_SOURCE_LOCATION)
+#  include <boost/asio/detail/handler_tracking.hpp>
 #  include <boost/asio/detail/source_location.hpp>
 # endif // defined(BOOST_ASIO_HAS_SOURCE_LOCATION)
 #endif // defined(BOOST_ASIO_ENABLE_HANDLER_TRACKING)

@@ -27,7 +27,7 @@ Threads:
 
 * One or more additional threads per `io_context` to emulate asynchronous host
 resolution. By default, only one thread is created, but this behaviour may be
-altered via the "resolver" / "threads" [link boost_asio.overview.configuration
+altered via the "resolver" / "threads" [link boost_asio.overview.core.configuration
 configuration option].
 
 Scatter-Gather:
@@ -49,7 +49,7 @@ Threads:
 
 * One or more additional threads per `io_context` to emulate asynchronous host
 resolution. By default, only one thread is created, but this behaviour may be
-altered via the "resolver" / "threads" [link boost_asio.overview.configuration
+altered via the "resolver" / "threads" [link boost_asio.overview.core.configuration
 configuration option].
 
 Scatter-Gather:
@@ -62,7 +62,7 @@ Scatter-Gather:
 Demultiplexing mechanism:
 
 * If `BOOST_ASIO_HAS_IO_URING` is defined, uses `io_uring` for file-related
-asynchonous operations.
+asynchronous operations.
 
 * Uses `epoll` for demultiplexing other event sources.
 
@@ -77,7 +77,7 @@ that calls `io_context::run()`, `io_context::run_one()`, `io_context::poll()` or
 
 * One or more additional threads per `io_context` to emulate asynchronous host
 resolution. By default, only one thread is created, but this behaviour may be
-altered via the "resolver" / "threads" [link boost_asio.overview.configuration
+altered via the "resolver" / "threads" [link boost_asio.overview.core.configuration
 configuration option].
 
 Scatter-Gather:
@@ -99,7 +99,7 @@ calls `io_context::run()`, `io_context::run_one()`, `io_context::poll()` or
 
 * One or more additional threads per `io_context` to emulate asynchronous host
 resolution. By default, only one thread is created, but this behaviour may be
-altered via the "resolver" / "threads" [link boost_asio.overview.configuration
+altered via the "resolver" / "threads" [link boost_asio.overview.core.configuration
 configuration option].
 
 Scatter-Gather:
@@ -122,7 +122,7 @@ Threads:
 
 * One or more additional threads per `io_context` to emulate asynchronous host
 resolution. By default, only one thread is created, but this behaviour may be
-altered via the "resolver" / "threads" [link boost_asio.overview.configuration
+altered via the "resolver" / "threads" [link boost_asio.overview.core.configuration
 configuration option].
 
 Scatter-Gather:
@@ -144,7 +144,7 @@ Threads:
 
 * One or more additional threads per `io_context` to emulate asynchronous host
 resolution. By default, only one thread is created, but this behaviour may be
-altered via the "resolver" / "threads" [link boost_asio.overview.configuration
+altered via the "resolver" / "threads" [link boost_asio.overview.core.configuration
 configuration option].
 
 Scatter-Gather:
@@ -166,7 +166,7 @@ Threads:
 
 * One or more additional threads per `io_context` to emulate asynchronous host
 resolution. By default, only one thread is created, but this behaviour may be
-altered via the "resolver" / "threads" [link boost_asio.overview.configuration
+altered via the "resolver" / "threads" [link boost_asio.overview.core.configuration
 configuration option].
 
 Scatter-Gather:
@@ -189,7 +189,7 @@ Threads:
 
 * One or more additional threads per `io_context` to emulate asynchronous host
 resolution. By default, only one thread is created, but this behaviour may be
-altered via the "resolver" / "threads" [link boost_asio.overview.configuration
+altered via the "resolver" / "threads" [link boost_asio.overview.core.configuration
 configuration option].
 
 Scatter-Gather:
@@ -212,7 +212,7 @@ Threads:
 
 * One or more additional threads per `io_context` to emulate asynchronous host
 resolution. By default, only one thread is created, but this behaviour may be
-altered via the "resolver" / "threads" [link boost_asio.overview.configuration
+altered via the "resolver" / "threads" [link boost_asio.overview.core.configuration
 configuration option].
 
 Scatter-Gather:
@@ -235,7 +235,7 @@ Threads:
 
 * One or more additional threads per `io_context` to emulate asynchronous host
 resolution. By default, only one thread is created, but this behaviour may be
-altered via the "resolver" / "threads" [link boost_asio.overview.configuration
+altered via the "resolver" / "threads" [link boost_asio.overview.core.configuration
 configuration option].
 
 Scatter-Gather:
@@ -257,7 +257,7 @@ Threads:
 
 * One or more additional threads per `io_context` to emulate asynchronous host
 resolution. By default, only one thread is created, but this behaviour may be
-altered via the "resolver" / "threads" [link boost_asio.overview.configuration
+altered via the "resolver" / "threads" [link boost_asio.overview.core.configuration
 configuration option].
 
 Scatter-Gather:
@@ -298,7 +298,7 @@ is created on construction of the first `basic_deadline_timer` or
 
 * One or more additional threads per `io_context` to emulate asynchronous host
 resolution. By default, only one thread is created, but this behaviour may be
-altered via the "resolver" / "threads" [link boost_asio.overview.configuration
+altered via the "resolver" / "threads" [link boost_asio.overview.core.configuration
 configuration option].
 
 Scatter-Gather:

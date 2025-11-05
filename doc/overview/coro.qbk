@@ -133,8 +133,8 @@ A coro can have both a `Yield` and `Return` that are non void at the same time.
 
 [heading Result]
 
-The result type of a coroutine is dermined by both `Yield` and `Return`. Note
-that in the follwing table only the yield output value is considered, i.e.
+The result type of a coroutine is determined by both `Yield` and `Return`. Note
+that in the following table only the yield output value is considered, i.e.
 `T(U)` means `T`.
 
 [table:result_type Result type deduction

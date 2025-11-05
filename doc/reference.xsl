@@ -1788,6 +1788,9 @@
         <xsl:when test="$declname = 'I'">
           <xsl:value-of select="$declname"/>
         </xsl:when>
+        <xsl:when test="$declname = 'InlineExceptionHandling'">
+          <xsl:value-of select="$declname"/>
+        </xsl:when>
         <xsl:when test="$declname = 'IoObjectService1'">
           <xsl:value-of select="concat('``[link boost_asio.reference.IoObjectService ', $declname, ']``')"/>
         </xsl:when>

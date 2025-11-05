@@ -30,7 +30,7 @@ class eventfd_select_interrupter
 {
 public:
   // Constructor.
-  BOOST_ASIO_DECL eventfd_select_interrupter();
+  BOOST_ASIO_DECL explicit eventfd_select_interrupter(bool use_eventfd = true);
 
   // Destructor.
   BOOST_ASIO_DECL ~eventfd_select_interrupter();
@@ -52,7 +52,7 @@ public:
 
 private:
   // Open the descriptors. Throws on error.
-  BOOST_ASIO_DECL void open_descriptors();
+  BOOST_ASIO_DECL void open_descriptors(bool use_eventfd);
 
   // Close the descriptors.
   BOOST_ASIO_DECL void close_descriptors();

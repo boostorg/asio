@@ -65,6 +65,15 @@ public:
           bufs_type::first(o->buffers_).size(), o->flags_,
           (o->state_ & socket_ops::stream_oriented) != 0,
           o->ec_, o->bytes_transferred_) ? done : not_done;
+
+#if defined(BOOST_ASIO_HAS_EPOLL)
+      if (result == done)
+        if ((o->state_ & socket_ops::stream_oriented) != 0)
+          if (o->bytes_transferred_ <
+              (((o->state_ & socket_ops::reset_edge_on_partial_read) != 0)
+                ? bufs_type::first(o->buffers_).size() : 1))
+            result = done_and_exhausted;
+#endif // defined(BOOST_ASIO_HAS_EPOLL)
     }
     else
     {
@@ -73,12 +82,23 @@ public:
           bufs.buffers(), bufs.count(), o->flags_,
           (o->state_ & socket_ops::stream_oriented) != 0,
           o->ec_, o->bytes_transferred_) ? done : not_done;
+
+#if defined(BOOST_ASIO_HAS_EPOLL)
+      if (result == done)
+        if ((o->state_ & socket_ops::stream_oriented) != 0)
+          if (o->bytes_transferred_ <
+              (((o->state_ & socket_ops::reset_edge_on_partial_read) != 0)
+                ? bufs.total_size() : 1))
+            result = done_and_exhausted;
+#endif // defined(BOOST_ASIO_HAS_EPOLL)
     }
 
+#if !defined(BOOST_ASIO_HAS_EPOLL)
     if (result == done)
       if ((o->state_ & socket_ops::stream_oriented) != 0)
         if (o->bytes_transferred_ == 0)
           result = done_and_exhausted;
+#endif // !defined(BOOST_ASIO_HAS_EPOLL)
 
     BOOST_ASIO_HANDLER_REACTOR_OPERATION((*o, "non_blocking_recv",
           o->ec_, o->bytes_transferred_));

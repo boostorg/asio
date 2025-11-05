@@ -13,7 +13,7 @@ execution of a completion handler when an asynchronous operation completes
 immediately.
 
 When a supported operation completes immediately (that is, within the
-initiating function) the associated immmediate executor is obtained, and the
+initiating function) the associated immediate executor is obtained, and the
 completion handler is delivered through that executor as if by using
 `boost::asio::dispatch` on that executor. By default, the immediate executor delivers
 the completion handler as if using `boost::asio::post` via the operation's I/O

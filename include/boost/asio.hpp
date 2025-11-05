@@ -163,6 +163,7 @@
 #include <boost/asio/read_until.hpp>
 #include <boost/asio/readable_pipe.hpp>
 #include <boost/asio/recycling_allocator.hpp>
+#include <boost/asio/redirect_disposition.hpp>
 #include <boost/asio/redirect_error.hpp>
 #include <boost/asio/registered_buffer.hpp>
 #include <boost/asio/require.hpp>

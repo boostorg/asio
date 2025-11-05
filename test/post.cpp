@@ -16,6 +16,7 @@
 // Test that header file is self-contained.
 #include <boost/asio/post.hpp>
 
+#include <boost/asio/bind_executor.hpp>
 #include <boost/asio/io_context.hpp>
 #include "unit_test.hpp"
 
@@ -93,6 +94,22 @@ void move_only_result_handler(
 {
   ++(*count);
   *result_out = result_in.value();
+}
+
+void post_no_args_test()
+{
+  io_context ctx(1);
+
+  int handler_count = 0;
+  boost::asio::post(boost::asio::deferred)(
+      boost::asio::bind_executor(ctx,
+        bindns::bind(void_handler, &handler_count)));
+
+  BOOST_ASIO_CHECK(handler_count == 0);
+
+  ctx.run();
+
+  BOOST_ASIO_CHECK(handler_count == 1);
 }
 
 void post_function_test()
@@ -229,5 +246,6 @@ void post_function_test()
 BOOST_ASIO_TEST_SUITE
 (
   "post",
+  BOOST_ASIO_TEST_CASE(post_no_args_test)
   BOOST_ASIO_TEST_CASE(post_function_test)
 )

@@ -80,8 +80,8 @@ namespace asio {
  * @par Completion Signature
  * @code void() @endcode
  */
-template <BOOST_ASIO_COMPLETION_TOKEN_FOR(void()) NullaryToken>
-inline auto defer(NullaryToken&& token)
+template <BOOST_ASIO_COMPLETION_TOKEN_FOR(void()) NullaryToken = deferred_t>
+inline auto defer(NullaryToken&& token = deferred_t())
   -> decltype(
     async_initiate<NullaryToken, void()>(
       declval<detail::initiate_defer>(), token))

@@ -36,7 +36,7 @@ namespace boost {
 namespace asio {
 namespace detail {
 
-socket_select_interrupter::socket_select_interrupter()
+socket_select_interrupter::socket_select_interrupter(bool)
 {
   open_descriptors();
 }

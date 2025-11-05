@@ -115,6 +115,7 @@ Service& make_service(execution_context& e, Args&&... args)
 }
 
 template <typename Service>
+BOOST_ASIO_DEPRECATED_MSG("Use make_service()")
 inline void add_service(execution_context& e, Service* svc)
 {
   // Check that Service meets the necessary type requirements.
