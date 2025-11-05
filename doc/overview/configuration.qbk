@@ -179,6 +179,18 @@ below.
   ]
   [
     [`reactor`]
+    [`use_eventfd`]
+    [`bool`]
+    [`true`]
+    [
+      Linux [^epoll] backend only.
+
+      When `true`, the reactor uses an [^eventfd] descriptor to wake a blocked
+      [^epoll_wait] call. When `false`, a pipe is used instead.
+    ]
+  ]
+  [
+    [`reactor`]
     [`use_timerfd`]
     [`bool`]
     [`true`]

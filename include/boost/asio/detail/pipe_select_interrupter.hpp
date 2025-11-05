@@ -33,7 +33,7 @@ class pipe_select_interrupter
 {
 public:
   // Constructor.
-  BOOST_ASIO_DECL pipe_select_interrupter();
+  BOOST_ASIO_DECL explicit pipe_select_interrupter(bool = true);
 
   // Destructor.
   BOOST_ASIO_DECL ~pipe_select_interrupter();

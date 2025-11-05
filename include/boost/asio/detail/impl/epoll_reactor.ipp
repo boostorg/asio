@@ -42,7 +42,7 @@ epoll_reactor::epoll_reactor(boost::asio::execution_context& ctx)
     scheduler_(use_service<scheduler>(ctx)),
     mutex_(config(ctx).get("reactor", "registration_locking", true),
         config(ctx).get("reactor", "registration_locking_spin_count", 0)),
-    interrupter_(),
+    interrupter_(config(ctx).get("reactor", "use_eventfd", true)),
     epoll_fd_(do_epoll_create()),
     timer_fd_(config(ctx).get("reactor", "use_timerfd", true)
         ? do_timerfd_create() : -1),
