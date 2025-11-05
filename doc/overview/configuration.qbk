@@ -178,6 +178,19 @@ below.
     ]
   ]
   [
+    [`reactor`]
+    [`use_timerfd`]
+    [`bool`]
+    [`true`]
+    [
+      Linux [^epoll] backend only.
+
+      When `true`, the reactor uses a [^timerfd] descriptor to manage timeouts.
+      When `false`, the duration until the next timeout is computed and passed
+      as a timeout to [^epoll_wait].
+    ]
+  ]
+  [
     [`timer`]
     [`heap_reserve`]
     [`unsigned int`]
