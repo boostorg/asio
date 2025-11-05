@@ -23,7 +23,7 @@ simple servers. For example:
   io_context ioc;
 
   ip::tcp::endpoint endpoint(tcp::v4(), 80);
-  ip::tcp::acceptor acceptor(ios, endpoint);
+  ip::tcp::acceptor acceptor(ioc, endpoint);
 
   for (;;)
   {

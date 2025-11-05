@@ -251,7 +251,7 @@ namespace into scope:
 Note: To use these operators we must explicitly specify the `use_awaitable`
 completion token.
 
-[heading Lightweight Coroutines Implementing Asynchonous Operations]
+[heading Lightweight Coroutines Implementing Asynchronous Operations]
 
 The `co_composed` template facilitates a lightweight implementation of
 user-defined asynchronous operations using C++20 coroutines. The following

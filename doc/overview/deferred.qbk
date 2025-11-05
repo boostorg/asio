@@ -57,7 +57,7 @@ write:
 
 [link boost_asio.reference.deferred deferred],
 [link boost_asio.reference.deferred_t deferred_t],
-[link boost_asio.examples.cpp14_examples.deferred Deferred examples (C++11)],
+[link boost_asio.examples.cpp11_examples.deferred Deferred examples (C++11)],
 [link boost_asio.examples.cpp14_examples.deferred Deferred examples (C++14)].
 
 [endsect]
