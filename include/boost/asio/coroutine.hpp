@@ -254,6 +254,11 @@ public:
   /// Returns true if the coroutine has reached its terminal state.
   bool is_complete() const { return value_ == -1; }
 
+  /**
+   * Returns true if the coroutine has yielded at least once and has not
+   * reached its terminal state.
+   */
+  bool is_suspended() const { return value_ > 0; }
 private:
   friend class detail::coroutine_ref;
   int value_;
