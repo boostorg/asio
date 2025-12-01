@@ -1368,11 +1368,15 @@
 // Compiler support for the the [[deprecated(msg)]] attribute.
 #if !defined(BOOST_ASIO_DEPRECATED_MSG)
 # if !defined(BOOST_ASIO_DISABLE_DEPRECATED_MSG)
-#  if defined(__has_cpp_attribute)
-#   if __has_cpp_attribute(deprecated)
-#    define BOOST_ASIO_DEPRECATED_MSG(msg) [[deprecated(msg)]]
-#   endif // __has_cpp_attribute(deprecated)
-#  endif // defined(__has_cpp_attribute)
+#  if defined(BOOST_ASIO_MSVC) && (BOOST_ASIO_MSVC >= 1400)
+#   define BOOST_ASIO_DEPRECATED_MSG(msg) __declspec(deprecated(msg))
+#  elif (__cplusplus >= 201402)
+#   if defined(__has_cpp_attribute)
+#    if __has_cpp_attribute(deprecated)
+#     define BOOST_ASIO_DEPRECATED_MSG(msg) [[deprecated(msg)]]
+#    endif // __has_cpp_attribute(deprecated)
+#   endif // defined(__has_cpp_attribute)
+#  endif // __cplusplus >= 201402
 # endif // !defined(BOOST_ASIO_DISABLE_DEPRECATED_MSG)
 #endif // !defined(BOOST_ASIO_DEPRECATED_MSG)
 #if !defined(BOOST_ASIO_DEPRECATED_MSG)
