@@ -52,6 +52,10 @@ public:
     return eng.read(buffer, ec, bytes_transferred);
   }
 
+  void complete_sync(boost::system::error_code&) const
+  {
+  }
+
   template <typename Handler>
   void call_handler(Handler& handler,
       const boost::system::error_code& ec,
