@@ -22,6 +22,7 @@
 
 #include <cstring>
 #include <sys/stat.h>
+#include <boost/asio/detail/memory.hpp>
 #include <boost/asio/detail/win_iocp_file_service.hpp>
 
 #include <boost/asio/detail/push_options.hpp>
@@ -61,6 +62,27 @@ boost::system::error_code win_iocp_file_service::open(
     return ec;
   }
 
+  int required_path_length = ::MultiByteToWideChar(
+      CP_UTF8, MB_ERR_INVALID_CHARS, path, -1, 0, 0);
+  if (required_path_length == 0)
+  {
+    DWORD last_error = ::GetLastError();
+    ec.assign(last_error, boost::asio::error::get_system_category());
+    BOOST_ASIO_ERROR_LOCATION(ec);
+    return ec;
+  }
+
+  std::unique_ptr<wchar_t[]> wide_path(new wchar_t[required_path_length]);
+  int result = ::MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS,
+      path, -1, wide_path.get(), required_path_length);
+  if (result == 0)
+  {
+    DWORD last_error = ::GetLastError();
+    ec.assign(last_error, boost::asio::error::get_system_category());
+    BOOST_ASIO_ERROR_LOCATION(ec);
+    return ec;
+  }
+
   DWORD access = 0;
   if ((open_flags & file_base::read_only) != 0)
     access = GENERIC_READ;
@@ -96,7 +118,8 @@ boost::system::error_code win_iocp_file_service::open(
     flags |= FILE_FLAG_WRITE_THROUGH;
 
   impl.offset_ = 0;
-  HANDLE handle = ::CreateFileA(path, access, share, 0, disposition, flags, 0);
+  HANDLE handle = ::CreateFileW(wide_path.get(),
+      access, share, 0, disposition, flags, 0);
   if (handle != INVALID_HANDLE_VALUE)
   {
     if (disposition == OPEN_ALWAYS)
