@@ -508,7 +508,7 @@ BOOST_ASIO_SYNC_OP_VOID serial_port_base::character_size::store(
     BOOST_ASIO_OPTION_STORAGE& storage, boost::system::error_code& ec) const
 {
 #if defined(BOOST_ASIO_WINDOWS) || defined(__CYGWIN__)
-  storage.ByteSize = value_;
+  storage.ByteSize = static_cast<BYTE>(value_);
 #else
   storage.c_cflag &= ~CSIZE;
   switch (value_)
