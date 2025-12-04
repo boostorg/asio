@@ -843,6 +843,9 @@ signed_size_type recv(socket_type s, buf* bufs, size_t count,
   msghdr msg = msghdr();
   msg.msg_iov = bufs;
   msg.msg_iovlen = static_cast<int>(count);
+#if defined(BOOST_ASIO_HAS_MSG_DONTWAIT)
+  flags |= MSG_DONTWAIT;
+#endif // defined(BOOST_ASIO_HAS_MSG_DONTWAIT)
   signed_size_type result = ::recvmsg(s, &msg, flags);
   get_last_error(ec, result < 0);
   return result;
@@ -873,6 +876,9 @@ signed_size_type recv1(socket_type s, void* data, size_t size,
   boost::asio::error::clear(ec);
   return bytes_transferred;
 #else // defined(BOOST_ASIO_WINDOWS) || defined(__CYGWIN__)
+#if defined(BOOST_ASIO_HAS_MSG_DONTWAIT)
+  flags |= MSG_DONTWAIT;
+#endif // defined(BOOST_ASIO_HAS_MSG_DONTWAIT)
   signed_size_type result = ::recv(s, static_cast<char*>(data), size, flags);
   get_last_error(ec, result < 0);
   return result;
@@ -1110,6 +1116,9 @@ signed_size_type recvfrom(socket_type s, buf* bufs, size_t count,
   msg.msg_namelen = static_cast<int>(*addrlen);
   msg.msg_iov = bufs;
   msg.msg_iovlen = static_cast<int>(count);
+#if defined(BOOST_ASIO_HAS_MSG_DONTWAIT)
+  flags |= MSG_DONTWAIT;
+#endif // defined(BOOST_ASIO_HAS_MSG_DONTWAIT)
   signed_size_type result = ::recvmsg(s, &msg, flags);
   get_last_error(ec, result < 0);
   *addrlen = msg.msg_namelen;
@@ -1122,6 +1131,9 @@ inline signed_size_type call_recvfrom(SockLenType msghdr::*, socket_type s,
     void* data, size_t size, int flags, void* addr, std::size_t* addrlen)
 {
   SockLenType tmp_addrlen = addrlen ? (SockLenType)*addrlen : 0;
+#if defined(BOOST_ASIO_HAS_MSG_DONTWAIT)
+  flags |= MSG_DONTWAIT;
+#endif // defined(BOOST_ASIO_HAS_MSG_DONTWAIT)
   signed_size_type result = ::recvfrom(s, static_cast<char*>(data), size,
       flags, static_cast<socket_addr_type*>(addr), addrlen ? &tmp_addrlen : 0);
   if (addrlen)
@@ -1328,6 +1340,9 @@ signed_size_type recvmsg(socket_type s, buf* bufs, size_t count,
   msghdr msg = msghdr();
   msg.msg_iov = bufs;
   msg.msg_iovlen = static_cast<int>(count);
+#if defined(BOOST_ASIO_HAS_MSG_DONTWAIT)
+  flags |= MSG_DONTWAIT;
+#endif // defined(BOOST_ASIO_HAS_MSG_DONTWAIT)
   signed_size_type result = ::recvmsg(s, &msg, in_flags);
   get_last_error(ec, result < 0);
   if (result >= 0)
@@ -1457,6 +1472,9 @@ signed_size_type send(socket_type s, const buf* bufs, size_t count,
 #if defined(BOOST_ASIO_HAS_MSG_NOSIGNAL)
   flags |= MSG_NOSIGNAL;
 #endif // defined(BOOST_ASIO_HAS_MSG_NOSIGNAL)
+#if defined(BOOST_ASIO_HAS_MSG_DONTWAIT)
+  flags |= MSG_DONTWAIT;
+#endif // defined(BOOST_ASIO_HAS_MSG_DONTWAIT)
   signed_size_type result = ::sendmsg(s, &msg, flags);
   get_last_error(ec, result < 0);
   return result;
@@ -1488,6 +1506,9 @@ signed_size_type send1(socket_type s, const void* data, size_t size,
 #if defined(BOOST_ASIO_HAS_MSG_NOSIGNAL)
   flags |= MSG_NOSIGNAL;
 #endif // defined(BOOST_ASIO_HAS_MSG_NOSIGNAL)
+#if defined(BOOST_ASIO_HAS_MSG_DONTWAIT)
+  flags |= MSG_DONTWAIT;
+#endif // defined(BOOST_ASIO_HAS_MSG_DONTWAIT)
   signed_size_type result = ::send(s,
       static_cast<const char*>(data), size, flags);
   get_last_error(ec, result < 0);
@@ -1687,6 +1708,9 @@ signed_size_type sendto(socket_type s, const buf* bufs,
 #if defined(BOOST_ASIO_HAS_MSG_NOSIGNAL)
   flags |= MSG_NOSIGNAL;
 #endif // defined(BOOST_ASIO_HAS_MSG_NOSIGNAL)
+#if defined(BOOST_ASIO_HAS_MSG_DONTWAIT)
+  flags |= MSG_DONTWAIT;
+#endif // defined(BOOST_ASIO_HAS_MSG_DONTWAIT)
   signed_size_type result = ::sendmsg(s, &msg, flags);
   get_last_error(ec, result < 0);
   return result;
@@ -1698,6 +1722,9 @@ inline signed_size_type call_sendto(SockLenType msghdr::*,
     socket_type s, const void* data, size_t size, int flags,
     const void* addr, std::size_t addrlen)
 {
+#if defined(BOOST_ASIO_HAS_MSG_DONTWAIT)
+  flags |= MSG_DONTWAIT;
+#endif // defined(BOOST_ASIO_HAS_MSG_DONTWAIT)
   return ::sendto(s, static_cast<char*>(const_cast<void*>(data)), size, flags,
       static_cast<const socket_addr_type*>(addr), (SockLenType)addrlen);
 }

@@ -1401,6 +1401,14 @@
 # endif // defined(_POSIX_VERSION)
 #endif // !defined(BOOST_ASIO_HAS_MSG_NOSIGNAL)
 
+#if !defined(BOOST_ASIO_HAS_MSG_DONTWAIT)
+# if defined (_POSIX_VERSION)
+#  if (_POSIX_VERSION >= 200112L)
+#   define BOOST_ASIO_HAS_MSG_DONTWAIT 1
+#  endif // _POSIX_VERSION >= 200112L
+# endif // defined(_POSIX_VERSION)
+#endif // !defined(BOOST_ASIO_HAS_MSG_DONTWAIT)
+
 // Standard library support for std::to_address.
 #if !defined(BOOST_ASIO_HAS_STD_TO_ADDRESS)
 # if !defined(BOOST_ASIO_DISABLE_STD_TO_ADDRESS)
