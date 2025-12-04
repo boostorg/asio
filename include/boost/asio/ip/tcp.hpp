@@ -46,6 +46,7 @@ namespace ip {
 class tcp
 {
 public:
+  tcp() {}
   /// The type of a TCP endpoint.
   typedef basic_endpoint<tcp> endpoint;
 
