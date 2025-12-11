@@ -412,7 +412,9 @@ const int max_iov_len = IOV_MAX;
 // POSIX platforms are not required to define IOV_MAX.
 const int max_iov_len = 16;
 # endif
+# if defined(SA_RESTART)
 # define BOOST_ASIO_OS_DEF_SA_RESTART SA_RESTART
+# endif
 # define BOOST_ASIO_OS_DEF_SA_NOCLDSTOP SA_NOCLDSTOP
 # if defined(SA_NOCLDWAIT)
 #  define BOOST_ASIO_OS_DEF_SA_NOCLDWAIT SA_NOCLDWAIT
