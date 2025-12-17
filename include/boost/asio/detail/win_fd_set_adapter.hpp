@@ -17,7 +17,7 @@
 
 #include <boost/asio/detail/config.hpp>
 
-#if defined(BOOST_ASIO_WINDOWS) || defined(__CYGWIN__)
+#if defined(BOOST_ASIO_WINDOWS)
 
 #include <boost/asio/detail/noncopyable.hpp>
 #include <boost/asio/detail/reactor_op_queue.hpp>

@@ -25,7 +25,7 @@ namespace boost {
 namespace asio {
 namespace error {
 
-#if !defined(BOOST_ASIO_WINDOWS) && !defined(__CYGWIN__)
+#if !defined(BOOST_ASIO_WINDOWS)
 
 namespace detail {
 

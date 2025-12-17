@@ -720,7 +720,7 @@
 #endif // !defined(BOOST_ASIO_WINDOWS)
 
 // Windows: target OS version.
-#if defined(BOOST_ASIO_WINDOWS) || defined(__CYGWIN__)
+#if defined(BOOST_ASIO_WINDOWS)
 # if !defined(_WIN32_WINNT) && !defined(_WIN32_WINDOWS)
 #  if defined(_MSC_VER) || (defined(__BORLANDC__) && !defined(__clang__))
 #   pragma message( \
@@ -753,15 +753,10 @@
 #   endif // !defined(_WINSOCK2API_)
 #  endif // defined(__WIN32__) && !defined(WIN32)
 # endif // defined(__BORLANDC__)
-# if defined(__CYGWIN__)
-#  if !defined(__USE_W32_SOCKETS)
-#   error You must add -D__USE_W32_SOCKETS to your compiler options.
-#  endif // !defined(__USE_W32_SOCKETS)
-# endif // defined(__CYGWIN__)
 #endif // defined(BOOST_ASIO_WINDOWS) || defined(__CYGWIN__)
 
 // Windows: minimise header inclusion.
-#if defined(BOOST_ASIO_WINDOWS) || defined(__CYGWIN__)
+#if defined(BOOST_ASIO_WINDOWS)
 # if !defined(BOOST_ASIO_NO_WIN32_LEAN_AND_MEAN)
 #  if !defined(WIN32_LEAN_AND_MEAN)
 #   define WIN32_LEAN_AND_MEAN
@@ -770,7 +765,7 @@
 #endif // defined(BOOST_ASIO_WINDOWS) || defined(__CYGWIN__)
 
 // Windows: suppress definition of "min" and "max" macros.
-#if defined(BOOST_ASIO_WINDOWS) || defined(__CYGWIN__)
+#if defined(BOOST_ASIO_WINDOWS)
 # if !defined(BOOST_ASIO_NO_NOMINMAX)
 #  if !defined(NOMINMAX)
 #   define NOMINMAX 1
@@ -780,7 +775,7 @@
 
 // Windows: IO Completion Ports.
 #if !defined(BOOST_ASIO_HAS_IOCP)
-# if defined(BOOST_ASIO_WINDOWS) || defined(__CYGWIN__)
+# if defined(BOOST_ASIO_WINDOWS)
 #  if defined(_WIN32_WINNT) && (_WIN32_WINNT >= 0x0400)
 #   if !defined(UNDER_CE) && !defined(BOOST_ASIO_WINDOWS_APP)
 #    if !defined(BOOST_ASIO_DISABLE_IOCP)
@@ -882,8 +877,7 @@
 #if !defined(BOOST_ASIO_HAS_SERIAL_PORT)
 # if defined(BOOST_ASIO_HAS_IOCP) \
   || !defined(BOOST_ASIO_WINDOWS) \
-  && !defined(BOOST_ASIO_WINDOWS_RUNTIME) \
-  && !defined(__CYGWIN__)
+  && !defined(BOOST_ASIO_WINDOWS_RUNTIME)
 #  if !defined(__SYMBIAN32__)
 #   if !defined(BOOST_ASIO_DISABLE_SERIAL_PORT)
 #    define BOOST_ASIO_HAS_SERIAL_PORT 1
@@ -916,7 +910,7 @@
 // Windows: object handles.
 #if !defined(BOOST_ASIO_HAS_WINDOWS_OBJECT_HANDLE)
 # if !defined(BOOST_ASIO_DISABLE_WINDOWS_OBJECT_HANDLE)
-#  if defined(BOOST_ASIO_WINDOWS) || defined(__CYGWIN__)
+#  if defined(BOOST_ASIO_WINDOWS)
 #   if !defined(UNDER_CE) && !defined(BOOST_ASIO_WINDOWS_APP)
 #    define BOOST_ASIO_HAS_WINDOWS_OBJECT_HANDLE 1
 #   endif // !defined(UNDER_CE) && !defined(BOOST_ASIO_WINDOWS_APP)
@@ -937,8 +931,7 @@
 #if !defined(BOOST_ASIO_HAS_POSIX_STREAM_DESCRIPTOR)
 # if !defined(BOOST_ASIO_DISABLE_POSIX_STREAM_DESCRIPTOR)
 #  if !defined(BOOST_ASIO_WINDOWS) \
-  && !defined(BOOST_ASIO_WINDOWS_RUNTIME) \
-  && !defined(__CYGWIN__)
+  && !defined(BOOST_ASIO_WINDOWS_RUNTIME)
 #   define BOOST_ASIO_HAS_POSIX_STREAM_DESCRIPTOR 1
 #  endif // !defined(BOOST_ASIO_WINDOWS)
          //   && !defined(BOOST_ASIO_WINDOWS_RUNTIME)
@@ -970,8 +963,7 @@
 #if !defined(BOOST_ASIO_HAS_PIPE)
 # if defined(BOOST_ASIO_HAS_IOCP) \
   || !defined(BOOST_ASIO_WINDOWS) \
-  && !defined(BOOST_ASIO_WINDOWS_RUNTIME) \
-  && !defined(__CYGWIN__)
+  && !defined(BOOST_ASIO_WINDOWS_RUNTIME)
 #  if !defined(__SYMBIAN32__)
 #   if !defined(BOOST_ASIO_DISABLE_PIPE)
 #    define BOOST_ASIO_HAS_PIPE 1
@@ -987,8 +979,7 @@
 #if !defined(BOOST_ASIO_HAS_SIGACTION)
 # if !defined(BOOST_ASIO_DISABLE_SIGACTION)
 #  if !defined(BOOST_ASIO_WINDOWS) \
-  && !defined(BOOST_ASIO_WINDOWS_RUNTIME) \
-  && !defined(__CYGWIN__)
+  && !defined(BOOST_ASIO_WINDOWS_RUNTIME)
 #   define BOOST_ASIO_HAS_SIGACTION 1
 #  endif // !defined(BOOST_ASIO_WINDOWS)
          //   && !defined(BOOST_ASIO_WINDOWS_RUNTIME)
@@ -1008,7 +999,7 @@
 // Can use getaddrinfo() and getnameinfo().
 #if !defined(BOOST_ASIO_HAS_GETADDRINFO)
 # if !defined(BOOST_ASIO_DISABLE_GETADDRINFO)
-#  if defined(BOOST_ASIO_WINDOWS) || defined(__CYGWIN__)
+#  if defined(BOOST_ASIO_WINDOWS)
 #   if defined(_WIN32_WINNT) && (_WIN32_WINNT >= 0x0501)
 #    define BOOST_ASIO_HAS_GETADDRINFO 1
 #   elif defined(UNDER_CE)

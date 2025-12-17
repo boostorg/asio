@@ -28,7 +28,7 @@
 #include <boost/asio/execution.hpp>
 #include <boost/asio/execution_context.hpp>
 
-#if defined(BOOST_ASIO_WINDOWS) || defined(__CYGWIN__)
+#if defined(BOOST_ASIO_WINDOWS)
 # include <boost/asio/detail/winsock_init.hpp>
 #elif defined(__sun) || defined(__QNX__) || defined(__hpux) || defined(_AIX) \
   || defined(__osf__)
@@ -517,7 +517,7 @@ private:
   template <typename Service>
   friend Service& use_service(io_context& ioc);
 
-#if defined(BOOST_ASIO_WINDOWS) || defined(__CYGWIN__)
+#if defined(BOOST_ASIO_WINDOWS)
   detail::winsock_init<> init_;
 #elif defined(__sun) || defined(__QNX__) || defined(__hpux) || defined(_AIX) \
   || defined(__osf__)

@@ -21,7 +21,7 @@
 #include <boost/asio/detail/assert.hpp>
 #include <boost/asio/detail/noncopyable.hpp>
 
-#if defined(BOOST_ASIO_WINDOWS) || defined(__CYGWIN__)
+#if defined(BOOST_ASIO_WINDOWS)
 # include <boost/asio/detail/socket_types.hpp>
 #endif // defined(BOOST_ASIO_WINDOWS) || defined(__CYGWIN__)
 
@@ -42,7 +42,7 @@ inline std::size_t calculate_hash_value(void* p)
     + (reinterpret_cast<std::size_t>(p) >> 3);
 }
 
-#if defined(BOOST_ASIO_WINDOWS) || defined(__CYGWIN__)
+#if defined(BOOST_ASIO_WINDOWS)
 inline std::size_t calculate_hash_value(SOCKET s)
 {
   return static_cast<std::size_t>(s);
