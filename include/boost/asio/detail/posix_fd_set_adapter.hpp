@@ -18,7 +18,6 @@
 #include <boost/asio/detail/config.hpp>
 
 #if !defined(BOOST_ASIO_WINDOWS) \
-  && !defined(__CYGWIN__) \
   && !defined(BOOST_ASIO_WINDOWS_RUNTIME)
 
 #include <cstring>

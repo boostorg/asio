@@ -19,7 +19,7 @@
 
 #if defined(BOOST_ASIO_WINDOWS_RUNTIME)
 # include <thread>
-#elif defined(BOOST_ASIO_WINDOWS) || defined(__CYGWIN__)
+#elif defined(BOOST_ASIO_WINDOWS)
 # include <boost/asio/detail/socket_types.hpp>
 #else
 # include <unistd.h>
@@ -41,7 +41,7 @@ void null_event::do_wait()
 {
 #if defined(BOOST_ASIO_WINDOWS_RUNTIME)
   std::this_thread::sleep_until((std::chrono::steady_clock::time_point::max)());
-#elif defined(BOOST_ASIO_WINDOWS) || defined(__CYGWIN__)
+#elif defined(BOOST_ASIO_WINDOWS)
   ::Sleep(INFINITE);
 #else
   ::pause();
@@ -52,7 +52,7 @@ void null_event::do_wait_for_usec(long usec)
 {
 #if defined(BOOST_ASIO_WINDOWS_RUNTIME)
   std::this_thread::sleep_for(std::chrono::microseconds(usec));
-#elif defined(BOOST_ASIO_WINDOWS) || defined(__CYGWIN__)
+#elif defined(BOOST_ASIO_WINDOWS)
   ::Sleep(usec / 1000);
 #elif defined(__hpux) && defined(__SELECT)
   timespec ts;

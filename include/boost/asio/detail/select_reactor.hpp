@@ -55,7 +55,7 @@ class select_reactor
 #endif // !defined(BOOST_ASIO_HAS_IOCP)
 {
 public:
-#if defined(BOOST_ASIO_WINDOWS) || defined(__CYGWIN__)
+#if defined(BOOST_ASIO_WINDOWS)
   enum op_types { read_op = 0, write_op = 1, except_op = 2,
     max_select_ops = 3, connect_op = 3, max_ops = 4 };
 #else // defined(BOOST_ASIO_WINDOWS) || defined(__CYGWIN__)

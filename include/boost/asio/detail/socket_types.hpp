@@ -19,7 +19,7 @@
 
 #if defined(BOOST_ASIO_WINDOWS_RUNTIME)
 // Empty.
-#elif defined(BOOST_ASIO_WINDOWS) || defined(__CYGWIN__)
+#elif defined(BOOST_ASIO_WINDOWS)
 # if defined(_WINSOCKAPI_) && !defined(_WINSOCK2API_)
 #  error WinSock.h has already been included
 # endif // defined(_WINSOCKAPI_) && !defined(_WINSOCK2API_)
@@ -183,7 +183,7 @@ typedef int signed_size_type;
 # define BOOST_ASIO_OS_DEF_SA_RESTART 0x1
 # define BOOST_ASIO_OS_DEF_SA_NOCLDSTOP 0x2
 # define BOOST_ASIO_OS_DEF_SA_NOCLDWAIT 0x4
-#elif defined(BOOST_ASIO_WINDOWS) || defined(__CYGWIN__)
+#elif defined(BOOST_ASIO_WINDOWS)
 typedef SOCKET socket_type;
 const SOCKET invalid_socket = INVALID_SOCKET;
 const int socket_error_retval = SOCKET_ERROR;
