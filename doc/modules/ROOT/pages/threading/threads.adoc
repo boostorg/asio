@@ -1,0 +1,264 @@
+//
+// Copyright (c) 2003-2025 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+//
+// Distributed under the Boost Software License, Version 1.0. (See accompanying
+// file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+//
+
+= Multi-Threading
+
+Learn how to scale Asio applications with multiple threads.
+
+== Single-Threaded by Default
+
+The simplest Asio usage is single-threaded:
+
+[source,cpp]
+----
+int main()
+{
+    asio::io_context ctx;
+    asio::co_spawn(ctx, server(), asio::detached);
+    ctx.run();  // Single thread runs the event loop
+}
+----
+
+This is often sufficient. All coroutines run on one thread, so there's no
+need for synchronization. A single thread can handle thousands of concurrent
+connections if the work is I/O-bound.
+
+== When to Use Multiple Threads
+
+Add threads when:
+
+* CPU-bound work blocks the event loop
+* You need to scale beyond what one core can handle
+* Latency-sensitive operations compete with slow handlers
+
+== Running `io_context` from Multiple Threads
+
+The simplest multi-threaded pattern: call `run()` from multiple threads:
+
+[source,cpp]
+----
+int main()
+{
+    asio::io_context ctx;
+    
+    // Spawn your coroutines
+    asio::co_spawn(ctx, server(), asio::detached);
+    
+    // Create a pool of threads to run the context
+    std::vector<std::thread> threads;
+    unsigned int thread_count = std::thread::hardware_concurrency();
+    
+    for (unsigned int i = 0; i < thread_count; ++i)
+    {
+        threads.emplace_back([&ctx]() {
+            ctx.run();
+        });
+    }
+    
+    // Wait for all threads to complete
+    for (auto& t : threads)
+        t.join();
+}
+----
+
+With this setup:
+
+* Any thread can run any handler
+* Handlers for the same socket may run on different threads
+* You need synchronization if handlers share mutable state
+
+== Thread Safety Guarantees
+
+Asio provides these guarantees:
+
+1. **Distinct objects:** Operations on distinct objects are thread-safe
+2. **Same object:** Concurrent operations on the *same* object require synchronization
+3. **Shared state:** You must protect any shared mutable state
+
+[source,cpp]
+----
+// SAFE: different sockets, no synchronization needed
+void thread1() { socket1.async_read_some(...); }
+void thread2() { socket2.async_read_some(...); }
+
+// UNSAFE: same socket, needs synchronization
+void thread1() { socket.async_read_some(...); }
+void thread2() { socket.async_write(...); }  // BAD!
+----
+
+== io_context-per-Thread
+
+An alternative pattern: one `io_context` per thread:
+
+[source,cpp]
+----
+class thread_pool
+{
+    std::vector<asio::io_context> contexts_;
+    std::vector<std::thread> threads_;
+    std::atomic<std::size_t> next_{0};
+
+public:
+    thread_pool(std::size_t size)
+        : contexts_(size)
+    {
+        for (auto& ctx : contexts_)
+        {
+            threads_.emplace_back([&ctx]() {
+                auto work = asio::make_work_guard(ctx);
+                ctx.run();
+            });
+        }
+    }
+    
+    // Round-robin assignment
+    asio::io_context& get_context()
+    {
+        return contexts_[next_++ % contexts_.size()];
+    }
+    
+    void stop()
+    {
+        for (auto& ctx : contexts_)
+            ctx.stop();
+    }
+    
+    ~thread_pool()
+    {
+        stop();
+        for (auto& t : threads_)
+            t.join();
+    }
+};
+----
+
+Benefits:
+
+* Handlers for one connection always run on the same thread
+* No synchronization needed within a connection
+* Better cache locality
+
+Drawbacks:
+
+* More complex to set up
+* Load balancing across contexts is manual
+
+== Using Strands for Synchronization
+
+For shared state with a single `io_context`, use strands (see next page):
+
+[source,cpp]
+----
+class shared_resource
+{
+    asio::strand<asio::io_context::executor_type> strand_;
+    std::string data_;
+
+public:
+    shared_resource(asio::io_context& ctx)
+        : strand_(asio::make_strand(ctx))
+    {}
+    
+    awaitable<void> update(std::string new_data)
+    {
+        // Ensure we're on the strand
+        co_await asio::dispatch(strand_, asio::use_awaitable);
+        data_ = std::move(new_data);
+    }
+};
+----
+
+== Concurrency Hints
+
+When creating `io_context`, you can provide hints:
+
+[source,cpp]
+----
+// Tell Asio only one thread will call run()
+asio::io_context ctx(1);  // Single-threaded hint
+
+// Or be explicit
+asio::io_context ctx(BOOST_ASIO_CONCURRENCY_HINT_UNSAFE);  // No internal locking
+asio::io_context ctx(BOOST_ASIO_CONCURRENCY_HINT_SAFE);    // Thread-safe (default)
+----
+
+`BOOST_ASIO_CONCURRENCY_HINT_1` enables optimizations for single-threaded use.
+
+== Example: Multi-Threaded Echo Server
+
+[source,cpp]
+----
+#include <boost/asio.hpp>
+#include <iostream>
+#include <thread>
+#include <vector>
+
+namespace asio = boost::asio;
+using asio::ip::tcp;
+using asio::awaitable;
+using asio::use_awaitable;
+
+awaitable<void> echo_session(tcp::socket socket)
+{
+    char data[1024];
+    try
+    {
+        for (;;)
+        {
+            std::size_t n = co_await socket.async_read_some(
+                asio::buffer(data), use_awaitable);
+            co_await asio::async_write(
+                socket, asio::buffer(data, n), use_awaitable);
+        }
+    }
+    catch (const std::exception&) {}
+}
+
+awaitable<void> listener(tcp::acceptor& acceptor)
+{
+    for (;;)
+    {
+        tcp::socket socket = co_await acceptor.async_accept(use_awaitable);
+        asio::co_spawn(
+            acceptor.get_executor(),
+            echo_session(std::move(socket)),
+            asio::detached);
+    }
+}
+
+int main()
+{
+    asio::io_context ctx;
+    tcp::acceptor acceptor(ctx, {tcp::v4(), 8080});
+    
+    asio::co_spawn(ctx, listener(acceptor), asio::detached);
+    
+    // Run from multiple threads
+    std::vector<std::thread> threads;
+    for (int i = 0; i < 4; ++i)
+        threads.emplace_back([&]{ ctx.run(); });
+    
+    for (auto& t : threads)
+        t.join();
+}
+----
+
+== Common Mistakes
+
+**Assuming single-threaded behavior** — With multiple threads calling `run()`,
+handlers can run concurrently. Add synchronization for shared state.
+
+**Over-using threads** — More threads don't always mean more performance.
+For I/O-bound work, fewer threads often perform better.
+
+**Forgetting to join threads** — Always join your threads before destroying
+the `io_context`.
+
+== Next Steps
+
+* xref:threading/strands.adoc[Strands] — Synchronize without locks
+* xref:core/io-context.adoc[The I/O Context] — Event loop details

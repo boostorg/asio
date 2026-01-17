@@ -1,0 +1,219 @@
+//
+// Copyright (c) 2003-2025 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+//
+// Distributed under the Boost Software License, Version 1.0. (See accompanying
+// file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+//
+
+= Recurring Timer
+
+Learn how to implement repeating timers with coroutines.
+
+== Simple Loop
+
+The most straightforward approach is a loop that resets the timer after each expiry:
+
+[source,cpp]
+----
+#include <boost/asio.hpp>
+#include <iostream>
+
+namespace asio = boost::asio;
+using asio::awaitable;
+using asio::use_awaitable;
+
+awaitable<void> heartbeat()
+{
+    auto executor = co_await asio::this_coro::executor;
+    asio::steady_timer timer(executor);
+    
+    for (int i = 0; i < 5; ++i)
+    {
+        timer.expires_after(std::chrono::seconds(1));
+        co_await timer.async_wait(use_awaitable);
+        std::cout << "Tick " << i << "\n";
+    }
+}
+
+int main()
+{
+    asio::io_context ctx;
+    asio::co_spawn(ctx, heartbeat(), asio::detached);
+    ctx.run();
+}
+----
+
+Output:
+----
+Tick 0
+Tick 1
+Tick 2
+Tick 3
+Tick 4
+----
+
+== Avoiding Timer Drift
+
+The simple loop can drift over time because it waits *after* processing.
+If processing takes 100ms, a 1-second interval becomes 1.1 seconds.
+
+To maintain precise intervals, calculate expiry from the previous expiry time:
+
+[source,cpp]
+----
+awaitable<void> precise_heartbeat()
+{
+    auto executor = co_await asio::this_coro::executor;
+    asio::steady_timer timer(executor);
+    
+    auto next_tick = std::chrono::steady_clock::now();
+    
+    for (int i = 0; i < 5; ++i)
+    {
+        next_tick += std::chrono::seconds(1);
+        timer.expires_at(next_tick);
+        co_await timer.async_wait(use_awaitable);
+        
+        std::cout << "Tick " << i << "\n";
+        
+        // Simulate some processing time
+        // The next tick is still calculated from the scheduled time,
+        // not from when processing finishes
+    }
+}
+----
+
+== Infinite Loop with Graceful Shutdown
+
+For a timer that runs indefinitely until cancelled:
+
+[source,cpp]
+----
+awaitable<void> infinite_heartbeat()
+{
+    auto executor = co_await asio::this_coro::executor;
+    asio::steady_timer timer(executor);
+    
+    try
+    {
+        for (;;)
+        {
+            timer.expires_after(std::chrono::seconds(1));
+            co_await timer.async_wait(use_awaitable);
+            std::cout << "Tick\n";
+        }
+    }
+    catch (const boost::system::system_error& e)
+    {
+        if (e.code() != asio::error::operation_aborted)
+            throw;
+        // Normal shutdown via cancellation
+    }
+}
+
+int main()
+{
+    asio::io_context ctx;
+    
+    // Set up signal handling for graceful shutdown
+    asio::signal_set signals(ctx, SIGINT, SIGTERM);
+    signals.async_wait([&](auto, auto) {
+        ctx.stop();
+    });
+    
+    asio::co_spawn(ctx, infinite_heartbeat(), asio::detached);
+    ctx.run();
+    
+    std::cout << "Shutdown complete\n";
+}
+----
+
+== Multiple Concurrent Timers
+
+You can run multiple timers in parallel using `co_spawn`:
+
+[source,cpp]
+----
+awaitable<void> timer_a()
+{
+    auto executor = co_await asio::this_coro::executor;
+    asio::steady_timer timer(executor);
+    
+    for (int i = 0; i < 3; ++i)
+    {
+        timer.expires_after(std::chrono::milliseconds(500));
+        co_await timer.async_wait(use_awaitable);
+        std::cout << "A\n";
+    }
+}
+
+awaitable<void> timer_b()
+{
+    auto executor = co_await asio::this_coro::executor;
+    asio::steady_timer timer(executor);
+    
+    for (int i = 0; i < 3; ++i)
+    {
+        timer.expires_after(std::chrono::milliseconds(700));
+        co_await timer.async_wait(use_awaitable);
+        std::cout << "B\n";
+    }
+}
+
+int main()
+{
+    asio::io_context ctx;
+    asio::co_spawn(ctx, timer_a(), asio::detached);
+    asio::co_spawn(ctx, timer_b(), asio::detached);
+    ctx.run();
+}
+----
+
+Both timers run concurrently on the same thread. The output will interleave:
+----
+A
+B
+A
+A
+B
+B
+----
+
+== Timeout Pattern
+
+A common pattern is to race a timer against another operation:
+
+[source,cpp]
+----
+#include <boost/asio/experimental/awaitable_operators.hpp>
+
+using namespace asio::experimental::awaitable_operators;
+
+awaitable<void> with_timeout()
+{
+    auto executor = co_await asio::this_coro::executor;
+    
+    asio::steady_timer timer(executor, std::chrono::seconds(5));
+    asio::ip::tcp::socket socket(executor);
+    
+    // Race: connect vs timeout
+    // First one to complete wins, the other is cancelled
+    auto result = co_await (
+        socket.async_connect(
+            asio::ip::tcp::endpoint(asio::ip::make_address("93.184.216.34"), 80),
+            use_awaitable
+        )
+        || timer.async_wait(use_awaitable)
+    );
+    
+    if (result.index() == 0)
+        std::cout << "Connected\n";
+    else
+        std::cout << "Timeout\n";
+}
+----
+
+== Next Steps
+
+* xref:networking/tcp-client.adoc[TCP Client] — Network I/O with timeouts
+* xref:threading/strands.adoc[Strands] — Thread-safe timer access

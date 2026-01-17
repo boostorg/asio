@@ -1,0 +1,257 @@
+//
+// Copyright (c) 2003-2025 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+//
+// Distributed under the Boost Software License, Version 1.0. (See accompanying
+// file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+//
+
+= TCP Server
+
+Learn how to accept connections and handle multiple clients using coroutines.
+
+== Echo Server
+
+A complete TCP server that echoes back whatever clients send:
+
+[source,cpp]
+----
+#include <boost/asio.hpp>
+#include <iostream>
+
+namespace asio = boost::asio;
+using asio::ip::tcp;
+using asio::awaitable;
+using asio::co_spawn;
+using asio::detached;
+using asio::use_awaitable;
+
+awaitable<void> echo_session(tcp::socket socket)
+{
+    try
+    {
+        char data[1024];
+        for (;;)
+        {
+            std::size_t n = co_await socket.async_read_some(
+                asio::buffer(data), use_awaitable);
+            
+            co_await asio::async_write(
+                socket, asio::buffer(data, n), use_awaitable);
+        }
+    }
+    catch (const std::exception& e)
+    {
+        std::cout << "Session ended: " << e.what() << "\n";
+    }
+}
+
+awaitable<void> listener(unsigned short port)
+{
+    auto executor = co_await asio::this_coro::executor;
+    
+    tcp::acceptor acceptor(executor, {tcp::v4(), port});
+    std::cout << "Listening on port " << port << "\n";
+    
+    for (;;)
+    {
+        tcp::socket socket = co_await acceptor.async_accept(use_awaitable);
+        std::cout << "New connection from " << socket.remote_endpoint() << "\n";
+        
+        // Spawn a new coroutine for this client
+        co_spawn(executor, echo_session(std::move(socket)), detached);
+    }
+}
+
+int main()
+{
+    asio::io_context ctx;
+    co_spawn(ctx, listener(8080), detached);
+    ctx.run();
+}
+----
+
+== How It Works
+
+=== 1. Create the Acceptor
+
+[source,cpp]
+----
+tcp::acceptor acceptor(executor, {tcp::v4(), port});
+----
+
+The acceptor listens for incoming connections. The endpoint `{tcp::v4(), port}`
+means "listen on all IPv4 interfaces on this port."
+
+=== 2. Accept Connections
+
+[source,cpp]
+----
+tcp::socket socket = co_await acceptor.async_accept(use_awaitable);
+----
+
+`async_accept` waits for a client to connect and returns a new socket for
+that connection. The acceptor continues to listen for more connections.
+
+=== 3. Spawn a Session
+
+[source,cpp]
+----
+co_spawn(executor, echo_session(std::move(socket)), detached);
+----
+
+Each client gets its own coroutine. The socket is moved into the session
+coroutine. `detached` means we don't wait for the session to complete.
+
+=== 4. Handle the Session
+
+The `echo_session` coroutine runs independently, reading and writing until
+the client disconnects (which throws an exception caught by the try/catch).
+
+== Dual-Stack Server (IPv4 and IPv6)
+
+To accept both IPv4 and IPv6 connections:
+
+[source,cpp]
+----
+awaitable<void> listener_v6(unsigned short port)
+{
+    auto executor = co_await asio::this_coro::executor;
+    
+    tcp::acceptor acceptor(executor, {tcp::v6(), port});
+    
+    // Allow IPv4 connections on this IPv6 socket
+    acceptor.set_option(asio::ip::v6_only(false));
+    
+    for (;;)
+    {
+        tcp::socket socket = co_await acceptor.async_accept(use_awaitable);
+        co_spawn(executor, echo_session(std::move(socket)), detached);
+    }
+}
+----
+
+NOTE: On some platforms, you may need separate acceptors for v4 and v6.
+
+== Graceful Shutdown
+
+To stop accepting new connections while letting existing sessions finish:
+
+[source,cpp]
+----
+awaitable<void> listener_with_shutdown(unsigned short port)
+{
+    auto executor = co_await asio::this_coro::executor;
+    
+    tcp::acceptor acceptor(executor, {tcp::v4(), port});
+    
+    try
+    {
+        for (;;)
+        {
+            tcp::socket socket = co_await acceptor.async_accept(use_awaitable);
+            co_spawn(executor, echo_session(std::move(socket)), detached);
+        }
+    }
+    catch (const boost::system::system_error& e)
+    {
+        if (e.code() != asio::error::operation_aborted)
+            throw;
+        // Normal shutdown
+    }
+}
+
+int main()
+{
+    asio::io_context ctx;
+    
+    // Handle Ctrl+C
+    asio::signal_set signals(ctx, SIGINT, SIGTERM);
+    signals.async_wait([&](auto, auto) {
+        ctx.stop();  // Cancels pending accepts
+    });
+    
+    co_spawn(ctx, listener_with_shutdown(8080), detached);
+    ctx.run();
+}
+----
+
+== Limiting Concurrent Connections
+
+Use a semaphore pattern to limit simultaneous sessions:
+
+[source,cpp]
+----
+class server
+{
+    tcp::acceptor acceptor_;
+    std::atomic<int> connection_count_{0};
+    static constexpr int max_connections = 100;
+
+public:
+    server(asio::any_io_executor executor, unsigned short port)
+        : acceptor_(executor, {tcp::v4(), port})
+    {}
+
+    awaitable<void> run()
+    {
+        for (;;)
+        {
+            tcp::socket socket = co_await acceptor_.async_accept(use_awaitable);
+            
+            if (connection_count_ >= max_connections)
+            {
+                // Reject the connection
+                socket.close();
+                continue;
+            }
+            
+            ++connection_count_;
+            co_spawn(
+                acceptor_.get_executor(),
+                handle_session(std::move(socket)),
+                detached);
+        }
+    }
+
+private:
+    awaitable<void> handle_session(tcp::socket socket)
+    {
+        // ... handle the session ...
+        --connection_count_;
+        co_return;
+    }
+};
+----
+
+== Socket Options
+
+Common options to set on the acceptor or sockets:
+
+[source,cpp]
+----
+// Allow address reuse (avoids "address already in use" on restart)
+acceptor.set_option(asio::socket_base::reuse_address(true));
+
+// Disable Nagle's algorithm for lower latency
+socket.set_option(tcp::no_delay(true));
+
+// Set receive buffer size
+socket.set_option(asio::socket_base::receive_buffer_size(65536));
+----
+
+== Common Mistakes
+
+**Forgetting to move the socket** — If you pass the socket by reference to
+`co_spawn`, it may be destroyed before the session uses it.
+
+**Not handling session errors** — Always wrap session code in try/catch.
+A crashing session shouldn't bring down the server.
+
+**Blocking in a session** — Don't call blocking operations in a coroutine.
+Everything should be `co_await` async operations.
+
+== Next Steps
+
+* xref:networking/udp.adoc[UDP] — Connectionless datagram sockets
+* xref:threading/threads.adoc[Multi-Threading] — Scale with multiple threads
+* xref:threading/strands.adoc[Strands] — Thread-safe shared state

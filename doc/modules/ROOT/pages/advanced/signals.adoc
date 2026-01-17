@@ -1,0 +1,285 @@
+//
+// Copyright (c) 2003-2025 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+//
+// Distributed under the Boost Software License, Version 1.0. (See accompanying
+// file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+//
+
+= Signal Handling
+
+Learn how to handle operating system signals with Asio coroutines.
+
+== Basic Signal Handling
+
+Use `signal_set` to wait for signals asynchronously:
+
+[source,cpp]
+----
+#include <boost/asio.hpp>
+#include <iostream>
+
+namespace asio = boost::asio;
+using asio::awaitable;
+using asio::use_awaitable;
+
+awaitable<void> signal_handler()
+{
+    auto executor = co_await asio::this_coro::executor;
+    
+    asio::signal_set signals(executor, SIGINT, SIGTERM);
+    
+    auto [ec, signum] = co_await signals.async_wait(
+        asio::experimental::as_tuple(use_awaitable));
+    
+    if (!ec)
+    {
+        std::cout << "Received signal " << signum << "\n";
+    }
+}
+----
+
+== Graceful Shutdown Pattern
+
+The most common use: shut down cleanly on Ctrl+C:
+
+[source,cpp]
+----
+int main()
+{
+    asio::io_context ctx;
+    
+    // Set up signal handler
+    asio::signal_set signals(ctx, SIGINT, SIGTERM);
+    signals.async_wait([&](auto ec, auto signum) {
+        if (!ec)
+        {
+            std::cout << "Shutting down...\n";
+            ctx.stop();
+        }
+    });
+    
+    // Run your server
+    asio::co_spawn(ctx, server(), asio::detached);
+    
+    ctx.run();
+    std::cout << "Shutdown complete\n";
+}
+----
+
+Or with coroutines:
+
+[source,cpp]
+----
+awaitable<void> run_with_shutdown()
+{
+    auto executor = co_await asio::this_coro::executor;
+    
+    asio::signal_set signals(executor, SIGINT, SIGTERM);
+    
+    // Start server in parallel with signal wait
+    // When signal arrives, stop accepting
+    
+    asio::ip::tcp::acceptor acceptor(executor, {asio::ip::tcp::v4(), 8080});
+    
+    try
+    {
+        for (;;)
+        {
+            auto socket = co_await acceptor.async_accept(use_awaitable);
+            asio::co_spawn(executor, handle_session(std::move(socket)), 
+                           asio::detached);
+        }
+    }
+    catch (const boost::system::system_error& e)
+    {
+        if (e.code() == asio::error::operation_aborted)
+            std::cout << "Server stopped\n";
+        else
+            throw;
+    }
+}
+----
+
+== Multiple Signals
+
+Wait for any of several signals:
+
+[source,cpp]
+----
+asio::signal_set signals(executor, SIGINT, SIGTERM, SIGHUP);
+
+auto [ec, signum] = co_await signals.async_wait(
+    asio::experimental::as_tuple(use_awaitable));
+
+switch (signum)
+{
+    case SIGINT:
+    case SIGTERM:
+        std::cout << "Shutdown requested\n";
+        break;
+    case SIGHUP:
+        std::cout << "Reload configuration\n";
+        break;
+}
+----
+
+== Adding and Removing Signals
+
+[source,cpp]
+----
+asio::signal_set signals(executor);
+
+// Add signals
+signals.add(SIGINT);
+signals.add(SIGTERM);
+
+// Remove a signal
+signals.remove(SIGTERM);
+
+// Clear all signals
+signals.clear();
+
+// Cancel pending wait
+signals.cancel();
+----
+
+== Repeated Signal Handling
+
+To handle signals repeatedly (not just once):
+
+[source,cpp]
+----
+awaitable<void> signal_loop()
+{
+    auto executor = co_await asio::this_coro::executor;
+    asio::signal_set signals(executor, SIGHUP);
+    
+    for (;;)
+    {
+        auto [ec, signum] = co_await signals.async_wait(
+            asio::experimental::as_tuple(use_awaitable));
+        
+        if (ec == asio::error::operation_aborted)
+            break;
+        
+        std::cout << "Reloading configuration...\n";
+        // Reload config here
+    }
+}
+----
+
+== Common Signals
+
+[cols="1,2"]
+|===
+| Signal | Typical Use
+
+| `SIGINT` | Interrupt (Ctrl+C)
+| `SIGTERM` | Termination request
+| `SIGHUP` | Hangup / reload config
+| `SIGPIPE` | Broken pipe (usually ignored)
+| `SIGUSR1` | User-defined
+| `SIGUSR2` | User-defined
+|===
+
+== Ignoring SIGPIPE
+
+Writing to a closed socket generates `SIGPIPE`, which terminates the process
+by default. Asio handles this on most platforms, but you may want to be explicit:
+
+[source,cpp]
+----
+#include <csignal>
+
+int main()
+{
+    // Ignore SIGPIPE (Asio returns an error instead)
+    std::signal(SIGPIPE, SIG_IGN);
+    
+    asio::io_context ctx;
+    // ...
+}
+----
+
+== Windows Considerations
+
+On Windows, only these signals are supported:
+
+* `SIGINT` — Ctrl+C
+* `SIGTERM` — Not typically used
+* `SIGBREAK` — Ctrl+Break
+
+For console close events, use Windows-specific APIs.
+
+== Example: Graceful Server with Cleanup
+
+[source,cpp]
+----
+class server
+{
+    asio::io_context& ctx_;
+    asio::ip::tcp::acceptor acceptor_;
+    asio::signal_set signals_;
+    std::vector<std::shared_ptr<session>> sessions_;
+
+public:
+    server(asio::io_context& ctx, unsigned short port)
+        : ctx_(ctx)
+        , acceptor_(ctx, {asio::ip::tcp::v4(), port})
+        , signals_(ctx, SIGINT, SIGTERM)
+    {
+        // Start signal handler
+        signals_.async_wait([this](auto ec, auto) {
+            if (!ec) shutdown();
+        });
+    }
+    
+    awaitable<void> run()
+    {
+        try
+        {
+            for (;;)
+            {
+                auto socket = co_await acceptor_.async_accept(use_awaitable);
+                auto sess = std::make_shared<session>(std::move(socket));
+                sessions_.push_back(sess);
+                asio::co_spawn(ctx_, sess->run(), asio::detached);
+            }
+        }
+        catch (const boost::system::system_error& e)
+        {
+            if (e.code() != asio::error::operation_aborted)
+                throw;
+        }
+    }
+    
+private:
+    void shutdown()
+    {
+        // Stop accepting
+        acceptor_.close();
+        
+        // Close all sessions
+        for (auto& sess : sessions_)
+            sess->close();
+        
+        sessions_.clear();
+    }
+};
+----
+
+== Common Mistakes
+
+**Not handling signals** — Without a handler, Ctrl+C terminates abruptly.
+Add graceful shutdown.
+
+**Multiple signal_sets for same signal** — Only one can receive the signal.
+Use a single `signal_set` and dispatch as needed.
+
+**Forgetting Windows differences** — SIGHUP doesn't exist on Windows.
+Use conditional compilation.
+
+== Next Steps
+
+* xref:core/io-context.adoc[The I/O Context] — Stopping the event loop
+* xref:networking/tcp-server.adoc[TCP Server] — Server shutdown patterns

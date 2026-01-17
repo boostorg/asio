@@ -1,0 +1,282 @@
+//
+// Copyright (c) 2003-2025 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+//
+// Distributed under the Boost Software License, Version 1.0. (See accompanying
+// file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+//
+
+= Concepts Reference
+
+Named requirements for Asio types and functions.
+
+== Stream Concepts
+
+=== AsyncReadStream
+
+A type that supports async read operations.
+
+**Requirements:**
+
+* `async_read_some(buffers, token)` — Initiates a read operation
+
+**Models:**
+
+* `tcp::socket`
+* `ssl::stream<tcp::socket>`
+* `buffered_read_stream<>`
+
+**Usage with coroutines:**
+
+[source,cpp]
+----
+template<typename AsyncReadStream>
+awaitable<std::size_t> read_some(AsyncReadStream& stream)
+{
+    char buf[1024];
+    co_return co_await stream.async_read_some(
+        asio::buffer(buf), use_awaitable);
+}
+----
+
+=== AsyncWriteStream
+
+A type that supports async write operations.
+
+**Requirements:**
+
+* `async_write_some(buffers, token)` — Initiates a write operation
+
+**Models:**
+
+* `tcp::socket`
+* `ssl::stream<tcp::socket>`
+* `buffered_write_stream<>`
+
+=== AsyncStream
+
+A type that is both AsyncReadStream and AsyncWriteStream.
+
+== Buffer Concepts
+
+=== ConstBufferSequence
+
+A sequence of read-only buffers.
+
+**Requirements:**
+
+* Iterable with `begin()` / `end()`
+* Iterator dereferences to something convertible to `const_buffer`
+
+**Models:**
+
+* `const_buffer`
+* `std::array<const_buffer, N>`
+* `std::vector<const_buffer>`
+* Result of `buffer("string")`
+
+=== MutableBufferSequence
+
+A sequence of writable buffers.
+
+**Requirements:**
+
+* Iterable with `begin()` / `end()`
+* Iterator dereferences to something convertible to `mutable_buffer`
+
+**Models:**
+
+* `mutable_buffer`
+* `std::array<mutable_buffer, N>`
+* `std::vector<mutable_buffer>`
+* Result of `buffer(array)`
+
+=== DynamicBuffer
+
+A buffer that can grow to accommodate data.
+
+**Requirements:**
+
+* `size()` — Current size
+* `max_size()` — Maximum allowed size
+* `capacity()` — Current capacity
+* `data()` — Get const buffer sequence
+* `prepare(n)` — Get mutable buffer for writing n bytes
+* `commit(n)` — Mark n bytes as written
+* `consume(n)` — Remove n bytes from front
+
+**Models:**
+
+* `dynamic_buffer(std::string&)`
+* `dynamic_buffer(std::vector<char>&)`
+* `streambuf`
+
+== Protocol Concepts
+
+=== Protocol
+
+Defines a communication protocol (TCP, UDP, etc.).
+
+**Requirements:**
+
+* `endpoint` — Nested endpoint type
+* `socket` — Nested socket type (or via `basic_socket`)
+
+**Models:**
+
+* `tcp`
+* `udp`
+* `icmp`
+* `local::stream_protocol`
+* `local::datagram_protocol`
+
+=== Endpoint
+
+An endpoint in a protocol (address + port).
+
+**Requirements:**
+
+* `protocol()` — Return the protocol
+* Default constructible
+* Copyable
+
+**Models:**
+
+* `tcp::endpoint`
+* `udp::endpoint`
+* `local::stream_protocol::endpoint`
+
+=== InternetProtocol
+
+A Protocol for IP-based communication.
+
+**Requirements:**
+
+* All Protocol requirements
+* `v4()` — Return IPv4 variant
+* `v6()` — Return IPv6 variant
+* `resolver` — Nested resolver type
+
+**Models:**
+
+* `tcp`
+* `udp`
+* `icmp`
+
+== Executor Concepts
+
+=== Executor
+
+A handle to an execution context.
+
+**Requirements:**
+
+* `execute(f)` — Execute a function
+* Equality comparable
+* Copyable
+
+**Models:**
+
+* `io_context::executor_type`
+* `thread_pool::executor_type`
+* `strand<E>`
+* `any_io_executor`
+
+=== ExecutionContext
+
+A context that can create executors.
+
+**Requirements:**
+
+* `get_executor()` — Return an executor
+
+**Models:**
+
+* `io_context`
+* `thread_pool`
+* `system_context`
+
+== Completion Token Concepts
+
+=== CompletionToken
+
+Determines how async operation results are delivered.
+
+**Models:**
+
+* `use_awaitable_t` — Return `awaitable<T>` for coroutines
+* `detached_t` — Discard result
+* Function objects — Called with result
+
+=== CompletionCondition
+
+Controls when composed read/write operations complete.
+
+**Requirements:**
+
+* `operator()(error_code, bytes_transferred)` — Return bytes remaining
+
+**Models:**
+
+* `transfer_all()` — Until buffer full/empty
+* `transfer_at_least(n)` — Until n bytes transferred
+* `transfer_exactly(n)` — Exactly n bytes
+
+== Service Concepts
+
+=== Service
+
+A singleton attached to an execution context.
+
+**Requirements:**
+
+* `key_type` — Nested type identifying the service
+* Constructor taking `execution_context&`
+
+Services allow extending `io_context` with custom functionality.
+
+== Socket Option Concepts
+
+=== GettableSocketOption
+
+An option that can be read from a socket.
+
+**Models:**
+
+* `socket_base::reuse_address`
+* `tcp::no_delay`
+* `socket_base::receive_buffer_size`
+
+=== SettableSocketOption
+
+An option that can be set on a socket.
+
+**Models:**
+
+Same as GettableSocketOption—most options are both.
+
+== Usage Notes
+
+These concepts are informal—they're documented requirements, not C++20
+`concept` declarations. Asio uses SFINAE and `enable_if` for constraint checks.
+
+When writing generic code:
+
+[source,cpp]
+----
+// Works with any AsyncReadStream
+template<typename Stream>
+awaitable<void> read_and_process(Stream& stream)
+{
+    char buf[1024];
+    auto n = co_await stream.async_read_some(
+        asio::buffer(buf), use_awaitable);
+    // process buf[0..n)
+}
+----
+
+For full details on each concept, see the Boost.Asio reference documentation.
+
+== Next Steps
+
+* xref:index.adoc[Introduction] — Library overview
+* xref:async-model/initiating-functions.adoc[Initiating Functions] — How async operations start
