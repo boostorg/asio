@@ -1513,15 +1513,55 @@
 # endif // !defined(BOOST_ASIO_DISABLE_SNPRINTF)
 #endif // !defined(BOOST_ASIO_HAS_SNPRINTF)
 
+// Standard library support for std::atomic<T>::wait and notify functions.
+// By default, this is only enabled on platforms where the standard library is
+// known to implement them using efficient wait primitives (e.g. Linux futex,
+// Windows WaitOnAddress, Apple ulock).
+#if !defined(BOOST_ASIO_HAS_STD_ATOMIC_WAIT)
+# if !defined(BOOST_ASIO_DISABLE_STD_ATOMIC_WAIT)
+#  if defined(BOOST_ASIO_HAS_STD_ATOMIC)
+#   if defined(BOOST_ASIO_MSVC)
+#    if (_MSVC_LANG >= 202002) && (__cpp_lib_atomic_wait >= 201907L)
+#     if defined(BOOST_ASIO_WINDOWS)
+#      if !defined(UNDER_CE)
+#       if defined(_WIN32_WINNT) && (_WIN32_WINNT >= 0x0602)
+#        define BOOST_ASIO_HAS_STD_ATOMIC_WAIT 1
+#       endif // defined(_WIN32_WINNT) && (_WIN32_WINNT >= 0x0602)
+#      endif // !defined(UNDER_CE)
+#     endif // defined(BOOST_ASIO_WINDOWS)
+#    endif // (_MSVC_LANG >= 202002) && (__cpp_lib_atomic_wait >= 201907L)
+#   elif (__cplusplus >= 202002L) && (__cpp_lib_atomic_wait >= 201907L)
+#    if defined(__linux__)
+#     define BOOST_ASIO_HAS_STD_ATOMIC_WAIT 1
+#    elif defined(__APPLE__)
+#     if defined(__MAC_OS_X_VERSION_MIN_REQUIRED) \
+        && (__MAC_OS_X_VERSION_MIN_REQUIRED >= 140400)
+#      define BOOST_ASIO_HAS_STD_ATOMIC_WAIT 1
+#     elif defined(__IPHONE_OS_VERSION_MIN_REQUIRED) \
+        && (__IPHONE_OS_VERSION_MIN_REQUIRED >= 170400)
+#      define BOOST_ASIO_HAS_STD_ATOMIC_WAIT 1
+#     endif // defined(__IPHONE_OS_VERSION_MIN_REQUIRED)
+            //   && (__IPHONE_OS_VERSION_MIN_REQUIRED >= 170400)
+#    endif // defined(__APPLE__)
+#   endif // (__cplusplus >= 202002L) && (__cpp_lib_atomic_wait >= 201907L)
+#  endif // defined(BOOST_ASIO_HAS_STD_ATOMIC)
+# endif // !defined(BOOST_ASIO_DISABLE_STD_ATOMIC_WAIT)
+#endif // !defined(BOOST_ASIO_HAS_STD_ATOMIC_WAIT)
+#if defined(BOOST_ASIO_HAS_STD_ATOMIC_WAIT)
+# define BOOST_ASIO_VERSION_TAG_n n
+#else // defined(BOOST_ASIO_HAS_STD_ATOMIC_WAIT)
+# define BOOST_ASIO_VERSION_TAG_n
+#endif // defined(BOOST_ASIO_HAS_STD_ATOMIC_WAIT)
+
 // Token-pasting helper (two levels needed to allow macro arguments to expand).
 #define BOOST_ASIO_DETAIL_CAT_(a, b) a ## b
 #define BOOST_ASIO_DETAIL_CAT(a, b) BOOST_ASIO_DETAIL_CAT_(a, b)
 
 // Version tags for user-enabled features with no auto-detection in this file.
 #if defined(BOOST_ASIO_ENABLE_HANDLER_TRACKING)
-# define BOOST_ASIO_VERSION_TAG_n n
+# define BOOST_ASIO_VERSION_TAG_o o
 #else // defined(BOOST_ASIO_ENABLE_HANDLER_TRACKING)
-# define BOOST_ASIO_VERSION_TAG_n
+# define BOOST_ASIO_VERSION_TAG_o
 #endif // defined(BOOST_ASIO_ENABLE_HANDLER_TRACKING)
 
 // Automatic version namespace v<BOOST_ASIO_VERSION>_<tags>.
@@ -1544,7 +1584,8 @@
   BOOST_ASIO_DETAIL_CAT(BOOST_ASIO_VERSION_TAG_k, \
   BOOST_ASIO_DETAIL_CAT(BOOST_ASIO_VERSION_TAG_l, \
   BOOST_ASIO_DETAIL_CAT(BOOST_ASIO_VERSION_TAG_m, \
-  BOOST_ASIO_VERSION_TAG_n))))))))))))))))
+  BOOST_ASIO_DETAIL_CAT(BOOST_ASIO_VERSION_TAG_n, \
+  BOOST_ASIO_VERSION_TAG_o)))))))))))))))))
 # endif // !defined(BOOST_ASIO_VERSION_NAMESPACE)
 #endif // defined(BOOST_ASIO_ENABLE_VERSION_NAMESPACE)
 

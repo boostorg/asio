@@ -144,7 +144,7 @@ public:
 
 private:
   // The mutex type used by this scheduler.
-  typedef conditionally_enabled_mutex mutex;
+  typedef conditionally_enabled_mutex<boost::asio::detail::mutex> mutex;
 
   // The event type used by this scheduler.
   typedef conditionally_enabled_event event;
