@@ -37,6 +37,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
 
 eventfd_select_interrupter::eventfd_select_interrupter(bool use_eventfd)
@@ -166,6 +167,7 @@ bool eventfd_select_interrupter::reset()
 }
 
 } // namespace detail
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

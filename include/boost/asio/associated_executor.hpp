@@ -28,6 +28,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 
 template <typename T, typename Executor>
 struct associated_executor;
@@ -230,6 +231,7 @@ struct associated_executor<reference_wrapper<T>, Executor>
   }
 };
 
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

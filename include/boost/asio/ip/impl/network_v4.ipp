@@ -30,6 +30,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace ip {
 
 network_v4::network_v4(const address_v4& addr, unsigned short prefix_len)
@@ -212,6 +213,7 @@ network_v4 make_network_v4(string_view str,
 #endif // defined(BOOST_ASIO_HAS_STRING_VIEW)
 
 } // namespace ip
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

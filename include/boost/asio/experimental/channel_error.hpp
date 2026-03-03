@@ -22,6 +22,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace experimental {
 namespace error {
 
@@ -48,6 +49,7 @@ namespace channel_errc {
   using error::channel_cancelled;
 } // namespace channel_errc
 } // namespace experimental
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 
@@ -65,6 +67,7 @@ template<> struct is_error_code_enum<
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace experimental {
 namespace error {
 
@@ -76,6 +79,7 @@ inline boost::system::error_code make_error_code(channel_errors e)
 
 } // namespace error
 } // namespace experimental
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

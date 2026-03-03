@@ -26,6 +26,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 
 /// Provides serialised function invocation for any executor type.
 template <typename Executor>
@@ -543,6 +544,7 @@ struct prefer_member<strand<Executor>, Property,
 
 #endif // !defined(GENERATING_DOCUMENTATION)
 
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

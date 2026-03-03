@@ -28,6 +28,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
 
 template <typename T>
@@ -513,6 +514,7 @@ co_spawn(ExecutionContext& ctx, F&& f,
       is_convertible<ExecutionContext&, execution_context&>::value
     > = 0);
 
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

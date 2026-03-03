@@ -38,6 +38,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
 
 #if defined(BOOST_ASIO_HAS_IOCP)
@@ -377,6 +378,7 @@ void select_reactor::cancel_ops_unlocked(socket_type descriptor,
 }
 
 } // namespace detail
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

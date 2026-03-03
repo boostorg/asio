@@ -25,6 +25,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace traits {
 
 template <typename T, typename Property, typename = void>
@@ -109,6 +110,7 @@ struct static_require : static_require_default<T, Property>
 };
 
 } // namespace traits
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

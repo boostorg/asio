@@ -42,6 +42,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 
 #if !defined(BOOST_ASIO_BASIC_SOCKET_ACCEPTOR_FWD_DECL)
 #define BOOST_ASIO_BASIC_SOCKET_ACCEPTOR_FWD_DECL
@@ -2702,6 +2703,7 @@ private:
 #endif
 };
 
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

@@ -33,6 +33,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
 
 char (&has_result_type_helper(...))[2];
@@ -3194,6 +3195,7 @@ inline auto async_read_until(AsyncReadStream& s,
 
 /*@}*/
 
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

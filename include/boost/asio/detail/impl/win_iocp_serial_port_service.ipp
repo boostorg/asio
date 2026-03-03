@@ -27,6 +27,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
 
 win_iocp_serial_port_service::win_iocp_serial_port_service(
@@ -192,6 +193,7 @@ boost::system::error_code win_iocp_serial_port_service::do_get_option(
 }
 
 } // namespace detail
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

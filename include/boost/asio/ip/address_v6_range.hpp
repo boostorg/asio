@@ -23,6 +23,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace ip {
 
 template <typename> class basic_address_range;
@@ -118,6 +119,7 @@ private:
 typedef basic_address_range<address_v6> address_v6_range;
 
 } // namespace ip
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

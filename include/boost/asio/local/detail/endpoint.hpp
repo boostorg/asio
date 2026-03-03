@@ -29,6 +29,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace local {
 namespace detail {
 
@@ -127,6 +128,7 @@ private:
 
 } // namespace detail
 } // namespace local
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

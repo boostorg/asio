@@ -25,6 +25,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 
 template <typename Allocator>
 execution_context::execution_context(allocator_arg_t, const Allocator& a)
@@ -140,6 +141,7 @@ inline execution_context& execution_context::service::context()
   return owner_;
 }
 
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

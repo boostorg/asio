@@ -34,6 +34,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
 
 class scheduler::thread_function
@@ -690,6 +691,7 @@ scheduler_task* scheduler::get_default_task(boost::asio::execution_context& ctx)
 }
 
 } // namespace detail
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

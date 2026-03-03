@@ -43,6 +43,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
 
 inline const char*& test_name()
@@ -109,6 +110,7 @@ void throw_exception(const T& t)
 #endif // defined(BOOST_ASIO_NO_EXCEPTIONS)
 
 } // namespace detail
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

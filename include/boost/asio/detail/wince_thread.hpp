@@ -28,6 +28,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
 
 DWORD WINAPI wince_thread_function(LPVOID arg);
@@ -163,6 +164,7 @@ inline DWORD WINAPI wince_thread_function(LPVOID arg)
 }
 
 } // namespace detail
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

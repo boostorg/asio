@@ -43,6 +43,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 
 /// Provides serial port functionality.
 /**
@@ -978,6 +979,7 @@ private:
 #endif
 };
 
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

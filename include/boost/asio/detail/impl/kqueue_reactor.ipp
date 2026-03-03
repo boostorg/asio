@@ -43,6 +43,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
 
 kqueue_reactor::kqueue_reactor(boost::asio::execution_context& ctx)
@@ -609,6 +610,7 @@ timespec* kqueue_reactor::get_timeout(long usec, timespec& ts)
 }
 
 } // namespace detail
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

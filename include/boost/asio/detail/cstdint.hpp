@@ -20,6 +20,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 
 using std::int16_t;
 using std::int_least16_t;
@@ -36,6 +37,7 @@ using std::uint_least64_t;
 using std::uintptr_t;
 using std::uintmax_t;
 
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

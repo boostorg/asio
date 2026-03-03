@@ -22,6 +22,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 
 multiple_exceptions::multiple_exceptions(
     std::exception_ptr first) noexcept
@@ -39,6 +40,7 @@ std::exception_ptr multiple_exceptions::first_exception() const
   return first_;
 }
 
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

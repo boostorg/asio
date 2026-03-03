@@ -21,6 +21,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 
 # if defined(GENERATING_DOCUMENTATION)
 
@@ -151,6 +152,7 @@ inline cancellation_type_t& operator^=(
   return x;
 }
 
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

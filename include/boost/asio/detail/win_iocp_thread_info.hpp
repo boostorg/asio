@@ -21,6 +21,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
 
 struct win_iocp_thread_info : public thread_info_base
@@ -28,6 +29,7 @@ struct win_iocp_thread_info : public thread_info_base
 };
 
 } // namespace detail
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

@@ -24,12 +24,14 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace posix {
 
 /// Typedef for the typical usage of a stream-oriented descriptor.
 typedef basic_stream_descriptor<> stream_descriptor;
 
 } // namespace posix
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

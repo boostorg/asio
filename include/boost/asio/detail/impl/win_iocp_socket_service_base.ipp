@@ -25,6 +25,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
 
 win_iocp_socket_service_base::win_iocp_socket_service_base(
@@ -813,6 +814,7 @@ void* win_iocp_socket_service_base::interlocked_exchange_pointer(
 }
 
 } // namespace detail
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

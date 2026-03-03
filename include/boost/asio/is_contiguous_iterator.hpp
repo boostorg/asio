@@ -23,6 +23,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 
 /// The is_contiguous_iterator class is a traits class that may be used to
 /// determine whether a type is a contiguous iterator.
@@ -39,6 +40,7 @@ struct is_contiguous_iterator :
 {
 };
 
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

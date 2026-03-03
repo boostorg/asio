@@ -23,6 +23,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
 
 class winsock_init_base
@@ -116,6 +117,7 @@ winsock_init_base::data winsock_init<Major, Minor>::data_;
 static const winsock_init<>& winsock_init_instance = winsock_init<>(false);
 
 } // namespace detail
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

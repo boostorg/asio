@@ -22,6 +22,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace placeholders {
 
 #if defined(GENERATING_DOCUMENTATION)
@@ -75,6 +76,7 @@ static BOOST_ASIO_INLINE_VARIABLE constexpr auto& signal_number
 #endif
 
 } // namespace placeholders
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

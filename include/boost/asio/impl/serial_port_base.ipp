@@ -37,6 +37,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 
 BOOST_ASIO_SYNC_OP_VOID serial_port_base::baud_rate::store(
     BOOST_ASIO_OPTION_STORAGE& storage, boost::system::error_code& ec) const
@@ -544,6 +545,7 @@ BOOST_ASIO_SYNC_OP_VOID serial_port_base::character_size::load(
   BOOST_ASIO_SYNC_OP_VOID_RETURN(ec);
 }
 
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

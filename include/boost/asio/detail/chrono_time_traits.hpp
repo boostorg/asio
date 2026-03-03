@@ -21,6 +21,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
 
 // Helper template to compute the greatest common divisor.
@@ -184,6 +185,7 @@ struct chrono_time_traits
 };
 
 } // namespace detail
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

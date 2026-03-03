@@ -29,6 +29,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace local {
 
 /// Encapsulates the flags needed for seq_packet UNIX sockets.
@@ -75,6 +76,7 @@ public:
 };
 
 } // namespace local
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

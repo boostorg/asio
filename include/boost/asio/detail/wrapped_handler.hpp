@@ -23,6 +23,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
 
 struct is_continuation_delegated
@@ -30,7 +31,8 @@ struct is_continuation_delegated
   template <typename Dispatcher, typename Handler>
   bool operator()(Dispatcher&, Handler& handler) const
   {
-    return boost_asio_handler_cont_helpers::is_continuation(handler);
+    return BOOST_ASIO_VERSIONED_NAME(handler_cont_helpers)::is_continuation(
+        handler);
   }
 };
 
@@ -213,6 +215,7 @@ inline bool asio_handler_is_continuation(
 }
 
 } // namespace detail
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

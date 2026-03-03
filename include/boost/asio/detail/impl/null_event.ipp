@@ -35,6 +35,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
 
 void null_event::do_wait()
@@ -68,6 +69,7 @@ void null_event::do_wait_for_usec(long usec)
 }
 
 } // namespace detail
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

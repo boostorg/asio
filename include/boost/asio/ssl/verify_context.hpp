@@ -24,6 +24,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace ssl {
 
 /// A simple wrapper around the X509_STORE_CTX type, used during verification of
@@ -61,6 +62,7 @@ private:
 };
 
 } // namespace ssl
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

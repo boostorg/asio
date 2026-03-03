@@ -11,6 +11,8 @@
 #ifndef BOOST_ASIO_DETAIL_CONFIG_HPP
 #define BOOST_ASIO_DETAIL_CONFIG_HPP
 
+#include <boost/asio/version.hpp>
+
 #if defined(BOOST_ASIO_STANDALONE)
 # define BOOST_ASIO_DISABLE_BOOST_ALIGN 1
 # define BOOST_ASIO_DISABLE_BOOST_ARRAY 1
@@ -691,6 +693,11 @@
          // && !WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 # endif // defined(_WIN32_WINNT) && (_WIN32_WINNT >= 0x0603)
 #endif // !defined(BOOST_ASIO_WINDOWS_APP)
+#if defined(BOOST_ASIO_WINDOWS_APP)
+# define BOOST_ASIO_VERSION_TAG_a a
+#else // defined(BOOST_ASIO_WINDOWS_APP)
+# define BOOST_ASIO_VERSION_TAG_a
+#endif // defined(BOOST_ASIO_WINDOWS_APP)
 
 // Legacy WinRT target. Windows App is preferred.
 #if !defined(BOOST_ASIO_WINDOWS_RUNTIME)
@@ -718,6 +725,11 @@
 #  endif // defined(BOOST_ASIO_HAS_BOOST_CONFIG) && defined(BOOST_WINDOWS)
 # endif // !defined(BOOST_ASIO_WINDOWS_RUNTIME)
 #endif // !defined(BOOST_ASIO_WINDOWS)
+#if defined(BOOST_ASIO_WINDOWS)
+# define BOOST_ASIO_VERSION_TAG_b b
+#else // defined(BOOST_ASIO_WINDOWS)
+# define BOOST_ASIO_VERSION_TAG_b
+#endif // defined(BOOST_ASIO_WINDOWS)
 
 // Windows: target OS version.
 #if defined(BOOST_ASIO_WINDOWS) || defined(__CYGWIN__)
@@ -790,6 +802,11 @@
 #  endif // defined(_WIN32_WINNT) && (_WIN32_WINNT >= 0x0400)
 # endif // defined(BOOST_ASIO_WINDOWS) || defined(__CYGWIN__)
 #endif // !defined(BOOST_ASIO_HAS_IOCP)
+#if defined(BOOST_ASIO_HAS_IOCP)
+# define BOOST_ASIO_VERSION_TAG_c c
+#else // defined(BOOST_ASIO_HAS_IOCP)
+# define BOOST_ASIO_VERSION_TAG_c
+#endif // defined(BOOST_ASIO_HAS_IOCP)
 
 // On POSIX (and POSIX-like) platforms we need to include unistd.h in order to
 // get access to the various platform feature macros, e.g. to be able to test
@@ -846,6 +863,26 @@
 #  endif // LINUX_VERSION_CODE < KERNEL_VERSION(5,10,0)
 # endif // defined(BOOST_ASIO_HAS_IO_URING)
 #endif // defined(__linux__)
+#if defined(BOOST_ASIO_HAS_EPOLL)
+# define BOOST_ASIO_VERSION_TAG_d d
+#else // defined(BOOST_ASIO_HAS_EPOLL)
+# define BOOST_ASIO_VERSION_TAG_d
+#endif // defined(BOOST_ASIO_HAS_EPOLL)
+#if defined(BOOST_ASIO_HAS_EVENTFD)
+# define BOOST_ASIO_VERSION_TAG_e e
+#else // defined(BOOST_ASIO_HAS_EVENTFD)
+# define BOOST_ASIO_VERSION_TAG_e
+#endif // defined(BOOST_ASIO_HAS_EVENTFD)
+#if defined(BOOST_ASIO_HAS_TIMERFD)
+# define BOOST_ASIO_VERSION_TAG_f f
+#else // defined(BOOST_ASIO_HAS_TIMERFD)
+# define BOOST_ASIO_VERSION_TAG_f
+#endif // defined(BOOST_ASIO_HAS_TIMERFD)
+#if defined(BOOST_ASIO_HAS_IO_URING)
+# define BOOST_ASIO_VERSION_TAG_g g
+#else // defined(BOOST_ASIO_HAS_IO_URING)
+# define BOOST_ASIO_VERSION_TAG_g
+#endif // defined(BOOST_ASIO_HAS_IO_URING)
 
 // Linux: io_uring is used instead of epoll.
 #if !defined(BOOST_ASIO_HAS_IO_URING_AS_DEFAULT)
@@ -853,6 +890,11 @@
 #  define BOOST_ASIO_HAS_IO_URING_AS_DEFAULT 1
 # endif // !defined(BOOST_ASIO_HAS_EPOLL) && defined(BOOST_ASIO_HAS_IO_URING)
 #endif // !defined(BOOST_ASIO_HAS_IO_URING_AS_DEFAULT)
+#if defined(BOOST_ASIO_HAS_IO_URING_AS_DEFAULT)
+# define BOOST_ASIO_VERSION_TAG_h h
+#else // defined(BOOST_ASIO_HAS_IO_URING_AS_DEFAULT)
+# define BOOST_ASIO_VERSION_TAG_h
+#endif // defined(BOOST_ASIO_HAS_IO_URING_AS_DEFAULT)
 
 // Mac OS X, FreeBSD, NetBSD, OpenBSD: kqueue.
 #if (defined(__MACH__) && defined(__APPLE__)) \
@@ -868,6 +910,11 @@
        //   || defined(__FreeBSD__)
        //   || defined(__NetBSD__)
        //   || defined(__OpenBSD__)
+#if defined(BOOST_ASIO_HAS_KQUEUE)
+# define BOOST_ASIO_VERSION_TAG_i i
+#else // defined(BOOST_ASIO_HAS_KQUEUE)
+# define BOOST_ASIO_VERSION_TAG_i
+#endif // defined(BOOST_ASIO_HAS_KQUEUE)
 
 // Solaris: /dev/poll.
 #if defined(__sun)
@@ -1041,6 +1088,11 @@
 #  define BOOST_ASIO_NO_EXCEPTIONS 1
 # endif // !defined(BOOST_NO_EXCEPTIONS)
 #endif // !defined(BOOST_ASIO_NO_EXCEPTIONS)
+#if defined(BOOST_ASIO_NO_EXCEPTIONS)
+# define BOOST_ASIO_VERSION_TAG_j j
+#else // defined(BOOST_ASIO_NO_EXCEPTIONS)
+# define BOOST_ASIO_VERSION_TAG_j
+#endif // defined(BOOST_ASIO_NO_EXCEPTIONS)
 
 // Whether the typeid operator is supported.
 #if !defined(BOOST_ASIO_NO_TYPEID)
@@ -1072,6 +1124,11 @@
 #  endif // defined(BOOST_ASIO_HAS_BOOST_CONFIG) && defined(BOOST_HAS_THREADS)
 # endif // !defined(BOOST_ASIO_DISABLE_THREADS)
 #endif // !defined(BOOST_ASIO_HAS_THREADS)
+#if defined(BOOST_ASIO_HAS_THREADS)
+# define BOOST_ASIO_VERSION_TAG_k k
+#else // defined(BOOST_ASIO_HAS_THREADS)
+# define BOOST_ASIO_VERSION_TAG_k
+#endif // defined(BOOST_ASIO_HAS_THREADS)
 
 // POSIX threads.
 #if !defined(BOOST_ASIO_HAS_PTHREADS)
@@ -1085,6 +1142,11 @@
 #  endif // defined(BOOST_ASIO_HAS_BOOST_CONFIG) && defined(BOOST_HAS_PTHREADS)
 # endif // defined(BOOST_ASIO_HAS_THREADS)
 #endif // !defined(BOOST_ASIO_HAS_PTHREADS)
+#if defined(BOOST_ASIO_HAS_PTHREADS)
+# define BOOST_ASIO_VERSION_TAG_l l
+#else // defined(BOOST_ASIO_HAS_PTHREADS)
+# define BOOST_ASIO_VERSION_TAG_l
+#endif // defined(BOOST_ASIO_HAS_PTHREADS)
 
 // Helper to prevent macro expansion.
 #define BOOST_ASIO_PREVENT_MACRO_SUBSTITUTION
@@ -1431,5 +1493,62 @@
 #  endif // defined(__APPLE__)
 # endif // !defined(BOOST_ASIO_DISABLE_SNPRINTF)
 #endif // !defined(BOOST_ASIO_HAS_SNPRINTF)
+
+// Token-pasting helper (two levels needed to allow macro arguments to expand).
+#define BOOST_ASIO_DETAIL_CAT_(a, b) a ## b
+#define BOOST_ASIO_DETAIL_CAT(a, b) BOOST_ASIO_DETAIL_CAT_(a, b)
+
+// Version tags for user-enabled features with no auto-detection in this file.
+#if defined(BOOST_ASIO_ENABLE_HANDLER_TRACKING)
+# define BOOST_ASIO_VERSION_TAG_m m
+#else // defined(BOOST_ASIO_ENABLE_HANDLER_TRACKING)
+# define BOOST_ASIO_VERSION_TAG_m
+#endif // defined(BOOST_ASIO_ENABLE_HANDLER_TRACKING)
+
+// Automatic version namespace v<BOOST_ASIO_VERSION>_<tags>.
+#if defined(BOOST_ASIO_ENABLE_VERSION_NAMESPACE)
+# if !defined(BOOST_ASIO_VERSION_NAMESPACE)
+#  define BOOST_ASIO_VERSION_NAMESPACE \
+  BOOST_ASIO_DETAIL_CAT(v, \
+  BOOST_ASIO_DETAIL_CAT(BOOST_ASIO_VERSION, \
+  BOOST_ASIO_DETAIL_CAT(_, \
+  BOOST_ASIO_DETAIL_CAT(BOOST_ASIO_VERSION_TAG_a, \
+  BOOST_ASIO_DETAIL_CAT(BOOST_ASIO_VERSION_TAG_b, \
+  BOOST_ASIO_DETAIL_CAT(BOOST_ASIO_VERSION_TAG_c, \
+  BOOST_ASIO_DETAIL_CAT(BOOST_ASIO_VERSION_TAG_d, \
+  BOOST_ASIO_DETAIL_CAT(BOOST_ASIO_VERSION_TAG_e, \
+  BOOST_ASIO_DETAIL_CAT(BOOST_ASIO_VERSION_TAG_f, \
+  BOOST_ASIO_DETAIL_CAT(BOOST_ASIO_VERSION_TAG_g, \
+  BOOST_ASIO_DETAIL_CAT(BOOST_ASIO_VERSION_TAG_h, \
+  BOOST_ASIO_DETAIL_CAT(BOOST_ASIO_VERSION_TAG_i, \
+  BOOST_ASIO_DETAIL_CAT(BOOST_ASIO_VERSION_TAG_j, \
+  BOOST_ASIO_DETAIL_CAT(BOOST_ASIO_VERSION_TAG_k, \
+  BOOST_ASIO_DETAIL_CAT(BOOST_ASIO_VERSION_TAG_l, \
+  BOOST_ASIO_VERSION_TAG_m)))))))))))))))
+# endif // !defined(BOOST_ASIO_VERSION_NAMESPACE)
+#endif // defined(BOOST_ASIO_ENABLE_VERSION_NAMESPACE)
+
+// Optional inline namespace used for library versioning.
+#if defined(BOOST_ASIO_VERSION_NAMESPACE)
+# define BOOST_ASIO_INLINE_NAMESPACE_BEGIN \
+  inline namespace BOOST_ASIO_VERSION_NAMESPACE {
+# define BOOST_ASIO_INLINE_NAMESPACE_END }
+#endif // defined(BOOST_ASIO_VERSION_NAMESPACE)
+#if !defined(BOOST_ASIO_INLINE_NAMESPACE_BEGIN)
+# define BOOST_ASIO_INLINE_NAMESPACE_BEGIN
+#endif // !defined(BOOST_ASIO_INLINE_NAMESPACE_BEGIN)
+#if !defined(BOOST_ASIO_INLINE_NAMESPACE_END)
+# define BOOST_ASIO_INLINE_NAMESPACE_END
+#endif // !defined(BOOST_ASIO_INLINE_NAMESPACE_END)
+
+// Helper macro used to tag global symbols (extern "C" functions and some helper
+// namespaces) with the version namespace name.
+#if defined(BOOST_ASIO_VERSION_NAMESPACE)
+# define BOOST_ASIO_VERSIONED_NAME(name) \
+    BOOST_ASIO_DETAIL_CAT(BOOST_ASIO_DETAIL_CAT(asio_, \
+      BOOST_ASIO_VERSION_NAMESPACE), _ ## name)
+#else // defined(BOOST_ASIO_VERSION_NAMESPACE)
+# define BOOST_ASIO_VERSIONED_NAME(name) asio_ ## name
+#endif // defined(BOOST_ASIO_VERSION_NAMESPACE)
 
 #endif // BOOST_ASIO_DETAIL_CONFIG_HPP

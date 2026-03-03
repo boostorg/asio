@@ -32,6 +32,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace experimental {
 namespace awaitable_operators {
 namespace detail {
@@ -530,6 +531,7 @@ awaitable<std::variant<T..., U>, Executor> operator||(
 
 } // namespace awaitable_operators
 } // namespace experimental
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

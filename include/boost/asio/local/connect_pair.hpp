@@ -30,6 +30,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace local {
 
 /// Create a pair of connected sockets.
@@ -92,6 +93,7 @@ inline BOOST_ASIO_SYNC_OP_VOID connect_pair(
 }
 
 } // namespace local
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

@@ -24,6 +24,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 
 template <typename Blocking, typename Relationship, typename Allocator>
 inline system_context&
@@ -173,6 +174,7 @@ void basic_system_executor<Blocking, Relationship, Allocator>::defer(
 }
 #endif // !defined(BOOST_ASIO_NO_TS_EXECUTORS)
 
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

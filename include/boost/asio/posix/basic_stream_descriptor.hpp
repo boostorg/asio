@@ -25,6 +25,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace posix {
 
 /// Provides stream-oriented descriptor functionality.
@@ -550,6 +551,7 @@ private:
 };
 
 } // namespace posix
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

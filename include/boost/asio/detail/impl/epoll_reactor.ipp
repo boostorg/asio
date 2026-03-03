@@ -35,6 +35,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
 
 epoll_reactor::epoll_reactor(boost::asio::execution_context& ctx)
@@ -835,6 +836,7 @@ void epoll_reactor::descriptor_state::do_complete(
 }
 
 } // namespace detail
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

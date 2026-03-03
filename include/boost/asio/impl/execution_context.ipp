@@ -23,6 +23,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 
 execution_context::execution_context()
   : execution_context(
@@ -114,6 +115,7 @@ invalid_service_owner::invalid_service_owner()
 {
 }
 
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

@@ -45,6 +45,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 
 namespace detail {
 #if defined(BOOST_ASIO_HAS_IOCP)
@@ -569,8 +570,8 @@ public:
 
 #if !defined(GENERATING_DOCUMENTATION)
 private:
-  friend struct boost_asio_require_fn::impl;
-  friend struct boost_asio_prefer_fn::impl;
+  friend struct BOOST_ASIO_VERSIONED_NAME(require_fn)::impl;
+  friend struct BOOST_ASIO_VERSIONED_NAME(prefer_fn)::impl;
 #endif // !defined(GENERATING_DOCUMENTATION)
 
   /// Obtain an executor with the @c blocking.possibly property.
@@ -711,7 +712,7 @@ private:
 
 #if !defined(GENERATING_DOCUMENTATION)
 private:
-  friend struct boost_asio_query_fn::impl;
+  friend struct BOOST_ASIO_VERSIONED_NAME(query_fn)::impl;
   friend struct boost::asio::execution::detail::mapping_t<0>;
   friend struct boost::asio::execution::detail::inline_exception_handling_t<0>;
   friend struct boost::asio::execution::detail::outstanding_work_t<0>;
@@ -1345,6 +1346,7 @@ struct is_executor<io_context> : false_type
 
 #endif // !defined(GENERATING_DOCUMENTATION)
 
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

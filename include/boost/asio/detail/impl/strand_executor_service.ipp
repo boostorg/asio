@@ -22,6 +22,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
 
 strand_executor_service::strand_executor_service(execution_context& ctx)
@@ -153,6 +154,7 @@ void strand_executor_service::run_ready_handlers(implementation_type& impl)
 }
 
 } // namespace detail
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

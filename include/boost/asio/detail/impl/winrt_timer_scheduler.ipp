@@ -26,6 +26,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
 
 winrt_timer_scheduler::winrt_timer_scheduler(execution_context& context)
@@ -106,6 +107,7 @@ void winrt_timer_scheduler::do_remove_timer_queue(timer_queue_base& queue)
 }
 
 } // namespace detail
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

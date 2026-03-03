@@ -27,6 +27,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
 
 void posix_tss_ptr_create(pthread_key_t& key)
@@ -38,6 +39,7 @@ void posix_tss_ptr_create(pthread_key_t& key)
 }
 
 } // namespace detail
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

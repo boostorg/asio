@@ -24,6 +24,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
 
 #if defined(BOOST_ASIO_WINDOWS) || defined(__CYGWIN__)
@@ -33,6 +34,7 @@ typedef posix_fd_set_adapter fd_set_adapter;
 #endif
 
 } // namespace detail
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

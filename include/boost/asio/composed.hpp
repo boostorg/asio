@@ -27,6 +27,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
 
 template <typename Impl, typename Work,
@@ -187,7 +188,7 @@ inline bool asio_handler_is_continuation(
     composed_op<Impl, Work, Handler, Signature>* this_handler)
 {
   return this_handler->invocations_ > 1 ? true
-    : boost_asio_handler_cont_helpers::is_continuation(
+    : BOOST_ASIO_VERSIONED_NAME(handler_cont_helpers)::is_continuation(
         this_handler->handler_);
 }
 
@@ -407,6 +408,7 @@ inline auto composed(Implementation&& implementation,
             io_objects_or_executors))...));
 }
 
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

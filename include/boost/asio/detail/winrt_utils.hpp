@@ -35,6 +35,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
 namespace winrt_utils {
 
@@ -98,6 +99,7 @@ inline Windows::Storage::Streams::IBuffer^ buffer_dup(
 
 } // namespace winrt_utils
 } // namespace detail
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

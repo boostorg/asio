@@ -27,6 +27,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 
 /// Submits a completion token or function object for execution.
 /**
@@ -505,6 +506,7 @@ inline auto dispatch(Function&& function, ExecutionContext& ctx,
         token, static_cast<Function&&>(function));
 }
 
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

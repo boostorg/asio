@@ -28,6 +28,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace ssl {
 
 struct context::bio_cleanup
@@ -1316,6 +1317,7 @@ boost::system::error_code context::translate_error(long error)
 }
 
 } // namespace ssl
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

@@ -49,6 +49,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
 
 #if defined(NSIG) && (NSIG > 0)
@@ -59,7 +60,8 @@ enum { max_signal_number = 128 };
 
 extern BOOST_ASIO_DECL struct signal_state* get_signal_state();
 
-extern "C" BOOST_ASIO_DECL void boost_asio_signal_handler(int signal_number);
+extern "C" BOOST_ASIO_DECL void BOOST_ASIO_VERSIONED_NAME(signal_handler)(
+    int signal_number);
 
 class signal_set_service :
   public execution_context_service_base<signal_set_service>
@@ -282,6 +284,7 @@ private:
 };
 
 } // namespace detail
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

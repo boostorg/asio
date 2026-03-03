@@ -25,12 +25,14 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace windows {
 
 /// Typedef for the typical usage of an object handle.
 typedef basic_object_handle<> object_handle;
 
 } // namespace windows
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

@@ -24,10 +24,12 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 
 /// Typedef for the typical usage of a random-access file.
 typedef basic_random_access_file<> random_access_file;
 
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

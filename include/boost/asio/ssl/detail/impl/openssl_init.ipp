@@ -28,6 +28,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace ssl {
 namespace detail {
 
@@ -163,6 +164,7 @@ STACK_OF(SSL_COMP)* openssl_init_base::get_null_compression_methods()
 
 } // namespace detail
 } // namespace ssl
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

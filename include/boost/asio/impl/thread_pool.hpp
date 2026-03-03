@@ -27,6 +27,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 
 #if !defined(BOOST_ASIO_NO_TS_EXECUTORS)
 
@@ -313,6 +314,7 @@ void thread_pool::basic_executor_type<Allocator, Bits>::defer(
 }
 #endif // !defined(BOOST_ASIO_NO_TS_EXECUTORS)
 
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

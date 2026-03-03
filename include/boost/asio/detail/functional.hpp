@@ -20,6 +20,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
 
 using std::function;
@@ -29,6 +30,7 @@ using std::function;
 using std::ref;
 using std::reference_wrapper;
 
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

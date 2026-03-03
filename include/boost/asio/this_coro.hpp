@@ -22,6 +22,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace this_coro {
 
 /// Awaitable type that returns the executor of the current coroutine.
@@ -261,6 +262,7 @@ throw_if_cancelled(bool value)
 #endif // defined(GENERATING_DOCUMENTATION)
 
 } // namespace this_coro
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

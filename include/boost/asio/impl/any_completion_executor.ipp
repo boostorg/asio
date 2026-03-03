@@ -25,6 +25,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 
 any_completion_executor::any_completion_executor() noexcept
   : base_type()
@@ -118,6 +119,7 @@ any_completion_executor any_completion_executor::prefer(
   return static_cast<const base_type&>(*this).prefer(p);
 }
 
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

@@ -30,6 +30,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
 
 #if defined(BOOST_ASIO_HAS_STD_SOURCE_LOCATION)
@@ -39,6 +40,7 @@ using std::experimental::source_location;
 #endif // defined(BOOST_ASIO_HAS_STD_EXPERIMENTAL_SOURCE_LOCATION)
 
 } // namespace detail
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

@@ -96,6 +96,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
 
 #if defined(BOOST_ASIO_WINDOWS_RUNTIME)
@@ -425,6 +426,7 @@ const int enable_connection_aborted_option = 1;
 const int always_fail_option = 2;
 
 } // namespace detail
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

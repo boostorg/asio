@@ -31,6 +31,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
 
 using std::allocate_shared;
@@ -150,6 +151,7 @@ inline void aligned_delete(void* ptr)
 #endif // defined(BOOST_ASIO_MSVC)
 }
 
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

@@ -29,6 +29,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace generic {
 namespace detail {
 
@@ -104,6 +105,7 @@ void endpoint::init(const void* sock_addr,
 
 } // namespace detail
 } // namespace generic
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

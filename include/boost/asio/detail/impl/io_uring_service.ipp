@@ -31,6 +31,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
 
 io_uring_service::io_uring_service(boost::asio::execution_context& ctx)
@@ -910,6 +911,7 @@ io_uring_service::io_object::io_object(bool locking, int spin_count)
 }
 
 } // namespace detail
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

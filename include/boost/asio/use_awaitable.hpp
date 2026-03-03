@@ -32,6 +32,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 
 /// A @ref completion_token that represents the currently executing coroutine.
 /**
@@ -151,6 +152,7 @@ BOOST_ASIO_INLINE_VARIABLE constexpr use_awaitable_t<> use_awaitable;
 BOOST_ASIO_INLINE_VARIABLE constexpr use_awaitable_t<> use_awaitable(0, 0, 0);
 #endif
 
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

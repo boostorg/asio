@@ -28,6 +28,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 
 /// (Deprecated) Time traits suitable for use with the deadline timer.
 template <typename Time>
@@ -81,6 +82,7 @@ struct BOOST_ASIO_DEPRECATED_MSG("Use basic_waitable_timer and wait_traits")
   }
 };
 
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

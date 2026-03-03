@@ -25,6 +25,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
 
 io_uring_socket_service_base::io_uring_socket_service_base(
@@ -241,6 +242,7 @@ void io_uring_socket_service_base::start_accept_op(
 }
 
 } // namespace detail
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

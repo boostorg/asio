@@ -35,6 +35,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 
 namespace detail
 {
@@ -283,7 +284,7 @@ namespace detail
         MutableBufferIterator, CompletionCondition, ReadHandler>* this_handler)
   {
     return this_handler->start_ == 0 ? true
-      : boost_asio_handler_cont_helpers::is_continuation(
+      : BOOST_ASIO_VERSIONED_NAME(handler_cont_helpers)::is_continuation(
           this_handler->handler_);
   }
 
@@ -478,7 +479,7 @@ namespace detail
         CompletionCondition, ReadHandler>* this_handler)
   {
     return this_handler->start_ == 0 ? true
-      : boost_asio_handler_cont_helpers::is_continuation(
+      : BOOST_ASIO_VERSIONED_NAME(handler_cont_helpers)::is_continuation(
           this_handler->handler_);
   }
 
@@ -556,6 +557,7 @@ struct associator<Associator,
 #endif // !defined(BOOST_ASIO_NO_IOSTREAM)
 #endif // !defined(BOOST_ASIO_NO_EXTENSIONS)
 
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

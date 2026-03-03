@@ -21,6 +21,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 
 /// Typedef for a timer based on the steady clock.
 /**
@@ -33,6 +34,7 @@ namespace asio {
  */
 typedef basic_waitable_timer<chrono::steady_clock> steady_timer;
 
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

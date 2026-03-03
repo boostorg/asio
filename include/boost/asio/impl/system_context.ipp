@@ -22,6 +22,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 
 struct system_context::thread_function
 {
@@ -87,6 +88,7 @@ detail::scheduler& system_context::add_scheduler(detail::scheduler* s)
   return *scoped_impl.release();
 }
 
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

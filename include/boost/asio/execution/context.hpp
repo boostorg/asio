@@ -30,6 +30,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 
 #if defined(GENERATING_DOCUMENTATION)
 
@@ -185,6 +186,7 @@ struct static_query<T, execution::context_t,
 
 #endif // defined(GENERATING_DOCUMENTATION)
 
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

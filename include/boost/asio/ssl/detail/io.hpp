@@ -27,6 +27,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace ssl {
 namespace detail {
 
@@ -336,7 +337,8 @@ inline bool asio_handler_is_continuation(
     io_op<Stream, Operation, Handler>* this_handler)
 {
   return this_handler->start_ == 0 ? true
-    : boost_asio_handler_cont_helpers::is_continuation(this_handler->handler_);
+    : BOOST_ASIO_VERSIONED_NAME(handler_cont_helpers)::is_continuation(
+        this_handler->handler_);
 }
 
 template <typename Stream, typename Operation, typename Handler>
@@ -373,6 +375,7 @@ struct associator<Associator,
   }
 };
 
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

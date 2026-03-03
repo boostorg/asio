@@ -28,6 +28,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 
 /// The file_base class is used as a base for the basic_stream_file and
 /// basic_random_access_file class templates so that we have a common place to
@@ -157,6 +158,7 @@ protected:
   }
 };
 
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

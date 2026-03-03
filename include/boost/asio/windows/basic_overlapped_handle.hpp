@@ -35,6 +35,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace windows {
 
 /// Provides Windows handle functionality for objects that support
@@ -445,6 +446,7 @@ private:
 };
 
 } // namespace windows
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

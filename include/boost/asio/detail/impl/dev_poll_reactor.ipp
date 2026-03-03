@@ -29,6 +29,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
 
 dev_poll_reactor::dev_poll_reactor(boost::asio::execution_context& ctx)
@@ -461,6 +462,7 @@ void dev_poll_reactor::cancel_ops_unlocked(socket_type descriptor,
 }
 
 } // namespace detail
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

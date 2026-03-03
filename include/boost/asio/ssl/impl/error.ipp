@@ -23,6 +23,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace error {
 namespace detail {
 
@@ -118,6 +119,7 @@ const boost::system::error_category& get_stream_category()
 
 } // namespace error
 } // namespace ssl
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

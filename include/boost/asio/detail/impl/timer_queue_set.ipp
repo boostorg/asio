@@ -22,6 +22,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
 
 timer_queue_set::timer_queue_set()
@@ -95,6 +96,7 @@ void timer_queue_set::get_all_timers(op_queue<operation>& ops)
 }
 
 } // namespace detail
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

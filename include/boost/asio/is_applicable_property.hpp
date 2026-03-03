@@ -20,6 +20,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
 
 template <typename T, typename Property, typename = void>
@@ -57,6 +58,7 @@ constexpr const bool is_applicable_property_v
 
 #endif // defined(BOOST_ASIO_HAS_VARIABLE_TEMPLATES)
 
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

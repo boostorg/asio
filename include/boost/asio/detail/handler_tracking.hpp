@@ -19,9 +19,11 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 
 class execution_context;
 
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 
@@ -38,6 +40,7 @@ class execution_context;
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
 
 #if defined(BOOST_ASIO_CUSTOM_HANDLER_TRACKING)
@@ -256,6 +259,7 @@ private:
 #endif // defined(BOOST_ASIO_ENABLE_HANDLER_TRACKING)
 
 } // namespace detail
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

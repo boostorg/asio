@@ -27,6 +27,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace posix {
 
 /// The descriptor_base class is used as a base for the descriptor class as a
@@ -81,6 +82,7 @@ protected:
 };
 
 } // namespace posix
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

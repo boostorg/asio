@@ -20,6 +20,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace chrono {
 
 using std::chrono::duration;
@@ -41,6 +42,7 @@ using std::chrono::system_clock;
 using std::chrono::high_resolution_clock;
 
 } // namespace chrono
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

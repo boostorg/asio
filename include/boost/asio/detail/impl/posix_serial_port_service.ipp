@@ -28,6 +28,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
 
 posix_serial_port_service::posix_serial_port_service(
@@ -159,6 +160,7 @@ boost::system::error_code posix_serial_port_service::do_get_option(
 }
 
 } // namespace detail
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

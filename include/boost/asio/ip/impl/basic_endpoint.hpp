@@ -23,6 +23,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace ip {
 
 template <typename Elem, typename Traits, typename InternetProtocol>
@@ -35,6 +36,7 @@ std::basic_ostream<Elem, Traits>& operator<<(
 }
 
 } // namespace ip
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

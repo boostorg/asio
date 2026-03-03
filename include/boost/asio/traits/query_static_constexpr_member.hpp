@@ -28,6 +28,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace traits {
 
 template <typename T, typename Property, typename = void>
@@ -95,6 +96,7 @@ struct query_static_constexpr_member :
 };
 
 } // namespace traits
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

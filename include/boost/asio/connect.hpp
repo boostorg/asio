@@ -25,6 +25,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 
 namespace detail
 {
@@ -1012,6 +1013,7 @@ inline auto async_connect(basic_socket<Protocol, Executor>& s,
 
 /*@}*/
 
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

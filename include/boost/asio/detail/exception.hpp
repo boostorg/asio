@@ -20,11 +20,13 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 
 using std::exception_ptr;
 using std::current_exception;
 using std::rethrow_exception;
 
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

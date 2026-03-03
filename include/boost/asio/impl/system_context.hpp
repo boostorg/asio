@@ -21,6 +21,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 
 inline system_context::executor_type
 system_context::get_executor() noexcept
@@ -28,6 +29,7 @@ system_context::get_executor() noexcept
   return system_executor();
 }
 
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

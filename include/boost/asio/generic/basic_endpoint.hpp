@@ -22,6 +22,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace generic {
 
 /// Describes an endpoint for any socket type.
@@ -183,6 +184,7 @@ private:
 };
 
 } // namespace generic
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

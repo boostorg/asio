@@ -29,6 +29,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
 
 reactive_descriptor_service::reactive_descriptor_service(
@@ -221,6 +222,7 @@ void reactive_descriptor_service::do_start_op(implementation_type& impl,
 }
 
 } // namespace detail
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

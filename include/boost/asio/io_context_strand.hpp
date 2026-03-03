@@ -30,6 +30,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 
 /// Provides serialised handler execution.
 /**
@@ -286,6 +287,7 @@ private:
   mutable boost::asio::detail::strand_service::implementation_type impl_;
 };
 
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

@@ -23,6 +23,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace ip {
 namespace multicast {
 
@@ -185,6 +186,7 @@ typedef boost::asio::ip::detail::socket_option::multicast_enable_loopback<
 
 } // namespace multicast
 } // namespace ip
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

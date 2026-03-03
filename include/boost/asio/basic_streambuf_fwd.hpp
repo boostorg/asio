@@ -23,6 +23,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 
 template <typename Allocator = std::allocator<char>>
 class basic_streambuf;
@@ -30,6 +31,7 @@ class basic_streambuf;
 template <typename Allocator = std::allocator<char>>
 class basic_streambuf_ref;
 
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

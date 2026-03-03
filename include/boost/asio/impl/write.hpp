@@ -33,6 +33,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 
 namespace detail
 {
@@ -401,7 +402,7 @@ namespace detail
         CompletionCondition, WriteHandler>* this_handler)
   {
     return this_handler->start_ == 0 ? true
-      : boost_asio_handler_cont_helpers::is_continuation(
+      : BOOST_ASIO_VERSIONED_NAME(handler_cont_helpers)::is_continuation(
           this_handler->handler_);
   }
 
@@ -555,7 +556,7 @@ namespace detail
       write_dynbuf_v1_op<AsyncWriteStream, DynamicBuffer_v1,
         CompletionCondition, WriteHandler>* this_handler)
   {
-    return boost_asio_handler_cont_helpers::is_continuation(
+    return BOOST_ASIO_VERSIONED_NAME(handler_cont_helpers)::is_continuation(
         this_handler->handler_);
   }
 
@@ -699,7 +700,7 @@ namespace detail
       write_dynbuf_v2_op<AsyncWriteStream, DynamicBuffer_v2,
         CompletionCondition, WriteHandler>* this_handler)
   {
-    return boost_asio_handler_cont_helpers::is_continuation(
+    return BOOST_ASIO_VERSIONED_NAME(handler_cont_helpers)::is_continuation(
         this_handler->handler_);
   }
 
@@ -774,6 +775,7 @@ struct associator<Associator,
 
 #endif // !defined(GENERATING_DOCUMENTATION)
 
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

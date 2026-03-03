@@ -26,6 +26,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace experimental {
 
 template<typename Signature = void(),
@@ -249,6 +250,7 @@ struct promise_handler<void(Ts...), Executor, Allocator>
 
 } // namespace detail
 } // namespace experimental
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

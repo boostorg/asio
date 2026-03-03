@@ -24,12 +24,14 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace windows {
 
 /// Typedef for the typical usage of a random-access handle.
 typedef basic_random_access_handle<> random_access_handle;
 
 } // namespace windows
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

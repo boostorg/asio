@@ -26,6 +26,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 
 #if defined(BOOST_ASIO_USE_TS_EXECUTOR_AS_DEFAULT)
 
@@ -324,6 +325,7 @@ struct prefer_member<any_completion_executor, Prop> :
 
 #endif // defined(BOOST_ASIO_USE_TS_EXECUTOR_AS_DEFAULT)
 
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

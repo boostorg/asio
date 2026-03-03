@@ -26,6 +26,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 
 class execution_context;
 class io_context;
@@ -576,6 +577,7 @@ template <typename Type>
 service_id<Type> execution_context_service_base<Type>::id;
 
 } // namespace detail
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

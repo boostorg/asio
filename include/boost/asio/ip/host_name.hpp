@@ -23,6 +23,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace ip {
 
 /// Get the current host name.
@@ -32,6 +33,7 @@ BOOST_ASIO_DECL std::string host_name();
 BOOST_ASIO_DECL std::string host_name(boost::system::error_code& ec);
 
 } // namespace ip
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

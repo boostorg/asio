@@ -11,8 +11,11 @@
 #ifndef BOOST_ASIO_COROUTINE_HPP
 #define BOOST_ASIO_COROUTINE_HPP
 
+#include <boost/asio/detail/config.hpp>
+
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
 
 class coroutine_ref;
@@ -287,6 +290,7 @@ private:
 };
 
 } // namespace detail
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

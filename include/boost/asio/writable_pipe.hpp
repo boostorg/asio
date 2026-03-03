@@ -24,10 +24,12 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 
 /// Typedef for the typical usage of a writable pipe.
 typedef basic_writable_pipe<> writable_pipe;
 
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

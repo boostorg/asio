@@ -25,6 +25,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
 
 #if !defined(BOOST_ASIO_HAS_THREADS)
@@ -68,6 +69,7 @@ inline long ref_count_read_acquire(atomic_count& a)
 #endif // !defined(BOOST_ASIO_HAS_THREADS)
 
 } // namespace detail
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

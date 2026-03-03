@@ -30,6 +30,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
 
 template <typename Executor, typename = void>
@@ -449,6 +450,7 @@ co_spawn(ExecutionContext& ctx, F&& f, CompletionToken&& token,
       std::forward<CompletionToken>(token));
 }
 
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

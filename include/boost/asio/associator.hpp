@@ -21,6 +21,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 
 /// Used to generically specialise associators for a type.
 template <template <typename, typename> class Associator,
@@ -29,6 +30,7 @@ struct associator
 {
 };
 
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

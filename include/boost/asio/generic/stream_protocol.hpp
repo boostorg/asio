@@ -28,6 +28,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace generic {
 
 /// Encapsulates the flags needed for a generic stream-oriented socket.
@@ -121,6 +122,7 @@ private:
 };
 
 } // namespace generic
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

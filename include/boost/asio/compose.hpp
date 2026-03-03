@@ -22,6 +22,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 
 /// Launch an asynchronous operation with a stateful implementation.
 /**
@@ -122,6 +123,7 @@ inline auto async_compose(Implementation&& implementation,
       token);
 }
 
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

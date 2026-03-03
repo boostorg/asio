@@ -34,6 +34,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 
 /// Automatically resizable buffer class based on std::streambuf.
 /**
@@ -442,6 +443,7 @@ private:
   basic_streambuf<Allocator>& sb_;
 };
 
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

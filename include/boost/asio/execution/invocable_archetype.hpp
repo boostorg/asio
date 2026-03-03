@@ -22,6 +22,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace execution {
 
 /// An archetypal function object used for determining adherence to the
@@ -36,6 +37,7 @@ struct invocable_archetype
 };
 
 } // namespace execution
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

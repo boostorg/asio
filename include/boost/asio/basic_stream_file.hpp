@@ -32,6 +32,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 
 #if !defined(BOOST_ASIO_BASIC_STREAM_FILE_FWD_DECL)
 #define BOOST_ASIO_BASIC_STREAM_FILE_FWD_DECL
@@ -735,6 +736,7 @@ private:
   };
 };
 
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

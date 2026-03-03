@@ -26,6 +26,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
 
 win_object_handle_service::win_object_handle_service(execution_context& context)
@@ -444,6 +445,7 @@ void win_object_handle_service::wait_callback(PVOID param, BOOLEAN)
 }
 
 } // namespace detail
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

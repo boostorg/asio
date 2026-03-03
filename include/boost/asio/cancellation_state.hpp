@@ -26,6 +26,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 
 /// A simple cancellation signal propagation filter.
 template <cancellation_type_t Mask>
@@ -229,6 +230,7 @@ private:
   impl_base* impl_;
 };
 
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

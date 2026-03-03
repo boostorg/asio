@@ -28,6 +28,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
 
 template <typename TimeTraits, typename Allocator>
@@ -115,6 +116,7 @@ void win_iocp_io_context::move_timer(timer_queue<TimeTraits, Allocator>& queue,
 }
 
 } // namespace detail
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

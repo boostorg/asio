@@ -22,6 +22,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 
 /// The signal_set_base class is used as a base for the basic_signal_set class
 /// templates so that we have a common place to define the flags enum.
@@ -165,6 +166,7 @@ inline signal_set_base::flags_t& operator^=(
   return x;
 }
 
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

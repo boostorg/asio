@@ -29,6 +29,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace ip {
 
 address_v4::address_v4(const address_v4::bytes_type& bytes)
@@ -144,6 +145,7 @@ address_v4 make_address_v4(string_view str,
 #endif // defined(BOOST_ASIO_HAS_STRING_VIEW)
 
 } // namespace ip
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

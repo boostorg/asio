@@ -28,6 +28,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
 
 template <typename Function, typename Allocator>
@@ -139,6 +140,7 @@ private:
  */
 BOOST_ASIO_INLINE_VARIABLE constexpr use_future_t<> use_future;
 
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

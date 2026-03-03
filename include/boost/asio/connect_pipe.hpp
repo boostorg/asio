@@ -28,6 +28,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
 
 #if defined(BOOST_ASIO_HAS_IOCP)
@@ -69,6 +70,7 @@ template <typename Executor1, typename Executor2>
 BOOST_ASIO_SYNC_OP_VOID connect_pipe(basic_readable_pipe<Executor1>& read_end,
     basic_writable_pipe<Executor2>& write_end, boost::system::error_code& ec);
 
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

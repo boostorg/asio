@@ -27,6 +27,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
 
 class cancellation_handler_base
@@ -235,6 +236,7 @@ inline cancellation_slot cancellation_signal::slot() noexcept
   return cancellation_slot(0, &handler_);
 }
 
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

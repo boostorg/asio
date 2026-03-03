@@ -23,6 +23,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 
 /// A @ref completion_token adapter used to specify that an error produced by an
 /// asynchronous operation is captured to an error_code variable.
@@ -96,6 +97,7 @@ redirect_error(CompletionToken&& completion_token,
       static_cast<CompletionToken&&>(completion_token), ec);
 }
 
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

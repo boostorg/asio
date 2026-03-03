@@ -26,6 +26,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 
 namespace detail
 {
@@ -495,6 +496,7 @@ inline buffers_iterator<BufferSequence> buffers_end(
   return buffers_iterator<BufferSequence>::end(buffers);
 }
 
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

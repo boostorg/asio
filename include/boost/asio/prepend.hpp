@@ -23,6 +23,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 
 /// Completion token type used to specify that the completion handler
 /// arguments should be passed additional values before the results of the
@@ -58,6 +59,7 @@ prepend(CompletionToken&& completion_token,
       static_cast<Values&&>(values)...);
 }
 
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

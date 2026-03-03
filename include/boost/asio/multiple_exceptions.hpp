@@ -21,6 +21,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 
 /// Exception thrown when there are multiple pending exceptions to rethrow.
 class multiple_exceptions
@@ -42,6 +43,7 @@ private:
   std::exception_ptr first_;
 };
 
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

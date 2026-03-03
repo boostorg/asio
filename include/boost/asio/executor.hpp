@@ -31,6 +31,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 
 /// Exception thrown when trying to access an empty polymorphic executor.
 class bad_executor
@@ -348,6 +349,7 @@ private:
 #endif // !defined(GENERATING_DOCUMENTATION)
 };
 
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

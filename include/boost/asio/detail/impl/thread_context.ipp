@@ -21,6 +21,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
 
 thread_info_base* thread_context::top_of_thread_call_stack()
@@ -29,6 +30,7 @@ thread_info_base* thread_context::top_of_thread_call_stack()
 }
 
 } // namespace detail
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

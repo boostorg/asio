@@ -22,6 +22,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace ip {
 
 /// Socket option for determining whether an IPv6 socket supports IPv6
@@ -63,6 +64,7 @@ typedef boost::asio::detail::socket_option::boolean<
 #endif
 
 } // namespace ip
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

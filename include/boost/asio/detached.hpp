@@ -23,6 +23,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 
 /// A @ref completion_token type used to specify that an asynchronous operation
 /// is detached.
@@ -97,6 +98,7 @@ public:
  */
 BOOST_ASIO_INLINE_VARIABLE constexpr detached_t detached;
 
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

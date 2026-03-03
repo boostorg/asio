@@ -21,6 +21,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace execution {
 
 /// Exception thrown when trying to access an empty polymorphic executor.
@@ -36,6 +37,7 @@ public:
 };
 
 } // namespace execution
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

@@ -63,6 +63,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace error {
 
 enum basic_errors
@@ -298,6 +299,7 @@ static const boost::system::error_category&
   = boost::asio::error::get_misc_category();
 
 } // namespace error
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 
@@ -329,6 +331,7 @@ template<> struct is_error_code_enum<boost::asio::error::misc_errors>
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace error {
 
 inline boost::system::error_code make_error_code(basic_errors e)
@@ -372,6 +375,7 @@ namespace resolver_errc {
   const error::netdb_errors try_again = error::host_not_found_try_again;
   using error::service_not_found;
 } // namespace resolver_errc
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

@@ -29,6 +29,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 
 #if defined(BOOST_ASIO_HAS_STD_STRING_VIEW)
 using std::basic_string_view;
@@ -38,6 +39,7 @@ using std::experimental::basic_string_view;
 using std::experimental::string_view;
 #endif // defined(BOOST_ASIO_HAS_STD_EXPERIMENTAL_STRING_VIEW)
 
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

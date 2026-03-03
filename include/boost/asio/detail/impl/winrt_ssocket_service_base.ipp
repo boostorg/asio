@@ -28,6 +28,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
 
 winrt_ssocket_service_base::winrt_ssocket_service_base(
@@ -618,6 +619,7 @@ void winrt_ssocket_service_base::start_receive_op(
 }
 
 } // namespace detail
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

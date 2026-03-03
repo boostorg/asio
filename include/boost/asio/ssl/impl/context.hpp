@@ -24,6 +24,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace ssl {
 
 template <typename VerifyCallback>
@@ -61,6 +62,7 @@ BOOST_ASIO_SYNC_OP_VOID context::set_password_callback(
 }
 
 } // namespace ssl
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

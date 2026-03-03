@@ -24,6 +24,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 
 cancellation_signal::~cancellation_signal()
 {
@@ -90,6 +91,7 @@ cancellation_slot::auto_delete_helper::~auto_delete_helper()
   }
 }
 
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

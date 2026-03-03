@@ -23,6 +23,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace ip {
 namespace unicast {
 
@@ -64,6 +65,7 @@ typedef boost::asio::ip::detail::socket_option::unicast_hops<
 
 } // namespace unicast
 } // namespace ip
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

@@ -24,6 +24,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
 
 template <typename T, typename Purpose = thread_info_base::default_tag>
@@ -108,6 +109,7 @@ struct get_recycling_allocator<std::allocator<T>, Purpose>
 };
 
 } // namespace detail
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

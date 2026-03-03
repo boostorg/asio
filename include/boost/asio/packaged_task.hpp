@@ -28,6 +28,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 
 /// Partial specialisation of @c async_result for @c std::packaged_task.
 template <typename Result, typename... Args, typename Signature>
@@ -57,6 +58,7 @@ private:
   return_type future_;
 };
 
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

@@ -24,6 +24,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 
 namespace detail {
 
@@ -261,6 +262,7 @@ inline detail::transfer_exactly_t transfer_exactly(std::size_t size)
 
 /*@}*/
 
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

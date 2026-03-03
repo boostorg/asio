@@ -33,6 +33,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace ip {
 
 /// Implements IP version 4 style addresses.
@@ -340,6 +341,7 @@ std::basic_ostream<Elem, Traits>& operator<<(
 #endif // !defined(BOOST_ASIO_NO_IOSTREAM)
 
 } // namespace ip
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

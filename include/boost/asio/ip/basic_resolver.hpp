@@ -41,6 +41,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace ip {
 
 #if !defined(BOOST_ASIO_IP_BASIC_RESOLVER_FWD_DECL)
@@ -1010,6 +1011,7 @@ private:
 };
 
 } // namespace ip
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

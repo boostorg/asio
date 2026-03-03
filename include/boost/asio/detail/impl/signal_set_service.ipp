@@ -34,6 +34,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
 
 struct signal_state
@@ -68,7 +69,7 @@ signal_state* get_signal_state()
   return &state;
 }
 
-void boost_asio_signal_handler(int signal_number)
+void BOOST_ASIO_VERSIONED_NAME(signal_handler)(int signal_number)
 {
 #if defined(BOOST_ASIO_WINDOWS) \
   || defined(BOOST_ASIO_WINDOWS_RUNTIME) \
@@ -88,7 +89,7 @@ void boost_asio_signal_handler(int signal_number)
        //   || defined(__CYGWIN__)
 
 #if defined(BOOST_ASIO_HAS_SIGNAL) && !defined(BOOST_ASIO_HAS_SIGACTION)
-  ::signal(signal_number, boost_asio_signal_handler);
+  ::signal(signal_number, BOOST_ASIO_VERSIONED_NAME(signal_handler));
 #endif // defined(BOOST_ASIO_HAS_SIGNAL) && !defined(BOOST_ASIO_HAS_SIGACTION)
 }
 
@@ -355,13 +356,14 @@ boost::system::error_code signal_set_service::add(
       using namespace std; // For memset.
       struct sigaction sa;
       memset(&sa, 0, sizeof(sa));
-      sa.sa_handler = boost_asio_signal_handler;
+      sa.sa_handler = BOOST_ASIO_VERSIONED_NAME(signal_handler);
       sigfillset(&sa.sa_mask);
       if (f != signal_set_base::flags::dont_care)
         sa.sa_flags = static_cast<int>(f);
       if (::sigaction(signal_number, &sa, 0) == -1)
 # else // defined(BOOST_ASIO_HAS_SIGACTION)
-      if (::signal(signal_number, boost_asio_signal_handler) == SIG_ERR)
+      if (::signal(signal_number, BOOST_ASIO_VERSIONED_NAME(signal_handler))
+          == SIG_ERR)
 # endif // defined(BOOST_ASIO_HAS_SIGACTION)
       {
 # if defined(BOOST_ASIO_WINDOWS) || defined(__CYGWIN__)
@@ -392,7 +394,7 @@ boost::system::error_code signal_set_service::add(
         }
         struct sigaction sa;
         memset(&sa, 0, sizeof(sa));
-        sa.sa_handler = boost_asio_signal_handler;
+        sa.sa_handler = BOOST_ASIO_VERSIONED_NAME(signal_handler);
         sigfillset(&sa.sa_mask);
         sa.sa_flags = static_cast<int>(f);
         if (::sigaction(signal_number, &sa, 0) == -1)
@@ -819,6 +821,7 @@ void signal_set_service::start_wait_op(
 }
 
 } // namespace detail
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

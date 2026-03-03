@@ -26,6 +26,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 
 #if !defined(BOOST_ASIO_EXECUTOR_WORK_GUARD_DECL)
 #define BOOST_ASIO_EXECUTOR_WORK_GUARD_DECL
@@ -356,6 +357,7 @@ make_work_guard(const T& t, ExecutionContext& ctx,
         t, ctx.get_executor()));
 }
 
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

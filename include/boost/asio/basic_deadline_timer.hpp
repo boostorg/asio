@@ -37,6 +37,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 
 /// (Deprecated: Use basic_waitable_timer.) Provides waitable timer
 /// functionality.
@@ -704,6 +705,7 @@ private:
     detail::deadline_timer_service<TimeTraits>, Executor> impl_;
 };
 
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

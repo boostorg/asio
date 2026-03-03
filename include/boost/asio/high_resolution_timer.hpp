@@ -21,6 +21,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 
 /// Typedef for a timer based on the high resolution clock.
 /**
@@ -35,6 +36,7 @@ typedef basic_waitable_timer<
     chrono::high_resolution_clock>
   high_resolution_timer;
 
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

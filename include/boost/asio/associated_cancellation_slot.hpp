@@ -25,6 +25,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 
 template <typename T, typename CancellationSlot>
 struct associated_cancellation_slot;
@@ -215,6 +216,7 @@ struct associated_cancellation_slot<reference_wrapper<T>, CancellationSlot>
   }
 };
 
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

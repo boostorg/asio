@@ -22,6 +22,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 
 /// The is_executor trait detects whether a type T meets the Executor type
 /// requirements.
@@ -40,6 +41,7 @@ struct is_executor
 {
 };
 
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

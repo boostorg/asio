@@ -44,6 +44,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 
 #if !defined(BOOST_ASIO_BASIC_FILE_FWD_DECL)
 #define BOOST_ASIO_BASIC_FILE_FWD_DECL
@@ -927,6 +928,7 @@ private:
   basic_file& operator=(const basic_file&) = delete;
 };
 
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

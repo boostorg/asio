@@ -41,6 +41,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
 
 void create_pipe(native_pipe_handle p[2], boost::system::error_code& ec)
@@ -142,6 +143,7 @@ void close_pipe(native_pipe_handle p)
 }
 
 } // namespace detail
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

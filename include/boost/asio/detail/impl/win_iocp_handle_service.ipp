@@ -26,6 +26,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
 
 class win_iocp_handle_service::overlapped_wrapper
@@ -611,6 +612,7 @@ void* win_iocp_handle_service::interlocked_exchange_pointer(
 }
 
 } // namespace detail
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

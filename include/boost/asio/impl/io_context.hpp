@@ -29,6 +29,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 
 template <typename Allocator>
 io_context::io_context(allocator_arg_t, const Allocator& a)
@@ -337,6 +338,7 @@ inline boost::asio::io_context& io_context::service::get_io_context()
   return static_cast<boost::asio::io_context&>(context());
 }
 
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

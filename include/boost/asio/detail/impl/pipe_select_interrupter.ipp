@@ -36,6 +36,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
 
 pipe_select_interrupter::pipe_select_interrupter(bool)
@@ -117,6 +118,7 @@ bool pipe_select_interrupter::reset()
 }
 
 } // namespace detail
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

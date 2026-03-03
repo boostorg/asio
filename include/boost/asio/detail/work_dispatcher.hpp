@@ -31,6 +31,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
 
 struct empty_work_function
@@ -297,6 +298,7 @@ private:
 #endif // !defined(BOOST_ASIO_NO_TS_EXECUTORS)
 
 } // namespace detail
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

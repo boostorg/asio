@@ -36,6 +36,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
 
 class buffer_registration_base
@@ -312,6 +313,7 @@ register_buffers(ExecutionContext& ctx,
       ctx, buffer_sequence, alloc);
 }
 
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

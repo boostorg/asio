@@ -22,6 +22,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace execution {
 
 bad_executor::bad_executor() noexcept
@@ -34,6 +35,7 @@ const char* bad_executor::what() const noexcept
 }
 
 } // namespace execution
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

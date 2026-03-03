@@ -26,6 +26,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 
 template <typename Executor1, typename Executor2>
 void connect_pipe(basic_readable_pipe<Executor1>& read_end,
@@ -65,6 +66,7 @@ BOOST_ASIO_SYNC_OP_VOID connect_pipe(basic_readable_pipe<Executor1>& read_end,
   BOOST_ASIO_SYNC_OP_VOID_RETURN(ec);
 }
 
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

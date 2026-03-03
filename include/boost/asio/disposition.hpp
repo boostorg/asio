@@ -26,6 +26,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 
 /// Traits type to adapt arbitrary error types as dispositions.
 /**
@@ -276,6 +277,7 @@ inline std::exception_ptr to_exception_ptr(Disposition&& d,
       static_cast<Disposition&&>(d));
 }
 
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

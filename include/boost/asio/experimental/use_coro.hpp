@@ -25,6 +25,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 
 class any_io_executor;
 
@@ -180,6 +181,7 @@ BOOST_ASIO_INLINE_VARIABLE constexpr use_coro_t<> use_coro(0, 0, 0);
 #endif
 
 } // namespace experimental
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

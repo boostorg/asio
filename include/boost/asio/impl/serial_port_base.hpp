@@ -20,6 +20,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 
 inline serial_port_base::baud_rate::baud_rate(unsigned int rate)
   : value_(rate)
@@ -53,6 +54,7 @@ inline unsigned int serial_port_base::character_size::value() const
   return value_;
 }
 
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

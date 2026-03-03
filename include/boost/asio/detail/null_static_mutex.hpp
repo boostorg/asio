@@ -25,6 +25,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
 
 struct null_static_mutex
@@ -58,6 +59,7 @@ struct null_static_mutex
 #define BOOST_ASIO_NULL_STATIC_MUTEX_INIT { 0 }
 
 } // namespace detail
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

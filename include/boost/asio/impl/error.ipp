@@ -23,6 +23,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace error {
 
 #if !defined(BOOST_ASIO_WINDOWS) && !defined(__CYGWIN__)
@@ -122,6 +123,7 @@ const boost::system::error_category& get_misc_category()
 }
 
 } // namespace error
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

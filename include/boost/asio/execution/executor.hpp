@@ -31,6 +31,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace execution {
 namespace detail {
 
@@ -110,6 +111,7 @@ BOOST_ASIO_CONCEPT executor = is_executor<T>::value;
 #endif // defined(BOOST_ASIO_HAS_CONCEPTS)
 
 } // namespace execution
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

@@ -26,6 +26,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
 
 void awaitable_launch_context::launch(void (*pump_fn)(void*), void* arg)
@@ -40,6 +41,7 @@ bool awaitable_launch_context::is_launching()
 }
 
 } // namespace detail
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

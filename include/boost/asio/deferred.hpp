@@ -26,6 +26,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 
 /// Trait for detecting objects that are usable as deferred operations.
 template <typename T>
@@ -711,6 +712,7 @@ inline auto operator|(Head head, Tail&& tail)
  */
 BOOST_ASIO_INLINE_VARIABLE constexpr deferred_t deferred;
 
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

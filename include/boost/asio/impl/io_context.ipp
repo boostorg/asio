@@ -33,6 +33,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 
 io_context::io_context()
   : execution_context(config_from_concurrency_hint()),
@@ -121,6 +122,7 @@ void io_context::service::notify_fork(io_context::fork_event)
 {
 }
 
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

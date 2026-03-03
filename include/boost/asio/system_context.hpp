@@ -25,6 +25,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 
 template <typename Blocking, typename Relationship, typename Allocator>
 class basic_system_executor;
@@ -79,6 +80,7 @@ private:
   std::size_t num_threads_;
 };
 
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

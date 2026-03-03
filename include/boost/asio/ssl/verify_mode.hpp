@@ -22,6 +22,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace ssl {
 
 /// Bitmask type for peer verification.
@@ -57,6 +58,7 @@ const int verify_client_once = SSL_VERIFY_CLIENT_ONCE;
 #endif
 
 } // namespace ssl
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

@@ -25,6 +25,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace experimental {
 
 #if defined(GENERATING_DOCUMENTATION)
@@ -295,6 +296,7 @@ struct channel_traits<R(T)>
 #endif // defined(GENERATING_DOCUMENTATION)
 
 } // namespace experimental
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

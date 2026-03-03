@@ -40,6 +40,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
 
 struct handler_tracking_timestamp
@@ -379,6 +380,7 @@ void handler_tracking::write_line(const char* format, ...)
 }
 
 } // namespace detail
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 
