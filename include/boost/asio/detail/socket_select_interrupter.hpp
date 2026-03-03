@@ -20,7 +20,7 @@
 #if !defined(BOOST_ASIO_WINDOWS_RUNTIME)
 
 #if defined(BOOST_ASIO_WINDOWS) \
-  || defined(__CYGWIN__) \
+  || defined(BOOST_ASIO_CYGWIN_W32_SOCKETS) \
   || defined(__SYMBIAN32__)
 
 #include <boost/asio/detail/socket_types.hpp>
@@ -87,7 +87,7 @@ BOOST_ASIO_INLINE_NAMESPACE_END
 #endif // defined(BOOST_ASIO_HEADER_ONLY)
 
 #endif // defined(BOOST_ASIO_WINDOWS)
-       // || defined(__CYGWIN__)
+       // || defined(BOOST_ASIO_CYGWIN_W32_SOCKETS)
        // || defined(__SYMBIAN32__)
 
 #endif // !defined(BOOST_ASIO_WINDOWS_RUNTIME)

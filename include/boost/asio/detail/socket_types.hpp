@@ -19,7 +19,7 @@
 
 #if defined(BOOST_ASIO_WINDOWS_RUNTIME)
 // Empty.
-#elif defined(BOOST_ASIO_WINDOWS) || defined(__CYGWIN__)
+#elif defined(BOOST_ASIO_WINDOWS) || defined(BOOST_ASIO_CYGWIN_W32_SOCKETS)
 # if defined(_WINSOCKAPI_) && !defined(_WINSOCK2API_)
 #  error WinSock.h has already been included
 # endif // defined(_WINSOCKAPI_) && !defined(_WINSOCK2API_)
@@ -184,7 +184,7 @@ typedef int signed_size_type;
 # define BOOST_ASIO_OS_DEF_SA_RESTART 0x1
 # define BOOST_ASIO_OS_DEF_SA_NOCLDSTOP 0x2
 # define BOOST_ASIO_OS_DEF_SA_NOCLDWAIT 0x4
-#elif defined(BOOST_ASIO_WINDOWS) || defined(__CYGWIN__)
+#elif defined(BOOST_ASIO_WINDOWS) || defined(BOOST_ASIO_CYGWIN_W32_SOCKETS)
 typedef SOCKET socket_type;
 const SOCKET invalid_socket = INVALID_SOCKET;
 const int socket_error_retval = SOCKET_ERROR;
@@ -208,13 +208,13 @@ typedef sockaddr_storage sockaddr_storage_type;
 typedef addrinfo addrinfo_type;
 # endif
 typedef ::linger linger_type;
-#if defined(__CYGWIN__)
+#if defined(BOOST_ASIO_CYGWIN_W32_SOCKETS)
 typedef unsigned __int32 u_long_type;
 typedef unsigned __int16 u_short_type;
-#else // defined(__CYGWIN__)
+#else // defined(BOOST_ASIO_CYGWIN_W32_SOCKETS)
 typedef u_long u_long_type;
 typedef u_short u_short_type;
-#endif // defined(__CYGWIN__)
+#endif // defined(BOOST_ASIO_CYGWIN_W32_SOCKETS)
 typedef int signed_size_type;
 typedef u_long_type ioctl_arg_type;
 struct sockaddr_un_type { u_short sun_family; char sun_path[108]; };

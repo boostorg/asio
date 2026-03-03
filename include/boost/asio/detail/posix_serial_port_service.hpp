@@ -19,7 +19,9 @@
 #include <boost/asio/detail/config.hpp>
 
 #if defined(BOOST_ASIO_HAS_SERIAL_PORT)
-#if !defined(BOOST_ASIO_WINDOWS) && !defined(__CYGWIN__)
+
+#if !defined(BOOST_ASIO_WINDOWS) \
+  && !defined(BOOST_ASIO_CYGWIN_W32_SOCKETS)
 
 #include <string>
 #include <boost/asio/error.hpp>
@@ -247,7 +249,9 @@ BOOST_ASIO_INLINE_NAMESPACE_END
 # include <boost/asio/detail/impl/posix_serial_port_service.ipp>
 #endif // defined(BOOST_ASIO_HEADER_ONLY)
 
-#endif // !defined(BOOST_ASIO_WINDOWS) && !defined(__CYGWIN__)
+#endif // !defined(BOOST_ASIO_WINDOWS)
+       //   && !defined(BOOST_ASIO_CYGWIN_W32_SOCKETS)
+
 #endif // defined(BOOST_ASIO_HAS_SERIAL_PORT)
 
 #endif // BOOST_ASIO_DETAIL_POSIX_SERIAL_PORT_SERVICE_HPP

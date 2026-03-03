@@ -130,11 +130,11 @@ BOOST_ASIO_DECL size_t available(socket_type s, boost::system::error_code& ec);
 BOOST_ASIO_DECL int listen(socket_type s,
     int backlog, boost::system::error_code& ec);
 
-#if defined(BOOST_ASIO_WINDOWS) || defined(__CYGWIN__)
+#if defined(BOOST_ASIO_WINDOWS) || defined(BOOST_ASIO_CYGWIN_W32_SOCKETS)
 typedef WSABUF buf;
-#else // defined(BOOST_ASIO_WINDOWS) || defined(__CYGWIN__)
+#else // defined(BOOST_ASIO_WINDOWS) || defined(BOOST_ASIO_CYGWIN_W32_SOCKETS)
 typedef iovec buf;
-#endif // defined(BOOST_ASIO_WINDOWS) || defined(__CYGWIN__)
+#endif // defined(BOOST_ASIO_WINDOWS) || defined(BOOST_ASIO_CYGWIN_W32_SOCKETS)
 
 BOOST_ASIO_DECL void init_buf(buf& b, void* data, size_t size);
 

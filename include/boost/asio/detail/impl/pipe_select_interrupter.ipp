@@ -19,7 +19,7 @@
 
 #if !defined(BOOST_ASIO_WINDOWS_RUNTIME)
 #if !defined(BOOST_ASIO_WINDOWS)
-#if !defined(__CYGWIN__)
+#if !defined(BOOST_ASIO_CYGWIN_W32_SOCKETS)
 #if !defined(__SYMBIAN32__)
 #if !defined(BOOST_ASIO_HAS_EVENTFD)
 
@@ -126,7 +126,7 @@ BOOST_ASIO_INLINE_NAMESPACE_END
 
 #endif // !defined(BOOST_ASIO_HAS_EVENTFD)
 #endif // !defined(__SYMBIAN32__)
-#endif // !defined(__CYGWIN__)
+#endif // !defined(BOOST_ASIO_CYGWIN_W32_SOCKETS)
 #endif // !defined(BOOST_ASIO_WINDOWS)
 #endif // !defined(BOOST_ASIO_WINDOWS_RUNTIME)
 

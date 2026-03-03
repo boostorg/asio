@@ -114,13 +114,13 @@ private:
 #if (OPENSSL_VERSION_NUMBER < 0x10000000L)
   static unsigned long openssl_id_func()
   {
-#if defined(BOOST_ASIO_WINDOWS) || defined(__CYGWIN__)
+#if defined(BOOST_ASIO_WINDOWS) || defined(BOOST_ASIO_CYGWIN_W32_SOCKETS)
     return ::GetCurrentThreadId();
-#else // defined(BOOST_ASIO_WINDOWS) || defined(__CYGWIN__)
+#else // defined(BOOST_ASIO_WINDOWS) || defined(BOOST_ASIO_CYGWIN_W32_SOCKETS)
     void* id = &errno;
     BOOST_ASIO_ASSERT(sizeof(unsigned long) >= sizeof(void*));
     return reinterpret_cast<unsigned long>(id);
-#endif // defined(BOOST_ASIO_WINDOWS) || defined(__CYGWIN__)
+#endif // defined(BOOST_ASIO_WINDOWS) || defined(BOOST_ASIO_CYGWIN_W32_SOCKETS)
   }
 #endif // (OPENSSL_VERSION_NUMBER < 0x10000000L)
 

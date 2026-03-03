@@ -27,7 +27,7 @@ namespace asio {
 BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
 
-#if defined(BOOST_ASIO_WINDOWS) || defined(__CYGWIN__)
+#if defined(BOOST_ASIO_WINDOWS) || defined(BOOST_ASIO_CYGWIN_W32_SOCKETS)
 typedef win_fd_set_adapter fd_set_adapter;
 #else
 typedef posix_fd_set_adapter fd_set_adapter;

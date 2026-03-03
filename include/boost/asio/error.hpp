@@ -20,7 +20,7 @@
 #include <boost/system/error_code.hpp>
 #include <boost/system/system_error.hpp>
 #if defined(BOOST_ASIO_WINDOWS) \
-  || defined(__CYGWIN__) \
+  || defined(BOOST_ASIO_CYGWIN_W32_SOCKETS) \
   || defined(BOOST_ASIO_WINDOWS_RUNTIME)
 # include <winerror.h>
 #else
@@ -28,9 +28,9 @@
 # include <netdb.h>
 #endif
 
-#if defined(__CYGWIN__)
+#if defined(BOOST_ASIO_CYGWIN_W32_SOCKETS)
 # include <boost/asio/detail/socket_types.hpp>
-#endif // defined(__CYGWIN__)
+#endif // defined(BOOST_ASIO_CYGWIN_W32_SOCKETS)
 
 #if defined(GENERATING_DOCUMENTATION)
 /// INTERNAL ONLY.
@@ -49,7 +49,7 @@
 # define BOOST_ASIO_NETDB_ERROR(e) __HRESULT_FROM_WIN32(WSA ## e)
 # define BOOST_ASIO_GETADDRINFO_ERROR(e) __HRESULT_FROM_WIN32(WSA ## e)
 # define BOOST_ASIO_WIN_OR_POSIX(e_win, e_posix) e_win
-#elif defined(BOOST_ASIO_WINDOWS) || defined(__CYGWIN__)
+#elif defined(BOOST_ASIO_WINDOWS) || defined(BOOST_ASIO_CYGWIN_W32_SOCKETS)
 # define BOOST_ASIO_NATIVE_ERROR(e) e
 # define BOOST_ASIO_SOCKET_ERROR(e) WSA ## e
 # define BOOST_ASIO_NETDB_ERROR(e) WSA ## e
@@ -264,7 +264,8 @@ inline const boost::system::error_category& get_system_category()
   return boost::system::system_category();
 }
 
-#if !defined(BOOST_ASIO_WINDOWS) && !defined(__CYGWIN__)
+#if !defined(BOOST_ASIO_WINDOWS) \
+  && !defined(BOOST_ASIO_CYGWIN_W32_SOCKETS)
 
 extern BOOST_ASIO_DECL
 const boost::system::error_category& get_netdb_category();
@@ -272,7 +273,8 @@ const boost::system::error_category& get_netdb_category();
 extern BOOST_ASIO_DECL
 const boost::system::error_category& get_addrinfo_category();
 
-#else // !defined(BOOST_ASIO_WINDOWS) && !defined(__CYGWIN__)
+#else // !defined(BOOST_ASIO_WINDOWS)
+      //   && !defined(BOOST_ASIO_CYGWIN_W32_SOCKETS)
 
 inline const boost::system::error_category& get_netdb_category()
 {
@@ -284,7 +286,8 @@ inline const boost::system::error_category& get_addrinfo_category()
   return get_system_category();
 }
 
-#endif // !defined(BOOST_ASIO_WINDOWS) && !defined(__CYGWIN__)
+#endif // !defined(BOOST_ASIO_WINDOWS)
+       //   && !defined(BOOST_ASIO_CYGWIN_W32_SOCKETS)
 
 extern BOOST_ASIO_DECL
 const boost::system::error_category& get_misc_category();

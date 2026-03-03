@@ -37,13 +37,15 @@
 # include <boost/asio/detail/scheduler.hpp>
 #endif // defined(BOOST_ASIO_HAS_IOCP)
 
-#if !defined(BOOST_ASIO_WINDOWS) && !defined(__CYGWIN__)
+#if !defined(BOOST_ASIO_WINDOWS) \
+  && !defined(BOOST_ASIO_CYGWIN_W32_SOCKETS)
 # if defined(BOOST_ASIO_HAS_IO_URING_AS_DEFAULT)
 #  include <boost/asio/detail/io_uring_service.hpp>
 # else // defined(BOOST_ASIO_HAS_IO_URING_AS_DEFAULT)
 #  include <boost/asio/detail/reactor.hpp>
 # endif // defined(BOOST_ASIO_HAS_IO_URING_AS_DEFAULT)
-#endif // !defined(BOOST_ASIO_WINDOWS) && !defined(__CYGWIN__)
+#endif // !defined(BOOST_ASIO_WINDOWS)
+       //   && !defined(BOOST_ASIO_CYGWIN_W32_SOCKETS)
 
 #include <boost/asio/detail/push_options.hpp>
 
@@ -254,7 +256,7 @@ private:
 
 #if !defined(BOOST_ASIO_WINDOWS) \
   && !defined(BOOST_ASIO_WINDOWS_RUNTIME) \
-  && !defined(__CYGWIN__)
+  && !defined(BOOST_ASIO_CYGWIN_W32_SOCKETS)
   // The type used for processing pipe readiness notifications.
   class pipe_read_op;
 
@@ -273,7 +275,7 @@ private:
 # endif // defined(BOOST_ASIO_HAS_IO_URING_AS_DEFAULT)
 #endif // !defined(BOOST_ASIO_WINDOWS)
        //   && !defined(BOOST_ASIO_WINDOWS_RUNTIME)
-       //   && !defined(__CYGWIN__)
+       //   && !defined(BOOST_ASIO_CYGWIN_W32_SOCKETS)
 
   // A mapping from signal number to the registered signal sets.
   registration* registrations_[max_signal_number];

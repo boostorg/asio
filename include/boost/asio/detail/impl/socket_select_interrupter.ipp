@@ -20,7 +20,7 @@
 #if !defined(BOOST_ASIO_WINDOWS_RUNTIME)
 
 #if defined(BOOST_ASIO_WINDOWS) \
-  || defined(__CYGWIN__) \
+  || defined(BOOST_ASIO_CYGWIN_W32_SOCKETS) \
   || defined(__SYMBIAN32__)
 
 #include <cstdlib>
@@ -181,7 +181,7 @@ BOOST_ASIO_INLINE_NAMESPACE_END
 #include <boost/asio/detail/pop_options.hpp>
 
 #endif // defined(BOOST_ASIO_WINDOWS)
-       // || defined(__CYGWIN__)
+       // || defined(BOOST_ASIO_CYGWIN_W32_SOCKETS)
        // || defined(__SYMBIAN32__)
 
 #endif // !defined(BOOST_ASIO_WINDOWS_RUNTIME)

@@ -58,7 +58,7 @@ void create_pipe(native_pipe_handle p[2], boost::system::error_code& ec)
     : ::InterlockedExchangeAdd(&counter2, 0);
 
   wchar_t pipe_name[128];
-#if defined(__CYGWIN__)
+#if defined(BOOST_ASIO_CYGWIN_W32_SOCKETS)
   swprintf(
 #elif defined(BOOST_ASIO_HAS_SECURE_RTL)
    swprintf_s(

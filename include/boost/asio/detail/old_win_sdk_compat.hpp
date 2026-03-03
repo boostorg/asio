@@ -17,7 +17,7 @@
 
 #include <boost/asio/detail/config.hpp>
 
-#if defined(BOOST_ASIO_WINDOWS) || defined(__CYGWIN__)
+#if defined(BOOST_ASIO_WINDOWS) || defined(BOOST_ASIO_CYGWIN_W32_SOCKETS)
 
 // Guess whether we are building against on old Platform SDK.
 #if !defined(IN6ADDR_ANY_INIT)
@@ -213,6 +213,6 @@ BOOST_ASIO_INLINE_NAMESPACE_END
 # define IPPROTO_ICMPV6 58
 #endif
 
-#endif // defined(BOOST_ASIO_WINDOWS) || defined(__CYGWIN__)
+#endif // defined(BOOST_ASIO_WINDOWS) || defined(BOOST_ASIO_CYGWIN_W32_SOCKETS)
 
 #endif // BOOST_ASIO_DETAIL_OLD_WIN_SDK_COMPAT_HPP
