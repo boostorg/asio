@@ -19,8 +19,10 @@
 
 #if !defined(BOOST_ASIO_HAS_THREADS)
 # include <boost/asio/detail/null_mutex.hpp>
-#elif defined(BOOST_ASIO_WINDOWS)
+#elif defined(BOOST_ASIO_WINDOWS) && defined(BOOST_ASIO_HAS_WINDOWS_SRWLOCK)
 # include <boost/asio/detail/win_mutex.hpp>
+#elif defined(BOOST_ASIO_WINDOWS)
+# include <boost/asio/detail/win_critsec_mutex.hpp>
 #elif defined(BOOST_ASIO_HAS_PTHREADS)
 # include <boost/asio/detail/posix_mutex.hpp>
 #else
@@ -34,8 +36,10 @@ namespace detail {
 
 #if !defined(BOOST_ASIO_HAS_THREADS)
 typedef null_mutex mutex;
-#elif defined(BOOST_ASIO_WINDOWS)
+#elif defined(BOOST_ASIO_WINDOWS) && defined(BOOST_ASIO_HAS_WINDOWS_SRWLOCK)
 typedef win_mutex mutex;
+#elif defined(BOOST_ASIO_WINDOWS)
+typedef win_critsec_mutex mutex;
 #elif defined(BOOST_ASIO_HAS_PTHREADS)
 typedef posix_mutex mutex;
 #else
