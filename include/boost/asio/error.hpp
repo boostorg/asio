@@ -28,6 +28,10 @@
 # include <netdb.h>
 #endif
 
+#if defined(__CYGWIN__)
+# include <boost/asio/detail/socket_types.hpp>
+#endif // defined(__CYGWIN__)
+
 #if defined(GENERATING_DOCUMENTATION)
 /// INTERNAL ONLY.
 # define BOOST_ASIO_NATIVE_ERROR(e) implementation_defined

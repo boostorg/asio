@@ -638,7 +638,7 @@ bool non_blocking_connect(socket_type s, boost::system::error_code& ec)
   fd_set except_fds;
   FD_ZERO(&except_fds);
   FD_SET(s, &except_fds);
-  timeval zero_timeout;
+  TIMEVAL zero_timeout;
   zero_timeout.tv_sec = 0;
   zero_timeout.tv_usec = 0;
   int ready = ::select(s + 1, 0, &write_fds, &except_fds, &zero_timeout);
@@ -2264,6 +2264,11 @@ int select(int nfds, fd_set* readfds, fd_set* writefds,
   ts.tv_nsec = timeout ? timeout->tv_usec * 1000 : 0;
   int result = ::pselect(nfds, readfds,
         writefds, exceptfds, timeout ? &ts : 0, 0);
+#elif defined(__CYGWIN__)
+  TIMEVAL tv;
+  tv.tv_sec = timeout ? timeout->tv_sec : 0;
+  tv.tv_usec = timeout ? timeout->tv_usec : 0;
+  int result = ::select(nfds, readfds, writefds, exceptfds, timeout ? &tv : 0);
 #else
   int result = ::select(nfds, readfds, writefds, exceptfds, timeout);
 #endif
@@ -2286,8 +2291,8 @@ int poll_read(socket_type s, state_type state,
   fd_set fds;
   FD_ZERO(&fds);
   FD_SET(s, &fds);
-  timeval timeout_obj;
-  timeval* timeout;
+  TIMEVAL timeout_obj;
+  TIMEVAL* timeout;
   if (state & user_set_non_blocking)
   {
     timeout_obj.tv_sec = 0;
@@ -2338,8 +2343,8 @@ int poll_write(socket_type s, state_type state,
   fd_set fds;
   FD_ZERO(&fds);
   FD_SET(s, &fds);
-  timeval timeout_obj;
-  timeval* timeout;
+  TIMEVAL timeout_obj;
+  TIMEVAL* timeout;
   if (state & user_set_non_blocking)
   {
     timeout_obj.tv_sec = 0;
@@ -2390,8 +2395,8 @@ int poll_error(socket_type s, state_type state,
   fd_set fds;
   FD_ZERO(&fds);
   FD_SET(s, &fds);
-  timeval timeout_obj;
-  timeval* timeout;
+  TIMEVAL timeout_obj;
+  TIMEVAL* timeout;
   if (state & user_set_non_blocking)
   {
     timeout_obj.tv_sec = 0;
@@ -2444,8 +2449,8 @@ int poll_connect(socket_type s, int msec, boost::system::error_code& ec)
   fd_set except_fds;
   FD_ZERO(&except_fds);
   FD_SET(s, &except_fds);
-  timeval timeout_obj;
-  timeval* timeout;
+  TIMEVAL timeout_obj;
+  TIMEVAL* timeout;
   if (msec >= 0)
   {
     timeout_obj.tv_sec = msec / 1000;

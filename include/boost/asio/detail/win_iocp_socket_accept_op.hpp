@@ -76,7 +76,7 @@ public:
     return sizeof(sockaddr_storage_type) + 16;
   }
 
-  void enable_cancellation(long* cancel_requested, operation* proxy_op)
+  void enable_cancellation(LONG* cancel_requested, operation* proxy_op)
   {
     cancel_requested_ = cancel_requested;
     proxy_op_ = proxy_op;
@@ -175,7 +175,7 @@ private:
   unsigned char output_buffer_[(sizeof(sockaddr_storage_type) + 16) * 2];
   bool enable_connection_aborted_;
   operation* proxy_op_;
-  long* cancel_requested_;
+  LONG* cancel_requested_;
   Handler handler_;
   handler_work<Handler, IoExecutor> work_;
 };
@@ -221,7 +221,7 @@ public:
     return sizeof(sockaddr_storage_type) + 16;
   }
 
-  void enable_cancellation(long* cancel_requested, operation* proxy_op)
+  void enable_cancellation(LONG* cancel_requested, operation* proxy_op)
   {
     cancel_requested_ = cancel_requested;
     proxy_op_ = proxy_op;
@@ -325,7 +325,7 @@ private:
   typename Protocol::endpoint* peer_endpoint_;
   unsigned char output_buffer_[(sizeof(sockaddr_storage_type) + 16) * 2];
   bool enable_connection_aborted_;
-  long* cancel_requested_;
+  LONG* cancel_requested_;
   operation* proxy_op_;
   Handler handler_;
   handler_work<Handler, IoExecutor> work_;
