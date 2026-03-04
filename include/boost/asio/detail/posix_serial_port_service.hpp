@@ -2,7 +2,7 @@
 // detail/posix_serial_port_service.hpp
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2025 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2026 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 // Copyright (c) 2008 Rep Invariant Systems, Inc. (info@repinvariant.com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
@@ -19,7 +19,9 @@
 #include <boost/asio/detail/config.hpp>
 
 #if defined(BOOST_ASIO_HAS_SERIAL_PORT)
-#if !defined(BOOST_ASIO_WINDOWS) && !defined(__CYGWIN__)
+
+#if !defined(BOOST_ASIO_WINDOWS) \
+  && !defined(BOOST_ASIO_CYGWIN_W32_SOCKETS)
 
 #include <string>
 #include <boost/asio/error.hpp>
@@ -37,6 +39,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
 
 // Extend a descriptor_service to provide serial port support.
@@ -236,6 +239,7 @@ private:
 };
 
 } // namespace detail
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 
@@ -245,7 +249,9 @@ private:
 # include <boost/asio/detail/impl/posix_serial_port_service.ipp>
 #endif // defined(BOOST_ASIO_HEADER_ONLY)
 
-#endif // !defined(BOOST_ASIO_WINDOWS) && !defined(__CYGWIN__)
+#endif // !defined(BOOST_ASIO_WINDOWS)
+       //   && !defined(BOOST_ASIO_CYGWIN_W32_SOCKETS)
+
 #endif // defined(BOOST_ASIO_HAS_SERIAL_PORT)
 
 #endif // BOOST_ASIO_DETAIL_POSIX_SERIAL_PORT_SERVICE_HPP

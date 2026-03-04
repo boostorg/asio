@@ -1,15 +1,15 @@
 //
-// detail/impl/win_mutex.ipp
-// ~~~~~~~~~~~~~~~~~~~~~~~~~
+// detail/impl/win_critsec_mutex.ipp
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2025 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2026 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
-#ifndef BOOST_ASIO_DETAIL_IMPL_WIN_MUTEX_IPP
-#define BOOST_ASIO_DETAIL_IMPL_WIN_MUTEX_IPP
+#ifndef BOOST_ASIO_DETAIL_IMPL_WIN_CRITSEC_MUTEX_IPP
+#define BOOST_ASIO_DETAIL_IMPL_WIN_CRITSEC_MUTEX_IPP
 
 #if defined(_MSC_VER) && (_MSC_VER >= 1200)
 # pragma once
@@ -20,16 +20,17 @@
 #if defined(BOOST_ASIO_WINDOWS)
 
 #include <boost/asio/detail/throw_error.hpp>
-#include <boost/asio/detail/win_mutex.hpp>
+#include <boost/asio/detail/win_critsec_mutex.hpp>
 #include <boost/asio/error.hpp>
 
 #include <boost/asio/detail/push_options.hpp>
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
 
-win_mutex::win_mutex()
+win_critsec_mutex::win_critsec_mutex()
 {
   int error = do_init();
   boost::system::error_code ec(error,
@@ -37,7 +38,7 @@ win_mutex::win_mutex()
   boost::asio::detail::throw_error(ec, "mutex");
 }
 
-int win_mutex::do_init()
+int win_critsec_mutex::do_init()
 {
 #if defined(__MINGW32__)
   // Not sure if MinGW supports structured exception handling, so for now
@@ -76,6 +77,7 @@ int win_mutex::do_init()
 }
 
 } // namespace detail
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 
@@ -83,4 +85,4 @@ int win_mutex::do_init()
 
 #endif // defined(BOOST_ASIO_WINDOWS)
 
-#endif // BOOST_ASIO_DETAIL_IMPL_WIN_MUTEX_IPP
+#endif // BOOST_ASIO_DETAIL_IMPL_WIN_CRITSEC_MUTEX_IPP

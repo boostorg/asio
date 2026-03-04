@@ -2,7 +2,7 @@
 // detail/socket_ops.hpp
 // ~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2025 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2026 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -25,6 +25,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
 namespace socket_ops {
 
@@ -129,11 +130,11 @@ BOOST_ASIO_DECL size_t available(socket_type s, boost::system::error_code& ec);
 BOOST_ASIO_DECL int listen(socket_type s,
     int backlog, boost::system::error_code& ec);
 
-#if defined(BOOST_ASIO_WINDOWS) || defined(__CYGWIN__)
+#if defined(BOOST_ASIO_WINDOWS) || defined(BOOST_ASIO_CYGWIN_W32_SOCKETS)
 typedef WSABUF buf;
-#else // defined(BOOST_ASIO_WINDOWS) || defined(__CYGWIN__)
+#else // defined(BOOST_ASIO_WINDOWS) || defined(BOOST_ASIO_CYGWIN_W32_SOCKETS)
 typedef iovec buf;
-#endif // defined(BOOST_ASIO_WINDOWS) || defined(__CYGWIN__)
+#endif // defined(BOOST_ASIO_WINDOWS) || defined(BOOST_ASIO_CYGWIN_W32_SOCKETS)
 
 BOOST_ASIO_DECL void init_buf(buf& b, void* data, size_t size);
 
@@ -369,6 +370,7 @@ BOOST_ASIO_DECL u_short_type host_to_network_short(u_short_type value);
 
 } // namespace socket_ops
 } // namespace detail
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

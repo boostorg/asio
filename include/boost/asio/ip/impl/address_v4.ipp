@@ -2,7 +2,7 @@
 // ip/impl/address_v4.ipp
 // ~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2025 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2026 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -29,6 +29,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace ip {
 
 address_v4::address_v4(const address_v4::bytes_type& bytes)
@@ -144,6 +145,7 @@ address_v4 make_address_v4(string_view str,
 #endif // defined(BOOST_ASIO_HAS_STRING_VIEW)
 
 } // namespace ip
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

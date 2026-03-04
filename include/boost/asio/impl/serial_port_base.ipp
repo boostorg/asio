@@ -2,7 +2,7 @@
 // impl/serial_port_base.ipp
 // ~~~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2025 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2026 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 // Copyright (c) 2008 Rep Invariant Systems, Inc. (info@repinvariant.com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
@@ -27,7 +27,7 @@
 
 #if defined(GENERATING_DOCUMENTATION)
 # define BOOST_ASIO_OPTION_STORAGE implementation_defined
-#elif defined(BOOST_ASIO_WINDOWS) || defined(__CYGWIN__)
+#elif defined(BOOST_ASIO_WINDOWS) || defined(BOOST_ASIO_CYGWIN_W32_SOCKETS)
 # define BOOST_ASIO_OPTION_STORAGE DCB
 #else
 # define BOOST_ASIO_OPTION_STORAGE termios
@@ -37,11 +37,12 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 
 BOOST_ASIO_SYNC_OP_VOID serial_port_base::baud_rate::store(
     BOOST_ASIO_OPTION_STORAGE& storage, boost::system::error_code& ec) const
 {
-#if defined(BOOST_ASIO_WINDOWS) || defined(__CYGWIN__)
+#if defined(BOOST_ASIO_WINDOWS) || defined(BOOST_ASIO_CYGWIN_W32_SOCKETS)
   storage.BaudRate = value_;
 #else
   speed_t baud;
@@ -128,7 +129,7 @@ BOOST_ASIO_SYNC_OP_VOID serial_port_base::baud_rate::store(
 BOOST_ASIO_SYNC_OP_VOID serial_port_base::baud_rate::load(
     const BOOST_ASIO_OPTION_STORAGE& storage, boost::system::error_code& ec)
 {
-#if defined(BOOST_ASIO_WINDOWS) || defined(__CYGWIN__)
+#if defined(BOOST_ASIO_WINDOWS) || defined(BOOST_ASIO_CYGWIN_W32_SOCKETS)
   value_ = storage.BaudRate;
 #else
   speed_t baud = ::cfgetospeed(&storage);
@@ -221,7 +222,7 @@ serial_port_base::flow_control::flow_control(
 BOOST_ASIO_SYNC_OP_VOID serial_port_base::flow_control::store(
     BOOST_ASIO_OPTION_STORAGE& storage, boost::system::error_code& ec) const
 {
-#if defined(BOOST_ASIO_WINDOWS) || defined(__CYGWIN__)
+#if defined(BOOST_ASIO_WINDOWS) || defined(BOOST_ASIO_CYGWIN_W32_SOCKETS)
   storage.fOutxCtsFlow = FALSE;
   storage.fOutxDsrFlow = FALSE;
   storage.fTXContinueOnXoff = TRUE;
@@ -288,7 +289,7 @@ BOOST_ASIO_SYNC_OP_VOID serial_port_base::flow_control::store(
 BOOST_ASIO_SYNC_OP_VOID serial_port_base::flow_control::load(
     const BOOST_ASIO_OPTION_STORAGE& storage, boost::system::error_code& ec)
 {
-#if defined(BOOST_ASIO_WINDOWS) || defined(__CYGWIN__)
+#if defined(BOOST_ASIO_WINDOWS) || defined(BOOST_ASIO_CYGWIN_W32_SOCKETS)
   if (storage.fOutX && storage.fInX)
   {
     value_ = software;
@@ -339,7 +340,7 @@ serial_port_base::parity::parity(serial_port_base::parity::type t)
 BOOST_ASIO_SYNC_OP_VOID serial_port_base::parity::store(
     BOOST_ASIO_OPTION_STORAGE& storage, boost::system::error_code& ec) const
 {
-#if defined(BOOST_ASIO_WINDOWS) || defined(__CYGWIN__)
+#if defined(BOOST_ASIO_WINDOWS) || defined(BOOST_ASIO_CYGWIN_W32_SOCKETS)
   switch (value_)
   {
   case none:
@@ -386,7 +387,7 @@ BOOST_ASIO_SYNC_OP_VOID serial_port_base::parity::store(
 BOOST_ASIO_SYNC_OP_VOID serial_port_base::parity::load(
     const BOOST_ASIO_OPTION_STORAGE& storage, boost::system::error_code& ec)
 {
-#if defined(BOOST_ASIO_WINDOWS) || defined(__CYGWIN__)
+#if defined(BOOST_ASIO_WINDOWS) || defined(BOOST_ASIO_CYGWIN_W32_SOCKETS)
   if (storage.Parity == EVENPARITY)
   {
     value_ = even;
@@ -434,7 +435,7 @@ serial_port_base::stop_bits::stop_bits(
 BOOST_ASIO_SYNC_OP_VOID serial_port_base::stop_bits::store(
     BOOST_ASIO_OPTION_STORAGE& storage, boost::system::error_code& ec) const
 {
-#if defined(BOOST_ASIO_WINDOWS) || defined(__CYGWIN__)
+#if defined(BOOST_ASIO_WINDOWS) || defined(BOOST_ASIO_CYGWIN_W32_SOCKETS)
   switch (value_)
   {
   case one:
@@ -470,7 +471,7 @@ BOOST_ASIO_SYNC_OP_VOID serial_port_base::stop_bits::store(
 BOOST_ASIO_SYNC_OP_VOID serial_port_base::stop_bits::load(
     const BOOST_ASIO_OPTION_STORAGE& storage, boost::system::error_code& ec)
 {
-#if defined(BOOST_ASIO_WINDOWS) || defined(__CYGWIN__)
+#if defined(BOOST_ASIO_WINDOWS) || defined(BOOST_ASIO_CYGWIN_W32_SOCKETS)
   if (storage.StopBits == ONESTOPBIT)
   {
     value_ = one;
@@ -507,8 +508,8 @@ serial_port_base::character_size::character_size(unsigned int t)
 BOOST_ASIO_SYNC_OP_VOID serial_port_base::character_size::store(
     BOOST_ASIO_OPTION_STORAGE& storage, boost::system::error_code& ec) const
 {
-#if defined(BOOST_ASIO_WINDOWS) || defined(__CYGWIN__)
-  storage.ByteSize = value_;
+#if defined(BOOST_ASIO_WINDOWS) || defined(BOOST_ASIO_CYGWIN_W32_SOCKETS)
+  storage.ByteSize = static_cast<BYTE>(value_);
 #else
   storage.c_cflag &= ~CSIZE;
   switch (value_)
@@ -527,7 +528,7 @@ BOOST_ASIO_SYNC_OP_VOID serial_port_base::character_size::store(
 BOOST_ASIO_SYNC_OP_VOID serial_port_base::character_size::load(
     const BOOST_ASIO_OPTION_STORAGE& storage, boost::system::error_code& ec)
 {
-#if defined(BOOST_ASIO_WINDOWS) || defined(__CYGWIN__)
+#if defined(BOOST_ASIO_WINDOWS) || defined(BOOST_ASIO_CYGWIN_W32_SOCKETS)
   value_ = storage.ByteSize;
 #else
   if ((storage.c_cflag & CSIZE) == CS5) { value_ = 5; }
@@ -544,6 +545,7 @@ BOOST_ASIO_SYNC_OP_VOID serial_port_base::character_size::load(
   BOOST_ASIO_SYNC_OP_VOID_RETURN(ec);
 }
 
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

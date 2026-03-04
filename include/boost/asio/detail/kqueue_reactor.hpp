@@ -2,7 +2,7 @@
 // detail/kqueue_reactor.hpp
 // ~~~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2025 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2026 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 // Copyright (c) 2005 Stefan Arentz (stefan at soze dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
@@ -31,6 +31,7 @@
 #include <boost/asio/detail/reactor_op.hpp>
 #include <boost/asio/detail/scheduler_task.hpp>
 #include <boost/asio/detail/select_interrupter.hpp>
+#include <boost/asio/detail/slim_mutex.hpp>
 #include <boost/asio/detail/socket_types.hpp>
 #include <boost/asio/detail/timer_queue_base.hpp>
 #include <boost/asio/detail/timer_queue_set.hpp>
@@ -47,6 +48,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
 
 class scheduler;
@@ -57,7 +59,7 @@ class kqueue_reactor
 {
 private:
   // The mutex type used by this reactor.
-  typedef conditionally_enabled_mutex mutex;
+  typedef conditionally_enabled_mutex<slim_mutex> mutex;
 
 public:
   enum op_types { read_op = 0, write_op = 1,
@@ -268,6 +270,7 @@ private:
 };
 
 } // namespace detail
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

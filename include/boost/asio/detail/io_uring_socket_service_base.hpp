@@ -2,7 +2,7 @@
 // detail/io_uring_socket_service_base.hpp
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2025 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2026 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -41,6 +41,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
 
 class io_uring_socket_service_base
@@ -198,7 +199,7 @@ public:
       socket_base::wait_type w, Handler& handler, const IoExecutor& io_ex)
   {
     bool is_continuation =
-      boost_asio_handler_cont_helpers::is_continuation(handler);
+      BOOST_ASIO_VERSIONED_NAME(handler_cont_helpers)::is_continuation(handler);
 
     associated_cancellation_slot_t<Handler> slot
       = boost::asio::get_associated_cancellation_slot(handler);
@@ -288,7 +289,7 @@ public:
       Handler& handler, const IoExecutor& io_ex)
   {
     bool is_continuation =
-      boost_asio_handler_cont_helpers::is_continuation(handler);
+      BOOST_ASIO_VERSIONED_NAME(handler_cont_helpers)::is_continuation(handler);
 
     associated_cancellation_slot_t<Handler> slot
       = boost::asio::get_associated_cancellation_slot(handler);
@@ -325,7 +326,7 @@ public:
       socket_base::message_flags, Handler& handler, const IoExecutor& io_ex)
   {
     bool is_continuation =
-      boost_asio_handler_cont_helpers::is_continuation(handler);
+      BOOST_ASIO_VERSIONED_NAME(handler_cont_helpers)::is_continuation(handler);
 
     associated_cancellation_slot_t<Handler> slot
       = boost::asio::get_associated_cancellation_slot(handler);
@@ -393,7 +394,7 @@ public:
       Handler& handler, const IoExecutor& io_ex)
   {
     bool is_continuation =
-      boost_asio_handler_cont_helpers::is_continuation(handler);
+      BOOST_ASIO_VERSIONED_NAME(handler_cont_helpers)::is_continuation(handler);
 
     int op_type = (flags & socket_base::message_out_of_band)
       ? io_uring_service::except_op : io_uring_service::read_op;
@@ -434,7 +435,7 @@ public:
       Handler& handler, const IoExecutor& io_ex)
   {
     bool is_continuation =
-      boost_asio_handler_cont_helpers::is_continuation(handler);
+      BOOST_ASIO_VERSIONED_NAME(handler_cont_helpers)::is_continuation(handler);
 
     int op_type;
     int poll_flags;
@@ -513,7 +514,7 @@ public:
       const IoExecutor& io_ex)
   {
     bool is_continuation =
-      boost_asio_handler_cont_helpers::is_continuation(handler);
+      BOOST_ASIO_VERSIONED_NAME(handler_cont_helpers)::is_continuation(handler);
 
     int op_type = (in_flags & socket_base::message_out_of_band)
       ? io_uring_service::except_op : io_uring_service::read_op;
@@ -552,7 +553,7 @@ public:
       const IoExecutor& io_ex)
   {
     bool is_continuation =
-      boost_asio_handler_cont_helpers::is_continuation(handler);
+      BOOST_ASIO_VERSIONED_NAME(handler_cont_helpers)::is_continuation(handler);
 
     int op_type;
     int poll_flags;
@@ -651,6 +652,7 @@ protected:
 };
 
 } // namespace detail
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

@@ -2,7 +2,7 @@
 // detail/win_iocp_io_context.hpp
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2025 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2026 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -36,6 +36,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
 
 class wait_op;
@@ -258,18 +259,18 @@ private:
   auto_handle iocp_;
 
   // The count of unfinished work.
-  long outstanding_work_;
+  LONG outstanding_work_;
 
   // Flag to indicate whether the event loop has been stopped.
-  mutable long stopped_;
+  mutable LONG stopped_;
 
   // Flag to indicate whether there is an in-flight stop event. Every event
   // posted using PostQueuedCompletionStatus consumes non-paged pool, so to
   // avoid exhausting this resource we limit the number of outstanding events.
-  long stop_event_posted_;
+  LONG stop_event_posted_;
 
   // Flag to indicate whether the service has been shut down.
-  long shutdown_;
+  LONG shutdown_;
 
   enum
   {
@@ -315,7 +316,7 @@ private:
   auto_handle waitable_timer_;
 
   // Non-zero if timers or completed operations need to be dispatched.
-  long dispatch_required_;
+  LONG dispatch_required_;
 
   // Mutex for protecting access to the timer queues and completed operations.
   mutex dispatch_mutex_;
@@ -334,6 +335,7 @@ private:
 };
 
 } // namespace detail
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

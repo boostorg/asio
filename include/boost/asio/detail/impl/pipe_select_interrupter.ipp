@@ -2,7 +2,7 @@
 // detail/impl/pipe_select_interrupter.ipp
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2025 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2026 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -19,7 +19,7 @@
 
 #if !defined(BOOST_ASIO_WINDOWS_RUNTIME)
 #if !defined(BOOST_ASIO_WINDOWS)
-#if !defined(__CYGWIN__)
+#if !defined(BOOST_ASIO_CYGWIN_W32_SOCKETS)
 #if !defined(__SYMBIAN32__)
 #if !defined(BOOST_ASIO_HAS_EVENTFD)
 
@@ -36,6 +36,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
 
 pipe_select_interrupter::pipe_select_interrupter(bool)
@@ -117,6 +118,7 @@ bool pipe_select_interrupter::reset()
 }
 
 } // namespace detail
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 
@@ -124,7 +126,7 @@ bool pipe_select_interrupter::reset()
 
 #endif // !defined(BOOST_ASIO_HAS_EVENTFD)
 #endif // !defined(__SYMBIAN32__)
-#endif // !defined(__CYGWIN__)
+#endif // !defined(BOOST_ASIO_CYGWIN_W32_SOCKETS)
 #endif // !defined(BOOST_ASIO_WINDOWS)
 #endif // !defined(BOOST_ASIO_WINDOWS_RUNTIME)
 

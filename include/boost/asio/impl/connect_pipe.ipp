@@ -2,7 +2,7 @@
 // impl/connect_pipe.ipp
 // ~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2025 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2026 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 // Copyright (c) 2021 Klemens D. Morgenstern
 //                    (klemens dot morgenstern at gmx dot net)
 //
@@ -41,6 +41,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
 
 void create_pipe(native_pipe_handle p[2], boost::system::error_code& ec)
@@ -48,8 +49,8 @@ void create_pipe(native_pipe_handle p[2], boost::system::error_code& ec)
 #if defined(BOOST_ASIO_HAS_IOCP)
   using namespace std; // For sprintf and memcmp.
 
-  static long counter1 = 0;
-  static long counter2 = 0;
+  static LONG counter1 = 0;
+  static LONG counter2 = 0;
 
   long n1 = ::InterlockedIncrement(&counter1);
   long n2 = (static_cast<unsigned long>(n1) % 0x10000000) == 0
@@ -57,10 +58,12 @@ void create_pipe(native_pipe_handle p[2], boost::system::error_code& ec)
     : ::InterlockedExchangeAdd(&counter2, 0);
 
   wchar_t pipe_name[128];
-#if defined(BOOST_ASIO_HAS_SECURE_RTL)
-  swprintf_s(
+#if defined(BOOST_ASIO_CYGWIN_W32_SOCKETS)
+  swprintf(
+#elif defined(BOOST_ASIO_HAS_SECURE_RTL)
+   swprintf_s(
 #else // defined(BOOST_ASIO_HAS_SECURE_RTL)
-  _snwprintf(
+   _snwprintf(
 #endif // defined(BOOST_ASIO_HAS_SECURE_RTL)
       pipe_name, 128,
       // Include address of static to discriminate asio instances in DLLs.
@@ -142,6 +145,7 @@ void close_pipe(native_pipe_handle p)
 }
 
 } // namespace detail
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

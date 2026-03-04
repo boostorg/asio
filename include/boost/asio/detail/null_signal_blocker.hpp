@@ -2,7 +2,7 @@
 // detail/null_signal_blocker.hpp
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2025 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2026 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -20,7 +20,7 @@
 #if !defined(BOOST_ASIO_HAS_THREADS) \
   || defined(BOOST_ASIO_WINDOWS) \
   || defined(BOOST_ASIO_WINDOWS_RUNTIME) \
-  || defined(__CYGWIN__) \
+  || defined(BOOST_ASIO_CYGWIN_W32_SOCKETS) \
   || defined(__SYMBIAN32__)
 
 #include <boost/asio/detail/noncopyable.hpp>
@@ -29,6 +29,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
 
 class null_signal_blocker
@@ -57,6 +58,7 @@ public:
 };
 
 } // namespace detail
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 
@@ -65,7 +67,7 @@ public:
 #endif // !defined(BOOST_ASIO_HAS_THREADS)
        // || defined(BOOST_ASIO_WINDOWS)
        // || defined(BOOST_ASIO_WINDOWS_RUNTIME)
-       // || defined(__CYGWIN__)
+       // || defined(BOOST_ASIO_CYGWIN_W32_SOCKETS)
        // || defined(__SYMBIAN32__)
 
 #endif // BOOST_ASIO_DETAIL_NULL_SIGNAL_BLOCKER_HPP

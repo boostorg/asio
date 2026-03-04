@@ -2,7 +2,7 @@
 // detail/bind_handler.hpp
 // ~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2025 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2026 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -24,6 +24,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
 
 template <typename Handler>
@@ -69,7 +70,7 @@ template <typename Handler>
 inline bool asio_handler_is_continuation(
     binder0<Handler>* this_handler)
 {
-  return boost_asio_handler_cont_helpers::is_continuation(
+  return BOOST_ASIO_VERSIONED_NAME(handler_cont_helpers)::is_continuation(
       this_handler->handler_);
 }
 
@@ -130,7 +131,7 @@ template <typename Handler, typename Arg1>
 inline bool asio_handler_is_continuation(
     binder1<Handler, Arg1>* this_handler)
 {
-  return boost_asio_handler_cont_helpers::is_continuation(
+  return BOOST_ASIO_VERSIONED_NAME(handler_cont_helpers)::is_continuation(
       this_handler->handler_);
 }
 
@@ -198,7 +199,7 @@ template <typename Handler, typename Arg1, typename Arg2>
 inline bool asio_handler_is_continuation(
     binder2<Handler, Arg1, Arg2>* this_handler)
 {
-  return boost_asio_handler_cont_helpers::is_continuation(
+  return BOOST_ASIO_VERSIONED_NAME(handler_cont_helpers)::is_continuation(
       this_handler->handler_);
 }
 
@@ -273,7 +274,7 @@ template <typename Handler, typename Arg1, typename Arg2, typename Arg3>
 inline bool asio_handler_is_continuation(
     binder3<Handler, Arg1, Arg2, Arg3>* this_handler)
 {
-  return boost_asio_handler_cont_helpers::is_continuation(
+  return BOOST_ASIO_VERSIONED_NAME(handler_cont_helpers)::is_continuation(
       this_handler->handler_);
 }
 
@@ -357,7 +358,7 @@ template <typename Handler, typename Arg1,
 inline bool asio_handler_is_continuation(
     binder4<Handler, Arg1, Arg2, Arg3, Arg4>* this_handler)
 {
-  return boost_asio_handler_cont_helpers::is_continuation(
+  return BOOST_ASIO_VERSIONED_NAME(handler_cont_helpers)::is_continuation(
       this_handler->handler_);
 }
 
@@ -448,7 +449,7 @@ template <typename Handler, typename Arg1, typename Arg2,
 inline bool asio_handler_is_continuation(
     binder5<Handler, Arg1, Arg2, Arg3, Arg4, Arg5>* this_handler)
 {
-  return boost_asio_handler_cont_helpers::is_continuation(
+  return BOOST_ASIO_VERSIONED_NAME(handler_cont_helpers)::is_continuation(
       this_handler->handler_);
 }
 
@@ -502,7 +503,7 @@ template <typename Handler, typename Arg1>
 inline bool asio_handler_is_continuation(
     move_binder1<Handler, Arg1>* this_handler)
 {
-  return boost_asio_handler_cont_helpers::is_continuation(
+  return BOOST_ASIO_VERSIONED_NAME(handler_cont_helpers)::is_continuation(
       this_handler->handler_);
 }
 
@@ -542,7 +543,7 @@ template <typename Handler, typename Arg1, typename Arg2>
 inline bool asio_handler_is_continuation(
     move_binder2<Handler, Arg1, Arg2>* this_handler)
 {
-  return boost_asio_handler_cont_helpers::is_continuation(
+  return BOOST_ASIO_VERSIONED_NAME(handler_cont_helpers)::is_continuation(
       this_handler->handler_);
 }
 
@@ -713,6 +714,7 @@ struct associator<Associator,
   }
 };
 
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

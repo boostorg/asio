@@ -29,6 +29,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace experimental {
 namespace detail {
 
@@ -285,6 +286,7 @@ template<typename T, typename Executor = boost::asio::any_io_executor,
 using task = coro<void(), T, Executor, Allocator>;
 
 } // namespace experimental
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

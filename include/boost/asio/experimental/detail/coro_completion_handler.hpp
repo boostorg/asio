@@ -24,6 +24,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace experimental {
 namespace detail {
 
@@ -163,6 +164,7 @@ auto coro_interpret_result(std::tuple<boost::system::error_code, Arg>&& args)
 
 } // namespace detail
 } // namespace experimental
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

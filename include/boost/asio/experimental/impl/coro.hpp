@@ -26,6 +26,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace experimental {
 
 template <typename Yield, typename Return,
@@ -1216,6 +1217,7 @@ private:
 };
 
 } // namespace experimental
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

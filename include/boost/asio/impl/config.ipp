@@ -2,7 +2,7 @@
 // impl/config.ipp
 // ~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2025 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2026 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -28,6 +28,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 
 config_service::config_service(execution_context& ctx)
   : detail::execution_context_service_base<config_service>(ctx)
@@ -339,6 +340,7 @@ void config_from_env::make(execution_context& ctx) const
   (void)make_service<detail::config_from_env_service>(ctx, prefix_);
 }
 
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

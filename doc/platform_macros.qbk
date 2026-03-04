@@ -1,5 +1,5 @@
 [/
- / Copyright (c) 2003-2025 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+ / Copyright (c) 2003-2026 Christopher M. Kohlhoff (chris at kohlhoff dot com)
  /
  / Distributed under the Boost Software License, Version 1.0. (See accompanying
  / file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -85,13 +85,6 @@ with Boost.Asio's needs.
       Boost support for the Context library's fibers.
     ]
     [`BOOST_ASIO_DISABLE_BOOST_CONTEXT_FIBER`]
-  ]
-  [
-    [`BOOST_ASIO_HAS_BOOST_COROUTINE`]
-    [
-      Boost support for the Coroutine library.
-    ]
-    [`BOOST_ASIO_DISABLE_BOOST_COROUTINE`]
   ]
   [
     [`BOOST_ASIO_HAS_BOOST_DATE_TIME`]
@@ -253,6 +246,13 @@ with Boost.Asio's needs.
       Handler hooking. Disabled for ancient Borland C++ and gcc compilers.
     ]
     [`BOOST_ASIO_DISABLE_HANDLER_HOOKS`]
+  ]
+  [
+    [`BOOST_ASIO_HAS_INLINE_VARIABLES`]
+    [
+      Support for inline variables.
+    ]
+    [`BOOST_ASIO_DISABLE_INLINE_VARIABLES`]
   ]
   [
     [`BOOST_ASIO_HAS_IOCP`]
@@ -458,6 +458,16 @@ with Boost.Asio's needs.
     []
   ]
   [
+    [`BOOST_ASIO_HAS_STD_ATOMIC_WAIT`]
+    [
+      Standard library support for std::atomic<T>::wait and notify functions.
+      By default, this is only enabled on platforms where the standard library is
+      known to implement them using efficient wait primitives (e.g. Linux futex,
+      Windows WaitOnAddress, Apple ulock).
+    ]
+    [`BOOST_ASIO_DISABLE_STD_ATOMIC_WAIT`]
+  ]
+  [
     [`BOOST_ASIO_HAS_STD_CALL_ONCE`]
     [
       Always enabled. Retained for backwards compatibility in user code.
@@ -577,6 +587,13 @@ with Boost.Asio's needs.
     []
   ]
   [
+    [`BOOST_ASIO_HAS_STD_SOURCE_LOCATION`]
+    [
+      Standard library support for std::source_location.
+    ]
+    [`BOOST_ASIO_DISABLE_STD_SOURCE_LOCATION`]
+  ]
+  [
     [`BOOST_ASIO_HAS_STD_STRING_VIEW`]
     [
       Standard library support for std::string_view.
@@ -651,7 +668,7 @@ with Boost.Asio's needs.
     [
       Linux: epoll, eventfd, timerfd and io_uring.
     ]
-    []
+    [`BOOST_ASIO_DISABLE_TIMERFD`]
   ]
   [
     [`BOOST_ASIO_HAS_UNISTD_H`]
@@ -710,6 +727,14 @@ with Boost.Asio's needs.
       Windows: random access handles.
     ]
     [`BOOST_ASIO_DISABLE_WINDOWS_RANDOM_ACCESS_HANDLE`]
+  ]
+  [
+    [`BOOST_ASIO_HAS_WINDOWS_SRWLOCK`]
+    [
+      Windows: Slim Reader/Writer Locks.
+      Requires Windows 7 or later for TryAcquireSRWLockExclusive support.
+    ]
+    [`BOOST_ASIO_DISABLE_WINDOWS_SRWLOCK`]
   ]
   [
     [`BOOST_ASIO_HAS_WINDOWS_STREAM_HANDLE`]

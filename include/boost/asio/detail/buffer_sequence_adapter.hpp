@@ -2,7 +2,7 @@
 // detail/buffer_sequence_adapter.hpp
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2025 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2026 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -25,6 +25,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
 
 class buffer_sequence_adapter_base
@@ -44,7 +45,7 @@ protected:
   BOOST_ASIO_DECL static void init_native_buffer(
       native_buffer_type& buf,
       const boost::asio::const_buffer& buffer);
-#elif defined(BOOST_ASIO_WINDOWS) || defined(__CYGWIN__)
+#elif defined(BOOST_ASIO_WINDOWS) || defined(BOOST_ASIO_CYGWIN_W32_SOCKETS)
 public:
   // The maximum number of buffers to support in a single operation.
   enum { max_buffers = 64 < max_iov_len ? 64 : max_iov_len };
@@ -65,7 +66,7 @@ protected:
     buf.buf = const_cast<char*>(static_cast<const char*>(buffer.data()));
     buf.len = static_cast<ULONG>(buffer.size());
   }
-#else // defined(BOOST_ASIO_WINDOWS) || defined(__CYGWIN__)
+#else // defined(BOOST_ASIO_WINDOWS) || defined(BOOST_ASIO_CYGWIN_W32_SOCKETS)
 public:
   // The maximum number of buffers to support in a single operation.
   enum { max_buffers = 64 < max_iov_len ? 64 : max_iov_len };
@@ -97,7 +98,7 @@ protected:
     init_iov_base(iov.iov_base, const_cast<void*>(buffer.data()));
     iov.iov_len = buffer.size();
   }
-#endif // defined(BOOST_ASIO_WINDOWS) || defined(__CYGWIN__)
+#endif // defined(BOOST_ASIO_WINDOWS) || defined(BOOST_ASIO_CYGWIN_W32_SOCKETS)
 };
 
 // Helper class to translate buffers into the native buffer representation.
@@ -687,6 +688,7 @@ private:
 };
 
 } // namespace detail
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

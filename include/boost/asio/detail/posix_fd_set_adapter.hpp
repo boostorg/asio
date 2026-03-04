@@ -2,7 +2,7 @@
 // detail/posix_fd_set_adapter.hpp
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2025 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2026 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -18,7 +18,7 @@
 #include <boost/asio/detail/config.hpp>
 
 #if !defined(BOOST_ASIO_WINDOWS) \
-  && !defined(__CYGWIN__) \
+  && !defined(BOOST_ASIO_CYGWIN_W32_SOCKETS) \
   && !defined(BOOST_ASIO_WINDOWS_RUNTIME)
 
 #include <cstring>
@@ -30,6 +30,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
 
 // Adapts the FD_SET type to meet the Descriptor_Set concept's requirements.
@@ -108,13 +109,14 @@ private:
 };
 
 } // namespace detail
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 
 #include <boost/asio/detail/pop_options.hpp>
 
 #endif // !defined(BOOST_ASIO_WINDOWS)
-       // && !defined(__CYGWIN__)
+       // && !defined(BOOST_ASIO_CYGWIN_W32_SOCKETS)
        // && !defined(BOOST_ASIO_WINDOWS_RUNTIME)
 
 #endif // BOOST_ASIO_DETAIL_POSIX_FD_SET_ADAPTER_HPP

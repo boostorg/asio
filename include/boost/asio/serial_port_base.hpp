@@ -2,7 +2,7 @@
 // serial_port_base.hpp
 // ~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2025 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2026 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 // Copyright (c) 2008 Rep Invariant Systems, Inc. (info@repinvariant.com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
@@ -21,16 +21,18 @@
 #if defined(BOOST_ASIO_HAS_SERIAL_PORT) \
   || defined(GENERATING_DOCUMENTATION)
 
-#if !defined(BOOST_ASIO_WINDOWS) && !defined(__CYGWIN__)
+#if !defined(BOOST_ASIO_WINDOWS) \
+  && !defined(BOOST_ASIO_CYGWIN_W32_SOCKETS)
 # include <termios.h>
-#endif // !defined(BOOST_ASIO_WINDOWS) && !defined(__CYGWIN__)
+#endif // !defined(BOOST_ASIO_WINDOWS)
+       //   && !defined(BOOST_ASIO_CYGWIN_W32_SOCKETS)
 
 #include <boost/asio/detail/socket_types.hpp>
 #include <boost/system/error_code.hpp>
 
 #if defined(GENERATING_DOCUMENTATION)
 # define BOOST_ASIO_OPTION_STORAGE implementation_defined
-#elif defined(BOOST_ASIO_WINDOWS) || defined(__CYGWIN__)
+#elif defined(BOOST_ASIO_WINDOWS) || defined(BOOST_ASIO_CYGWIN_W32_SOCKETS)
 # define BOOST_ASIO_OPTION_STORAGE DCB
 #else
 # define BOOST_ASIO_OPTION_STORAGE termios
@@ -40,6 +42,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 
 /// The serial_port_base class is used as a base for the basic_serial_port class
 /// template so that we have a common place to define the serial port options.
@@ -151,6 +154,7 @@ protected:
   }
 };
 
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

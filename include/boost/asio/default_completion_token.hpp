@@ -2,7 +2,7 @@
 // default_completion_token.hpp
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2025 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2026 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -22,6 +22,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 
 class deferred_t;
 
@@ -81,6 +82,7 @@ using default_completion_token_t = typename default_completion_token<T>::type;
 #define BOOST_ASIO_DEFAULT_COMPLETION_TOKEN(e) \
   = typename ::boost::asio::default_completion_token<e>::type()
 
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

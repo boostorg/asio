@@ -2,7 +2,7 @@
 // detail/impl/socket_select_interrupter.ipp
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2025 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2026 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -20,7 +20,7 @@
 #if !defined(BOOST_ASIO_WINDOWS_RUNTIME)
 
 #if defined(BOOST_ASIO_WINDOWS) \
-  || defined(__CYGWIN__) \
+  || defined(BOOST_ASIO_CYGWIN_W32_SOCKETS) \
   || defined(__SYMBIAN32__)
 
 #include <cstdlib>
@@ -34,6 +34,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
 
 socket_select_interrupter::socket_select_interrupter(bool)
@@ -173,13 +174,14 @@ bool socket_select_interrupter::reset()
 }
 
 } // namespace detail
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 
 #include <boost/asio/detail/pop_options.hpp>
 
 #endif // defined(BOOST_ASIO_WINDOWS)
-       // || defined(__CYGWIN__)
+       // || defined(BOOST_ASIO_CYGWIN_W32_SOCKETS)
        // || defined(__SYMBIAN32__)
 
 #endif // !defined(BOOST_ASIO_WINDOWS_RUNTIME)

@@ -2,7 +2,7 @@
 // detail/winsock_init.hpp
 // ~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2025 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2026 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -17,12 +17,15 @@
 
 #include <boost/asio/detail/config.hpp>
 
-#if defined(BOOST_ASIO_WINDOWS) || defined(__CYGWIN__)
+#if defined(BOOST_ASIO_WINDOWS) || defined(BOOST_ASIO_CYGWIN_W32_SOCKETS)
+
+#include <boost/asio/detail/socket_types.hpp>
 
 #include <boost/asio/detail/push_options.hpp>
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
 
 class winsock_init_base
@@ -32,8 +35,8 @@ protected:
   // to ensure that the values are zero-initialised prior to any code being run.
   struct data
   {
-    long init_count_;
-    long result_;
+    LONG init_count_;
+    LONG result_;
   };
 
   BOOST_ASIO_DECL static void startup(data& d,
@@ -116,6 +119,7 @@ winsock_init_base::data winsock_init<Major, Minor>::data_;
 static const winsock_init<>& winsock_init_instance = winsock_init<>(false);
 
 } // namespace detail
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 
@@ -125,6 +129,6 @@ static const winsock_init<>& winsock_init_instance = winsock_init<>(false);
 # include <boost/asio/detail/impl/winsock_init.ipp>
 #endif // defined(BOOST_ASIO_HEADER_ONLY)
 
-#endif // defined(BOOST_ASIO_WINDOWS) || defined(__CYGWIN__)
+#endif // defined(BOOST_ASIO_WINDOWS) || defined(BOOST_ASIO_CYGWIN_W32_SOCKETS)
 
 #endif // BOOST_ASIO_DETAIL_WINSOCK_INIT_HPP

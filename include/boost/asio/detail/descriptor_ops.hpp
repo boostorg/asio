@@ -2,7 +2,7 @@
 // detail/descriptor_ops.hpp
 // ~~~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2025 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2026 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -19,7 +19,7 @@
 
 #if !defined(BOOST_ASIO_WINDOWS) \
   && !defined(BOOST_ASIO_WINDOWS_RUNTIME) \
-  && !defined(__CYGWIN__)
+  && !defined(BOOST_ASIO_CYGWIN_W32_SOCKETS)
 
 #include <cstddef>
 #include <boost/asio/error.hpp>
@@ -31,6 +31,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
 namespace descriptor_ops {
 
@@ -165,6 +166,7 @@ BOOST_ASIO_DECL int poll_error(int d,
 
 } // namespace descriptor_ops
 } // namespace detail
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 
@@ -176,6 +178,6 @@ BOOST_ASIO_DECL int poll_error(int d,
 
 #endif // !defined(BOOST_ASIO_WINDOWS)
        //   && !defined(BOOST_ASIO_WINDOWS_RUNTIME)
-       //   && !defined(__CYGWIN__)
+       //   && !defined(BOOST_ASIO_CYGWIN_W32_SOCKETS)
 
 #endif // BOOST_ASIO_DETAIL_DESCRIPTOR_OPS_HPP

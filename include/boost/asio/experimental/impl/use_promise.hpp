@@ -24,6 +24,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace experimental {
 
 template <typename Allocator>
@@ -60,6 +61,7 @@ struct async_result<experimental::use_promise_t<Allocator>, R(Args...)>
 
 #endif // !defined(GENERATING_DOCUMENTATION)
 
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

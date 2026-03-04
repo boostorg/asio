@@ -25,6 +25,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace experimental {
 namespace detail {
 
@@ -113,6 +114,7 @@ struct partial_promise : partial_promise_base<Allocator>
 
 } // namespace detail
 } // namespace experimental
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 
@@ -152,6 +154,7 @@ struct coroutine_traits<
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace experimental {
 namespace detail {
 
@@ -193,6 +196,7 @@ partial_coro dispatch_coroutine(Context& ctx,
 
 } // namespace detail
 } // namespace experimental
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

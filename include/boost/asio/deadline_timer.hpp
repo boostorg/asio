@@ -2,7 +2,7 @@
 // deadline_timer.hpp
 // ~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2025 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2026 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -29,12 +29,14 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 
 /// (Deprecated: Use system_timer.) Typedef for the typical usage of timer. Uses
 /// a UTC clock.
 BOOST_ASIO_DEPRECATED_MSG("Use system_timer")
 typedef basic_deadline_timer<boost::posix_time::ptime> deadline_timer;
 
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

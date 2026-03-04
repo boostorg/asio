@@ -2,7 +2,7 @@
 // detail/win_mutex.hpp
 // ~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2025 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2026 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -17,16 +17,18 @@
 
 #include <boost/asio/detail/config.hpp>
 
-#if defined(BOOST_ASIO_WINDOWS)
+#if defined(BOOST_ASIO_HAS_WINDOWS_SRWLOCK)
 
 #include <boost/asio/detail/noncopyable.hpp>
 #include <boost/asio/detail/scoped_lock.hpp>
 #include <boost/asio/detail/socket_types.hpp>
+#include <synchapi.h>
 
 #include <boost/asio/detail/push_options.hpp>
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
 
 class win_mutex
@@ -36,51 +38,45 @@ public:
   typedef boost::asio::detail::scoped_lock<win_mutex> scoped_lock;
 
   // Constructor.
-  BOOST_ASIO_DECL win_mutex();
+  win_mutex()
+  {
+    ::InitializeSRWLock(&srw_lock_);
+  }
 
-  // Destructor.
+  // Destructor. SRWLock does not require explicit cleanup.
   ~win_mutex()
   {
-    ::DeleteCriticalSection(&crit_section_);
   }
 
   // Try to lock the mutex.
   bool try_lock()
   {
-    return ::TryEnterCriticalSection(&crit_section_) != 0;
+    return ::TryAcquireSRWLockExclusive(&srw_lock_) != 0;
   }
 
   // Lock the mutex.
   void lock()
   {
-    ::EnterCriticalSection(&crit_section_);
+    ::AcquireSRWLockExclusive(&srw_lock_);
   }
 
   // Unlock the mutex.
   void unlock()
   {
-    ::LeaveCriticalSection(&crit_section_);
+    ::ReleaseSRWLockExclusive(&srw_lock_);
   }
 
 private:
-  // Initialisation must be performed in a separate function to the constructor
-  // since the compiler does not support the use of structured exceptions and
-  // C++ exceptions in the same function.
-  BOOST_ASIO_DECL int do_init();
-
-  ::CRITICAL_SECTION crit_section_;
+  ::SRWLOCK srw_lock_;
 };
 
 } // namespace detail
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 
 #include <boost/asio/detail/pop_options.hpp>
 
-#if defined(BOOST_ASIO_HEADER_ONLY)
-# include <boost/asio/detail/impl/win_mutex.ipp>
-#endif // defined(BOOST_ASIO_HEADER_ONLY)
-
-#endif // defined(BOOST_ASIO_WINDOWS)
+#endif // defined(BOOST_ASIO_HAS_WINDOWS_SRWLOCK)
 
 #endif // BOOST_ASIO_DETAIL_WIN_MUTEX_HPP

@@ -2,7 +2,7 @@
 // detail/io_uring_service.hpp
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2025 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2026 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -29,6 +29,7 @@
 #include <boost/asio/detail/op_queue.hpp>
 #include <boost/asio/detail/reactor.hpp>
 #include <boost/asio/detail/scheduler_task.hpp>
+#include <boost/asio/detail/slim_mutex.hpp>
 #include <boost/asio/detail/timer_queue_base.hpp>
 #include <boost/asio/detail/timer_queue_set.hpp>
 #include <boost/asio/detail/wait_op.hpp>
@@ -38,6 +39,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
 
 class io_uring_service
@@ -46,7 +48,7 @@ class io_uring_service
 {
 private:
   // The mutex type used by this reactor.
-  typedef conditionally_enabled_mutex mutex;
+  typedef conditionally_enabled_mutex<slim_mutex> mutex;
 
 public:
   enum op_types { read_op = 0, write_op = 1, except_op = 2, max_ops = 3 };
@@ -311,6 +313,7 @@ private:
 };
 
 } // namespace detail
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

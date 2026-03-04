@@ -2,7 +2,7 @@
 // detail/impl/null_event.ipp
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2025 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2026 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -19,7 +19,7 @@
 
 #if defined(BOOST_ASIO_WINDOWS_RUNTIME)
 # include <thread>
-#elif defined(BOOST_ASIO_WINDOWS) || defined(__CYGWIN__)
+#elif defined(BOOST_ASIO_WINDOWS) || defined(BOOST_ASIO_CYGWIN_W32_SOCKETS)
 # include <boost/asio/detail/socket_types.hpp>
 #else
 # include <unistd.h>
@@ -35,13 +35,14 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
 
 void null_event::do_wait()
 {
 #if defined(BOOST_ASIO_WINDOWS_RUNTIME)
   std::this_thread::sleep_until((std::chrono::steady_clock::time_point::max)());
-#elif defined(BOOST_ASIO_WINDOWS) || defined(__CYGWIN__)
+#elif defined(BOOST_ASIO_WINDOWS) || defined(BOOST_ASIO_CYGWIN_W32_SOCKETS)
   ::Sleep(INFINITE);
 #else
   ::pause();
@@ -52,7 +53,7 @@ void null_event::do_wait_for_usec(long usec)
 {
 #if defined(BOOST_ASIO_WINDOWS_RUNTIME)
   std::this_thread::sleep_for(std::chrono::microseconds(usec));
-#elif defined(BOOST_ASIO_WINDOWS) || defined(__CYGWIN__)
+#elif defined(BOOST_ASIO_WINDOWS) || defined(BOOST_ASIO_CYGWIN_W32_SOCKETS)
   ::Sleep(usec / 1000);
 #elif defined(__hpux) && defined(__SELECT)
   timespec ts;
@@ -68,6 +69,7 @@ void null_event::do_wait_for_usec(long usec)
 }
 
 } // namespace detail
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 

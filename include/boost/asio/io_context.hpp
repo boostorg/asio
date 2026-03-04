@@ -2,7 +2,7 @@
 // io_context.hpp
 // ~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2025 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2026 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -28,7 +28,7 @@
 #include <boost/asio/execution.hpp>
 #include <boost/asio/execution_context.hpp>
 
-#if defined(BOOST_ASIO_WINDOWS) || defined(__CYGWIN__)
+#if defined(BOOST_ASIO_WINDOWS) || defined(BOOST_ASIO_CYGWIN_W32_SOCKETS)
 # include <boost/asio/detail/winsock_init.hpp>
 #elif defined(__sun) || defined(__QNX__) || defined(__hpux) || defined(_AIX) \
   || defined(__osf__)
@@ -45,6 +45,7 @@
 
 namespace boost {
 namespace asio {
+BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 
 namespace detail {
 #if defined(BOOST_ASIO_HAS_IOCP)
@@ -517,7 +518,7 @@ private:
   template <typename Service>
   friend Service& use_service(io_context& ioc);
 
-#if defined(BOOST_ASIO_WINDOWS) || defined(__CYGWIN__)
+#if defined(BOOST_ASIO_WINDOWS) || defined(BOOST_ASIO_CYGWIN_W32_SOCKETS)
   detail::winsock_init<> init_;
 #elif defined(__sun) || defined(__QNX__) || defined(__hpux) || defined(_AIX) \
   || defined(__osf__)
@@ -569,8 +570,8 @@ public:
 
 #if !defined(GENERATING_DOCUMENTATION)
 private:
-  friend struct boost_asio_require_fn::impl;
-  friend struct boost_asio_prefer_fn::impl;
+  friend struct BOOST_ASIO_VERSIONED_NAME(require_fn)::impl;
+  friend struct BOOST_ASIO_VERSIONED_NAME(prefer_fn)::impl;
 #endif // !defined(GENERATING_DOCUMENTATION)
 
   /// Obtain an executor with the @c blocking.possibly property.
@@ -711,7 +712,7 @@ private:
 
 #if !defined(GENERATING_DOCUMENTATION)
 private:
-  friend struct boost_asio_query_fn::impl;
+  friend struct BOOST_ASIO_VERSIONED_NAME(query_fn)::impl;
   friend struct boost::asio::execution::detail::mapping_t<0>;
   friend struct boost::asio::execution::detail::inline_exception_handling_t<0>;
   friend struct boost::asio::execution::detail::outstanding_work_t<0>;
@@ -1345,6 +1346,7 @@ struct is_executor<io_context> : false_type
 
 #endif // !defined(GENERATING_DOCUMENTATION)
 
+BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 
