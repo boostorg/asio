@@ -355,7 +355,9 @@ PREDEFINED             = GENERATING_DOCUMENTATION \
                          BOOST_ASIO_AUTO_RETURN_TYPE_PREFIX(t)=auto \
                          "BOOST_ASIO_AUTO_RETURN_TYPE_PREFIX2(t0,t1)=auto" \
                          "BOOST_ASIO_AUTO_RETURN_TYPE_PREFIX3(t0,t1,t2)=auto" \
-                         BOOST_ASIO_AUTO_RETURN_TYPE_SUFFIX(t)=
+                         BOOST_ASIO_AUTO_RETURN_TYPE_SUFFIX(t)= \
+                         BOOST_ASIO_INLINE_NAMESPACE_BEGIN= \
+                         BOOST_ASIO_INLINE_NAMESPACE_END=
 EXPAND_AS_DEFINED      =
 SKIP_FUNCTION_MACROS   = YES
 #---------------------------------------------------------------------------
