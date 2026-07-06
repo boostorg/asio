@@ -17,6 +17,7 @@
 
 #include <boost/asio/detail/config.hpp>
 #include <boost/asio/detail/functional.hpp>
+#include <boost/asio/detail/type_traits.hpp>
 
 #include <boost/asio/detail/push_options.hpp>
 
@@ -60,18 +61,21 @@ unspecified signal_number;
 
 #else
 
-static BOOST_ASIO_INLINE_VARIABLE constexpr auto& error
-  = std::placeholders::_1;
-static BOOST_ASIO_INLINE_VARIABLE constexpr auto& bytes_transferred
-  = std::placeholders::_2;
-static BOOST_ASIO_INLINE_VARIABLE constexpr auto& iterator
-  = std::placeholders::_2;
-static BOOST_ASIO_INLINE_VARIABLE constexpr auto& results
-  = std::placeholders::_2;
-static BOOST_ASIO_INLINE_VARIABLE constexpr auto& endpoint
-  = std::placeholders::_2;
-static BOOST_ASIO_INLINE_VARIABLE constexpr auto& signal_number
-  = std::placeholders::_2;
+#if defined(BOOST_ASIO_HAS_INLINE_VARIABLES)
+inline constexpr decay_t<decltype(std::placeholders::_1)> error;
+inline constexpr decay_t<decltype(std::placeholders::_2)> bytes_transferred;
+inline constexpr decay_t<decltype(std::placeholders::_2)> iterator;
+inline constexpr decay_t<decltype(std::placeholders::_2)> results;
+inline constexpr decay_t<decltype(std::placeholders::_2)> endpoint;
+inline constexpr decay_t<decltype(std::placeholders::_2)> signal_number;
+#else // defined(BOOST_ASIO_HAS_INLINE_VARIABLES)
+static constexpr auto& error = std::placeholders::_1;
+static constexpr auto& bytes_transferred = std::placeholders::_2;
+static constexpr auto& iterator = std::placeholders::_2;
+static constexpr auto& results = std::placeholders::_2;
+static constexpr auto& endpoint = std::placeholders::_2;
+static constexpr auto& signal_number = std::placeholders::_2;
+#endif // defined(BOOST_ASIO_HAS_INLINE_VARIABLES)
 
 #endif
 

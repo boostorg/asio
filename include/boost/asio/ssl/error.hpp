@@ -34,7 +34,7 @@ enum ssl_errors
 extern BOOST_ASIO_DECL
 const boost::system::error_category& get_ssl_category();
 
-static const boost::system::error_category&
+BOOST_ASIO_INLINE_OR_STATIC_VARIABLE const boost::system::error_category&
   ssl_category BOOST_ASIO_UNUSED_VARIABLE
   = boost::asio::error::get_ssl_category();
 
@@ -71,7 +71,7 @@ enum stream_errors
 extern BOOST_ASIO_DECL
 const boost::system::error_category& get_stream_category();
 
-static const boost::system::error_category&
+BOOST_ASIO_INLINE_OR_STATIC_VARIABLE const boost::system::error_category&
   stream_category BOOST_ASIO_UNUSED_VARIABLE
   = boost::asio::ssl::error::get_stream_category();
 

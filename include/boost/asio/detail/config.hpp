@@ -350,12 +350,16 @@
 #  if (__cplusplus >= 201703) && (__cpp_inline_variables >= 201606)
 #   define BOOST_ASIO_HAS_INLINE_VARIABLES 1
 #   define BOOST_ASIO_INLINE_VARIABLE inline
+#   define BOOST_ASIO_INLINE_OR_STATIC_VARIABLE inline
 #  endif // (__cplusplus >= 201703) && (__cpp_inline_variables >= 201606)
 # endif // !defined(BOOST_ASIO_DISABLE_INLINE_VARIABLES)
 #endif // !defined(BOOST_ASIO_HAS_INLINE_VARIABLES)
 #if !defined(BOOST_ASIO_INLINE_VARIABLE)
 # define BOOST_ASIO_INLINE_VARIABLE
 #endif // !defined(BOOST_ASIO_INLINE_VARIABLE)
+#if !defined(BOOST_ASIO_INLINE_OR_STATIC_VARIABLE)
+# define BOOST_ASIO_INLINE_OR_STATIC_VARIABLE static
+#endif // !defined(BOOST_ASIO_INLINE_OR_STATIC_VARIABLE)
 #if defined(BOOST_ASIO_HAS_INLINE_VARIABLES)
 # define BOOST_ASIO_VERSION_TAG_a a
 #else // defined(BOOST_ASIO_HAS_INLINE_VARIABLES)

@@ -100,8 +100,8 @@ BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
 
 #if defined(BOOST_ASIO_WINDOWS_RUNTIME)
-const int max_addr_v4_str_len = 256;
-const int max_addr_v6_str_len = 256;
+BOOST_ASIO_INLINE_VARIABLE const int max_addr_v4_str_len = 256;
+BOOST_ASIO_INLINE_VARIABLE const int max_addr_v6_str_len = 256;
 typedef unsigned __int32 u_long_type;
 typedef unsigned __int16 u_short_type;
 struct in4_addr_type { u_long_type s_addr; };
@@ -186,10 +186,10 @@ typedef int signed_size_type;
 # define BOOST_ASIO_OS_DEF_SA_NOCLDWAIT 0x4
 #elif defined(BOOST_ASIO_WINDOWS) || defined(BOOST_ASIO_CYGWIN_W32_SOCKETS)
 typedef SOCKET socket_type;
-const SOCKET invalid_socket = INVALID_SOCKET;
-const int socket_error_retval = SOCKET_ERROR;
-const int max_addr_v4_str_len = 256;
-const int max_addr_v6_str_len = 256;
+BOOST_ASIO_INLINE_VARIABLE const SOCKET invalid_socket = INVALID_SOCKET;
+BOOST_ASIO_INLINE_VARIABLE const int socket_error_retval = SOCKET_ERROR;
+BOOST_ASIO_INLINE_VARIABLE const int max_addr_v4_str_len = 256;
+BOOST_ASIO_INLINE_VARIABLE const int max_addr_v6_str_len = 256;
 typedef sockaddr socket_addr_type;
 typedef in_addr in4_addr_type;
 typedef ip_mreq in4_mreq_type;
@@ -292,22 +292,23 @@ struct sockaddr_un_type { u_short sun_family; char sun_path[108]; };
 #  define BOOST_ASIO_OS_DEF_AI_ADDRCONFIG 0
 # endif
 # if defined (_WIN32_WINNT)
-const int max_iov_len = 64;
+BOOST_ASIO_INLINE_VARIABLE const int max_iov_len = 64;
 # else
-const int max_iov_len = 16;
+BOOST_ASIO_INLINE_VARIABLE const int max_iov_len = 16;
 # endif
 # define BOOST_ASIO_OS_DEF_SA_RESTART 0x1
 # define BOOST_ASIO_OS_DEF_SA_NOCLDSTOP 0x2
 # define BOOST_ASIO_OS_DEF_SA_NOCLDWAIT 0x4
 #else
 typedef int socket_type;
-const int invalid_socket = -1;
-const int socket_error_retval = -1;
-const int max_addr_v4_str_len = INET_ADDRSTRLEN;
+BOOST_ASIO_INLINE_VARIABLE const int invalid_socket = -1;
+BOOST_ASIO_INLINE_VARIABLE const int socket_error_retval = -1;
+BOOST_ASIO_INLINE_VARIABLE const int max_addr_v4_str_len = INET_ADDRSTRLEN;
 #if defined(INET6_ADDRSTRLEN)
-const int max_addr_v6_str_len = INET6_ADDRSTRLEN + 1 + IF_NAMESIZE;
+BOOST_ASIO_INLINE_VARIABLE const int max_addr_v6_str_len =
+  INET6_ADDRSTRLEN + 1 + IF_NAMESIZE;
 #else // defined(INET6_ADDRSTRLEN)
-const int max_addr_v6_str_len = 256;
+BOOST_ASIO_INLINE_VARIABLE const int max_addr_v6_str_len = 256;
 #endif // defined(INET6_ADDRSTRLEN)
 typedef sockaddr socket_addr_type;
 typedef in_addr in4_addr_type;
@@ -413,10 +414,10 @@ typedef int signed_size_type;
 #  define BOOST_ASIO_OS_DEF_AI_ADDRCONFIG 0
 # endif
 # if defined(IOV_MAX)
-const int max_iov_len = IOV_MAX;
+BOOST_ASIO_INLINE_VARIABLE const int max_iov_len = IOV_MAX;
 # else
 // POSIX platforms are not required to define IOV_MAX.
-const int max_iov_len = 16;
+BOOST_ASIO_INLINE_VARIABLE const int max_iov_len = 16;
 # endif
 # define BOOST_ASIO_OS_DEF_SA_RESTART SA_RESTART
 # define BOOST_ASIO_OS_DEF_SA_NOCLDSTOP SA_NOCLDSTOP
@@ -426,9 +427,9 @@ const int max_iov_len = 16;
 #  define BOOST_ASIO_OS_DEF_SA_NOCLDWAIT 0
 # endif // defined(SA_NOCLDWAIT)
 #endif
-const int custom_socket_option_level = 0xA5100000;
-const int enable_connection_aborted_option = 1;
-const int always_fail_option = 2;
+BOOST_ASIO_INLINE_VARIABLE const int custom_socket_option_level = 0xA5100000;
+BOOST_ASIO_INLINE_VARIABLE const int enable_connection_aborted_option = 1;
+BOOST_ASIO_INLINE_VARIABLE const int always_fail_option = 2;
 
 } // namespace detail
 BOOST_ASIO_INLINE_NAMESPACE_END

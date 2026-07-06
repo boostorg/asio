@@ -38,7 +38,7 @@ enum channel_errors
 extern BOOST_ASIO_DECL
 const boost::system::error_category& get_channel_category();
 
-static const boost::system::error_category&
+BOOST_ASIO_INLINE_OR_STATIC_VARIABLE const boost::system::error_category&
   channel_category BOOST_ASIO_UNUSED_VARIABLE
   = boost::asio::experimental::error::get_channel_category();
 
