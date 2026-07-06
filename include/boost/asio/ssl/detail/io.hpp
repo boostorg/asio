@@ -17,6 +17,7 @@
 
 #include <boost/asio/detail/config.hpp>
 
+#include <limits>
 #include <boost/asio/detail/base_from_cancellation_state.hpp>
 #include <boost/asio/detail/handler_tracking.hpp>
 #include <boost/asio/ssl/detail/engine.hpp>
@@ -30,6 +31,14 @@ namespace asio {
 BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace ssl {
 namespace detail {
+
+struct transfer_unlimited
+{
+  std::size_t operator()(const boost::system::error_code& ec, std::size_t) const
+  {
+    return ec ? 0 : (std::numeric_limits<std::size_t>::max)();
+  }
+};
 
 template <typename Stream, typename Operation>
 std::size_t io(Stream& next_layer, stream_core& core,
@@ -62,7 +71,8 @@ std::size_t io(Stream& next_layer, stream_core& core,
     // Get output data from the engine and write it to the underlying
     // transport.
     boost::asio::write(next_layer,
-        core.engine_.get_output(core.output_buffer()), io_ec);
+        core.engine_.get_output(core.output_buffer()),
+        transfer_unlimited(), io_ec);
     if (!ec)
       ec = io_ec;
 
@@ -74,7 +84,8 @@ std::size_t io(Stream& next_layer, stream_core& core,
     // Get output data from the engine and write it to the underlying
     // transport.
     boost::asio::write(next_layer,
-        core.engine_.get_output(core.output_buffer()), io_ec);
+        core.engine_.get_output(core.output_buffer()),
+        transfer_unlimited(), io_ec);
     if (!ec)
       ec = io_ec;
 
@@ -212,7 +223,7 @@ public:
             // Start writing all the data to the underlying transport.
             boost::asio::async_write(next_layer_,
                 core_.engine_.get_output(core_.output_buffer()),
-                static_cast<io_op&&>(*this));
+                transfer_unlimited(), static_cast<io_op&&>(*this));
           }
           else
           {
