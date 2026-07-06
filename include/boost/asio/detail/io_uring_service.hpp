@@ -207,8 +207,10 @@ public:
   BOOST_ASIO_DECL void interrupt();
 
 private:
-  // The hint to pass to io_uring_queue_init to size its data structures.
-  enum { ring_size = 16384 };
+  // The default hint to pass to io_uring_queue_init to size its data
+  // structures, used when the "reactor" / "io_uring_ring_size" configuration
+  // value is not set.
+  enum { default_ring_size = 16384 };
 
   // The number of operations to complete in a batch.
   enum { complete_batch_size = 128 };
@@ -316,6 +318,9 @@ private:
 
   // The number of operations to submit in a batch.
   const int submit_batch_size_;
+
+  // The number of entries used to size each io_uring.
+  const unsigned int ring_size_;
 
   // A count of SQE submissions that are yet to be flushed.
   atomic_count unflushed_submits_;
