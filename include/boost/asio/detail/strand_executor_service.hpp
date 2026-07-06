@@ -165,7 +165,7 @@ private:
   BOOST_ASIO_DECL static bool push_waiting_to_ready(implementation_type& impl);
 
   // Invokes all ready-to-run handlers.
-  BOOST_ASIO_DECL static void run_ready_handlers(implementation_type& impl);
+  BOOST_ASIO_DECL void run_ready_handlers(implementation_type& impl);
 
   // Helper function to request invocation of the given function.
   template <typename Executor, typename Function, typename Allocator>
@@ -191,6 +191,9 @@ private:
 
   // The head of a linked list of all implementations.
   strand_impl* impl_list_;
+
+  // Cached success value to avoid accessing category singleton.
+  const boost::system::error_code success_ec_;
 };
 
 } // namespace detail
