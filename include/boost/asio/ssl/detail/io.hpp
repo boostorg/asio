@@ -265,7 +265,7 @@ public:
           }
         }
 
-        default:
+        /* fall-through */ default:
         if (bytes_transferred == ~std::size_t(0))
           bytes_transferred = 0; // Timer cancellation, no data transferred.
         else if (!ec_)
@@ -315,7 +315,7 @@ public:
 
           // Fall through to call handler.
 
-        default:
+        /* fall-through */ default:
 
           // Pass the result to the handler.
           op_.call_handler(handler_,
