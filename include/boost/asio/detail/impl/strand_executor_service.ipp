@@ -28,9 +28,11 @@ namespace detail {
 strand_executor_service::strand_executor_service(execution_context& ctx)
   : execution_context_service_base<strand_executor_service>(ctx),
     mutex_(),
-#if !defined(BOOST_ASIO_HAS_STD_ATOMIC_WAIT)
+#if !defined(BOOST_ASIO_HAS_STD_ATOMIC_WAIT) \
+  && !defined(BOOST_ASIO_HAS_FUTEX)
     salt_(0),
 #endif // !defined(BOOST_ASIO_HAS_STD_ATOMIC_WAIT)
+       //   && !defined(BOOST_ASIO_HAS_FUTEX)
     impl_list_(0)
 {
 }
@@ -63,7 +65,8 @@ strand_executor_service::create_implementation()
 
   boost::asio::detail::mutex::scoped_lock lock(mutex_);
 
-#if !defined(BOOST_ASIO_HAS_STD_ATOMIC_WAIT)
+#if !defined(BOOST_ASIO_HAS_STD_ATOMIC_WAIT) \
+  && !defined(BOOST_ASIO_HAS_FUTEX)
   // Select a mutex from the pool of shared mutexes.
   std::size_t salt = salt_++;
   std::size_t mutex_index = reinterpret_cast<std::size_t>(new_impl.get());
@@ -74,6 +77,7 @@ strand_executor_service::create_implementation()
     mutexes_[mutex_index] = allocate_shared<mutex>(alloc);
   new_impl->mutex_ = mutexes_[mutex_index].get();
 #endif // !defined(BOOST_ASIO_HAS_STD_ATOMIC_WAIT)
+       //   && !defined(BOOST_ASIO_HAS_FUTEX)
 
   // Insert implementation into linked list of all implementations.
   new_impl->next_ = impl_list_;

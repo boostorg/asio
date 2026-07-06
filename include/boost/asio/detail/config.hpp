@@ -934,6 +934,22 @@
 # define BOOST_ASIO_VERSION_TAG_j
 #endif // defined(BOOST_ASIO_HAS_IO_URING_AS_DEFAULT)
 
+// Linux: futex.
+#if !defined(BOOST_ASIO_HAS_FUTEX)
+# if !defined(BOOST_ASIO_DISABLE_FUTEX)
+#  if defined(__linux__)
+#   if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,22)
+#    define BOOST_ASIO_HAS_FUTEX 1
+#   endif // LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,22)
+#  endif // defined(__linux__)
+# endif // !defined(BOOST_ASIO_DISABLE_FUTEX)
+#endif // !defined(BOOST_ASIO_HAS_FUTEX)
+#if defined(BOOST_ASIO_HAS_FUTEX)
+# define BOOST_ASIO_VERSION_TAG_q q
+#else // defined(BOOST_ASIO_HAS_FUTEX)
+# define BOOST_ASIO_VERSION_TAG_q
+#endif // defined(BOOST_ASIO_HAS_FUTEX)
+
 // Mac OS X, FreeBSD, NetBSD, OpenBSD: kqueue.
 #if (defined(__MACH__) && defined(__APPLE__)) \
   || defined(__FreeBSD__) \
@@ -1606,7 +1622,8 @@
   BOOST_ASIO_DETAIL_CAT(BOOST_ASIO_VERSION_TAG_m, \
   BOOST_ASIO_DETAIL_CAT(BOOST_ASIO_VERSION_TAG_n, \
   BOOST_ASIO_DETAIL_CAT(BOOST_ASIO_VERSION_TAG_o, \
-  BOOST_ASIO_VERSION_TAG_p))))))))))))))))))
+  BOOST_ASIO_DETAIL_CAT(BOOST_ASIO_VERSION_TAG_p, \
+  BOOST_ASIO_VERSION_TAG_q)))))))))))))))))))
 # endif // !defined(BOOST_ASIO_VERSION_NAMESPACE)
 #endif // defined(BOOST_ASIO_ENABLE_VERSION_NAMESPACE)
 
