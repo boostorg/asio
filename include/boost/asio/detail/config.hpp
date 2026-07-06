@@ -1194,6 +1194,17 @@
 # define BOOST_ASIO_VERSION_TAG_o
 #endif // defined(BOOST_ASIO_HAS_THREADS)
 
+// Thread sanitizer.
+#if !defined(BOOST_ASIO_HAS_THREAD_SANITIZER)
+# if defined(__SANITIZE_THREAD__)
+#  define BOOST_ASIO_HAS_THREAD_SANITIZER 1
+# elif defined(__has_feature)
+#  if __has_feature(thread_sanitizer)
+#   define BOOST_ASIO_HAS_THREAD_SANITIZER 1
+#  endif // __has_feature(thread_sanitizer)
+# endif // defined(__SANITIZE_THREAD__)
+#endif // !defined(BOOST_ASIO_HAS_THREAD_SANITIZER)
+
 // POSIX threads.
 #if !defined(BOOST_ASIO_HAS_PTHREADS)
 # if defined(BOOST_ASIO_HAS_THREADS)

@@ -21,6 +21,9 @@
 // Nothing to include.
 #else // !defined(BOOST_ASIO_HAS_THREADS)
 # include <atomic>
+# if defined(BOOST_ASIO_HAS_THREAD_SANITIZER)
+#  include <sanitizer/tsan_interface.h>
+# endif // defined(BOOST_ASIO_HAS_THREAD_SANITIZER)
 #endif // !defined(BOOST_ASIO_HAS_THREADS)
 
 namespace boost {
@@ -50,7 +53,11 @@ inline bool ref_count_down(atomic_count& a)
 {
   if (a.fetch_sub(1, std::memory_order_release) == 1)
   {
+#if defined(BOOST_ASIO_HAS_THREAD_SANITIZER)
+    __tsan_acquire(&a);
+#else // defined(BOOST_ASIO_HAS_THREAD_SANITIZER)
     std::atomic_thread_fence(std::memory_order_acquire);
+#endif // defined(BOOST_ASIO_HAS_THREAD_SANITIZER)
     return true;
   }
   return false;
