@@ -37,6 +37,15 @@ namespace asio {
 BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace windows {
 
+#if !defined(BOOST_ASIO_WINDOWS_BASIC_OBJECT_HANDLE_FWD_DECL)
+#define BOOST_ASIO_WINDOWS_BASIC_OBJECT_HANDLE_FWD_DECL
+
+// Forward declaration with defaulted arguments.
+template <typename Executor = any_io_executor>
+class basic_object_handle;
+
+#endif // !defined(BOOST_ASIO_WINDOWS_BASIC_OBJECT_HANDLE_FWD_DECL)
+
 /// Provides object-oriented handle functionality.
 /**
  * The windows::basic_object_handle class provides asynchronous and blocking
@@ -46,7 +55,7 @@ namespace windows {
  * @e Distinct @e objects: Safe.@n
  * @e Shared @e objects: Unsafe.
  */
-template <typename Executor = any_io_executor>
+template <typename Executor>
 class basic_object_handle
 {
 private:

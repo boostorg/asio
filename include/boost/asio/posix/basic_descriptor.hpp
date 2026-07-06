@@ -44,6 +44,15 @@ namespace asio {
 BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace posix {
 
+#if !defined(BOOST_ASIO_POSIX_BASIC_DESCRIPTOR_FWD_DECL)
+#define BOOST_ASIO_POSIX_BASIC_DESCRIPTOR_FWD_DECL
+
+// Forward declaration with defaulted arguments.
+template <typename Executor = any_io_executor>
+class basic_descriptor;
+
+#endif // !defined(BOOST_ASIO_POSIX_BASIC_DESCRIPTOR_FWD_DECL)
+
 /// Provides POSIX descriptor functionality.
 /**
  * The posix::basic_descriptor class template provides the ability to wrap a
@@ -53,7 +62,7 @@ namespace posix {
  * @e Distinct @e objects: Safe.@n
  * @e Shared @e objects: Unsafe.
  */
-template <typename Executor = any_io_executor>
+template <typename Executor>
 class basic_descriptor
   : public descriptor_base
 {

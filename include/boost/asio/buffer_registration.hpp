@@ -37,6 +37,17 @@
 namespace boost {
 namespace asio {
 BOOST_ASIO_INLINE_NAMESPACE_BEGIN
+
+#if !defined(BOOST_ASIO_BUFFER_REGISTRATION_FWD_DECL)
+#define BOOST_ASIO_BUFFER_REGISTRATION_FWD_DECL
+
+// Forward declaration with defaulted arguments.
+template <typename MutableBufferSequence,
+    typename Allocator = std::allocator<void>>
+class buffer_registration;
+
+#endif // !defined(BOOST_ASIO_BUFFER_REGISTRATION_FWD_DECL)
+
 namespace detail {
 
 class buffer_registration_base
@@ -56,8 +67,7 @@ protected:
  * For portability, applications should assume that only one registration is
  * permitted per execution context.
  */
-template <typename MutableBufferSequence,
-    typename Allocator = std::allocator<void>>
+template <typename MutableBufferSequence, typename Allocator>
 class buffer_registration
   : detail::buffer_registration_base
 {

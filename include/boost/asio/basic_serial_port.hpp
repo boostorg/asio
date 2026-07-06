@@ -45,6 +45,15 @@ namespace boost {
 namespace asio {
 BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 
+#if !defined(BOOST_ASIO_BASIC_SERIAL_PORT_FWD_DECL)
+#define BOOST_ASIO_BASIC_SERIAL_PORT_FWD_DECL
+
+// Forward declaration with defaulted arguments.
+template <typename Executor = any_io_executor>
+class basic_serial_port;
+
+#endif // !defined(BOOST_ASIO_BASIC_SERIAL_PORT_FWD_DECL)
+
 /// Provides serial port functionality.
 /**
  * The basic_serial_port class provides a wrapper over serial port
@@ -54,7 +63,7 @@ BOOST_ASIO_INLINE_NAMESPACE_BEGIN
  * @e Distinct @e objects: Safe.@n
  * @e Shared @e objects: Unsafe.
  */
-template <typename Executor = any_io_executor>
+template <typename Executor>
 class basic_serial_port
   : public serial_port_base
 {
