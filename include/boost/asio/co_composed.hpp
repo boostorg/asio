@@ -844,7 +844,11 @@ public:
   {
     if (owner_)
       *owner_ = this;
+#if !defined(BOOST_ASIO_NO_EXCEPTIONS)
     throw;
+#else // !defined(BOOST_ASIO_NO_EXCEPTIONS)
+    std::terminate();
+#endif // !defined(BOOST_ASIO_NO_EXCEPTIONS)
   }
 
   template <BOOST_ASIO_ASYNC_OPERATION Op>
