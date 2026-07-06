@@ -52,6 +52,8 @@ io_uring_service::io_uring_service(boost::asio::execution_context& ctx)
     io_locking_spin_count_(
         config(ctx).get("reactor", "io_locking_spin_count", 0)),
     iowait_(config(ctx).get("reactor", "io_uring_iowait", true)),
+    submit_batch_size_(
+        config(ctx).get("reactor", "io_uring_submit_batch_size", 128)),
     timeout_(),
     registration_mutex_(mutex_.enabled()),
     registered_io_objects_(execution_context::allocator<void>(ctx),
@@ -767,7 +769,7 @@ void io_uring_service::submit_sqes()
 
 void io_uring_service::post_submit_sqes_op(mutex::scoped_lock& lock)
 {
-  if (pending_sqes_ >= submit_batch_size)
+  if (pending_sqes_ >= submit_batch_size_)
   {
     submit_sqes();
   }
