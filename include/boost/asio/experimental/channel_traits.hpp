@@ -17,6 +17,7 @@
 
 #include <boost/asio/detail/config.hpp>
 #include <deque>
+#include <exception>
 #include <boost/asio/detail/type_traits.hpp>
 #include <boost/asio/error.hpp>
 #include <boost/asio/experimental/channel_error.hpp>

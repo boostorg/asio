@@ -16,6 +16,7 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include <boost/asio/detail/config.hpp>
+#include <exception>
 #include <boost/asio/detail/non_const_lvalue.hpp>
 #include <boost/asio/detail/type_traits.hpp>
 #include <boost/asio/execution/blocking.hpp>
