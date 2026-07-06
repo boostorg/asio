@@ -39,11 +39,20 @@ class bad_executor
 {
 public:
   /// Constructor.
-  BOOST_ASIO_DECL bad_executor() noexcept;
+  bad_executor() noexcept
+  {
+  }
+
+  /// Destructor.
+  virtual ~bad_executor() noexcept
+  {
+  }
 
   /// Obtain message associated with exception.
-  BOOST_ASIO_DECL virtual const char* what() const
-    noexcept;
+  virtual const char* what() const noexcept
+  {
+    return "bad executor";
+  }
 };
 
 /// Polymorphic wrapper for executors.
@@ -358,9 +367,6 @@ BOOST_ASIO_USES_ALLOCATOR(boost::asio::executor)
 #include <boost/asio/detail/pop_options.hpp>
 
 #include <boost/asio/impl/executor.hpp>
-#if defined(BOOST_ASIO_HEADER_ONLY)
-# include <boost/asio/impl/executor.ipp>
-#endif // defined(BOOST_ASIO_HEADER_ONLY)
 
 #endif // !defined(BOOST_ASIO_NO_TS_EXECUTORS)
 

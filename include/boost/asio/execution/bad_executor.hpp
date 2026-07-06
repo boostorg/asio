@@ -30,10 +30,20 @@ class bad_executor
 {
 public:
   /// Constructor.
-  BOOST_ASIO_DECL bad_executor() noexcept;
+  bad_executor() noexcept
+  {
+  }
+
+  /// Destructor.
+  virtual ~bad_executor() noexcept
+  {
+  }
 
   /// Obtain message associated with exception.
-  BOOST_ASIO_DECL virtual const char* what() const noexcept;
+  virtual const char* what() const noexcept
+  {
+    return "bad executor";
+  }
 };
 
 } // namespace execution
@@ -42,9 +52,5 @@ BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace boost
 
 #include <boost/asio/detail/pop_options.hpp>
-
-#if defined(BOOST_ASIO_HEADER_ONLY)
-# include <boost/asio/execution/impl/bad_executor.ipp>
-#endif // defined(BOOST_ASIO_HEADER_ONLY)
 
 #endif // BOOST_ASIO_EXECUTION_BAD_EXECUTOR_HPP
