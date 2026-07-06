@@ -51,6 +51,7 @@ io_uring_service::io_uring_service(boost::asio::execution_context& ctx)
     io_locking_(config(ctx).get("reactor", "io_locking", true)),
     io_locking_spin_count_(
         config(ctx).get("reactor", "io_locking_spin_count", 0)),
+    iowait_(config(ctx).get("reactor", "io_uring_iowait", true)),
     timeout_(),
     registration_mutex_(mutex_.enabled()),
     registered_io_objects_(execution_context::allocator<void>(ctx),
@@ -566,6 +567,11 @@ void io_uring_service::init_ring()
         boost::asio::error::get_system_category());
     boost::asio::detail::throw_error(ec, "io_uring_queue_init");
   }
+
+#if defined(IORING_FEAT_NO_IOWAIT)
+  if (!iowait_)
+    static_cast<void>(::io_uring_set_iowait(&ring_, false));
+#endif // defined(IORING_FEAT_NO_IOWAIT)
 
 #if !defined(BOOST_ASIO_HAS_IO_URING_AS_DEFAULT)
   event_fd_ = ::eventfd(0, EFD_CLOEXEC | EFD_NONBLOCK);
