@@ -37,4 +37,5 @@ exe echo_server_with_default : echo_server_with_default.cpp ;
 exe echo_server_with_deferred : echo_server_with_deferred.cpp ;
 exe echo_server_with_deferred_default : echo_server_with_deferred_default.cpp ;
 exe refactored_echo_server : refactored_echo_server.cpp ;
-exe timeout : timeout.cpp ;
+exe timeout_cancel_after : timeout_cancel_after.cpp ;
+exe timeout_watchdog : timeout_watchdog.cpp ;
