@@ -378,12 +378,17 @@ const T static_instance<T>::instance = {};
 namespace boost {
 namespace asio {
 BOOST_ASIO_INLINE_NAMESPACE_BEGIN
+
+#if defined(BOOST_ASIO_HAS_INLINE_VARIABLES)
+inline constexpr BOOST_ASIO_VERSIONED_NAME(require_fn)::impl require{};
+#else // defined(BOOST_ASIO_HAS_INLINE_VARIABLES)
 namespace {
 
 static constexpr const BOOST_ASIO_VERSIONED_NAME(require_fn)::impl&
   require = BOOST_ASIO_VERSIONED_NAME(require_fn)::static_instance<>::instance;
 
 } // namespace
+#endif // defined(BOOST_ASIO_HAS_INLINE_VARIABLES)
 
 typedef BOOST_ASIO_VERSIONED_NAME(require_fn)::impl require_t;
 

@@ -45,6 +45,15 @@ namespace boost {
 namespace asio {
 BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 
+#if !defined(BOOST_ASIO_BASIC_READABLE_PIPE_FWD_DECL)
+#define BOOST_ASIO_BASIC_READABLE_PIPE_FWD_DECL
+
+// Forward declaration with defaulted arguments.
+template <typename Executor = any_io_executor>
+class basic_readable_pipe;
+
+#endif // !defined(BOOST_ASIO_BASIC_READABLE_PIPE_FWD_DECL)
+
 /// Provides pipe functionality.
 /**
  * The basic_readable_pipe class provides a wrapper over pipe
@@ -53,8 +62,10 @@ BOOST_ASIO_INLINE_NAMESPACE_BEGIN
  * @par Thread Safety
  * @e Distinct @e objects: Safe.@n
  * @e Shared @e objects: Unsafe.
+ *
+ * @sa @ref overview_pipes "Pipes"
  */
-template <typename Executor = any_io_executor>
+template <typename Executor>
 class basic_readable_pipe
 {
 private:

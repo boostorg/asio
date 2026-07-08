@@ -138,7 +138,7 @@ public:
           address_info->ai_family == BOOST_ASIO_OS_DEF(AF_INET)
             ? sizeof(boost::asio::detail::sockaddr_in4_type)
             : sizeof(boost::asio::detail::sockaddr_in6_type);
-        if (address_info->ai_addrlen >= expected_size)
+        if (static_cast<std::size_t>(address_info->ai_addrlen) >= expected_size)
         {
           using namespace std; // For memcpy.
           typename InternetProtocol::endpoint endpoint;

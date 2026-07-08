@@ -54,6 +54,9 @@ public:
 
 /// Provides access to the configuration values associated with an execution
 /// context.
+/**
+ * @sa @ref overview_configuration "Runtime configuration and concurrency hints"
+ */
 class config
 {
 public:

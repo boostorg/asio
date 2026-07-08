@@ -32,6 +32,8 @@ BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 /**
  * The cancel_at_t class is used to indicate that an asynchronous operation
  * should be cancelled if not complete at the specified absolute time.
+ *
+ * @sa @ref overview_token_adapters "Completion token adapters"
  */
 template <typename CompletionToken, typename Clock,
     typename WaitTraits = boost::asio::wait_traits<Clock>>

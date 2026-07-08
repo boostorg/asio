@@ -28,6 +28,15 @@ namespace asio {
 BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace windows {
 
+#if !defined(BOOST_ASIO_WINDOWS_BASIC_RANDOM_ACCESS_HANDLE_FWD_DECL)
+#define BOOST_ASIO_WINDOWS_BASIC_RANDOM_ACCESS_HANDLE_FWD_DECL
+
+// Forward declaration with defaulted arguments.
+template <typename Executor = any_io_executor>
+class basic_random_access_handle;
+
+#endif // !defined(BOOST_ASIO_WINDOWS_BASIC_RANDOM_ACCESS_HANDLE_FWD_DECL)
+
 /// Provides random-access handle functionality.
 /**
  * The windows::basic_random_access_handle class provides asynchronous and
@@ -36,8 +45,10 @@ namespace windows {
  * @par Thread Safety
  * @e Distinct @e objects: Safe.@n
  * @e Shared @e objects: Unsafe.
+ *
+ * @sa @ref overview_windows_random_access_handle "Random-access HANDLEs"
  */
-template <typename Executor = any_io_executor>
+template <typename Executor>
 class basic_random_access_handle
   : public basic_overlapped_handle<Executor>
 {

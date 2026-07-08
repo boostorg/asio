@@ -30,6 +30,8 @@ BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 /**
  * The redirect_disposition_t class is used to indicate that any disposition
  * produced by an asynchronous operation is captured to a specified variable.
+ *
+ * @sa @ref overview_token_adapters "Completion token adapters"
  */
 template <typename CompletionToken, BOOST_ASIO_DISPOSITION Disposition>
 class redirect_disposition_t

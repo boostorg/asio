@@ -292,16 +292,16 @@ inline const boost::system::error_category& get_addrinfo_category()
 extern BOOST_ASIO_DECL
 const boost::system::error_category& get_misc_category();
 
-static const boost::system::error_category&
+BOOST_ASIO_INLINE_OR_STATIC_VARIABLE const boost::system::error_category&
   system_category BOOST_ASIO_UNUSED_VARIABLE
   = boost::asio::error::get_system_category();
-static const boost::system::error_category&
+BOOST_ASIO_INLINE_OR_STATIC_VARIABLE const boost::system::error_category&
   netdb_category BOOST_ASIO_UNUSED_VARIABLE
   = boost::asio::error::get_netdb_category();
-static const boost::system::error_category&
+BOOST_ASIO_INLINE_OR_STATIC_VARIABLE const boost::system::error_category&
   addrinfo_category BOOST_ASIO_UNUSED_VARIABLE
   = boost::asio::error::get_addrinfo_category();
-static const boost::system::error_category&
+BOOST_ASIO_INLINE_OR_STATIC_VARIABLE const boost::system::error_category&
   misc_category BOOST_ASIO_UNUSED_VARIABLE
   = boost::asio::error::get_misc_category();
 

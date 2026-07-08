@@ -35,6 +35,15 @@ namespace boost {
 namespace asio {
 BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 
+#if !defined(BOOST_ASIO_BASIC_SIGNAL_SET_FWD_DECL)
+#define BOOST_ASIO_BASIC_SIGNAL_SET_FWD_DECL
+
+// Forward declaration with defaulted arguments.
+template <typename Executor = any_io_executor>
+class basic_signal_set;
+
+#endif // !defined(BOOST_ASIO_BASIC_SIGNAL_SET_FWD_DECL)
+
 /// Provides signal functionality.
 /**
  * The basic_signal_set class provides the ability to perform an asynchronous
@@ -94,8 +103,10 @@ BOOST_ASIO_INLINE_NAMESPACE_BEGIN
  * and @c pthread_sigmask(). For signals to be delivered, programs must ensure
  * that any signals registered using signal_set objects are unblocked in at
  * least one thread.
+ *
+ * @sa @ref overview_signals "Signal handling"
  */
-template <typename Executor = any_io_executor>
+template <typename Executor>
 class basic_signal_set : public signal_set_base
 {
 private:

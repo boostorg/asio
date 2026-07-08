@@ -28,6 +28,9 @@ BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 /// Completion token type used to specify that the completion handler
 /// arguments should be passed additional values before the results of the
 /// operation.
+/**
+ * @sa @ref overview_token_adapters "Completion token adapters"
+ */
 template <typename CompletionToken, typename... Values>
 class prepend_t
 {

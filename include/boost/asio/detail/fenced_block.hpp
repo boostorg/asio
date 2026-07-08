@@ -18,7 +18,8 @@
 #include <boost/asio/detail/config.hpp>
 
 #if !defined(BOOST_ASIO_HAS_THREADS) \
-  || defined(BOOST_ASIO_DISABLE_FENCED_BLOCK)
+  || defined(BOOST_ASIO_DISABLE_FENCED_BLOCK) \
+  || defined(BOOST_ASIO_HAS_THREAD_SANITIZER)
 # include <boost/asio/detail/null_fenced_block.hpp>
 #else
 # include <boost/asio/detail/std_fenced_block.hpp>
@@ -30,7 +31,8 @@ BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
 
 #if !defined(BOOST_ASIO_HAS_THREADS) \
-  || defined(BOOST_ASIO_DISABLE_FENCED_BLOCK)
+  || defined(BOOST_ASIO_DISABLE_FENCED_BLOCK) \
+  || defined(BOOST_ASIO_HAS_THREAD_SANITIZER)
 typedef null_fenced_block fenced_block;
 #else
 typedef std_fenced_block fenced_block;

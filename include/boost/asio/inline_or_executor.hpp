@@ -16,6 +16,7 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include <boost/asio/detail/config.hpp>
+#include <exception>
 #include <boost/asio/detail/non_const_lvalue.hpp>
 #include <boost/asio/detail/type_traits.hpp>
 #include <boost/asio/execution/blocking.hpp>
@@ -86,7 +87,7 @@ public:
    * This constructor is only valid if the @c OtherExecutor type is convertible
    * to @c Executor.
    */
-  template <class OtherExecutor>
+  template <typename OtherExecutor>
   inline_or_executor(
       const inline_or_executor<OtherExecutor>& other) noexcept
     : executor_(other.executor_)
@@ -105,7 +106,7 @@ public:
    * This assignment operator is only valid if the @c OtherExecutor type is
    * convertible to @c Executor.
    */
-  template <class OtherExecutor>
+  template <typename OtherExecutor>
   inline_or_executor& operator=(
       const inline_or_executor<OtherExecutor>& other) noexcept
   {
@@ -124,7 +125,7 @@ public:
    * This constructor is only valid if the @c OtherExecutor type is convertible
    * to @c Executor.
    */
-  template <class OtherExecutor>
+  template <typename OtherExecutor>
   inline_or_executor(inline_or_executor<OtherExecutor>&& other) noexcept
     : executor_(static_cast<OtherExecutor&&>(other.executor_))
   {
@@ -142,7 +143,7 @@ public:
    * This assignment operator is only valid if the @c OtherExecutor type is
    * convertible to @c Executor.
    */
-  template <class OtherExecutor>
+  template <typename OtherExecutor>
   inline_or_executor& operator=(
       inline_or_executor<OtherExecutor>&& other) noexcept
   {
@@ -161,66 +162,37 @@ public:
     return executor_;
   }
 
-  /// Query the current value of the @c blocking property.
-  /**
-   * Do not call this function directly. It is intended for use with the
-   * boost::asio::query customisation point.
-   *
-   * For example:
-   * @code boost::asio::inline_or_executor<my_executor_type> ex = ...;
-   * if (boost::asio::query(ex, boost::asio::execution::blocking)
-   *     == boost::asio::execution::blocking.possibly)
-   *   ... @endcode
-   */
-  static constexpr execution::blocking_t query(execution::blocking_t) noexcept
+#if !defined(BOOST_ASIO_NO_TS_EXECUTORS)
+  /// Obtain the underlying execution context.
+  execution_context& context() const noexcept
   {
-    return Blocking();
+    return executor_.context();
   }
 
-  /// Query the current value of the @c inline_exception_handling property.
+  /// Inform the inline_or_executor that it has some outstanding work to do.
   /**
-   * Do not call this function directly. It is intended for use with the
-   * boost::asio::query customisation point.
-   *
-   * For example:
-   * @code boost::asio::inline_or_executor<my_executor_type> ex = ...;
-   * if (boost::asio::query(ex,
-   *       boost::asio::execution::inline_exception_handling)
-   *     == boost::asio::execution::inline_exception_handling.propagate)
-   *   ... @endcode
+   * The inline_or_executor delegates this call to its underlying executor.
    */
-  static constexpr execution::inline_exception_handling_t query(
-      execution::inline_exception_handling_t) noexcept
+  void on_work_started() const noexcept
   {
-    return InlineExceptionHandling();
+    executor_.on_work_started();
   }
 
-  /// Forward a query to the underlying executor.
+  /// Inform the inline_or_executor that some work is no longer outstanding.
   /**
-   * Do not call this function directly. It is intended for use with the
-   * boost::asio::query customisation point.
-   *
-   * For example:
-   * @code boost::asio::inline_or_executor<my_executor_type> ex = ...;
-   * if (boost::asio::query(ex, boost::asio::execution::blocking)
-   *       == boost::asio::execution::blocking.never)
-   *   ... @endcode
+   * The inline_or_executor delegates this call to its underlying executor.
    */
-  template <typename Property>
-  query_result_t<const Executor&, Property> query(const Property& p,
-      constraint_t<
-        can_query<const Executor&, Property>::value
-      > = 0,
-      constraint_t<
-        !is_convertible<Property, execution::blocking_t>::value
-      > = 0,
-      constraint_t<
-        !is_convertible<Property, execution::inline_exception_handling_t>::value
-      > = 0) const
-    noexcept(is_nothrow_query<const Executor&, Property>::value)
+  void on_work_finished() const noexcept
   {
-    return boost::asio::query(executor_, p);
+    executor_.on_work_finished();
   }
+#endif // !defined(BOOST_ASIO_NO_TS_EXECUTORS)
+
+#if !defined(GENERATING_DOCUMENTATION)
+private:
+  friend struct BOOST_ASIO_VERSIONED_NAME(require_fn)::impl;
+  friend struct BOOST_ASIO_VERSIONED_NAME(prefer_fn)::impl;
+#endif // !defined(GENERATING_DOCUMENTATION)
 
   /// Obtain an executor with the @c blocking.possibly property.
   /**
@@ -376,32 +348,75 @@ public:
         Blocking, InlineExceptionHandling>(boost::asio::prefer(executor_, p));
   }
 
-#if !defined(BOOST_ASIO_NO_TS_EXECUTORS)
-  /// Obtain the underlying execution context.
-  execution_context& context() const noexcept
-  {
-    return executor_.context();
-  }
+#if !defined(GENERATING_DOCUMENTATION)
+private:
+  friend struct BOOST_ASIO_VERSIONED_NAME(query_fn)::impl;
+  friend struct boost::asio::execution::detail::blocking_t<0>;
+  friend struct boost::asio::execution::detail::inline_exception_handling_t<0>;
+#endif // !defined(GENERATING_DOCUMENTATION)
 
-  /// Inform the inline_or_executor that it has some outstanding work to do.
+  /// Query the current value of the @c blocking property.
   /**
-   * The inline_or_executor delegates this call to its underlying executor.
+   * Do not call this function directly. It is intended for use with the
+   * boost::asio::query customisation point.
+   *
+   * For example:
+   * @code boost::asio::inline_or_executor<my_executor_type> ex = ...;
+   * if (boost::asio::query(ex, boost::asio::execution::blocking)
+   *     == boost::asio::execution::blocking.possibly)
+   *   ... @endcode
    */
-  void on_work_started() const noexcept
+  static constexpr execution::blocking_t query(execution::blocking_t) noexcept
   {
-    executor_.on_work_started();
+    return Blocking();
   }
 
-  /// Inform the inline_or_executor that some work is no longer outstanding.
+  /// Query the current value of the @c inline_exception_handling property.
   /**
-   * The inline_or_executor delegates this call to its underlying executor.
+   * Do not call this function directly. It is intended for use with the
+   * boost::asio::query customisation point.
+   *
+   * For example:
+   * @code boost::asio::inline_or_executor<my_executor_type> ex = ...;
+   * if (boost::asio::query(ex,
+   *       boost::asio::execution::inline_exception_handling)
+   *     == boost::asio::execution::inline_exception_handling.propagate)
+   *   ... @endcode
    */
-  void on_work_finished() const noexcept
+  static constexpr execution::inline_exception_handling_t query(
+      execution::inline_exception_handling_t) noexcept
   {
-    executor_.on_work_finished();
+    return InlineExceptionHandling();
   }
-#endif // !defined(BOOST_ASIO_NO_TS_EXECUTORS)
 
+  /// Forward a query to the underlying executor.
+  /**
+   * Do not call this function directly. It is intended for use with the
+   * boost::asio::query customisation point.
+   *
+   * For example:
+   * @code boost::asio::inline_or_executor<my_executor_type> ex = ...;
+   * if (boost::asio::query(ex, boost::asio::execution::blocking)
+   *       == boost::asio::execution::blocking.never)
+   *   ... @endcode
+   */
+  template <typename Property>
+  query_result_t<const Executor&, Property> query(const Property& p,
+      constraint_t<
+        can_query<const Executor&, Property>::value
+      > = 0,
+      constraint_t<
+        !is_convertible<Property, execution::blocking_t>::value
+      > = 0,
+      constraint_t<
+        !is_convertible<Property, execution::inline_exception_handling_t>::value
+      > = 0) const
+    noexcept(is_nothrow_query<const Executor&, Property>::value)
+  {
+    return boost::asio::query(executor_, p);
+  }
+
+public:
   /// Request the inline_or_executor to invoke the given function object.
   /**
    * This function is used to ask the inline_or_executor to execute the given

@@ -28,6 +28,15 @@ namespace boost {
 namespace asio {
 BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 
+#if !defined(BOOST_ASIO_BUFFERS_ITERATOR_FWD_DECL)
+#define BOOST_ASIO_BUFFERS_ITERATOR_FWD_DECL
+
+// Forward declaration with defaulted arguments.
+template <typename BufferSequence, typename ByteType = char>
+class buffers_iterator;
+
+#endif // !defined(BOOST_ASIO_BUFFERS_ITERATOR_FWD_DECL)
+
 namespace detail
 {
   template <bool IsMutable>
@@ -88,7 +97,7 @@ namespace detail
 } // namespace detail
 
 /// A random access iterator over the bytes in a buffer sequence.
-template <typename BufferSequence, typename ByteType = char>
+template <typename BufferSequence, typename ByteType>
 class buffers_iterator
 {
 private:

@@ -793,9 +793,9 @@ public:
    *
    * @throws boost::system::system_error Thrown on failure.
    *
-   * @sa SettableSocketOption @n
-   * boost::asio::socket_base::reuse_address
-   * boost::asio::socket_base::enable_connection_aborted
+   * @sa
+   * @li boost::asio::socket_base::reuse_address
+   * @li boost::asio::socket_base::enable_connection_aborted
    *
    * @par Example
    * Setting the SOL_SOCKET/SO_REUSEADDR option:
@@ -822,9 +822,9 @@ public:
    *
    * @param ec Set to indicate what error occurred, if any.
    *
-   * @sa SettableSocketOption @n
-   * boost::asio::socket_base::reuse_address
-   * boost::asio::socket_base::enable_connection_aborted
+   * @sa
+   * @li boost::asio::socket_base::reuse_address
+   * @li boost::asio::socket_base::enable_connection_aborted
    *
    * @par Example
    * Setting the SOL_SOCKET/SO_REUSEADDR option:
@@ -857,8 +857,8 @@ public:
    *
    * @throws boost::system::system_error Thrown on failure.
    *
-   * @sa GettableSocketOption @n
-   * boost::asio::socket_base::reuse_address
+   * @sa
+   * @li boost::asio::socket_base::reuse_address
    *
    * @par Example
    * Getting the value of the SOL_SOCKET/SO_REUSEADDR option:
@@ -887,8 +887,8 @@ public:
    *
    * @param ec Set to indicate what error occurred, if any.
    *
-   * @sa GettableSocketOption @n
-   * boost::asio::socket_base::reuse_address
+   * @sa
+   * @li boost::asio::socket_base::reuse_address
    *
    * @par Example
    * Getting the value of the SOL_SOCKET/SO_REUSEADDR option:
@@ -920,18 +920,6 @@ public:
    * @param command The IO control command to be performed on the acceptor.
    *
    * @throws boost::system::system_error Thrown on failure.
-   *
-   * @sa IoControlCommand @n
-   * boost::asio::socket_base::non_blocking_io
-   *
-   * @par Example
-   * Getting the number of bytes ready to read:
-   * @code
-   * boost::asio::ip::tcp::acceptor acceptor(my_context);
-   * ...
-   * boost::asio::ip::tcp::acceptor::non_blocking_io command(true);
-   * socket.io_control(command);
-   * @endcode
    */
   template <typename IoControlCommand>
   void io_control(IoControlCommand& command)
@@ -948,23 +936,6 @@ public:
    * @param command The IO control command to be performed on the acceptor.
    *
    * @param ec Set to indicate what error occurred, if any.
-   *
-   * @sa IoControlCommand @n
-   * boost::asio::socket_base::non_blocking_io
-   *
-   * @par Example
-   * Getting the number of bytes ready to read:
-   * @code
-   * boost::asio::ip::tcp::acceptor acceptor(my_context);
-   * ...
-   * boost::asio::ip::tcp::acceptor::non_blocking_io command(true);
-   * boost::system::error_code ec;
-   * socket.io_control(command, ec);
-   * if (ec)
-   * {
-   *   // An error occurred.
-   * }
-   * @endcode
    */
   template <typename IoControlCommand>
   BOOST_ASIO_SYNC_OP_VOID io_control(IoControlCommand& command,

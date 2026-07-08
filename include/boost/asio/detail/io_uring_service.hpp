@@ -19,7 +19,10 @@
 
 #if defined(BOOST_ASIO_HAS_IO_URING)
 
+#include <atomic>
 #include <liburing.h>
+#include <sys/poll.h>
+#include <vector>
 #include <boost/asio/detail/atomic_count.hpp>
 #include <boost/asio/detail/buffer_sequence_adapter.hpp>
 #include <boost/asio/detail/conditionally_enabled_mutex.hpp>
@@ -32,6 +35,7 @@
 #include <boost/asio/detail/slim_mutex.hpp>
 #include <boost/asio/detail/timer_queue_base.hpp>
 #include <boost/asio/detail/timer_queue_set.hpp>
+#include <boost/asio/detail/tss_ptr.hpp>
 #include <boost/asio/detail/wait_op.hpp>
 #include <boost/asio/execution_context.hpp>
 
@@ -42,13 +46,27 @@ namespace asio {
 BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
 
+template <typename Derived>
+class io_uring_service_base
+{
+protected:
+  static tss_ptr<void> tss_ring_index_;
+};
+
+template <typename Derived>
+tss_ptr<void> io_uring_service_base<Derived>::tss_ring_index_;
+
 class io_uring_service
   : public execution_context_service_base<io_uring_service>,
-    public scheduler_task
+    public scheduler_task,
+    private io_uring_service_base<io_uring_service>
 {
 private:
   // The mutex type used by this reactor.
   typedef conditionally_enabled_mutex<slim_mutex> mutex;
+
+  // Holds per-ring state.
+  struct ring;
 
 public:
   enum op_types { read_op = 0, write_op = 1, except_op = 2, max_ops = 3 };
@@ -63,6 +81,7 @@ public:
     io_object* io_object_;
     op_queue<io_uring_operation> op_queue_;
     bool cancel_requested_;
+    std::size_t first_op_ring_index_;
 
     BOOST_ASIO_DECL io_queue();
     void set_result(int r) { task_result_ = static_cast<unsigned>(r); }
@@ -188,11 +207,10 @@ public:
   BOOST_ASIO_DECL void interrupt();
 
 private:
-  // The hint to pass to io_uring_queue_init to size its data structures.
-  enum { ring_size = 16384 };
-
-  // The number of operations to submit in a batch.
-  enum { submit_batch_size = 128 };
+  // The default hint to pass to io_uring_queue_init to size its data
+  // structures, used when the "reactor" / "io_uring_ring_size" configuration
+  // value is not set.
+  enum { default_ring_size = 16384 };
 
   // The number of operations to complete in a batch.
   enum { complete_batch_size = 128 };
@@ -230,26 +248,43 @@ private:
   // Get the current timeout value.
   BOOST_ASIO_DECL __kernel_timespec get_timeout() const;
 
+  // Get the ring index for the current thread.
+  BOOST_ASIO_DECL std::size_t current_ring_index();
+
+  // Obtain the mutex for timer operations. Always comes from ring 0.
+  BOOST_ASIO_DECL mutex& timer_mutex();
+
+  // Run implementation when using a single ring. No poll needed.
+  BOOST_ASIO_DECL void run_single_ring(long usec, op_queue<operation>& ops);
+
+  // Run implementation when using multiple rings. Uses poll to identify rings
+  // with ready completions.
+  BOOST_ASIO_DECL void run_multi_ring(long usec, op_queue<operation>& ops);
+
   // Get a new submission queue entry, flushing the queue if necessary.
-  BOOST_ASIO_DECL ::io_uring_sqe* get_sqe();
+  BOOST_ASIO_DECL ::io_uring_sqe* get_sqe(std::size_t ring_index);
 
   // Submit pending submission queue entries.
-  BOOST_ASIO_DECL void submit_sqes();
+  BOOST_ASIO_DECL void submit_sqes(std::size_t ring_index);
 
   // Post an operation to submit the pending submission queue entries.
-  BOOST_ASIO_DECL void post_submit_sqes_op(mutex::scoped_lock& lock);
+  BOOST_ASIO_DECL void post_submit_sqes_op(
+      mutex::scoped_lock& lock, std::size_t ring_index);
 
   // Push an operation to submit the pending submission queue entries.
-  BOOST_ASIO_DECL void push_submit_sqes_op(op_queue<operation>& ops);
+  BOOST_ASIO_DECL void push_submit_sqes_op(
+      op_queue<operation>& ops, std::size_t ring_index);
 
   // Helper operation to submit pending submission queue entries.
   class submit_sqes_op : operation
   {
     friend class io_uring_service;
+    friend struct ring;
 
     io_uring_service* service_;
+    std::size_t ring_index_;
 
-    BOOST_ASIO_DECL submit_sqes_op(io_uring_service* s);
+    BOOST_ASIO_DECL submit_sqes_op(io_uring_service* s, std::size_t ring_index);
     BOOST_ASIO_DECL static void do_complete(void* owner, operation* base,
         const boost::system::error_code& ec, std::size_t bytes_transferred);
   };
@@ -257,23 +292,17 @@ private:
   // The scheduler implementation used to post completions.
   scheduler& scheduler_;
 
-  // Mutex to protect access to internal data.
-  mutex mutex_;
+  // Per-ring state.
+  std::vector<ring, execution_context::allocator<ring>> rings_;
 
-  // The ring.
-  ::io_uring ring_;
+  // Used to assign a ring index to a new thread.
+  std::atomic<std::size_t> next_ring_;
 
   // The count of unfinished work.
   atomic_count outstanding_work_;
 
-  // The operation used to submit the pending submission queue entries.
-  submit_sqes_op submit_sqes_op_;
-
-  // The number of pending submission queue entries_.
-  int pending_sqes_;
-
-  // Whether there is a pending submission operation.
-  bool pending_submit_sqes_op_;
+  // Used when configured with multiple rings to poll for rings with new events.
+  std::vector< ::pollfd, execution_context::allocator< ::pollfd>> pollfd_buf_;
 
   // Whether the service has been shut down.
   bool shutdown_;
@@ -283,6 +312,18 @@ private:
 
   // How any times to spin waiting for the I/O mutex.
   const int io_locking_spin_count_;
+
+  // Whether to mark the waiting task as in_iowait while SQEs are pending.
+  const bool iowait_;
+
+  // The number of operations to submit in a batch.
+  const int submit_batch_size_;
+
+  // The number of entries used to size each io_uring.
+  const unsigned int ring_size_;
+
+  // A count of SQE submissions that are yet to be flushed.
+  atomic_count unflushed_submits_;
 
   // The timer queues.
   timer_queue_set timer_queues_;

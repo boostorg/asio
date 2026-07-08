@@ -48,8 +48,7 @@ inline void channel_service<Mutex>::shutdown()
 
 template <typename Mutex>
 inline void channel_service<Mutex>::construct(
-    channel_service<Mutex>::base_implementation_type& impl,
-    std::size_t max_buffer_size)
+    base_implementation_type& impl, std::size_t max_buffer_size)
 {
   impl.max_buffer_size_ = max_buffer_size;
   impl.receive_state_ = block;
@@ -67,7 +66,7 @@ inline void channel_service<Mutex>::construct(
 template <typename Mutex>
 template <typename Traits, typename... Signatures>
 void channel_service<Mutex>::destroy(
-    channel_service<Mutex>::implementation_type<Traits, Signatures...>& impl)
+    implementation_type<Traits, Signatures...>& impl)
 {
   cancel(impl);
   base_destroy(impl);
@@ -76,9 +75,8 @@ void channel_service<Mutex>::destroy(
 template <typename Mutex>
 template <typename Traits, typename... Signatures>
 void channel_service<Mutex>::move_construct(
-    channel_service<Mutex>::implementation_type<Traits, Signatures...>& impl,
-    channel_service<Mutex>::implementation_type<
-      Traits, Signatures...>& other_impl)
+    implementation_type<Traits, Signatures...>& impl,
+    implementation_type<Traits, Signatures...>& other_impl)
 {
   impl.max_buffer_size_ = other_impl.max_buffer_size_;
   impl.receive_state_ = other_impl.receive_state_;
@@ -99,10 +97,9 @@ void channel_service<Mutex>::move_construct(
 template <typename Mutex>
 template <typename Traits, typename... Signatures>
 void channel_service<Mutex>::move_assign(
-    channel_service<Mutex>::implementation_type<Traits, Signatures...>& impl,
+    implementation_type<Traits, Signatures...>& impl,
     channel_service& other_service,
-    channel_service<Mutex>::implementation_type<
-      Traits, Signatures...>& other_impl)
+    implementation_type<Traits, Signatures...>& other_impl)
 {
   cancel(impl);
 
@@ -141,7 +138,7 @@ void channel_service<Mutex>::move_assign(
 
 template <typename Mutex>
 inline void channel_service<Mutex>::base_destroy(
-    channel_service<Mutex>::base_implementation_type& impl)
+    base_implementation_type& impl)
 {
   // Remove implementation from linked list of all implementations.
   boost::asio::detail::mutex::scoped_lock lock(mutex_);
@@ -157,7 +154,7 @@ inline void channel_service<Mutex>::base_destroy(
 
 template <typename Mutex>
 inline std::size_t channel_service<Mutex>::capacity(
-    const channel_service<Mutex>::base_implementation_type& impl)
+    const base_implementation_type& impl)
   const noexcept
 {
   typename Mutex::scoped_lock lock(impl.mutex_);
@@ -167,7 +164,7 @@ inline std::size_t channel_service<Mutex>::capacity(
 
 template <typename Mutex>
 inline bool channel_service<Mutex>::is_open(
-    const channel_service<Mutex>::base_implementation_type& impl)
+    const base_implementation_type& impl)
   const noexcept
 {
   typename Mutex::scoped_lock lock(impl.mutex_);
@@ -178,7 +175,7 @@ inline bool channel_service<Mutex>::is_open(
 template <typename Mutex>
 template <typename Traits, typename... Signatures>
 void channel_service<Mutex>::reset(
-    channel_service<Mutex>::implementation_type<Traits, Signatures...>& impl)
+    implementation_type<Traits, Signatures...>& impl)
 {
   cancel(impl);
 
@@ -192,7 +189,7 @@ void channel_service<Mutex>::reset(
 template <typename Mutex>
 template <typename Traits, typename... Signatures>
 void channel_service<Mutex>::close(
-    channel_service<Mutex>::implementation_type<Traits, Signatures...>& impl)
+    implementation_type<Traits, Signatures...>& impl)
 {
   typedef typename implementation_type<Traits,
       Signatures...>::traits_type traits_type;
@@ -221,7 +218,7 @@ void channel_service<Mutex>::close(
 template <typename Mutex>
 template <typename Traits, typename... Signatures>
 void channel_service<Mutex>::cancel(
-    channel_service<Mutex>::implementation_type<Traits, Signatures...>& impl)
+    implementation_type<Traits, Signatures...>& impl)
 {
   typedef typename implementation_type<Traits,
       Signatures...>::traits_type traits_type;
@@ -256,7 +253,7 @@ void channel_service<Mutex>::cancel(
 template <typename Mutex>
 template <typename Traits, typename... Signatures>
 void channel_service<Mutex>::cancel_by_key(
-    channel_service<Mutex>::implementation_type<Traits, Signatures...>& impl,
+    implementation_type<Traits, Signatures...>& impl,
     void* cancellation_key)
 {
   typedef typename implementation_type<Traits,
@@ -304,7 +301,7 @@ void channel_service<Mutex>::cancel_by_key(
 
 template <typename Mutex>
 inline bool channel_service<Mutex>::ready(
-    const channel_service<Mutex>::base_implementation_type& impl)
+    const base_implementation_type& impl)
   const noexcept
 {
   typename Mutex::scoped_lock lock(impl.mutex_);
@@ -316,7 +313,7 @@ template <typename Mutex>
 template <typename Message, typename Traits,
     typename... Signatures, typename... Args>
 bool channel_service<Mutex>::try_send(
-    channel_service<Mutex>::implementation_type<Traits, Signatures...>& impl,
+    implementation_type<Traits, Signatures...>& impl,
     bool via_dispatch, Args&&... args)
 {
   typedef typename implementation_type<Traits,
@@ -365,7 +362,7 @@ template <typename Mutex>
 template <typename Message, typename Traits,
     typename... Signatures, typename... Args>
 std::size_t channel_service<Mutex>::try_send_n(
-    channel_service<Mutex>::implementation_type<Traits, Signatures...>& impl,
+    implementation_type<Traits, Signatures...>& impl,
     std::size_t count, bool via_dispatch, Args&&... args)
 {
   typedef typename implementation_type<Traits,
@@ -435,7 +432,7 @@ std::size_t channel_service<Mutex>::try_send_n(
 template <typename Mutex>
 template <typename Traits, typename... Signatures>
 void channel_service<Mutex>::start_send_op(
-    channel_service<Mutex>::implementation_type<Traits, Signatures...>& impl,
+    implementation_type<Traits, Signatures...>& impl,
     channel_send<typename implementation_type<
       Traits, Signatures...>::payload_type>* send_op)
 {
@@ -485,7 +482,7 @@ void channel_service<Mutex>::start_send_op(
 template <typename Mutex>
 template <typename Traits, typename... Signatures, typename Handler>
 bool channel_service<Mutex>::try_receive(
-    channel_service<Mutex>::implementation_type<Traits, Signatures...>& impl,
+    implementation_type<Traits, Signatures...>& impl,
     Handler&& handler)
 {
   typedef typename implementation_type<Traits,
@@ -551,7 +548,7 @@ bool channel_service<Mutex>::try_receive(
 template <typename Mutex>
 template <typename Traits, typename... Signatures>
 void channel_service<Mutex>::start_receive_op(
-    channel_service<Mutex>::implementation_type<Traits, Signatures...>& impl,
+    implementation_type<Traits, Signatures...>& impl,
     channel_receive<typename implementation_type<
       Traits, Signatures...>::payload_type>* receive_op)
 {

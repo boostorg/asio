@@ -136,6 +136,8 @@ class basic_waitable_timer;
  *
  * @li If a wait handler is cancelled, the boost::system::error_code passed to
  * it contains the value boost::asio::error::operation_aborted.
+ *
+ * @sa @ref overview_timers "Timers"
  */
 template <typename Clock, typename WaitTraits, typename Executor>
 class basic_waitable_timer

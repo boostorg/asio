@@ -49,7 +49,8 @@ public:
     friend class strand_executor_service;
 
     // Mutex to protect access to internal data.
-#if defined(BOOST_ASIO_HAS_STD_ATOMIC_WAIT)
+#if defined(BOOST_ASIO_HAS_STD_ATOMIC_WAIT) \
+  || defined(BOOST_ASIO_HAS_FUTEX)
     slim_mutex mutex_;
 
     void lock_mutex()
@@ -62,6 +63,7 @@ public:
       mutex_.unlock();
     }
 #else // defined(BOOST_ASIO_HAS_STD_ATOMIC_WAIT)
+      //   || defined(BOOST_ASIO_HAS_FUTEX)
     mutex* mutex_;
 
     void lock_mutex()
@@ -74,6 +76,7 @@ public:
       mutex_->unlock();
     }
 #endif // defined(BOOST_ASIO_HAS_STD_ATOMIC_WAIT)
+       //   || defined(BOOST_ASIO_HAS_FUTEX)
 
     // Indicates whether the strand is currently "locked" by a handler. This
     // means that there is a handler upcall in progress, or that the strand
@@ -162,7 +165,7 @@ private:
   BOOST_ASIO_DECL static bool push_waiting_to_ready(implementation_type& impl);
 
   // Invokes all ready-to-run handlers.
-  BOOST_ASIO_DECL static void run_ready_handlers(implementation_type& impl);
+  BOOST_ASIO_DECL void run_ready_handlers(implementation_type& impl);
 
   // Helper function to request invocation of the given function.
   template <typename Executor, typename Function, typename Allocator>
@@ -172,7 +175,8 @@ private:
   // Mutex to protect access to the service-wide state.
   mutex mutex_;
 
-#if !defined(BOOST_ASIO_HAS_STD_ATOMIC_WAIT)
+#if !defined(BOOST_ASIO_HAS_STD_ATOMIC_WAIT) \
+  && !defined(BOOST_ASIO_HAS_FUTEX)
   // Number of mutexes shared between all strand objects.
   enum { num_mutexes = 193 };
 
@@ -183,9 +187,13 @@ private:
   // getting the same mutex.
   std::size_t salt_;
 #endif // !defined(BOOST_ASIO_HAS_STD_ATOMIC_WAIT)
+       //   && !defined(BOOST_ASIO_HAS_FUTEX)
 
   // The head of a linked list of all implementations.
   strand_impl* impl_list_;
+
+  // Cached success value to avoid accessing category singleton.
+  const boost::system::error_code success_ec_;
 };
 
 } // namespace detail

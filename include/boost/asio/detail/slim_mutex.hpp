@@ -19,6 +19,8 @@
 
 #if !defined(BOOST_ASIO_HAS_THREADS)
 # include <boost/asio/detail/null_mutex.hpp>
+#elif defined(BOOST_ASIO_HAS_FUTEX)
+# include <boost/asio/detail/futex_slim_mutex.hpp>
 #elif defined(BOOST_ASIO_HAS_STD_ATOMIC_WAIT)
 # include <boost/asio/detail/atomic_slim_mutex.hpp>
 #else
@@ -32,6 +34,8 @@ namespace detail {
 
 #if !defined(BOOST_ASIO_HAS_THREADS)
 typedef null_mutex slim_mutex;
+#elif defined(BOOST_ASIO_HAS_FUTEX)
+typedef futex_slim_mutex slim_mutex;
 #elif defined(BOOST_ASIO_HAS_STD_ATOMIC_WAIT)
 typedef atomic_slim_mutex slim_mutex;
 #else

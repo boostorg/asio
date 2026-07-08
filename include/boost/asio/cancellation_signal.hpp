@@ -83,6 +83,9 @@ private:
 class cancellation_slot;
 
 /// A cancellation signal with a single slot.
+/**
+ * @sa @ref overview_cancellation "Per-operation cancellation"
+ */
 class cancellation_signal
 {
 public:
@@ -115,6 +118,9 @@ private:
 };
 
 /// A slot associated with a cancellation signal.
+/**
+ * @sa @ref overview_cancellation "Per-operation cancellation"
+ */
 class cancellation_slot
 {
 public:

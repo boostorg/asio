@@ -140,6 +140,8 @@ struct is_async_operation_range
 /**
  * See the documentation for boost::asio::experimental::make_parallel_group for
  * a usage example.
+ *
+ * @sa @ref overview_parallel_group "Co-ordinating parallel operations"
  */
 template <typename... Ops>
 class parallel_group
