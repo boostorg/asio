@@ -793,9 +793,9 @@ public:
    *
    * @throws boost::system::system_error Thrown on failure.
    *
-   * @sa SettableSocketOption @n
-   * boost::asio::socket_base::reuse_address
-   * boost::asio::socket_base::enable_connection_aborted
+   * @sa
+   * @li boost::asio::socket_base::reuse_address
+   * @li boost::asio::socket_base::enable_connection_aborted
    *
    * @par Example
    * Setting the SOL_SOCKET/SO_REUSEADDR option:
@@ -822,9 +822,9 @@ public:
    *
    * @param ec Set to indicate what error occurred, if any.
    *
-   * @sa SettableSocketOption @n
-   * boost::asio::socket_base::reuse_address
-   * boost::asio::socket_base::enable_connection_aborted
+   * @sa
+   * @li boost::asio::socket_base::reuse_address
+   * @li boost::asio::socket_base::enable_connection_aborted
    *
    * @par Example
    * Setting the SOL_SOCKET/SO_REUSEADDR option:
@@ -857,8 +857,8 @@ public:
    *
    * @throws boost::system::system_error Thrown on failure.
    *
-   * @sa GettableSocketOption @n
-   * boost::asio::socket_base::reuse_address
+   * @sa
+   * @li boost::asio::socket_base::reuse_address
    *
    * @par Example
    * Getting the value of the SOL_SOCKET/SO_REUSEADDR option:
@@ -887,8 +887,8 @@ public:
    *
    * @param ec Set to indicate what error occurred, if any.
    *
-   * @sa GettableSocketOption @n
-   * boost::asio::socket_base::reuse_address
+   * @sa
+   * @li boost::asio::socket_base::reuse_address
    *
    * @par Example
    * Getting the value of the SOL_SOCKET/SO_REUSEADDR option:
@@ -921,8 +921,8 @@ public:
    *
    * @throws boost::system::system_error Thrown on failure.
    *
-   * @sa IoControlCommand @n
-   * boost::asio::socket_base::non_blocking_io
+   * @sa
+   * @li boost::asio::socket_base::non_blocking_io
    *
    * @par Example
    * Getting the number of bytes ready to read:
@@ -949,8 +949,8 @@ public:
    *
    * @param ec Set to indicate what error occurred, if any.
    *
-   * @sa IoControlCommand @n
-   * boost::asio::socket_base::non_blocking_io
+   * @sa
+   * @li boost::asio::socket_base::non_blocking_io
    *
    * @par Example
    * Getting the number of bytes ready to read:

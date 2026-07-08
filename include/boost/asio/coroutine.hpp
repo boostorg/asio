@@ -241,6 +241,8 @@ class coroutine_ref;
  * @li @c BOOST_ASIO_CORO_REENTER instead of @c reenter
  * @li @c BOOST_ASIO_CORO_YIELD instead of @c yield
  * @li @c BOOST_ASIO_CORO_FORK instead of @c fork
+ *
+ * @sa @ref overview_coroutine "Stackless coroutines"
  */
 class coroutine
 {

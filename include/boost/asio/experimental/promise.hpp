@@ -92,6 +92,8 @@ struct promise_value_type<>
  *   co_await p;
  * }
  * @endcode
+ *
+ * @sa @ref overview_promises "Promises"
  */
 template<typename Signature = void(),
     typename Executor = boost::asio::any_io_executor,

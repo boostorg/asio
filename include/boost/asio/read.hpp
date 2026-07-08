@@ -46,6 +46,8 @@ template <typename> class initiate_async_read_dynbuf_v2;
  *
  * @brief The @c read function is a composed operation that reads a certain
  * amount of data from a stream before returning.
+ *
+ * @sa @ref overview_streams "Streams, short reads and short writes"
  */
 /*@{*/
 
@@ -740,6 +742,8 @@ std::size_t read(SyncReadStream& s, DynamicBuffer_v2 buffers,
  *
  * @brief The @c async_read function is a composed asynchronous operation that
  * reads a certain amount of data from a stream before completion.
+ *
+ * @sa @ref overview_streams "Streams, short reads and short writes"
  */
 /*@{*/
 

@@ -62,6 +62,8 @@ class basic_writable_pipe;
  * @par Thread Safety
  * @e Distinct @e objects: Safe.@n
  * @e Shared @e objects: Unsafe.
+ *
+ * @sa @ref overview_pipes "Pipes"
  */
 template <typename Executor>
 class basic_writable_pipe

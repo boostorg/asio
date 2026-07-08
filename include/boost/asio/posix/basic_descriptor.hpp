@@ -423,9 +423,9 @@ public:
    *
    * @throws boost::system::system_error Thrown on failure.
    *
-   * @sa IoControlCommand @n
-   * boost::asio::posix::descriptor_base::bytes_readable @n
-   * boost::asio::posix::descriptor_base::non_blocking_io
+   * @sa
+   * @li boost::asio::posix::descriptor_base::bytes_readable
+   * @li boost::asio::posix::descriptor_base::non_blocking_io
    *
    * @par Example
    * Getting the number of bytes ready to read:
@@ -453,9 +453,9 @@ public:
    *
    * @param ec Set to indicate what error occurred, if any.
    *
-   * @sa IoControlCommand @n
-   * boost::asio::posix::descriptor_base::bytes_readable @n
-   * boost::asio::posix::descriptor_base::non_blocking_io
+   * @sa
+   * @li boost::asio::posix::descriptor_base::bytes_readable
+   * @li boost::asio::posix::descriptor_base::non_blocking_io
    *
    * @par Example
    * Getting the number of bytes ready to read:

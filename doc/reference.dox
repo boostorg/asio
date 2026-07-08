@@ -126,6 +126,7 @@ INPUT                  = ./../../../boost/asio.hpp \
                          ./../../../boost/asio/execution \
                          ./../../../boost/asio/experimental \
                          ./model_dox.txt \
+                         ./overview_dox.txt \
                          ./noncopyable_dox.txt \
                          ./requirements_dox.txt \
                          ./std_exception_dox.txt
@@ -342,8 +343,6 @@ PREDEFINED             = GENERATING_DOCUMENTATION \
                          BOOST_ASIO_SVC_TARG1= \
                          BOOST_ASIO_SVC_T=asio::detail::service \
                          BOOST_ASIO_SVC_T1=asio::detail::service \
-                         BOOST_ASIO_CONST_BUFFER=const_buffer \
-                         BOOST_ASIO_MUTABLE_BUFFER=mutable_buffer \
                          BOOST_ASIO_SYNC_OP_VOID=void \
                          BOOST_ASIO_STRING_VIEW_PARAM=string_view \
                          BOOST_ASIO_UNUSED_VARIABLE= \

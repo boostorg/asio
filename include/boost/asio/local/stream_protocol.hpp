@@ -44,6 +44,8 @@ namespace local {
  *
  * @par Concepts:
  * Protocol.
+ *
+ * @sa @ref overview_posix_local "UNIX domain sockets"
  */
 class stream_protocol
 {
