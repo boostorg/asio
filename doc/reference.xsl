@@ -1171,6 +1171,53 @@
       <xsl:value-of name="text" select="$ref-name"/>
       <xsl:text>`]</xsl:text>
     </xsl:when>
+    <xsl:when test="contains(@refid, 'classboost_1_1asio') and count($memberdefs) &gt; 0">
+      <xsl:variable name="ref-text">
+        <xsl:call-template name="strip-asio-ns">
+          <xsl:with-param name="name" select="."/>
+        </xsl:call-template>
+      </xsl:variable>
+      <xsl:variable name="written-class">
+        <xsl:if test="contains($ref-text, '::')">
+          <xsl:variable name="written-member">
+            <xsl:call-template name="strip-ns">
+              <xsl:with-param name="name" select="$ref-text"/>
+            </xsl:call-template>
+          </xsl:variable>
+          <xsl:value-of select="substring-before($ref-text, concat('::', $written-member))"/>
+        </xsl:if>
+      </xsl:variable>
+      <xsl:variable name="class-name">
+        <xsl:choose>
+          <xsl:when test="$written-class != ''
+              and substring($written-class, string-length($written-class) - 4) = '_base'">
+            <xsl:value-of select="$written-class"/>
+          </xsl:when>
+          <xsl:otherwise>
+            <xsl:call-template name="strip-asio-ns">
+              <xsl:with-param name="name" select="($memberdefs)[1]/../../compoundname"/>
+            </xsl:call-template>
+          </xsl:otherwise>
+        </xsl:choose>
+      </xsl:variable>
+      <xsl:variable name="class-id">
+        <xsl:call-template name="make-id">
+          <xsl:with-param name="name" select="$class-name"/>
+        </xsl:call-template>
+      </xsl:variable>
+      <xsl:variable name="member-id">
+        <xsl:call-template name="make-id">
+          <xsl:with-param name="name" select="($memberdefs)[1]/name"/>
+        </xsl:call-template>
+      </xsl:variable>
+      <xsl:text>[link boost_asio.reference.</xsl:text>
+      <xsl:value-of select="$class-id"/>
+      <xsl:text>.</xsl:text>
+      <xsl:value-of select="$member-id"/>
+      <xsl:text> `</xsl:text>
+      <xsl:value-of select="$ref-text"/>
+      <xsl:text>`]</xsl:text>
+    </xsl:when>
     <xsl:otherwise>
       <xsl:text>`</xsl:text>
       <xsl:value-of select="."/>
@@ -1201,6 +1248,53 @@
       <xsl:value-of select="$ref-id"/>
       <xsl:text> `</xsl:text>
       <xsl:value-of name="text" select="$ref-name"/>
+      <xsl:text>`]</xsl:text>
+    </xsl:when>
+    <xsl:when test="contains(@refid, 'classboost_1_1asio') and count($memberdefs) &gt; 0">
+      <xsl:variable name="ref-text">
+        <xsl:call-template name="strip-asio-ns">
+          <xsl:with-param name="name" select="."/>
+        </xsl:call-template>
+      </xsl:variable>
+      <xsl:variable name="written-class">
+        <xsl:if test="contains($ref-text, '::')">
+          <xsl:variable name="written-member">
+            <xsl:call-template name="strip-ns">
+              <xsl:with-param name="name" select="$ref-text"/>
+            </xsl:call-template>
+          </xsl:variable>
+          <xsl:value-of select="substring-before($ref-text, concat('::', $written-member))"/>
+        </xsl:if>
+      </xsl:variable>
+      <xsl:variable name="class-name">
+        <xsl:choose>
+          <xsl:when test="$written-class != ''
+              and substring($written-class, string-length($written-class) - 4) = '_base'">
+            <xsl:value-of select="$written-class"/>
+          </xsl:when>
+          <xsl:otherwise>
+            <xsl:call-template name="strip-asio-ns">
+              <xsl:with-param name="name" select="($memberdefs)[1]/../../compoundname"/>
+            </xsl:call-template>
+          </xsl:otherwise>
+        </xsl:choose>
+      </xsl:variable>
+      <xsl:variable name="class-id">
+        <xsl:call-template name="make-id">
+          <xsl:with-param name="name" select="$class-name"/>
+        </xsl:call-template>
+      </xsl:variable>
+      <xsl:variable name="member-id">
+        <xsl:call-template name="make-id">
+          <xsl:with-param name="name" select="($memberdefs)[1]/name"/>
+        </xsl:call-template>
+      </xsl:variable>
+      <xsl:text>[link boost_asio.reference.</xsl:text>
+      <xsl:value-of select="$class-id"/>
+      <xsl:text>.</xsl:text>
+      <xsl:value-of select="$member-id"/>
+      <xsl:text> `</xsl:text>
+      <xsl:value-of select="$ref-text"/>
       <xsl:text>`]</xsl:text>
     </xsl:when>
     <xsl:otherwise>
@@ -1861,16 +1955,16 @@
   <xsl:variable name="class-refid">
     <xsl:choose>
       <xsl:when test="type='basic_address_iterator&lt; address_v4 &gt;'">
-        <xsl:text>classasio_1_1ip_1_1basic__address__iterator_3_01address__v4_01_4</xsl:text>
+        <xsl:text>classboost_1_1asio_1_1ip_1_1basic__address__iterator_3_01address__v4_01_4</xsl:text>
       </xsl:when>
       <xsl:when test="type='basic_address_iterator&lt; address_v6 &gt;'">
-        <xsl:text>classasio_1_1ip_1_1basic__address__iterator_3_01address__v6_01_4</xsl:text>
+        <xsl:text>classboost_1_1asio_1_1ip_1_1basic__address__iterator_3_01address__v6_01_4</xsl:text>
       </xsl:when>
       <xsl:when test="type='basic_address_range&lt; address_v4 &gt;'">
-        <xsl:text>classasio_1_1ip_1_1basic__address__range_3_01address__v4_01_4</xsl:text>
+        <xsl:text>classboost_1_1asio_1_1ip_1_1basic__address__range_3_01address__v4_01_4</xsl:text>
       </xsl:when>
       <xsl:when test="type='basic_address_range&lt; address_v6 &gt;'">
-        <xsl:text>classasio_1_1ip_1_1basic__address__range_3_01address__v6_01_4</xsl:text>
+        <xsl:text>classboost_1_1asio_1_1ip_1_1basic__address__range_3_01address__v6_01_4</xsl:text>
       </xsl:when>
       <xsl:otherwise>
         <xsl:for-each select="type/ref[1]">
