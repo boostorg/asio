@@ -1,0 +1,220 @@
+//
+// Copyright (c) 2003-2025 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+//
+// Distributed under the Boost Software License, Version 1.0. (See accompanying
+// file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+//
+
+= Completion Handlers
+
+Understand how async operation results are delivered.
+
+NOTE: This section explains the handler model for background. With coroutines
+and `use_awaitable`, you rarely interact with handlers directly—`co_await`
+handles it for you.
+
+== What is a Completion Handler?
+
+A *completion handler* is a function object that receives the result of an
+async operation. When the operation completes, Asio invokes the handler with
+the result.
+
+[source,cpp]
+----
+// With callbacks (for comparison)
+socket.async_read_some(buffer,
+    [](boost::system::error_code ec, std::size_t n) {
+        // This is the completion handler
+        if (!ec)
+            std::cout << "Read " << n << " bytes\n";
+    });
+----
+
+With coroutines, the completion handler is hidden inside `use_awaitable`:
+
+[source,cpp]
+----
+// The awaitable machinery handles the completion internally
+std::size_t n = co_await socket.async_read_some(buffer, use_awaitable);
+----
+
+== Handler Guarantees
+
+Asio provides these guarantees for completion handlers:
+
+=== 1. Invoked At Most Once
+
+A completion handler is invoked *exactly once* if the operation completes,
+and *zero times* if the operation is destroyed before completion (rare).
+
+=== 2. Invoked Asynchronously
+
+The handler is never invoked directly from the initiating function.
+It's always invoked later, through the executor:
+
+[source,cpp]
+----
+socket.async_read_some(buffer, handler);
+// handler is NOT called yet
+// ...code here runs before handler...
+
+ctx.run();  // handler is called from here
+----
+
+This means you can safely set up state after calling the initiating function.
+
+=== 3. Invoked by the Associated Executor
+
+The handler runs on its associated executor. For coroutines with `use_awaitable`,
+this is the executor from `this_coro::executor`.
+
+== Handler Signatures
+
+Each async operation defines the handler signature:
+
+[source,cpp]
+----
+// Timer wait: void(error_code)
+timer.async_wait([](boost::system::error_code ec) {
+    // ...
+});
+
+// Socket read: void(error_code, size_t)
+socket.async_read_some(buffer, 
+    [](boost::system::error_code ec, std::size_t n) {
+        // ...
+    });
+
+// Accept: void(error_code, socket)
+acceptor.async_accept(
+    [](boost::system::error_code ec, tcp::socket socket) {
+        // ...
+    });
+----
+
+== Move-Only Handlers
+
+Handlers can be move-only (no copy required):
+
+[source,cpp]
+----
+auto ptr = std::make_unique<MyData>();
+
+socket.async_read_some(buffer,
+    [p = std::move(ptr)](auto ec, auto n) {
+        // p is valid here
+    });
+----
+
+== Associated Characteristics
+
+Handlers can have associated characteristics:
+
+=== Associated Executor
+
+Where the handler runs:
+
+[source,cpp]
+----
+auto strand = asio::make_strand(ctx);
+
+// Handler runs on the strand
+socket.async_read_some(buffer,
+    asio::bind_executor(strand, [](auto ec, auto n) {
+        // Runs on strand
+    }));
+----
+
+With coroutines, the executor comes from `this_coro::executor`.
+
+=== Associated Allocator
+
+Memory allocation for async operations:
+
+[source,cpp]
+----
+// Provide a custom allocator for handler memory
+socket.async_read_some(buffer,
+    asio::bind_allocator(my_allocator, [](auto ec, auto n) {
+        // ...
+    }));
+----
+
+This is an advanced optimization for reducing allocations.
+
+== Handler Invocation Order
+
+When multiple operations complete, handlers are invoked in an unspecified order
+unless you use a strand to serialize them.
+
+[source,cpp]
+----
+// These may complete in any order
+socket.async_read_some(buffer1, handler1);
+socket.async_write_some(buffer2, handler2);
+
+// With strand, they won't run concurrently
+auto strand = asio::make_strand(ctx);
+socket.async_read_some(buffer1, asio::bind_executor(strand, handler1));
+socket.async_write_some(buffer2, asio::bind_executor(strand, handler2));
+----
+
+== The Coroutine Advantage
+
+With `use_awaitable`, you don't manage handlers directly:
+
+[source,cpp]
+----
+// No explicit handlers needed
+awaitable<void> example(tcp::socket& socket)
+{
+    char buf[1024];
+    
+    // Internally, use_awaitable creates a handler that resumes the coroutine
+    std::size_t n = co_await socket.async_read_some(
+        asio::buffer(buf), use_awaitable);
+    
+    // When the read completes, the coroutine resumes here
+    std::cout << "Read " << n << " bytes\n";
+}
+----
+
+The machinery:
+
+1. `use_awaitable` creates a special handler
+2. When awaited, the coroutine suspends
+3. When the operation completes, the handler resumes the coroutine
+4. Execution continues after the `co_await`
+
+== Exception Propagation
+
+With coroutines, errors throw exceptions by default:
+
+[source,cpp]
+----
+try
+{
+    co_await socket.async_connect(endpoint, use_awaitable);
+}
+catch (const boost::system::system_error& e)
+{
+    // e.code() contains the error
+}
+----
+
+Use `as_tuple` to get error codes instead:
+
+[source,cpp]
+----
+auto [ec] = co_await socket.async_connect(
+    endpoint,
+    asio::experimental::as_tuple(use_awaitable));
+
+if (ec)
+    std::cout << "Error: " << ec.message() << "\n";
+----
+
+== Next Steps
+
+* xref:async-model/memory-model.adoc[Memory and Lifetimes] — Resource guarantees
+* xref:async-model/initiating-functions.adoc[Initiating Functions] — Starting operations

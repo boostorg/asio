@@ -1,0 +1,287 @@
+//
+// Copyright (c) 2003-2025 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+//
+// Distributed under the Boost Software License, Version 1.0. (See accompanying
+// file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+//
+
+= Error Handling
+
+Learn how errors are reported in Asio coroutines.
+
+== Default: Exceptions
+
+By default, errors in `co_await` expressions throw `boost::system::system_error`:
+
+[source,cpp]
+----
+#include <boost/asio.hpp>
+#include <iostream>
+
+namespace asio = boost::asio;
+using asio::awaitable;
+using asio::use_awaitable;
+
+awaitable<void> connect_with_exceptions()
+{
+    auto executor = co_await asio::this_coro::executor;
+    asio::ip::tcp::socket socket(executor);
+    
+    try
+    {
+        asio::ip::tcp::endpoint ep(asio::ip::make_address("127.0.0.1"), 12345);
+        co_await socket.async_connect(ep, use_awaitable);
+        std::cout << "Connected!\n";
+    }
+    catch (const boost::system::system_error& e)
+    {
+        std::cout << "Error: " << e.what() << "\n";
+        std::cout << "Code: " << e.code() << "\n";
+        // e.code() == asio::error::connection_refused, etc.
+    }
+}
+----
+
+== Using Error Codes
+
+If you prefer error codes over exceptions, use `redirect_error`:
+
+[source,cpp]
+----
+awaitable<void> connect_with_error_codes()
+{
+    auto executor = co_await asio::this_coro::executor;
+    asio::ip::tcp::socket socket(executor);
+    
+    asio::ip::tcp::endpoint ep(asio::ip::make_address("127.0.0.1"), 12345);
+    
+    boost::system::error_code ec;
+    co_await socket.async_connect(ep, asio::redirect_error(use_awaitable, ec));
+    
+    if (ec)
+    {
+        std::cout << "Error: " << ec.message() << "\n";
+        co_return;
+    }
+    
+    std::cout << "Connected!\n";
+}
+----
+
+== Using `as_tuple`
+
+`as_tuple` returns all results including the error code as a tuple:
+
+[source,cpp]
+----
+#include <boost/asio/experimental/as_tuple.hpp>
+
+awaitable<void> read_with_as_tuple()
+{
+    auto executor = co_await asio::this_coro::executor;
+    asio::ip::tcp::socket socket(executor);
+    // ... connect ...
+    
+    char buf[1024];
+    auto [ec, n] = co_await socket.async_read_some(
+        asio::buffer(buf),
+        asio::experimental::as_tuple(use_awaitable));
+    
+    if (ec)
+    {
+        if (ec == asio::error::eof)
+            std::cout << "Connection closed\n";
+        else
+            std::cout << "Error: " << ec.message() << "\n";
+        co_return;
+    }
+    
+    std::cout << "Read " << n << " bytes\n";
+}
+----
+
+This is particularly useful when the error isn't exceptional (like EOF).
+
+== Common Error Codes
+
+=== Connection Errors
+
+[cols="1,2"]
+|===
+| Error | Meaning
+
+| `asio::error::connection_refused` | No server listening on that port
+| `asio::error::connection_reset` | Peer forcibly closed the connection
+| `asio::error::host_unreachable` | No route to host
+| `asio::error::network_unreachable` | No route to network
+| `asio::error::timed_out` | Connection attempt timed out
+|===
+
+=== Read/Write Errors
+
+[cols="1,2"]
+|===
+| Error | Meaning
+
+| `asio::error::eof` | Connection closed cleanly by peer
+| `asio::error::connection_reset` | Connection forcibly closed
+| `asio::error::broken_pipe` | Write to a closed connection
+| `asio::error::operation_aborted` | Operation was cancelled
+|===
+
+=== Resolution Errors
+
+[cols="1,2"]
+|===
+| Error | Meaning
+
+| `asio::error::host_not_found` | DNS lookup failed
+| `asio::error::host_not_found_try_again` | Temporary DNS failure
+| `asio::error::no_data` | Host exists but has no address
+|===
+
+== Checking Error Codes
+
+[source,cpp]
+----
+if (ec == asio::error::eof)
+{
+    // Handle clean close
+}
+else if (ec == asio::error::connection_refused)
+{
+    // Handle refused connection
+}
+else if (ec)
+{
+    // Handle other errors
+}
+----
+
+You can also check error categories:
+
+[source,cpp]
+----
+if (ec.category() == asio::error::get_system_category())
+{
+    // System-level error (OS error code)
+}
+else if (ec.category() == asio::error::get_misc_category())
+{
+    // Asio-specific error (eof, etc.)
+}
+----
+
+== Cancellation
+
+When an operation is cancelled (e.g., timer cancelled, socket closed), it
+completes with `asio::error::operation_aborted`:
+
+[source,cpp]
+----
+awaitable<void> handle_cancellation()
+{
+    auto executor = co_await asio::this_coro::executor;
+    asio::steady_timer timer(executor, std::chrono::seconds(10));
+    
+    try
+    {
+        co_await timer.async_wait(use_awaitable);
+        std::cout << "Timer expired\n";
+    }
+    catch (const boost::system::system_error& e)
+    {
+        if (e.code() == asio::error::operation_aborted)
+            std::cout << "Timer was cancelled\n";
+        else
+            throw;
+    }
+}
+----
+
+== Partial Operations
+
+Some operations may succeed partially. For example, `async_read` might read
+fewer bytes than requested if the connection closes:
+
+[source,cpp]
+----
+awaitable<void> handle_partial_read()
+{
+    // ... socket setup ...
+    
+    char buf[1000];
+    boost::system::error_code ec;
+    
+    std::size_t n = co_await asio::async_read(
+        socket,
+        asio::buffer(buf),
+        asio::redirect_error(use_awaitable, ec));
+    
+    // n bytes were read, even if ec indicates an error
+    std::cout << "Read " << n << " bytes\n";
+    
+    if (ec == asio::error::eof)
+        std::cout << "Connection closed after partial read\n";
+}
+----
+
+== Exception Safety in Coroutines
+
+Exceptions propagate through coroutine chains:
+
+[source,cpp]
+----
+awaitable<void> inner()
+{
+    throw std::runtime_error("Something went wrong");
+}
+
+awaitable<void> outer()
+{
+    try
+    {
+        co_await inner();
+    }
+    catch (const std::exception& e)
+    {
+        std::cout << "Caught: " << e.what() << "\n";
+    }
+}
+----
+
+If an exception escapes a coroutine spawned with `detached`, it terminates
+the program. Use a completion handler to catch exceptions:
+
+[source,cpp]
+----
+asio::co_spawn(ctx, my_coroutine(),
+    [](std::exception_ptr ep) {
+        if (ep)
+        {
+            try { std::rethrow_exception(ep); }
+            catch (const std::exception& e) {
+                std::cerr << "Unhandled: " << e.what() << "\n";
+            }
+        }
+    });
+----
+
+== Best Practices
+
+1. **Use exceptions for unexpected errors** — Connection failures, permission
+   denied, etc.
+
+2. **Use `as_tuple` for expected conditions** — EOF is normal when reading to
+   end of stream; don't force a try/catch.
+
+3. **Always handle `operation_aborted`** — It's not really an error, just
+   indicates the operation was cancelled.
+
+4. **Log error details** — Include `ec.message()` and `ec.value()` in logs
+   for debugging.
+
+== Next Steps
+
+* xref:core/streams.adoc[Reading and Writing] — Handle read/write errors
+* xref:advanced/ssl.adoc[SSL/TLS] — SSL-specific errors

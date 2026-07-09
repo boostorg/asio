@@ -1,0 +1,314 @@
+//
+// Copyright (c) 2003-2025 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+//
+// Distributed under the Boost Software License, Version 1.0. (See accompanying
+// file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+//
+
+= Reading and Writing
+
+Learn the different ways to read and write data with Asio coroutines.
+
+== Overview
+
+Asio provides several read/write functions with different behaviors:
+
+[cols="1,2"]
+|===
+| Function | Behavior
+
+| `async_read_some` | Read *some* data (may be less than buffer size)
+| `async_read` | Read *exact* amount (loops internally)
+| `async_read_until` | Read until delimiter found
+| `async_write_some` | Write *some* data (may be less than buffer size)
+| `async_write` | Write *all* data (loops internally)
+|===
+
+== Reading Some Data
+
+`async_read_some` is the lowest-level read. It returns whatever data is
+available, which may be less than your buffer size:
+
+[source,cpp]
+----
+awaitable<void> read_some_example(asio::ip::tcp::socket& socket)
+{
+    char buf[1024];
+    
+    // May return 1 byte or 1024 bytes or anywhere in between
+    std::size_t n = co_await socket.async_read_some(
+        asio::buffer(buf), asio::use_awaitable);
+    
+    std::cout << "Received " << n << " bytes\n";
+    // Process buf[0..n)
+}
+----
+
+Use `async_read_some` when:
+
+* You want to process data as it arrives
+* You don't know how much data to expect
+* You're implementing a streaming protocol
+
+== Reading Exact Amount
+
+`async_read` keeps reading until the buffer is full:
+
+[source,cpp]
+----
+awaitable<void> read_exact_example(asio::ip::tcp::socket& socket)
+{
+    char header[4];  // Read exactly 4 bytes
+    
+    co_await asio::async_read(
+        socket, asio::buffer(header), asio::use_awaitable);
+    
+    // header is now completely filled
+    uint32_t length = /* parse header */;
+    
+    std::vector<char> body(length);
+    co_await asio::async_read(
+        socket, asio::buffer(body), asio::use_awaitable);
+}
+----
+
+Use `async_read` when:
+
+* You need exactly N bytes (e.g., fixed-size headers)
+* You're reading length-prefixed messages
+
+== Reading Until Delimiter
+
+`async_read_until` reads until a delimiter is found:
+
+[source,cpp]
+----
+awaitable<std::string> read_line(asio::ip::tcp::socket& socket)
+{
+    std::string data;
+    
+    std::size_t n = co_await asio::async_read_until(
+        socket,
+        asio::dynamic_buffer(data),
+        '\n',
+        asio::use_awaitable);
+    
+    // data[0..n) includes the delimiter
+    std::string line = data.substr(0, n - 1);  // Remove \n
+    data.erase(0, n);  // Remove consumed data
+    
+    co_return line;
+}
+----
+
+You can also use string delimiters:
+
+[source,cpp]
+----
+// Read until double newline (HTTP header end)
+std::size_t n = co_await asio::async_read_until(
+    socket,
+    asio::dynamic_buffer(data),
+    "\r\n\r\n",
+    asio::use_awaitable);
+----
+
+Or regex:
+
+[source,cpp]
+----
+#include <boost/asio/read_until.hpp>
+#include <boost/regex.hpp>
+
+std::size_t n = co_await asio::async_read_until(
+    socket,
+    asio::dynamic_buffer(data),
+    boost::regex("\\r?\\n"),  // \n or \r\n
+    asio::use_awaitable);
+----
+
+== Writing Some Data
+
+`async_write_some` writes some data, possibly less than provided:
+
+[source,cpp]
+----
+awaitable<void> write_some_example(asio::ip::tcp::socket& socket)
+{
+    std::string data = "Hello, World!";
+    
+    // May write less than data.size()
+    std::size_t n = co_await socket.async_write_some(
+        asio::buffer(data), asio::use_awaitable);
+    
+    std::cout << "Wrote " << n << " of " << data.size() << " bytes\n";
+}
+----
+
+You rarely need `async_write_some` directly.
+
+== Writing All Data
+
+`async_write` ensures all data is written:
+
+[source,cpp]
+----
+awaitable<void> write_all_example(asio::ip::tcp::socket& socket)
+{
+    std::string data = "Hello, World!";
+    
+    // Writes all data, retrying as needed
+    co_await asio::async_write(
+        socket, asio::buffer(data), asio::use_awaitable);
+    
+    // All of data has been sent
+}
+----
+
+Use `async_write` for almost all writes. It handles partial writes internally.
+
+== Scatter/Gather I/O
+
+Write multiple buffers in one operation (gather):
+
+[source,cpp]
+----
+awaitable<void> gather_write(asio::ip::tcp::socket& socket)
+{
+    std::string header = "HTTP/1.1 200 OK\r\n\r\n";
+    std::string body = "Hello!";
+    
+    std::array<asio::const_buffer, 2> buffers = {
+        asio::buffer(header),
+        asio::buffer(body)
+    };
+    
+    co_await asio::async_write(socket, buffers, asio::use_awaitable);
+}
+----
+
+Read into multiple buffers (scatter):
+
+[source,cpp]
+----
+awaitable<void> scatter_read(asio::ip::tcp::socket& socket)
+{
+    char header[4];
+    char body[100];
+    
+    std::array<asio::mutable_buffer, 2> buffers = {
+        asio::buffer(header),
+        asio::buffer(body)
+    };
+    
+    // Fills header first, then body
+    co_await asio::async_read(socket, buffers, asio::use_awaitable);
+}
+----
+
+== Completion Conditions
+
+`async_read` accepts a completion condition to customize when it stops:
+
+[source,cpp]
+----
+// Read at least 100 bytes, but accept more
+std::size_t n = co_await asio::async_read(
+    socket,
+    asio::buffer(buf),
+    asio::transfer_at_least(100),
+    asio::use_awaitable);
+
+// Read exactly 100 bytes (default behavior)
+co_await asio::async_read(
+    socket,
+    asio::buffer(buf, 100),
+    asio::transfer_exactly(100),
+    asio::use_awaitable);
+
+// Read until buffer is full
+co_await asio::async_read(
+    socket,
+    asio::buffer(buf),
+    asio::transfer_all(),
+    asio::use_awaitable);
+----
+
+== Handling Short Reads and Writes
+
+With `async_read_some`, you typically loop until you have what you need:
+
+[source,cpp]
+----
+awaitable<void> read_message(asio::ip::tcp::socket& socket)
+{
+    std::vector<char> message;
+    char buf[1024];
+    
+    while (message.size() < expected_size)
+    {
+        auto [ec, n] = co_await socket.async_read_some(
+            asio::buffer(buf),
+            asio::experimental::as_tuple(asio::use_awaitable));
+        
+        if (ec == asio::error::eof)
+            break;
+        if (ec)
+            throw boost::system::system_error(ec);
+        
+        message.insert(message.end(), buf, buf + n);
+    }
+}
+----
+
+Or just use `async_read` which does this for you.
+
+== EOF Handling
+
+When reading, `asio::error::eof` means the peer closed the connection:
+
+[source,cpp]
+----
+awaitable<void> read_until_close(asio::ip::tcp::socket& socket)
+{
+    std::string data;
+    char buf[1024];
+    
+    for (;;)
+    {
+        auto [ec, n] = co_await socket.async_read_some(
+            asio::buffer(buf),
+            asio::experimental::as_tuple(asio::use_awaitable));
+        
+        if (ec == asio::error::eof)
+        {
+            std::cout << "Connection closed, received total: "
+                      << data.size() << " bytes\n";
+            break;
+        }
+        if (ec)
+            throw boost::system::system_error(ec);
+        
+        data.append(buf, n);
+    }
+}
+----
+
+== Common Mistakes
+
+**Using `async_read_some` expecting full reads** — It may return less data
+than requested. Use `async_read` for exact amounts.
+
+**Forgetting buffer lifetime** — The buffer must remain valid until the
+operation completes.
+
+**Not handling EOF** — EOF is normal, not an error. Handle it appropriately.
+
+**Mixing reads and writes on same socket without care** — Operations can
+overlap, but make sure you understand the protocol.
+
+== Next Steps
+
+* xref:core/buffers.adoc[Buffers] — Buffer types in detail
+* xref:core/error-handling.adoc[Error Handling] — Handle read/write errors
+* xref:networking/tcp-server.adoc[TCP Server] — Full server example

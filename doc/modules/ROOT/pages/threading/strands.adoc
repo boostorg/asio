@@ -1,0 +1,275 @@
+//
+// Copyright (c) 2003-2025 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+//
+// Distributed under the Boost Software License, Version 1.0. (See accompanying
+// file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+//
+
+= Strands
+
+Learn how to synchronize handlers without explicit locks.
+
+== What is a Strand?
+
+A strand is a serialization mechanism. Handlers dispatched through a strand
+are guaranteed to:
+
+* Not run concurrently with each other
+* Run in the order they were posted
+
+Think of it as a queue that processes one handler at a time.
+
+== Why Use Strands?
+
+When multiple threads call `io_context::run()`, handlers can run concurrently.
+If two handlers access shared state, you need synchronization.
+
+Options:
+
+1. **Mutex** — Traditional locking
+2. **Strand** — Serialize handlers so they don't run concurrently
+
+Strands are often cleaner than mutexes for Asio code because they work with
+the async model naturally.
+
+== Creating a Strand
+
+[source,cpp]
+----
+#include <boost/asio.hpp>
+
+namespace asio = boost::asio;
+
+asio::io_context ctx;
+
+// Create a strand associated with the context
+auto strand = asio::make_strand(ctx);
+
+// Or from an existing executor
+auto strand2 = asio::make_strand(ctx.get_executor());
+----
+
+== Using Strands with Coroutines
+
+Bind a coroutine's operations to a strand:
+
+[source,cpp]
+----
+class connection : public std::enable_shared_from_this<connection>
+{
+    asio::strand<asio::io_context::executor_type> strand_;
+    asio::ip::tcp::socket socket_;
+    std::string shared_data_;
+
+public:
+    connection(asio::io_context& ctx)
+        : strand_(asio::make_strand(ctx))
+        , socket_(strand_)  // Socket bound to strand
+    {}
+    
+    awaitable<void> run()
+    {
+        // All operations on this socket are serialized
+        // because the socket's executor is the strand
+        char buf[1024];
+        for (;;)
+        {
+            std::size_t n = co_await socket_.async_read_some(
+                asio::buffer(buf), asio::use_awaitable);
+            
+            // Safe to modify shared_data_ here
+            shared_data_.append(buf, n);
+            
+            co_await asio::async_write(
+                socket_, asio::buffer(shared_data_), asio::use_awaitable);
+        }
+    }
+};
+----
+
+== Dispatching to a Strand
+
+Use `dispatch` or `post` to run work on a strand:
+
+[source,cpp]
+----
+awaitable<void> work_on_strand(
+    asio::strand<asio::io_context::executor_type>& strand)
+{
+    // Switch to the strand
+    co_await asio::dispatch(strand, asio::use_awaitable);
+    
+    // Now running on the strand
+    // Safe to access state protected by this strand
+}
+----
+
+Difference between `dispatch` and `post`:
+
+* `dispatch` — Run immediately if already on the strand, otherwise queue
+* `post` — Always queue (never runs immediately)
+
+== Binding Handlers to Strands
+
+Use `bind_executor` to ensure a handler runs on a strand:
+
+[source,cpp]
+----
+auto strand = asio::make_strand(ctx);
+
+timer.async_wait(
+    asio::bind_executor(strand,
+        [](boost::system::error_code ec) {
+            // This handler runs on the strand
+        }));
+----
+
+== Example: Shared Counter
+
+Two coroutines increment a shared counter safely:
+
+[source,cpp]
+----
+class counter
+{
+    asio::strand<asio::io_context::executor_type> strand_;
+    int value_ = 0;
+
+public:
+    counter(asio::io_context& ctx)
+        : strand_(asio::make_strand(ctx))
+    {}
+    
+    awaitable<void> increment()
+    {
+        co_await asio::dispatch(strand_, asio::use_awaitable);
+        ++value_;
+        std::cout << "Value: " << value_ << "\n";
+    }
+    
+    awaitable<void> run_incrementer()
+    {
+        for (int i = 0; i < 100; ++i)
+            co_await increment();
+    }
+};
+
+int main()
+{
+    asio::io_context ctx;
+    counter c(ctx);
+    
+    // Two concurrent incrementers
+    asio::co_spawn(ctx, c.run_incrementer(), asio::detached);
+    asio::co_spawn(ctx, c.run_incrementer(), asio::detached);
+    
+    // Run from multiple threads
+    std::thread t1([&]{ ctx.run(); });
+    std::thread t2([&]{ ctx.run(); });
+    
+    t1.join();
+    t2.join();
+    // Final value is 200, guaranteed
+}
+----
+
+== Strands vs Mutexes
+
+[cols="1,1"]
+|===
+| Strand | Mutex
+
+| Non-blocking (handlers are queued) | Can block waiting for lock
+| Natural fit for async code | Requires careful lock scoping
+| One strand per resource | One mutex per resource
+| Cannot deadlock with other strands | Can deadlock with other mutexes
+| Slight overhead even if single-threaded | Zero overhead if single-threaded
+|===
+
+== Implicit Strands
+
+Some operations create implicit serialization:
+
+[source,cpp]
+----
+awaitable<void> session(tcp::socket socket)
+{
+    // This coroutine runs to completion before handling
+    // another operation on this socket. No explicit strand needed
+    // if there's only one outstanding operation at a time.
+    
+    char buf[1024];
+    for (;;)
+    {
+        auto n = co_await socket.async_read_some(
+            asio::buffer(buf), asio::use_awaitable);
+        co_await asio::async_write(
+            socket, asio::buffer(buf, n), asio::use_awaitable);
+    }
+}
+----
+
+The `co_await` ensures sequential execution within the coroutine. You only
+need an explicit strand if:
+
+* Multiple coroutines access the same resource
+* You have concurrent operations on the same object
+
+== Common Patterns
+
+=== Per-Connection Strand
+
+[source,cpp]
+----
+class session
+{
+    asio::strand<asio::io_context::executor_type> strand_;
+    tcp::socket socket_;
+    
+public:
+    session(asio::io_context& ctx)
+        : strand_(asio::make_strand(ctx))
+        , socket_(strand_)
+    {}
+};
+----
+
+=== Shared Resource Strand
+
+[source,cpp]
+----
+class shared_cache
+{
+    asio::strand<asio::io_context::executor_type> strand_;
+    std::unordered_map<std::string, std::string> data_;
+    
+public:
+    awaitable<std::string> get(std::string key)
+    {
+        co_await asio::dispatch(strand_, asio::use_awaitable);
+        co_return data_[key];
+    }
+    
+    awaitable<void> set(std::string key, std::string value)
+    {
+        co_await asio::dispatch(strand_, asio::use_awaitable);
+        data_[key] = std::move(value);
+    }
+};
+----
+
+== Common Mistakes
+
+**Using strand when single-threaded** — Unnecessary overhead if only one
+thread calls `run()`.
+
+**Holding work across `co_await`** — The strand only protects while the handler
+is running. Between `co_await`s, another handler could run.
+
+**Creating too many strands** — One strand per logical resource is typical.
+Don't create a strand per operation.
+
+== Next Steps
+
+* xref:threading/threads.adoc[Multi-Threading] — Thread pool patterns
+* xref:advanced/executors.adoc[Executors] — Understanding executor types

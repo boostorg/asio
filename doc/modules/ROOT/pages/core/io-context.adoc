@@ -1,0 +1,233 @@
+//
+// Copyright (c) 2003-2025 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+//
+// Distributed under the Boost Software License, Version 1.0. (See accompanying
+// file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+//
+
+= The I/O Context
+
+Understand the `io_context`, the engine that drives all asynchronous operations.
+
+== What is `io_context`?
+
+The `io_context` is the event loop at the heart of Asio. It:
+
+* Receives completion notifications from the operating system
+* Runs completion handlers (including coroutine resumptions)
+* Tracks outstanding work to know when to stop
+
+Every I/O object (socket, timer, etc.) is associated with an `io_context`
+(via an executor), and all async operations are processed by calling `run()`.
+
+== Basic Usage
+
+[source,cpp]
+----
+#include <boost/asio.hpp>
+
+namespace asio = boost::asio;
+
+int main()
+{
+    // Create the event loop
+    asio::io_context ctx;
+    
+    // Add work (spawn a coroutine, create timers, etc.)
+    asio::co_spawn(ctx, some_coroutine(), asio::detached);
+    
+    // Run the event loop
+    ctx.run();
+    
+    // run() returns when there's no more work
+}
+----
+
+== The `run()` Function
+
+`run()` blocks and processes events until:
+
+1. All work is complete (no pending async operations)
+2. `stop()` is called
+3. An exception escapes a handler
+
+[source,cpp]
+----
+ctx.run();  // Blocks until done
+
+// These variants are also available:
+ctx.run_one();      // Process at most one handler, then return
+ctx.run_for(1s);    // Run for at most 1 second
+ctx.run_until(tp);  // Run until a time point
+ctx.poll();         // Process ready handlers without blocking
+ctx.poll_one();     // Process at most one ready handler
+----
+
+== Spawning Coroutines
+
+Use `co_spawn` to launch a coroutine onto an `io_context`:
+
+[source,cpp]
+----
+asio::awaitable<void> my_coroutine()
+{
+    // ...
+    co_return;
+}
+
+int main()
+{
+    asio::io_context ctx;
+    
+    // Launch with detached (fire and forget)
+    asio::co_spawn(ctx, my_coroutine(), asio::detached);
+    
+    // Or capture the result
+    asio::co_spawn(ctx, my_coroutine(), 
+        [](std::exception_ptr ep) {
+            if (ep) std::rethrow_exception(ep);
+        });
+    
+    ctx.run();
+}
+----
+
+From within a coroutine, you can spawn child coroutines:
+
+[source,cpp]
+----
+asio::awaitable<void> parent()
+{
+    auto executor = co_await asio::this_coro::executor;
+    
+    // Spawn a child coroutine
+    asio::co_spawn(executor, child(), asio::detached);
+}
+----
+
+== Getting the Executor
+
+Every `io_context` has an associated executor. I/O objects need this executor:
+
+[source,cpp]
+----
+// From main, get the executor from the context
+auto executor = ctx.get_executor();
+asio::steady_timer timer(executor, 1s);
+
+// From a coroutine, get it from this_coro
+asio::awaitable<void> example()
+{
+    auto executor = co_await asio::this_coro::executor;
+    asio::steady_timer timer(executor, 1s);
+    // ...
+}
+----
+
+== Stopping the Event Loop
+
+To stop `run()` from outside:
+
+[source,cpp]
+----
+ctx.stop();  // Causes run() to return soon
+
+// Check if stopped
+if (ctx.stopped())
+    ctx.restart();  // Must restart before calling run() again
+----
+
+Common pattern with signal handling:
+
+[source,cpp]
+----
+int main()
+{
+    asio::io_context ctx;
+    
+    // Stop on Ctrl+C
+    asio::signal_set signals(ctx, SIGINT, SIGTERM);
+    signals.async_wait([&](auto, auto) {
+        ctx.stop();
+    });
+    
+    asio::co_spawn(ctx, server(), asio::detached);
+    ctx.run();
+}
+----
+
+== Work Tracking
+
+`run()` returns when there's no more work. But sometimes you want to keep it
+running even when idle (e.g., waiting for new connections).
+
+Pending async operations count as work. So does an outstanding `executor_work_guard`:
+
+[source,cpp]
+----
+int main()
+{
+    asio::io_context ctx;
+    
+    // Keep ctx.run() from returning even when idle
+    auto work = asio::make_work_guard(ctx);
+    
+    // ... spawn things ...
+    
+    // When ready to stop:
+    work.reset();  // Allow run() to return when idle
+    // or
+    ctx.stop();    // Stop immediately
+    
+    ctx.run();
+}
+----
+
+== Concurrency Hint
+
+You can hint to `io_context` that only one thread will call `run()`:
+
+[source,cpp]
+----
+// Single-threaded (may enable optimizations)
+asio::io_context ctx(1);
+
+// Or explicitly
+asio::io_context ctx(BOOST_ASIO_CONCURRENCY_HINT_1);
+----
+
+This can improve performance by avoiding unnecessary synchronization.
+
+== Multiple `io_context` Objects
+
+You can have multiple `io_context` instances:
+
+[source,cpp]
+----
+asio::io_context ctx1;
+asio::io_context ctx2;
+
+// Each has its own event loop
+std::thread t1([&]{ ctx1.run(); });
+std::thread t2([&]{ ctx2.run(); });
+----
+
+I/O objects are tied to their context. A socket created with `ctx1`'s executor
+cannot be moved to `ctx2`.
+
+== Common Mistakes
+
+**Forgetting to call `run()`** — Nothing happens until `run()` is called.
+Spawning coroutines just queues them; they don't execute.
+
+**`run()` returns immediately** — This happens when there's no work. Make sure
+you've started async operations before calling `run()`.
+
+**Calling `run()` from a handler** — Don't nest `run()` calls. If you need to
+run more work from a handler, use `post()` instead.
+
+== Next Steps
+
+* xref:threading/threads.adoc[Multi-Threading] — Run `io_context` from multiple threads
+* xref:threading/strands.adoc[Strands] — Synchronize handlers
+* xref:core/buffers.adoc[Buffers] — Understand buffer management
