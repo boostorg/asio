@@ -24,7 +24,7 @@ using boost::asio::ip::tcp;
 // I/O objects). It contains a single block of memory from which objects are
 // monotonically allocated (similar to std::pmr::monotonic_resource). If no
 // more space is available it delegates allocation to the global heap.
-class context_memory
+/*class context_memory
 {
 public:
   explicit context_memory(std::size_t preallocated)
@@ -126,7 +126,7 @@ private:
   // The underlying memory.
   context_memory& memory_;
 };
-
+*/
 // Class to manage the memory to be used for handler-based custom allocation.
 // It contains a single block of memory which may be returned for allocation
 // requests. If the memory is in use when an allocation request is made, the
@@ -169,7 +169,7 @@ public:
 
 private:
   // Storage space used for handler-based custom memory allocation.
-  typename std::aligned_storage<1024>::type storage_;
+  alignas(std::max_align_t) std::byte storage_[1024]; 
 
   // Whether the handler-based custom allocation storage has been used.
   bool in_use_;
@@ -313,9 +313,10 @@ int main(int argc, char* argv[])
       return 1;
     }
 
-    context_memory memory(4096);
+    /*context_memory memory(4096);
     context_allocator<void> allocator(memory);
-    boost::asio::io_context io_context(std::allocator_arg, allocator);
+    */
+    boost::asio::io_context io_context;
     server s(io_context, std::atoi(argv[1]));
     io_context.run();
   }
