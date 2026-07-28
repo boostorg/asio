@@ -1,0 +1,51 @@
+compilation_database_dir: ./build
+output_directory: ./docs/diagrams
+diagrams:
+  boost_asio:
+    type: class
+    generate_method_arguments: none
+    include_relations_also_as_members: false
+    glob:
+      - example/cpp11/http/server/server.cpp
+    using_namespace:
+      - boost::asio
+    include:
+      namespaces:
+        - boost::asio
+    exclude:
+      namespaces:
+        - http::server
+        - std
+        - boost::asio::detail
+        - boost::asio::buffer_literals::detail
+        - boost::asio::execution::detail
+        - boost::asio::experimental::detail
+        - boost::asio::impl
+        - boost::asio::executor::impl
+        - boost::asio::ip::detail
+        - boost::asio::posix
+        - boost::asio::traits
+        - boost::beast
+        - boost::redis
+      elements:
+        - boost::asio::associator
+        - boost::asio::async_result
+        - boost::asio::deferred_init_tag
+        - boost::asio::is_deferred
+        - boost::asio::traits::static_query
+        - boost::asio::is_applicable_property
+
+      # Excluding these specializations unfortunately results in a crash of clang-uml
+      # specializations:
+        # - boost::asio::associator<T1>
+        # - boost::asio::associator<T1,T2>
+        # - boost::asio::asyncresult<T1>
+        # - boost::asio::asyncresult<T1,T2>
+        # - boost::asio::is_deferred<T1>
+        # - boost::asio::is_deferred<T1,T2>
+      access:
+        - private
+    plantuml:
+      before:
+        - 'title Class Diagram for boost asio'
+

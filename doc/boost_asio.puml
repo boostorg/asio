@@ -1,0 +1,3117 @@
+@startuml
+title Class Diagram for boost asio
+class "aligned_storage<std::size_t N,std::size_t A>" as C_0000579592779670012332
+class C_0000579592779670012332 {
+}
+class "aligned_storage::type" as C_0002110400422178108755
+class C_0002110400422178108755 {
++data : unsigned char [N]
+}
+class "remove_cvref<T>" as C_0001987019697484329811
+class C_0001987019697484329811 {
+}
+class "void_type<>" as C_0001000103218164549947
+class C_0001000103218164549947 {
+}
+class "conjunction<...>" as C_0000753777493944093159
+class C_0000753777493944093159 {
+}
+class "conjunction" as C_0000296724516884520014
+class C_0000296724516884520014 {
+}
+class "conjunction<T>" as C_0001041834930635121886
+class C_0001041834930635121886 {
+}
+class "conjunction<Head,Tail...>" as C_0001684094058832511287
+class C_0001684094058832511287 {
+}
+class "defaulted_constraint" as C_0002086795079272478460
+class C_0002086795079272478460 {
++defaulted_constraint() : void
+}
+class "constraint<_Bool Condition,Type>" as C_0000576389164609867081
+class C_0000576389164609867081 {
+}
+class "execution::invocable_archetype" as C_0002268761606142125805
+class C_0002268761606142125805 {
++operator()<Args...>() : void
+}
+class "execution::receiver_invocation_error" as C_0000972429552341426131
+class C_0000972429552341426131 {
++receiver_invocation_error() : void
+}
+class "execution::can_set_done<R>" as C_0002082518388914266172
+class C_0002082518388914266172 {
+}
+class "execution::is_nothrow_set_done<R>" as C_0001962000632127088146
+class C_0001962000632127088146 {
+}
+class "execution::can_set_error<R,E>" as C_0000405303666802852631
+class C_0000405303666802852631 {
+}
+class "execution::is_nothrow_set_error<R,E>" as C_0000045140933470815653
+class C_0000045140933470815653 {
+}
+class "execution::can_set_value<R,Vs...>" as C_0000389647355528027145
+class C_0000389647355528027145 {
+}
+class "execution::is_nothrow_set_value<R,Vs...>" as C_0001441722819273374224
+class C_0001441722819273374224 {
+}
+class "execution::can_execute<T,F>" as C_0002119763767749626858
+class C_0002119763767749626858 {
+}
+class "execution::is_executor<T>" as C_0002295839784929029914
+class C_0002295839784929029914 {
+}
+class "execution::is_executor_of<T,F>" as C_0002144590037745486826
+class C_0002144590037745486826 {
+}
+class "execution::executor_shape<T>" as C_0000445495203297773331
+class C_0000445495203297773331 {
+}
+class "execution::executor_index<T>" as C_0001609874729614519265
+class C_0001609874729614519265 {
+}
+class "execution::can_schedule<S>" as C_0000732418261509680155
+class C_0000732418261509680155 {
+}
+class "execution::is_nothrow_schedule<S>" as C_0000067795948250504679
+class C_0000067795948250504679 {
+}
+class "execution::is_scheduler<T>" as C_0000935905208951410413
+class C_0000935905208951410413 {
+}
+class "execution::is_receiver<T,E>" as C_0000111106382659944809
+class C_0000111106382659944809 {
+}
+class "execution::is_receiver_of<T,Vs...>" as C_0001642894112610859064
+class C_0001642894112610859064 {
+}
+class "execution::is_nothrow_receiver_of<T,Vs...>" as C_0001181660369662644829
+class C_0001181660369662644829 {
+}
+class "execution::sender_traits<S>" as C_0000004602000229436680
+class C_0000004602000229436680 {
+}
+class "execution::is_sender<T>" as C_0001149225105691160543
+class C_0001149225105691160543 {
+}
+class "execution::is_sender_to<T,R>" as C_0001381488724873157820
+class C_0001381488724873157820 {
+}
+class "execution::is_typed_sender<T>" as C_0001738113620967102102
+class C_0001738113620967102102 {
+}
+class "execution::can_start<R>" as C_0000967739045281501834
+class C_0000967739045281501834 {
+}
+class "execution::is_nothrow_start<R>" as C_0001447801322838974785
+class C_0001447801322838974785 {
+}
+class "execution::is_operation_state<T>" as C_0001585224038675902175
+class C_0001585224038675902175 {
+}
+class "execution::can_connect<S,R>" as C_0001332409624746049559
+class C_0001332409624746049559 {
+}
+class "execution::is_nothrow_connect<S,R>" as C_0001900795959504001078
+class C_0001900795959504001078 {
+}
+class "execution::connect_result<S,R>" as C_0000590588717228504908
+class C_0000590588717228504908 {
+}
+class "execution::allocator_t<ProtoAllocator>" as C_0001919956248681364680
+class C_0001919956248681364680 {
++value() const : ProtoAllocator
+{static} +is_requirable : const bool
+{static} +is_preferable : const bool
+}
+class "execution::allocator_t::static_proxy<T>" as C_0002178673844739850305
+class C_0002178673844739850305 {
+}
+class "execution::allocator_t::query_static_constexpr_member<T>" as C_0002094325986805421920
+class C_0002094325986805421920 {
+}
+class "execution::allocator_t" as C_0000328240645697443049
+class C_0000328240645697443049 {
++allocator_t() : void
++operator()<OtherProtoAllocator>() : allocator_t<OtherProtoAllocator>
+{static} +is_requirable : const bool
+{static} +is_preferable : const bool
+}
+class "execution::allocator_t<void>" as C_0001751898571735160462
+class C_0001751898571735160462 {
++allocator_t() : void
++operator()<OtherProtoAllocator>() : allocator_t<OtherProtoAllocator>
+{static} +is_requirable : const bool
+{static} +is_preferable : const bool
+}
+class "execution::bad_executor" as C_0002062081675072086182
+class C_0002062081675072086182 {
++bad_executor() : void
++what() const : const char *
+}
+class "execution::any_executor" as C_0001163808302553303505
+class C_0001163808302553303505 {
++any_executor() : void
++any_executor() : void
++any_executor() : void
++any_executor() : void
++operator=() : execution::any_executor<> &
++operator=() : execution::any_executor<> &
++any_executor() : void
++any_executor() : void
++operator=() : execution::any_executor<> &
++swap() : void
++equality_helper() const : bool
++any_executor<Executor>() : void
++any_executor<Executor>() : void
++any_executor<OtherSupportableProperties...>() : void
++any_executor<OtherSupportableProperties...>() : void
+}
+class "execution::any_executor<SupportableProperties...>" as C_0000352118411325380521
+class C_0000352118411325380521 {
+}
+class "execution::any_executor::find_convertible_property<T>" as C_0001886574204218092814
+class C_0001886574204218092814 {
+}
+class "execution::any_executor::find_convertible_requirable_property<T>" as C_0001232554361209982665
+class C_0001232554361209982665 {
+}
+class "execution::any_executor::find_convertible_preferable_property<T>" as C_0001631490790111047121
+class C_0001631490790111047121 {
+}
+class "execution::can_bulk_execute<S,F,N>" as C_0001980535949126915332
+class C_0001980535949126915332 {
+}
+class "execution::is_nothrow_bulk_execute<S,F,N>" as C_0001474698393389523959
+class C_0001474698393389523959 {
+}
+class "execution::bulk_execute_result<S,F,N>" as C_0001969029287527607370
+class C_0001969029287527607370 {
+}
+class "execution::context_as_t<T>" as C_0002111739362956445069
+class C_0002111739362956445069 {
++context_as_t<U>() : void
++context_as_t<U>() : void
+{static} +is_requirable : const bool
+{static} +is_preferable : const bool
+}
+class "execution::prefer_only<InnerProperty>" as C_0002099617589394897753
+class C_0002099617589394897753 {
++prefer_only<InnerProperty>() : void
+{static} +is_requirable : const bool
+}
+class "execution::can_submit<S,R>" as C_0001917254621073297788
+class C_0001917254621073297788 {
+}
+class "execution::is_nothrow_submit<S,R>" as C_0001228625026234348305
+class C_0001228625026234348305 {
+}
+class "execution::submit_result<S,R>" as C_0000849094483816578277
+class C_0000849094483816578277 {
+}
+class "execution::is_executor" as C_0001262484639467907853
+class C_0001262484639467907853 {
+}
+class "execution::is_executor<io_context>" as C_0000105945471770528204
+class C_0000105945471770528204 {
+}
+class "execution::is_executor<thread_pool>" as C_0001620070496707355129
+class C_0001620070496707355129 {
+}
+class "execution::any_executor<...>" as C_0000958091182183117250
+class C_0000958091182183117250 {
+}
+class "execution::context_as_t<U>" as C_0002080209979786011883
+class C_0002080209979786011883 {
+}
+class "multiple_exceptions" as C_0001264191542819817749
+class C_0001264191542819817749 {
++multiple_exceptions() : void
++what() const : const char *
++first_exception() const : std::exception_ptr
+}
+class "associated_allocator<T,Allocator>" as C_0001763862446001942345
+class C_0001763862446001942345 {
+}
+class "associated_allocator" as C_0001830365946563533489
+class C_0001830365946563533489 {
+{static} +get() : associated_allocator<reference_wrapper<type-parameter-0-0>,type-parameter-0-1>::type
+{static} +get() : decltype(associated_allocator<T,Allocator>::get(t.get(),a))
+}
+class "associated_allocator<std::reference_wrapper<type-parameter-0-0>,type-parameter-0-1>" as C_0001333988438710426705
+class C_0001333988438710426705 {
+{static} +get() : associated_allocator<reference_wrapper<type-parameter-0-0>,type-parameter-0-1>::type
+{static} +get() : decltype(associated_allocator<T,Allocator>::get(t.get(),a))
+}
+class "can_prefer<T,Properties...>" as C_0002185418976218609686
+class C_0002185418976218609686 {
+}
+class "is_nothrow_prefer<T,Properties...>" as C_0001732291581700516551
+class C_0001732291581700516551 {
+}
+class "prefer_result<T,Properties...>" as C_0001333738625188322489
+class C_0001333738625188322489 {
+}
+class "can_query<T,Property>" as C_0001914587886529905881
+class C_0001914587886529905881 {
+}
+class "is_nothrow_query<T,Property>" as C_0001519501349843584133
+class C_0001519501349843584133 {
+}
+class "query_result<T,Property>" as C_0000132471295115447389
+class C_0000132471295115447389 {
+}
+class "can_require<T,Properties...>" as C_0001696722461684456340
+class C_0001696722461684456340 {
+}
+class "is_nothrow_require<T,Properties...>" as C_0002291828421873652752
+class C_0002291828421873652752 {
+}
+class "require_result<T,Properties...>" as C_0001279614435415410300
+class C_0001279614435415410300 {
+}
+enum "error::basic_errors" as C_0002147120332809299988
+enum C_0002147120332809299988 {
+access_denied
+address_family_not_supported
+address_in_use
+already_connected
+already_started
+broken_pipe
+connection_aborted
+connection_refused
+connection_reset
+bad_descriptor
+fault
+host_unreachable
+in_progress
+interrupted
+invalid_argument
+message_size
+name_too_long
+network_down
+network_reset
+network_unreachable
+no_descriptors
+no_buffer_space
+no_memory
+no_permission
+no_protocol_option
+no_such_device
+not_connected
+not_socket
+operation_aborted
+operation_not_supported
+shut_down
+timed_out
+try_again
+would_block
+}
+enum "error::netdb_errors" as C_0000925057522115825409
+enum C_0000925057522115825409 {
+host_not_found
+host_not_found_try_again
+no_data
+no_recovery
+}
+enum "error::addrinfo_errors" as C_0002162172288910256282
+enum C_0002162172288910256282 {
+service_not_found
+socket_type_not_supported
+}
+enum "error::misc_errors" as C_0002067309675921375731
+enum C_0002067309675921375731 {
+already_open
+eof
+not_found
+fd_set_failure
+}
+class "error::detail::netdb_category" as C_0000570278424444546455
+class C_0000570278424444546455 {
++name() const : const char *
++message() const : std::string
+}
+class "error::detail::addrinfo_category" as C_0000264153005272410604
+class C_0000264153005272410604 {
++name() const : const char *
++message() const : std::string
+}
+class "error::detail::misc_category" as C_0001534085128894270884
+class C_0001534085128894270884 {
++name() const : const char *
++message() const : std::string
+}
+class "any_completion_executor" as C_0002216123710377401285
+class C_0002216123710377401285 {
++any_completion_executor() : void
++any_completion_executor() : void
++any_completion_executor() : void
++any_completion_executor() : void
++any_completion_executor() : void
++any_completion_executor() : void
++operator=() : any_completion_executor &
++operator=() : any_completion_executor &
++operator=() : any_completion_executor &
++~any_completion_executor() : void
++swap() : void
++any_completion_executor<OtherAnyExecutor>() : void
++any_completion_executor<OtherAnyExecutor>() : void
++any_completion_executor<Executor>() : void
++any_completion_executor<Executor>() : void
++require<Property>() : class any_completion_executor
++prefer<Property>() : class any_completion_executor
+}
+enum "cancellation_type" as C_0000267097329498411292
+enum C_0000267097329498411292 {
+none
+terminal
+partial
+total
+all
+}
+class "cancellation_signal" as C_0001075184824456831325
+class C_0001075184824456831325 {
++cancellation_signal() : void
++~cancellation_signal() : void
++emit() : void
++slot() : cancellation_slot
+}
+class "cancellation_slot" as C_0001060514151700537330
+class C_0001060514151700537330 {
++cancellation_slot() : void
++clear() : void
++is_connected() const : bool
++has_handler() const : bool
++emplace<CancellationHandler,Args...>() : CancellationHandler &
++assign<CancellationHandler>() : typename decay<CancellationHandler>::type &
+}
+class "cancellation_slot::auto_delete_helper" as C_0000957743670870456570
+class C_0000957743670870456570 {
++~auto_delete_helper() : void
++mem : std::pair<void *,std::size_t>
+}
+class "associated_cancellation_slot<T,CancellationSlot>" as C_0000532634720971459996
+class C_0000532634720971459996 {
+}
+class "associated_cancellation_slot" as C_0001005884597158528235
+class C_0001005884597158528235 {
+{static} +get() : associated_cancellation_slot<reference_wrapper<type-parameter-0-0>,type-parameter-0-1>::type
+{static} +get() : decltype(associated_cancellation_slot<T,CancellationSlot>::get(t.get(),s))
+}
+class "associated_cancellation_slot<std::reference_wrapper<type-parameter-0-0>,type-parameter-0-1>" as C_0000899286941696341228
+class C_0000899286941696341228 {
+{static} +get() : associated_cancellation_slot<reference_wrapper<type-parameter-0-0>,type-parameter-0-1>::type
+{static} +get() : decltype(associated_cancellation_slot<T,CancellationSlot>::get(t.get(),s))
+}
+class "is_executor<T>" as C_0000872970159060608462
+class C_0000872970159060608462 {
+}
+class "basic_system_executor<Blocking,Relationship,Allocator>" as C_0001884445244141597806
+class C_0001884445244141597806 {
++basic_system_executor<Blocking, Relationship, Allocator>() : void
++context() const : system_context &
++on_work_started() const : void
++on_work_finished() const : void
++execute<Function>() : void
++dispatch<Function,OtherAllocator>() : void
++post<Function,OtherAllocator>() : void
++defer<Function,OtherAllocator>() : void
+}
+class "execution_context" as C_0002065305983511051496
+class C_0002065305983511051496 {
++execution_context() : void
++~execution_context() : void
+#shutdown() : void
+#destroy() : void
++notify_fork() : void
+}
+enum "execution_context::fork_event" as C_0000695141153035704827
+enum C_0000695141153035704827 {
+fork_prepare
+fork_parent
+fork_child
+}
+class "execution_context::id" as C_0002061865058505779735
+class C_0002061865058505779735 {
++id() : void
+}
+abstract "execution_context::service" as C_0002149874971759018197
+abstract C_0002149874971759018197 {
++context() : execution_context &
+#service() : void
+#~service() : void
+}
+class "execution_context::service::key" as C_0000707417393859856318
+class C_0000707417393859856318 {
++key() : void
++type_info_ : const std::type_info *
++id_ : const execution_context::id *
+}
+class "service_already_exists" as C_0001303087164408281476
+class C_0001303087164408281476 {
++service_already_exists() : void
+}
+class "invalid_service_owner" as C_0000724166715409489817
+class C_0000724166715409489817 {
++invalid_service_owner() : void
+}
+class "async_completion<CompletionToken,Signatures...>" as C_0001538166116730723609
+class C_0001538166116730723609 {
++async_completion<CompletionToken, Signatures...>() : void
++completion_handler : typename conditional<is_same<CompletionToken,completion_handler_type>::value,completion_handler_type &,completion_handler_type>::type
++result : async_result<typename decay<CompletionToken>::type,Signatures...>
+}
+class "is_async_operation<T,Args...>" as C_0001973172076909946704
+class C_0001973172076909946704 {
+}
+class "completion_signature_of<T,Args...>" as C_0001885286219411315513
+class C_0001885286219411315513 {
+}
+class "default_completion_token<T>" as C_0002020472629250993016
+class C_0002020472629250993016 {
+}
+class "basic_system_executor<execution::detail::blocking::possibly_t<I>,execution::detail::relationship::fork_t<I>,std::allocator<void>>" as C_0001930045390932397221
+class C_0001930045390932397221 {
+}
+class "system_context" as C_0001221939569020161524
+class C_0001221939569020161524 {
++~system_context() : void
++get_executor() : system_context::executor_type
++stop() : void
++stopped() const : bool
++join() : void
++system_context() : void
+}
+class "system_context::thread_function" as C_0000927029792606998000
+class C_0000927029792606998000 {
++operator()() : void
++scheduler_ : detail::scheduler *
+}
+class "associated_executor<T,Executor>" as C_0000923206039121407326
+class C_0000923206039121407326 {
+}
+class "associated_executor" as C_0000542372358239726186
+class C_0000542372358239726186 {
+{static} +get() : associated_executor<reference_wrapper<type-parameter-0-0>,type-parameter-0-1>::type
+{static} +get() : decltype(associated_executor<T,Executor>::get(t.get(),ex))
+}
+class "associated_executor<std::reference_wrapper<type-parameter-0-0>,type-parameter-0-1>" as C_0001454795182572301238
+class C_0001454795182572301238 {
+{static} +get() : associated_executor<reference_wrapper<type-parameter-0-0>,type-parameter-0-1>::type
+{static} +get() : decltype(associated_executor<T,Executor>::get(t.get(),ex))
+}
+class "cancellation_filter<cancellation_type_t Mask>" as C_0002052210819347097931
+class C_0002052210819347097931 {
++operator()() const : cancellation_type_t
+}
+class "cancellation_state" as C_0001623925961559449120
+class C_0001623925961559449120 {
++cancellation_state() : void
++slot() const : cancellation_slot
++cancelled() const : cancellation_type_t
++clear() : void
++cancellation_state<CancellationSlot>() : void
++cancellation_state<CancellationSlot,Filter>() : void
++cancellation_state<CancellationSlot,InFilter,OutFilter>() : void
+}
+class "cancellation_state::impl_base" as C_0000211046925031916270
+class C_0000211046925031916270 {
++impl_base() : void
+}
+class "cancellation_state::impl<InFilter,OutFilter>" as C_0000475070016299141269
+class C_0000475070016299141269 {
++impl<InFilter, OutFilter>() : void
++impl<InFilter, OutFilter>() : void
++operator()() : void
++in_filter_ : InFilter
++out_filter_ : OutFilter
+}
+class "recycling_allocator<T>" as C_0001164715841612463432
+class C_0001164715841612463432 {
++recycling_allocator<T>() : void
++operator==() const : bool
++operator!=() const : bool
++allocate() : T *
++deallocate() : void
++recycling_allocator<T><U>() : void
+}
+class "recycling_allocator::rebind<U>" as C_0000473578666287689519
+class C_0000473578666287689519 {
+}
+class "recycling_allocator" as C_0001992449723781696109
+class C_0001992449723781696109 {
++recycling_allocator() : void
++operator==() const : bool
++operator!=() const : bool
++recycling_allocator<U>() : void
+}
+class "recycling_allocator<void>" as C_0002289647677683880663
+class C_0002289647677683880663 {
++recycling_allocator() : void
++operator==() const : bool
++operator!=() const : bool
++recycling_allocator<U>() : void
+}
+class "any_completion_handler_allocator<T,Signatures...>" as C_0000339474733885529932
+class C_0000339474733885529932 {
++operator==() const : bool
++operator!=() const : bool
++allocate() const : T *
++deallocate() const : void
++any_completion_handler_allocator<T, Signatures...><U>() : void
+}
+class "any_completion_handler_allocator::rebind<U>" as C_0000995635239522977261
+class C_0000995635239522977261 {
+}
+class "any_completion_handler_allocator" as C_0001333788306557319588
+class C_0001333788306557319588 {
++operator==() const : bool
++operator!=() const : bool
++any_completion_handler_allocator<void, type-parameter-0-0...><U>() : void
+}
+class "any_completion_handler_allocator<void,Signatures...>" as C_0000994107202387188237
+class C_0000994107202387188237 {
++operator==() const : bool
++operator!=() const : bool
++any_completion_handler_allocator<void, type-parameter-0-0...><U>() : void
+}
+class "any_completion_handler<Signatures...>" as C_0001518213415919356242
+class C_0001518213415919356242 {
++any_completion_handler<Signatures...>() : void
++any_completion_handler<Signatures...>() : void
++any_completion_handler<Signatures...>() : void
++operator=() : any_completion_handler<Signatures...> &
++operator=() : any_completion_handler<Signatures...> &
++~any_completion_handler<Signatures...>() : void
++operator bool() const : bool
++operator!() const : bool
++swap() : void
++get_allocator() const : any_completion_handler::allocator_type
++get_cancellation_slot() const : any_completion_handler::cancellation_slot_type
++any_completion_handler<Signatures...><H,Handler>() : void
++operator()<Args...>() : decltype(this->fn_table_->call(this->impl_, static_cast<Args &&>(args)...))
+}
+class "associated_executor<any_completion_handler<>,type-parameter-0-1>" as C_0000996213171688166134
+class C_0000996213171688166134 {
+{static} +get() : any_completion_executor<any_completion_handler<type-parameter-0-0...>,type-parameter-0-1>::type
+}
+class "any_io_executor" as C_0000750189554942949379
+class C_0000750189554942949379 {
++any_io_executor() : void
++any_io_executor() : void
++any_io_executor() : void
++any_io_executor() : void
++any_io_executor() : void
++any_io_executor() : void
++operator=() : any_io_executor &
++operator=() : any_io_executor &
++operator=() : any_io_executor &
++~any_io_executor() : void
++swap() : void
++any_io_executor<OtherAnyExecutor>() : void
++any_io_executor<OtherAnyExecutor>() : void
++any_io_executor<Executor>() : void
++any_io_executor<Executor>() : void
++require<Property>() : class any_io_executor
++prefer<Property>() : class any_io_executor
+}
+class "append_t<CompletionToken,Values...>" as C_0000920728604948448211
+class C_0000920728604948448211 {
++append_t<CompletionToken, Values...><T,V...>() : void
++token_ : CompletionToken
++values_ : std::tuple<Values...>
+}
+class "as_tuple_t<CompletionToken>" as C_0000821918711511637479
+class C_0000821918711511637479 {
++as_tuple_t<CompletionToken>() : void
++as_tuple_t<CompletionToken><T>() : void
+{static} +as_default_on<T>() : typename decay<T>::type::template rebind_executor<executor_with_default<typename decay<T>::type::executor_type> >::other
++token_ : CompletionToken
+}
+class "as_tuple_t::default_constructor_tag" as C_0001283838706248842689
+class C_0001283838706248842689 {
+}
+class "as_tuple_t::executor_with_default<InnerExecutor>" as C_0001427378672799846397
+class C_0001427378672799846397 {
++executor_with_default<InnerExecutor><InnerExecutor1>() : void
+}
+class "associated_immediate_executor<T,Executor>" as C_0001058762363213460233
+class C_0001058762363213460233 {
+}
+class "associated_immediate_executor" as C_0002036247542250675663
+class C_0002036247542250675663 {
+{static} +get() : decltype(associated_immediate_executor<T,Executor>::get(t.get(),ex))
+}
+class "associated_immediate_executor<std::reference_wrapper<type-parameter-0-0>,type-parameter-0-1>" as C_0002287188187341591389
+class C_0002287188187341591389 {
+{static} +get() : decltype(associated_immediate_executor<T,Executor>::get(t.get(),ex))
+}
+class "io_context::basic_executor_type<std::allocator<void>,0>" as C_0001588984883922838991
+class C_0001588984883922838991 {
+}
+class "io_context" as C_0000105129752803362734
+class C_0000105129752803362734 {
++io_context() : void
++io_context() : void
++~io_context() : void
++get_executor() : io_context::executor_type
++run() : io_context::count_type
++run() : io_context::count_type
++run_one() : io_context::count_type
++run_one() : io_context::count_type
++poll() : io_context::count_type
++poll() : io_context::count_type
++poll_one() : io_context::count_type
++poll_one() : io_context::count_type
++stop() : void
++stopped() const : bool
++restart() : void
++reset() : void
++run_for<Rep,Period>() : std::size_t
++run_until<Clock,Duration>() : std::size_t
++run_one_for<Rep,Period>() : std::size_t
++run_one_until<Clock,Duration>() : std::size_t
++dispatch<LegacyCompletionHandler>() : decltype(async_initiate<LegacyCompletionHandler, void (void)>(declval<struct io_context::initiate_dispatch>(), handler, this))
++post<LegacyCompletionHandler>() : decltype(async_initiate<LegacyCompletionHandler, void (void)>(declval<struct io_context::initiate_post>(), handler, this))
++wrap<Handler>() : detail::wrapped_handler<io_context &, Handler>
+}
+class "io_context::basic_executor_type<Allocator,uintptr_t Bits>" as C_0000276547691992090690
+class C_0000276547691992090690 {
++basic_executor_type<Allocator, Bits>() : void
++basic_executor_type<Allocator, Bits>() : void
++~basic_executor_type<Allocator, Bits>() : void
++operator=() : basic_executor_type<Allocator,Bits> &
++operator=() : basic_executor_type<Allocator,Bits> &
++running_in_this_thread() const : bool
++context() const : io_context &
++on_work_started() const : void
++on_work_finished() const : void
++execute<Function>() : void
++dispatch<Function,OtherAllocator>() : void
++post<Function,OtherAllocator>() : void
++defer<Function,OtherAllocator>() : void
+}
+class "io_context::work" as C_0000001930820299579924
+class C_0000001930820299579924 {
++work() : void
++work() : void
++~work() : void
++get_io_context() : io_context &
+}
+class "io_context::service" as C_0001841820429911858749
+class C_0001841820429911858749 {
++get_io_context() : io_context &
+#service() : void
+#~service() : void
+}
+class "executor_work_guard" as C_0001052945440517134591
+class C_0001052945440517134591 {
++executor_work_guard<type-parameter-0-0, typename enable_if<is_executor<Executor>::value, void>::type>() : void
++executor_work_guard<type-parameter-0-0, typename enable_if<is_executor<Executor>::value, void>::type>() : void
++executor_work_guard<type-parameter-0-0, typename enable_if<is_executor<Executor>::value, void>::type>() : void
++~executor_work_guard<type-parameter-0-0, typename enable_if<is_executor<Executor>::value, void>::type>() : void
++get_executor() const : executor_work_guard<type-parameter-0-0,typename enable_if<is_executor<Executor>::value,void>::type>::executor_type
++owns_work() const : bool
++reset() : void
+}
+class "executor_work_guard<Executor,typename enable_if<is_executor<Executor>>,void>" as C_0000116913879989434614
+class C_0000116913879989434614 {
++executor_work_guard<type-parameter-0-0, typename enable_if<is_executor<Executor>::value, void>::type>() : void
++executor_work_guard<type-parameter-0-0, typename enable_if<is_executor<Executor>::value, void>::type>() : void
++executor_work_guard<type-parameter-0-0, typename enable_if<is_executor<Executor>::value, void>::type>() : void
++~executor_work_guard<type-parameter-0-0, typename enable_if<is_executor<Executor>::value, void>::type>() : void
++get_executor() const : executor_work_guard<type-parameter-0-0,typename enable_if<is_executor<Executor>::value,void>::type>::executor_type
++owns_work() const : bool
++reset() : void
+}
+class "executor_work_guard<Executor,typename enable_if<! is_executor<Executor>>,typename enable_if<is_executor<Executor>>>" as C_0001466659954377760637
+class C_0001466659954377760637 {
++executor_work_guard<type-parameter-0-0, typename enable_if<! is_executor<Executor>::value, void>::type, typename enable_if<is_executor<Executor>::value, void>::type>() : void
++executor_work_guard<type-parameter-0-0, typename enable_if<! is_executor<Executor>::value, void>::type, typename enable_if<is_executor<Executor>::value, void>::type>() : void
++executor_work_guard<type-parameter-0-0, typename enable_if<! is_executor<Executor>::value, void>::type, typename enable_if<is_executor<Executor>::value, void>::type>() : void
++~executor_work_guard<type-parameter-0-0, typename enable_if<! is_executor<Executor>::value, void>::type, typename enable_if<is_executor<Executor>::value, void>::type>() : void
++get_executor() const : executor_work_guard<type-parameter-0-0,typename enable_if<! is_executor<Executor>::value,void>::type,typename enable_if<is_executor<Executor>::value,void>::type>::executor_type
++owns_work() const : bool
++reset() : void
+}
+class "io_context::initiate_dispatch" as C_0000073531310776945951
+class C_0000073531310776945951 {
++operator()<LegacyCompletionHandler>() : void
+}
+class "io_context::initiate_post" as C_0002167338014875013779
+class C_0002167338014875013779 {
++operator()<LegacyCompletionHandler>() : void
+}
+class "socket_base" as C_0001329267821479112043
+class C_0001329267821479112043 {
+#~socket_base() : void
+{static} +message_peek : const int
+{static} +message_out_of_band : const int
+{static} +message_do_not_route : const int
+{static} +message_end_of_record : const int
+{static} +max_listen_connections : const int
+{static} +max_connections : const int
+}
+enum "socket_base::shutdown_type" as C_0000133685500292154467
+enum C_0000133685500292154467 {
+shutdown_receive
+shutdown_send
+shutdown_both
+}
+enum "socket_base::wait_type" as C_0000336099795826135937
+enum C_0000336099795826135937 {
+wait_read
+wait_write
+wait_error
+}
+class "is_contiguous_iterator<T>" as C_0002205823896566184199
+class C_0002205823896566184199 {
+}
+class "mutable_buffer" as C_0000622260736241324297
+class C_0000622260736241324297 {
++mutable_buffer() : void
++mutable_buffer() : void
++data() const : void *
++size() const : std::size_t
++operator+=() : mutable_buffer &
+}
+class "mutable_buffers_1" as C_0001682096113223144056
+class C_0001682096113223144056 {
++mutable_buffers_1() : void
++mutable_buffers_1() : void
++begin() const : mutable_buffers_1::const_iterator
++end() const : mutable_buffers_1::const_iterator
+}
+class "const_buffer" as C_0000298775955056524500
+class C_0000298775955056524500 {
++const_buffer() : void
++const_buffer() : void
++const_buffer() : void
++data() const : const void *
++size() const : std::size_t
++operator+=() : const_buffer &
+}
+class "const_buffers_1" as C_0000923069171355014186
+class C_0000923069171355014186 {
++const_buffers_1() : void
++const_buffers_1() : void
++begin() const : const_buffers_1::const_iterator
++end() const : const_buffers_1::const_iterator
+}
+class "null_buffers" as C_0001632964849648014196
+class C_0001632964849648014196 {
++begin() const : null_buffers::const_iterator
++end() const : null_buffers::const_iterator
+}
+class "dynamic_string_buffer<Elem,Traits,Allocator>" as C_0000491537876793414642
+class C_0000491537876793414642 {
++dynamic_string_buffer<Elem, Traits, Allocator>() : void
++dynamic_string_buffer<Elem, Traits, Allocator>() : void
++dynamic_string_buffer<Elem, Traits, Allocator>() : void
++size() const : std::size_t
++max_size() const : std::size_t
++capacity() const : std::size_t
++data() const : dynamic_string_buffer::const_buffers_type
++data() : dynamic_string_buffer::mutable_buffers_type
++data() const : dynamic_string_buffer::const_buffers_type
++prepare() : dynamic_string_buffer::mutable_buffers_type
++commit() : void
++grow() : void
++shrink() : void
++consume() : void
+}
+class "dynamic_vector_buffer<Elem,Allocator>" as C_0000042643733936786038
+class C_0000042643733936786038 {
++dynamic_vector_buffer<Elem, Allocator>() : void
++dynamic_vector_buffer<Elem, Allocator>() : void
++dynamic_vector_buffer<Elem, Allocator>() : void
++size() const : std::size_t
++max_size() const : std::size_t
++capacity() const : std::size_t
++data() const : dynamic_vector_buffer::const_buffers_type
++data() : dynamic_vector_buffer::mutable_buffers_type
++data() const : dynamic_vector_buffer::const_buffers_type
++prepare() : dynamic_vector_buffer::mutable_buffers_type
++commit() : void
++grow() : void
++shrink() : void
++consume() : void
+}
+class "is_mutable_buffer_sequence<T>" as C_0001245799211275390768
+class C_0001245799211275390768 {
+}
+class "is_const_buffer_sequence<T>" as C_0000531835600544833660
+class C_0000531835600544833660 {
+}
+class "is_dynamic_buffer_v1<T>" as C_0000493043484508310822
+class C_0000493043484508310822 {
+}
+class "is_dynamic_buffer_v2<T>" as C_0000098699251076698219
+class C_0000098699251076698219 {
+}
+class "is_dynamic_buffer<T>" as C_0002258581739027353293
+class C_0002258581739027353293 {
+}
+class "registered_buffer_id" as C_0000735632064666601427
+class C_0000735632064666601427 {
++registered_buffer_id() : void
++native_handle() const : registered_buffer_id::native_handle_type
+}
+class "mutable_registered_buffer" as C_0000138963604805253517
+class C_0000138963604805253517 {
++mutable_registered_buffer() : void
++buffer() const : const mutable_buffer &
++data() const : void *
++size() const : std::size_t
++id() const : const registered_buffer_id &
++operator+=() : mutable_registered_buffer &
+}
+class "const_registered_buffer" as C_0002280791800217451586
+class C_0002280791800217451586 {
++const_registered_buffer() : void
++const_registered_buffer() : void
++buffer() const : const const_buffer &
++data() const : const void *
++size() const : std::size_t
++id() const : const registered_buffer_id &
++operator+=() : const_registered_buffer &
+}
+class "basic_socket<Protocol,Executor>" as C_0002251142779628954667
+class C_0002251142779628954667 {
++basic_socket<Protocol, Executor>() : void
++basic_socket<Protocol, Executor>() : void
++basic_socket<Protocol, Executor>() : void
++basic_socket<Protocol, Executor>() : void
++basic_socket<Protocol, Executor>() : void
++operator=() : basic_socket<Protocol,Executor> &
++get_executor() : const basic_socket::executor_type &
++lowest_layer() : basic_socket::lowest_layer_type &
++lowest_layer() const : const basic_socket::lowest_layer_type &
++open() : void
++open() : boost::system::error_code
++assign() : void
++assign() : boost::system::error_code
++is_open() const : bool
++close() : void
++close() : boost::system::error_code
++release() : basic_socket::native_handle_type
++release() : basic_socket::native_handle_type
++native_handle() : basic_socket::native_handle_type
++cancel() : void
++cancel() : boost::system::error_code
++at_mark() const : bool
++at_mark() const : bool
++available() const : std::size_t
++available() const : std::size_t
++bind() : void
++bind() : boost::system::error_code
++connect() : void
++connect() : boost::system::error_code
++non_blocking() const : bool
++non_blocking() : void
++non_blocking() : boost::system::error_code
++native_non_blocking() const : bool
++native_non_blocking() : void
++native_non_blocking() : boost::system::error_code
++local_endpoint() const : basic_socket::endpoint_type
++local_endpoint() const : basic_socket::endpoint_type
++remote_endpoint() const : basic_socket::endpoint_type
++remote_endpoint() const : basic_socket::endpoint_type
++shutdown() : void
++shutdown() : boost::system::error_code
++wait() : void
++wait() : boost::system::error_code
+#~basic_socket<Protocol, Executor>() : void
++basic_socket<Protocol, Executor><ExecutionContext>() : void
++basic_socket<Protocol, Executor><ExecutionContext>() : void
++basic_socket<Protocol, Executor><ExecutionContext>() : void
++basic_socket<Protocol, Executor><ExecutionContext>() : void
++basic_socket<Protocol, Executor><Protocol1,Executor1>() : void
++operator=<Protocol1,Executor1>() : typename constraint<is_convertible<Protocol1, Protocol>::value && is_convertible<Executor1, Executor>::value, basic_socket<Protocol, Executor> &>::type
++async_connect<ConnectToken>() : decltype(async_initiate<ConnectToken, void (boost::system::error_code)>(declval<class basic_socket::initiate_async_connect>(), token, peer_endpoint, declval<boost::system::error_code &>()))
++set_option<SettableSocketOption>() : void
++set_option<SettableSocketOption>() : boost::system::error_code
++get_option<GettableSocketOption>() : void
++get_option<GettableSocketOption>() : boost::system::error_code
++io_control<IoControlCommand>() : void
++io_control<IoControlCommand>() : boost::system::error_code
++async_wait<WaitToken>() : decltype(async_initiate<WaitToken, void (boost::system::error_code)>(declval<class basic_socket::initiate_async_wait>(), token, w))
+#impl_ : detail::io_object_impl<detail::reactive_socket_service<Protocol>,Executor>
+}
+class "basic_socket::rebind_executor<Executor1>" as C_0000118360417514684777
+class C_0000118360417514684777 {
+}
+class "basic_socket::initiate_async_connect" as C_0000992936191056096373
+class C_0000992936191056096373 {
++initiate_async_connect() : void
++get_executor() const : const basic_socket::initiate_async_connect::executor_type &
++operator()<ConnectHandler>() : void
+}
+class "basic_socket::initiate_async_wait" as C_0000663413449874258456
+class C_0000663413449874258456 {
++initiate_async_wait() : void
++get_executor() const : const basic_socket::initiate_async_wait::executor_type &
++operator()<WaitHandler>() : void
+}
+class "basic_datagram_socket<Protocol,Executor>" as C_0000300421770783900070
+class C_0000300421770783900070 {
++basic_datagram_socket<Protocol, Executor>() : void
++basic_datagram_socket<Protocol, Executor>() : void
++basic_datagram_socket<Protocol, Executor>() : void
++basic_datagram_socket<Protocol, Executor>() : void
++basic_datagram_socket<Protocol, Executor>() : void
++operator=() : basic_datagram_socket<Protocol,Executor> &
++~basic_datagram_socket<Protocol, Executor>() : void
++basic_datagram_socket<Protocol, Executor><ExecutionContext>() : void
++basic_datagram_socket<Protocol, Executor><ExecutionContext>() : void
++basic_datagram_socket<Protocol, Executor><ExecutionContext>() : void
++basic_datagram_socket<Protocol, Executor><ExecutionContext>() : void
++basic_datagram_socket<Protocol, Executor><Protocol1,Executor1>() : void
++operator=<Protocol1,Executor1>() : typename constraint<is_convertible<Protocol1, Protocol>::value && is_convertible<Executor1, Executor>::value, basic_datagram_socket<Protocol, Executor> &>::type
++send<ConstBufferSequence>() : std::size_t
++send<ConstBufferSequence>() : std::size_t
++send<ConstBufferSequence>() : std::size_t
++async_send<ConstBufferSequence,WriteToken>() : decltype(async_initiate<WriteToken, void (boost::system::error_code, std::size_t)>(declval<class basic_datagram_socket::initiate_async_send>(), token, buffers, class socket_base::message_flags(0)))
++async_send<ConstBufferSequence,WriteToken>() : decltype(async_initiate<WriteToken, void (boost::system::error_code, std::size_t)>(declval<class basic_datagram_socket::initiate_async_send>(), token, buffers, flags))
++send_to<ConstBufferSequence>() : std::size_t
++send_to<ConstBufferSequence>() : std::size_t
++send_to<ConstBufferSequence>() : std::size_t
++async_send_to<ConstBufferSequence,WriteToken>() : decltype(async_initiate<WriteToken, void (boost::system::error_code, std::size_t)>(declval<class basic_datagram_socket::initiate_async_send_to>(), token, buffers, destination, class socket_base::message_flags(0)))
++async_send_to<ConstBufferSequence,WriteToken>() : decltype(async_initiate<WriteToken, void (boost::system::error_code, std::size_t)>(declval<class basic_datagram_socket::initiate_async_send_to>(), token, buffers, destination, flags))
++receive<MutableBufferSequence>() : std::size_t
++receive<MutableBufferSequence>() : std::size_t
++receive<MutableBufferSequence>() : std::size_t
++async_receive<MutableBufferSequence,ReadToken>() : decltype(async_initiate<ReadToken, void (boost::system::error_code, std::size_t)>(declval<class basic_datagram_socket::initiate_async_receive>(), token, buffers, class socket_base::message_flags(0)))
++async_receive<MutableBufferSequence,ReadToken>() : decltype(async_initiate<ReadToken, void (boost::system::error_code, std::size_t)>(declval<class basic_datagram_socket::initiate_async_receive>(), token, buffers, flags))
++receive_from<MutableBufferSequence>() : std::size_t
++receive_from<MutableBufferSequence>() : std::size_t
++receive_from<MutableBufferSequence>() : std::size_t
++async_receive_from<MutableBufferSequence,ReadToken>() : decltype(async_initiate<ReadToken, void (boost::system::error_code, std::size_t)>(declval<class basic_datagram_socket::initiate_async_receive_from>(), token, buffers, & sender_endpoint, class socket_base::message_flags(0)))
++async_receive_from<MutableBufferSequence,ReadToken>() : decltype(async_initiate<ReadToken, void (boost::system::error_code, std::size_t)>(declval<class basic_datagram_socket::initiate_async_receive_from>(), token, buffers, & sender_endpoint, flags))
+}
+class "basic_datagram_socket::rebind_executor<Executor1>" as C_0000845548434118702422
+class C_0000845548434118702422 {
+}
+class "basic_datagram_socket::initiate_async_send" as C_0002106151838513322220
+class C_0002106151838513322220 {
++initiate_async_send() : void
++get_executor() const : const basic_datagram_socket::initiate_async_send::executor_type &
++operator()<WriteHandler,ConstBufferSequence>() : void
+}
+class "basic_datagram_socket::initiate_async_send_to" as C_0001404791623453730807
+class C_0001404791623453730807 {
++initiate_async_send_to() : void
++get_executor() const : const basic_datagram_socket::initiate_async_send_to::executor_type &
++operator()<WriteHandler,ConstBufferSequence>() : void
+}
+class "basic_datagram_socket::initiate_async_receive" as C_0001993384269880860283
+class C_0001993384269880860283 {
++initiate_async_receive() : void
++get_executor() const : const basic_datagram_socket::initiate_async_receive::executor_type &
++operator()<ReadHandler,MutableBufferSequence>() : void
+}
+class "basic_datagram_socket::initiate_async_receive_from" as C_0001751521259469802707
+class C_0001751521259469802707 {
++initiate_async_receive_from() : void
++get_executor() const : const basic_datagram_socket::initiate_async_receive_from::executor_type &
++operator()<ReadHandler,MutableBufferSequence>() : void
+}
+class "time_traits" as C_0000684139325220970560
+class C_0000684139325220970560 {
+{static} +now() : time_traits<boost::posix_time::ptime>::time_type
+{static} +add() : time_traits<boost::posix_time::ptime>::time_type
+{static} +subtract() : boost::posix_time::time_duration<boost::posix_time::ptime>::duration_type
+{static} +less_than() : bool
+{static} +to_posix_duration() : boost::posix_time::time_duration
+}
+class "time_traits<boost::posix_time::ptime>" as C_0001429389221502855366
+class C_0001429389221502855366 {
+{static} +now() : time_traits<boost::posix_time::ptime>::time_type
+{static} +add() : time_traits<boost::posix_time::ptime>::time_type
+{static} +subtract() : boost::posix_time::time_duration<boost::posix_time::ptime>::duration_type
+{static} +less_than() : bool
+{static} +to_posix_duration() : boost::posix_time::time_duration
+}
+class "basic_deadline_timer<Time,TimeTraits,Executor>" as C_0000825134613055375187
+class C_0000825134613055375187 {
++basic_deadline_timer<Time, TimeTraits, Executor>() : void
++basic_deadline_timer<Time, TimeTraits, Executor>() : void
++basic_deadline_timer<Time, TimeTraits, Executor>() : void
++basic_deadline_timer<Time, TimeTraits, Executor>() : void
++operator=() : basic_deadline_timer<Time,TimeTraits,Executor> &
++~basic_deadline_timer<Time, TimeTraits, Executor>() : void
++get_executor() : const basic_deadline_timer::executor_type &
++cancel() : std::size_t
++cancel() : std::size_t
++cancel_one() : std::size_t
++cancel_one() : std::size_t
++expires_at() const : basic_deadline_timer::time_type
++expires_at() : std::size_t
++expires_at() : std::size_t
++expires_from_now() const : basic_deadline_timer::duration_type
++expires_from_now() : std::size_t
++expires_from_now() : std::size_t
++wait() : void
++wait() : void
++basic_deadline_timer<Time, TimeTraits, Executor><ExecutionContext>() : void
++basic_deadline_timer<Time, TimeTraits, Executor><ExecutionContext>() : void
++basic_deadline_timer<Time, TimeTraits, Executor><ExecutionContext>() : void
++async_wait<WaitToken>() : decltype(async_initiate<WaitToken, void (boost::system::error_code)>(declval<class basic_deadline_timer::initiate_async_wait>(), token))
+}
+class "basic_deadline_timer::rebind_executor<Executor1>" as C_0002179810917352815544
+class C_0002179810917352815544 {
+}
+class "basic_deadline_timer::initiate_async_wait" as C_0000634773909533942772
+class C_0000634773909533942772 {
++initiate_async_wait() : void
++get_executor() const : const basic_deadline_timer::initiate_async_wait::executor_type &
++operator()<WaitHandler>() : void
+}
+class "basic_io_object<IoObjectService,_Bool Movable>" as C_0000539825336144485956
+class C_0000539825336144485956 {
++get_io_context() : io_context &
++get_io_service() : io_context &
++get_executor() : basic_io_object::executor_type
+#basic_io_object<IoObjectService, Movable>() : void
+#~basic_io_object<IoObjectService, Movable>() : void
+#get_service() : basic_io_object::service_type &
+#get_service() const : const basic_io_object::service_type &
+#get_implementation() : basic_io_object::implementation_type &
+#get_implementation() const : const basic_io_object::implementation_type &
+}
+class "basic_io_object" as C_0000617462298852086838
+class C_0000617462298852086838 {
++get_io_context() : io_context &
++get_io_service() : io_context &
++get_executor() : io_context::basic_executor_type<type-parameter-0-0,true>::executor_type
+#basic_io_object<type-parameter-0-0, true>() : void
+#basic_io_object<type-parameter-0-0, true>() : void
+#~basic_io_object<type-parameter-0-0, true>() : void
+#operator=() : basic_io_object<type-parameter-0-0,true> &
+#get_service() : basic_io_object<type-parameter-0-0,true>::service_type &
+#get_service() const : const basic_io_object<type-parameter-0-0,true>::service_type &
+#get_implementation() : typename type-parameter-0-0::implementation_type &<type-parameter-0-0,true>::implementation_type &
+#get_implementation() const : const typename type-parameter-0-0::implementation_type &<type-parameter-0-0,true>::implementation_type &
+#basic_io_object<type-parameter-0-0, true><IoObjectService1>() : void
+}
+class "basic_io_object<IoObjectService,1>" as C_0002023240989275094213
+class C_0002023240989275094213 {
++get_io_context() : io_context &
++get_io_service() : io_context &
++get_executor() : io_context::basic_executor_type<type-parameter-0-0,true>::executor_type
+#basic_io_object<type-parameter-0-0, true>() : void
+#basic_io_object<type-parameter-0-0, true>() : void
+#~basic_io_object<type-parameter-0-0, true>() : void
+#operator=() : basic_io_object<type-parameter-0-0,true> &
+#get_service() : basic_io_object<type-parameter-0-0,true>::service_type &
+#get_service() const : const basic_io_object<type-parameter-0-0,true>::service_type &
+#get_implementation() : typename type-parameter-0-0::implementation_type &<type-parameter-0-0,true>::implementation_type &
+#get_implementation() const : const typename type-parameter-0-0::implementation_type &<type-parameter-0-0,true>::implementation_type &
+#basic_io_object<type-parameter-0-0, true><IoObjectService1>() : void
+}
+class "basic_raw_socket<Protocol,Executor>" as C_0001689830339688587027
+class C_0001689830339688587027 {
++basic_raw_socket<Protocol, Executor>() : void
++basic_raw_socket<Protocol, Executor>() : void
++basic_raw_socket<Protocol, Executor>() : void
++basic_raw_socket<Protocol, Executor>() : void
++basic_raw_socket<Protocol, Executor>() : void
++operator=() : basic_raw_socket<Protocol,Executor> &
++~basic_raw_socket<Protocol, Executor>() : void
++basic_raw_socket<Protocol, Executor><ExecutionContext>() : void
++basic_raw_socket<Protocol, Executor><ExecutionContext>() : void
++basic_raw_socket<Protocol, Executor><ExecutionContext>() : void
++basic_raw_socket<Protocol, Executor><ExecutionContext>() : void
++basic_raw_socket<Protocol, Executor><Protocol1,Executor1>() : void
++operator=<Protocol1,Executor1>() : typename constraint<is_convertible<Protocol1, Protocol>::value && is_convertible<Executor1, Executor>::value, basic_raw_socket<Protocol, Executor> &>::type
++send<ConstBufferSequence>() : std::size_t
++send<ConstBufferSequence>() : std::size_t
++send<ConstBufferSequence>() : std::size_t
++async_send<ConstBufferSequence,WriteToken>() : decltype(async_initiate<WriteToken, void (boost::system::error_code, std::size_t)>(declval<class basic_raw_socket::initiate_async_send>(), token, buffers, class socket_base::message_flags(0)))
++async_send<ConstBufferSequence,WriteToken>() : decltype(async_initiate<WriteToken, void (boost::system::error_code, std::size_t)>(declval<class basic_raw_socket::initiate_async_send>(), token, buffers, flags))
++send_to<ConstBufferSequence>() : std::size_t
++send_to<ConstBufferSequence>() : std::size_t
++send_to<ConstBufferSequence>() : std::size_t
++async_send_to<ConstBufferSequence,WriteToken>() : decltype(async_initiate<WriteToken, void (boost::system::error_code, std::size_t)>(declval<class basic_raw_socket::initiate_async_send_to>(), token, buffers, destination, class socket_base::message_flags(0)))
++async_send_to<ConstBufferSequence,WriteToken>() : decltype(async_initiate<WriteToken, void (boost::system::error_code, std::size_t)>(declval<class basic_raw_socket::initiate_async_send_to>(), token, buffers, destination, flags))
++receive<MutableBufferSequence>() : std::size_t
++receive<MutableBufferSequence>() : std::size_t
++receive<MutableBufferSequence>() : std::size_t
++async_receive<MutableBufferSequence,ReadToken>() : decltype(async_initiate<ReadToken, void (boost::system::error_code, std::size_t)>(declval<class basic_raw_socket::initiate_async_receive>(), token, buffers, class socket_base::message_flags(0)))
++async_receive<MutableBufferSequence,ReadToken>() : decltype(async_initiate<ReadToken, void (boost::system::error_code, std::size_t)>(declval<class basic_raw_socket::initiate_async_receive>(), token, buffers, flags))
++receive_from<MutableBufferSequence>() : std::size_t
++receive_from<MutableBufferSequence>() : std::size_t
++receive_from<MutableBufferSequence>() : std::size_t
++async_receive_from<MutableBufferSequence,ReadToken>() : decltype(async_initiate<ReadToken, void (boost::system::error_code, std::size_t)>(declval<class basic_raw_socket::initiate_async_receive_from>(), token, buffers, & sender_endpoint, class socket_base::message_flags(0)))
++async_receive_from<MutableBufferSequence,ReadToken>() : decltype(async_initiate<ReadToken, void (boost::system::error_code, std::size_t)>(declval<class basic_raw_socket::initiate_async_receive_from>(), token, buffers, & sender_endpoint, flags))
+}
+class "basic_raw_socket::rebind_executor<Executor1>" as C_0001787537657380559740
+class C_0001787537657380559740 {
+}
+class "basic_raw_socket::initiate_async_send" as C_0000497487532278530771
+class C_0000497487532278530771 {
++initiate_async_send() : void
++get_executor() const : const basic_raw_socket::initiate_async_send::executor_type &
++operator()<WriteHandler,ConstBufferSequence>() : void
+}
+class "basic_raw_socket::initiate_async_send_to" as C_0000851301681241319678
+class C_0000851301681241319678 {
++initiate_async_send_to() : void
++get_executor() const : const basic_raw_socket::initiate_async_send_to::executor_type &
++operator()<WriteHandler,ConstBufferSequence>() : void
+}
+class "basic_raw_socket::initiate_async_receive" as C_0002101155047341252618
+class C_0002101155047341252618 {
++initiate_async_receive() : void
++get_executor() const : const basic_raw_socket::initiate_async_receive::executor_type &
++operator()<ReadHandler,MutableBufferSequence>() : void
+}
+class "basic_raw_socket::initiate_async_receive_from" as C_0000170381772536364385
+class C_0000170381772536364385 {
++initiate_async_receive_from() : void
++get_executor() const : const basic_raw_socket::initiate_async_receive_from::executor_type &
++operator()<ReadHandler,MutableBufferSequence>() : void
+}
+class "basic_readable_pipe<Executor>" as C_0002203480802918800744
+class C_0002203480802918800744 {
++basic_readable_pipe<Executor>() : void
++basic_readable_pipe<Executor>() : void
++basic_readable_pipe<Executor>() : void
++operator=() : basic_readable_pipe<Executor> &
++~basic_readable_pipe<Executor>() : void
++get_executor() : const basic_readable_pipe::executor_type &
++lowest_layer() : basic_readable_pipe::lowest_layer_type &
++lowest_layer() const : const basic_readable_pipe::lowest_layer_type &
++assign() : void
++assign() : boost::system::error_code
++is_open() const : bool
++close() : void
++close() : boost::system::error_code
++release() : basic_readable_pipe::native_handle_type
++release() : basic_readable_pipe::native_handle_type
++native_handle() : basic_readable_pipe::native_handle_type
++cancel() : void
++cancel() : boost::system::error_code
++basic_readable_pipe<Executor><ExecutionContext>() : void
++basic_readable_pipe<Executor><ExecutionContext>() : void
++basic_readable_pipe<Executor><Executor1>() : void
++operator=<Executor1>() : typename constraint<is_convertible<Executor1, Executor>::value, basic_readable_pipe<Executor> &>::type
++read_some<MutableBufferSequence>() : std::size_t
++read_some<MutableBufferSequence>() : std::size_t
++async_read_some<MutableBufferSequence,ReadToken>() : decltype(async_initiate<ReadToken, void (boost::system::error_code, std::size_t)>(declval<class basic_readable_pipe::initiate_async_read_some>(), token, buffers))
+}
+class "basic_readable_pipe::rebind_executor<Executor1>" as C_0000928439653276581367
+class C_0000928439653276581367 {
+}
+class "basic_readable_pipe::initiate_async_read_some" as C_0000694677938061162486
+class C_0000694677938061162486 {
++initiate_async_read_some() : void
++get_executor() const : const basic_readable_pipe::initiate_async_read_some::executor_type &
++operator()<ReadHandler,MutableBufferSequence>() : void
+}
+class "basic_seq_packet_socket<Protocol,Executor>" as C_0000102779505467483669
+class C_0000102779505467483669 {
++basic_seq_packet_socket<Protocol, Executor>() : void
++basic_seq_packet_socket<Protocol, Executor>() : void
++basic_seq_packet_socket<Protocol, Executor>() : void
++basic_seq_packet_socket<Protocol, Executor>() : void
++basic_seq_packet_socket<Protocol, Executor>() : void
++operator=() : basic_seq_packet_socket<Protocol,Executor> &
++~basic_seq_packet_socket<Protocol, Executor>() : void
++basic_seq_packet_socket<Protocol, Executor><ExecutionContext>() : void
++basic_seq_packet_socket<Protocol, Executor><ExecutionContext>() : void
++basic_seq_packet_socket<Protocol, Executor><ExecutionContext>() : void
++basic_seq_packet_socket<Protocol, Executor><ExecutionContext>() : void
++basic_seq_packet_socket<Protocol, Executor><Protocol1,Executor1>() : void
++operator=<Protocol1,Executor1>() : typename constraint<is_convertible<Protocol1, Protocol>::value && is_convertible<Executor1, Executor>::value, basic_seq_packet_socket<Protocol, Executor> &>::type
++send<ConstBufferSequence>() : std::size_t
++send<ConstBufferSequence>() : std::size_t
++async_send<ConstBufferSequence,WriteToken>() : decltype(async_initiate<WriteToken, void (boost::system::error_code, std::size_t)>(declval<class basic_seq_packet_socket::initiate_async_send>(), token, buffers, flags))
++receive<MutableBufferSequence>() : std::size_t
++receive<MutableBufferSequence>() : std::size_t
++receive<MutableBufferSequence>() : std::size_t
++async_receive<MutableBufferSequence,ReadToken>() : decltype(async_initiate<ReadToken, void (boost::system::error_code, std::size_t)>(declval<class basic_seq_packet_socket::initiate_async_receive_with_flags>(), token, buffers, class socket_base::message_flags(0), &out_flags))
++async_receive<MutableBufferSequence,ReadToken>() : decltype(async_initiate<ReadToken, void (boost::system::error_code, std::size_t)>(declval<class basic_seq_packet_socket::initiate_async_receive_with_flags>(), token, buffers, in_flags, &out_flags))
+}
+class "basic_seq_packet_socket::rebind_executor<Executor1>" as C_0001580129487375757497
+class C_0001580129487375757497 {
+}
+class "basic_seq_packet_socket::initiate_async_send" as C_0001561069650707268835
+class C_0001561069650707268835 {
++initiate_async_send() : void
++get_executor() const : const basic_seq_packet_socket::initiate_async_send::executor_type &
++operator()<WriteHandler,ConstBufferSequence>() : void
+}
+class "basic_seq_packet_socket::initiate_async_receive_with_flags" as C_0000684171793268208012
+class C_0000684171793268208012 {
++initiate_async_receive_with_flags() : void
++get_executor() const : const basic_seq_packet_socket::initiate_async_receive_with_flags::executor_type &
++operator()<ReadHandler,MutableBufferSequence>() : void
+}
+class "serial_port_base" as C_0001872423731591456498
+class C_0001872423731591456498 {
+#~serial_port_base() : void
+}
+class "serial_port_base::baud_rate" as C_0002275936598283369010
+class C_0002275936598283369010 {
++baud_rate() : void
++value() const : unsigned int
++store() const : boost::system::error_code
++load() : boost::system::error_code
+}
+class "serial_port_base::flow_control" as C_0001935096372874959705
+class C_0001935096372874959705 {
++flow_control() : void
++value() const : serial_port_base::flow_control::type
++store() const : boost::system::error_code
++load() : boost::system::error_code
+}
+enum "serial_port_base::flow_control::type" as C_0001214867729856727203
+enum C_0001214867729856727203 {
+none
+software
+hardware
+}
+class "serial_port_base::parity" as C_0000382608433822363207
+class C_0000382608433822363207 {
++parity() : void
++value() const : serial_port_base::parity::type
++store() const : boost::system::error_code
++load() : boost::system::error_code
+}
+enum "serial_port_base::parity::type" as C_0002127774062639185902
+enum C_0002127774062639185902 {
+none
+odd
+even
+}
+class "serial_port_base::stop_bits" as C_0001372024863050258601
+class C_0001372024863050258601 {
++stop_bits() : void
++value() const : serial_port_base::stop_bits::type
++store() const : boost::system::error_code
++load() : boost::system::error_code
+}
+enum "serial_port_base::stop_bits::type" as C_0000002389278402762306
+enum C_0000002389278402762306 {
+one
+onepointfive
+two
+}
+class "serial_port_base::character_size" as C_0000938921830601086473
+class C_0000938921830601086473 {
++character_size() : void
++value() const : unsigned int
++store() const : boost::system::error_code
++load() : boost::system::error_code
+}
+class "basic_serial_port<Executor>" as C_0000607999972769002841
+class C_0000607999972769002841 {
++basic_serial_port<Executor>() : void
++basic_serial_port<Executor>() : void
++basic_serial_port<Executor>() : void
++basic_serial_port<Executor>() : void
++basic_serial_port<Executor>() : void
++operator=() : basic_serial_port<Executor> &
++~basic_serial_port<Executor>() : void
++get_executor() : const basic_serial_port::executor_type &
++lowest_layer() : basic_serial_port::lowest_layer_type &
++lowest_layer() const : const basic_serial_port::lowest_layer_type &
++open() : void
++open() : boost::system::error_code
++assign() : void
++assign() : boost::system::error_code
++is_open() const : bool
++close() : void
++close() : boost::system::error_code
++native_handle() : basic_serial_port::native_handle_type
++cancel() : void
++cancel() : boost::system::error_code
++send_break() : void
++send_break() : boost::system::error_code
++basic_serial_port<Executor><ExecutionContext>() : void
++basic_serial_port<Executor><ExecutionContext>() : void
++basic_serial_port<Executor><ExecutionContext>() : void
++basic_serial_port<Executor><ExecutionContext>() : void
++basic_serial_port<Executor><Executor1>() : void
++operator=<Executor1>() : typename constraint<is_convertible<Executor1, Executor>::value, basic_serial_port<Executor> &>::type
++set_option<SettableSerialPortOption>() : void
++set_option<SettableSerialPortOption>() : boost::system::error_code
++get_option<GettableSerialPortOption>() : void
++get_option<GettableSerialPortOption>() : boost::system::error_code
++write_some<ConstBufferSequence>() : std::size_t
++write_some<ConstBufferSequence>() : std::size_t
++async_write_some<ConstBufferSequence,WriteToken>() : decltype(async_initiate<WriteToken, void (boost::system::error_code, std::size_t)>(declval<class basic_serial_port::initiate_async_write_some>(), token, buffers))
++read_some<MutableBufferSequence>() : std::size_t
++read_some<MutableBufferSequence>() : std::size_t
++async_read_some<MutableBufferSequence,ReadToken>() : decltype(async_initiate<ReadToken, void (boost::system::error_code, std::size_t)>(declval<class basic_serial_port::initiate_async_read_some>(), token, buffers))
+}
+class "basic_serial_port::rebind_executor<Executor1>" as C_0001863119155462986358
+class C_0001863119155462986358 {
+}
+class "basic_serial_port::initiate_async_write_some" as C_0001481347359384526046
+class C_0001481347359384526046 {
++initiate_async_write_some() : void
++get_executor() const : const basic_serial_port::initiate_async_write_some::executor_type &
++operator()<WriteHandler,ConstBufferSequence>() : void
+}
+class "basic_serial_port::initiate_async_read_some" as C_0000463694792247200959
+class C_0000463694792247200959 {
++initiate_async_read_some() : void
++get_executor() const : const basic_serial_port::initiate_async_read_some::executor_type &
++operator()<ReadHandler,MutableBufferSequence>() : void
+}
+class "signal_set_base" as C_0000473339362468888815
+class C_0000473339362468888815 {
+#~signal_set_base() : void
+}
+enum "signal_set_base::flags" as C_0000721964023551572495
+enum C_0000721964023551572495 {
+none
+restart
+no_child_stop
+no_child_wait
+dont_care
+}
+class "basic_signal_set<Executor>" as C_0001994823049193047898
+class C_0001994823049193047898 {
++basic_signal_set<Executor>() : void
++basic_signal_set<Executor>() : void
++basic_signal_set<Executor>() : void
++basic_signal_set<Executor>() : void
++~basic_signal_set<Executor>() : void
++get_executor() : const basic_signal_set::executor_type &
++add() : void
++add() : boost::system::error_code
++add() : void
++add() : boost::system::error_code
++remove() : void
++remove() : boost::system::error_code
++clear() : void
++clear() : boost::system::error_code
++cancel() : void
++cancel() : boost::system::error_code
++basic_signal_set<Executor><ExecutionContext>() : void
++basic_signal_set<Executor><ExecutionContext>() : void
++basic_signal_set<Executor><ExecutionContext>() : void
++basic_signal_set<Executor><ExecutionContext>() : void
++async_wait<SignalToken>() : decltype(async_initiate<SignalToken, void (boost::system::error_code, int)>(declval<class basic_signal_set::initiate_async_wait>(), token))
+}
+class "basic_signal_set::rebind_executor<Executor1>" as C_0001310078398999034377
+class C_0001310078398999034377 {
+}
+class "basic_signal_set::initiate_async_wait" as C_0001462986487885308685
+class C_0001462986487885308685 {
++initiate_async_wait() : void
++get_executor() const : const basic_signal_set::initiate_async_wait::executor_type &
++operator()<SignalHandler>() : void
+}
+class "basic_socket_acceptor<Protocol,Executor>" as C_0000800464884670493624
+class C_0000800464884670493624 {
++basic_socket_acceptor<Protocol, Executor>() : void
++basic_socket_acceptor<Protocol, Executor>() : void
++basic_socket_acceptor<Protocol, Executor>() : void
++basic_socket_acceptor<Protocol, Executor>() : void
++basic_socket_acceptor<Protocol, Executor>() : void
++operator=() : basic_socket_acceptor<Protocol,Executor> &
++~basic_socket_acceptor<Protocol, Executor>() : void
++get_executor() : const basic_socket_acceptor::executor_type &
++open() : void
++open() : boost::system::error_code
++assign() : void
++assign() : boost::system::error_code
++is_open() const : bool
++bind() : void
++bind() : boost::system::error_code
++listen() : void
++listen() : boost::system::error_code
++close() : void
++close() : boost::system::error_code
++release() : basic_socket_acceptor::native_handle_type
++release() : basic_socket_acceptor::native_handle_type
++native_handle() : basic_socket_acceptor::native_handle_type
++cancel() : void
++cancel() : boost::system::error_code
++non_blocking() const : bool
++non_blocking() : void
++non_blocking() : boost::system::error_code
++native_non_blocking() const : bool
++native_non_blocking() : void
++native_non_blocking() : boost::system::error_code
++local_endpoint() const : basic_socket_acceptor::endpoint_type
++local_endpoint() const : basic_socket_acceptor::endpoint_type
++wait() : void
++wait() : boost::system::error_code
++accept() : typename Protocol::socket::template rebind_executor<executor_type>::other
++accept() : typename Protocol::socket::template rebind_executor<executor_type>::other
++accept() : typename Protocol::socket::template rebind_executor<executor_type>::other
++accept() : typename Protocol::socket::template rebind_executor<executor_type>::other
++basic_socket_acceptor<Protocol, Executor><ExecutionContext>() : void
++basic_socket_acceptor<Protocol, Executor><ExecutionContext>() : void
++basic_socket_acceptor<Protocol, Executor><ExecutionContext>() : void
++basic_socket_acceptor<Protocol, Executor><ExecutionContext>() : void
++basic_socket_acceptor<Protocol, Executor><Protocol1,Executor1>() : void
++operator=<Protocol1,Executor1>() : typename constraint<is_convertible<Protocol1, Protocol>::value && is_convertible<Executor1, Executor>::value, basic_socket_acceptor<Protocol, Executor> &>::type
++set_option<SettableSocketOption>() : void
++set_option<SettableSocketOption>() : boost::system::error_code
++get_option<GettableSocketOption>() : void
++get_option<GettableSocketOption>() : boost::system::error_code
++io_control<IoControlCommand>() : void
++io_control<IoControlCommand>() : boost::system::error_code
++async_wait<WaitToken>() : decltype(async_initiate<WaitToken, void (boost::system::error_code)>(declval<class basic_socket_acceptor::initiate_async_wait>(), token, w))
++accept<Protocol1,Executor1>() : void
++accept<Protocol1,Executor1>() : boost::system::error_code
++async_accept<Protocol1,Executor1,AcceptToken>() : decltype(async_initiate<AcceptToken, void (boost::system::error_code)>(declval<class basic_socket_acceptor::initiate_async_accept>(), token, & peer, static_cast<basic_socket_acceptor::endpoint_type *>(0)))
++accept<Executor1>() : void
++accept<Executor1>() : boost::system::error_code
++async_accept<Executor1,AcceptToken>() : decltype(async_initiate<AcceptToken, void (boost::system::error_code)>(declval<class basic_socket_acceptor::initiate_async_accept>(), token, & peer, & peer_endpoint))
++async_accept<MoveAcceptToken>() : decltype(async_initiate<MoveAcceptToken, void (boost::system::error_code, typename Protocol::socket::template rebind_executor<executor_type>::other)>(declval<class basic_socket_acceptor::initiate_async_move_accept>(), token, declval<basic_socket_acceptor::executor_type>(), static_cast<basic_socket_acceptor::endpoint_type *>(0), static_cast<typename Protocol::socket::template rebind_executor<executor_type>::other *>(0)))
++accept<Executor1>() : typename Protocol::socket::template rebind_executor<Executor1>::other
++accept<ExecutionContext>() : typename Protocol::socket::template rebind_executor<typename ExecutionContext::executor_type>::other
++accept<Executor1>() : typename Protocol::socket::template rebind_executor<Executor1>::other
++accept<ExecutionContext>() : typename Protocol::socket::template rebind_executor<typename ExecutionContext::executor_type>::other
++async_accept<Executor1,MoveAcceptToken>() : decltype(async_initiate<MoveAcceptToken, void (boost::system::error_code, typename Protocol::socket::template rebind_executor<Executor1>::other)>(declval<class basic_socket_acceptor::initiate_async_move_accept>(), token, ex, static_cast<basic_socket_acceptor::endpoint_type *>(0), static_cast<typename Protocol::socket::template rebind_executor<Executor1>::other *>(0)))
++async_accept<ExecutionContext,MoveAcceptToken>() : decltype(async_initiate<MoveAcceptToken, void (boost::system::error_code, typename Protocol::socket::template rebind_executor<typename ExecutionContext::executor_type>::other)>(declval<class basic_socket_acceptor::initiate_async_move_accept>(), token, context.get_executor(), static_cast<basic_socket_acceptor::endpoint_type *>(0), static_cast<typename Protocol::socket::template rebind_executor<typename ExecutionContext::executor_type>::other *>(0)))
++async_accept<MoveAcceptToken>() : decltype(async_initiate<MoveAcceptToken, void (boost::system::error_code, typename Protocol::socket::template rebind_executor<executor_type>::other)>(declval<class basic_socket_acceptor::initiate_async_move_accept>(), token, declval<basic_socket_acceptor::executor_type>(), & peer_endpoint, static_cast<typename Protocol::socket::template rebind_executor<executor_type>::other *>(0)))
++accept<Executor1>() : typename Protocol::socket::template rebind_executor<Executor1>::other
++accept<ExecutionContext>() : typename Protocol::socket::template rebind_executor<typename ExecutionContext::executor_type>::other
++accept<Executor1>() : typename Protocol::socket::template rebind_executor<Executor1>::other
++accept<ExecutionContext>() : typename Protocol::socket::template rebind_executor<typename ExecutionContext::executor_type>::other
++async_accept<Executor1,MoveAcceptToken>() : decltype(async_initiate<MoveAcceptToken, void (boost::system::error_code, typename Protocol::socket::template rebind_executor<Executor1>::other)>(declval<class basic_socket_acceptor::initiate_async_move_accept>(), token, ex, & peer_endpoint, static_cast<typename Protocol::socket::template rebind_executor<Executor1>::other *>(0)))
++async_accept<ExecutionContext,MoveAcceptToken>() : decltype(async_initiate<MoveAcceptToken, void (boost::system::error_code, typename Protocol::socket::template rebind_executor<typename ExecutionContext::executor_type>::other)>(declval<class basic_socket_acceptor::initiate_async_move_accept>(), token, context.get_executor(), & peer_endpoint, static_cast<typename Protocol::socket::template rebind_executor<typename ExecutionContext::executor_type>::other *>(0)))
+}
+class "basic_socket_acceptor::rebind_executor<Executor1>" as C_0000101577815943841046
+class C_0000101577815943841046 {
+}
+class "basic_socket_acceptor::initiate_async_wait" as C_0000486324289532472689
+class C_0000486324289532472689 {
++initiate_async_wait() : void
++get_executor() const : const basic_socket_acceptor::initiate_async_wait::executor_type &
++operator()<WaitHandler>() : void
+}
+class "basic_socket_acceptor::initiate_async_accept" as C_0001031346170663651795
+class C_0001031346170663651795 {
++initiate_async_accept() : void
++get_executor() const : const basic_socket_acceptor::initiate_async_accept::executor_type &
++operator()<AcceptHandler,Protocol1,Executor1>() : void
+}
+class "basic_socket_acceptor::initiate_async_move_accept" as C_0001167514986718000192
+class C_0001167514986718000192 {
++initiate_async_move_accept() : void
++get_executor() const : const basic_socket_acceptor::initiate_async_move_accept::executor_type &
++operator()<MoveAcceptHandler,Executor1,Socket>() : void
+}
+class "basic_stream_socket<Protocol,Executor>" as C_0000888920646676525023
+class C_0000888920646676525023 {
++basic_stream_socket<Protocol, Executor>() : void
++basic_stream_socket<Protocol, Executor>() : void
++basic_stream_socket<Protocol, Executor>() : void
++basic_stream_socket<Protocol, Executor>() : void
++basic_stream_socket<Protocol, Executor>() : void
++operator=() : basic_stream_socket<Protocol,Executor> &
++~basic_stream_socket<Protocol, Executor>() : void
++basic_stream_socket<Protocol, Executor><ExecutionContext>() : void
++basic_stream_socket<Protocol, Executor><ExecutionContext>() : void
++basic_stream_socket<Protocol, Executor><ExecutionContext>() : void
++basic_stream_socket<Protocol, Executor><ExecutionContext>() : void
++basic_stream_socket<Protocol, Executor><Protocol1,Executor1>() : void
++operator=<Protocol1,Executor1>() : typename constraint<is_convertible<Protocol1, Protocol>::value && is_convertible<Executor1, Executor>::value, basic_stream_socket<Protocol, Executor> &>::type
++send<ConstBufferSequence>() : std::size_t
++send<ConstBufferSequence>() : std::size_t
++send<ConstBufferSequence>() : std::size_t
++async_send<ConstBufferSequence,WriteToken>() : decltype(async_initiate<WriteToken, void (boost::system::error_code, std::size_t)>(declval<class basic_stream_socket::initiate_async_send>(), token, buffers, class socket_base::message_flags(0)))
++async_send<ConstBufferSequence,WriteToken>() : decltype(async_initiate<WriteToken, void (boost::system::error_code, std::size_t)>(declval<class basic_stream_socket::initiate_async_send>(), token, buffers, flags))
++receive<MutableBufferSequence>() : std::size_t
++receive<MutableBufferSequence>() : std::size_t
++receive<MutableBufferSequence>() : std::size_t
++async_receive<MutableBufferSequence,ReadToken>() : decltype(async_initiate<ReadToken, void (boost::system::error_code, std::size_t)>(declval<class basic_stream_socket::initiate_async_receive>(), token, buffers, class socket_base::message_flags(0)))
++async_receive<MutableBufferSequence,ReadToken>() : decltype(async_initiate<ReadToken, void (boost::system::error_code, std::size_t)>(declval<class basic_stream_socket::initiate_async_receive>(), token, buffers, flags))
++write_some<ConstBufferSequence>() : std::size_t
++write_some<ConstBufferSequence>() : std::size_t
++async_write_some<ConstBufferSequence,WriteToken>() : decltype(async_initiate<WriteToken, void (boost::system::error_code, std::size_t)>(declval<class basic_stream_socket::initiate_async_send>(), token, buffers, class socket_base::message_flags(0)))
++read_some<MutableBufferSequence>() : std::size_t
++read_some<MutableBufferSequence>() : std::size_t
++async_read_some<MutableBufferSequence,ReadToken>() : decltype(async_initiate<ReadToken, void (boost::system::error_code, std::size_t)>(declval<class basic_stream_socket::initiate_async_receive>(), token, buffers, class socket_base::message_flags(0)))
+}
+class "basic_stream_socket::rebind_executor<Executor1>" as C_0001619071580851378341
+class C_0001619071580851378341 {
+}
+class "basic_stream_socket::initiate_async_send" as C_0001246419260724352257
+class C_0001246419260724352257 {
++initiate_async_send() : void
++get_executor() const : const basic_stream_socket::initiate_async_send::executor_type &
++operator()<WriteHandler,ConstBufferSequence>() : void
+}
+class "basic_stream_socket::initiate_async_receive" as C_0000402371130314303983
+class C_0000402371130314303983 {
++initiate_async_receive() : void
++get_executor() const : const basic_stream_socket::initiate_async_receive::executor_type &
++operator()<ReadHandler,MutableBufferSequence>() : void
+}
+class "wait_traits<Clock>" as C_0002247574831392807382
+class C_0002247574831392807382 {
+{static} +to_wait_duration() : typename Clock::duration
+{static} +to_wait_duration() : typename Clock::duration
+}
+class "basic_waitable_timer<Clock,WaitTraits,Executor>" as C_0001480821051807658755
+class C_0001480821051807658755 {
++basic_waitable_timer<Clock, WaitTraits, Executor>() : void
++basic_waitable_timer<Clock, WaitTraits, Executor>() : void
++basic_waitable_timer<Clock, WaitTraits, Executor>() : void
++basic_waitable_timer<Clock, WaitTraits, Executor>() : void
++operator=() : basic_waitable_timer<Clock,WaitTraits,Executor> &
++~basic_waitable_timer<Clock, WaitTraits, Executor>() : void
++get_executor() : const basic_waitable_timer::executor_type &
++cancel() : std::size_t
++cancel() : std::size_t
++cancel_one() : std::size_t
++cancel_one() : std::size_t
++expires_at() const : basic_waitable_timer::time_point
++expiry() const : basic_waitable_timer::time_point
++expires_at() : std::size_t
++expires_at() : std::size_t
++expires_after() : std::size_t
++expires_from_now() const : basic_waitable_timer::duration
++expires_from_now() : std::size_t
++expires_from_now() : std::size_t
++wait() : void
++wait() : void
++basic_waitable_timer<Clock, WaitTraits, Executor><ExecutionContext>() : void
++basic_waitable_timer<Clock, WaitTraits, Executor><ExecutionContext>() : void
++basic_waitable_timer<Clock, WaitTraits, Executor><ExecutionContext>() : void
++basic_waitable_timer<Clock, WaitTraits, Executor><Executor1>() : void
++operator=<Executor1>() : typename constraint<is_convertible<Executor1, Executor>::value, basic_waitable_timer<Clock, WaitTraits, Executor> &>::type
++async_wait<WaitToken>() : decltype(async_initiate<WaitToken, void (boost::system::error_code)>(declval<class basic_waitable_timer::initiate_async_wait>(), token))
+}
+class "basic_waitable_timer::rebind_executor<Executor1>" as C_0001339208676110265245
+class C_0001339208676110265245 {
+}
+class "basic_waitable_timer::initiate_async_wait" as C_0001563175005524888899
+class C_0001563175005524888899 {
++initiate_async_wait() : void
++get_executor() const : const basic_waitable_timer::initiate_async_wait::executor_type &
++operator()<WaitHandler>() : void
+}
+class "basic_socket_streambuf<Protocol,Clock,WaitTraits>" as C_0000598211904123792581
+class C_0000598211904123792581 {
++basic_socket_streambuf<Protocol, Clock, WaitTraits>() : void
++basic_socket_streambuf<Protocol, Clock, WaitTraits>() : void
++basic_socket_streambuf<Protocol, Clock, WaitTraits>() : void
++operator=() : basic_socket_streambuf<Protocol,Clock,WaitTraits> &
++~basic_socket_streambuf<Protocol, Clock, WaitTraits>() : void
++connect() : basic_socket_streambuf<Protocol,Clock,WaitTraits> *
++close() : basic_socket_streambuf<Protocol,Clock,WaitTraits> *
++socket() : basic_socket<Protocol> &
++error() const : const boost::system::error_code &
++puberror() const : const boost::system::error_code &
++expires_at() const : basic_socket_streambuf::time_point
++expiry() const : basic_socket_streambuf::time_point
++expires_at() : void
++expires_after() : void
++expires_from_now() const : basic_socket_streambuf::duration
++expires_from_now() : void
+#underflow() : std::basic_streambuf<char>::int_type
+#overflow() : std::basic_streambuf<char>::int_type
+#sync() : int
+#setbuf() : std::streambuf *
++connect<T...>() : basic_socket_streambuf<Protocol, Clock, WaitTraits> *
+}
+class "basic_socket_iostream<Protocol,Clock,WaitTraits>" as C_0001368414461083048547
+class C_0001368414461083048547 {
++basic_socket_iostream<Protocol, Clock, WaitTraits>() : void
++basic_socket_iostream<Protocol, Clock, WaitTraits>() : void
++basic_socket_iostream<Protocol, Clock, WaitTraits>() : void
++operator=() : basic_socket_iostream<Protocol,Clock,WaitTraits> &
++close() : void
++rdbuf() const : basic_socket_streambuf<Protocol,Clock,WaitTraits> *
++socket() : basic_socket<Protocol> &
++error() const : const boost::system::error_code &
++expires_at() const : basic_socket_iostream::time_point
++expiry() const : basic_socket_iostream::time_point
++expires_at() : void
++expires_after() : void
++expires_from_now() const : basic_socket_iostream::duration
++expires_from_now() : void
++basic_socket_iostream<Protocol, Clock, WaitTraits><T...>() : void
++connect<T...>() : void
+}
+class "basic_streambuf<Allocator>" as C_0000447720034096664289
+class C_0000447720034096664289 {
++basic_streambuf<Allocator>() : void
++size() const : std::size_t
++max_size() const : std::size_t
++capacity() const : std::size_t
++data() const : basic_streambuf::const_buffers_type
++prepare() : basic_streambuf::mutable_buffers_type
++commit() : void
++consume() : void
+#underflow() : std::basic_streambuf<char>::int_type
+#overflow() : std::basic_streambuf<char>::int_type
+#reserve() : void
+#buffer_delta : enum
+}
+class "basic_streambuf_ref<Allocator>" as C_0001707204983602852877
+class C_0001707204983602852877 {
++basic_streambuf_ref<Allocator>() : void
++basic_streambuf_ref<Allocator>() : void
++basic_streambuf_ref<Allocator>() : void
++size() const : std::size_t
++max_size() const : std::size_t
++capacity() const : std::size_t
++data() const : basic_streambuf_ref::const_buffers_type
++prepare() : basic_streambuf_ref::mutable_buffers_type
++commit() : void
++consume() : void
+}
+class "basic_writable_pipe<Executor>" as C_0000565542308197095561
+class C_0000565542308197095561 {
++basic_writable_pipe<Executor>() : void
++basic_writable_pipe<Executor>() : void
++basic_writable_pipe<Executor>() : void
++operator=() : basic_writable_pipe<Executor> &
++~basic_writable_pipe<Executor>() : void
++get_executor() : const basic_writable_pipe::executor_type &
++lowest_layer() : basic_writable_pipe::lowest_layer_type &
++lowest_layer() const : const basic_writable_pipe::lowest_layer_type &
++assign() : void
++assign() : boost::system::error_code
++is_open() const : bool
++close() : void
++close() : boost::system::error_code
++release() : basic_writable_pipe::native_handle_type
++release() : basic_writable_pipe::native_handle_type
++native_handle() : basic_writable_pipe::native_handle_type
++cancel() : void
++cancel() : boost::system::error_code
++basic_writable_pipe<Executor><ExecutionContext>() : void
++basic_writable_pipe<Executor><ExecutionContext>() : void
++basic_writable_pipe<Executor><Executor1>() : void
++operator=<Executor1>() : typename constraint<is_convertible<Executor1, Executor>::value, basic_writable_pipe<Executor> &>::type
++write_some<ConstBufferSequence>() : std::size_t
++write_some<ConstBufferSequence>() : std::size_t
++async_write_some<ConstBufferSequence,WriteToken>() : decltype(async_initiate<WriteToken, void (boost::system::error_code, std::size_t)>(declval<class basic_writable_pipe::initiate_async_write_some>(), token, buffers))
+}
+class "basic_writable_pipe::rebind_executor<Executor1>" as C_0000326567288131709361
+class C_0000326567288131709361 {
+}
+class "basic_writable_pipe::initiate_async_write_some" as C_0000141398663260888379
+class C_0000141398663260888379 {
++initiate_async_write_some() : void
++get_executor() const : const basic_writable_pipe::initiate_async_write_some::executor_type &
++operator()<WriteHandler,ConstBufferSequence>() : void
+}
+class "allocator_binder<T,Allocator>" as C_0001209250569527793898
+class C_0001209250569527793898 {
++allocator_binder<T, Allocator>() : void
++allocator_binder<T, Allocator>() : void
++allocator_binder<T, Allocator>() : void
++allocator_binder<T, Allocator>() : void
++~allocator_binder<T, Allocator>() : void
++get() : allocator_binder::target_type &
++get() const : const allocator_binder::target_type &
++get_allocator() const : allocator_binder::allocator_type
++allocator_binder<T, Allocator><U>() : void
++allocator_binder<T, Allocator><U,OtherAllocator>() : void
++allocator_binder<T, Allocator><U,OtherAllocator>() : void
++allocator_binder<T, Allocator><U,OtherAllocator>() : void
++allocator_binder<T, Allocator><U,OtherAllocator>() : void
++operator()<Args...>() : typename result_of<T (Args...)>::type
++operator()<Args...>() : typename result_of<T (Args...)>::type
+}
+class "associated_allocator<allocator_binder<type-parameter-0-0,type-parameter-0-1>,type-parameter-0-2>" as C_0001341254032176167842
+class C_0001341254032176167842 {
+{static} +get() : decltype(b.get_allocator())
+}
+class "cancellation_slot_binder<T,CancellationSlot>" as C_0001835176679716454787
+class C_0001835176679716454787 {
++cancellation_slot_binder<T, CancellationSlot>() : void
++cancellation_slot_binder<T, CancellationSlot>() : void
++cancellation_slot_binder<T, CancellationSlot>() : void
++cancellation_slot_binder<T, CancellationSlot>() : void
++~cancellation_slot_binder<T, CancellationSlot>() : void
++get() : cancellation_slot_binder::target_type &
++get() const : const cancellation_slot_binder::target_type &
++get_cancellation_slot() const : cancellation_slot_binder::cancellation_slot_type
++cancellation_slot_binder<T, CancellationSlot><U>() : void
++cancellation_slot_binder<T, CancellationSlot><U,OtherCancellationSlot>() : void
++cancellation_slot_binder<T, CancellationSlot><U,OtherCancellationSlot>() : void
++cancellation_slot_binder<T, CancellationSlot><U,OtherCancellationSlot>() : void
++cancellation_slot_binder<T, CancellationSlot><U,OtherCancellationSlot>() : void
++operator()<Args...>() : typename result_of<T (Args...)>::type
++operator()<Args...>() : typename result_of<T (Args...)>::type
+}
+class "associated_cancellation_slot<cancellation_slot_binder<type-parameter-0-0,type-parameter-0-1>,type-parameter-0-2>" as C_0000344792771848228327
+class C_0000344792771848228327 {
+{static} +get() : decltype(b.get_cancellation_slot())
+}
+class "executor_arg_t" as C_0001251642126827096656
+class C_0001251642126827096656 {
++executor_arg_t() : void
+}
+class "uses_executor<T,Executor>" as C_0002085166210246050158
+class C_0002085166210246050158 {
+}
+class "executor_binder<T,Executor>" as C_0000737634417215276942
+class C_0000737634417215276942 {
++executor_binder<T, Executor>() : void
++executor_binder<T, Executor>() : void
++executor_binder<T, Executor>() : void
++executor_binder<T, Executor>() : void
++~executor_binder<T, Executor>() : void
++get() : executor_binder::target_type &
++get() const : const executor_binder::target_type &
++get_executor() const : executor_binder::executor_type
++executor_binder<T, Executor><U>() : void
++executor_binder<T, Executor><U,OtherExecutor>() : void
++executor_binder<T, Executor><U,OtherExecutor>() : void
++executor_binder<T, Executor><U,OtherExecutor>() : void
++executor_binder<T, Executor><U,OtherExecutor>() : void
++operator()<Args...>() : typename result_of<T (Args...)>::type
++operator()<Args...>() : typename result_of<T (Args...)>::type
+}
+class "uses_executor" as C_0000373881468381634030
+class C_0000373881468381634030 {
+}
+class "uses_executor<executor_binder<type-parameter-0-0,type-parameter-0-1>,type-parameter-0-1>" as C_0000667662157759996161
+class C_0000667662157759996161 {
+}
+class "associated_executor<executor_binder<type-parameter-0-0,type-parameter-0-1>,type-parameter-0-2>" as C_0000674820976728978734
+class C_0000674820976728978734 {
+{static} +get() : decltype(b.get_executor())
+}
+class "immediate_executor_binder<T,Executor>" as C_0001292987643905878313
+class C_0001292987643905878313 {
++immediate_executor_binder<T, Executor>() : void
++immediate_executor_binder<T, Executor>() : void
++immediate_executor_binder<T, Executor>() : void
++immediate_executor_binder<T, Executor>() : void
++~immediate_executor_binder<T, Executor>() : void
++get() : immediate_executor_binder::target_type &
++get() const : const immediate_executor_binder::target_type &
++get_immediate_executor() const : immediate_executor_binder::immediate_executor_type
++immediate_executor_binder<T, Executor><U>() : void
++immediate_executor_binder<T, Executor><U,OtherExecutor>() : void
++immediate_executor_binder<T, Executor><U,OtherExecutor>() : void
++immediate_executor_binder<T, Executor><U,OtherExecutor>() : void
++immediate_executor_binder<T, Executor><U,OtherExecutor>() : void
++operator()<Args...>() : typename result_of<T (Args...)>::type
++operator()<Args...>() : typename result_of<T (Args...)>::type
+}
+class "associated_immediate_executor<immediate_executor_binder<type-parameter-0-0,type-parameter-0-1>,type-parameter-0-2>" as C_0000396051957264461855
+class C_0000396051957264461855 {
+{static} +get() : decltype(b.get_immediate_executor())
+}
+class "buffer_registration<MutableBufferSequence,Allocator>" as C_0000243748527253355396
+class C_0000243748527253355396 {
++buffer_registration<MutableBufferSequence, Allocator>() : void
++~buffer_registration<MutableBufferSequence, Allocator>() : void
++operator=() : buffer_registration<MutableBufferSequence,Allocator> &
++size() const : std::size_t
++begin() const : buffer_registration::const_iterator
++cbegin() const : buffer_registration::const_iterator
++end() const : buffer_registration::const_iterator
++cend() const : buffer_registration::const_iterator
++operator[]() : const mutable_registered_buffer &
++at() : const mutable_registered_buffer &
++buffer_registration<MutableBufferSequence, Allocator><Executor>() : void
++buffer_registration<MutableBufferSequence, Allocator><ExecutionContext>() : void
+}
+class "buffered_read_stream<Stream>" as C_0000762851305950348766
+class C_0000762851305950348766 {
++next_layer() : buffered_read_stream::next_layer_type &
++lowest_layer() : buffered_read_stream::lowest_layer_type &
++lowest_layer() const : const buffered_read_stream::lowest_layer_type &
++get_executor() : buffered_read_stream::executor_type
++close() : void
++close() : boost::system::error_code
++fill() : std::size_t
++fill() : std::size_t
++in_avail() : std::size_t
++in_avail() : std::size_t
++buffered_read_stream<Stream><Arg>() : void
++buffered_read_stream<Stream><Arg>() : void
++write_some<ConstBufferSequence>() : std::size_t
++write_some<ConstBufferSequence>() : std::size_t
++async_write_some<ConstBufferSequence,WriteHandler>() : decltype(declval<typename conditional<true, Stream &, WriteHandler>::type>().async_write_some(buffers, static_cast<WriteHandler &&>(handler)))
++async_fill<ReadHandler>() : decltype(async_initiate<ReadHandler, void (boost::system::error_code, std::size_t)>(declval<detail::initiate_async_buffered_fill<Stream> >(), handler, declval<detail::buffered_stream_storage *>()))
++read_some<MutableBufferSequence>() : std::size_t
++read_some<MutableBufferSequence>() : std::size_t
++async_read_some<MutableBufferSequence,ReadHandler>() : decltype(async_initiate<ReadHandler, void (boost::system::error_code, std::size_t)>(declval<detail::initiate_async_buffered_read_some<Stream> >(), handler, declval<detail::buffered_stream_storage *>(), buffers))
++peek<MutableBufferSequence>() : std::size_t
++peek<MutableBufferSequence>() : std::size_t
+{static} +default_buffer_size : const std::size_t
+}
+class "buffered_write_stream<Stream>" as C_0000820246541163106035
+class C_0000820246541163106035 {
++next_layer() : buffered_write_stream::next_layer_type &
++lowest_layer() : buffered_write_stream::lowest_layer_type &
++lowest_layer() const : const buffered_write_stream::lowest_layer_type &
++get_executor() : buffered_write_stream::executor_type
++close() : void
++close() : boost::system::error_code
++flush() : std::size_t
++flush() : std::size_t
++in_avail() : std::size_t
++in_avail() : std::size_t
++buffered_write_stream<Stream><Arg>() : void
++buffered_write_stream<Stream><Arg>() : void
++async_flush<WriteHandler>() : decltype(async_initiate<WriteHandler, void (boost::system::error_code, std::size_t)>(declval<detail::initiate_async_buffered_flush<Stream> >(), handler, declval<detail::buffered_stream_storage *>()))
++write_some<ConstBufferSequence>() : std::size_t
++write_some<ConstBufferSequence>() : std::size_t
++async_write_some<ConstBufferSequence,WriteHandler>() : decltype(async_initiate<WriteHandler, void (boost::system::error_code, std::size_t)>(declval<detail::initiate_async_buffered_write_some<Stream> >(), handler, declval<detail::buffered_stream_storage *>(), buffers))
++read_some<MutableBufferSequence>() : std::size_t
++read_some<MutableBufferSequence>() : std::size_t
++async_read_some<MutableBufferSequence,ReadHandler>() : decltype(declval<typename conditional<true, Stream &, ReadHandler>::type>().async_read_some(buffers, static_cast<ReadHandler &&>(handler)))
++peek<MutableBufferSequence>() : std::size_t
++peek<MutableBufferSequence>() : std::size_t
+{static} +default_buffer_size : const std::size_t
+}
+class "buffered_read_stream<buffered_stream::write_stream_type &>" as C_0001893286903938629994
+class C_0001893286903938629994 {
+}
+class "buffered_stream<Stream>" as C_0000035198005532594412
+class C_0000035198005532594412 {
++next_layer() : buffered_stream::next_layer_type &
++lowest_layer() : buffered_stream::lowest_layer_type &
++lowest_layer() const : const buffered_stream::lowest_layer_type &
++get_executor() : buffered_stream::executor_type
++close() : void
++close() : boost::system::error_code
++flush() : std::size_t
++flush() : std::size_t
++fill() : std::size_t
++fill() : std::size_t
++in_avail() : std::size_t
++in_avail() : std::size_t
++buffered_stream<Stream><Arg>() : void
++buffered_stream<Stream><Arg>() : void
++async_flush<WriteHandler>() : decltype(declval<buffered_write_stream<Stream> &>().async_flush(static_cast<WriteHandler &&>(handler)))
++write_some<ConstBufferSequence>() : std::size_t
++write_some<ConstBufferSequence>() : std::size_t
++async_write_some<ConstBufferSequence,WriteHandler>() : decltype(declval<Stream &>().async_write_some(buffers, static_cast<WriteHandler &&>(handler)))
++async_fill<ReadHandler>() : decltype(declval<buffered_read_stream<buffered_write_stream<Stream> > &>().async_fill(static_cast<ReadHandler &&>(handler)))
++read_some<MutableBufferSequence>() : std::size_t
++read_some<MutableBufferSequence>() : std::size_t
++async_read_some<MutableBufferSequence,ReadHandler>() : decltype(declval<Stream &>().async_read_some(buffers, static_cast<ReadHandler &&>(handler)))
++peek<MutableBufferSequence>() : std::size_t
++peek<MutableBufferSequence>() : std::size_t
+}
+class "buffers_iterator<BufferSequence,ByteType>" as C_0001617501813464659292
+class C_0001617501813464659292 {
++buffers_iterator<BufferSequence, ByteType>() : void
+{static} +begin() : buffers_iterator<BufferSequence,ByteType>
+{static} +end() : buffers_iterator<BufferSequence,ByteType>
++operator*() const : buffers_iterator::reference
++operator->() const : buffers_iterator::pointer
++operator[]() const : buffers_iterator::reference
++operator++() : buffers_iterator<BufferSequence,ByteType> &
++operator++() : buffers_iterator<BufferSequence,ByteType>
++operator--() : buffers_iterator<BufferSequence,ByteType> &
++operator--() : buffers_iterator<BufferSequence,ByteType>
++operator+=() : buffers_iterator<BufferSequence,ByteType> &
++operator-=() : buffers_iterator<BufferSequence,ByteType> &
+}
+class "is_endpoint_sequence<T>" as C_0000525854547058639503
+class C_0000525854547058639503 {
++value : enum
+}
+class "consign_t<CompletionToken,Values...>" as C_0000316430127824501579
+class C_0000316430127824501579 {
++consign_t<CompletionToken, Values...><T,V...>() : void
++token_ : CompletionToken
++values_ : std::tuple<Values...>
+}
+class "coroutine" as C_0000794848617510637586
+class C_0000794848617510637586 {
++coroutine() : void
++is_child() const : bool
++is_parent() const : bool
++is_complete() const : bool
+}
+class "deferred_signatures<Signatures...>" as C_0001472099186716181715
+class C_0001472099186716181715 {
+}
+class "deferred_noop" as C_0001872625171729549394
+class C_0001872625171729549394 {
++operator()<Args...>() : void
++operator()<Args...>() : void
+}
+class "deferred_function<Function>" as C_0001754043766963330684
+class C_0001754043766963330684 {
++deferred_function<Function><F>() : void
++operator()<Args...>() : decltype(static_cast<Function &&>(this->function_)(static_cast<Args &&>(args)...))
++operator()<Args...>() : decltype(Function(this->function_)(static_cast<Args &&>(args)...))
++function_ : Function
+}
+class "deferred_values<Values...>" as C_0000478198388049114075
+class C_0000478198388049114075 {
++deferred_values<Values...><V...>() : void
++operator()<CompletionToken>() : decltype(this->invoke_helper(static_cast<CompletionToken &&>(token), detail::index_sequence_for<Values...>()))
++operator()<CompletionToken>() : decltype(this->const_invoke_helper(static_cast<CompletionToken &&>(token), detail::index_sequence_for<Values...>()))
+}
+class "deferred_values::initiate" as C_0002154363408278802263
+class C_0002154363408278802263 {
++operator()<Handler,V...>() : void
+}
+class "deferred_async_operation<Signature,Initiation,InitArgs...>" as C_0001354847054453951725
+class C_0001354847054453951725 {
++deferred_async_operation<Signature, Initiation, InitArgs...><I,A...>() : void
++operator()<CompletionToken>() : decltype(this->invoke_helper(static_cast<CompletionToken &&>(token), detail::index_sequence_for<InitArgs...>()))
++operator()<CompletionToken>() : decltype(this->const_invoke_helper(static_cast<CompletionToken &&>(token), detail::index_sequence_for<InitArgs...>()))
+}
+class "deferred_async_operation" as C_0000049391965140997166
+class C_0000049391965140997166 {
++deferred_async_operation<deferred_signatures<type-parameter-0-0...>, type-parameter-0-1, type-parameter-0-2...><I,A...>() : void
++operator()<CompletionToken>() : decltype(this->invoke_helper(static_cast<CompletionToken &&>(token), detail::index_sequence_for<InitArgs...>()))
++operator()<CompletionToken>() : decltype(this->const_invoke_helper(static_cast<CompletionToken &&>(token), detail::index_sequence_for<InitArgs...>()))
+}
+class "deferred_async_operation<deferred_signatures<>,type-parameter-0-1,type-parameter-0-2...>" as C_0000108266549297425902
+class C_0000108266549297425902 {
++deferred_async_operation<deferred_signatures<type-parameter-0-0...>, type-parameter-0-1, type-parameter-0-2...><I,A...>() : void
++operator()<CompletionToken>() : decltype(this->invoke_helper(static_cast<CompletionToken &&>(token), detail::index_sequence_for<InitArgs...>()))
++operator()<CompletionToken>() : decltype(this->const_invoke_helper(static_cast<CompletionToken &&>(token), detail::index_sequence_for<InitArgs...>()))
+}
+class "deferred_sequence<Head,Tail>" as C_0001218625529098884481
+class C_0001218625529098884481 {
++deferred_sequence<Head, Tail><H,T>() : void
+}
+class "deferred_conditional<OnTrue,OnFalse>" as C_0001118399273803747903
+class C_0001118399273803747903 {
++deferred_conditional<OnTrue, OnFalse>() : void
++operator()<Args...>() : decltype(static_cast<OnTrue &&>(this->on_true_)(static_cast<Args &&>(args)...))
++operator()<Args...>() : decltype(this->on_true_(static_cast<Args &&>(args)...))
++then<T>() : deferred_conditional<T, OnFalse>
++otherwise<T>() : deferred_conditional<OnTrue, T>
+}
+class "deferred_conditional" as C_0001639765042149222702
+class C_0001639765042149222702 {
+}
+class "deferred_t" as C_0001841029389783028511
+class C_0001841029389783028511 {
++deferred_t() : void
+{static} +when() : deferred_conditional<>
+{static} +as_default_on<T>() : typename decay<T>::type::template rebind_executor<executor_with_default<typename decay<T>::type::executor_type> >::other
++operator()<Function>() : typename constraint<! is_deferred<typename decay<Function>::type>::value, deferred_function<typename decay<Function>::type> >::type
++operator()<T>() : typename constraint<is_deferred<typename decay<T>::type>::value, typename decay<T>::type>::type
+{static} +values<Args...>() : deferred_values<typename decay<Args>::type...>
+}
+class "deferred_t::executor_with_default<InnerExecutor>" as C_0000040289487466732585
+class C_0000040289487466732585 {
++executor_with_default<InnerExecutor><InnerExecutor1>() : void
+}
+class "detached_t" as C_0000068264242739121300
+class C_0000068264242739121300 {
++detached_t() : void
+{static} +as_default_on<T>() : typename decay<T>::type::template rebind_executor<executor_with_default<typename decay<T>::type::executor_type> >::other
+}
+class "detached_t::executor_with_default<InnerExecutor>" as C_0001469913543827020208
+class C_0001469913543827020208 {
++executor_with_default<InnerExecutor>() : void
++executor_with_default<InnerExecutor><OtherExecutor>() : void
+}
+class "bad_executor" as C_0000536189499668024446
+class C_0000536189499668024446 {
++bad_executor() : void
++what() const : const char *
+}
+class "executor" as C_0000408522659736215366
+class C_0000408522659736215366 {
++executor() : void
++executor() : void
++executor() : void
++executor() : void
++~executor() : void
++operator=() : executor &
++operator=() : executor &
++operator=() : executor &
++context() const : execution_context &
++on_work_started() const : void
++on_work_finished() const : void
+{static} +unspecified_bool_true() : void
++operator void (*)(boost::asio::executor::unspecified_bool_type_t)() const : executor::unspecified_bool_type
++target_type() const : const std::type_info &
++executor<Executor>() : void
++executor<Executor,Allocator>() : void
++operator=<Executor>() : class executor &
++dispatch<Function,Allocator>() : void
++post<Function,Allocator>() : void
++defer<Function,Allocator>() : void
++target<Executor>() : Executor *
++target<Executor>() : const Executor *
+}
+class "executor::unspecified_bool_type_t" as C_0001792641688715044824
+class C_0001792641688715044824 {
+}
+abstract "executor::impl_base" as C_0002304422587923435943
+abstract C_0002304422587923435943 {
+{abstract} +clone() const = 0 : executor::impl_base *
+{abstract} +destroy() = 0 : void
+{abstract} +context() = 0 : execution_context &
+{abstract} +on_work_started() = 0 : void
+{abstract} +on_work_finished() = 0 : void
+{abstract} +dispatch() = 0 : void
+{abstract} +post() = 0 : void
+{abstract} +defer() = 0 : void
+{abstract} +target_type() const = 0 : executor::type_id_result_type
+{abstract} +target() = 0 : void *
+{abstract} +target() const = 0 : const void *
+{abstract} +equals() const = 0 : bool
+#impl_base() : void
+#~impl_base() : void
+}
+class "executor::impl<Executor,Allocator>" as C_0002080923436031164336
+class C_0002080923436031164336 {
+{static} +create() : executor::impl_base *
++impl<type-parameter-0-0, type-parameter-0-1>() : void
++clone() const : executor::impl_base *
++destroy() : void
++on_work_started() : void
++on_work_finished() : void
++context() : execution_context &
++dispatch() : void
++post() : void
++defer() : void
++target_type() const : executor::type_id_result_type
++target() : void *
++target() const : const void *
++equals() const : bool
+}
+class "executor::impl" as C_0000640326921389067419
+class C_0000640326921389067419 {
+{static} +create() : executor::impl_base *
++impl<boost::asio::basic_system_executor<boost::asio::execution::detail::blocking::possibly_t<0>, boost::asio::execution::detail::relationship::fork_t<0>, std::allocator<void> >, type-parameter-0-0>() : void
++clone() const : executor::impl_base *
++destroy() : void
++on_work_started() : void
++on_work_finished() : void
++context() : execution_context &
++dispatch() : void
++post() : void
++defer() : void
++target_type() const : executor::type_id_result_type
++target() : void *
++target() const : const void *
++equals() const : bool
+}
+class "generic::detail::endpoint" as C_0001197525458661947626
+class C_0001197525458661947626 {
++endpoint() : void
++endpoint() : void
++endpoint() : void
++operator=() : generic::detail::endpoint &
++family() const : int
++protocol() const : int
++data() : detail::socket_addr_type *
++data() const : const detail::socket_addr_type *
++size() const : std::size_t
++resize() : void
++capacity() const : std::size_t
+}
+class "generic::detail::endpoint::data_union" as C_0001204664422348815587
+class C_0001204664422348815587 {
++base : detail::socket_addr_type
++generic : detail::sockaddr_storage_type
+}
+class "generic::basic_endpoint<Protocol>" as C_0001317710114972522026
+class C_0001317710114972522026 {
++basic_endpoint<Protocol>() : void
++basic_endpoint<Protocol>() : void
++basic_endpoint<Protocol>() : void
++basic_endpoint<Protocol>() : void
++operator=() : basic_endpoint<Protocol> &
++operator=() : basic_endpoint<Protocol> &
++protocol() const : generic::basic_endpoint::protocol_type
++data() : generic::basic_endpoint::data_type *
++data() const : const generic::basic_endpoint::data_type *
++size() const : std::size_t
++resize() : void
++capacity() const : std::size_t
++basic_endpoint<Protocol><Endpoint>() : void
+}
+class "generic::datagram_protocol" as C_0001134369500416867519
+class C_0001134369500416867519 {
++datagram_protocol() : void
++type() const : int
++protocol() const : int
++family() const : int
++datagram_protocol<Protocol>() : void
+}
+class "generic::raw_protocol" as C_0001345950551281786720
+class C_0001345950551281786720 {
++raw_protocol() : void
++type() const : int
++protocol() const : int
++family() const : int
++raw_protocol<Protocol>() : void
+}
+class "generic::seq_packet_protocol" as C_0001768178951380087929
+class C_0001768178951380087929 {
++seq_packet_protocol() : void
++type() const : int
++protocol() const : int
++family() const : int
++seq_packet_protocol<Protocol>() : void
+}
+class "generic::stream_protocol" as C_0001809122141265005642
+class C_0001809122141265005642 {
++stream_protocol() : void
++type() const : int
++protocol() const : int
++family() const : int
++stream_protocol<Protocol>() : void
+}
+class "io_context::strand" as C_0001047890427567912267
+class C_0001047890427567912267 {
++strand() : void
++~strand() : void
++context() const : io_context &
++on_work_started() const : void
++on_work_finished() const : void
++running_in_this_thread() const : bool
++dispatch<Function,Allocator>() : void
++dispatch<LegacyCompletionHandler>() : decltype(async_initiate<LegacyCompletionHandler, void (void)>(declval<struct io_context::strand::initiate_dispatch>(), handler, this))
++post<Function,Allocator>() : void
++post<LegacyCompletionHandler>() : decltype(async_initiate<LegacyCompletionHandler, void (void)>(declval<struct io_context::strand::initiate_post>(), handler, this))
++defer<Function,Allocator>() : void
++wrap<Handler>() : detail::wrapped_handler<strand, Handler, detail::is_continuation_if_running>
+}
+class "io_context::strand::initiate_dispatch" as C_0001293600527802285514
+class C_0001293600527802285514 {
++operator()<LegacyCompletionHandler>() : void
+}
+class "io_context::strand::initiate_post" as C_0001830231423530344583
+class C_0001830231423530344583 {
++operator()<LegacyCompletionHandler>() : void
+}
+class "ip::address_v4" as C_0002025919776476726445
+class C_0002025919776476726445 {
++address_v4() : void
++address_v4() : void
++address_v4() : void
++address_v4() : void
++address_v4() : void
++operator=() : ip::address_v4 &
++operator=() : ip::address_v4 &
++to_bytes() const : ip::address_v4::bytes_type
++to_uint() const : ip::address_v4::uint_type
++to_ulong() const : unsigned long
++to_string() const : std::string
++to_string() const : std::string
+{static} +from_string() : ip::address_v4
+{static} +from_string() : ip::address_v4
+{static} +from_string() : ip::address_v4
+{static} +from_string() : ip::address_v4
++is_loopback() const : bool
++is_unspecified() const : bool
++is_class_a() const : bool
++is_class_b() const : bool
++is_class_c() const : bool
++is_multicast() const : bool
+{static} +any() : ip::address_v4
+{static} +loopback() : ip::address_v4
+{static} +broadcast() : ip::address_v4
+{static} +broadcast() : ip::address_v4
+{static} +netmask() : ip::address_v4
+}
+class "ip::address_v6" as C_0002098982763942637031
+class C_0002098982763942637031 {
++address_v6() : void
++address_v6() : void
++address_v6() : void
++address_v6() : void
++operator=() : ip::address_v6 &
++operator=() : ip::address_v6 &
++scope_id() const : ip::scope_id_type
++scope_id() : void
++to_bytes() const : ip::address_v6::bytes_type
++to_string() const : std::string
++to_string() const : std::string
+{static} +from_string() : ip::address_v6
+{static} +from_string() : ip::address_v6
+{static} +from_string() : ip::address_v6
+{static} +from_string() : ip::address_v6
++to_v4() const : ip::address_v4
++is_loopback() const : bool
++is_unspecified() const : bool
++is_link_local() const : bool
++is_site_local() const : bool
++is_v4_mapped() const : bool
++is_v4_compatible() const : bool
++is_multicast() const : bool
++is_multicast_global() const : bool
++is_multicast_link_local() const : bool
++is_multicast_node_local() const : bool
++is_multicast_org_local() const : bool
++is_multicast_site_local() const : bool
+{static} +any() : ip::address_v6
+{static} +loopback() : ip::address_v6
+{static} +v4_mapped() : ip::address_v6
+{static} +v4_compatible() : ip::address_v6
+}
+enum "ip::v4_mapped_t" as C_0001093647575738903606
+enum C_0001093647575738903606 {
+v4_mapped
+}
+class "ip::bad_address_cast" as C_0001311393420595390911
+class C_0001311393420595390911 {
++bad_address_cast() : void
++~bad_address_cast() : void
++what() const : const char *
+}
+class "ip::address" as C_0001327524464125083386
+class C_0001327524464125083386 {
++address() : void
++address() : void
++address() : void
++address() : void
++address() : void
++operator=() : ip::address &
++operator=() : ip::address &
++operator=() : ip::address &
++operator=() : ip::address &
++is_v4() const : bool
++is_v6() const : bool
++to_v4() const : ip::address_v4
++to_v6() const : ip::address_v6
++to_string() const : std::string
++to_string() const : std::string
+{static} +from_string() : ip::address
+{static} +from_string() : ip::address
+{static} +from_string() : ip::address
+{static} +from_string() : ip::address
++is_loopback() const : bool
++is_unspecified() const : bool
++is_multicast() const : bool
+}
+class "ip::basic_address_iterator" as C_0000318402603351769102
+class C_0000318402603351769102 {
++basic_address_iterator() : void
++basic_address_iterator() : void
++basic_address_iterator() : void
++operator=() : ip::basic_address_iterator<ip::address_v4> &
++operator=() : ip::basic_address_iterator<ip::address_v4> &
++operator*() const : const ip::address_v4 &
++operator->() const : const ip::address_v4 *
++operator++() : ip::basic_address_iterator<ip::address_v4> &
++operator++() : ip::basic_address_iterator<ip::address_v4>
++operator--() : ip::basic_address_iterator<ip::address_v4> &
++operator--() : ip::basic_address_iterator<ip::address_v4>
+}
+class "ip::basic_address_iterator<ip::address_v4>" as C_0001494989037982793636
+class C_0001494989037982793636 {
++basic_address_iterator() : void
++basic_address_iterator() : void
++basic_address_iterator() : void
++operator=() : ip::basic_address_iterator<ip::address_v4> &
++operator=() : ip::basic_address_iterator<ip::address_v4> &
++operator*() const : const ip::address_v4 &
++operator->() const : const ip::address_v4 *
++operator++() : ip::basic_address_iterator<ip::address_v4> &
++operator++() : ip::basic_address_iterator<ip::address_v4>
++operator--() : ip::basic_address_iterator<ip::address_v4> &
++operator--() : ip::basic_address_iterator<ip::address_v4>
+}
+class "ip::basic_address_range" as C_0001983676680109476603
+class C_0001983676680109476603 {
++basic_address_range() : void
++basic_address_range() : void
++basic_address_range() : void
++basic_address_range() : void
++operator=() : ip::basic_address_range<ip::address_v4> &
++operator=() : ip::basic_address_range<ip::address_v4> &
++begin() const : ip::basic_address_iterator<ip::address_v4>::iterator
++end() const : ip::basic_address_iterator<ip::address_v4>::iterator
++empty() const : bool
++size() const : std::size_t
++find() const : ip::basic_address_iterator<ip::address_v4>::iterator
+}
+class "ip::basic_address_range<ip::address_v4>" as C_0000772044873699700545
+class C_0000772044873699700545 {
++basic_address_range() : void
++basic_address_range() : void
++basic_address_range() : void
++basic_address_range() : void
++operator=() : ip::basic_address_range<ip::address_v4> &
++operator=() : ip::basic_address_range<ip::address_v4> &
++begin() const : ip::basic_address_iterator<ip::address_v4>::iterator
++end() const : ip::basic_address_iterator<ip::address_v4>::iterator
++empty() const : bool
++size() const : std::size_t
++find() const : ip::basic_address_iterator<ip::address_v4>::iterator
+}
+class "ip::basic_address_iterator<ip::address_v6>" as C_0002102615558040381043
+class C_0002102615558040381043 {
++basic_address_iterator() : void
++basic_address_iterator() : void
++basic_address_iterator() : void
++operator=() : ip::basic_address_iterator<ip::address_v6> &
++operator=() : ip::basic_address_iterator<ip::address_v6> &
++operator*() const : const ip::address_v6 &
++operator->() const : const ip::address_v6 *
++operator++() : ip::basic_address_iterator<ip::address_v6> &
++operator++() : ip::basic_address_iterator<ip::address_v6>
++operator--() : ip::basic_address_iterator<ip::address_v6> &
++operator--() : ip::basic_address_iterator<ip::address_v6>
+}
+class "ip::basic_address_range<ip::address_v6>" as C_0001541815403956626262
+class C_0001541815403956626262 {
++basic_address_range() : void
++basic_address_range() : void
++basic_address_range() : void
++basic_address_range() : void
++operator=() : ip::basic_address_range<ip::address_v6> &
++operator=() : ip::basic_address_range<ip::address_v6> &
++begin() const : ip::basic_address_iterator<ip::address_v6>::iterator
++end() const : ip::basic_address_iterator<ip::address_v6>::iterator
++empty() const : bool
++find() const : ip::basic_address_iterator<ip::address_v6>::iterator
+}
+class "ip::network_v4" as C_0000630457919158355745
+class C_0000630457919158355745 {
++network_v4() : void
++network_v4() : void
++network_v4() : void
++network_v4() : void
++network_v4() : void
++operator=() : ip::network_v4 &
++operator=() : ip::network_v4 &
++address() const : ip::address_v4
++prefix_length() const : unsigned short
++netmask() const : ip::address_v4
++network() const : ip::address_v4
++broadcast() const : ip::address_v4
++hosts() const : ip::address_v4_range
++canonical() const : ip::network_v4
++is_host() const : bool
++is_subnet_of() const : bool
++to_string() const : std::string
++to_string() const : std::string
+}
+class "ip::network_v6" as C_0001305454857652324427
+class C_0001305454857652324427 {
++network_v6() : void
++network_v6() : void
++network_v6() : void
++network_v6() : void
++operator=() : ip::network_v6 &
++operator=() : ip::network_v6 &
++address() const : ip::address_v6
++prefix_length() const : unsigned short
++network() const : ip::address_v6
++hosts() const : ip::address_v6_range
++canonical() const : ip::network_v6
++is_host() const : bool
++is_subnet_of() const : bool
++to_string() const : std::string
++to_string() const : std::string
+}
+class "ip::basic_endpoint<InternetProtocol>" as C_0001250048442097748343
+class C_0001250048442097748343 {
++basic_endpoint<InternetProtocol>() : void
++basic_endpoint<InternetProtocol>() : void
++basic_endpoint<InternetProtocol>() : void
++basic_endpoint<InternetProtocol>() : void
++basic_endpoint<InternetProtocol>() : void
++operator=() : basic_endpoint<InternetProtocol> &
++operator=() : basic_endpoint<InternetProtocol> &
++protocol() const : ip::basic_endpoint::protocol_type
++data() : ip::basic_endpoint::data_type *
++data() const : const ip::basic_endpoint::data_type *
++size() const : std::size_t
++resize() : void
++capacity() const : std::size_t
++port() const : ip::port_type
++port() : void
++address() const : ip::address
++address() : void
+}
+class "ip::basic_resolver_entry<InternetProtocol>" as C_0000504239392535325073
+class C_0000504239392535325073 {
++basic_resolver_entry<InternetProtocol>() : void
++basic_resolver_entry<InternetProtocol>() : void
++endpoint() const : ip::basic_resolver_entry::endpoint_type
++operator typename type-parameter-0-0::endpoint() const : ip::basic_resolver_entry::endpoint_type
++host_name() const : std::string
++service_name() const : std::string
++host_name<Allocator>() : std::basic_string<char, std::char_traits<char>, Allocator>
++service_name<Allocator>() : std::basic_string<char, std::char_traits<char>, Allocator>
+}
+class "ip::basic_resolver_iterator<InternetProtocol>" as C_0001347871524203521943
+class C_0001347871524203521943 {
++basic_resolver_iterator<InternetProtocol>() : void
++basic_resolver_iterator<InternetProtocol>() : void
++basic_resolver_iterator<InternetProtocol>() : void
++operator=() : basic_resolver_iterator<InternetProtocol> &
++operator=() : basic_resolver_iterator<InternetProtocol> &
++operator*() const : const basic_resolver_entry<InternetProtocol> &
++operator->() const : const basic_resolver_entry<InternetProtocol> *
++operator++() : basic_resolver_iterator<InternetProtocol> &
++operator++() : basic_resolver_iterator<InternetProtocol>
+#increment() : void
+#equal() const : bool
+#dereference() const : const basic_resolver_entry<InternetProtocol> &
+#index_ : std::size_t
+}
+class "ip::resolver_base" as C_0002054056523873699388
+class C_0002054056523873699388 {
+#~resolver_base() : void
+}
+enum "ip::resolver_base::flags" as C_0002226089269405758232
+enum C_0002226089269405758232 {
+canonical_name
+passive
+numeric_host
+numeric_service
+v4_mapped
+all_matching
+address_configured
+}
+class "ip::resolver_query_base" as C_0001433847844236950668
+class C_0001433847844236950668 {
+#~resolver_query_base() : void
+}
+class "ip::basic_resolver_query<InternetProtocol>" as C_0001352938694161192245
+class C_0001352938694161192245 {
++basic_resolver_query<InternetProtocol>() : void
++basic_resolver_query<InternetProtocol>() : void
++basic_resolver_query<InternetProtocol>() : void
++basic_resolver_query<InternetProtocol>() : void
++hints() const : const detail::addrinfo_type &
++host_name() const : std::string
++service_name() const : std::string
+}
+class "ip::basic_resolver_results<InternetProtocol>" as C_0002280271119024021380
+class C_0002280271119024021380 {
++basic_resolver_results<InternetProtocol>() : void
++basic_resolver_results<InternetProtocol>() : void
++basic_resolver_results<InternetProtocol>() : void
++operator=() : basic_resolver_results<InternetProtocol> &
++operator=() : basic_resolver_results<InternetProtocol> &
+{static} +create() : basic_resolver_results<InternetProtocol>
+{static} +create() : basic_resolver_results<InternetProtocol>
++size() const : ip::basic_resolver_results::size_type
++max_size() const : ip::basic_resolver_results::size_type
++empty() const : bool
++begin() const : ip::basic_resolver_results::const_iterator
++end() const : ip::basic_resolver_results::const_iterator
++cbegin() const : ip::basic_resolver_results::const_iterator
++cend() const : ip::basic_resolver_results::const_iterator
++swap() : void
+{static} +create<EndpointIterator>() : basic_resolver_results<InternetProtocol>
+}
+class "ip::basic_resolver<InternetProtocol,Executor>" as C_0000605417433857946713
+class C_0000605417433857946713 {
++basic_resolver<InternetProtocol, Executor>() : void
++basic_resolver<InternetProtocol, Executor>() : void
++operator=() : basic_resolver<InternetProtocol,Executor> &
++~basic_resolver<InternetProtocol, Executor>() : void
++get_executor() : ip::basic_resolver::executor_type
++cancel() : void
++resolve() : ip::basic_resolver::results_type
++resolve() : ip::basic_resolver::results_type
++resolve() : ip::basic_resolver::results_type
++resolve() : ip::basic_resolver::results_type
++resolve() : ip::basic_resolver::results_type
++resolve() : ip::basic_resolver::results_type
++resolve() : ip::basic_resolver::results_type
++resolve() : ip::basic_resolver::results_type
++resolve() : ip::basic_resolver::results_type
++resolve() : ip::basic_resolver::results_type
++resolve() : ip::basic_resolver::results_type
++resolve() : ip::basic_resolver::results_type
++basic_resolver<InternetProtocol, Executor><ExecutionContext>() : void
++basic_resolver<InternetProtocol, Executor><Executor1>() : void
++operator=<Executor1>() : typename constraint<is_convertible<Executor1, Executor>::value, basic_resolver<InternetProtocol, Executor> &>::type
++async_resolve<ResolveToken>() : decltype(async_initiate<ResolveToken, void (boost::system::error_code, ip::basic_resolver::results_type)>(declval<class ip::basic_resolver::initiate_async_resolve>(), token, q))
++async_resolve<ResolveToken>() : decltype(async_initiate<ResolveToken, void (boost::system::error_code, ip::basic_resolver::results_type)>(declval<class ip::basic_resolver::initiate_async_resolve>(), token, declval<basic_resolver_query<ip::basic_resolver::protocol_type> &>()))
++async_resolve<ResolveToken>() : decltype(async_initiate<ResolveToken, void (boost::system::error_code, ip::basic_resolver::results_type)>(declval<class ip::basic_resolver::initiate_async_resolve>(), token, declval<basic_resolver_query<ip::basic_resolver::protocol_type> &>()))
++async_resolve<ResolveToken>() : decltype(async_initiate<ResolveToken, void (boost::system::error_code, ip::basic_resolver::results_type)>(declval<class ip::basic_resolver::initiate_async_resolve>(), token, declval<basic_resolver_query<ip::basic_resolver::protocol_type> &>()))
++async_resolve<ResolveToken>() : decltype(async_initiate<ResolveToken, void (boost::system::error_code, ip::basic_resolver::results_type)>(declval<class ip::basic_resolver::initiate_async_resolve>(), token, declval<basic_resolver_query<ip::basic_resolver::protocol_type> &>()))
++async_resolve<ResolveToken>() : decltype(async_initiate<ResolveToken, void (boost::system::error_code, ip::basic_resolver::results_type)>(declval<class ip::basic_resolver::initiate_async_resolve>(), token, e))
+}
+class "ip::basic_resolver::rebind_executor<Executor1>" as C_0001751550961524516647
+class C_0001751550961524516647 {
+}
+class "ip::basic_resolver::initiate_async_resolve" as C_0000636570610308227296
+class C_0000636570610308227296 {
++initiate_async_resolve() : void
++get_executor() const : ip::basic_resolver::initiate_async_resolve::executor_type
++operator()<ResolveHandler,Query>() : void
+}
+class "ip::icmp" as C_0002286282680096396617
+class C_0002286282680096396617 {
+{static} +v4() : ip::icmp
+{static} +v6() : ip::icmp
++type() const : int
++protocol() const : int
++family() const : int
+}
+class "ip::tcp" as C_0001747329754165877091
+class C_0001747329754165877091 {
+{static} +v4() : ip::tcp
+{static} +v6() : ip::tcp
++type() const : int
++protocol() const : int
++family() const : int
+}
+class "ip::udp" as C_0001852578197906964688
+class C_0001852578197906964688 {
+{static} +v4() : ip::udp
+{static} +v6() : ip::udp
++type() const : int
++protocol() const : int
++family() const : int
+}
+class "ip::basic_address_iterator<>" as C_0000193569378466042893
+class C_0000193569378466042893 {
+}
+class "ip::basic_resolver<InternetProtocol1,Executor1>" as C_0001111536083036436993
+class C_0001111536083036436993 {
+}
+class "ip::basic_address_range<>" as C_0002162700889548815212
+class C_0002162700889548815212 {
+}
+class "is_read_buffered<Stream>" as C_0001170111170497037018
+class C_0001170111170497037018 {
+{static} +value : const bool
+}
+class "is_write_buffered<Stream>" as C_0002240001693239958926
+class C_0002240001693239958926 {
+{static} +value : const bool
+}
+class "local::detail::endpoint" as C_0001936514665235435084
+class C_0001936514665235435084 {
++endpoint() : void
++endpoint() : void
++endpoint() : void
++endpoint() : void
++operator=() : local::detail::endpoint &
++data() : detail::socket_addr_type *
++data() const : const detail::socket_addr_type *
++size() const : std::size_t
++resize() : void
++capacity() const : std::size_t
++path() const : std::string
++path() : void
++path() : void
+}
+class "local::detail::endpoint::data_union" as C_0000767644011034091251
+class C_0000767644011034091251 {
++base : detail::socket_addr_type
++local : detail::sockaddr_un_type
+}
+class "local::basic_endpoint<Protocol>" as C_0002115006149424113920
+class C_0002115006149424113920 {
++basic_endpoint<Protocol>() : void
++basic_endpoint<Protocol>() : void
++basic_endpoint<Protocol>() : void
++basic_endpoint<Protocol>() : void
++basic_endpoint<Protocol>() : void
++operator=() : basic_endpoint<Protocol> &
++operator=() : basic_endpoint<Protocol> &
++protocol() const : local::basic_endpoint::protocol_type
++data() : local::basic_endpoint::data_type *
++data() const : const local::basic_endpoint::data_type *
++size() const : std::size_t
++resize() : void
++capacity() const : std::size_t
++path() const : std::string
++path() : void
++path() : void
+}
+class "local::datagram_protocol" as C_0001854195773056506757
+class C_0001854195773056506757 {
++type() const : int
++protocol() const : int
++family() const : int
+}
+class "local::seq_packet_protocol" as C_0000310864930145326074
+class C_0000310864930145326074 {
++type() const : int
++protocol() const : int
++family() const : int
+}
+class "local::stream_protocol" as C_0002024172891526936075
+class C_0002024172891526936075 {
++type() const : int
++protocol() const : int
++family() const : int
+}
+class "prepend_t<CompletionToken,Values...>" as C_0000873450437072005506
+class C_0000873450437072005506 {
++prepend_t<CompletionToken, Values...><T,V...>() : void
++token_ : CompletionToken
++values_ : std::tuple<Values...>
+}
+class "is_match_condition<T>" as C_0001967484069156113171
+class C_0001967484069156113171 {
++value : enum
+}
+class "redirect_error_t<CompletionToken>" as C_0001344052433180822513
+class C_0001344052433180822513 {
++redirect_error_t<CompletionToken><T>() : void
++token_ : CompletionToken
++ec_ : boost::system::error_code &
+}
+class "can_require_concept<T,Property>" as C_0001412872591570361122
+class C_0001412872591570361122 {
+}
+class "is_nothrow_require_concept<T,Property>" as C_0001406532248330840168
+class C_0001406532248330840168 {
+}
+class "require_concept_result<T,Property>" as C_0000367349886905107842
+class C_0000367349886905107842 {
+}
+class "thread_pool::basic_executor_type<std::allocator<void>,0>" as C_0001091533276186936325
+class C_0001091533276186936325 {
+}
+class "thread_pool" as C_0000428358945123590506
+class C_0000428358945123590506 {
++thread_pool() : void
++thread_pool() : void
++~thread_pool() : void
++get_executor() : thread_pool::executor_type
++executor() : thread_pool::executor_type
++scheduler() : thread_pool::scheduler_type
++stop() : void
++attach() : void
++join() : void
++wait() : void
+}
+class "thread_pool::basic_executor_type<Allocator,unsigned int Bits>" as C_0002216214012275323442
+class C_0002216214012275323442 {
++basic_executor_type<Allocator, Bits>() : void
++basic_executor_type<Allocator, Bits>() : void
++~basic_executor_type<Allocator, Bits>() : void
++operator=() : basic_executor_type<Allocator,Bits> &
++operator=() : basic_executor_type<Allocator,Bits> &
++running_in_this_thread() const : bool
++schedule() const : thread_pool::basic_executor_type::sender_type
++context() const : thread_pool &
++on_work_started() const : void
++on_work_finished() const : void
++execute<Function>() : void
++bulk_execute<Function>() : void
++connect<Receiver>() : execution::detail::as_operation<basic_executor_type<Allocator, Bits>, Receiver>
++dispatch<Function,OtherAllocator>() : void
++post<Function,OtherAllocator>() : void
++defer<Function,OtherAllocator>() : void
+{static} +sends_done : const bool
+}
+class "thread_pool_always_blocking_function_adapter<Function>" as C_0000358207284792429370
+class C_0000358207284792429370 {
++operator()() : void
++f : typename decay<Function>::type *
++n : std::size_t
+}
+class "thread_pool::thread_function" as C_0000127867743380468457
+class C_0000127867743380468457 {
++operator()() : void
++scheduler_ : detail::scheduler *
+}
+class "strand<Executor>" as C_0000128377300581950063
+class C_0000128377300581950063 {
++strand<Executor>() : void
++strand<Executor>() : void
++operator=() : strand<Executor> &
++strand<Executor>() : void
++operator=() : strand<Executor> &
++~strand<Executor>() : void
++get_inner_executor() const : strand::inner_executor_type
++context() const : execution_context &
++on_work_started() const : void
++on_work_finished() const : void
++running_in_this_thread() const : bool
++strand<Executor>() : void
++strand<Executor><Executor1>() : void
++strand<Executor><OtherExecutor>() : void
++operator=<OtherExecutor>() : strand<Executor> &
++strand<Executor><OtherExecutor>() : void
++operator=<OtherExecutor>() : strand<Executor> &
++query<Property>() : typename constraint<can_query<const Executor &, Property>::value, typename conditional<is_convertible<Property, execution::blocking_t>::value, execution::blocking_t, typename query_result<const Executor &, Property>::type>::type>::type
++require<Property>() : typename constraint<can_require<const Executor &, Property>::value && ! is_convertible<Property, execution::blocking_t::always_t>::value, strand<typename decay<typename require_result<const Executor &, Property>::type>::type> >::type
++prefer<Property>() : typename constraint<can_prefer<const Executor &, Property>::value && ! is_convertible<Property, execution::blocking_t::always_t>::value, strand<typename decay<typename prefer_result<const Executor &, Property>::type>::type> >::type
++execute<Function>() : typename constraint<execution::can_execute<const Executor &, Function>::value, void>::type
++dispatch<Function,Allocator>() : void
++post<Function,Allocator>() : void
++defer<Function,Allocator>() : void
+{static} +create_implementation<InnerExecutor>() : strand::implementation_type
+{static} +create_implementation<InnerExecutor>() : strand::implementation_type
++query_helper<Property>() : typename query_result<const Executor &, Property>::type
++query_helper<Property>() : execution::blocking_t
++executor_ : Executor
++impl_ : strand::implementation_type
+}
+class "this_coro::executor_t" as C_0001504610152439225185
+class C_0001504610152439225185 {
++executor_t() : void
+}
+class "this_coro::cancellation_state_t" as C_0000294703930715479565
+class C_0000294703930715479565 {
++cancellation_state_t() : void
+}
+class "this_coro::reset_cancellation_state_0_t" as C_0002044191965526733817
+class C_0002044191965526733817 {
++reset_cancellation_state_0_t() : void
+}
+class "this_coro::reset_cancellation_state_1_t<Filter>" as C_0001494855093536409981
+class C_0001494855093536409981 {
++reset_cancellation_state_1_t<Filter><F>() : void
++filter : Filter
+}
+class "this_coro::reset_cancellation_state_2_t<InFilter,OutFilter>" as C_0002164251787289099355
+class C_0002164251787289099355 {
++reset_cancellation_state_2_t<InFilter, OutFilter><F1,F2>() : void
++in_filter : InFilter
++out_filter : OutFilter
+}
+class "this_coro::throw_if_cancelled_0_t" as C_0000875908961316745704
+class C_0000875908961316745704 {
++throw_if_cancelled_0_t() : void
+}
+class "this_coro::throw_if_cancelled_1_t" as C_0002026769674415075041
+class C_0002026769674415075041 {
++throw_if_cancelled_1_t() : void
++value : bool
+}
+class "use_future_t<Allocator>" as C_0000184205612715164375
+class C_0000184205612715164375 {
++use_future_t<Allocator>() : void
++use_future_t<Allocator>() : void
++get_allocator() const : use_future_t::allocator_type
++operator[]<OtherAllocator>() : use_future_t<OtherAllocator>
++rebind<OtherAllocator>() : use_future_t<OtherAllocator>
++operator()<Function>() : detail::packaged_token<typename decay<Function>::type, Allocator>
+}
+class "use_future_t::std_allocator_void" as C_0001713724102727392149
+class C_0001713724102727392149 {
++std_allocator_void() : void
++operator allocator() const : std::allocator<void>
+}
+class "executor_work_guard<Executor,,>" as C_0000161744423736293270
+class C_0000161744423736293270 {
+}
+class "deferred_conditional<T,F>" as C_0000405152319293864563
+class C_0000405152319293864563 {
+}
+class "associated_executor<,>" as C_0000449086915005619037
+class C_0000449086915005619037 {
+}
+class "io_context::basic_executor_type<,uintptr_t>" as C_0000454252346129031868
+class C_0000454252346129031868 {
+}
+class "basic_socket_acceptor<Protocol1,Executor1>" as C_0000458608041516983122
+class C_0000458608041516983122 {
+}
+class "any_completion_handler_allocator<,...>" as C_0000599912472826442676
+class C_0000599912472826442676 {
+}
+class "basic_serial_port<Executor1>" as C_0000629005009591162662
+class C_0000629005009591162662 {
+}
+class "basic_system_executor<,,>" as C_0001032056072342606223
+class C_0001032056072342606223 {
+}
+class "basic_readable_pipe<Executor1>" as C_0001159488150419572868
+class C_0001159488150419572868 {
+}
+class "basic_socket<Protocol1,Executor1>" as C_0001234152234264910327
+class C_0001234152234264910327 {
+}
+class "executor::impl<,>" as C_0001272670126457277140
+class C_0001272670126457277140 {
+}
+class "thread_pool::basic_executor_type<,unsigned int>" as C_0001522797346949347799
+class C_0001522797346949347799 {
+}
+class "time_traits<Time>" as C_0001643558408390301083
+class C_0001643558408390301083 {
+}
+class "basic_writable_pipe<Executor1>" as C_0001972317845011315593
+class C_0001972317845011315593 {
+}
+class "any_completion_handler<...>" as C_0002161679459459154283
+class C_0002161679459459154283 {
+}
+class "basic_waitable_timer<Clock1,WaitTraits1,Executor1>" as C_0002303812189832376029
+class C_0002303812189832376029 {
+}
+C_0002110400422178108755 --+ C_0000579592779670012332
+C_0001041834930635121886 ..|> C_0000753777493944093159
+C_0001684094058832511287 ..|> C_0000753777493944093159
+C_0002178673844739850305 --+ C_0001919956248681364680
+C_0002094325986805421920 --+ C_0001919956248681364680
+C_0001751898571735160462 ..|> C_0001919956248681364680
+C_0000352118411325380521 ..|> C_0000352118411325380521
+C_0001886574204218092814 --+ C_0000352118411325380521
+C_0001232554361209982665 --+ C_0000352118411325380521
+C_0001631490790111047121 --+ C_0000352118411325380521
+C_0000105945471770528204 ..|> C_0002295839784929029914
+C_0001620070496707355129 ..|> C_0002295839784929029914
+C_0001333988438710426705 ..|> C_0001763862446001942345
+C_0001163808302553303505 <|-- C_0002216123710377401285
+C_0001075184824456831325 ..> C_0000267097329498411292
+C_0001075184824456831325 ..> C_0001060514151700537330
+C_0001060514151700537330 <.. C_0001075184824456831325 : +<<friend>>
+C_0000957743670870456570 --+ C_0001060514151700537330
+C_0000899286941696341228 ..|> C_0000532634720971459996
+C_0001884445244141597806 ..> C_0001751898571735160462
+C_0001884445244141597806 ..> C_0001221939569020161524
+C_0000695141153035704827 --+ C_0002065305983511051496
+C_0002061865058505779735 --+ C_0002065305983511051496
+C_0002149874971759018197 --+ C_0002065305983511051496
+C_0002149874971759018197 ..> C_0002065305983511051496
+C_0002149874971759018197 --> C_0002065305983511051496 : -owner_
+C_0000707417393859856318 --+ C_0002149874971759018197
+C_0001930045390932397221 ..|> C_0001884445244141597806
+C_0001221939569020161524 ..> C_0001930045390932397221
+C_0002065305983511051496 <|-- C_0001221939569020161524
+C_0000927029792606998000 --+ C_0001221939569020161524
+C_0001454795182572301238 ..|> C_0000923206039121407326
+C_0002052210819347097931 ..> C_0000267097329498411292
+C_0001623925961559449120 ..> C_0001060514151700537330
+C_0001623925961559449120 ..> C_0000267097329498411292
+C_0000211046925031916270 --+ C_0001623925961559449120
+C_0000211046925031916270 o-- C_0001075184824456831325 : +signal_
+C_0000211046925031916270 o-- C_0000267097329498411292 : +cancelled_
+C_0000475070016299141269 --+ C_0001623925961559449120
+C_0000475070016299141269 ..> C_0000267097329498411292
+C_0000473578666287689519 --+ C_0001164715841612463432
+C_0002289647677683880663 ..> C_0001992449723781696109
+C_0002289647677683880663 ..|> C_0001164715841612463432
+C_0000339474733885529932 ..> C_0001518213415919356242
+C_0000995635239522977261 --+ C_0000339474733885529932
+C_0001333788306557319588 ..> C_0001518213415919356242
+C_0000994107202387188237 ..> C_0001518213415919356242
+C_0000994107202387188237 ..|> C_0000339474733885529932
+C_0001518213415919356242 ..> C_0000994107202387188237
+C_0001518213415919356242 ..> C_0001060514151700537330
+C_0000996213171688166134 ..> C_0001518213415919356242
+C_0000996213171688166134 ..> C_0002216123710377401285
+C_0000996213171688166134 ..|> C_0000923206039121407326
+C_0001163808302553303505 <|-- C_0000750189554942949379
+C_0001283838706248842689 --+ C_0000821918711511637479
+C_0001427378672799846397 --+ C_0000821918711511637479
+C_0002287188187341591389 ..|> C_0001058762363213460233
+C_0001588984883922838991 ..|> C_0000276547691992090690
+C_0000105129752803362734 ..> C_0001588984883922838991
+C_0002065305983511051496 <|-- C_0000105129752803362734
+C_0000276547691992090690 --+ C_0000105129752803362734
+C_0000276547691992090690 ..> C_0001751898571735160462
+C_0000276547691992090690 ..> C_0000105129752803362734
+C_0000276547691992090690 <.. C_0000105129752803362734 : +<<friend>>
+C_0000001930820299579924 --+ C_0000105129752803362734
+C_0000001930820299579924 ..> C_0000105129752803362734
+C_0001841820429911858749 --+ C_0000105129752803362734
+C_0001841820429911858749 ..> C_0000105129752803362734
+C_0000116913879989434614 ..|> C_0000161744423736293270
+C_0001466659954377760637 ..|> C_0000161744423736293270
+C_0000073531310776945951 --+ C_0000105129752803362734
+C_0000073531310776945951 ..> C_0000105129752803362734
+C_0002167338014875013779 --+ C_0000105129752803362734
+C_0002167338014875013779 ..> C_0000105129752803362734
+C_0000133685500292154467 --+ C_0001329267821479112043
+C_0000336099795826135937 --+ C_0001329267821479112043
+C_0001682096113223144056 ..> C_0000622260736241324297
+C_0000622260736241324297 <|-- C_0001682096113223144056
+C_0000298775955056524500 ..> C_0000622260736241324297
+C_0000923069171355014186 ..> C_0000298775955056524500
+C_0000298775955056524500 <|-- C_0000923069171355014186
+C_0001632964849648014196 ..> C_0000622260736241324297
+C_0001632964849648014196 o-- C_0000622260736241324297 : -buf_
+C_0000491537876793414642 ..> C_0000923069171355014186
+C_0000491537876793414642 ..> C_0001682096113223144056
+C_0000042643733936786038 ..> C_0000923069171355014186
+C_0000042643733936786038 ..> C_0001682096113223144056
+C_0000493043484508310822 <|-- C_0002258581739027353293
+C_0000138963604805253517 ..> C_0000622260736241324297
+C_0000138963604805253517 ..> C_0000735632064666601427
+C_0000138963604805253517 o-- C_0000622260736241324297 : -buffer_
+C_0000138963604805253517 o-- C_0000735632064666601427 : -id_
+C_0002280791800217451586 ..> C_0000138963604805253517
+C_0002280791800217451586 ..> C_0000298775955056524500
+C_0002280791800217451586 ..> C_0000735632064666601427
+C_0002280791800217451586 o-- C_0000298775955056524500 : -buffer_
+C_0002280791800217451586 o-- C_0000735632064666601427 : -id_
+C_0002251142779628954667 ..> C_0002251142779628954667
+C_0002251142779628954667 ..> C_0001234152234264910327
+C_0001329267821479112043 <|-- C_0002251142779628954667
+C_0000118360417514684777 --+ C_0002251142779628954667
+C_0000992936191056096373 --+ C_0002251142779628954667
+C_0000663413449874258456 --+ C_0002251142779628954667
+C_0002251142779628954667 <|-- C_0000300421770783900070
+C_0000845548434118702422 --+ C_0000300421770783900070
+C_0002106151838513322220 --+ C_0000300421770783900070
+C_0001404791623453730807 --+ C_0000300421770783900070
+C_0001993384269880860283 --+ C_0000300421770783900070
+C_0001751521259469802707 --+ C_0000300421770783900070
+C_0001429389221502855366 ..|> C_0001643558408390301083
+C_0002179810917352815544 --+ C_0000825134613055375187
+C_0000634773909533942772 --+ C_0000825134613055375187
+C_0000539825336144485956 ..> C_0000105129752803362734
+C_0000539825336144485956 ..> C_0001588984883922838991
+C_0000617462298852086838 ..> C_0000105129752803362734
+C_0000617462298852086838 ..> C_0001588984883922838991
+C_0002023240989275094213 ..> C_0000105129752803362734
+C_0002023240989275094213 ..> C_0001588984883922838991
+C_0002023240989275094213 ..|> C_0000539825336144485956
+C_0002251142779628954667 <|-- C_0001689830339688587027
+C_0001787537657380559740 --+ C_0001689830339688587027
+C_0000497487532278530771 --+ C_0001689830339688587027
+C_0000851301681241319678 --+ C_0001689830339688587027
+C_0002101155047341252618 --+ C_0001689830339688587027
+C_0000170381772536364385 --+ C_0001689830339688587027
+C_0002203480802918800744 ..> C_0001159488150419572868
+C_0000928439653276581367 --+ C_0002203480802918800744
+C_0000694677938061162486 --+ C_0002203480802918800744
+C_0002251142779628954667 <|-- C_0000102779505467483669
+C_0001580129487375757497 --+ C_0000102779505467483669
+C_0001561069650707268835 --+ C_0000102779505467483669
+C_0000684171793268208012 --+ C_0000102779505467483669
+C_0002275936598283369010 --+ C_0001872423731591456498
+C_0001935096372874959705 --+ C_0001872423731591456498
+C_0001214867729856727203 --+ C_0001935096372874959705
+C_0000382608433822363207 --+ C_0001872423731591456498
+C_0002127774062639185902 --+ C_0000382608433822363207
+C_0001372024863050258601 --+ C_0001872423731591456498
+C_0000002389278402762306 --+ C_0001372024863050258601
+C_0000938921830601086473 --+ C_0001872423731591456498
+C_0000607999972769002841 ..> C_0000629005009591162662
+C_0001872423731591456498 <|-- C_0000607999972769002841
+C_0001863119155462986358 --+ C_0000607999972769002841
+C_0001481347359384526046 --+ C_0000607999972769002841
+C_0000463694792247200959 --+ C_0000607999972769002841
+C_0000721964023551572495 --+ C_0000473339362468888815
+C_0000473339362468888815 <|-- C_0001994823049193047898
+C_0001310078398999034377 --+ C_0001994823049193047898
+C_0001462986487885308685 --+ C_0001994823049193047898
+C_0000800464884670493624 ..> C_0000458608041516983122
+C_0000800464884670493624 ..> C_0001234152234264910327
+C_0001329267821479112043 <|-- C_0000800464884670493624
+C_0000101577815943841046 --+ C_0000800464884670493624
+C_0000486324289532472689 --+ C_0000800464884670493624
+C_0001031346170663651795 --+ C_0000800464884670493624
+C_0001031346170663651795 ..> C_0001234152234264910327
+C_0001167514986718000192 --+ C_0000800464884670493624
+C_0002251142779628954667 <|-- C_0000888920646676525023
+C_0001619071580851378341 --+ C_0000888920646676525023
+C_0001246419260724352257 --+ C_0000888920646676525023
+C_0000402371130314303983 --+ C_0000888920646676525023
+C_0001339208676110265245 --+ C_0001480821051807658755
+C_0001563175005524888899 --+ C_0001480821051807658755
+C_0001368414461083048547 ..> C_0000598211904123792581
+C_0000447720034096664289 ..> C_0000923069171355014186
+C_0000447720034096664289 ..> C_0001682096113223144056
+C_0001707204983602852877 ..> C_0000447720034096664289
+C_0001707204983602852877 --> C_0000447720034096664289 : -sb_
+C_0000565542308197095561 ..> C_0001972317845011315593
+C_0000326567288131709361 --+ C_0000565542308197095561
+C_0000141398663260888379 --+ C_0000565542308197095561
+C_0001341254032176167842 ..> C_0001209250569527793898
+C_0001341254032176167842 ..|> C_0001763862446001942345
+C_0000344792771848228327 ..> C_0001835176679716454787
+C_0000344792771848228327 ..|> C_0000532634720971459996
+C_0000737634417215276942 ..> C_0001251642126827096656
+C_0000667662157759996161 ..|> C_0002085166210246050158
+C_0000674820976728978734 ..> C_0000737634417215276942
+C_0000674820976728978734 ..|> C_0000923206039121407326
+C_0000396051957264461855 ..> C_0001292987643905878313
+C_0000396051957264461855 ..|> C_0001058762363213460233
+C_0000243748527253355396 ..> C_0000138963604805253517
+C_0000243748527253355396 ..> C_0002065305983511051496
+C_0000243748527253355396 o-- C_0000138963604805253517 : -buffers_
+C_0001893286903938629994 ..|> C_0000762851305950348766
+C_0000035198005532594412 o-- C_0000820246541163106035 : -inner_stream_impl_
+C_0000035198005532594412 o-- C_0001893286903938629994 : -stream_impl_
+C_0002154363408278802263 --+ C_0000478198388049114075
+C_0000108266549297425902 ..|> C_0001354847054453951725
+C_0001639765042149222702 ..|> C_0001118399273803747903
+C_0001841029389783028511 ..> C_0001639765042149222702
+C_0000040289487466732585 --+ C_0001841029389783028511
+C_0001469913543827020208 --+ C_0000068264242739121300
+C_0000408522659736215366 ..> C_0002065305983511051496
+C_0001792641688715044824 --+ C_0000408522659736215366
+C_0002304422587923435943 --+ C_0000408522659736215366
+C_0002304422587923435943 ..> C_0002065305983511051496
+C_0002304422587923435943 <.. C_0000408522659736215366 : +<<friend>>
+C_0002080923436031164336 --+ C_0000408522659736215366
+C_0002080923436031164336 ..> C_0002065305983511051496
+C_0000640326921389067419 --+ C_0000408522659736215366
+C_0000640326921389067419 ..> C_0001930045390932397221
+C_0000640326921389067419 ..> C_0002065305983511051496
+C_0000640326921389067419 o-- C_0001930045390932397221 : -executor_
+C_0001204664422348815587 --+ C_0001197525458661947626
+C_0001317710114972522026 o-- C_0001197525458661947626 : -impl_
+C_0001047890427567912267 --+ C_0000105129752803362734
+C_0001047890427567912267 ..> C_0000105129752803362734
+C_0001293600527802285514 --+ C_0001047890427567912267
+C_0001830231423530344583 --+ C_0001047890427567912267
+C_0002098982763942637031 ..> C_0002025919776476726445
+C_0001327524464125083386 ..> C_0002025919776476726445
+C_0001327524464125083386 ..> C_0002098982763942637031
+C_0001327524464125083386 o-- C_0002025919776476726445 : -ipv4_address_
+C_0001327524464125083386 o-- C_0002098982763942637031 : -ipv6_address_
+C_0000318402603351769102 ..> C_0002025919776476726445
+C_0000318402603351769102 o-- C_0002025919776476726445 : -address_
+C_0001494989037982793636 ..> C_0002025919776476726445
+C_0001494989037982793636 ..> C_0000318402603351769102
+C_0001494989037982793636 o-- C_0002025919776476726445 : -address_
+C_0001494989037982793636 ..|> C_0000193569378466042893
+C_0001983676680109476603 ..> C_0002025919776476726445
+C_0001983676680109476603 ..> C_0001494989037982793636
+C_0001983676680109476603 o-- C_0001494989037982793636 : -begin_
+C_0001983676680109476603 o-- C_0001494989037982793636 : -end_
+C_0000772044873699700545 ..> C_0002025919776476726445
+C_0000772044873699700545 ..> C_0001494989037982793636
+C_0000772044873699700545 ..> C_0001983676680109476603
+C_0000772044873699700545 o-- C_0001494989037982793636 : -begin_
+C_0000772044873699700545 o-- C_0001494989037982793636 : -end_
+C_0000772044873699700545 ..|> C_0002162700889548815212
+C_0002102615558040381043 ..> C_0002098982763942637031
+C_0002102615558040381043 ..> C_0000318402603351769102
+C_0002102615558040381043 o-- C_0002098982763942637031 : -address_
+C_0002102615558040381043 ..|> C_0000193569378466042893
+C_0001541815403956626262 ..> C_0002098982763942637031
+C_0001541815403956626262 ..> C_0002102615558040381043
+C_0001541815403956626262 ..> C_0001983676680109476603
+C_0001541815403956626262 o-- C_0002102615558040381043 : -begin_
+C_0001541815403956626262 o-- C_0002102615558040381043 : -end_
+C_0001541815403956626262 ..|> C_0002162700889548815212
+C_0000630457919158355745 ..> C_0002025919776476726445
+C_0000630457919158355745 ..> C_0000772044873699700545
+C_0000630457919158355745 o-- C_0002025919776476726445 : -address_
+C_0001305454857652324427 ..> C_0002098982763942637031
+C_0001305454857652324427 ..> C_0001541815403956626262
+C_0001305454857652324427 o-- C_0002098982763942637031 : -address_
+C_0001250048442097748343 ..> C_0001327524464125083386
+C_0001347871524203521943 ..> C_0000504239392535325073
+C_0001347871524203521943 o-- C_0000504239392535325073 : #values_
+C_0002226089269405758232 --+ C_0002054056523873699388
+C_0002054056523873699388 <|-- C_0001433847844236950668
+C_0001433847844236950668 <|-- C_0001352938694161192245
+C_0001347871524203521943 <|-- C_0002280271119024021380
+C_0000605417433857946713 ..> C_0001352938694161192245
+C_0000605417433857946713 ..> C_0002280271119024021380
+C_0002054056523873699388 <|-- C_0000605417433857946713
+C_0001751550961524516647 --+ C_0000605417433857946713
+C_0000636570610308227296 --+ C_0000605417433857946713
+C_0000767644011034091251 --+ C_0001936514665235435084
+C_0002115006149424113920 o-- C_0001936514665235435084 : -impl_
+C_0001091533276186936325 ..|> C_0002216214012275323442
+C_0000428358945123590506 ..> C_0001091533276186936325
+C_0002065305983511051496 <|-- C_0000428358945123590506
+C_0002216214012275323442 --+ C_0000428358945123590506
+C_0002216214012275323442 ..> C_0001751898571735160462
+C_0002216214012275323442 ..> C_0000428358945123590506
+C_0002216214012275323442 --> C_0000428358945123590506 : -pool_
+C_0002216214012275323442 <.. C_0000428358945123590506 : +<<friend>>
+C_0000127867743380468457 --+ C_0000428358945123590506
+C_0000128377300581950063 ..> C_0002065305983511051496
+C_0001713724102727392149 --+ C_0000184205612715164375
+C_0000454252346129031868 --+ C_0000105129752803362734
+C_0001272670126457277140 --+ C_0000408522659736215366
+C_0001522797346949347799 --+ C_0000428358945123590506
+@enduml
