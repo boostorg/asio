@@ -70,6 +70,10 @@ target_link_libraries(boost_asio
     Boost::asio_spawn
 )
 
+if (MINGW)
+  target_link_libraries(boost_asio INTERFACE ws2_32)
+endif()
+
 target_compile_features(boost_asio INTERFACE cxx_std_11)
 
 if (BOOST_SUPERPROJECT_VERSION AND NOT CMAKE_VERSION VERSION_LESS 3.13)
