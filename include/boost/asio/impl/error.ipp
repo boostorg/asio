@@ -29,6 +29,12 @@ namespace error {
 #if !defined(BOOST_ASIO_WINDOWS) \
   && !defined(BOOST_ASIO_CYGWIN_W32_SOCKETS)
 
+// classes derived from boost::system::error_category
+#if ( defined( BOOST_GCC ) && BOOST_GCC >= 40600 ) || defined( BOOST_CLANG )
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wnon-virtual-dtor"
+#endif
+
 namespace detail {
 
 class netdb_category : public boost::system::error_category
@@ -117,6 +123,10 @@ public:
 };
 
 } // namespace detail
+
+#if ( defined( BOOST_GCC ) && BOOST_GCC >= 40600 ) || defined( BOOST_CLANG )
+#pragma GCC diagnostic pop
+#endif
 
 const boost::system::error_category& get_misc_category()
 {
