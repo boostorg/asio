@@ -23,6 +23,7 @@
 
 #include <boost/asio/config.hpp>
 #include <boost/asio/detail/reactive_socket_service_base.hpp>
+#include <boost/asio/error.hpp>
 
 #include <boost/asio/detail/push_options.hpp>
 
@@ -122,7 +123,7 @@ boost::system::error_code reactive_socket_service_base::close(
   }
   else
   {
-    ec = boost::system::error_code();
+    boost::asio::error::clear(ec);
   }
 
   // The descriptor is closed by the OS even if close() returns an error.
@@ -155,7 +156,7 @@ socket_type reactive_socket_service_base::release(
   reactor_.cleanup_descriptor_data(impl.reactor_data_);
   socket_type sock = impl.socket_;
   construct(impl);
-  ec = boost::system::error_code();
+  boost::asio::error::clear(ec);
   return sock;
 }
 
@@ -173,7 +174,7 @@ boost::system::error_code reactive_socket_service_base::cancel(
         "socket", &impl, impl.socket_, "cancel"));
 
   reactor_.cancel_ops(impl.socket_, impl.reactor_data_);
-  ec = boost::system::error_code();
+  boost::asio::error::clear(ec);
   return ec;
 }
 
@@ -211,7 +212,7 @@ boost::system::error_code reactive_socket_service_base::do_open(
     impl.state_ = 0;
     break;
   }
-  ec = boost::system::error_code();
+  boost::asio::error::clear(ec);
   return ec;
 }
 
@@ -248,7 +249,7 @@ boost::system::error_code reactive_socket_service_base::do_assign(
     break;
   }
   impl.state_ |= socket_ops::possible_dup;
-  ec = boost::system::error_code();
+  boost::asio::error::clear(ec);
   return ec;
 }
 
@@ -308,7 +309,7 @@ void reactive_socket_service_base::do_start_connect_op(
       if (op->ec_ == boost::asio::error::in_progress
           || op->ec_ == boost::asio::error::would_block)
       {
-        op->ec_ = boost::system::error_code();
+        boost::asio::error::clear(op->ec_);
         reactor_.start_op(reactor::connect_op, impl.socket_, impl.reactor_data_,
             op, is_continuation, false, on_immediate, immediate_arg);
         return;

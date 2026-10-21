@@ -98,7 +98,7 @@ std::string network_v6::to_string() const
 std::string network_v6::to_string(boost::system::error_code& ec) const
 {
   using namespace std; // For sprintf.
-  ec = boost::system::error_code();
+  boost::asio::error::clear(ec);
   char prefix_len[16];
 #if defined(BOOST_ASIO_HAS_SNPRINTF)
   snprintf(prefix_len, sizeof(prefix_len), "/%u", prefix_length_);

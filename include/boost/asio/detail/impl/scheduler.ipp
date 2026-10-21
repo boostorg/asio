@@ -23,6 +23,7 @@
 #include <boost/asio/detail/scheduler.hpp>
 #include <boost/asio/detail/scheduler_thread_info.hpp>
 #include <boost/asio/detail/signal_blocker.hpp>
+#include <boost/asio/error.hpp>
 
 #if defined(BOOST_ASIO_HAS_IO_URING_AS_DEFAULT)
 # include <boost/asio/detail/io_uring_service.hpp>
@@ -204,7 +205,7 @@ void scheduler::init_task()
 
 std::size_t scheduler::run(boost::system::error_code& ec)
 {
-  ec = boost::system::error_code();
+  boost::asio::error::clear(ec);
   if (outstanding_work_ == 0)
   {
     stop();
@@ -228,7 +229,7 @@ std::size_t scheduler::run(boost::system::error_code& ec)
 
 std::size_t scheduler::run_one(boost::system::error_code& ec)
 {
-  ec = boost::system::error_code();
+  boost::asio::error::clear(ec);
   if (outstanding_work_ == 0)
   {
     stop();
@@ -248,7 +249,7 @@ std::size_t scheduler::run_one(boost::system::error_code& ec)
 
 std::size_t scheduler::wait_one(long usec, boost::system::error_code& ec)
 {
-  ec = boost::system::error_code();
+  boost::asio::error::clear(ec);
   if (outstanding_work_ == 0)
   {
     stop();
@@ -266,7 +267,7 @@ std::size_t scheduler::wait_one(long usec, boost::system::error_code& ec)
 
 std::size_t scheduler::poll(boost::system::error_code& ec)
 {
-  ec = boost::system::error_code();
+  boost::asio::error::clear(ec);
   if (outstanding_work_ == 0)
   {
     stop();
@@ -299,7 +300,7 @@ std::size_t scheduler::poll(boost::system::error_code& ec)
 
 std::size_t scheduler::poll_one(boost::system::error_code& ec)
 {
-  ec = boost::system::error_code();
+  boost::asio::error::clear(ec);
   if (outstanding_work_ == 0)
   {
     stop();

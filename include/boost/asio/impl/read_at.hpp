@@ -46,7 +46,7 @@ namespace detail
       const MutableBufferIterator&, CompletionCondition completion_condition,
       boost::system::error_code& ec)
   {
-    ec = boost::system::error_code();
+    boost::asio::error::clear(ec);
     boost::asio::detail::consuming_buffers<mutable_buffer,
         MutableBufferSequence, MutableBufferIterator> tmp(buffers);
     while (!tmp.empty())
@@ -125,7 +125,7 @@ std::size_t read_at(SyncRandomAccessReadDevice& d,
       is_completion_condition<CompletionCondition>::value
     >)
 {
-  ec = boost::system::error_code();
+  boost::asio::error::clear(ec);
   std::size_t total_transferred = 0;
   std::size_t max_size = detail::adapt_completion_condition_result(
         completion_condition(ec, total_transferred));

@@ -45,7 +45,7 @@ namespace detail
       const MutableBufferSequence& buffers, const MutableBufferIterator&,
       CompletionCondition completion_condition, boost::system::error_code& ec)
   {
-    ec = boost::system::error_code();
+    boost::asio::error::clear(ec);
     boost::asio::detail::consuming_buffers<mutable_buffer,
         MutableBufferSequence, MutableBufferIterator> tmp(buffers);
     while (!tmp.empty())
@@ -136,7 +136,7 @@ std::size_t read(SyncReadStream& s,
   decay_t<DynamicBuffer_v1> b(
       static_cast<DynamicBuffer_v1&&>(buffers));
 
-  ec = boost::system::error_code();
+  boost::asio::error::clear(ec);
   std::size_t total_transferred = 0;
   std::size_t max_size = detail::adapt_completion_condition_result(
         completion_condition(ec, total_transferred));
@@ -273,7 +273,7 @@ std::size_t read(SyncReadStream& s, DynamicBuffer_v2 buffers,
 {
   DynamicBuffer_v2& b = buffers;
 
-  ec = boost::system::error_code();
+  boost::asio::error::clear(ec);
   std::size_t total_transferred = 0;
   std::size_t max_size = detail::adapt_completion_condition_result(
         completion_condition(ec, total_transferred));

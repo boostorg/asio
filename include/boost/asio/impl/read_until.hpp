@@ -30,6 +30,7 @@
 #include <boost/asio/detail/limits.hpp>
 #include <boost/asio/detail/non_const_lvalue.hpp>
 #include <boost/asio/detail/throw_error.hpp>
+#include <boost/asio/error.hpp>
 
 #include <boost/asio/detail/push_options.hpp>
 
@@ -134,7 +135,7 @@ std::size_t read_until(SyncReadStream& s,
     if (iter != end)
     {
       // Found a match. We're done.
-      ec = boost::system::error_code();
+      boost::asio::error::clear(ec);
       return iter - begin + 1;
     }
     else
@@ -211,7 +212,7 @@ std::size_t read_until(SyncReadStream& s,
       if (result.second)
       {
         // Full match. We're done.
-        ec = boost::system::error_code();
+        boost::asio::error::clear(ec);
         return result.first - begin + delim.length();
       }
       else
@@ -297,7 +298,7 @@ std::size_t read_until(SyncReadStream& s, DynamicBuffer_v1&& buffers,
       if (match_results[0].matched)
       {
         // Full match. We're done.
-        ec = boost::system::error_code();
+        boost::asio::error::clear(ec);
         return match_results[0].second - begin;
       }
       else
@@ -388,7 +389,7 @@ std::size_t read_until(SyncReadStream& s,
     if (result.second)
     {
       // Full match. We're done.
-      ec = boost::system::error_code();
+      boost::asio::error::clear(ec);
       return result.first - begin;
     }
     else if (result.first != end)
@@ -534,7 +535,7 @@ std::size_t read_until(SyncReadStream& s, DynamicBuffer_v2 buffers,
     if (iter != end)
     {
       // Found a match. We're done.
-      ec = boost::system::error_code();
+      boost::asio::error::clear(ec);
       return iter - begin + 1;
     }
     else
@@ -606,7 +607,7 @@ std::size_t read_until(SyncReadStream& s, DynamicBuffer_v2 buffers,
       if (result.second)
       {
         // Full match. We're done.
-        ec = boost::system::error_code();
+        boost::asio::error::clear(ec);
         return result.first - begin + delim.length();
       }
       else
@@ -689,7 +690,7 @@ std::size_t read_until(SyncReadStream& s, DynamicBuffer_v2 buffers,
       if (match_results[0].matched)
       {
         // Full match. We're done.
-        ec = boost::system::error_code();
+        boost::asio::error::clear(ec);
         return match_results[0].second - begin;
       }
       else
@@ -775,7 +776,7 @@ std::size_t read_until(SyncReadStream& s, DynamicBuffer_v2 buffers,
     if (result.second)
     {
       // Full match. We're done.
-      ec = boost::system::error_code();
+      boost::asio::error::clear(ec);
       return result.first - begin;
     }
     else if (result.first != end)

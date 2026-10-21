@@ -22,6 +22,7 @@
 #if defined(BOOST_ASIO_HAS_PIPE)
 
 #include <boost/asio/connect_pipe.hpp>
+#include <boost/asio/error.hpp>
 
 #if defined(BOOST_ASIO_HAS_IOCP)
 # include <cstdio>

@@ -24,6 +24,7 @@
 #include <sys/stat.h>
 #include <boost/asio/detail/memory.hpp>
 #include <boost/asio/detail/win_iocp_file_service.hpp>
+#include <boost/asio/error.hpp>
 
 #include <boost/asio/detail/push_options.hpp>
 

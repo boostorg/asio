@@ -157,7 +157,7 @@ public:
         while (wait_op* op = timer->op_queue_.front())
         {
           timer->op_queue_.pop();
-          op->ec_ = boost::system::error_code();
+          boost::asio::error::clear(op->ec_);
           ops.push(op);
         }
         remove_timer(*timer);

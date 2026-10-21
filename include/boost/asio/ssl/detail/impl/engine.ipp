@@ -131,7 +131,7 @@ boost::system::error_code engine::set_verify_mode(
 {
   ::SSL_set_verify(ssl_, v, ::SSL_get_verify_callback(ssl_));
 
-  ec = boost::system::error_code();
+  boost::asio::error::clear(ec);
   return ec;
 }
 
@@ -140,7 +140,7 @@ boost::system::error_code engine::set_verify_depth(
 {
   ::SSL_set_verify_depth(ssl_, depth);
 
-  ec = boost::system::error_code();
+  boost::asio::error::clear(ec);
   return ec;
 }
 
@@ -155,7 +155,7 @@ boost::system::error_code engine::set_verify_callback(
   ::SSL_set_verify(ssl_, ::SSL_get_verify_mode(ssl_),
       &engine::verify_callback_function);
 
-  ec = boost::system::error_code();
+  boost::asio::error::clear(ec);
   return ec;
 }
 
@@ -199,7 +199,7 @@ engine::want engine::write(const boost::asio::const_buffer& data,
 {
   if (data.size() == 0)
   {
-    ec = boost::system::error_code();
+    boost::asio::error::clear(ec);
     return engine::want_nothing;
   }
 
@@ -213,7 +213,7 @@ engine::want engine::read(const boost::asio::mutable_buffer& data,
 {
   if (data.size() == 0)
   {
-    ec = boost::system::error_code();
+    boost::asio::error::clear(ec);
     return engine::want_nothing;
   }
 
@@ -318,17 +318,17 @@ engine::want engine::perform(int (engine::* op)(void*, std::size_t),
 
   if (ssl_error == SSL_ERROR_WANT_WRITE)
   {
-    ec = boost::system::error_code();
+    boost::asio::error::clear(ec);
     return want_output_and_retry;
   }
   else if (pending_output_after > pending_output_before)
   {
-    ec = boost::system::error_code();
+    boost::asio::error::clear(ec);
     return result > 0 ? want_output : want_output_and_retry;
   }
   else if (ssl_error == SSL_ERROR_WANT_READ)
   {
-    ec = boost::system::error_code();
+    boost::asio::error::clear(ec);
     return want_input_and_retry;
   }
   else if (ssl_error == SSL_ERROR_ZERO_RETURN)
@@ -338,7 +338,7 @@ engine::want engine::perform(int (engine::* op)(void*, std::size_t),
   }
   else if (ssl_error == SSL_ERROR_NONE)
   {
-    ec = boost::system::error_code();
+    boost::asio::error::clear(ec);
     return want_nothing;
   }
   else

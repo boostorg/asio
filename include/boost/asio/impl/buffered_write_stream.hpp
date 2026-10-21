@@ -19,6 +19,7 @@
 #include <boost/asio/detail/handler_cont_helpers.hpp>
 #include <boost/asio/detail/handler_type_requirements.hpp>
 #include <boost/asio/detail/non_const_lvalue.hpp>
+#include <boost/asio/error.hpp>
 
 #include <boost/asio/detail/push_options.hpp>
 
@@ -189,7 +190,7 @@ template <typename ConstBufferSequence>
 std::size_t buffered_write_stream<Stream>::write_some(
     const ConstBufferSequence& buffers, boost::system::error_code& ec)
 {
-  ec = boost::system::error_code();
+  boost::asio::error::clear(ec);
 
   using boost::asio::buffer_size;
   if (buffer_size(buffers) == 0)

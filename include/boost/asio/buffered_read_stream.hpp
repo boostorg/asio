@@ -234,7 +234,7 @@ public:
   /// Determine the amount of data that may be read without blocking.
   std::size_t in_avail(boost::system::error_code& ec)
   {
-    ec = boost::system::error_code();
+    boost::asio::error::clear(ec);
     return storage_.size();
   }
 

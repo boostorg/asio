@@ -124,7 +124,7 @@ boost::system::error_code reactive_descriptor_service::assign(
 
   impl.descriptor_ = native_descriptor;
   impl.state_ = descriptor_ops::possible_dup;
-  ec = boost::system::error_code();
+  boost::asio::error::clear(ec);
   return ec;
 }
 
@@ -146,7 +146,7 @@ boost::system::error_code reactive_descriptor_service::close(
   }
   else
   {
-    ec = boost::system::error_code();
+    boost::asio::error::clear(ec);
   }
 
   // The descriptor is closed by the OS even if close() returns an error.
@@ -195,7 +195,7 @@ boost::system::error_code reactive_descriptor_service::cancel(
         "descriptor", &impl, impl.descriptor_, "cancel"));
 
   reactor_.cancel_ops(impl.descriptor_, impl.reactor_data_);
-  ec = boost::system::error_code();
+  boost::asio::error::clear(ec);
   return ec;
 }
 

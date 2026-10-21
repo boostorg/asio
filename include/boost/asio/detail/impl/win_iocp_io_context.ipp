@@ -208,7 +208,7 @@ boost::system::error_code win_iocp_io_context::register_handle(
   }
   else
   {
-    ec = boost::system::error_code();
+    boost::asio::error::clear(ec);
   }
   return ec;
 }
@@ -218,7 +218,7 @@ size_t win_iocp_io_context::run(boost::system::error_code& ec)
   if (::InterlockedExchangeAdd(&outstanding_work_, 0) == 0)
   {
     stop();
-    ec = boost::system::error_code();
+    boost::asio::error::clear(ec);
     return 0;
   }
 
@@ -239,7 +239,7 @@ size_t win_iocp_io_context::run_one(boost::system::error_code& ec)
   if (::InterlockedExchangeAdd(&outstanding_work_, 0) == 0)
   {
     stop();
-    ec = boost::system::error_code();
+    boost::asio::error::clear(ec);
     return 0;
   }
 
@@ -256,7 +256,7 @@ size_t win_iocp_io_context::wait_one(long usec, boost::system::error_code& ec)
   if (::InterlockedExchangeAdd(&outstanding_work_, 0) == 0)
   {
     stop();
-    ec = boost::system::error_code();
+    boost::asio::error::clear(ec);
     return 0;
   }
 
@@ -271,7 +271,7 @@ size_t win_iocp_io_context::poll(boost::system::error_code& ec)
   if (::InterlockedExchangeAdd(&outstanding_work_, 0) == 0)
   {
     stop();
-    ec = boost::system::error_code();
+    boost::asio::error::clear(ec);
     return 0;
   }
 
@@ -292,7 +292,7 @@ size_t win_iocp_io_context::poll_one(boost::system::error_code& ec)
   if (::InterlockedExchangeAdd(&outstanding_work_, 0) == 0)
   {
     stop();
-    ec = boost::system::error_code();
+    boost::asio::error::clear(ec);
     return 0;
   }
 
@@ -505,7 +505,7 @@ size_t win_iocp_io_context::do_one(DWORD msec,
 
         op->complete(this, result_ec, bytes_transferred);
         this_thread.rethrow_pending_exception();
-        ec = boost::system::error_code();
+        boost::asio::error::clear(ec);
         return 1;
       }
     }
@@ -523,7 +523,7 @@ size_t win_iocp_io_context::do_one(DWORD msec,
       if (msec == INFINITE)
         continue;
 
-      ec = boost::system::error_code();
+      boost::asio::error::clear(ec);
       return 0;
     }
     else if (completion_key == wake_for_dispatch)
@@ -552,7 +552,7 @@ size_t win_iocp_io_context::do_one(DWORD msec,
           }
         }
 
-        ec = boost::system::error_code();
+        boost::asio::error::clear(ec);
         return 0;
       }
     }

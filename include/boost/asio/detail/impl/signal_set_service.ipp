@@ -23,6 +23,7 @@
 #include <boost/asio/detail/signal_set_service.hpp>
 #include <boost/asio/detail/static_mutex.hpp>
 #include <boost/asio/detail/throw_exception.hpp>
+#include <boost/asio/error.hpp>
 
 #if defined(BOOST_ASIO_HAS_IO_URING_AS_DEFAULT)
 # include <boost/asio/detail/io_uring_service.hpp>
@@ -425,7 +426,7 @@ boost::system::error_code signal_set_service::add(
     ++state->registration_count_[signal_number];
   }
 
-  ec = boost::system::error_code();
+  boost::asio::error::clear(ec);
   return ec;
 }
 
@@ -498,7 +499,7 @@ boost::system::error_code signal_set_service::remove(
     delete reg;
   }
 
-  ec = boost::system::error_code();
+  boost::asio::error::clear(ec);
   return ec;
 }
 
@@ -553,7 +554,7 @@ boost::system::error_code signal_set_service::clear(
     delete reg;
   }
 
-  ec = boost::system::error_code();
+  boost::asio::error::clear(ec);
   return ec;
 }
 
@@ -579,7 +580,7 @@ boost::system::error_code signal_set_service::cancel(
 
   scheduler_.post_deferred_completions(ops);
 
-  ec = boost::system::error_code();
+  boost::asio::error::clear(ec);
   return ec;
 }
 
