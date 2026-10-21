@@ -279,13 +279,9 @@ public:
   template <typename Function>
   void immediate(Function& function, Handler&,
       enable_if_t<
-        is_same<
-          typename associated_immediate_executor<
-            conditional_t<false, Function, Handler>,
-            typename base1_type::executor_type>::
-              asio_associated_immediate_executor_is_unspecialised,
-          void
-        >::value
+        !has_associated_immediate_executor<
+          conditional_t<false, Function, Handler>,
+          typename base1_type::executor_type>::value
       >*)
   {
     (initiate_post_with_executor<
@@ -300,11 +296,7 @@ template <typename Handler, typename IoExecutor>
 class channel_operation::handler_work<
     Handler, IoExecutor,
     enable_if_t<
-      is_same<
-        typename associated_executor<Handler,
-          IoExecutor>::asio_associated_executor_is_unspecialised,
-        void
-      >::value
+      !has_associated_executor<Handler, IoExecutor>::value
     >
   > : handler_work_base<IoExecutor>
 {
@@ -346,13 +338,9 @@ public:
   template <typename Function>
   void immediate(Function& function, Handler& handler,
       enable_if_t<
-        is_same<
-          typename associated_immediate_executor<
-            conditional_t<false, Function, Handler>,
-            typename base1_type::executor_type>::
-              asio_associated_immediate_executor_is_unspecialised,
-          void
-        >::value
+        !has_associated_immediate_executor<
+          conditional_t<false, Function, Handler>,
+          typename base1_type::executor_type>::value
       >*)
   {
     base1_type::post(base1_type::get_executor(), function, handler);
