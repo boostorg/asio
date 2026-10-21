@@ -18,6 +18,8 @@
 
 #include <boost/asio/io_context.hpp>
 #include <cstdlib>
+#include <cstring>
+#include <stdexcept>
 #include "unit_test.hpp"
 
 void config_from_string_test()
@@ -52,6 +54,40 @@ void config_from_string_test()
   BOOST_ASIO_CHECK(cfg2.get("scheduler", "locking", false) == true);
   BOOST_ASIO_CHECK(cfg2.get("reactor", "registration_locking", true) == false);
   BOOST_ASIO_CHECK(cfg2.get("reactor", "io_locking", false) == true);
+
+  boost::asio::io_context ctx3(
+      boost::asio::config_from_string(
+        "reactor.type=spin\n"
+        "scheduler.concurrency_hint=1"));
+
+  boost::asio::config cfg3(ctx3);
+
+  char buf[16];
+  BOOST_ASIO_CHECK(std::strcmp(
+        cfg3.get("reactor", "type", "epoll", buf), "spin") == 0);
+
+  BOOST_ASIO_CHECK(std::strcmp(
+        cfg3.get("reactor", "flavour", "vanilla", buf), "vanilla") == 0);
+
+  BOOST_ASIO_CHECK(std::strcmp(cfg3.get("reactor", "type",
+          "epoll", buf, sizeof(buf)), "spin") == 0);
+
+  char small[3];
+  bool threw = false;
+  try
+  {
+    (void)cfg3.get("reactor", "type", "x", small);
+  }
+  catch (const std::out_of_range&)
+  {
+    threw = true;
+  }
+  BOOST_ASIO_CHECK(threw);
+
+  boost::asio::io_context ctx4;
+  boost::asio::config cfg4(ctx4);
+  BOOST_ASIO_CHECK(std::strcmp(
+        cfg2.get("reactor", "type", "kqueue", buf), "kqueue") == 0);
 }
 
 void config_from_concurrency_hint_test()
