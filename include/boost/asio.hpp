@@ -101,6 +101,7 @@
 #include <boost/asio/execution/outstanding_work.hpp>
 #include <boost/asio/execution/prefer_only.hpp>
 #include <boost/asio/execution/relationship.hpp>
+#include <boost/asio/execution/staging_executor.hpp>
 #include <boost/asio/executor.hpp>
 #include <boost/asio/executor_work_guard.hpp>
 #include <boost/asio/file_base.hpp>

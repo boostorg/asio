@@ -22,6 +22,7 @@
 #include <boost/asio/execution/allocator.hpp>
 #include <boost/asio/execution/blocking.hpp>
 #include <boost/asio/execution/relationship.hpp>
+#include <boost/asio/execution/staging_executor.hpp>
 #include <boost/asio/prefer.hpp>
 #include <boost/asio/require.hpp>
 
@@ -50,7 +51,8 @@ public:
         (get_associated_allocator)(handler));
 
     boost::asio::prefer(
-        boost::asio::require(ex, execution::blocking.never),
+        boost::asio::require(execution::stage(ex),
+          execution::blocking.never),
         execution::relationship.fork,
         execution::allocator(alloc)
       ).execute(
@@ -112,7 +114,8 @@ public:
         (get_associated_allocator)(handler));
 
     boost::asio::prefer(
-        boost::asio::require(ex_, execution::blocking.never),
+        boost::asio::require(execution::stage(ex_),
+          execution::blocking.never),
         execution::relationship.fork,
         execution::allocator(alloc)
       ).execute(
@@ -145,7 +148,8 @@ public:
         (get_associated_allocator)(handler));
 
     boost::asio::prefer(
-        boost::asio::require(ex_, execution::blocking.never),
+        boost::asio::require(execution::stage(ex_),
+          execution::blocking.never),
         execution::relationship.fork,
         execution::allocator(alloc)
       ).execute(
