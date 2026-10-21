@@ -35,7 +35,7 @@ void unbuffered_channel_test()
   channel<void(boost::system::error_code, std::string)> ch1(ctx);
 
   BOOST_ASIO_CHECK(ch1.is_open());
-  BOOST_ASIO_CHECK(!ch1.ready());
+  BOOST_ASIO_CHECK(!ch1.can_receive());
 
   bool b1 = ch1.try_send(boost::asio::error::eof, "hello");
 
@@ -104,7 +104,7 @@ void buffered_channel_test()
   channel<void(boost::system::error_code, std::string)> ch1(ctx, 1);
 
   BOOST_ASIO_CHECK(ch1.is_open());
-  BOOST_ASIO_CHECK(!ch1.ready());
+  BOOST_ASIO_CHECK(!ch1.can_receive());
 
   bool b1 = ch1.try_send(boost::asio::error::eof, "hello");
 
@@ -204,7 +204,7 @@ void buffered_error_channel_test()
   channel<void(boost::system::error_code)> ch1(ctx, 1);
 
   BOOST_ASIO_CHECK(ch1.is_open());
-  BOOST_ASIO_CHECK(!ch1.ready());
+  BOOST_ASIO_CHECK(!ch1.can_receive());
 
   bool b1 = ch1.try_send(boost::asio::error::eof);
 
@@ -878,7 +878,7 @@ void implicit_error_signature_channel_test()
   channel<void(std::string)> ch1(ctx);
 
   BOOST_ASIO_CHECK(ch1.is_open());
-  BOOST_ASIO_CHECK(!ch1.ready());
+  BOOST_ASIO_CHECK(!ch1.can_receive());
 
   bool b1 = ch1.try_send("hello");
 
@@ -984,6 +984,87 @@ void channel_with_any_completion_handler_test()
   BOOST_ASIO_CHECK(!ec2);
 }
 
+void can_send_can_receive_test()
+{
+  io_context ctx;
+
+  channel<void(boost::system::error_code, std::string)> ch1(ctx);
+
+  BOOST_ASIO_CHECK(!ch1.can_send());
+  BOOST_ASIO_CHECK(!ch1.can_receive());
+
+  boost::system::error_code ec1 = boost::asio::error::would_block;
+  std::string s1 = "hello";
+  ch1.async_send(boost::asio::error::eof, std::move(s1),
+      [&](boost::system::error_code ec) { ec1 = ec; });
+
+  BOOST_ASIO_CHECK(!ch1.can_send());
+  BOOST_ASIO_CHECK(ch1.can_receive());
+
+  bool b1 = ch1.try_receive([](boost::system::error_code, std::string){});
+
+  BOOST_ASIO_CHECK(b1);
+  BOOST_ASIO_CHECK(!ch1.can_send());
+  BOOST_ASIO_CHECK(!ch1.can_receive());
+
+  ctx.run();
+
+  BOOST_ASIO_CHECK(!ec1);
+
+  boost::system::error_code ec2 = boost::asio::error::would_block;
+  std::string s2;
+  ch1.async_receive(
+      [&](boost::system::error_code ec, std::string s)
+      {
+        ec2 = ec;
+        s2 = std::move(s);
+      });
+
+  BOOST_ASIO_CHECK(ch1.can_send());
+  BOOST_ASIO_CHECK(!ch1.can_receive());
+
+  bool b2 = ch1.try_send(boost::asio::error::eof, "world");
+
+  BOOST_ASIO_CHECK(b2);
+  BOOST_ASIO_CHECK(!ch1.can_send());
+  BOOST_ASIO_CHECK(!ch1.can_receive());
+
+  ctx.restart();
+  ctx.run();
+
+  BOOST_ASIO_CHECK(ec2 == boost::asio::error::eof);
+  BOOST_ASIO_CHECK(s2 == "world");
+
+  channel<void(boost::system::error_code, std::string)> ch2(ctx, 2);
+
+  BOOST_ASIO_CHECK(ch2.can_send());
+  BOOST_ASIO_CHECK(!ch2.can_receive());
+
+  BOOST_ASIO_CHECK(ch2.try_send(boost::system::error_code(), "first"));
+
+  BOOST_ASIO_CHECK(ch2.can_send());
+  BOOST_ASIO_CHECK(ch2.can_receive());
+
+  BOOST_ASIO_CHECK(ch2.try_send(boost::system::error_code(), "second"));
+
+  BOOST_ASIO_CHECK(!ch2.can_send());
+  BOOST_ASIO_CHECK(ch2.can_receive());
+
+  boost::system::error_code ec3;
+  std::string s3;
+  BOOST_ASIO_CHECK(ch2.try_receive(
+      [&](boost::system::error_code ec, std::string s)
+      {
+        ec3 = ec;
+        s3 = std::move(s);
+      }));
+
+  BOOST_ASIO_CHECK(!ec3);
+  BOOST_ASIO_CHECK(s3 == "first");
+  BOOST_ASIO_CHECK(ch2.can_send());
+  BOOST_ASIO_CHECK(ch2.can_receive());
+}
+
 void channel_move_test()
 {
   io_context ctx;
@@ -1018,6 +1099,7 @@ BOOST_ASIO_TEST_SUITE
   BOOST_ASIO_TEST_CASE(try_send_via_dispatch)
   BOOST_ASIO_TEST_CASE(try_send_n_via_dispatch)
   BOOST_ASIO_TEST_CASE(try_peek_test)
+  BOOST_ASIO_TEST_CASE(can_send_can_receive_test)
   BOOST_ASIO_TEST_CASE(implicit_error_signature_channel_test)
   BOOST_ASIO_TEST_CASE(channel_with_any_completion_handler_test)
   BOOST_ASIO_COMPILE_TEST_CASE(channel_move_test)
