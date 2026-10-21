@@ -85,6 +85,7 @@
 #include <boost/asio/detached.hpp>
 #include <boost/asio/dispatch.hpp>
 #include <boost/asio/disposition.hpp>
+#include <boost/asio/eager.hpp>
 #include <boost/asio/error.hpp>
 #include <boost/asio/execution.hpp>
 #include <boost/asio/execution/allocator.hpp>
@@ -151,6 +152,7 @@
 #include <boost/asio/local/stream_protocol.hpp>
 #include <boost/asio/multiple_exceptions.hpp>
 #include <boost/asio/packaged_task.hpp>
+#include <boost/asio/piping.hpp>
 #include <boost/asio/placeholders.hpp>
 #include <boost/asio/posix/basic_descriptor.hpp>
 #include <boost/asio/posix/basic_stream_descriptor.hpp>
