@@ -13,6 +13,12 @@
 
 #include <boost/asio/version.hpp>
 
+// On Apple platforms we need to include Availability.h in order to get access
+// to the platform feature macros.
+#if defined(__APPLE__)
+# include <Availability.h>
+#endif // defined(__APPLE__)
+
 #if defined(BOOST_ASIO_STANDALONE)
 # define BOOST_ASIO_DISABLE_BOOST_ALIGN 1
 # define BOOST_ASIO_DISABLE_BOOST_ARRAY 1
