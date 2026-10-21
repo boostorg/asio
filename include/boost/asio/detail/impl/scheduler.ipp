@@ -227,8 +227,9 @@ std::size_t scheduler::run(boost::system::error_code& ec)
 
   mutex::scoped_lock lock(mutex_);
 
+  const bool may_wake = wake_possible();
   std::size_t n = 0;
-  for (; do_run_one(lock, this_thread); lock.lock())
+  for (; do_run_one(lock, this_thread, may_wake); lock.lock())
     if (n != (std::numeric_limits<std::size_t>::max)())
       ++n;
   return n;
@@ -251,7 +252,7 @@ std::size_t scheduler::run_one(boost::system::error_code& ec)
 
   mutex::scoped_lock lock(mutex_);
 
-  return do_run_one(lock, this_thread);
+  return do_run_one(lock, this_thread, wake_possible());
 }
 
 std::size_t scheduler::wait_one(long usec, boost::system::error_code& ec)
@@ -298,8 +299,9 @@ std::size_t scheduler::poll(boost::system::error_code& ec)
       op_queue_.push(outer_info->private_op_queue);
 #endif // defined(BOOST_ASIO_HAS_THREADS)
 
+  const bool may_wake = wake_possible();
   std::size_t n = 0;
-  for (; do_poll_one(lock, this_thread); lock.lock())
+  for (; do_poll_one(lock, this_thread, may_wake); lock.lock())
     if (n != (std::numeric_limits<std::size_t>::max)())
       ++n;
   return n;
@@ -331,7 +333,7 @@ std::size_t scheduler::poll_one(boost::system::error_code& ec)
       op_queue_.push(outer_info->private_op_queue);
 #endif // defined(BOOST_ASIO_HAS_THREADS)
 
-  return do_poll_one(lock, this_thread);
+  return do_poll_one(lock, this_thread, wake_possible());
 }
 
 void scheduler::stop()
@@ -395,10 +397,7 @@ void scheduler::do_post_immediate_completion(scheduler::operation* op)
   work_started();
   mutex::scoped_lock lock(mutex_);
   op_queue_.push(op);
-  if (can_skip_wake(lock))
-    lock.unlock();
-  else
-    wake_one_thread_and_unlock(lock);
+  wake_if_needed_and_unlock(lock);
 }
 
 void scheduler::post_immediate_completions(std::size_t n,
@@ -428,7 +427,7 @@ void scheduler::do_post_immediate_completions(
   increment(outstanding_work_, static_cast<long>(n));
   mutex::scoped_lock lock(mutex_);
   op_queue_.push(ops);
-  wake_one_thread_and_unlock(lock);
+  wake_if_needed_and_unlock(lock);
 }
 
 void scheduler::post_deferred_completion(scheduler::operation* op)
@@ -451,7 +450,7 @@ void scheduler::do_post_deferred_completion(scheduler::operation* op)
 {
   mutex::scoped_lock lock(mutex_);
   op_queue_.push(op);
-  wake_one_thread_and_unlock(lock);
+  wake_if_needed_and_unlock(lock);
 }
 
 void scheduler::post_deferred_completions(
@@ -488,7 +487,7 @@ void scheduler::do_dispatch(
   work_started();
   mutex::scoped_lock lock(mutex_);
   op_queue_.push(op);
-  wake_one_thread_and_unlock(lock);
+  wake_if_needed_and_unlock(lock);
 }
 
 void scheduler::abandon_operations(
@@ -499,7 +498,7 @@ void scheduler::abandon_operations(
 }
 
 std::size_t scheduler::do_run_one(mutex::scoped_lock& lock,
-    scheduler::thread_info& this_thread)
+    scheduler::thread_info& this_thread, bool may_wake)
 {
   while (!stopped_)
   {
@@ -536,7 +535,7 @@ std::size_t scheduler::do_run_one(mutex::scoped_lock& lock,
 
     std::size_t task_result = o->task_result_;
 
-    if (more_handlers && !one_thread_ && !can_skip_wake(lock))
+    if (more_handlers && may_wake && must_wake(lock))
       wake_one_thread_and_unlock(lock);
     else
       lock.unlock();
@@ -628,7 +627,7 @@ std::size_t scheduler::do_wait_one(mutex::scoped_lock& lock,
 
   std::size_t task_result = o->task_result_;
 
-  if (more_handlers && !one_thread_)
+  if (more_handlers && wake_possible() && must_wake(lock))
     wake_one_thread_and_unlock(lock);
   else
     lock.unlock();
@@ -645,7 +644,7 @@ std::size_t scheduler::do_wait_one(mutex::scoped_lock& lock,
 }
 
 std::size_t scheduler::do_poll_one(mutex::scoped_lock& lock,
-    scheduler::thread_info& this_thread)
+    scheduler::thread_info& this_thread, bool may_wake)
 {
   if (stopped_)
     return 0;
@@ -683,7 +682,7 @@ std::size_t scheduler::do_poll_one(mutex::scoped_lock& lock,
 
   std::size_t task_result = o->task_result_;
 
-  if (more_handlers && !one_thread_)
+  if (more_handlers && may_wake && must_wake(lock))
     wake_one_thread_and_unlock(lock);
   else
     lock.unlock();
