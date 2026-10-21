@@ -28,6 +28,8 @@ namespace boost {
 namespace asio {
 BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
+  class executor_function;
+
   struct thread_pool_bits
   {
     static constexpr uintptr_t blocking_never = 1;
@@ -745,6 +747,10 @@ private:
   /// Execution helper implementation for possibly and never blocking.
   template <typename Function>
   void do_execute(Function&& f, false_type) const;
+
+  /// Execution helper implementation for possibly and never blocking,
+  /// when passed a type-erased function.
+  void do_execute(detail::executor_function&& f, false_type) const;
 
   /// Execution helper implementation for always blocking.
   template <typename Function>

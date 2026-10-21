@@ -18,7 +18,7 @@
 #include <boost/asio/detail/config.hpp>
 #include <boost/asio/detail/fenced_block.hpp>
 #include <boost/asio/detail/handler_alloc_helpers.hpp>
-#include <boost/asio/detail/scheduler_operation.hpp>
+#include <boost/asio/detail/operation.hpp>
 
 #include <boost/asio/detail/push_options.hpp>
 
@@ -28,21 +28,21 @@ BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
 
 template <typename Handler, typename Alloc,
-    typename Operation = scheduler_operation>
-class executor_op : public Operation
+    typename Purpose = thread_info_base::default_tag>
+class executor_op : public operation
 {
 public:
-  BOOST_ASIO_DEFINE_HANDLER_ALLOCATOR_PTR(executor_op);
+  BOOST_ASIO_DEFINE_TAGGED_HANDLER_ALLOCATOR_PTR(Purpose, executor_op);
 
   template <typename H>
   executor_op(H&& h, const Alloc& allocator)
-    : Operation(&executor_op::do_complete),
+    : operation(&executor_op::do_complete),
       handler_(static_cast<H&&>(h)),
       allocator_(allocator)
   {
   }
 
-  static void do_complete(void* owner, Operation* base,
+  static void do_complete(void* owner, operation* base,
       int /*error_value*/, std::size_t /*bytes_transferred*/)
   {
     // Take ownership of the handler object.

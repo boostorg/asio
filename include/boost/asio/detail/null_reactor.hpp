@@ -21,7 +21,7 @@
   || defined(BOOST_ASIO_WINDOWS_RUNTIME) \
   || defined(BOOST_ASIO_HAS_IO_URING_AS_DEFAULT)
 
-#include <boost/asio/detail/scheduler_operation.hpp>
+#include <boost/asio/detail/operation.hpp>
 #include <boost/asio/detail/scheduler_task.hpp>
 #include <boost/asio/execution_context.hpp>
 
@@ -63,7 +63,7 @@ public:
   }
 
   // No-op because should never be called.
-  void run(long /*usec*/, op_queue<scheduler_operation>& /*ops*/)
+  void run(long /*usec*/, op_queue<operation>& /*ops*/)
   {
   }
 

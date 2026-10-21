@@ -23,6 +23,7 @@
 #include <boost/asio/detail/conditionally_enabled_event.hpp>
 #include <boost/asio/detail/conditionally_enabled_mutex.hpp>
 #include <boost/asio/detail/op_queue.hpp>
+#include <boost/asio/detail/operation.hpp>
 #include <boost/asio/detail/scheduler_operation.hpp>
 #include <boost/asio/detail/scheduler_task.hpp>
 #include <boost/asio/detail/thread.hpp>
@@ -42,7 +43,7 @@ class scheduler
     public thread_context
 {
 public:
-  typedef scheduler_operation operation;
+  typedef boost::asio::detail::operation operation;
 
   // Tag type used for constructing as an internal scheduler.
   struct internal {};

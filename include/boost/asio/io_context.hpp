@@ -48,6 +48,8 @@ namespace asio {
 BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 
 namespace detail {
+  class executor_function;
+
 #if defined(BOOST_ASIO_HAS_IOCP)
   typedef win_iocp_io_context io_context_impl;
   class win_iocp_overlapped_ptr;
@@ -892,7 +894,10 @@ public:
 
   /// Execution function.
   template <typename Function>
-  void execute(Function&& f) const;
+  void execute(Function&& f) const
+  {
+    this->do_execute(static_cast<Function&&>(f));
+  }
 
 #if !defined(BOOST_ASIO_NO_TS_EXECUTORS)
 public:
@@ -992,6 +997,13 @@ private:
       if (context_ptr())
         context_ptr()->impl_.work_started();
   }
+
+  /// Execution helper implementation.
+  template <typename Function>
+  void do_execute(Function&& f) const;
+
+  /// Execution helper implementation, when passed a type-erased function.
+  void do_execute(detail::executor_function&& f) const;
 
   io_context* context_ptr() const noexcept
   {

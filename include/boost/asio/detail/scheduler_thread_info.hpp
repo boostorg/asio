@@ -16,6 +16,7 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include <boost/asio/detail/op_queue.hpp>
+#include <boost/asio/detail/operation.hpp>
 #include <boost/asio/detail/thread_info_base.hpp>
 
 #include <boost/asio/detail/push_options.hpp>
@@ -26,11 +27,10 @@ BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
 
 class scheduler;
-class scheduler_operation;
 
 struct scheduler_thread_info : public thread_info_base
 {
-  op_queue<scheduler_operation> private_op_queue;
+  op_queue<operation> private_op_queue;
   long private_outstanding_work;
 };
 

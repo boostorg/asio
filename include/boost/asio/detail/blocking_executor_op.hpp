@@ -19,7 +19,7 @@
 #include <boost/asio/detail/event.hpp>
 #include <boost/asio/detail/fenced_block.hpp>
 #include <boost/asio/detail/mutex.hpp>
-#include <boost/asio/detail/scheduler_operation.hpp>
+#include <boost/asio/detail/operation.hpp>
 
 #include <boost/asio/detail/push_options.hpp>
 
@@ -28,12 +28,11 @@ namespace asio {
 BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
 
-template <typename Operation = scheduler_operation>
-class blocking_executor_op_base : public Operation
+class blocking_executor_op_base : public operation
 {
 public:
-  blocking_executor_op_base(typename Operation::func_type complete_func)
-    : Operation(complete_func),
+  blocking_executor_op_base(operation::func_type complete_func)
+    : operation(complete_func),
       is_complete_(false)
   {
   }
@@ -64,23 +63,23 @@ private:
   bool is_complete_;
 };
 
-template <typename Handler, typename Operation = scheduler_operation>
-class blocking_executor_op : public blocking_executor_op_base<Operation>
+template <typename Handler>
+class blocking_executor_op : public blocking_executor_op_base
 {
 public:
   blocking_executor_op(Handler& h)
-    : blocking_executor_op_base<Operation>(&blocking_executor_op::do_complete),
+    : blocking_executor_op_base(&blocking_executor_op::do_complete),
       handler_(h)
   {
   }
 
-  static void do_complete(void* owner, Operation* base,
+  static void do_complete(void* owner, operation* base,
       int /*error_value*/, std::size_t /*bytes_transferred*/)
   {
     BOOST_ASIO_ASSUME(base != 0);
     blocking_executor_op* o(static_cast<blocking_executor_op*>(base));
 
-    typename blocking_executor_op_base<Operation>::do_complete_cleanup
+    blocking_executor_op_base::do_complete_cleanup
       on_exit = { o };
     (void)on_exit;
 
