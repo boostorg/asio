@@ -384,9 +384,9 @@ public:
           ? executor_type()
           : (has_native_outstanding_work)(ex)
             ? ex
-            : boost::asio::prefer(ex, execution::outstanding_work.tracked))
+            : handler_work_base::tracked(ex))
 #else // !defined(BOOST_ASIO_NO_TYPEID)
-    : executor_(boost::asio::prefer(ex, execution::outstanding_work.tracked))
+    : executor_(handler_work_base::tracked(ex))
 #endif // !defined(BOOST_ASIO_NO_TYPEID)
   {
   }
@@ -396,14 +396,14 @@ public:
     : executor_(
         ex == candidate
           ? executor_type()
-          : boost::asio::prefer(ex, execution::outstanding_work.tracked))
+          : handler_work_base::tracked(ex))
   {
   }
 
   template <typename OtherExecutor>
   handler_work_base(const executor_type& ex,
       const OtherExecutor& /*candidate*/) noexcept
-    : executor_(boost::asio::prefer(ex, execution::outstanding_work.tracked))
+    : executor_(handler_work_base::tracked(ex))
   {
   }
 
@@ -429,6 +429,12 @@ public:
   }
 
 private:
+  BOOST_ASIO_NEVER_INLINE static executor_type tracked(
+      const executor_type& ex) noexcept
+  {
+    return boost::asio::prefer(ex, execution::outstanding_work.tracked);
+  }
+
   executor_type executor_;
 };
 
@@ -462,9 +468,9 @@ public:
           ? executor_type()
           : (has_native_outstanding_work)(ex)
             ? ex
-            : boost::asio::prefer(ex, execution::outstanding_work.tracked))
+            : handler_work_base::tracked(ex))
 #else // !defined(BOOST_ASIO_NO_TYPEID)
-    : executor_(boost::asio::prefer(ex, execution::outstanding_work.tracked))
+    : executor_(handler_work_base::tracked(ex))
 #endif // !defined(BOOST_ASIO_NO_TYPEID)
   {
   }
@@ -474,14 +480,14 @@ public:
     : executor_(
         ex == candidate
           ? executor_type()
-          : boost::asio::prefer(ex, execution::outstanding_work.tracked))
+          : handler_work_base::tracked(ex))
   {
   }
 
   template <typename OtherExecutor>
   handler_work_base(const executor_type& ex,
       const OtherExecutor& /*candidate*/) noexcept
-    : executor_(boost::asio::prefer(ex, execution::outstanding_work.tracked))
+    : executor_(handler_work_base::tracked(ex))
   {
   }
 
@@ -507,6 +513,12 @@ public:
   }
 
 private:
+  BOOST_ASIO_NEVER_INLINE static executor_type tracked(
+      const executor_type& ex) noexcept
+  {
+    return boost::asio::prefer(ex, execution::outstanding_work.tracked);
+  }
+
   executor_type executor_;
 };
 
