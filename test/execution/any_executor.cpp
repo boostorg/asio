@@ -23,6 +23,7 @@
 #include <utility>
 #include <boost/asio/thread_pool.hpp>
 #include <boost/asio/io_context.hpp>
+#include <boost/asio/any_completion_executor.hpp>
 #include <boost/asio/any_io_executor.hpp>
 #include <boost/asio/detail/executor_function.hpp>
 #include <boost/asio/strand.hpp>
@@ -1351,9 +1352,68 @@ void any_executor_execute_ready_made_test()
   BOOST_ASIO_CHECK(!handed_wrapped);
 }
 
+void executor_targets_equal_test()
+{
+  boost::asio::io_context ioc1;
+  boost::asio::io_context ioc2;
+  boost::asio::any_io_executor poly(ioc1.get_executor());
+
+  // A polymorphic executor against the concrete executor it erases,
+  // either way round.
+  BOOST_ASIO_CHECK(boost::asio::execution::detail::executor_targets_equal(
+        poly, ioc1.get_executor()));
+  BOOST_ASIO_CHECK(boost::asio::execution::detail::executor_targets_equal(
+        ioc1.get_executor(), poly));
+
+  // The same concrete type, a different executor: must NOT be equal, or a
+  // completion would be run on the wrong context's behalf.
+  BOOST_ASIO_CHECK(!boost::asio::execution::detail::executor_targets_equal(
+        poly, ioc2.get_executor()));
+  BOOST_ASIO_CHECK(!boost::asio::execution::detail::executor_targets_equal(
+        ioc2.get_executor(), poly));
+
+  // Two polymorphic executors of differing any_executor<...> instantiations:
+  // compared on the any_executor_base layer they share, since a direct ==
+  // between them would be ambiguous. The same target, either way round.
+  boost::asio::any_completion_executor completion_poly(ioc1.get_executor());
+  BOOST_ASIO_CHECK(boost::asio::execution::detail::executor_targets_equal(
+        poly, completion_poly));
+  BOOST_ASIO_CHECK(boost::asio::execution::detail::executor_targets_equal(
+        completion_poly, poly));
+
+  // The same pair over differing contexts: must NOT be equal.
+  boost::asio::any_completion_executor completion_poly2(ioc2.get_executor());
+  BOOST_ASIO_CHECK(!boost::asio::execution::detail::executor_targets_equal(
+        poly, completion_poly2));
+  BOOST_ASIO_CHECK(!boost::asio::execution::detail::executor_targets_equal(
+        completion_poly2, poly));
+
+  // A different concrete type altogether.
+  boost::asio::thread_pool pool(1);
+  BOOST_ASIO_CHECK(!boost::asio::execution::detail::executor_targets_equal(
+        poly, pool.get_executor()));
+
+  // An executor with no target matches nothing.
+  boost::asio::any_io_executor empty;
+  BOOST_ASIO_CHECK(!boost::asio::execution::detail::executor_targets_equal(
+        empty, ioc1.get_executor()));
+
+  // A target that carries tracked outstanding work is a distinct target,
+  // and so does not match the plain executor it was preferred from.
+  boost::asio::any_io_executor tracked(
+      boost::asio::prefer(poly, boost::asio::execution::outstanding_work.tracked));
+  BOOST_ASIO_CHECK(!boost::asio::execution::detail::executor_targets_equal(
+        tracked, ioc1.get_executor()));
+
+  // Two differing concrete types are never equal.
+  BOOST_ASIO_CHECK(!boost::asio::execution::detail::executor_targets_equal(
+        ioc1.get_executor(), pool.get_executor()));
+}
+
 BOOST_ASIO_TEST_SUITE
 (
   "any_executor",
+  BOOST_ASIO_TEST_CASE(executor_targets_equal_test)
   BOOST_ASIO_TEST_CASE(any_executor_construction_test)
   BOOST_ASIO_TEST_CASE(any_executor_nothrow_construction_test)
   BOOST_ASIO_TEST_CASE(any_executor_assignment_test)
