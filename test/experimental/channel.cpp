@@ -734,6 +734,127 @@ void try_send_n_via_dispatch()
   BOOST_ASIO_CHECK(s3.empty());
 }
 
+struct counting_handler
+{
+  int& count_;
+  template <typename... Args>
+  void operator()(Args...) { ++count_; }
+};
+
+void try_peek_test()
+{
+  io_context ctx;
+
+  channel<void(boost::system::error_code, std::string)> ch1(ctx, 2);
+
+  bool b1 = ch1.try_peek([](boost::system::error_code, std::string){});
+
+  BOOST_ASIO_CHECK(!b1);
+
+  bool b2 = ch1.try_send(boost::asio::error::eof, "hello");
+
+  BOOST_ASIO_CHECK(b2);
+
+  boost::system::error_code ec1 = boost::asio::error::would_block;
+  std::string s1;
+  bool b3 = ch1.try_peek(
+      [&](boost::system::error_code ec, std::string s)
+      {
+        ec1 = ec;
+        s1 = s;
+      });
+
+  BOOST_ASIO_CHECK(b3);
+  BOOST_ASIO_CHECK(ec1 == boost::asio::error::eof);
+  BOOST_ASIO_CHECK(s1 == "hello");
+
+  boost::system::error_code ec2 = boost::asio::error::would_block;
+  std::string s2;
+  bool b4 = ch1.try_receive(
+      [&](boost::system::error_code ec, std::string s)
+      {
+        ec2 = ec;
+        s2 = s;
+      });
+
+  BOOST_ASIO_CHECK(b4);
+  BOOST_ASIO_CHECK(ec2 == boost::asio::error::eof);
+  BOOST_ASIO_CHECK(s2 == "hello");
+
+  bool b5 = ch1.try_peek([](boost::system::error_code, std::string){});
+
+  BOOST_ASIO_CHECK(!b5);
+
+  boost::system::error_code ec3 = boost::asio::error::would_block;
+  std::string s3 = "zyxwvutsrqponmlkjihgfedcba";
+  ch1.async_send(boost::asio::error::eof, std::move(s3),
+      [&](boost::system::error_code ec)
+      {
+        ec3 = ec;
+      });
+
+  boost::system::error_code ec4 = boost::asio::error::would_block;
+  std::string s4;
+  bool b6 = ch1.try_peek(
+      [&](boost::system::error_code ec, std::string s)
+      {
+        ec4 = ec;
+        s4 = s;
+      });
+
+  BOOST_ASIO_CHECK(b6);
+  BOOST_ASIO_CHECK(ec4 == boost::asio::error::eof);
+  BOOST_ASIO_CHECK(s4 == "zyxwvutsrqponmlkjihgfedcba");
+
+  BOOST_ASIO_CHECK(ec3 == boost::asio::error::would_block);
+
+  boost::system::error_code ec5 = boost::asio::error::would_block;
+  std::string s5;
+  bool b7 = ch1.try_receive(
+      [&](boost::system::error_code ec, std::string s)
+      {
+        ec5 = ec;
+        s5 = s;
+      });
+
+  BOOST_ASIO_CHECK(b7);
+  BOOST_ASIO_CHECK(ec5 == boost::asio::error::eof);
+  BOOST_ASIO_CHECK(s5 == "zyxwvutsrqponmlkjihgfedcba");
+
+  ctx.run();
+
+  BOOST_ASIO_CHECK(!ec3);
+
+  channel<void()> ch2(ctx, 2);
+  int zero = 0;
+
+  bool b8 = ch2.try_peek(counting_handler{zero});
+
+  BOOST_ASIO_CHECK(!b8);
+  BOOST_ASIO_CHECK(zero == 0);
+
+  bool b9 = ch2.try_send();
+
+  BOOST_ASIO_CHECK(b9);
+
+  int peek_count = 0;
+  bool b10 = ch2.try_peek(counting_handler{peek_count});
+
+  BOOST_ASIO_CHECK(b10);
+  BOOST_ASIO_CHECK(peek_count == 1);
+
+  int receive_count = 0;
+  bool b11 = ch2.try_receive(counting_handler{receive_count});
+
+  BOOST_ASIO_CHECK(b11);
+  BOOST_ASIO_CHECK(receive_count == 1);
+
+  bool b12 = ch2.try_peek(counting_handler{zero});
+
+  BOOST_ASIO_CHECK(!b12);
+  BOOST_ASIO_CHECK(zero == 0);
+}
+
 struct multi_signature_handler
 {
   std::string* s_;
@@ -896,6 +1017,7 @@ BOOST_ASIO_TEST_SUITE
   BOOST_ASIO_TEST_CASE(buffered_executor_send)
   BOOST_ASIO_TEST_CASE(try_send_via_dispatch)
   BOOST_ASIO_TEST_CASE(try_send_n_via_dispatch)
+  BOOST_ASIO_TEST_CASE(try_peek_test)
   BOOST_ASIO_TEST_CASE(implicit_error_signature_channel_test)
   BOOST_ASIO_TEST_CASE(channel_with_any_completion_handler_test)
   BOOST_ASIO_COMPILE_TEST_CASE(channel_move_test)

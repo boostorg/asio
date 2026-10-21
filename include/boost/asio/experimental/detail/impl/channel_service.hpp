@@ -613,6 +613,47 @@ void channel_service<Mutex>::start_receive_op(
   }
 }
 
+template <typename Mutex>
+template <typename Traits, typename... Signatures, typename Handler>
+bool channel_service<Mutex>::try_peek(
+    channel_service<Mutex>::implementation_type<Traits, Signatures...>& impl,
+    Handler&& handler)
+{
+  // No locking since try_peek is only exposed on basic_channel.
+
+  typedef typename implementation_type<Traits,
+      Signatures...>::payload_type payload_type;
+
+  switch (impl.receive_state_)
+  {
+  case block:
+    {
+      return false;
+    }
+  case buffer:
+    {
+      const payload_type& payload = impl.buffer_peek();
+      boost::asio::detail::non_const_lvalue<Handler> handler2(handler);
+      payload.peek(handler2.value);
+      return true;
+    }
+  case waiter:
+    {
+      channel_send<payload_type>* send_op =
+        static_cast<channel_send<payload_type>*>(impl.waiters_.front());
+      const payload_type& payload = send_op->peek_payload();
+      boost::asio::detail::non_const_lvalue<Handler> handler2(handler);
+      payload.peek(handler2.value);
+      return true;
+    }
+  case closed:
+  default:
+    {
+      return false;
+    }
+  }
+}
+
 } // namespace detail
 } // namespace experimental
 BOOST_ASIO_INLINE_NAMESPACE_END
