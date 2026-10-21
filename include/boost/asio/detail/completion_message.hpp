@@ -55,7 +55,9 @@ template <typename R, typename Arg0>
 class completion_message<R(Arg0)>
 {
 public:
-  template <typename T0>
+  template <typename T0,
+      typename = enable_if_t<
+        is_constructible<decay_t<Arg0>, T0>::value>>
   completion_message(int, T0&& t0)
     : arg0_(static_cast<T0&&>(t0))
   {
@@ -83,7 +85,10 @@ template <typename R, typename Arg0, typename Arg1>
 class completion_message<R(Arg0, Arg1)>
 {
 public:
-  template <typename T0, typename T1>
+  template <typename T0, typename T1,
+      typename = enable_if_t<
+        is_constructible<decay_t<Arg0>, T0>::value
+          && is_constructible<decay_t<Arg1>, T1>::value>>
   completion_message(int, T0&& t0, T1&& t1)
     : arg0_(static_cast<T0&&>(t0)),
       arg1_(static_cast<T1&&>(t1))
@@ -115,7 +120,9 @@ template <typename R, typename... Args>
 class completion_message<R(Args...)>
 {
 public:
-  template <typename... T>
+  template <typename... T,
+      typename = enable_if_t<
+        is_constructible<std::tuple<decay_t<Args>...>, T&&...>::value>>
   completion_message(int, T&&... t)
     : args_(static_cast<T&&>(t)...)
   {

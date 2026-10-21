@@ -1328,6 +1328,357 @@ void channel_move_test()
   (void)ch4;
 }
 
+struct int_or_string_handler
+{
+  boost::system::error_code* ec_;
+  int* i_;
+  std::string* s_;
+
+  void operator()(boost::system::error_code ec, int i)
+  {
+    *ec_ = ec;
+    *i_ = i;
+  }
+
+  void operator()(boost::system::error_code ec, std::string s)
+  {
+    *ec_ = ec;
+    *s_ = std::move(s);
+  }
+};
+
+struct three_signature_handler
+{
+  boost::system::error_code* ec_;
+  int* i_;
+  std::string* s1_;
+  std::string* s2_;
+
+  void operator()(boost::system::error_code ec, int i)
+  {
+    *ec_ = ec;
+    *i_ = i;
+  }
+
+  void operator()(boost::system::error_code ec, std::string s)
+  {
+    *ec_ = ec;
+    *s1_ = std::move(s);
+  }
+
+  void operator()(boost::system::error_code ec, std::string s1, std::string s2)
+  {
+    *ec_ = ec;
+    *s1_ = std::move(s1);
+    *s2_ = std::move(s2);
+  }
+};
+
+void multi_signature_try_send()
+{
+  io_context ctx;
+
+  channel<void(boost::system::error_code, int),
+      void(boost::system::error_code, std::string)> ch1(ctx, 2);
+
+  bool b1 = ch1.try_send(boost::system::error_code(), 42);
+  bool b2 = ch1.try_send(boost::asio::error::eof, std::string("second"));
+
+  BOOST_ASIO_CHECK(b1);
+  BOOST_ASIO_CHECK(b2);
+
+  boost::system::error_code ec1;
+  int i1 = 0;
+  std::string s1;
+  int_or_string_handler h1 = {&ec1, &i1, &s1};
+
+  bool b3 = ch1.try_receive(h1);
+
+  BOOST_ASIO_CHECK(b3);
+  BOOST_ASIO_CHECK(!ec1);
+  BOOST_ASIO_CHECK(i1 == 42);
+
+  bool b4 = ch1.try_receive(h1);
+
+  BOOST_ASIO_CHECK(b4);
+  BOOST_ASIO_CHECK(ec1 == boost::asio::error::eof);
+  BOOST_ASIO_CHECK(s1 == "second");
+
+  bool b5 = ch1.try_send(boost::system::error_code(), 0);
+  bool b6 = ch1.try_send(boost::system::error_code(), 0);
+
+  BOOST_ASIO_CHECK(b5);
+  BOOST_ASIO_CHECK(b6);
+
+  bool b7 = ch1.try_send(boost::asio::error::eof, std::string("full"));
+
+  BOOST_ASIO_CHECK(!b7);
+
+#if defined(BOOST_ASIO_HAS_STD_VARIANT)
+  channel<void(boost::system::error_code, int),
+      void(boost::system::error_code, std::string),
+      void(boost::system::error_code, std::string, std::string)> ch2(ctx, 3);
+
+  bool b8 = ch2.try_send(boost::system::error_code(), 42);
+  bool b9 = ch2.try_send(boost::asio::error::eof, std::string("second"));
+  bool b10 = ch2.try_send(boost::asio::error::eof,
+      std::string("left"), std::string("right"));
+
+  BOOST_ASIO_CHECK(b8);
+  BOOST_ASIO_CHECK(b9);
+  BOOST_ASIO_CHECK(b10);
+
+  boost::system::error_code ec2;
+  int i2 = 0;
+  std::string s2;
+  std::string s3;
+  three_signature_handler h2 = {&ec2, &i2, &s2, &s3};
+
+  bool b11 = ch2.try_receive(h2);
+
+  BOOST_ASIO_CHECK(b11);
+  BOOST_ASIO_CHECK(!ec2);
+  BOOST_ASIO_CHECK(i2 == 42);
+
+  bool b12 = ch2.try_receive(h2);
+
+  BOOST_ASIO_CHECK(b12);
+  BOOST_ASIO_CHECK(ec2 == boost::asio::error::eof);
+  BOOST_ASIO_CHECK(s2 == "second");
+
+  bool b13 = ch2.try_receive(h2);
+
+  BOOST_ASIO_CHECK(b13);
+  BOOST_ASIO_CHECK(ec2 == boost::asio::error::eof);
+  BOOST_ASIO_CHECK(s2 == "left");
+  BOOST_ASIO_CHECK(s3 == "right");
+
+  bool b14 = ch2.try_send(boost::asio::error::eof,
+      std::string("buffer"), std::string("full"));
+  bool b15 = ch2.try_send(boost::asio::error::eof,
+      std::string("buffer"), std::string("full"));
+  bool b16 = ch2.try_send(boost::asio::error::eof,
+      std::string("buffer"), std::string("full"));
+  bool b17 = ch2.try_send(boost::asio::error::eof,
+      std::string("buffer"), std::string("full"));
+
+  BOOST_ASIO_CHECK(b14);
+  BOOST_ASIO_CHECK(b15);
+  BOOST_ASIO_CHECK(b16);
+  BOOST_ASIO_CHECK(!b17);
+#endif // defined(BOOST_ASIO_HAS_STD_VARIANT)
+}
+
+struct long_or_int_handler
+{
+  int* which_;
+
+  void operator()(boost::system::error_code, long)
+  {
+    *which_ = 1;
+  }
+
+  void operator()(boost::system::error_code, int)
+  {
+    *which_ = 2;
+  }
+};
+
+void multi_signature_try_send_first_match_wins()
+{
+  io_context ctx;
+
+  channel<void(boost::system::error_code, long),
+      void(boost::system::error_code, int)> ch1(ctx, 1);
+
+  bool b1 = ch1.try_send(boost::system::error_code(), 42);
+
+  BOOST_ASIO_CHECK(b1);
+
+  int which = 0;
+  long_or_int_handler h1 = {&which};
+  bool b2 = ch1.try_receive(h1);
+
+  BOOST_ASIO_CHECK(b2);
+  BOOST_ASIO_CHECK(which == 1);
+}
+
+struct movable_payload
+{
+  int* moves_;
+  int* copies_;
+  int value_;
+
+  movable_payload(int* moves, int* copies, int value)
+    : moves_(moves),
+      copies_(copies),
+      value_(value)
+  {
+  }
+
+  movable_payload(const movable_payload& other)
+    : moves_(other.moves_),
+      copies_(other.copies_),
+      value_(other.value_)
+  {
+    ++*copies_;
+  }
+
+  movable_payload(movable_payload&& other)
+    : moves_(other.moves_),
+      copies_(other.copies_),
+      value_(other.value_)
+  {
+    ++*moves_;
+  }
+};
+
+void multi_signature_try_send_failure_preserves_arguments()
+{
+  io_context ctx;
+
+  channel<void(boost::system::error_code, int),
+      void(boost::system::error_code, movable_payload)> ch1(ctx);
+
+  int moves = 0;
+  int copies = 0;
+  movable_payload p1(&moves, &copies, 42);
+
+  bool b1 = ch1.try_send(boost::asio::error::eof, std::move(p1));
+
+  BOOST_ASIO_CHECK(!b1);
+  BOOST_ASIO_CHECK(moves == 0);
+  BOOST_ASIO_CHECK(copies == 0);
+
+  channel<void(boost::system::error_code, int),
+      void(boost::system::error_code, movable_payload)> ch2(ctx, 1);
+
+  bool b2 = ch2.try_send(boost::asio::error::eof, std::move(p1));
+
+  BOOST_ASIO_CHECK(b2);
+  BOOST_ASIO_CHECK(moves > 0);
+  BOOST_ASIO_CHECK(copies == 0);
+}
+
+void multi_signature_try_send_n()
+{
+#if defined(BOOST_ASIO_HAS_STD_VARIANT)
+  io_context ctx;
+
+  channel<void(boost::system::error_code, int),
+      void(boost::system::error_code, std::string)> ch1(ctx, 4);
+
+  std::size_t n1 = ch1.try_send_n(2, boost::asio::error::eof, std::string("copied"));
+
+  BOOST_ASIO_CHECK(n1 == 2);
+
+  boost::system::error_code ec1;
+  int i1 = 0;
+  std::string s1;
+  int_or_string_handler h1 = {&ec1, &i1, &s1};
+
+  bool b1 = ch1.try_receive(h1);
+
+  BOOST_ASIO_CHECK(b1);
+  BOOST_ASIO_CHECK(ec1 == boost::asio::error::eof);
+  BOOST_ASIO_CHECK(s1 == "copied");
+
+  s1.clear();
+  bool b2 = ch1.try_receive(h1);
+
+  BOOST_ASIO_CHECK(b2);
+  BOOST_ASIO_CHECK(ec1 == boost::asio::error::eof);
+  BOOST_ASIO_CHECK(s1 == "copied");
+#endif // defined(BOOST_ASIO_HAS_STD_VARIANT)
+}
+
+void multi_signature_try_send_via_dispatch()
+{
+  io_context ctx;
+
+  channel<void(boost::system::error_code, int),
+      void(boost::system::error_code, std::string)> ch1(ctx);
+
+  boost::system::error_code ec1 = boost::asio::error::would_block;
+  int i1 = 0;
+  std::string s1;
+  int_or_string_handler h1 = {&ec1, &i1, &s1};
+  ch1.async_receive(bind_executor(boost::asio::inline_executor(), h1));
+
+  BOOST_ASIO_CHECK(ec1 == boost::asio::error::would_block);
+
+  ctx.poll();
+
+  BOOST_ASIO_CHECK(ec1 == boost::asio::error::would_block);
+
+  std::string s2 = "0123456789";
+  bool b1 = ch1.try_send_via_dispatch(boost::asio::error::eof, std::move(s2));
+
+  BOOST_ASIO_CHECK(b1);
+  BOOST_ASIO_CHECK(ec1 == boost::asio::error::eof);
+  BOOST_ASIO_CHECK(s1 == "0123456789");
+  BOOST_ASIO_CHECK(s2.empty());
+
+#if defined(BOOST_ASIO_HAS_STD_VARIANT)
+  boost::system::error_code ec2 = boost::asio::error::would_block;
+  int i2 = 0;
+  std::string s3;
+  int_or_string_handler h2 = {&ec2, &i2, &s3};
+  ch1.async_receive(bind_executor(boost::asio::inline_executor(), h2));
+
+  boost::system::error_code ec3 = boost::asio::error::would_block;
+  int i3 = 0;
+  std::string s4;
+  int_or_string_handler h3 = {&ec3, &i3, &s4};
+  ch1.async_receive(bind_executor(boost::asio::inline_executor(), h3));
+
+  ctx.poll();
+
+  BOOST_ASIO_CHECK(ec2 == boost::asio::error::would_block);
+  BOOST_ASIO_CHECK(ec3 == boost::asio::error::would_block);
+
+  std::string s5 = "9876543210";
+  std::size_t n1 = ch1.try_send_n_via_dispatch(
+      2, boost::asio::error::eof, std::move(s5));
+
+  BOOST_ASIO_CHECK(n1 == 2);
+  BOOST_ASIO_CHECK(ec2 == boost::asio::error::eof);
+  BOOST_ASIO_CHECK(s3 == "9876543210");
+  BOOST_ASIO_CHECK(ec3 == boost::asio::error::eof);
+  BOOST_ASIO_CHECK(s4 == "9876543210");
+  BOOST_ASIO_CHECK(s5.empty());
+#endif // defined(BOOST_ASIO_HAS_STD_VARIANT)
+}
+
+void multi_signature_async_send()
+{
+  io_context ctx;
+
+  channel<void(boost::system::error_code, int),
+      void(boost::system::error_code, std::string)> ch1(ctx, 1);
+
+  boost::system::error_code ec1 = boost::asio::error::would_block;
+  ch1.async_send(boost::asio::error::eof, std::string("hello"),
+      [&](boost::system::error_code ec)
+      {
+        ec1 = ec;
+      });
+
+  boost::system::error_code ec2;
+  int i1 = 0;
+  std::string s1;
+  int_or_string_handler h1 = {&ec2, &i1, &s1};
+  bool b1 = ch1.try_receive(h1);
+
+  BOOST_ASIO_CHECK(b1);
+  BOOST_ASIO_CHECK(ec2 == boost::asio::error::eof);
+  BOOST_ASIO_CHECK(s1 == "hello");
+
+  ctx.run();
+
+  BOOST_ASIO_CHECK(!ec1);
+}
+
 BOOST_ASIO_TEST_SUITE
 (
   "experimental/channel",
@@ -1359,4 +1710,10 @@ BOOST_ASIO_TEST_SUITE
   BOOST_ASIO_TEST_CASE(buffered_drain_after_close)
   BOOST_ASIO_TEST_CASE(send_after_close)
   BOOST_ASIO_COMPILE_TEST_CASE(channel_move_test)
+  BOOST_ASIO_TEST_CASE(multi_signature_try_send)
+  BOOST_ASIO_TEST_CASE(multi_signature_try_send_first_match_wins)
+  BOOST_ASIO_TEST_CASE(multi_signature_try_send_failure_preserves_arguments)
+  BOOST_ASIO_TEST_CASE(multi_signature_try_send_n)
+  BOOST_ASIO_TEST_CASE(multi_signature_try_send_via_dispatch)
+  BOOST_ASIO_TEST_CASE(multi_signature_async_send)
 )
