@@ -17,6 +17,7 @@
 #include <boost/asio/dispatch.hpp>
 
 #include <boost/asio/bind_executor.hpp>
+#include <boost/asio/executor.hpp>
 #include <boost/asio/io_context.hpp>
 #include "unit_test.hpp"
 
@@ -95,6 +96,26 @@ void move_only_result_handler(
   ++(*count);
   *result_out = result_in.value();
 }
+
+struct stateful_move_only_result_function_object
+{
+  explicit stateful_move_only_result_function_object(int value)
+    : value_(value)
+  {
+  }
+
+  stateful_move_only_result_function_object(
+      stateful_move_only_result_function_object&&) = default;
+
+  move_only_result operator()() &&
+  {
+    ++function_count;
+    return move_only_result(value_);
+  }
+
+private:
+  int value_;
+};
 
 void dispatch_no_args_test()
 {
@@ -241,6 +262,27 @@ void dispatch_function_test()
   BOOST_ASIO_CHECK(function_count == 1);
   BOOST_ASIO_CHECK(handler_count == 1);
   BOOST_ASIO_CHECK(handler_result == 42);
+
+#if !defined(BOOST_ASIO_NO_TS_EXECUTORS)
+  function_count = 0;
+  handler_count = 0;
+  handler_result = 0;
+  dispatch(stateful_move_only_result_function_object(123),
+      executor(ctx.get_executor()),
+      bindns::bind(move_only_result_handler, _1,
+        &handler_count, &handler_result));
+
+  BOOST_ASIO_CHECK(function_count == 0);
+  BOOST_ASIO_CHECK(handler_count == 0);
+  BOOST_ASIO_CHECK(handler_result == 0);
+
+  ctx.restart();
+  ctx.run();
+
+  BOOST_ASIO_CHECK(function_count == 1);
+  BOOST_ASIO_CHECK(handler_count == 1);
+  BOOST_ASIO_CHECK(handler_result == 123);
+#endif // !defined(BOOST_ASIO_NO_TS_EXECUTORS)
 }
 
 BOOST_ASIO_TEST_SUITE
