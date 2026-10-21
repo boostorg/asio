@@ -259,7 +259,7 @@ private:
     }
 
     BOOST_ASIO_DECL static void do_complete(void* owner, operation* base,
-        const boost::system::error_code& ec, std::size_t bytes_transferred);
+        int error_value, std::size_t bytes_transferred);
 
   private:
     select_reactor* reactor_;

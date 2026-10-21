@@ -153,16 +153,16 @@ private:
   typedef scheduler_thread_info thread_info;
 
   // Run at most one operation. May block.
-  BOOST_ASIO_DECL std::size_t do_run_one(mutex::scoped_lock& lock,
-      thread_info& this_thread, const boost::system::error_code& ec);
+  BOOST_ASIO_DECL std::size_t do_run_one(
+      mutex::scoped_lock& lock, thread_info& this_thread);
 
   // Run at most one operation with a timeout. May block.
   BOOST_ASIO_DECL std::size_t do_wait_one(mutex::scoped_lock& lock,
-      thread_info& this_thread, long usec, const boost::system::error_code& ec);
+      thread_info& this_thread, long usec);
 
   // Poll for at most one operation.
-  BOOST_ASIO_DECL std::size_t do_poll_one(mutex::scoped_lock& lock,
-      thread_info& this_thread, const boost::system::error_code& ec);
+  BOOST_ASIO_DECL std::size_t do_poll_one(
+      mutex::scoped_lock& lock, thread_info& this_thread);
 
   // Stop the task and all idle threads.
   BOOST_ASIO_DECL void stop_all_threads(mutex::scoped_lock& lock);

@@ -243,9 +243,6 @@ public:
 private:
   // The implementation used for initiating asynchronous operations.
   descriptor_service descriptor_service_;
-
-  // Cached success value to avoid accessing category singleton.
-  const boost::system::error_code success_ec_;
 };
 
 } // namespace detail

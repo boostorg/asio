@@ -104,9 +104,8 @@ private:
   BOOST_ASIO_DECL void do_post(implementation_type& impl,
       operation* op, bool is_continuation);
 
-  BOOST_ASIO_DECL static void do_complete(void* owner,
-      operation* base, const boost::system::error_code& ec,
-      std::size_t bytes_transferred);
+  BOOST_ASIO_DECL static void do_complete(void* owner, operation* base,
+      int error_value, std::size_t bytes_transferred);
 
   // The io_context used to obtain an I/O executor.
   io_context& io_context_;

@@ -221,7 +221,7 @@ std::size_t scheduler::run(boost::system::error_code& ec)
   mutex::scoped_lock lock(mutex_);
 
   std::size_t n = 0;
-  for (; do_run_one(lock, this_thread, ec); lock.lock())
+  for (; do_run_one(lock, this_thread); lock.lock())
     if (n != (std::numeric_limits<std::size_t>::max)())
       ++n;
   return n;
@@ -244,7 +244,7 @@ std::size_t scheduler::run_one(boost::system::error_code& ec)
 
   mutex::scoped_lock lock(mutex_);
 
-  return do_run_one(lock, this_thread, ec);
+  return do_run_one(lock, this_thread);
 }
 
 std::size_t scheduler::wait_one(long usec, boost::system::error_code& ec)
@@ -262,7 +262,7 @@ std::size_t scheduler::wait_one(long usec, boost::system::error_code& ec)
 
   mutex::scoped_lock lock(mutex_);
 
-  return do_wait_one(lock, this_thread, usec, ec);
+  return do_wait_one(lock, this_thread, usec);
 }
 
 std::size_t scheduler::poll(boost::system::error_code& ec)
@@ -292,7 +292,7 @@ std::size_t scheduler::poll(boost::system::error_code& ec)
 #endif // defined(BOOST_ASIO_HAS_THREADS)
 
   std::size_t n = 0;
-  for (; do_poll_one(lock, this_thread, ec); lock.lock())
+  for (; do_poll_one(lock, this_thread); lock.lock())
     if (n != (std::numeric_limits<std::size_t>::max)())
       ++n;
   return n;
@@ -324,7 +324,7 @@ std::size_t scheduler::poll_one(boost::system::error_code& ec)
       op_queue_.push(outer_info->private_op_queue);
 #endif // defined(BOOST_ASIO_HAS_THREADS)
 
-  return do_poll_one(lock, this_thread, ec);
+  return do_poll_one(lock, this_thread);
 }
 
 void scheduler::stop()
@@ -467,8 +467,7 @@ void scheduler::abandon_operations(
 }
 
 std::size_t scheduler::do_run_one(mutex::scoped_lock& lock,
-    scheduler::thread_info& this_thread,
-    const boost::system::error_code& ec)
+    scheduler::thread_info& this_thread)
 {
   while (!stopped_)
   {
@@ -511,7 +510,7 @@ std::size_t scheduler::do_run_one(mutex::scoped_lock& lock,
         (void)on_exit;
 
         // Complete the operation. May throw an exception. Deletes the object.
-        o->complete(this, ec, task_result);
+        o->complete(this, 0, task_result);
         this_thread.rethrow_pending_exception();
 
         return 1;
@@ -539,8 +538,7 @@ std::size_t scheduler::do_run_one(mutex::scoped_lock& lock,
 }
 
 std::size_t scheduler::do_wait_one(mutex::scoped_lock& lock,
-    scheduler::thread_info& this_thread, long usec,
-    const boost::system::error_code& ec)
+    scheduler::thread_info& this_thread, long usec)
 {
   if (stopped_)
     return 0;
@@ -605,15 +603,14 @@ std::size_t scheduler::do_wait_one(mutex::scoped_lock& lock,
   (void)on_exit;
 
   // Complete the operation. May throw an exception. Deletes the object.
-  o->complete(this, ec, task_result);
+  o->complete(this, 0, task_result);
   this_thread.rethrow_pending_exception();
 
   return 1;
 }
 
 std::size_t scheduler::do_poll_one(mutex::scoped_lock& lock,
-    scheduler::thread_info& this_thread,
-    const boost::system::error_code& ec)
+    scheduler::thread_info& this_thread)
 {
   if (stopped_)
     return 0;
@@ -661,7 +658,7 @@ std::size_t scheduler::do_poll_one(mutex::scoped_lock& lock,
   (void)on_exit;
 
   // Complete the operation. May throw an exception. Deletes the object.
-  o->complete(this, ec, task_result);
+  o->complete(this, 0, task_result);
   this_thread.rethrow_pending_exception();
 
   return 1;

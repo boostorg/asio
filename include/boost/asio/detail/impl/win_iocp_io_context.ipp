@@ -472,15 +472,13 @@ size_t win_iocp_io_context::do_one(DWORD msec,
     if (overlapped)
     {
       win_iocp_operation* op = static_cast<win_iocp_operation*>(overlapped);
-      boost::system::error_code result_ec(last_error,
-          boost::asio::error::get_system_category());
+      int error_value = static_cast<int>(last_error);
 
       // We may have been passed the last_error and bytes_transferred in the
       // OVERLAPPED structure itself.
       if (completion_key == overlapped_contains_result)
       {
-        result_ec = boost::system::error_code(static_cast<int>(op->Offset),
-            *reinterpret_cast<boost::system::error_category*>(op->Internal));
+        error_value = static_cast<int>(op->Offset);
         bytes_transferred = op->OffsetHigh;
       }
 
@@ -488,8 +486,9 @@ size_t win_iocp_io_context::do_one(DWORD msec,
       // structure.
       else
       {
-        op->Internal = reinterpret_cast<ulong_ptr_t>(&result_ec.category());
-        op->Offset = result_ec.value();
+        op->Internal = reinterpret_cast<ulong_ptr_t>(
+            &boost::asio::error::get_system_category());
+        op->Offset = error_value;
         op->OffsetHigh = bytes_transferred;
       }
 
@@ -503,7 +502,7 @@ size_t win_iocp_io_context::do_one(DWORD msec,
         work_finished_on_block_exit on_exit = { this };
         (void)on_exit;
 
-        op->complete(this, result_ec, bytes_transferred);
+        op->complete(this, error_value, bytes_transferred);
         this_thread.rethrow_pending_exception();
         boost::asio::error::clear(ec);
         return 1;

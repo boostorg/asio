@@ -42,15 +42,20 @@ class win_iocp_operation
 public:
   typedef win_iocp_operation operation_type;
 
-  void complete(void* owner, const boost::system::error_code& ec,
-      std::size_t bytes_transferred)
+  void complete(void* owner, int error_value, std::size_t bytes_transferred)
   {
-    func_(owner, this, ec, bytes_transferred);
+    func_(owner, this, error_value, bytes_transferred);
   }
 
   void destroy()
   {
-    func_(0, this, boost::system::error_code(), 0);
+    func_(0, this, 0, 0);
+  }
+
+  boost::system::error_code make_error_code(int error_value) const
+  {
+    return boost::system::error_code(error_value,
+        *reinterpret_cast<boost::system::error_category*>(Internal));
   }
 
   void reset()
@@ -64,9 +69,7 @@ public:
   }
 
 protected:
-  typedef void (*func_type)(
-      void*, win_iocp_operation*,
-      const boost::system::error_code&, std::size_t);
+  typedef void (*func_type)(void*, win_iocp_operation*, int, std::size_t);
 
   win_iocp_operation(func_type func)
     : next_(0),

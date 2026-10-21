@@ -132,7 +132,7 @@ void strand_service::do_dispatch(implementation_type& impl, operation* op)
     on_dispatch_exit on_exit = { &io_context_impl_, impl };
     (void)on_exit;
 
-    op->complete(&io_context_impl_, boost::system::error_code(), 0);
+    op->complete(&io_context_impl_, 0, 0);
     return;
   }
 
@@ -175,7 +175,7 @@ void strand_service::do_post(implementation_type& impl,
 }
 
 void strand_service::do_complete(void* owner, operation* base,
-    const boost::system::error_code& ec, std::size_t /*bytes_transferred*/)
+    int error_value, std::size_t /*bytes_transferred*/)
 {
   if (owner)
   {
@@ -194,7 +194,7 @@ void strand_service::do_complete(void* owner, operation* base,
     while (operation* o = impl->ready_queue_.front())
     {
       impl->ready_queue_.pop();
-      o->complete(owner, ec, 0);
+      o->complete(owner, error_value, 0);
     }
   }
 }

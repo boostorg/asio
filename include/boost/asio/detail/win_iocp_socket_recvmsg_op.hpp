@@ -58,16 +58,14 @@ public:
   }
 
   static void do_complete(void* owner, operation* base,
-      const boost::system::error_code& result_ec,
-      std::size_t bytes_transferred)
+      int error_value, std::size_t bytes_transferred)
   {
-    boost::system::error_code ec(result_ec);
-
     // Take ownership of the operation object.
     BOOST_ASIO_ASSUME(base != 0);
     win_iocp_socket_recvmsg_op* o(
         static_cast<win_iocp_socket_recvmsg_op*>(base));
     ptr p = { boost::asio::detail::addressof(o->handler_), o, o };
+    boost::system::error_code ec(o->make_error_code(error_value));
 
     BOOST_ASIO_HANDLER_COMPLETION((*o));
 
