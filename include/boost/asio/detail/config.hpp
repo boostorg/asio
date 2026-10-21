@@ -1505,6 +1505,16 @@
 # define BOOST_ASIO_UNUSED_VARIABLE
 #endif // !defined(BOOST_ASIO_UNUSED_VARIABLE)
 
+// Helper macro to prevent a static object from being destroyed at exit.
+#if defined(__has_cpp_attribute)
+# if __has_cpp_attribute(clang::no_destroy)
+#  define BOOST_ASIO_NO_DESTROY [[clang::no_destroy]]
+# endif // __has_cpp_attribute(clang::no_destroy)
+#endif // defined(__has_cpp_attribute)
+#if !defined(BOOST_ASIO_NO_DESTROY)
+# define BOOST_ASIO_NO_DESTROY
+#endif // !defined(BOOST_ASIO_NO_DESTROY)
+
 // Helper macro to tell the optimiser what may be assumed to be true.
 #if defined(BOOST_ASIO_MSVC)
 # define BOOST_ASIO_ASSUME(expr) __assume(expr)

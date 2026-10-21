@@ -57,7 +57,7 @@ public:
 
 const boost::system::error_category& get_netdb_category()
 {
-  static detail::netdb_category instance;
+  BOOST_ASIO_NO_DESTROY static detail::netdb_category instance;
   return instance;
 }
 
@@ -85,7 +85,7 @@ public:
 
 const boost::system::error_category& get_addrinfo_category()
 {
-  static detail::addrinfo_category instance;
+  BOOST_ASIO_NO_DESTROY static detail::addrinfo_category instance;
   return instance;
 }
 
@@ -120,7 +120,7 @@ public:
 
 const boost::system::error_category& get_misc_category()
 {
-  static detail::misc_category instance;
+  BOOST_ASIO_NO_DESTROY static detail::misc_category instance;
   return instance;
 }
 

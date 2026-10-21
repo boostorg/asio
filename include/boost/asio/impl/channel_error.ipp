@@ -49,7 +49,7 @@ public:
 
 const boost::system::error_category& get_channel_category()
 {
-  static detail::channel_category instance;
+  BOOST_ASIO_NO_DESTROY static detail::channel_category instance;
   return instance;
 }
 
