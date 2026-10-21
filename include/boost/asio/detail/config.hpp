@@ -1863,10 +1863,10 @@
 // namespaces) with the version namespace name.
 #if defined(BOOST_ASIO_VERSION_NAMESPACE)
 # define BOOST_ASIO_VERSIONED_NAME(name) \
-    BOOST_ASIO_DETAIL_CAT(BOOST_ASIO_DETAIL_CAT(asio_, \
+    BOOST_ASIO_DETAIL_CAT(BOOST_ASIO_DETAIL_CAT(boost_asio_, \
       BOOST_ASIO_VERSION_NAMESPACE), _ ## name)
 #else // defined(BOOST_ASIO_VERSION_NAMESPACE)
-# define BOOST_ASIO_VERSIONED_NAME(name) asio_ ## name
+# define BOOST_ASIO_VERSIONED_NAME(name) boost_asio_ ## name
 #endif // defined(BOOST_ASIO_VERSION_NAMESPACE)
 
 #endif // BOOST_ASIO_DETAIL_CONFIG_HPP
