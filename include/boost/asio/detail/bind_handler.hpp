@@ -42,15 +42,8 @@ public:
   {
   }
 
-  binder0(const binder0& other)
-    : handler_(other.handler_)
-  {
-  }
-
-  binder0(binder0&& other)
-    : handler_(static_cast<Handler&&>(other.handler_))
-  {
-  }
+  binder0(const binder0& other) = default;
+  binder0(binder0&& other) = default;
 
   void operator()()
   {
@@ -99,17 +92,8 @@ public:
   {
   }
 
-  binder1(const binder1& other)
-    : handler_(other.handler_),
-      arg1_(other.arg1_)
-  {
-  }
-
-  binder1(binder1&& other)
-    : handler_(static_cast<Handler&&>(other.handler_)),
-      arg1_(static_cast<Arg1&&>(other.arg1_))
-  {
-  }
+  binder1(const binder1& other) = default;
+  binder1(binder1&& other) = default;
 
   void operator()()
   {
@@ -163,19 +147,8 @@ public:
   {
   }
 
-  binder2(const binder2& other)
-    : handler_(other.handler_),
-      arg1_(other.arg1_),
-      arg2_(other.arg2_)
-  {
-  }
-
-  binder2(binder2&& other)
-    : handler_(static_cast<Handler&&>(other.handler_)),
-      arg1_(static_cast<Arg1&&>(other.arg1_)),
-      arg2_(static_cast<Arg2&&>(other.arg2_))
-  {
-  }
+  binder2(const binder2& other) = default;
+  binder2(binder2&& other) = default;
 
   void operator()()
   {
@@ -234,21 +207,8 @@ public:
   {
   }
 
-  binder3(const binder3& other)
-    : handler_(other.handler_),
-      arg1_(other.arg1_),
-      arg2_(other.arg2_),
-      arg3_(other.arg3_)
-  {
-  }
-
-  binder3(binder3&& other)
-    : handler_(static_cast<Handler&&>(other.handler_)),
-      arg1_(static_cast<Arg1&&>(other.arg1_)),
-      arg2_(static_cast<Arg2&&>(other.arg2_)),
-      arg3_(static_cast<Arg3&&>(other.arg3_))
-  {
-  }
+  binder3(const binder3& other) = default;
+  binder3(binder3&& other) = default;
 
   void operator()()
   {
@@ -313,23 +273,8 @@ public:
   {
   }
 
-  binder4(const binder4& other)
-    : handler_(other.handler_),
-      arg1_(other.arg1_),
-      arg2_(other.arg2_),
-      arg3_(other.arg3_),
-      arg4_(other.arg4_)
-  {
-  }
-
-  binder4(binder4&& other)
-    : handler_(static_cast<Handler&&>(other.handler_)),
-      arg1_(static_cast<Arg1&&>(other.arg1_)),
-      arg2_(static_cast<Arg2&&>(other.arg2_)),
-      arg3_(static_cast<Arg3&&>(other.arg3_)),
-      arg4_(static_cast<Arg4&&>(other.arg4_))
-  {
-  }
+  binder4(const binder4& other) = default;
+  binder4(binder4&& other) = default;
 
   void operator()()
   {
@@ -400,25 +345,8 @@ public:
   {
   }
 
-  binder5(const binder5& other)
-    : handler_(other.handler_),
-      arg1_(other.arg1_),
-      arg2_(other.arg2_),
-      arg3_(other.arg3_),
-      arg4_(other.arg4_),
-      arg5_(other.arg5_)
-  {
-  }
-
-  binder5(binder5&& other)
-    : handler_(static_cast<Handler&&>(other.handler_)),
-      arg1_(static_cast<Arg1&&>(other.arg1_)),
-      arg2_(static_cast<Arg2&&>(other.arg2_)),
-      arg3_(static_cast<Arg3&&>(other.arg3_)),
-      arg4_(static_cast<Arg4&&>(other.arg4_)),
-      arg5_(static_cast<Arg5&&>(other.arg5_))
-  {
-  }
+  binder5(const binder5& other) = default;
+  binder5(binder5&& other) = default;
 
   void operator()()
   {
@@ -474,11 +402,7 @@ public:
   {
   }
 
-  move_binder1(move_binder1&& other)
-    : handler_(static_cast<Handler&&>(other.handler_)),
-      arg1_(static_cast<Arg1&&>(other.arg1_))
-  {
-  }
+  move_binder1(move_binder1&& other) = default;
 
   void operator()()
   {
@@ -519,12 +443,7 @@ public:
   {
   }
 
-  move_binder2(move_binder2&& other)
-    : handler_(static_cast<Handler&&>(other.handler_)),
-      arg1_(static_cast<Arg1&&>(other.arg1_)),
-      arg2_(static_cast<Arg2&&>(other.arg2_))
-  {
-  }
+  move_binder2(move_binder2&& other) = default;
 
   void operator()()
   {
