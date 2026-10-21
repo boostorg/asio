@@ -222,6 +222,10 @@ private:
   // Helper function to start all threads in the pool.
   BOOST_ASIO_DECL void start();
 
+  // Helper function to invoke a function immediately, on the calling thread.
+  template <typename Function>
+  BOOST_ASIO_NEVER_INLINE static void execute_immediately(Function&& f);
+
   // The underlying scheduler.
   alignas(8) detail::scheduler& scheduler_;
 

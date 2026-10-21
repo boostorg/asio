@@ -513,6 +513,11 @@ private:
   io_context(const io_context&) = delete;
   io_context& operator=(const io_context&) = delete;
 
+  // Helper function to invoke a function immediately, on the calling thread.
+  template <typename Function>
+  BOOST_ASIO_NEVER_INLINE static void execute_immediately(
+      io_context* ctx, Function&& f);
+
   // Backwards compatible overload for use with services derived from
   // io_context::service.
   template <typename Service>
