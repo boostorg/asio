@@ -363,7 +363,7 @@ namespace detail
           }
         }
 
-        static_cast<WriteHandler&&>(handler_)(
+        BOOST_ASIO_INVOKE_INLINE static_cast<WriteHandler&&>(handler_)(
             static_cast<const boost::system::error_code&>(ec),
             static_cast<const std::size_t&>(buffers_.total_consumed()));
       }

@@ -195,7 +195,7 @@ public:
     Handler handler(static_cast<Handler&&>(handler_));
     ptr.reset();
 
-    static_cast<Handler&&>(handler)(
+    BOOST_ASIO_INVOKE_INLINE static_cast<Handler&&>(handler)(
         static_cast<Args&&>(args)...);
   }
 
@@ -225,8 +225,8 @@ public:
   template <typename Handler>
   static void impl(any_completion_handler_impl_base* impl, Args... args)
   {
-    static_cast<any_completion_handler_impl<Handler>*>(impl)->call(
-        static_cast<Args&&>(args)...);
+    BOOST_ASIO_INVOKE_INLINE static_cast<any_completion_handler_impl<Handler>*>(
+        impl)->call(static_cast<Args&&>(args)...);
   }
 
 private:
