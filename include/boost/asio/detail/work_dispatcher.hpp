@@ -193,7 +193,7 @@ public:
   work_dispatcher(const work_dispatcher& other) = default;
   work_dispatcher(work_dispatcher&& other) = default;
 
-  void operator()()
+  BOOST_ASIO_ALWAYS_INLINE void operator()()
   {
     associated_allocator_t<Handler> alloc((get_associated_allocator)(handler_));
     boost::asio::prefer(executor_, execution::allocator(alloc)).execute(
