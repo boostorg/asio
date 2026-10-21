@@ -16,6 +16,7 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include <boost/asio/detail/config.hpp>
+#include <boost/asio/detail/io_control.hpp>
 
 #if !defined(BOOST_ASIO_WINDOWS) \
   && !defined(BOOST_ASIO_WINDOWS_RUNTIME) \
@@ -142,6 +143,15 @@ public:
   boost::system::error_code io_control(implementation_type& impl,
       IO_Control_Command& command, boost::system::error_code& ec)
   {
+    const char* descriptor_name = 0;
+    if (get_descriptor_name(command, descriptor_name, ec))
+    {
+      if (!ec)
+        reactor_.set_descriptor_name(impl.reactor_data_, descriptor_name, ec);
+      BOOST_ASIO_ERROR_LOCATION(ec);
+      return ec;
+    }
+
     descriptor_ops::ioctl(impl.descriptor_, impl.state_,
         command.name(), static_cast<ioctl_arg_type*>(command.data()), ec);
     BOOST_ASIO_ERROR_LOCATION(ec);

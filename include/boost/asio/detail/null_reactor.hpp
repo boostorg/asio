@@ -41,6 +41,13 @@ public:
   {
   };
 
+  // Give a descriptor a name, used to lookup per-descriptor configuration.
+  void set_descriptor_name(per_descriptor_data&,
+      const char* /*name*/, boost::system::error_code& ec)
+  {
+    boost::asio::error::clear(ec);
+  }
+
   // Constructor.
   null_reactor(boost::asio::execution_context& ctx)
     : execution_context_service_base<null_reactor>(ctx)

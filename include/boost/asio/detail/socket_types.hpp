@@ -441,6 +441,7 @@ BOOST_ASIO_INLINE_VARIABLE const int max_iov_len = 16;
 BOOST_ASIO_INLINE_VARIABLE const int custom_socket_option_level = 0xA5100000;
 BOOST_ASIO_INLINE_VARIABLE const int enable_connection_aborted_option = 1;
 BOOST_ASIO_INLINE_VARIABLE const int always_fail_option = 2;
+BOOST_ASIO_INLINE_VARIABLE const int custom_io_control_name = 0x5A110001;
 
 } // namespace detail
 BOOST_ASIO_INLINE_NAMESPACE_END

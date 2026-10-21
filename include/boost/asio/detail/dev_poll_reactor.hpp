@@ -82,6 +82,13 @@ public:
       int op_type, socket_type descriptor,
       per_descriptor_data& descriptor_data, reactor_op* op);
 
+  // Give a descriptor a name, used to lookup per-descriptor configuraation.
+  void set_descriptor_name(per_descriptor_data&,
+      const char* /*name*/, boost::system::error_code& ec)
+  {
+    boost::asio::error::clear(ec);
+  }
+
   // Move descriptor registration from one descriptor_data object to another.
   BOOST_ASIO_DECL void move_descriptor(socket_type descriptor,
       per_descriptor_data& target_descriptor_data,
