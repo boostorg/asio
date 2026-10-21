@@ -1428,6 +1428,22 @@
 # define BOOST_ASIO_ASSUME(expr) (void)0
 #endif // !defined(BOOST_ASIO_ASSUME)
 
+// Branch prediction hints.
+#if !defined(BOOST_ASIO_LIKELY) && !defined(BOOST_ASIO_UNLIKELY)
+# if !defined(BOOST_ASIO_DISABLE_LIKELY)
+#  if defined(__GNUC__) || defined(__clang__)
+#   define BOOST_ASIO_LIKELY(x) __builtin_expect(!!(x), 1)
+#   define BOOST_ASIO_UNLIKELY(x) __builtin_expect(!!(x), 0)
+#  endif // defined(__GNUC__) || defined(__clang__)
+# endif // !defined(BOOST_ASIO_DISABLE_LIKELY)
+#endif // !defined(BOOST_ASIO_LIKELY) && !defined(BOOST_ASIO_UNLIKELY)
+#if !defined(BOOST_ASIO_LIKELY)
+# define BOOST_ASIO_LIKELY(x) (x)
+#endif // !defined(BOOST_ASIO_LIKELY)
+#if !defined(BOOST_ASIO_UNLIKELY)
+# define BOOST_ASIO_UNLIKELY(x) (x)
+#endif // !defined(BOOST_ASIO_UNLIKELY)
+
 // Helper macro to prevent a function from being inlined into its callers.
 #if !defined(BOOST_ASIO_DISABLE_NEVER_INLINE)
 # if defined(BOOST_ASIO_MSVC)
