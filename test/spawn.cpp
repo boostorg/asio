@@ -27,7 +27,10 @@
 #include <boost/asio/any_completion_handler.hpp>
 #include <boost/asio/bind_cancellation_slot.hpp>
 #include <boost/asio/deferred.hpp>
+#include <boost/asio/detached.hpp>
+#include <boost/asio/dispatch.hpp>
 #include <boost/asio/io_context.hpp>
+#include <boost/asio/post.hpp>
 #include <boost/asio/steady_timer.hpp>
 
 void void_returning_coroutine(boost::asio::yield_context)
@@ -575,6 +578,99 @@ void test_spawn_async_ops()
   BOOST_ASIO_CHECK(called);
 }
 
+void test_spawn_completes_out_of_line()
+{
+  boost::asio::io_context ctx;
+
+  int depth = 0;
+  int max_depth = 0;
+  bool called = false;
+
+  boost::asio::post(ctx,
+      [&]
+      {
+        ++depth;
+        max_depth = depth > max_depth ? depth : max_depth;
+
+        boost::asio::spawn(ctx,
+            [](boost::asio::yield_context)
+            {
+            },
+            [&](std::exception_ptr)
+            {
+              ++depth;
+              max_depth = depth > max_depth ? depth : max_depth;
+              called = true;
+              --depth;
+            });
+
+        --depth;
+      });
+
+  ctx.run();
+
+  BOOST_ASIO_CHECK(called);
+  BOOST_ASIO_CHECK(max_depth == 1);
+}
+
+void test_spawn_inline_completions()
+{
+  boost::asio::io_context ctx;
+
+  int completed = 0;
+  int destroyed = 0;
+
+  struct tracker
+  {
+    int& destroyed_;
+    ~tracker() { ++destroyed_; }
+  };
+
+  boost::asio::spawn(ctx,
+      [&](boost::asio::yield_context yield)
+      {
+        tracker t{destroyed};
+        for (int i = 0; i < 16; ++i)
+          boost::asio::dispatch(yield);
+        completed = 1;
+      }, boost::asio::detached);
+
+  ctx.run();
+
+  BOOST_ASIO_CHECK(completed == 1);
+  BOOST_ASIO_CHECK(destroyed == 1);
+}
+
+void test_spawn_inline_completions_abandoned()
+{
+  int destroyed = 0;
+
+  struct tracker
+  {
+    int& destroyed_;
+    ~tracker() { ++destroyed_; }
+  };
+
+  {
+    boost::asio::io_context ctx;
+    boost::asio::steady_timer timer(ctx);
+
+    boost::asio::spawn(ctx,
+        [&](boost::asio::yield_context yield)
+        {
+          tracker t{destroyed};
+          for (int i = 0; i < 8; ++i)
+            boost::asio::dispatch(yield);
+          timer.expires_after(boost::asio::chrono::hours(1));
+          timer.async_wait(yield);
+        }, boost::asio::detached);
+
+    ctx.run_one();
+  }
+
+  BOOST_ASIO_CHECK(destroyed == 1);
+}
+
 BOOST_ASIO_TEST_SUITE
 (
   "spawn",
@@ -584,6 +680,9 @@ BOOST_ASIO_TEST_SUITE
   BOOST_ASIO_TEST_CASE(test_spawn_exception)
   BOOST_ASIO_TEST_CASE(test_spawn_return_move_only)
   BOOST_ASIO_TEST_CASE(test_spawn_async_ops)
+  BOOST_ASIO_TEST_CASE(test_spawn_completes_out_of_line)
+  BOOST_ASIO_TEST_CASE(test_spawn_inline_completions)
+  BOOST_ASIO_TEST_CASE(test_spawn_inline_completions_abandoned)
 )
 
 #else // defined(BOOST_ASIO_HAS_BOOST_CONTEXT_FIBER)
