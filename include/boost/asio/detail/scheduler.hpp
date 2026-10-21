@@ -152,9 +152,32 @@ private:
   // Structure containing thread-specific data.
   typedef scheduler_thread_info thread_info;
 
-  // Run at most one operation. May block.
-  BOOST_ASIO_DECL std::size_t do_run_one(
+  // Request invocation of the given operation and return immediately. Assumes
+  // that work_started() has not yet been called for the operation.
+  BOOST_ASIO_DECL BOOST_ASIO_NEVER_INLINE void do_post_immediate_completion(
+      operation* op);
+
+  // Request invocation of the given operations and return immediately. Assumes
+  // that work_started() has not yet been called for the operations.
+  BOOST_ASIO_DECL BOOST_ASIO_NEVER_INLINE void do_post_immediate_completions(
+      std::size_t n, op_queue<operation>& ops);
+
+  // The tail of post_deferred_completion(), as above.
+  BOOST_ASIO_DECL BOOST_ASIO_NEVER_INLINE void do_post_deferred_completion(
+      operation* op);
+
+  // The tail of post_deferred_completions(), as above.
+  BOOST_ASIO_DECL BOOST_ASIO_NEVER_INLINE void do_post_deferred_completions(
+      op_queue<operation>& ops);
+
+  // Run at most one operation. May block. Always inlined into the run
+  // functions, as leaving it out of line costs them a stack frame.
+  BOOST_ASIO_ALWAYS_INLINE std::size_t do_run_one(
       mutex::scoped_lock& lock, thread_info& this_thread);
+
+  // Sleep until woken to run an operation. May block.
+  BOOST_ASIO_DECL BOOST_ASIO_NEVER_INLINE void do_sleep(
+      mutex::scoped_lock& lock);
 
   // Run at most one operation with a timeout. May block.
   BOOST_ASIO_DECL std::size_t do_wait_one(mutex::scoped_lock& lock,
@@ -167,8 +190,16 @@ private:
   // Stop the task and all idle threads.
   BOOST_ASIO_DECL void stop_all_threads(mutex::scoped_lock& lock);
 
+  // True if there is no reason to wake any other thread.
+  bool can_skip_wake(mutex::scoped_lock& lock)
+  {
+    return wait_usec_ != 0
+      && !wakeup_event_.has_waiters(lock)
+      && (task_interrupted_ || !task_);
+  }
+
   // Wake a single idle thread, or the task, and always unlock the mutex.
-  BOOST_ASIO_DECL void wake_one_thread_and_unlock(
+  BOOST_ASIO_DECL BOOST_ASIO_NEVER_INLINE void wake_one_thread_and_unlock(
       mutex::scoped_lock& lock);
 
   // Get the default task.
