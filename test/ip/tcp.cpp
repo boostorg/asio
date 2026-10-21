@@ -1273,6 +1273,82 @@ void test()
 
 //------------------------------------------------------------------------------
 
+// ip_tcp_socket_async_wait_runtime test
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// The following test checks the runtime operation of the ip::tcp::socket
+// async_wait function. A wait operation is never performed speculatively. It
+// waits for the socket to become ready, and transfers nothing.
+
+namespace ip_tcp_socket_async_wait_runtime {
+
+void handle_wait(const boost::system::error_code& err, bool* called)
+{
+  *called = true;
+  BOOST_ASIO_CHECK(!err);
+}
+
+void handle_wait_cancel(const boost::system::error_code& err, bool* called)
+{
+  *called = true;
+  BOOST_ASIO_CHECK(err == boost::asio::error::operation_aborted);
+}
+
+void test()
+{
+  using namespace boost::asio;
+  namespace ip = boost::asio::ip;
+
+  namespace bindns = std;
+  using bindns::placeholders::_1;
+
+  io_context ioc;
+
+  ip::tcp::acceptor acceptor(ioc, ip::tcp::endpoint(ip::tcp::v4(), 0));
+  ip::tcp::endpoint server_endpoint = acceptor.local_endpoint();
+  server_endpoint.address(ip::address_v4::loopback());
+
+  ip::tcp::socket client_side_socket(ioc);
+  ip::tcp::socket server_side_socket(ioc);
+
+  client_side_socket.connect(server_endpoint);
+  acceptor.accept(server_side_socket);
+
+  bool write_completed = false;
+  client_side_socket.async_wait(ip::tcp::socket::wait_write,
+      bindns::bind(handle_wait, _1, &write_completed));
+
+  ioc.run();
+  BOOST_ASIO_CHECK(write_completed);
+
+  server_side_socket.send(buffer("x", 1));
+
+  bool read_completed = false;
+  client_side_socket.async_wait(ip::tcp::socket::wait_read,
+      bindns::bind(handle_wait, _1, &read_completed));
+
+  ioc.restart();
+  ioc.run();
+  BOOST_ASIO_CHECK(read_completed);
+
+  char data[1];
+  size_t bytes_received = client_side_socket.receive(buffer(data, 1));
+  BOOST_ASIO_CHECK(bytes_received == 1);
+  BOOST_ASIO_CHECK(data[0] == 'x');
+
+  bool cancel_completed = false;
+  server_side_socket.async_wait(ip::tcp::socket::wait_read,
+      bindns::bind(handle_wait_cancel, _1, &cancel_completed));
+  server_side_socket.close();
+
+  ioc.restart();
+  ioc.run();
+  BOOST_ASIO_CHECK(cancel_completed);
+}
+
+} // namespace ip_tcp_socket_async_wait_runtime
+
+//------------------------------------------------------------------------------
+
 BOOST_ASIO_TEST_SUITE
 (
   "ip/tcp",
@@ -1280,6 +1356,7 @@ BOOST_ASIO_TEST_SUITE
   BOOST_ASIO_TEST_CASE(ip_tcp_runtime::test)
   BOOST_ASIO_COMPILE_TEST_CASE(ip_tcp_socket_compile::test)
   BOOST_ASIO_TEST_CASE(ip_tcp_socket_runtime::test)
+  BOOST_ASIO_TEST_CASE(ip_tcp_socket_async_wait_runtime::test)
   BOOST_ASIO_COMPILE_TEST_CASE(ip_tcp_acceptor_compile::test)
   BOOST_ASIO_TEST_CASE(ip_tcp_acceptor_runtime::test)
   BOOST_ASIO_COMPILE_TEST_CASE(ip_tcp_resolver_compile::test)

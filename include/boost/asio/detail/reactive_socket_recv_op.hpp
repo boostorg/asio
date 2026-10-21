@@ -49,7 +49,7 @@ public:
   {
   }
 
-  static status do_perform(reactor_op* base)
+  static BOOST_ASIO_ALWAYS_INLINE status do_perform(reactor_op* base)
   {
     BOOST_ASIO_ASSUME(base != 0);
     reactive_socket_recv_op_base* o(

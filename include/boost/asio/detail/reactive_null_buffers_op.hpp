@@ -48,7 +48,7 @@ public:
   {
   }
 
-  static status do_perform(reactor_op*)
+  static BOOST_ASIO_ALWAYS_INLINE status do_perform(reactor_op*)
   {
     return done;
   }

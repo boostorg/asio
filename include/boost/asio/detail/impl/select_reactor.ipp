@@ -23,6 +23,7 @@
       && !defined(BOOST_ASIO_HAS_KQUEUE) \
       && !defined(BOOST_ASIO_WINDOWS_RUNTIME))
 
+#include <boost/asio/detail/assert.hpp>
 #include <boost/asio/detail/fd_set_adapter.hpp>
 #include <boost/asio/detail/select_reactor.hpp>
 #include <boost/asio/detail/signal_blocker.hpp>
@@ -155,24 +156,23 @@ void select_reactor::call_post_immediate_completion(
       op, is_continuation);
 }
 
-void select_reactor::start_op(int op_type, socket_type descriptor,
-    select_reactor::per_descriptor_data&, reactor_op* op, bool is_continuation,
-    bool, void (*on_immediate)(operation*, bool, const void*),
-    const void* immediate_arg)
+bool select_reactor::start_unready_op(int op_type, socket_type descriptor,
+    boost::asio::detail::mutex::scoped_lock& lock, reactor_op* op)
 {
-  boost::asio::detail::mutex::scoped_lock lock(mutex_);
+  BOOST_ASIO_ASSERT(lock.locked());
 
   if (shutdown_)
   {
     lock.unlock();
-    on_immediate(op, is_continuation, immediate_arg);
-    return;
+    return true;
   }
 
   bool first = op_queue_[op_type].enqueue_operation(descriptor, op);
   scheduler_.work_started();
   if (first)
     interrupter_.interrupt();
+
+  return false;
 }
 
 void select_reactor::cancel_ops(socket_type descriptor,

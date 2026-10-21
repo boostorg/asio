@@ -49,7 +49,7 @@ public:
   {
   }
 
-  static status do_perform(reactor_op* base)
+  static BOOST_ASIO_ALWAYS_INLINE status do_perform(reactor_op* base)
   {
     BOOST_ASIO_ASSUME(base != 0);
     descriptor_write_op_base* o(static_cast<descriptor_write_op_base*>(base));

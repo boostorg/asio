@@ -56,8 +56,8 @@ void reactive_socket_service_base::async_wait(
     break;
   default:
     p.p->ec_ = boost::asio::error::invalid_argument;
-    start_op(impl, reactor::read_op, p.p,
-        is_continuation, false, true, false, &io_ex, 0);
+    start_op<nullptr, reactor::read_op>(impl, p.p,
+        is_continuation, true, false, &io_ex, 0);
     p.v = p.p = 0;
     return;
   }
@@ -70,8 +70,21 @@ void reactive_socket_service_base::async_wait(
           &reactor_, &impl.reactor_data_, impl.socket_, op_type);
   }
 
-  start_op(impl, op_type, p.p, is_continuation,
-      false, false, false, &io_ex, 0);
+  switch (op_type)
+  {
+  case reactor::read_op:
+    start_op<nullptr, reactor::read_op>(impl, p.p,
+        is_continuation, false, false, &io_ex, 0);
+    break;
+  case reactor::write_op:
+    start_op<nullptr, reactor::write_op>(impl, p.p,
+        is_continuation, false, false, &io_ex, 0);
+    break;
+  default:
+    start_op<nullptr, reactor::except_op>(impl, p.p,
+        is_continuation, false, false, &io_ex, 0);
+    break;
+  }
   p.v = p.p = 0;
 }
 
@@ -106,7 +119,8 @@ void reactive_socket_service_base::async_send(
   BOOST_ASIO_HANDLER_CREATION((reactor_.context(), *p.p, "socket",
         &impl, impl.socket_, "async_send"));
 
-  start_op(impl, reactor::write_op, p.p, is_continuation, true,
+  BOOST_ASIO_INVOKE_INLINE start_op<&op::do_perform, reactor::write_op>(
+      impl, p.p, is_continuation,
       ((impl.state_ & socket_ops::stream_oriented)
         && buffer_sequence_adapter<boost::asio::const_buffer,
           ConstBufferSequence>::all_empty(buffers)),
@@ -143,8 +157,8 @@ void reactive_socket_service_base::async_send(
   BOOST_ASIO_HANDLER_CREATION((reactor_.context(), *p.p, "socket",
         &impl, impl.socket_, "async_send(null_buffers)"));
 
-  start_op(impl, reactor::write_op, p.p,
-      is_continuation, false, false, false, &io_ex, 0);
+  start_op<nullptr, reactor::write_op>(impl, p.p,
+      is_continuation, false, false, &io_ex, 0);
   p.v = p.p = 0;
 }
 
@@ -180,15 +194,21 @@ void reactive_socket_service_base::async_receive(
   BOOST_ASIO_HANDLER_CREATION((reactor_.context(), *p.p, "socket",
         &impl, impl.socket_, "async_receive"));
 
-  start_op(impl,
-      (flags & socket_base::message_out_of_band)
-        ? reactor::except_op : reactor::read_op,
-      p.p, is_continuation,
-      (flags & socket_base::message_out_of_band) == 0,
-      ((impl.state_ & socket_ops::stream_oriented)
-        && buffer_sequence_adapter<boost::asio::mutable_buffer,
-          MutableBufferSequence>::all_empty(buffers)),
-      BOOST_ASIO_OS_DEF(MSG_DONTWAIT) == 0, &io_ex, 0);
+  const bool noop = (impl.state_ & socket_ops::stream_oriented)
+    && buffer_sequence_adapter<boost::asio::mutable_buffer,
+      MutableBufferSequence>::all_empty(buffers);
+
+  if (flags & socket_base::message_out_of_band)
+  {
+    start_op<nullptr, reactor::except_op>(impl, p.p, is_continuation,
+        noop, BOOST_ASIO_OS_DEF(MSG_DONTWAIT) == 0, &io_ex, 0);
+  }
+  else
+  {
+    BOOST_ASIO_INVOKE_INLINE start_op<&op::do_perform, reactor::read_op>(
+        impl, p.p, is_continuation, noop,
+        BOOST_ASIO_OS_DEF(MSG_DONTWAIT) == 0, &io_ex, 0);
+  }
   p.v = p.p = 0;
 }
 
@@ -221,10 +241,16 @@ void reactive_socket_service_base::async_receive(
   BOOST_ASIO_HANDLER_CREATION((reactor_.context(), *p.p, "socket",
         &impl, impl.socket_, "async_receive(null_buffers)"));
 
-  start_op(impl,
-      (flags & socket_base::message_out_of_band)
-        ? reactor::except_op : reactor::read_op,
-      p.p, is_continuation, false, false, false, &io_ex, 0);
+  if (flags & socket_base::message_out_of_band)
+  {
+    start_op<nullptr, reactor::except_op>(impl, p.p,
+        is_continuation, false, false, &io_ex, 0);
+  }
+  else
+  {
+    start_op<nullptr, reactor::read_op>(impl, p.p,
+        is_continuation, false, false, &io_ex, 0);
+  }
   p.v = p.p = 0;
 }
 
@@ -261,12 +287,17 @@ void reactive_socket_service_base::async_receive_with_flags(
   BOOST_ASIO_HANDLER_CREATION((reactor_.context(), *p.p, "socket",
         &impl, impl.socket_, "async_receive_with_flags"));
 
-  start_op(impl,
-      (in_flags & socket_base::message_out_of_band)
-        ? reactor::except_op : reactor::read_op,
-      p.p, is_continuation,
-      (in_flags & socket_base::message_out_of_band) == 0,
-      false, BOOST_ASIO_OS_DEF(MSG_DONTWAIT) == 0, &io_ex, 0);
+  // Out-of-band data is never received speculatively.
+  if (in_flags & socket_base::message_out_of_band)
+  {
+    start_op<nullptr, reactor::except_op>(impl, p.p, is_continuation,
+        false, BOOST_ASIO_OS_DEF(MSG_DONTWAIT) == 0, &io_ex, 0);
+  }
+  else
+  {
+    start_op<&op::do_perform, reactor::read_op>(impl, p.p, is_continuation,
+        false, BOOST_ASIO_OS_DEF(MSG_DONTWAIT) == 0, &io_ex, 0);
+  }
   p.v = p.p = 0;
 }
 
@@ -304,10 +335,16 @@ void reactive_socket_service_base::async_receive_with_flags(
   // performing a null_buffers operation.
   out_flags = 0;
 
-  start_op(impl,
-      (in_flags & socket_base::message_out_of_band)
-        ? reactor::except_op : reactor::read_op,
-      p.p, is_continuation, false, false, false, &io_ex, 0);
+  if (in_flags & socket_base::message_out_of_band)
+  {
+    start_op<nullptr, reactor::except_op>(impl, p.p,
+        is_continuation, false, false, &io_ex, 0);
+  }
+  else
+  {
+    start_op<nullptr, reactor::read_op>(impl, p.p,
+        is_continuation, false, false, &io_ex, 0);
+  }
   p.v = p.p = 0;
 }
 
