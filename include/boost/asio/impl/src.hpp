@@ -37,13 +37,14 @@
 #include <boost/asio/detail/impl/dev_poll_reactor.ipp>
 #include <boost/asio/detail/impl/epoll_reactor.ipp>
 #include <boost/asio/detail/impl/eventfd_select_interrupter.ipp>
-#include <boost/asio/detail/impl/handler_tracking.ipp>
 #include <boost/asio/detail/impl/io_uring_descriptor_service.ipp>
 #include <boost/asio/detail/impl/io_uring_file_service.ipp>
 #include <boost/asio/detail/impl/io_uring_socket_service_base.ipp>
 #include <boost/asio/detail/impl/io_uring_service.ipp>
 #include <boost/asio/detail/impl/kqueue_reactor.ipp>
 #include <boost/asio/detail/impl/null_event.ipp>
+#include <boost/asio/detail/impl/perfetto_handler_tracking.ipp>
+#include <boost/asio/detail/impl/perfetto_writer.ipp>
 #include <boost/asio/detail/impl/pipe_select_interrupter.ipp>
 #include <boost/asio/detail/impl/posix_event.ipp>
 #include <boost/asio/detail/impl/posix_mutex.ipp>
@@ -60,6 +61,7 @@
 #include <boost/asio/detail/impl/signal_set_service.ipp>
 #include <boost/asio/detail/impl/socket_ops.ipp>
 #include <boost/asio/detail/impl/socket_select_interrupter.ipp>
+#include <boost/asio/detail/impl/stderr_handler_tracking.ipp>
 #include <boost/asio/detail/impl/strand_executor_service.ipp>
 #include <boost/asio/detail/impl/strand_service.ipp>
 #include <boost/asio/detail/impl/thread_context.ipp>

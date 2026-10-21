@@ -211,6 +211,8 @@ std::size_t scheduler::run(boost::system::error_code& ec)
     return 0;
   }
 
+  BOOST_ASIO_HANDLER_SCHEDULER_RUN((&this->context(), "run"));
+
   thread_info this_thread;
   this_thread.private_outstanding_work = 0;
   thread_call_stack::context ctx(this, this_thread);
@@ -232,6 +234,8 @@ std::size_t scheduler::run_one(boost::system::error_code& ec)
     stop();
     return 0;
   }
+
+  BOOST_ASIO_HANDLER_SCHEDULER_RUN((&this->context(), "run_one"));
 
   thread_info this_thread;
   this_thread.private_outstanding_work = 0;
@@ -269,6 +273,8 @@ std::size_t scheduler::poll(boost::system::error_code& ec)
     return 0;
   }
 
+  BOOST_ASIO_HANDLER_SCHEDULER_RUN((&this->context(), "poll"));
+
   thread_info this_thread;
   this_thread.private_outstanding_work = 0;
   thread_call_stack::context ctx(this, this_thread);
@@ -299,6 +305,8 @@ std::size_t scheduler::poll_one(boost::system::error_code& ec)
     stop();
     return 0;
   }
+
+  BOOST_ASIO_HANDLER_SCHEDULER_RUN((&this->context(), "poll_one"));
 
   thread_info this_thread;
   this_thread.private_outstanding_work = 0;

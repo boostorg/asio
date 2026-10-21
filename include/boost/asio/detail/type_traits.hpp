@@ -83,6 +83,8 @@ using std::is_nothrow_default_constructible;
 
 using std::is_destructible;
 
+using std::is_enum;
+
 using std::is_function;
 
 using std::is_integral;
@@ -157,6 +159,8 @@ using result_of_t = typename std::result_of<T>::type;
 #endif // defined(BOOST_ASIO_HAS_STD_INVOKE_RESULT)
 
 using std::true_type;
+
+using std::underlying_type;
 
 template <typename> struct void_type
 {

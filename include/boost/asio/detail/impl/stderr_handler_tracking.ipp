@@ -1,6 +1,6 @@
 //
-// detail/impl/handler_tracking.ipp
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// detail/impl/stderr_handler_tracking.ipp
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2026 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
@@ -8,8 +8,8 @@
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
-#ifndef BOOST_ASIO_DETAIL_IMPL_HANDLER_TRACKING_IPP
-#define BOOST_ASIO_DETAIL_IMPL_HANDLER_TRACKING_IPP
+#ifndef BOOST_ASIO_DETAIL_IMPL_STDERR_HANDLER_TRACKING_IPP
+#define BOOST_ASIO_DETAIL_IMPL_STDERR_HANDLER_TRACKING_IPP
 
 #if defined(_MSC_VER) && (_MSC_VER >= 1200)
 # pragma once
@@ -17,17 +17,15 @@
 
 #include <boost/asio/detail/config.hpp>
 
-#if defined(BOOST_ASIO_CUSTOM_HANDLER_TRACKING)
-
-// The handler tracking implementation is provided by the user-specified header.
-
-#elif defined(BOOST_ASIO_ENABLE_HANDLER_TRACKING)
+#if defined(BOOST_ASIO_ENABLE_HANDLER_TRACKING) \
+  && !defined(BOOST_ASIO_PERFETTO_HANDLER_TRACKING) \
+  && !defined(BOOST_ASIO_CUSTOM_HANDLER_TRACKING)
 
 #include <cstdarg>
 #include <cstdio>
 #include <boost/asio/detail/chrono.hpp>
 #include <boost/asio/detail/chrono_time_traits.hpp>
-#include <boost/asio/detail/handler_tracking.hpp>
+#include <boost/asio/detail/stderr_handler_tracking.hpp>
 #include <boost/asio/wait_traits.hpp>
 
 #if defined(BOOST_ASIO_WINDOWS_RUNTIME)
@@ -43,12 +41,12 @@ namespace asio {
 BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
 
-struct handler_tracking_timestamp
+struct stderr_handler_tracking_timestamp
 {
   uint64_t seconds;
   uint64_t microseconds;
 
-  handler_tracking_timestamp()
+  stderr_handler_tracking_timestamp()
   {
     typedef chrono_time_traits<chrono::system_clock,
         boost::asio::wait_traits<chrono::system_clock>> traits_helper;
@@ -59,7 +57,7 @@ struct handler_tracking_timestamp
   }
 };
 
-struct handler_tracking::tracking_state
+struct stderr_handler_tracking::tracking_state
 {
   static_mutex mutex_;
   uint64_t next_id_;
@@ -67,13 +65,14 @@ struct handler_tracking::tracking_state
   tss_ptr<location>* current_location_;
 };
 
-handler_tracking::tracking_state* handler_tracking::get_state()
+stderr_handler_tracking::tracking_state*
+stderr_handler_tracking::get_state()
 {
   static tracking_state state = { BOOST_ASIO_STATIC_MUTEX_INIT, 1, 0, 0 };
   return &state;
 }
 
-void handler_tracking::init()
+void stderr_handler_tracking::init()
 {
   static tracking_state* state = get_state();
 
@@ -86,7 +85,7 @@ void handler_tracking::init()
     state->current_location_ = new tss_ptr<location>;
 }
 
-handler_tracking::location::location(
+stderr_handler_tracking::location::location(
     const char* file, int line, const char* func)
   : file_(file),
     line_(line),
@@ -97,14 +96,14 @@ handler_tracking::location::location(
     *get_state()->current_location_ = this;
 }
 
-handler_tracking::location::~location()
+stderr_handler_tracking::location::~location()
 {
   if (file_)
     *get_state()->current_location_ = next_;
 }
 
-void handler_tracking::creation(execution_context&,
-    handler_tracking::tracked_handler& h,
+void stderr_handler_tracking::creation(
+    stderr_handler_tracking::tracked_handler& h,
     const char* object_type, void* object,
     uintmax_t /*native_handle*/, const char* op_name)
 {
@@ -114,7 +113,7 @@ void handler_tracking::creation(execution_context&,
   h.id_ = state->next_id_++;
   lock.unlock();
 
-  handler_tracking_timestamp timestamp;
+  stderr_handler_tracking_timestamp timestamp;
 
   uint64_t current_id = 0;
   if (completion* current_completion = *state->current_completion_)
@@ -148,8 +147,16 @@ void handler_tracking::creation(execution_context&,
       current_id, h.id_, object_type, object, op_name);
 }
 
-handler_tracking::completion::completion(
-    const handler_tracking::tracked_handler& h)
+void stderr_handler_tracking::creation(execution_context&,
+    stderr_handler_tracking::tracked_handler& h,
+    const char* object_type, void* object,
+    uintmax_t native_handle, const char* op_name)
+{
+  creation(h, object_type, object, native_handle, op_name);
+}
+
+stderr_handler_tracking::completion::completion(
+    const stderr_handler_tracking::tracked_handler& h)
   : id_(h.id_),
     invoked_(false),
     next_(*get_state()->current_completion_)
@@ -157,11 +164,11 @@ handler_tracking::completion::completion(
   *get_state()->current_completion_ = this;
 }
 
-handler_tracking::completion::~completion()
+stderr_handler_tracking::completion::~completion()
 {
   if (id_)
   {
-    handler_tracking_timestamp timestamp;
+    stderr_handler_tracking_timestamp timestamp;
 
     write_line(
 #if defined(BOOST_ASIO_WINDOWS)
@@ -176,9 +183,9 @@ handler_tracking::completion::~completion()
   *get_state()->current_completion_ = next_;
 }
 
-void handler_tracking::completion::invocation_begin()
+void stderr_handler_tracking::completion::invocation_begin()
 {
-  handler_tracking_timestamp timestamp;
+  stderr_handler_tracking_timestamp timestamp;
 
   write_line(
 #if defined(BOOST_ASIO_WINDOWS)
@@ -191,10 +198,10 @@ void handler_tracking::completion::invocation_begin()
   invoked_ = true;
 }
 
-void handler_tracking::completion::invocation_begin(
+void stderr_handler_tracking::completion::invocation_begin(
     const boost::system::error_code& ec)
 {
-  handler_tracking_timestamp timestamp;
+  stderr_handler_tracking_timestamp timestamp;
 
   write_line(
 #if defined(BOOST_ASIO_WINDOWS)
@@ -208,10 +215,10 @@ void handler_tracking::completion::invocation_begin(
   invoked_ = true;
 }
 
-void handler_tracking::completion::invocation_begin(
+void stderr_handler_tracking::completion::invocation_begin(
     const boost::system::error_code& ec, std::size_t bytes_transferred)
 {
-  handler_tracking_timestamp timestamp;
+  stderr_handler_tracking_timestamp timestamp;
 
   write_line(
 #if defined(BOOST_ASIO_WINDOWS)
@@ -226,10 +233,10 @@ void handler_tracking::completion::invocation_begin(
   invoked_ = true;
 }
 
-void handler_tracking::completion::invocation_begin(
+void stderr_handler_tracking::completion::invocation_begin(
     const boost::system::error_code& ec, int signal_number)
 {
-  handler_tracking_timestamp timestamp;
+  stderr_handler_tracking_timestamp timestamp;
 
   write_line(
 #if defined(BOOST_ASIO_WINDOWS)
@@ -243,10 +250,10 @@ void handler_tracking::completion::invocation_begin(
   invoked_ = true;
 }
 
-void handler_tracking::completion::invocation_begin(
+void stderr_handler_tracking::completion::invocation_begin(
     const boost::system::error_code& ec, const char* arg)
 {
-  handler_tracking_timestamp timestamp;
+  stderr_handler_tracking_timestamp timestamp;
 
   write_line(
 #if defined(BOOST_ASIO_WINDOWS)
@@ -260,11 +267,11 @@ void handler_tracking::completion::invocation_begin(
   invoked_ = true;
 }
 
-void handler_tracking::completion::invocation_end()
+void stderr_handler_tracking::completion::invocation_end()
 {
   if (id_)
   {
-    handler_tracking_timestamp timestamp;
+    stderr_handler_tracking_timestamp timestamp;
 
     write_line(
 #if defined(BOOST_ASIO_WINDOWS)
@@ -278,13 +285,13 @@ void handler_tracking::completion::invocation_end()
   }
 }
 
-void handler_tracking::operation(execution_context&,
+void stderr_handler_tracking::operation(execution_context&,
     const char* object_type, void* object,
     uintmax_t /*native_handle*/, const char* op_name)
 {
   static tracking_state* state = get_state();
 
-  handler_tracking_timestamp timestamp;
+  stderr_handler_tracking_timestamp timestamp;
 
   unsigned long long current_id = 0;
   if (completion* current_completion = *state->current_completion_)
@@ -300,26 +307,28 @@ void handler_tracking::operation(execution_context&,
       current_id, object_type, object, op_name);
 }
 
-void handler_tracking::reactor_registration(execution_context& /*context*/,
+void stderr_handler_tracking::reactor_registration(
+    execution_context& /*context*/,
     uintmax_t /*native_handle*/, uintmax_t /*registration*/)
 {
 }
 
-void handler_tracking::reactor_deregistration(execution_context& /*context*/,
+void stderr_handler_tracking::reactor_deregistration(
+    execution_context& /*context*/,
     uintmax_t /*native_handle*/, uintmax_t /*registration*/)
 {
 }
 
-void handler_tracking::reactor_events(execution_context& /*context*/,
-    uintmax_t /*native_handle*/, unsigned /*events*/)
+void stderr_handler_tracking::reactor_events(execution_context& /*context*/,
+    uintmax_t /*registration*/, unsigned /*events*/)
 {
 }
 
-void handler_tracking::reactor_operation(
+void stderr_handler_tracking::reactor_operation(
     const tracked_handler& h, const char* op_name,
     const boost::system::error_code& ec)
 {
-  handler_tracking_timestamp timestamp;
+  stderr_handler_tracking_timestamp timestamp;
 
   write_line(
 #if defined(BOOST_ASIO_WINDOWS)
@@ -331,11 +340,11 @@ void handler_tracking::reactor_operation(
       h.id_, op_name, ec.category().name(), ec.value());
 }
 
-void handler_tracking::reactor_operation(
+void stderr_handler_tracking::reactor_operation(
     const tracked_handler& h, const char* op_name,
     const boost::system::error_code& ec, std::size_t bytes_transferred)
 {
-  handler_tracking_timestamp timestamp;
+  stderr_handler_tracking_timestamp timestamp;
 
   write_line(
 #if defined(BOOST_ASIO_WINDOWS)
@@ -348,7 +357,7 @@ void handler_tracking::reactor_operation(
       static_cast<uint64_t>(bytes_transferred));
 }
 
-void handler_tracking::write_line(const char* format, ...)
+void stderr_handler_tracking::write_line(const char* format, ...)
 {
   using namespace std; // For sprintf (or equivalent).
 
@@ -387,5 +396,7 @@ BOOST_ASIO_INLINE_NAMESPACE_END
 #include <boost/asio/detail/pop_options.hpp>
 
 #endif // defined(BOOST_ASIO_ENABLE_HANDLER_TRACKING)
+       //   && !defined(BOOST_ASIO_PERFETTO_HANDLER_TRACKING)
+       //   && !defined(BOOST_ASIO_CUSTOM_HANDLER_TRACKING)
 
-#endif // BOOST_ASIO_DETAIL_IMPL_HANDLER_TRACKING_IPP
+#endif // BOOST_ASIO_DETAIL_IMPL_STDERR_HANDLER_TRACKING_IPP
