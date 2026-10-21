@@ -20,6 +20,7 @@
 #include <boost/asio/associated_executor.hpp>
 #include <boost/asio/associated_immediate_executor.hpp>
 #include <boost/asio/detail/initiate_dispatch.hpp>
+#include <boost/asio/detail/native_executors.hpp>
 #include <boost/asio/detail/type_traits.hpp>
 #include <boost/asio/detail/work_dispatcher.hpp>
 #include <boost/asio/execution/allocator.hpp>
@@ -38,7 +39,6 @@ namespace asio {
 BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 
 class executor;
-class io_context;
 
 #if !defined(BOOST_ASIO_USE_TS_EXECUTOR_AS_DEFAULT)
 
@@ -62,7 +62,6 @@ struct handler_work_ownership
 };
 
 template <typename Executor, typename CandidateExecutor = void,
-    typename IoContext = io_context,
     typename PolymorphicExecutor = executor, typename = void>
 class handler_work_base
 {
@@ -113,9 +112,8 @@ private:
 };
 
 template <typename Executor, typename CandidateExecutor,
-    typename IoContext, typename PolymorphicExecutor>
-class handler_work_base<Executor, CandidateExecutor,
-    IoContext, PolymorphicExecutor,
+    typename PolymorphicExecutor>
+class handler_work_base<Executor, CandidateExecutor, PolymorphicExecutor,
     enable_if_t<
       !execution::is_executor<Executor>::value
         && (!is_same<Executor, PolymorphicExecutor>::value
@@ -194,12 +192,12 @@ private:
   bool owns_work_;
 };
 
-template <typename Executor, typename IoContext, typename PolymorphicExecutor>
-class handler_work_base<Executor, void, IoContext, PolymorphicExecutor,
+template <typename Executor, typename PolymorphicExecutor>
+class handler_work_base<Executor, void, PolymorphicExecutor,
     enable_if_t<
       is_same<
-        Executor,
-        typename IoContext::executor_type
+        native_execute_kind_t<Executor>,
+        native_execute_kinds::native
       >::value
     >
   >
@@ -226,8 +224,66 @@ public:
   }
 };
 
-template <typename Executor, typename CandidateExecutor, typename IoContext>
-class handler_work_base<Executor, CandidateExecutor, IoContext, Executor,
+template <typename Executor, typename CandidateExecutor,
+    typename PolymorphicExecutor>
+class handler_work_base<Executor, CandidateExecutor, PolymorphicExecutor,
+    enable_if_t<
+      execution::is_executor<Executor>::value
+        && is_same<
+            native_execute_kind_t<Executor>,
+            native_execute_kinds::none
+          >::value
+        && is_same<
+            native_outstanding_work_kind_t<Executor>,
+            native_outstanding_work_kinds::native
+          >::value
+    >
+  >
+{
+public:
+  typedef handler_work_ownership::always work_ownership;
+
+  explicit handler_work_base(int, int, const Executor& ex) noexcept
+    : executor_(ex)
+  {
+  }
+
+  template <typename OtherExecutor>
+  handler_work_base(const Executor& ex,
+      const OtherExecutor& /*candidate*/) noexcept
+    : executor_(ex)
+  {
+  }
+
+  handler_work_base(const handler_work_base& other) noexcept
+    : executor_(other.executor_)
+  {
+  }
+
+  handler_work_base(handler_work_base&& other) noexcept
+    : executor_(static_cast<Executor&&>(other.executor_))
+  {
+  }
+
+  bool owns_work() const noexcept
+  {
+    return true;
+  }
+
+  template <typename Function, typename Handler>
+  void dispatch(Function& function, Handler& handler)
+  {
+    boost::asio::prefer(executor_,
+        execution::allocator((get_associated_allocator)(handler))
+      ).execute(static_cast<Function&&>(function));
+  }
+
+private:
+  Executor executor_;
+};
+
+template <typename Executor, typename CandidateExecutor>
+class handler_work_base<Executor, CandidateExecutor, Executor,
     enable_if_t<
       is_same<CandidateExecutor, void>::value
         || is_executor<CandidateExecutor>::value
@@ -239,9 +295,7 @@ public:
 
   explicit handler_work_base(int, int, const Executor& ex) noexcept
 #if !defined(BOOST_ASIO_NO_TYPEID)
-    : executor_(
-        ex.target_type() == typeid(typename IoContext::executor_type)
-          ? Executor() : ex)
+    : executor_((has_native_execute)(ex) ? Executor() : ex)
 #else // !defined(BOOST_ASIO_NO_TYPEID)
     : executor_(ex)
 #endif // !defined(BOOST_ASIO_NO_TYPEID)
@@ -309,9 +363,9 @@ private:
 };
 
 template <typename... SupportableProperties, typename CandidateExecutor,
-    typename IoContext, typename PolymorphicExecutor>
+    typename PolymorphicExecutor>
 class handler_work_base<execution::any_executor<SupportableProperties...>,
-    CandidateExecutor, IoContext, PolymorphicExecutor>
+    CandidateExecutor, PolymorphicExecutor>
 {
 public:
   typedef execution::any_executor<SupportableProperties...> executor_type;
@@ -326,9 +380,11 @@ public:
   explicit handler_work_base(int, int, const executor_type& ex) noexcept
 #if !defined(BOOST_ASIO_NO_TYPEID)
     : executor_(
-        ex.target_type() == typeid(typename IoContext::executor_type)
+        (has_native_execute)(ex)
           ? executor_type()
-          : boost::asio::prefer(ex, execution::outstanding_work.tracked))
+          : (has_native_outstanding_work)(ex)
+            ? ex
+            : boost::asio::prefer(ex, execution::outstanding_work.tracked))
 #else // !defined(BOOST_ASIO_NO_TYPEID)
     : executor_(boost::asio::prefer(ex, execution::outstanding_work.tracked))
 #endif // !defined(BOOST_ASIO_NO_TYPEID)
@@ -379,10 +435,9 @@ private:
 #if !defined(BOOST_ASIO_USE_TS_EXECUTOR_AS_DEFAULT)
 
 template <typename Executor, typename CandidateExecutor,
-    typename IoContext, typename PolymorphicExecutor>
+    typename PolymorphicExecutor>
 class handler_work_base<
-    Executor, CandidateExecutor,
-    IoContext, PolymorphicExecutor,
+    Executor, CandidateExecutor, PolymorphicExecutor,
     enable_if_t<
       is_same<Executor, any_completion_executor>::value
         || is_same<Executor, any_io_executor>::value
@@ -403,9 +458,11 @@ public:
       const executor_type& ex) noexcept
 #if !defined(BOOST_ASIO_NO_TYPEID)
     : executor_(
-        ex.target_type() == typeid(typename IoContext::executor_type)
+        (has_native_execute)(ex)
           ? executor_type()
-          : boost::asio::prefer(ex, execution::outstanding_work.tracked))
+          : (has_native_outstanding_work)(ex)
+            ? ex
+            : boost::asio::prefer(ex, execution::outstanding_work.tracked))
 #else // !defined(BOOST_ASIO_NO_TYPEID)
     : executor_(boost::asio::prefer(ex, execution::outstanding_work.tracked))
 #endif // !defined(BOOST_ASIO_NO_TYPEID)
