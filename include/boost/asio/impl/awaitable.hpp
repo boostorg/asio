@@ -926,7 +926,7 @@ public:
     this->pump();
   }
 
-  static T resume(result_type& result)
+  BOOST_ASIO_ALWAYS_INLINE static T resume(result_type& result)
   {
     if (*result.disposition_ != no_error)
     {
