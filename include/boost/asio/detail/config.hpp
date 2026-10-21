@@ -1428,6 +1428,47 @@
 # define BOOST_ASIO_ASSUME(expr) (void)0
 #endif // !defined(BOOST_ASIO_ASSUME)
 
+// Helper macro to prevent a function from being inlined into its callers.
+#if !defined(BOOST_ASIO_DISABLE_NEVER_INLINE)
+# if defined(BOOST_ASIO_MSVC)
+#  define BOOST_ASIO_NEVER_INLINE __declspec(noinline)
+# elif defined(__clang__) || defined(__GNUC__)
+#  define BOOST_ASIO_NEVER_INLINE __attribute__((__noinline__))
+# endif // defined(__clang__) || defined(__GNUC__)
+#endif // !defined(BOOST_ASIO_DISABLE_NEVER_INLINE)
+#if !defined(BOOST_ASIO_NEVER_INLINE)
+# define BOOST_ASIO_NEVER_INLINE
+#endif // !defined(BOOST_ASIO_NEVER_INLINE)
+
+// Helper macro to force a small function to be inlined into its callers.
+#if !defined(BOOST_ASIO_ALWAYS_INLINE)
+# if !defined(BOOST_ASIO_DISABLE_ALWAYS_INLINE)
+#  if defined(__GNUC__) || defined(__clang__)
+#   define BOOST_ASIO_ALWAYS_INLINE inline __attribute__((always_inline))
+#  elif defined(BOOST_ASIO_MSVC)
+#   define BOOST_ASIO_ALWAYS_INLINE __forceinline
+#  endif
+# endif // !defined(BOOST_ASIO_DISABLE_ALWAYS_INLINE)
+#endif // !defined(BOOST_ASIO_ALWAYS_INLINE)
+#if !defined(BOOST_ASIO_ALWAYS_INLINE)
+# define BOOST_ASIO_ALWAYS_INLINE inline
+#endif // !defined(BOOST_ASIO_ALWAYS_INLINE)
+
+// Helper macro to force the inlining of a particular call, where the function
+// is worth inlining at that call site but not at the others.
+#if !defined(BOOST_ASIO_INVOKE_INLINE)
+# if !defined(BOOST_ASIO_DISABLE_INVOKE_INLINE)
+#  if defined(__has_cpp_attribute)
+#   if __has_cpp_attribute(clang::always_inline)
+#    define BOOST_ASIO_INVOKE_INLINE [[clang::always_inline]]
+#   endif // __has_cpp_attribute(clang::always_inline)
+#  endif // defined(__has_cpp_attribute)
+# endif // !defined(BOOST_ASIO_DISABLE_INVOKE_INLINE)
+#endif // !defined(BOOST_ASIO_INVOKE_INLINE)
+#if !defined(BOOST_ASIO_INVOKE_INLINE)
+# define BOOST_ASIO_INVOKE_INLINE
+#endif // !defined(BOOST_ASIO_INVOKE_INLINE)
+
 // Support the co_await keyword on compilers known to allow it.
 #if !defined(BOOST_ASIO_HAS_CO_AWAIT)
 # if !defined(BOOST_ASIO_DISABLE_CO_AWAIT)
