@@ -117,7 +117,8 @@ private:
         async_initiate<CompletionToken, PayloadSignatures...>(
           declval<initiate_async_receive>(), token))
   {
-    return async_initiate<CompletionToken, PayloadSignatures...>(
+    BOOST_ASIO_INVOKE_INLINE return async_initiate<CompletionToken,
+      PayloadSignatures...>(
         initiate_async_receive(this), token);
   }
 
@@ -503,7 +504,7 @@ private:
         payload_type&& payload) const
     {
       detail::non_const_lvalue<SendHandler> handler2(handler);
-      self_->service_->async_send(self_->impl_,
+      BOOST_ASIO_INVOKE_INLINE self_->service_->async_send(self_->impl_,
           static_cast<payload_type&&>(payload),
           handler2.value, self_->get_executor());
     }
@@ -531,7 +532,7 @@ private:
     void operator()(ReceiveHandler&& handler) const
     {
       detail::non_const_lvalue<ReceiveHandler> handler2(handler);
-      self_->service_->async_receive(self_->impl_,
+      BOOST_ASIO_INVOKE_INLINE self_->service_->async_receive(self_->impl_,
           handler2.value, self_->get_executor());
     }
 

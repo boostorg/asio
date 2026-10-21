@@ -325,7 +325,7 @@ private:
         static_cast<initiation_t&&>(initiation_), token,
         std::get<I>(static_cast<init_args_t&&>(init_args_))...))
   {
-    return async_initiate<CompletionToken, Signature>(
+    BOOST_ASIO_INVOKE_INLINE return async_initiate<CompletionToken, Signature>(
         static_cast<initiation_t&&>(initiation_), token,
         std::get<I>(static_cast<init_args_t&&>(init_args_))...);
   }
@@ -361,7 +361,7 @@ public:
         static_cast<CompletionToken&&>(token),
         detail::index_sequence_for<InitArgs...>()))
   {
-    return this->invoke_helper(
+    BOOST_ASIO_INVOKE_INLINE return this->invoke_helper(
         static_cast<CompletionToken&&>(token),
         detail::index_sequence_for<InitArgs...>());
   }

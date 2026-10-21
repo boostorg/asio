@@ -577,7 +577,7 @@ public:
         void (boost::system::error_code, std::size_t)>(
           declval<initiate_async_read_some>(), token, buffers))
   {
-    return async_initiate<ReadToken,
+    BOOST_ASIO_INVOKE_INLINE return async_initiate<ReadToken,
       void (boost::system::error_code, std::size_t)>(
         initiate_async_read_some(this), token, buffers);
   }
@@ -611,7 +611,7 @@ private:
       BOOST_ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
 
       detail::non_const_lvalue<ReadHandler> handler2(handler);
-      self_->impl_.get_service().async_read_some(
+      BOOST_ASIO_INVOKE_INLINE self_->impl_.get_service().async_read_some(
           self_->impl_.get_implementation(), buffers,
           handler2.value, self_->impl_.get_executor());
     }
