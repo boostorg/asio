@@ -1805,6 +1805,13 @@
 # define BOOST_ASIO_VERSION_TAG_w
 #endif // defined(BOOST_ASIO_PERFETTO_HANDLER_TRACKING)
 
+// Version tags for user-enabled features with no auto-detection in this file.
+#if defined(BOOST_ASIO_ENABLE_SPIN_REACTOR)
+# define BOOST_ASIO_VERSION_TAG_x x
+#else // defined(BOOST_ASIO_ENABLE_SPIN_REACTOR)
+# define BOOST_ASIO_VERSION_TAG_x
+#endif // defined(BOOST_ASIO_ENABLE_SPIN_REACTOR)
+
 // Automatic version namespace v<BOOST_ASIO_VERSION>_<tags>.
 #if defined(BOOST_ASIO_ENABLE_VERSION_NAMESPACE)
 # if !defined(BOOST_ASIO_VERSION_NAMESPACE)
@@ -1834,7 +1841,8 @@
   BOOST_ASIO_DETAIL_CAT(BOOST_ASIO_VERSION_TAG_t, \
   BOOST_ASIO_DETAIL_CAT(BOOST_ASIO_VERSION_TAG_u, \
   BOOST_ASIO_DETAIL_CAT(BOOST_ASIO_VERSION_TAG_v, \
-  BOOST_ASIO_VERSION_TAG_w)))))))))))))))))))))))))
+  BOOST_ASIO_DETAIL_CAT(BOOST_ASIO_VERSION_TAG_w, \
+  BOOST_ASIO_VERSION_TAG_x))))))))))))))))))))))))))
 # endif // !defined(BOOST_ASIO_VERSION_NAMESPACE)
 #endif // defined(BOOST_ASIO_ENABLE_VERSION_NAMESPACE)
 

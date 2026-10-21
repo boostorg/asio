@@ -21,6 +21,8 @@
 # include <boost/asio/detail/null_reactor.hpp>
 #elif defined(BOOST_ASIO_HAS_IO_URING_AS_DEFAULT)
 # include <boost/asio/detail/null_reactor.hpp>
+#elif defined(BOOST_ASIO_ENABLE_SPIN_REACTOR)
+# include <boost/asio/detail/spin_reactor.hpp>
 #elif defined(BOOST_ASIO_HAS_EPOLL)
 # include <boost/asio/detail/epoll_reactor.hpp>
 #elif defined(BOOST_ASIO_HAS_KQUEUE)
@@ -40,6 +42,8 @@ namespace detail {
 typedef null_reactor reactor;
 #elif defined(BOOST_ASIO_HAS_IO_URING_AS_DEFAULT)
 typedef null_reactor reactor;
+#elif defined(BOOST_ASIO_ENABLE_SPIN_REACTOR)
+typedef spin_reactor reactor;
 #elif defined(BOOST_ASIO_HAS_EPOLL)
 typedef epoll_reactor reactor;
 #elif defined(BOOST_ASIO_HAS_KQUEUE)

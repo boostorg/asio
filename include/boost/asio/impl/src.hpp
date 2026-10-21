@@ -64,6 +64,7 @@
 #include <boost/asio/detail/impl/signal_set_service.ipp>
 #include <boost/asio/detail/impl/socket_ops.ipp>
 #include <boost/asio/detail/impl/socket_select_interrupter.ipp>
+#include <boost/asio/detail/impl/spin_reactor.ipp>
 #include <boost/asio/detail/impl/stderr_handler_tracking.ipp>
 #include <boost/asio/detail/impl/strand_executor_service.ipp>
 #include <boost/asio/detail/impl/strand_service.ipp>
