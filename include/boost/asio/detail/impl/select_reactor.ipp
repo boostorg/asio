@@ -164,6 +164,7 @@ void select_reactor::start_op(int op_type, socket_type descriptor,
 
   if (shutdown_)
   {
+    lock.unlock();
     on_immediate(op, is_continuation, immediate_arg);
     return;
   }

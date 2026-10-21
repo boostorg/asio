@@ -223,6 +223,7 @@ void kqueue_reactor::start_op(int op_type, socket_type descriptor,
 
   if (descriptor_data->shutdown_)
   {
+    descriptor_lock.unlock();
     on_immediate(op, is_continuation, immediate_arg);
     return;
   }
@@ -257,6 +258,7 @@ void kqueue_reactor::start_op(int op_type, socket_type descriptor,
         {
           op->ec_ = boost::system::error_code(errno,
               boost::asio::error::get_system_category());
+          descriptor_lock.unlock();
           on_immediate(op, is_continuation, immediate_arg);
           return;
         }
