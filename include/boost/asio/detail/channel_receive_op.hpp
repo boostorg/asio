@@ -1,6 +1,6 @@
 //
-// experimental/detail/channel_receive_op.hpp
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// detail/channel_receive_op.hpp
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2026 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
@@ -8,8 +8,8 @@
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
-#ifndef BOOST_ASIO_EXPERIMENTAL_DETAIL_CHANNEL_RECEIVE_OP_HPP
-#define BOOST_ASIO_EXPERIMENTAL_DETAIL_CHANNEL_RECEIVE_OP_HPP
+#ifndef BOOST_ASIO_DETAIL_CHANNEL_RECEIVE_OP_HPP
+#define BOOST_ASIO_DETAIL_CHANNEL_RECEIVE_OP_HPP
 
 #if defined(_MSC_VER) && (_MSC_VER >= 1200)
 # pragma once
@@ -20,14 +20,13 @@
 #include <boost/asio/detail/completion_handler.hpp>
 #include <boost/asio/detail/handler_alloc_helpers.hpp>
 #include <boost/asio/error.hpp>
-#include <boost/asio/experimental/detail/channel_operation.hpp>
+#include <boost/asio/detail/channel_operation.hpp>
 
 #include <boost/asio/detail/push_options.hpp>
 
 namespace boost {
 namespace asio {
 BOOST_ASIO_INLINE_NAMESPACE_BEGIN
-namespace experimental {
 namespace detail {
 
 template <typename Payload>
@@ -75,7 +74,7 @@ public:
   {
     // Take ownership of the operation object.
     channel_receive_op* o(static_cast<channel_receive_op*>(base));
-    ptr p = { boost::asio::detail::addressof(o->handler_), o, o };
+    ptr p = { addressof(o->handler_), o, o };
 
     BOOST_ASIO_HANDLER_COMPLETION((*o));
 
@@ -93,9 +92,9 @@ public:
     if (a != channel_operation::destroy_op)
     {
       Payload* payload = static_cast<Payload*>(v);
-      boost::asio::detail::completion_payload_handler<Payload, Handler> handler(
+      completion_payload_handler<Payload, Handler> handler(
           static_cast<Payload&&>(*payload), o->handler_);
-      p.h = boost::asio::detail::addressof(handler.handler_);
+      p.h = addressof(handler.handler_);
       p.reset();
       BOOST_ASIO_HANDLER_INVOCATION_BEGIN(());
       if (a == channel_operation::immediate_op)
@@ -108,8 +107,8 @@ public:
     }
     else
     {
-      boost::asio::detail::binder0<Handler> handler(o->handler_);
-      p.h = boost::asio::detail::addressof(handler.handler_);
+      binder0<Handler> handler(o->handler_);
+      p.h = addressof(handler.handler_);
       p.reset();
     }
   }
@@ -120,11 +119,10 @@ private:
 };
 
 } // namespace detail
-} // namespace experimental
 BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 
 #include <boost/asio/detail/pop_options.hpp>
 
-#endif // BOOST_ASIO_EXPERIMENTAL_DETAIL_CHANNEL_RECEIVE_OP_HPP
+#endif // BOOST_ASIO_DETAIL_CHANNEL_RECEIVE_OP_HPP

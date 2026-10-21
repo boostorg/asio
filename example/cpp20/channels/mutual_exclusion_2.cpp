@@ -9,7 +9,7 @@
 //
 
 #include <boost/asio.hpp>
-#include <boost/asio/experimental/channel.hpp>
+#include <boost/asio/channel.hpp>
 #include <iostream>
 #include <memory>
 
@@ -18,7 +18,7 @@ using boost::asio::awaitable;
 using boost::asio::dynamic_buffer;
 using boost::asio::co_spawn;
 using boost::asio::detached;
-using boost::asio::experimental::channel;
+using boost::asio::channel;
 using boost::asio::io_context;
 using boost::asio::ip::tcp;
 using boost::asio::steady_timer;

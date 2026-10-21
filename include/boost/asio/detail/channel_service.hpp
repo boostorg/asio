@@ -1,6 +1,6 @@
 //
-// experimental/detail/channel_service.hpp
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// detail/channel_service.hpp
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2026 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
@@ -8,8 +8,8 @@
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
-#ifndef BOOST_ASIO_EXPERIMENTAL_DETAIL_CHANNEL_SERVICE_HPP
-#define BOOST_ASIO_EXPERIMENTAL_DETAIL_CHANNEL_SERVICE_HPP
+#ifndef BOOST_ASIO_DETAIL_CHANNEL_SERVICE_HPP
+#define BOOST_ASIO_DETAIL_CHANNEL_SERVICE_HPP
 
 #if defined(_MSC_VER) && (_MSC_VER >= 1200)
 # pragma once
@@ -24,21 +24,20 @@
 #include <boost/asio/detail/mutex.hpp>
 #include <boost/asio/detail/op_queue.hpp>
 #include <boost/asio/execution_context.hpp>
-#include <boost/asio/experimental/detail/channel_receive_op.hpp>
-#include <boost/asio/experimental/detail/channel_send_op.hpp>
-#include <boost/asio/experimental/detail/has_signature.hpp>
+#include <boost/asio/detail/channel_receive_op.hpp>
+#include <boost/asio/detail/channel_send_op.hpp>
+#include <boost/asio/detail/has_signature.hpp>
 
 #include <boost/asio/detail/push_options.hpp>
 
 namespace boost {
 namespace asio {
 BOOST_ASIO_INLINE_NAMESPACE_BEGIN
-namespace experimental {
 namespace detail {
 
 template <typename Mutex>
 class channel_service
-  : public boost::asio::detail::execution_context_service_base<
+  : public execution_context_service_base<
       channel_service<Mutex>>
 {
 public:
@@ -72,7 +71,7 @@ public:
     std::size_t max_buffer_size_;
 
     // The operations that are waiting on the channel.
-    boost::asio::detail::op_queue<channel_operation> waiters_;
+    op_queue<channel_operation> waiters_;
 
     // Pointers to adjacent channel implementations in linked list.
     base_implementation_type* next_;
@@ -167,7 +166,7 @@ public:
     typedef channel_send_op<
       typename implementation_type<Traits, Signatures...>::payload_type,
         Handler, IoExecutor> op;
-    typename op::ptr p = { boost::asio::detail::addressof(handler),
+    typename op::ptr p = { addressof(handler),
       op::ptr::allocate(handler), 0 };
     p.p = new (p.v) op(static_cast<typename implementation_type<
           Traits, Signatures...>::payload_type&&>(payload), handler, io_ex);
@@ -205,7 +204,7 @@ public:
     typedef channel_receive_op<
       typename implementation_type<Traits, Signatures...>::payload_type,
         Handler, IoExecutor> op;
-    typename op::ptr p = { boost::asio::detail::addressof(handler),
+    typename op::ptr p = { addressof(handler),
       op::ptr::allocate(handler), 0 };
     p.p = new (p.v) op(handler, io_ex);
 
@@ -243,7 +242,7 @@ private:
     void operator()(Args&&... args)
     {
       op_->post(
-          boost::asio::detail::completion_message<Signature>(0,
+          completion_message<Signature>(0,
             static_cast<Args&&>(args)...));
     }
 
@@ -294,7 +293,7 @@ private:
   };
 
   // Mutex to protect access to the linked list of implementations.
-  boost::asio::detail::mutex mutex_;
+  mutex mutex_;
 
   // The head of a linked list of all implementations.
   base_implementation_type* impl_list_;
@@ -319,8 +318,8 @@ struct channel_service<Mutex>::implementation_type : base_implementation_type
           typename traits_type::receive_closed_signature,
           Signatures...
         >::value,
-        boost::asio::detail::completion_payload<Signatures...>,
-        boost::asio::detail::completion_payload<
+        completion_payload<Signatures...>,
+        completion_payload<
           Signatures...,
           typename traits_type::receive_closed_signature
         >
@@ -331,11 +330,11 @@ struct channel_service<Mutex>::implementation_type : base_implementation_type
           Signatures...,
           typename traits_type::receive_cancelled_signature
         >::value,
-        boost::asio::detail::completion_payload<
+        completion_payload<
           Signatures...,
           typename traits_type::receive_cancelled_signature
         >,
-        boost::asio::detail::completion_payload<
+        completion_payload<
           Signatures...,
           typename traits_type::receive_cancelled_signature,
           typename traits_type::receive_closed_signature
@@ -422,8 +421,8 @@ struct channel_service<Mutex>::implementation_type<Traits, R()>
           typename traits_type::receive_closed_signature,
           R()
         >::value,
-        boost::asio::detail::completion_payload<R()>,
-        boost::asio::detail::completion_payload<
+        completion_payload<R()>,
+        completion_payload<
           R(),
           typename traits_type::receive_closed_signature
         >
@@ -434,11 +433,11 @@ struct channel_service<Mutex>::implementation_type<Traits, R()>
           R(),
           typename traits_type::receive_cancelled_signature
         >::value,
-        boost::asio::detail::completion_payload<
+        completion_payload<
           R(),
           typename traits_type::receive_cancelled_signature
         >,
-        boost::asio::detail::completion_payload<
+        completion_payload<
           R(),
           typename traits_type::receive_cancelled_signature,
           typename traits_type::receive_closed_signature
@@ -483,13 +482,13 @@ struct channel_service<Mutex>::implementation_type<Traits, R()>
   // Get the element at the front of the buffer.
   payload_type buffer_front()
   {
-    return payload_type(boost::asio::detail::completion_message<R()>(0));
+    return payload_type(completion_message<R()>(0));
   }
 
   // Peek at the element at the front of the buffer without removing it.
   payload_type buffer_peek() const
   {
-    return payload_type(boost::asio::detail::completion_message<R()>(0));
+    return payload_type(completion_message<R()>(0));
   }
 
   // Pop a value from the front of the buffer.
@@ -531,8 +530,8 @@ struct channel_service<Mutex>::implementation_type<
           typename traits_type::receive_closed_signature,
           R(boost::system::error_code)
         >::value,
-        boost::asio::detail::completion_payload<R(boost::system::error_code)>,
-        boost::asio::detail::completion_payload<
+        completion_payload<R(boost::system::error_code)>,
+        completion_payload<
           R(boost::system::error_code),
           typename traits_type::receive_closed_signature
         >
@@ -543,11 +542,11 @@ struct channel_service<Mutex>::implementation_type<
           R(boost::system::error_code),
           typename traits_type::receive_cancelled_signature
         >::value,
-        boost::asio::detail::completion_payload<
+        completion_payload<
           R(boost::system::error_code),
           typename traits_type::receive_cancelled_signature
         >,
-        boost::asio::detail::completion_payload<
+        completion_payload<
           R(boost::system::error_code),
           typename traits_type::receive_cancelled_signature,
           typename traits_type::receive_closed_signature
@@ -697,13 +696,12 @@ private:
 };
 
 } // namespace detail
-} // namespace experimental
 BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 
 #include <boost/asio/detail/pop_options.hpp>
 
-#include <boost/asio/experimental/detail/impl/channel_service.hpp>
+#include <boost/asio/detail/impl/channel_service.hpp>
 
-#endif // BOOST_ASIO_EXPERIMENTAL_DETAIL_CHANNEL_SERVICE_HPP
+#endif // BOOST_ASIO_DETAIL_CHANNEL_SERVICE_HPP

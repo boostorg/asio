@@ -21,8 +21,8 @@
 #include <boost/asio/io_context.hpp>
 #include "../unit_test.hpp"
 
-using namespace boost::asio;
-using namespace boost::asio::experimental;
+using boost::asio::io_context;
+using boost::asio::experimental::concurrent_channel;
 
 void unbuffered_concurrent_channel_test()
 {

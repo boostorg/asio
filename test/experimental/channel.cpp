@@ -25,8 +25,9 @@
 #include <boost/asio/io_context.hpp>
 #include "../unit_test.hpp"
 
-using namespace boost::asio;
-using namespace boost::asio::experimental;
+using boost::asio::inline_executor;
+using boost::asio::io_context;
+using boost::asio::experimental::channel;
 
 void unbuffered_channel_test()
 {
@@ -193,7 +194,7 @@ void buffered_channel_test()
   ctx.restart();
   ctx.run();
 
-  BOOST_ASIO_CHECK(ec5 == boost::asio::experimental::channel_errc::channel_closed);
+  BOOST_ASIO_CHECK(ec5 == boost::asio::channel_errc::channel_closed);
   BOOST_ASIO_CHECK(s6.empty());
 }
 
@@ -945,7 +946,7 @@ void implicit_error_signature_channel_test()
   ctx.run();
 
   BOOST_ASIO_CHECK(s6.empty());
-  BOOST_ASIO_CHECK(ec5 == boost::asio::experimental::channel_errc::channel_closed);
+  BOOST_ASIO_CHECK(ec5 == boost::asio::channel_errc::channel_closed);
 }
 
 void channel_with_any_completion_handler_test()
