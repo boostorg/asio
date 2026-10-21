@@ -34,8 +34,7 @@ struct system_context::thread_function
     try
     {
 #endif// !defined(BOOST_ASIO_NO_EXCEPTIONS)
-      boost::system::error_code ec;
-      scheduler_->run(ec);
+      scheduler_->run();
 #if !defined(BOOST_ASIO_NO_EXCEPTIONS)
     }
     catch (...)

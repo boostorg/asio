@@ -70,20 +70,19 @@ public:
   BOOST_ASIO_DECL void init_task();
 
   // Run the event loop until interrupted or no more work.
-  BOOST_ASIO_DECL std::size_t run(boost::system::error_code& ec);
+  BOOST_ASIO_DECL std::size_t run();
 
   // Run until interrupted or one operation is performed.
-  BOOST_ASIO_DECL std::size_t run_one(boost::system::error_code& ec);
+  BOOST_ASIO_DECL std::size_t run_one();
 
   // Run until timeout, interrupted, or one operation is performed.
-  BOOST_ASIO_DECL std::size_t wait_one(
-      long usec, boost::system::error_code& ec);
+  BOOST_ASIO_DECL std::size_t wait_one(long usec);
 
   // Poll for operations without blocking.
-  BOOST_ASIO_DECL std::size_t poll(boost::system::error_code& ec);
+  BOOST_ASIO_DECL std::size_t poll();
 
   // Poll for one operation without blocking.
-  BOOST_ASIO_DECL std::size_t poll_one(boost::system::error_code& ec);
+  BOOST_ASIO_DECL std::size_t poll_one();
 
   // Interrupt the event processing loop.
   BOOST_ASIO_DECL void stop();

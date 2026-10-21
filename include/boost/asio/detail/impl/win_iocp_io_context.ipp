@@ -44,8 +44,7 @@ struct win_iocp_io_context::thread_function
 
   void operator()()
   {
-    boost::system::error_code ec;
-    this_->run(ec);
+    this_->run();
   }
 
   win_iocp_io_context* this_;
@@ -213,12 +212,13 @@ boost::system::error_code win_iocp_io_context::register_handle(
   return ec;
 }
 
-size_t win_iocp_io_context::run(boost::system::error_code& ec)
+size_t win_iocp_io_context::run()
 {
+  boost::system::error_code ec;
+
   if (::InterlockedExchangeAdd(&outstanding_work_, 0) == 0)
   {
     stop();
-    boost::asio::error::clear(ec);
     return 0;
   }
 
@@ -231,15 +231,17 @@ size_t win_iocp_io_context::run(boost::system::error_code& ec)
   while (do_one(INFINITE, this_thread, ec))
     if (n != (std::numeric_limits<size_t>::max)())
       ++n;
+  boost::asio::detail::throw_error(ec);
   return n;
 }
 
-size_t win_iocp_io_context::run_one(boost::system::error_code& ec)
+size_t win_iocp_io_context::run_one()
 {
+  boost::system::error_code ec;
+
   if (::InterlockedExchangeAdd(&outstanding_work_, 0) == 0)
   {
     stop();
-    boost::asio::error::clear(ec);
     return 0;
   }
 
@@ -248,30 +250,37 @@ size_t win_iocp_io_context::run_one(boost::system::error_code& ec)
   win_iocp_thread_info this_thread;
   thread_call_stack::context ctx(this, this_thread);
 
-  return do_one(INFINITE, this_thread, ec);
+  size_t n = do_one(INFINITE, this_thread, ec);
+  boost::asio::detail::throw_error(ec);
+  return n;
 }
 
-size_t win_iocp_io_context::wait_one(long usec, boost::system::error_code& ec)
+size_t win_iocp_io_context::wait_one(long usec)
 {
+  boost::system::error_code ec;
+
   if (::InterlockedExchangeAdd(&outstanding_work_, 0) == 0)
   {
     stop();
-    boost::asio::error::clear(ec);
     return 0;
   }
 
   win_iocp_thread_info this_thread;
   thread_call_stack::context ctx(this, this_thread);
 
-  return do_one(usec < 0 ? INFINITE : ((usec - 1) / 1000 + 1), this_thread, ec);
+  size_t n = do_one(
+      usec < 0 ? INFINITE : ((usec - 1) / 1000 + 1), this_thread, ec);
+  boost::asio::detail::throw_error(ec);
+  return n;
 }
 
-size_t win_iocp_io_context::poll(boost::system::error_code& ec)
+size_t win_iocp_io_context::poll()
 {
+  boost::system::error_code ec;
+
   if (::InterlockedExchangeAdd(&outstanding_work_, 0) == 0)
   {
     stop();
-    boost::asio::error::clear(ec);
     return 0;
   }
 
@@ -284,15 +293,17 @@ size_t win_iocp_io_context::poll(boost::system::error_code& ec)
   while (do_one(0, this_thread, ec))
     if (n != (std::numeric_limits<size_t>::max)())
       ++n;
+  boost::asio::detail::throw_error(ec);
   return n;
 }
 
-size_t win_iocp_io_context::poll_one(boost::system::error_code& ec)
+size_t win_iocp_io_context::poll_one()
 {
+  boost::system::error_code ec;
+
   if (::InterlockedExchangeAdd(&outstanding_work_, 0) == 0)
   {
     stop();
-    boost::asio::error::clear(ec);
     return 0;
   }
 
@@ -301,7 +312,9 @@ size_t win_iocp_io_context::poll_one(boost::system::error_code& ec)
   win_iocp_thread_info this_thread;
   thread_call_stack::context ctx(this, this_thread);
 
-  return do_one(0, this_thread, ec);
+  size_t n = do_one(0, this_thread, ec);
+  boost::asio::detail::throw_error(ec);
+  return n;
 }
 
 void win_iocp_io_context::stop()

@@ -38,8 +38,7 @@ public:
 
   void operator()()
   {
-    boost::system::error_code ec;
-    work_scheduler_.run(ec);
+    work_scheduler_.run();
   }
 
 private:
