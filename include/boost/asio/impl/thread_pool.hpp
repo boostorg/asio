@@ -89,14 +89,13 @@ thread_pool::basic_executor_type<Allocator, Bits>::operator=(
 {
   if (this != &other)
   {
-    thread_pool* old_thread_pool = pool_;
-    pool_ = other.pool_;
-    allocator_ = other.allocator_;
-    bits_ = other.bits_;
+    static_cast<Allocator&>(*this) = static_cast<const Allocator&>(other);
+    thread_pool* old_thread_pool = context_ptr();
+    target_ = other.target_;
     if (Bits & outstanding_work_tracked)
     {
-      if (pool_)
-        pool_->scheduler_.work_started();
+      if (context_ptr())
+        context_ptr()->scheduler_.work_started();
       if (old_thread_pool)
         old_thread_pool->scheduler_.work_finished();
     }
@@ -111,13 +110,12 @@ thread_pool::basic_executor_type<Allocator, Bits>::operator=(
 {
   if (this != &other)
   {
-    thread_pool* old_thread_pool = pool_;
-    pool_ = other.pool_;
-    allocator_ = std::move(other.allocator_);
-    bits_ = other.bits_;
+    static_cast<Allocator&>(*this) = static_cast<Allocator&&>(other);
+    thread_pool* old_thread_pool = context_ptr();
+    target_ = other.target_;
     if (Bits & outstanding_work_tracked)
     {
-      other.pool_ = 0;
+      other.target_ = 0;
       if (old_thread_pool)
         old_thread_pool->scheduler_.work_finished();
     }
@@ -129,7 +127,7 @@ template <typename Allocator, unsigned int Bits>
 inline bool thread_pool::basic_executor_type<Allocator,
     Bits>::running_in_this_thread() const noexcept
 {
-  return pool_->scheduler_.can_dispatch();
+  return context_ptr()->scheduler_.can_dispatch();
 }
 
 template <typename Allocator, unsigned int Bits>
@@ -141,7 +139,8 @@ void thread_pool::basic_executor_type<Allocator,
 
   // Invoke immediately if the blocking.possibly property is enabled and we are
   // already inside the thread pool.
-  if ((bits_ & blocking_never) == 0 && pool_->scheduler_.can_dispatch())
+  if ((bits() & blocking_never) == 0
+      && context_ptr()->scheduler_.can_dispatch())
   {
     // Make a local, non-const copy of the function.
     function_type tmp(static_cast<Function&&>(f));
@@ -165,23 +164,25 @@ void thread_pool::basic_executor_type<Allocator,
 
   // Allocate and construct an operation to wrap the function.
   typedef detail::executor_op<function_type, Allocator> op;
-  typename op::ptr p = { detail::addressof(allocator_),
-      op::ptr::allocate(allocator_), 0 };
-  p.p = new (p.v) op(static_cast<Function&&>(f), allocator_);
+  typename op::ptr p = {
+      detail::addressof(static_cast<const Allocator&>(*this)),
+      op::ptr::allocate(static_cast<const Allocator&>(*this)), 0 };
+  p.p = new (p.v) op(static_cast<Function&&>(f),
+      static_cast<const Allocator&>(*this));
 
-  if ((bits_ & relationship_continuation) != 0)
+  if ((bits() & relationship_continuation) != 0)
   {
-    BOOST_ASIO_HANDLER_CREATION((*pool_, *p.p,
-          "thread_pool", pool_, 0, "execute(blk=never,rel=cont)"));
+    BOOST_ASIO_HANDLER_CREATION((*context_ptr(), *p.p,
+          "thread_pool", context_ptr(), 0, "execute(blk=never,rel=cont)"));
+    context_ptr()->scheduler_.post_immediate_completion(p.p, true);
   }
   else
   {
-    BOOST_ASIO_HANDLER_CREATION((*pool_, *p.p,
-          "thread_pool", pool_, 0, "execute(blk=never,rel=fork)"));
+    BOOST_ASIO_HANDLER_CREATION((*context_ptr(), *p.p,
+          "thread_pool", context_ptr(), 0, "execute(blk=never,rel=fork)"));
+    context_ptr()->scheduler_.post_immediate_completion(p.p, false);
   }
 
-  pool_->scheduler_.post_immediate_completion(p.p,
-      (bits_ & relationship_continuation) != 0);
   p.v = p.p = 0;
 }
 
@@ -194,7 +195,7 @@ void thread_pool::basic_executor_type<Allocator,
   detail::non_const_lvalue<Function> f2(f);
 
   // Invoke immediately if we are already inside the thread pool.
-  if (pool_->scheduler_.can_dispatch())
+  if (context_ptr()->scheduler_.can_dispatch())
   {
 #if !defined(BOOST_ASIO_NO_EXCEPTIONS)
     try
@@ -216,10 +217,10 @@ void thread_pool::basic_executor_type<Allocator,
   typedef decay_t<Function> function_type;
   detail::blocking_executor_op<function_type> op(f2.value);
 
-  BOOST_ASIO_HANDLER_CREATION((*pool_, op,
-        "thread_pool", pool_, 0, "execute(blk=always)"));
+  BOOST_ASIO_HANDLER_CREATION((*context_ptr(), op,
+        "thread_pool", context_ptr(), 0, "execute(blk=always)"));
 
-  pool_->scheduler_.post_immediate_completion(&op, false);
+  context_ptr()->scheduler_.post_immediate_completion(&op, false);
   op.wait();
 }
 
@@ -228,21 +229,21 @@ template <typename Allocator, unsigned int Bits>
 inline thread_pool& thread_pool::basic_executor_type<
     Allocator, Bits>::context() const noexcept
 {
-  return *pool_;
+  return *context_ptr();
 }
 
 template <typename Allocator, unsigned int Bits>
 inline void thread_pool::basic_executor_type<Allocator,
     Bits>::on_work_started() const noexcept
 {
-  pool_->scheduler_.work_started();
+  context_ptr()->scheduler_.work_started();
 }
 
 template <typename Allocator, unsigned int Bits>
 inline void thread_pool::basic_executor_type<Allocator,
     Bits>::on_work_finished() const noexcept
 {
-  pool_->scheduler_.work_finished();
+  context_ptr()->scheduler_.work_finished();
 }
 
 template <typename Allocator, unsigned int Bits>
@@ -253,7 +254,7 @@ void thread_pool::basic_executor_type<Allocator, Bits>::dispatch(
   typedef decay_t<Function> function_type;
 
   // Invoke immediately if we are already inside the thread pool.
-  if (pool_->scheduler_.can_dispatch())
+  if (context_ptr()->scheduler_.can_dispatch())
   {
     // Make a local, non-const copy of the function.
     function_type tmp(static_cast<Function&&>(f));
@@ -268,10 +269,10 @@ void thread_pool::basic_executor_type<Allocator, Bits>::dispatch(
   typename op::ptr p = { detail::addressof(a), op::ptr::allocate(a), 0 };
   p.p = new (p.v) op(static_cast<Function&&>(f), a);
 
-  BOOST_ASIO_HANDLER_CREATION((*pool_, *p.p,
-        "thread_pool", pool_, 0, "dispatch"));
+  BOOST_ASIO_HANDLER_CREATION((*context_ptr(), *p.p,
+        "thread_pool", context_ptr(), 0, "dispatch"));
 
-  pool_->scheduler_.post_immediate_completion(p.p, false);
+  context_ptr()->scheduler_.post_immediate_completion(p.p, false);
   p.v = p.p = 0;
 }
 
@@ -287,10 +288,10 @@ void thread_pool::basic_executor_type<Allocator, Bits>::post(
   typename op::ptr p = { detail::addressof(a), op::ptr::allocate(a), 0 };
   p.p = new (p.v) op(static_cast<Function&&>(f), a);
 
-  BOOST_ASIO_HANDLER_CREATION((*pool_, *p.p,
-        "thread_pool", pool_, 0, "post"));
+  BOOST_ASIO_HANDLER_CREATION((*context_ptr(), *p.p,
+        "thread_pool", context_ptr(), 0, "post"));
 
-  pool_->scheduler_.post_immediate_completion(p.p, false);
+  context_ptr()->scheduler_.post_immediate_completion(p.p, false);
   p.v = p.p = 0;
 }
 
@@ -306,10 +307,10 @@ void thread_pool::basic_executor_type<Allocator, Bits>::defer(
   typename op::ptr p = { detail::addressof(a), op::ptr::allocate(a), 0 };
   p.p = new (p.v) op(static_cast<Function&&>(f), a);
 
-  BOOST_ASIO_HANDLER_CREATION((*pool_, *p.p,
-        "thread_pool", pool_, 0, "defer"));
+  BOOST_ASIO_HANDLER_CREATION((*context_ptr(), *p.p,
+        "thread_pool", context_ptr(), 0, "defer"));
 
-  pool_->scheduler_.post_immediate_completion(p.p, true);
+  context_ptr()->scheduler_.post_immediate_completion(p.p, true);
   p.v = p.p = 0;
 }
 #endif // !defined(BOOST_ASIO_NO_TS_EXECUTORS)
