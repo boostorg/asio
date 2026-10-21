@@ -91,7 +91,7 @@ struct scheduler::work_cleanup
     this_thread_->private_outstanding_work = 0;
 
 #if defined(BOOST_ASIO_HAS_THREADS)
-    if (!this_thread_->private_op_queue.empty())
+    if (BOOST_ASIO_LIKELY(!this_thread_->private_op_queue.empty()))
     {
       lock_->lock();
       scheduler_->op_queue_.push(this_thread_->private_op_queue);
@@ -503,7 +503,7 @@ std::size_t scheduler::do_run_one(mutex::scoped_lock& lock,
 {
   while (!stopped_)
   {
-    if (op_queue_.empty())
+    if (BOOST_ASIO_UNLIKELY(op_queue_.empty()))
     {
       do_sleep(lock);
       continue;
@@ -514,7 +514,7 @@ std::size_t scheduler::do_run_one(mutex::scoped_lock& lock,
     op_queue_.pop();
     bool more_handlers = (!op_queue_.empty());
 
-    if (o == &task_operation_)
+    if (BOOST_ASIO_UNLIKELY(o == &task_operation_))
     {
       task_interrupted_ = more_handlers || task_usec_ == 0;
 

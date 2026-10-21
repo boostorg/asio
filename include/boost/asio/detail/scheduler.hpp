@@ -193,9 +193,9 @@ private:
   // True if there is no reason to wake any other thread.
   bool can_skip_wake(mutex::scoped_lock& lock)
   {
-    return wait_usec_ != 0
-      && !wakeup_event_.has_waiters(lock)
-      && (task_interrupted_ || !task_);
+    return BOOST_ASIO_LIKELY(wait_usec_ != 0)
+      && BOOST_ASIO_LIKELY(!wakeup_event_.has_waiters(lock))
+      && BOOST_ASIO_LIKELY(task_interrupted_ || !task_);
   }
 
   // Wake a single idle thread, or the task, and always unlock the mutex.
