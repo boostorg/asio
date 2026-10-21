@@ -20,6 +20,7 @@
 #include <cstddef>
 #include <boost/asio/detail/memory.hpp>
 #include <boost/asio/detail/noncopyable.hpp>
+#include <boost/asio/detail/call_stack.hpp>
 
 #if !defined(BOOST_ASIO_NO_EXCEPTIONS)
 # include <exception>
@@ -37,10 +38,24 @@ namespace detail {
 # define BOOST_ASIO_RECYCLING_ALLOCATOR_CACHE_SIZE 2
 #endif // BOOST_ASIO_RECYCLING_ALLOCATOR_CACHE_SIZE
 
+class thread_context;
+
+// Derives from call_frame<thread_info_base> so thread_context's call_stack
+// can link this (or a derived scheduler_thread_info/win_iocp_thread_info)
+// directly on to the per-thread stack.
 class thread_info_base
-  : private noncopyable
+  : public call_frame<thread_info_base>
 {
 public:
+  // The thread_context (scheduler or win_iocp_io_context) that pushed this.
+  // Set by call_stack<thread_info_base>::context's constructor.
+  typedef thread_context key_type;
+
+  key_type* key() const
+  {
+    return static_cast<key_type*>(this->key_);
+  }
+
   struct default_tag
   {
     enum

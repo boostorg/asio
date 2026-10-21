@@ -17,6 +17,7 @@
 
 #include <boost/asio/detail/config.hpp>
 #include <boost/asio/detail/atomic_count.hpp>
+#include <boost/asio/detail/call_stack.hpp>
 #include <boost/asio/detail/executor_op.hpp>
 #include <boost/asio/detail/memory.hpp>
 #include <boost/asio/detail/mutex.hpp>
