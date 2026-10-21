@@ -27,6 +27,7 @@
 #include <boost/asio/detail/scoped_ptr.hpp>
 #include <boost/asio/detail/type_traits.hpp>
 #include <boost/asio/detail/throw_exception.hpp>
+#include <boost/asio/detail/utility.hpp>
 #include <boost/asio/execution/bad_executor.hpp>
 #include <boost/asio/execution/blocking.hpp>
 #include <boost/asio/execution/executor.hpp>
@@ -409,6 +410,48 @@ struct is_valid_target_executor :
 
 template <typename Props>
 struct is_valid_target_executor<int, Props> : false_type
+{
+};
+
+// Helper templates to determine whether one property list appears as a
+// contiguous subset of another.
+
+template <typename Sub, typename Props>
+struct is_prop_list_prefix : false_type
+{
+};
+
+template <typename... Props>
+struct is_prop_list_prefix<void(), void(Props...)> : true_type
+{
+};
+
+template <typename Head, typename... SubTail, typename... Tail>
+struct is_prop_list_prefix<void(Head, SubTail...), void(Head, Tail...)> :
+  is_prop_list_prefix<void(SubTail...), void(Tail...)>
+{
+};
+
+template <std::size_t Offset>
+struct prop_sublist_found
+{
+  static constexpr bool value = true;
+  static constexpr std::size_t offset = Offset;
+};
+
+template <typename Sub, typename Props, std::size_t Offset = 0>
+struct find_prop_sublist
+{
+  static constexpr bool value = false;
+};
+
+template <typename Sub, std::size_t Offset, typename Head, typename... Tail>
+struct find_prop_sublist<Sub, void(Head, Tail...), Offset> :
+  conditional_t<
+    is_prop_list_prefix<Sub, void(Head, Tail...)>::value,
+    prop_sublist_found<Offset>,
+    find_prop_sublist<Sub, void(Tail...), Offset + 1>
+  >
 {
 };
 
@@ -960,6 +1003,13 @@ protected:
 # pragma warning (disable:4702)
 #endif // defined(BOOST_ASIO_MSVC)
 
+  struct prop_fns
+  {
+    void (*query)(void*, const void*, const void*);
+    const prop_fns* (*require)(any_executor_base&, const void*, const void*);
+    const prop_fns* (*prefer)(any_executor_base&, const void*, const void*);
+  };
+
   static void query_fn_void(void*, const void*, const void*)
   {
     bad_executor ex;
@@ -1084,79 +1134,81 @@ protected:
     query_fn_impl<Ex, Prop>(result, ex, prop, 0);
   }
 
-  template <typename Poly, typename Ex, class Prop>
-  static Poly require_fn_impl(const void*, const void*,
+  template <typename Poly, typename Ex, class Prop, std::size_t I>
+  static const prop_fns* require_fn_impl(any_executor_base&,
+      const void*, const void*,
       enable_if_t<
         is_same<Ex, void>::value
       >*)
   {
     bad_executor ex;
     boost::asio::detail::throw_exception(ex);
-    return Poly();
+    return Poly::template prop_fns_table<void>() + I;
   }
 
-  template <typename Poly, typename Ex, class Prop>
-  static Poly require_fn_impl(const void* ex, const void* prop,
+  template <typename Poly, typename Ex, class Prop, std::size_t I>
+  static const prop_fns* require_fn_impl(any_executor_base& result,
+      const void* ex, const void* prop,
       enable_if_t<
         !is_same<Ex, void>::value && Prop::is_requirable
       >*)
   {
-    return boost::asio::require(*static_cast<const Ex*>(ex),
-        *static_cast<const Prop*>(prop));
+    return Poly::adopt(result,
+        boost::asio::require(*static_cast<const Ex*>(ex),
+          *static_cast<const Prop*>(prop))) + I;
   }
 
-  template <typename Poly, typename Ex, class Prop>
-  static Poly require_fn_impl(const void*, const void*, ...)
+  template <typename Poly, typename Ex, class Prop, std::size_t I>
+  static const prop_fns* require_fn_impl(any_executor_base&,
+      const void*, const void*, ...)
   {
-    return Poly();
+    return Poly::template prop_fns_table<void>() + I;
   }
 
-  template <typename Poly, typename Ex, class Prop>
-  static Poly require_fn(const void* ex, const void* prop)
+  template <typename Poly, typename Ex, class Prop, std::size_t I>
+  static const prop_fns* require_fn(any_executor_base& result,
+      const void* ex, const void* prop)
   {
-    return require_fn_impl<Poly, Ex, Prop>(ex, prop, 0);
+    return require_fn_impl<Poly, Ex, Prop, I>(result, ex, prop, 0);
   }
 
-  template <typename Poly, typename Ex, class Prop>
-  static Poly prefer_fn_impl(const void*, const void*,
+  template <typename Poly, typename Ex, class Prop, std::size_t I>
+  static const prop_fns* prefer_fn_impl(any_executor_base&,
+      const void*, const void*,
       enable_if_t<
         is_same<Ex, void>::value
       >*)
   {
     bad_executor ex;
     boost::asio::detail::throw_exception(ex);
-    return Poly();
+    return Poly::template prop_fns_table<void>() + I;
   }
 
-  template <typename Poly, typename Ex, class Prop>
-  static Poly prefer_fn_impl(const void* ex, const void* prop,
+  template <typename Poly, typename Ex, class Prop, std::size_t I>
+  static const prop_fns* prefer_fn_impl(any_executor_base& result,
+      const void* ex, const void* prop,
       enable_if_t<
         !is_same<Ex, void>::value && Prop::is_preferable
       >*)
   {
-    return boost::asio::prefer(*static_cast<const Ex*>(ex),
-        *static_cast<const Prop*>(prop));
+    return Poly::adopt(result,
+        boost::asio::prefer(*static_cast<const Ex*>(ex),
+          *static_cast<const Prop*>(prop))) + I;
   }
 
-  template <typename Poly, typename Ex, class Prop>
-  static Poly prefer_fn_impl(const void*, const void*, ...)
+  template <typename Poly, typename Ex, class Prop, std::size_t I>
+  static const prop_fns* prefer_fn_impl(any_executor_base&,
+      const void*, const void*, ...)
   {
-    return Poly();
+    return Poly::template prop_fns_table<void>() + I;
   }
 
-  template <typename Poly, typename Ex, class Prop>
-  static Poly prefer_fn(const void* ex, const void* prop)
+  template <typename Poly, typename Ex, class Prop, std::size_t I>
+  static const prop_fns* prefer_fn(any_executor_base& result,
+      const void* ex, const void* prop)
   {
-    return prefer_fn_impl<Poly, Ex, Prop>(ex, prop, 0);
+    return prefer_fn_impl<Poly, Ex, Prop, I>(result, ex, prop, 0);
   }
-
-  template <typename Poly>
-  struct prop_fns
-  {
-    void (*query)(void*, const void*, const void*);
-    Poly (*require)(const void*, const void*);
-    Poly (*prefer)(const void*, const void*);
-  };
 
 #if defined(BOOST_ASIO_MSVC)
 # pragma warning (pop)
@@ -1213,6 +1265,21 @@ private:
 
 /*private:*/public:
 //  template <typename...> friend class any_executor;
+
+  template <typename Executor>
+  void construct_target(Executor& ex)
+  {
+    const target_fns* fns = target_fns_table<Executor>(
+        any_executor_base::query_blocking(ex,
+          can_query<const Executor&, const execution::blocking_t&>())
+        == execution::blocking.always);
+    any_executor_base::construct_object(ex,
+        integral_constant<bool,
+          sizeof(Executor) <= sizeof(object_type)
+            && alignment_of<Executor>::value <= alignment_of<object_type>::value
+        >());
+    target_fns_ = fns;
+  }
 
   typedef aligned_storage<
       sizeof(boost::asio::detail::shared_ptr<void>) + sizeof(void*),
@@ -1496,13 +1563,107 @@ public:
   }
 
   template <typename... OtherSupportableProperties>
-  any_executor(any_executor<OtherSupportableProperties...> other,
+  any_executor(const any_executor<OtherSupportableProperties...>& other,
       enable_if_t<
         conditional_t<
           !is_same<
             any_executor<OtherSupportableProperties...>,
             any_executor
           >::value,
+          detail::find_prop_sublist<
+            void(SupportableProperties...),
+            void(OtherSupportableProperties...)>,
+          false_type
+        >::value
+      >* = 0) noexcept
+    : detail::any_executor_base(
+        static_cast<const detail::any_executor_base&>(other)),
+      prop_fns_(other.prop_fns_
+          + detail::find_prop_sublist<void(SupportableProperties...),
+            void(OtherSupportableProperties...)>::offset)
+  {
+  }
+
+  template <typename... OtherSupportableProperties>
+  any_executor(any_executor<OtherSupportableProperties...>&& other,
+      enable_if_t<
+        conditional_t<
+          !is_same<
+            any_executor<OtherSupportableProperties...>,
+            any_executor
+          >::value,
+          detail::find_prop_sublist<
+            void(SupportableProperties...),
+            void(OtherSupportableProperties...)>,
+          false_type
+        >::value
+      >* = 0) noexcept
+    : detail::any_executor_base(
+        static_cast<detail::any_executor_base&&>(
+          static_cast<detail::any_executor_base&>(other))),
+      prop_fns_(other.prop_fns_
+          + detail::find_prop_sublist<void(SupportableProperties...),
+            void(OtherSupportableProperties...)>::offset)
+  {
+  }
+
+  template <typename... OtherSupportableProperties>
+  any_executor(std::nothrow_t,
+      const any_executor<OtherSupportableProperties...>& other,
+      enable_if_t<
+        conditional_t<
+          !is_same<
+            any_executor<OtherSupportableProperties...>,
+            any_executor
+          >::value,
+          detail::find_prop_sublist<
+            void(SupportableProperties...),
+            void(OtherSupportableProperties...)>,
+          false_type
+        >::value
+      >* = 0) noexcept
+    : detail::any_executor_base(
+        static_cast<const detail::any_executor_base&>(other)),
+      prop_fns_(other.prop_fns_
+          + detail::find_prop_sublist<void(SupportableProperties...),
+            void(OtherSupportableProperties...)>::offset)
+  {
+  }
+
+  template <typename... OtherSupportableProperties>
+  any_executor(std::nothrow_t,
+      any_executor<OtherSupportableProperties...>&& other,
+      enable_if_t<
+        conditional_t<
+          !is_same<
+            any_executor<OtherSupportableProperties...>,
+            any_executor
+          >::value,
+          detail::find_prop_sublist<
+            void(SupportableProperties...),
+            void(OtherSupportableProperties...)>,
+          false_type
+        >::value
+      >* = 0) noexcept
+    : detail::any_executor_base(
+        static_cast<detail::any_executor_base&&>(
+          static_cast<detail::any_executor_base&>(other))),
+      prop_fns_(other.prop_fns_
+          + detail::find_prop_sublist<void(SupportableProperties...),
+            void(OtherSupportableProperties...)>::offset)
+  {
+  }
+
+  template <typename... OtherSupportableProperties>
+  any_executor(any_executor<OtherSupportableProperties...> other,
+      enable_if_t<
+        conditional_t<
+          !is_same<
+            any_executor<OtherSupportableProperties...>,
+            any_executor
+          >::value
+          && !detail::find_prop_sublist<void(SupportableProperties...),
+            void(OtherSupportableProperties...)>::value,
           typename detail::supportable_properties<
             0, void(SupportableProperties...)>::template is_valid_target<
               any_executor<OtherSupportableProperties...>>,
@@ -1524,6 +1685,10 @@ public:
           !is_same<
             any_executor<OtherSupportableProperties...>,
             any_executor
+          >::value
+          && !detail::find_prop_sublist<
+            void(SupportableProperties...),
+            void(OtherSupportableProperties...)
           >::value,
           typename detail::supportable_properties<
             0, void(SupportableProperties...)>::template is_valid_target<
@@ -1608,7 +1773,7 @@ public:
     {
       detail::any_executor_base::swap(
           static_cast<detail::any_executor_base&>(other));
-      const prop_fns<any_executor>* tmp_prop_fns = other.prop_fns_;
+      const prop_fns* tmp_prop_fns = other.prop_fns_;
       other.prop_fns_ = prop_fns_;
       prop_fns_ = tmp_prop_fns;
     }
@@ -1809,8 +1974,11 @@ public:
       boost::asio::detail::throw_exception(ex);
     }
     typedef find_convertible_requirable_property<Property> found;
-    return prop_fns_[found::index].require(object_fns_->target(*this),
-        &static_cast<const typename found::type&>(p));
+    any_executor result;
+    result.prop_fns_ = prop_fns_[found::index].require(result,
+        object_fns_->target(*this),
+        &static_cast<const typename found::type&>(p)) - found::index;
+    return result;
   }
 
   template <typename T>
@@ -1831,29 +1999,65 @@ public:
       boost::asio::detail::throw_exception(ex);
     }
     typedef find_convertible_preferable_property<Property> found;
-    return prop_fns_[found::index].prefer(object_fns_->target(*this),
-        &static_cast<const typename found::type&>(p));
+    any_executor result;
+    result.prop_fns_ = prop_fns_[found::index].prefer(result,
+        object_fns_->target(*this),
+        &static_cast<const typename found::type&>(p)) - found::index;
+    return result;
   }
 
 //private:
   template <typename Ex>
-  static const prop_fns<any_executor>* prop_fns_table()
+  static const prop_fns* prop_fns_table()
   {
-    static const prop_fns<any_executor> fns[] =
+    return any_executor::prop_fns_table_impl<Ex>(
+        boost::asio::detail::index_sequence_for<SupportableProperties...>());
+  }
+
+  template <typename Ex, std::size_t... I>
+  static const prop_fns* prop_fns_table_impl(
+      boost::asio::detail::index_sequence<I...>)
+  {
+    static const prop_fns fns[] =
     {
       {
         &detail::any_executor_base::query_fn<
             Ex, SupportableProperties>,
         &detail::any_executor_base::require_fn<
-            any_executor, Ex, SupportableProperties>,
+            any_executor, Ex, SupportableProperties, I>,
         &detail::any_executor_base::prefer_fn<
-            any_executor, Ex, SupportableProperties>
+            any_executor, Ex, SupportableProperties, I>
       }...
     };
     return fns;
   }
 
-  const prop_fns<any_executor>* prop_fns_;
+  template <typename Executor>
+  static const prop_fns* adopt(detail::any_executor_base& result, Executor ex)
+  {
+    return any_executor::adopt_impl(result, ex,
+        is_base_of<detail::any_executor_base, Executor>());
+  }
+
+  template <typename Executor>
+  static const prop_fns* adopt_impl(detail::any_executor_base& result,
+      Executor& ex, false_type)
+  {
+    result.construct_target(ex);
+    return prop_fns_table<Executor>();
+  }
+
+  template <typename Executor>
+  static const prop_fns* adopt_impl(detail::any_executor_base& result,
+      Executor& ex, true_type)
+  {
+    any_executor tmp(static_cast<Executor&&>(ex));
+    result = static_cast<detail::any_executor_base&&>(
+        static_cast<detail::any_executor_base&>(tmp));
+    return tmp.prop_fns_;
+  }
+
+  const prop_fns* prop_fns_;
 };
 
 template <typename... SupportableProperties>
