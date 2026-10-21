@@ -32,7 +32,9 @@
 #include <boost/asio/impl/serial_port_base.ipp>
 #include <boost/asio/impl/system_context.ipp>
 #include <boost/asio/impl/thread_pool.ipp>
+#include <boost/asio/detail/impl/asm_fiber.ipp>
 #include <boost/asio/detail/impl/buffer_sequence_adapter.ipp>
+#include <boost/asio/detail/impl/default_stack_allocator.ipp>
 #include <boost/asio/detail/impl/descriptor_ops.ipp>
 #include <boost/asio/detail/impl/dev_poll_reactor.ipp>
 #include <boost/asio/detail/impl/epoll_reactor.ipp>

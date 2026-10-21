@@ -462,6 +462,97 @@
 # endif // !defined(BOOST_ASIO_DISABLE_BOOST_DATE_TIME)
 #endif // !defined(BOOST_ASIO_HAS_BOOST_DATE_TIME)
 
+// Thread sanitizer.
+#if !defined(BOOST_ASIO_HAS_THREAD_SANITIZER)
+# if defined(__SANITIZE_THREAD__)
+#  define BOOST_ASIO_HAS_THREAD_SANITIZER 1
+# elif defined(__has_feature)
+#  if __has_feature(thread_sanitizer)
+#   define BOOST_ASIO_HAS_THREAD_SANITIZER 1
+#  endif // __has_feature(thread_sanitizer)
+# endif // defined(__SANITIZE_THREAD__)
+#endif // !defined(BOOST_ASIO_HAS_THREAD_SANITIZER)
+
+// Address sanitizer.
+#if !defined(BOOST_ASIO_HAS_ADDRESS_SANITIZER)
+# if defined(__SANITIZE_ADDRESS__)
+#  define BOOST_ASIO_HAS_ADDRESS_SANITIZER 1
+# elif defined(__has_feature)
+#  if __has_feature(address_sanitizer)
+#   define BOOST_ASIO_HAS_ADDRESS_SANITIZER 1
+#  endif // __has_feature(address_sanitizer)
+# endif // defined(__SANITIZE_ADDRESS__)
+#endif // !defined(BOOST_ASIO_HAS_ADDRESS_SANITIZER)
+
+// Common header file support for sanitizers.
+#if defined(BOOST_ASIO_HAS_THREAD_SANITIZER) \
+  || defined(BOOST_ASIO_HAS_ADDRESS_SANITIZER)
+# if defined(__has_include)
+#  if __has_include(<sanitizer/common_interface_defs.h>)
+#   define BOOST_ASIO_HAS_SANITIZER_COMMON_INTERFACE_DEFS 1
+#  endif // __has_include(<sanitizer/common_interface_defs.h>)
+# endif // defined(__has_include)
+#endif // defined(BOOST_ASIO_HAS_THREAD_SANITIZER)
+       //   || defined(BOOST_ASIO_HAS_ADDRESS_SANITIZER)
+
+// Valgrind support. Must be explicitly enabled.
+#if !defined(BOOST_ASIO_HAS_VALGRIND)
+# if defined(BOOST_ASIO_ENABLE_VALGRIND)
+#  define BOOST_ASIO_HAS_VALGRIND 1
+# endif // defined(BOOST_ASIO_ENABLE_VALGRIND)
+#endif // !defined(BOOST_ASIO_HAS_VALGRIND)
+#if defined(BOOST_ASIO_HAS_VALGRIND)
+# define BOOST_ASIO_VERSION_TAG_b b
+#else // defined(BOOST_ASIO_HAS_VALGRIND)
+# define BOOST_ASIO_VERSION_TAG_b
+#endif // defined(BOOST_ASIO_HAS_VALGRIND)
+
+// Support for fibers implemented in assembly.
+#if !defined(BOOST_ASIO_HAS_ASM_FIBER)
+# if !defined(BOOST_ASIO_DISABLE_ASM_FIBER)
+#  if defined(__clang__) || defined(__GNUC__)
+#   if defined(__APPLE__) || defined(__linux__)
+#    if defined(__x86_64__) || defined(__aarch64__)
+#     if defined(__LP64__)
+#      define BOOST_ASIO_HAS_ASM_FIBER 1
+#     endif // defined(__LP64__)
+#    endif // defined(__x86_64__) || defined(__aarch64__)
+#   endif // defined(__APPLE__) || defined(__linux__)
+#  endif // defined(__clang__) || defined(__GNUC__)
+# endif // !defined(BOOST_ASIO_DISABLE_ASM_FIBER)
+#endif // !defined(BOOST_ASIO_HAS_ASM_FIBER)
+#if defined(BOOST_ASIO_HAS_ASM_FIBER)
+# define BOOST_ASIO_VERSION_TAG_c c
+#else // defined(BOOST_ASIO_HAS_ASM_FIBER)
+# define BOOST_ASIO_VERSION_TAG_c
+#endif // defined(BOOST_ASIO_HAS_ASM_FIBER)
+
+// Whether to use a page to detect stack overflow in fibers.
+#if !defined(BOOST_ASIO_HAS_FIBER_GUARD_PAGE)
+# if defined(BOOST_ASIO_ENABLE_FIBER_GUARD_PAGE)
+#  if defined(BOOST_ASIO_HAS_ASM_FIBER)
+#   define BOOST_ASIO_HAS_FIBER_GUARD_PAGE 1
+#  endif // defined(BOOST_ASIO_HAS_ASM_FIBER)
+# endif // defined(BOOST_ASIO_ENABLE_FIBER_GUARD_PAGE)
+#endif // !defined(BOOST_ASIO_HAS_FIBER_GUARD_PAGE)
+#if defined(BOOST_ASIO_HAS_FIBER_GUARD_PAGE)
+# define BOOST_ASIO_VERSION_TAG_d d
+#else // defined(BOOST_ASIO_HAS_FIBER_GUARD_PAGE)
+# define BOOST_ASIO_VERSION_TAG_d
+#endif // defined(BOOST_ASIO_HAS_FIBER_GUARD_PAGE)
+
+// The fiber stack size to use when not otherwise specified by the user.
+#if !defined(BOOST_ASIO_DEFAULT_FIBER_STACK_SIZE)
+# if defined(BOOST_ASIO_HAS_ADDRESS_SANITIZER) \
+  || defined(BOOST_ASIO_HAS_THREAD_SANITIZER)
+#  define BOOST_ASIO_DEFAULT_FIBER_STACK_SIZE (1024 * 1024)
+# else // defined(BOOST_ASIO_HAS_ADDRESS_SANITIZER)
+       //   || defined(BOOST_ASIO_HAS_THREAD_SANITIZER)
+#  define BOOST_ASIO_DEFAULT_FIBER_STACK_SIZE (256 * 1024)
+# endif // defined(BOOST_ASIO_HAS_ADDRESS_SANITIZER)
+        //   || defined(BOOST_ASIO_HAS_THREAD_SANITIZER)
+#endif // !defined(BOOST_ASIO_DEFAULT_FIBER_STACK_SIZE)
+
 // Boost support for the Context library's fibers.
 #if !defined(BOOST_ASIO_HAS_BOOST_CONTEXT_FIBER)
 # if !defined(BOOST_ASIO_DISABLE_BOOST_CONTEXT_FIBER)
@@ -483,6 +574,12 @@
 #  endif // defined(BOOST_ASIO_MSVC)
 # endif // !defined(BOOST_ASIO_DISABLE_BOOST_CONTEXT_FIBER)
 #endif // !defined(BOOST_ASIO_HAS_BOOST_CONTEXT_FIBER)
+#if defined(BOOST_ASIO_HAS_BOOST_CONTEXT_FIBER)
+# define BOOST_ASIO_VERSION_TAG_e e
+#else // defined(BOOST_ASIO_HAS_BOOST_CONTEXT_FIBER)
+# define BOOST_ASIO_VERSION_TAG_e
+#endif // defined(BOOST_ASIO_HAS_BOOST_CONTEXT_FIBER)
+
 
 // Standard library support for std::string_view.
 #if !defined(BOOST_ASIO_HAS_STD_STRING_VIEW)
@@ -708,9 +805,9 @@
 # endif // defined(_WIN32_WINNT) && (_WIN32_WINNT >= 0x0603)
 #endif // !defined(BOOST_ASIO_WINDOWS_APP)
 #if defined(BOOST_ASIO_WINDOWS_APP)
-# define BOOST_ASIO_VERSION_TAG_b b
+# define BOOST_ASIO_VERSION_TAG_f f
 #else // defined(BOOST_ASIO_WINDOWS_APP)
-# define BOOST_ASIO_VERSION_TAG_b
+# define BOOST_ASIO_VERSION_TAG_f
 #endif // defined(BOOST_ASIO_WINDOWS_APP)
 
 // Legacy WinRT target. Windows App is preferred.
@@ -740,9 +837,9 @@
 # endif // !defined(BOOST_ASIO_WINDOWS_RUNTIME)
 #endif // !defined(BOOST_ASIO_WINDOWS)
 #if defined(BOOST_ASIO_WINDOWS)
-# define BOOST_ASIO_VERSION_TAG_c c
+# define BOOST_ASIO_VERSION_TAG_g g
 #else // defined(BOOST_ASIO_WINDOWS)
-# define BOOST_ASIO_VERSION_TAG_c
+# define BOOST_ASIO_VERSION_TAG_g
 #endif // defined(BOOST_ASIO_WINDOWS)
 
 // Cygwin target using Win32 sockets.
@@ -754,9 +851,9 @@
 # endif // defined(__CYGWIN__)
 #endif // !defined(BOOST_ASIO_CYGWIN_W32_SOCKETS)
 #if defined(BOOST_ASIO_CYGWIN_W32_SOCKETS)
-# define BOOST_ASIO_VERSION_TAG_d d
+# define BOOST_ASIO_VERSION_TAG_h h
 #else // defined(BOOST_ASIO_CYGWIN_W32_SOCKETS)
-# define BOOST_ASIO_VERSION_TAG_d
+# define BOOST_ASIO_VERSION_TAG_h
 #endif // defined(BOOST_ASIO_CYGWIN_W32_SOCKETS)
 
 // Windows: target OS version.
@@ -831,9 +928,9 @@
 # endif // defined(BOOST_ASIO_WINDOWS) || defined(BOOST_ASIO_CYGWIN_W32_SOCKETS)
 #endif // !defined(BOOST_ASIO_HAS_IOCP)
 #if defined(BOOST_ASIO_HAS_IOCP)
-# define BOOST_ASIO_VERSION_TAG_e e
+# define BOOST_ASIO_VERSION_TAG_i i
 #else // defined(BOOST_ASIO_HAS_IOCP)
-# define BOOST_ASIO_VERSION_TAG_e
+# define BOOST_ASIO_VERSION_TAG_i
 #endif // defined(BOOST_ASIO_HAS_IOCP)
 
 // Windows: Slim Reader/Writer Locks.
@@ -850,9 +947,9 @@
 # endif // !defined(BOOST_ASIO_DISABLE_WINDOWS_SRWLOCK)
 #endif // !defined(BOOST_ASIO_HAS_WINDOWS_SRWLOCK)
 #if defined(BOOST_ASIO_HAS_WINDOWS_SRWLOCK)
-# define BOOST_ASIO_VERSION_TAG_f f
+# define BOOST_ASIO_VERSION_TAG_j j
 #else // defined(BOOST_ASIO_HAS_WINDOWS_SRWLOCK)
-# define BOOST_ASIO_VERSION_TAG_f
+# define BOOST_ASIO_VERSION_TAG_j
 #endif // defined(BOOST_ASIO_HAS_WINDOWS_SRWLOCK)
 
 // On POSIX (and POSIX-like) platforms we need to include unistd.h in order to
@@ -911,24 +1008,24 @@
 # endif // defined(BOOST_ASIO_HAS_IO_URING)
 #endif // defined(__linux__)
 #if defined(BOOST_ASIO_HAS_EPOLL)
-# define BOOST_ASIO_VERSION_TAG_g g
+# define BOOST_ASIO_VERSION_TAG_k k
 #else // defined(BOOST_ASIO_HAS_EPOLL)
-# define BOOST_ASIO_VERSION_TAG_g
+# define BOOST_ASIO_VERSION_TAG_k
 #endif // defined(BOOST_ASIO_HAS_EPOLL)
 #if defined(BOOST_ASIO_HAS_EVENTFD)
-# define BOOST_ASIO_VERSION_TAG_h h
+# define BOOST_ASIO_VERSION_TAG_l l
 #else // defined(BOOST_ASIO_HAS_EVENTFD)
-# define BOOST_ASIO_VERSION_TAG_h
+# define BOOST_ASIO_VERSION_TAG_l
 #endif // defined(BOOST_ASIO_HAS_EVENTFD)
 #if defined(BOOST_ASIO_HAS_TIMERFD)
-# define BOOST_ASIO_VERSION_TAG_i i
+# define BOOST_ASIO_VERSION_TAG_m m
 #else // defined(BOOST_ASIO_HAS_TIMERFD)
-# define BOOST_ASIO_VERSION_TAG_i
+# define BOOST_ASIO_VERSION_TAG_m
 #endif // defined(BOOST_ASIO_HAS_TIMERFD)
 #if defined(BOOST_ASIO_HAS_IO_URING)
-# define BOOST_ASIO_VERSION_TAG_j j
+# define BOOST_ASIO_VERSION_TAG_n n
 #else // defined(BOOST_ASIO_HAS_IO_URING)
-# define BOOST_ASIO_VERSION_TAG_j
+# define BOOST_ASIO_VERSION_TAG_n
 #endif // defined(BOOST_ASIO_HAS_IO_URING)
 
 // Linux: io_uring is used instead of epoll.
@@ -938,9 +1035,9 @@
 # endif // !defined(BOOST_ASIO_HAS_EPOLL) && defined(BOOST_ASIO_HAS_IO_URING)
 #endif // !defined(BOOST_ASIO_HAS_IO_URING_AS_DEFAULT)
 #if defined(BOOST_ASIO_HAS_IO_URING_AS_DEFAULT)
-# define BOOST_ASIO_VERSION_TAG_k k
+# define BOOST_ASIO_VERSION_TAG_o o
 #else // defined(BOOST_ASIO_HAS_IO_URING_AS_DEFAULT)
-# define BOOST_ASIO_VERSION_TAG_k
+# define BOOST_ASIO_VERSION_TAG_o
 #endif // defined(BOOST_ASIO_HAS_IO_URING_AS_DEFAULT)
 
 // Linux: futex.
@@ -954,9 +1051,9 @@
 # endif // !defined(BOOST_ASIO_DISABLE_FUTEX)
 #endif // !defined(BOOST_ASIO_HAS_FUTEX)
 #if defined(BOOST_ASIO_HAS_FUTEX)
-# define BOOST_ASIO_VERSION_TAG_l l
+# define BOOST_ASIO_VERSION_TAG_p p
 #else // defined(BOOST_ASIO_HAS_FUTEX)
-# define BOOST_ASIO_VERSION_TAG_l
+# define BOOST_ASIO_VERSION_TAG_p
 #endif // defined(BOOST_ASIO_HAS_FUTEX)
 
 // Mac OS X, FreeBSD, NetBSD, OpenBSD: kqueue.
@@ -974,9 +1071,9 @@
        //   || defined(__NetBSD__)
        //   || defined(__OpenBSD__)
 #if defined(BOOST_ASIO_HAS_KQUEUE)
-# define BOOST_ASIO_VERSION_TAG_m m
+# define BOOST_ASIO_VERSION_TAG_q q
 #else // defined(BOOST_ASIO_HAS_KQUEUE)
-# define BOOST_ASIO_VERSION_TAG_m
+# define BOOST_ASIO_VERSION_TAG_q
 #endif // defined(BOOST_ASIO_HAS_KQUEUE)
 
 // Solaris: /dev/poll.
@@ -1152,10 +1249,11 @@
 #  define BOOST_ASIO_NO_EXCEPTIONS 1
 # endif // !defined(BOOST_NO_EXCEPTIONS)
 #endif // !defined(BOOST_ASIO_NO_EXCEPTIONS)
+
 #if defined(BOOST_ASIO_NO_EXCEPTIONS)
-# define BOOST_ASIO_VERSION_TAG_n n
+# define BOOST_ASIO_VERSION_TAG_r r
 #else // defined(BOOST_ASIO_NO_EXCEPTIONS)
-# define BOOST_ASIO_VERSION_TAG_n
+# define BOOST_ASIO_VERSION_TAG_r
 #endif // defined(BOOST_ASIO_NO_EXCEPTIONS)
 
 // Whether the typeid operator is supported.
@@ -1189,21 +1287,10 @@
 # endif // !defined(BOOST_ASIO_DISABLE_THREADS)
 #endif // !defined(BOOST_ASIO_HAS_THREADS)
 #if defined(BOOST_ASIO_HAS_THREADS)
-# define BOOST_ASIO_VERSION_TAG_o o
+# define BOOST_ASIO_VERSION_TAG_s s
 #else // defined(BOOST_ASIO_HAS_THREADS)
-# define BOOST_ASIO_VERSION_TAG_o
+# define BOOST_ASIO_VERSION_TAG_s
 #endif // defined(BOOST_ASIO_HAS_THREADS)
-
-// Thread sanitizer.
-#if !defined(BOOST_ASIO_HAS_THREAD_SANITIZER)
-# if defined(__SANITIZE_THREAD__)
-#  define BOOST_ASIO_HAS_THREAD_SANITIZER 1
-# elif defined(__has_feature)
-#  if __has_feature(thread_sanitizer)
-#   define BOOST_ASIO_HAS_THREAD_SANITIZER 1
-#  endif // __has_feature(thread_sanitizer)
-# endif // defined(__SANITIZE_THREAD__)
-#endif // !defined(BOOST_ASIO_HAS_THREAD_SANITIZER)
 
 // POSIX threads.
 #if !defined(BOOST_ASIO_HAS_PTHREADS)
@@ -1218,9 +1305,9 @@
 # endif // defined(BOOST_ASIO_HAS_THREADS)
 #endif // !defined(BOOST_ASIO_HAS_PTHREADS)
 #if defined(BOOST_ASIO_HAS_PTHREADS)
-# define BOOST_ASIO_VERSION_TAG_p p
+# define BOOST_ASIO_VERSION_TAG_t t
 #else // defined(BOOST_ASIO_HAS_PTHREADS)
-# define BOOST_ASIO_VERSION_TAG_p
+# define BOOST_ASIO_VERSION_TAG_t
 #endif // defined(BOOST_ASIO_HAS_PTHREADS)
 
 // Helper to prevent macro expansion.
@@ -1664,14 +1751,18 @@
 # endif // !defined(BOOST_ASIO_DISABLE_STD_ATOMIC_WAIT)
 #endif // !defined(BOOST_ASIO_HAS_STD_ATOMIC_WAIT)
 #if defined(BOOST_ASIO_HAS_STD_ATOMIC_WAIT)
-# define BOOST_ASIO_VERSION_TAG_q q
+# define BOOST_ASIO_VERSION_TAG_u u
 #else // defined(BOOST_ASIO_HAS_STD_ATOMIC_WAIT)
-# define BOOST_ASIO_VERSION_TAG_q
+# define BOOST_ASIO_VERSION_TAG_u
 #endif // defined(BOOST_ASIO_HAS_STD_ATOMIC_WAIT)
 
 // Token-pasting helper (two levels needed to allow macro arguments to expand).
 #define BOOST_ASIO_DETAIL_CAT_(a, b) a ## b
 #define BOOST_ASIO_DETAIL_CAT(a, b) BOOST_ASIO_DETAIL_CAT_(a, b)
+
+// Stringifying helper (two levels needed to allow macro arguments to expand).
+#define BOOST_ASIO_DETAIL_STRINGIFY_(x) #x
+#define BOOST_ASIO_DETAIL_STRINGIFY(x) BOOST_ASIO_DETAIL_STRINGIFY_(x)
 
 // Handler tracking backends.
 #if defined(BOOST_ASIO_ENABLE_HANDLER_TRACKING) \
@@ -1688,14 +1779,14 @@
 #endif // defined(BOOST_ASIO_ENABLE_HANDLER_TRACKING)
        //   && !defined(BOOST_ASIO_CUSTOM_HANDLER_TRACKING)
 #if defined(BOOST_ASIO_ENABLE_HANDLER_TRACKING)
-# define BOOST_ASIO_VERSION_TAG_r r
+# define BOOST_ASIO_VERSION_TAG_v v
 #else // defined(BOOST_ASIO_ENABLE_HANDLER_TRACKING)
-# define BOOST_ASIO_VERSION_TAG_r
+# define BOOST_ASIO_VERSION_TAG_v
 #endif // defined(BOOST_ASIO_ENABLE_HANDLER_TRACKING)
 #if defined(BOOST_ASIO_PERFETTO_HANDLER_TRACKING)
-# define BOOST_ASIO_VERSION_TAG_s s
+# define BOOST_ASIO_VERSION_TAG_w w
 #else // defined(BOOST_ASIO_PERFETTO_HANDLER_TRACKING)
-# define BOOST_ASIO_VERSION_TAG_s
+# define BOOST_ASIO_VERSION_TAG_w
 #endif // defined(BOOST_ASIO_PERFETTO_HANDLER_TRACKING)
 
 // Automatic version namespace v<BOOST_ASIO_VERSION>_<tags>.
@@ -1723,7 +1814,11 @@
   BOOST_ASIO_DETAIL_CAT(BOOST_ASIO_VERSION_TAG_p, \
   BOOST_ASIO_DETAIL_CAT(BOOST_ASIO_VERSION_TAG_q, \
   BOOST_ASIO_DETAIL_CAT(BOOST_ASIO_VERSION_TAG_r, \
-  BOOST_ASIO_VERSION_TAG_s)))))))))))))))))))))
+  BOOST_ASIO_DETAIL_CAT(BOOST_ASIO_VERSION_TAG_s, \
+  BOOST_ASIO_DETAIL_CAT(BOOST_ASIO_VERSION_TAG_t, \
+  BOOST_ASIO_DETAIL_CAT(BOOST_ASIO_VERSION_TAG_u, \
+  BOOST_ASIO_DETAIL_CAT(BOOST_ASIO_VERSION_TAG_v, \
+  BOOST_ASIO_VERSION_TAG_w)))))))))))))))))))))))))
 # endif // !defined(BOOST_ASIO_VERSION_NAMESPACE)
 #endif // defined(BOOST_ASIO_ENABLE_VERSION_NAMESPACE)
 
