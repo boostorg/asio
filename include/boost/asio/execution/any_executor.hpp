@@ -836,14 +836,10 @@ public:
 protected:
   bool equality_helper(const any_executor_base& other) const noexcept
   {
-    if (target_ == other.target_)
-      return true;
-    if (target_ && !other.target_)
-      return false;
-    if (!target_ && other.target_)
-      return false;
     if (target_fns_ != other.target_fns_)
       return false;
+    if (target_ == other.target_)
+      return true;
     return target_fns_->equal(*this, other);
   }
 
@@ -994,8 +990,8 @@ protected:
   static bool equal_ex(const any_executor_base& ex1,
       const any_executor_base& ex2)
   {
-    const Ex* p1 = ex1.target<Ex>();
-    const Ex* p2 = ex2.target<Ex>();
+    const Ex* p1 = static_cast<const Ex*>(ex1.target_);
+    const Ex* p2 = static_cast<const Ex*>(ex2.target_);
     BOOST_ASIO_ASSUME(p1 != 0 && p2 != 0);
     return *p1 == *p2;
   }
@@ -1003,7 +999,7 @@ protected:
   template <typename Ex>
   static void execute_ex(const any_executor_base& ex, function&& f)
   {
-    const Ex* p = ex.target<Ex>();
+    const Ex* p = static_cast<const Ex*>(ex.target_);
     BOOST_ASIO_ASSUME(p != 0);
     p->execute(static_cast<function&&>(f));
   }
@@ -1011,7 +1007,7 @@ protected:
   template <typename Ex>
   static void blocking_execute_ex(const any_executor_base& ex, function_view f)
   {
-    const Ex* p = ex.target<Ex>();
+    const Ex* p = static_cast<const Ex*>(ex.target_);
     BOOST_ASIO_ASSUME(p != 0);
     p->execute(f);
   }
