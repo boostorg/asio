@@ -371,6 +371,9 @@ private:
         can_prefer<const Executor&, Property>::value
       > = 0,
       constraint_t<
+        !is_identity_prefer<const Executor&, Property>::value
+      > = 0,
+      constraint_t<
         !is_convertible<Property, execution::blocking_t>::value
       > = 0,
       constraint_t<
@@ -895,6 +898,7 @@ struct prefer_member<
     Property,
     enable_if_t<
       can_prefer<const Executor&, Property>::value
+        && !is_identity_prefer<const Executor&, Property>::value
         && !is_convertible<Property, execution::blocking_t>::value
         && !is_convertible<Property, execution::relationship_t>::value
         && !is_convertible<Property,
