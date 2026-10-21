@@ -17,6 +17,7 @@
 #include <boost/asio/cancel_after.hpp>
 
 #include <functional>
+#include <boost/asio/any_io_executor.hpp>
 #include <boost/asio/io_context.hpp>
 #include <boost/asio/steady_timer.hpp>
 #include "unit_test.hpp"
@@ -741,6 +742,83 @@ void partial_cancel_after_trigger_test()
   BOOST_ASIO_CHECK(count == 1);
 }
 
+template <typename Handler>
+struct sync_cancel_handler
+{
+  Handler handler_;
+
+  explicit sync_cancel_handler(Handler h)
+    : handler_(static_cast<Handler&&>(h))
+  {
+  }
+
+  void operator()(cancellation_type)
+  {
+    static_cast<Handler&&>(handler_)(boost::asio::error::operation_aborted);
+  }
+};
+
+struct sync_cancel_initiation
+{
+  typedef any_io_executor executor_type;
+
+  executor_type executor_;
+
+  executor_type get_executor() const noexcept
+  {
+    return executor_;
+  }
+
+  template <typename Handler>
+  void operator()(Handler&& handler) const
+  {
+    cancellation_slot slot = get_associated_cancellation_slot(handler);
+    if (slot.is_connected())
+      slot.template emplace<sync_cancel_handler<decay_t<Handler> > >(
+          static_cast<Handler&&>(handler));
+  }
+};
+
+template <typename CompletionToken>
+BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(CompletionToken, void(boost::system::error_code))
+async_sync_cancel(const any_io_executor& ex, CompletionToken&& token)
+{
+  return async_initiate<CompletionToken, void(boost::system::error_code)>(
+      sync_cancel_initiation{ex}, token);
+}
+
+void cancel_after_sync_completion_test()
+{
+  io_context ioc;
+  int count = 0;
+
+  async_sync_cancel(ioc.get_executor(),
+      cancel_after(chronons::milliseconds(100),
+        bindns::bind(&increment_on_cancel,
+          &count, bindns::placeholders::_1)));
+
+  ioc.run();
+
+  BOOST_ASIO_CHECK(count == 1);
+}
+
+void cancel_after_trigger_sync_completion_test()
+{
+  io_context ioc;
+  steady_timer cancellation_timer(ioc);
+  int count = 0;
+
+  cancellation_timer.expires_after(chronons::milliseconds(100));
+  async_sync_cancel(ioc.get_executor(),
+      cancel_after(cancellation_timer.async_wait(),
+        bindns::bind(&increment_on_cancel,
+          &count, bindns::placeholders::_1)));
+
+  ioc.run();
+
+  BOOST_ASIO_CHECK(count == 1);
+}
+
 BOOST_ASIO_TEST_SUITE
 (
   "cancel_after",
@@ -756,4 +834,6 @@ BOOST_ASIO_TEST_SUITE
   BOOST_ASIO_TEST_CASE(partial_cancel_after_test)
   BOOST_ASIO_TEST_CASE(partial_cancel_after_timer_test)
   BOOST_ASIO_TEST_CASE(partial_cancel_after_trigger_test)
+  BOOST_ASIO_TEST_CASE(cancel_after_sync_completion_test)
+  BOOST_ASIO_TEST_CASE(cancel_after_trigger_sync_completion_test)
 )
