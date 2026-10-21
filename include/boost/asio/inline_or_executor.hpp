@@ -17,6 +17,7 @@
 
 #include <boost/asio/detail/config.hpp>
 #include <exception>
+#include <boost/asio/detail/native_executors.hpp>
 #include <boost/asio/detail/non_const_lvalue.hpp>
 #include <boost/asio/detail/type_traits.hpp>
 #include <boost/asio/execution/blocking.hpp>
@@ -609,6 +610,24 @@ inline_or(ExecutionContext& ctx,
 
 #if !defined(GENERATING_DOCUMENTATION)
 
+namespace detail {
+
+template <typename Executor, typename Blocking,
+    typename InlineExceptionHandling>
+struct native_outstanding_work_kind<
+    inline_or_executor<Executor, Blocking, InlineExceptionHandling>>
+{
+  using type = conditional_t<
+      is_same<
+        native_outstanding_work_kind_t<Executor>,
+        native_outstanding_work_kinds::native
+      >::value,
+      native_outstanding_work_kinds::native,
+      native_outstanding_work_kinds::none
+    >;
+};
+
+} // namespace detail
 namespace traits {
 
 #if !defined(BOOST_ASIO_HAS_DEDUCED_EQUALITY_COMPARABLE_TRAIT)
