@@ -209,7 +209,9 @@ BOOST_ASIO_NEVER_INLINE void asm_fiber_definitions()
   ".p2align 4, 0x90\n"
   BOOST_ASIO_DETAIL_ASM_SYMBOL(make_fiber_context) ":\n"
   BOOST_ASIO_DETAIL_ASM_CFI(".cfi_startproc\n")
+#  if defined(__CET__)
   "    endbr64\n"
+#  endif // defined(__CET__)
   "    movq %rdi, %rax\n" // rax = requested stack top
   "    andq $-16, %rax\n" // align the top down to 16 bytes
   "    leaq -0x40(%rax), %rax\n" // make space for the context block
@@ -246,7 +248,9 @@ BOOST_ASIO_NEVER_INLINE void asm_fiber_definitions()
   ".p2align 4, 0x90\n"
   BOOST_ASIO_DETAIL_ASM_SYMBOL(swap_fiber_context) ":\n"
   BOOST_ASIO_DETAIL_ASM_CFI(".cfi_startproc\n")
+#  if defined(__CET__)
   "    endbr64\n"
+#  endif // defined(__CET__)
   "    leaq -0x38(%rsp), %rsp\n" // our return address now lies at 0x38
   "    movq %r12, 0x08(%rsp)\n"
   "    movq %r13, 0x10(%rsp)\n"
