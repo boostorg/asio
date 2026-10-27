@@ -21,6 +21,8 @@
 
 #include <cstring>
 #include <functional>
+#include <boost/asio/bind_cancellation_slot.hpp>
+#include <boost/asio/cancellation_signal.hpp>
 #include <boost/asio/io_context.hpp>
 #include <boost/asio/read.hpp>
 #include <boost/asio/write.hpp>
@@ -1349,6 +1351,161 @@ void test()
 
 //------------------------------------------------------------------------------
 
+// ip_tcp_cancellation_runtime test
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// The following test checks the runtime operation of per-operation
+// cancellation on the ip::tcp::socket and ip::tcp::acceptor classes, and the
+// destruction of outstanding operations by the io_context.
+
+namespace ip_tcp_cancellation_runtime {
+
+void handle_accept(const boost::system::error_code& err, bool* called)
+{
+  *called = true;
+  BOOST_ASIO_CHECK(!err);
+  BOOST_ASIO_CHECK(err.category().name() != 0);
+}
+
+void handle_connect(const boost::system::error_code& err, bool* called)
+{
+  *called = true;
+  BOOST_ASIO_CHECK(!err);
+}
+
+void handle_read(const boost::system::error_code& err,
+    size_t bytes_transferred, bool* called)
+{
+  *called = true;
+  BOOST_ASIO_CHECK(!err);
+  BOOST_ASIO_CHECK(bytes_transferred == 1);
+  BOOST_ASIO_CHECK(err.category().name() != 0);
+}
+
+void handle_read_cancel(const boost::system::error_code& err,
+    size_t /*bytes_transferred*/, bool* called)
+{
+  *called = true;
+  BOOST_ASIO_CHECK(err == boost::asio::error::operation_aborted);
+}
+
+void handle_wait(const boost::system::error_code& err, bool* called)
+{
+  *called = true;
+  BOOST_ASIO_CHECK(!err);
+  BOOST_ASIO_CHECK(err.category().name() != 0);
+}
+
+void handle_wait_cancel(const boost::system::error_code& err, bool* called)
+{
+  *called = true;
+  BOOST_ASIO_CHECK(err == boost::asio::error::operation_aborted);
+}
+
+void handle_not_called(const boost::system::error_code& /*err*/)
+{
+  BOOST_ASIO_ERROR("handler should not have been called");
+}
+
+void test()
+{
+  using namespace boost::asio;
+  namespace ip = boost::asio::ip;
+
+  namespace bindns = std;
+  using bindns::placeholders::_1;
+  using bindns::placeholders::_2;
+
+  io_context ioc;
+
+  ip::tcp::acceptor acceptor(ioc, ip::tcp::endpoint(ip::tcp::v4(), 0));
+  ip::tcp::endpoint server_endpoint = acceptor.local_endpoint();
+  server_endpoint.address(ip::address_v4::loopback());
+
+  ip::tcp::socket client_side_socket(ioc);
+  ip::tcp::socket server_side_socket(ioc);
+
+  cancellation_signal signal;
+
+  bool accept_completed = false;
+  bool connect_completed = false;
+  acceptor.async_accept(server_side_socket,
+      bind_cancellation_slot(signal.slot(),
+        bindns::bind(handle_accept, _1, &accept_completed)));
+  client_side_socket.async_connect(server_endpoint,
+      bindns::bind(handle_connect, _1, &connect_completed));
+
+  ioc.run();
+  BOOST_ASIO_CHECK(accept_completed);
+  BOOST_ASIO_CHECK(connect_completed);
+
+  char data[1];
+  bool read_completed = false;
+  client_side_socket.async_read_some(buffer(data),
+      bind_cancellation_slot(signal.slot(),
+        bindns::bind(handle_read, _1, _2, &read_completed)));
+  server_side_socket.send(buffer("x", 1));
+
+  ioc.restart();
+  ioc.run();
+  BOOST_ASIO_CHECK(read_completed);
+
+#if !defined(BOOST_ASIO_HAS_IOCP) || (_WIN32_WINNT >= 0x0600)
+  bool read_cancelled = false;
+  client_side_socket.async_read_some(buffer(data),
+      bind_cancellation_slot(signal.slot(),
+        bindns::bind(handle_read_cancel, _1, _2, &read_cancelled)));
+  signal.emit(cancellation_type::terminal);
+
+  ioc.restart();
+  ioc.run();
+  BOOST_ASIO_CHECK(read_cancelled);
+#endif // !defined(BOOST_ASIO_HAS_IOCP) || (_WIN32_WINNT >= 0x0600)
+
+  bool wait_completed = false;
+  server_side_socket.async_wait(ip::tcp::socket::wait_write,
+      bind_cancellation_slot(signal.slot(),
+        bindns::bind(handle_wait, _1, &wait_completed)));
+
+  ioc.restart();
+  ioc.run();
+  BOOST_ASIO_CHECK(wait_completed);
+
+#if !defined(BOOST_ASIO_HAS_IOCP) || (_WIN32_WINNT >= 0x0600)
+  bool wait_cancelled = false;
+  server_side_socket.async_wait(ip::tcp::socket::wait_read,
+      bind_cancellation_slot(signal.slot(),
+        bindns::bind(handle_wait_cancel, _1, &wait_cancelled)));
+  signal.emit(cancellation_type::terminal);
+
+  ioc.restart();
+  ioc.run();
+  BOOST_ASIO_CHECK(wait_cancelled);
+#endif // !defined(BOOST_ASIO_HAS_IOCP) || (_WIN32_WINNT >= 0x0600)
+
+  {
+    io_context ioc2;
+    ip::tcp::acceptor acceptor2(ioc2,
+        ip::tcp::endpoint(ip::address_v4::loopback(), 0));
+    ip::tcp::socket socket2(ioc2);
+    acceptor2.async_accept(socket2, &handle_not_called);
+    acceptor2.close();
+  }
+
+  {
+    io_context ioc2;
+    ip::tcp::acceptor acceptor2(ioc2,
+        ip::tcp::endpoint(ip::address_v4::loopback(), 0));
+    ip::tcp::socket socket2(ioc2);
+    acceptor2.async_accept(socket2,
+        bind_cancellation_slot(signal.slot(), &handle_not_called));
+    acceptor2.close();
+  }
+}
+
+} // namespace ip_tcp_cancellation_runtime
+
+//------------------------------------------------------------------------------
+
 BOOST_ASIO_TEST_SUITE
 (
   "ip/tcp",
@@ -1357,6 +1514,7 @@ BOOST_ASIO_TEST_SUITE
   BOOST_ASIO_COMPILE_TEST_CASE(ip_tcp_socket_compile::test)
   BOOST_ASIO_TEST_CASE(ip_tcp_socket_runtime::test)
   BOOST_ASIO_TEST_CASE(ip_tcp_socket_async_wait_runtime::test)
+  BOOST_ASIO_TEST_CASE(ip_tcp_cancellation_runtime::test)
   BOOST_ASIO_COMPILE_TEST_CASE(ip_tcp_acceptor_compile::test)
   BOOST_ASIO_TEST_CASE(ip_tcp_acceptor_runtime::test)
   BOOST_ASIO_COMPILE_TEST_CASE(ip_tcp_resolver_compile::test)

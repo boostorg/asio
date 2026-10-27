@@ -22,6 +22,7 @@
 #include <boost/asio/detail/handler_tracking.hpp>
 #include <boost/asio/detail/op_queue.hpp>
 #include <boost/asio/detail/socket_types.hpp>
+#include <boost/asio/error.hpp>
 #include <boost/system/error_code.hpp>
 
 #include <boost/asio/detail/push_options.hpp>
@@ -50,6 +51,8 @@ public:
 
   void destroy()
   {
+    Internal = reinterpret_cast<ULONG_PTR>(
+        &boost::asio::error::get_system_category());
     func_(0, this, 0, 0);
   }
 

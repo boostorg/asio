@@ -784,6 +784,7 @@ protected:
         int error_value, std::size_t bytes_transferred)
     {
       iocp_op_cancellation* o = static_cast<iocp_op_cancellation*>(base);
+      o->target_->Internal = o->Internal;
       o->target_->complete(owner, error_value, bytes_transferred);
     }
 
@@ -813,7 +814,7 @@ protected:
   {
   public:
     accept_op_cancellation(SOCKET s, operation* target)
-      : operation(&iocp_op_cancellation::do_complete),
+      : operation(&accept_op_cancellation::do_complete),
         socket_(s),
         target_(target),
         cancel_requested_(0)
@@ -824,6 +825,7 @@ protected:
         int error_value, std::size_t bytes_transferred)
     {
       accept_op_cancellation* o = static_cast<accept_op_cancellation*>(base);
+      o->target_->Internal = o->Internal;
       o->target_->complete(owner, error_value, bytes_transferred);
     }
 
@@ -880,6 +882,7 @@ protected:
         int error_value, std::size_t bytes_transferred)
     {
       reactor_op_cancellation* o = static_cast<reactor_op_cancellation*>(base);
+      o->target_->Internal = o->Internal;
       o->target_->complete(owner, error_value, bytes_transferred);
     }
 
