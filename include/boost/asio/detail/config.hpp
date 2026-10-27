@@ -1579,7 +1579,15 @@
 # if !defined(BOOST_ASIO_DISABLE_INVOKE_INLINE)
 #  if defined(__has_cpp_attribute)
 #   if __has_cpp_attribute(clang::always_inline)
-#    define BOOST_ASIO_INVOKE_INLINE [[clang::always_inline]]
+#    if defined(__apple_build_version__)
+#     if (__clang_major__ >= 16)
+#      define BOOST_ASIO_INVOKE_INLINE [[clang::always_inline]]
+#     endif // (__clang_major__ >= 16)
+#    elif defined(__clang_major__)
+#     if (__clang_major__ >= 17)
+#      define BOOST_ASIO_INVOKE_INLINE [[clang::always_inline]]
+#     endif // (__clang_major__ >= 17)
+#    endif // defined(__apple_build_version__)
 #   endif // __has_cpp_attribute(clang::always_inline)
 #  endif // defined(__has_cpp_attribute)
 # endif // !defined(BOOST_ASIO_DISABLE_INVOKE_INLINE)
