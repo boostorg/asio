@@ -21,6 +21,7 @@
 #include <boost/asio/detail/assert.hpp>
 #include <boost/asio/detail/atomic_count.hpp>
 #include <boost/asio/detail/cstddef.hpp>
+#include <boost/asio/detail/cstdint.hpp>
 #include <boost/asio/detail/executor_function.hpp>
 #include <boost/asio/detail/memory.hpp>
 #include <boost/asio/detail/native_executors.hpp>
@@ -1428,10 +1429,19 @@ private:
     target_fns_ = fns;
   }
 
-  typedef aligned_storage<
-      sizeof(boost::asio::detail::shared_ptr<void>) + sizeof(void*),
-      alignment_of<boost::asio::detail::shared_ptr<void>>::value
-    >::type object_type;
+  static constexpr std::size_t object_size =
+    sizeof(boost::asio::detail::shared_ptr<void>) + sizeof(void*)
+      > 2 * sizeof(void*) + sizeof(std::uint64_t)
+    ? sizeof(boost::asio::detail::shared_ptr<void>) + sizeof(void*)
+    : 2 * sizeof(void*) + sizeof(std::uint64_t);
+
+  static constexpr std::size_t object_align =
+    alignment_of<boost::asio::detail::shared_ptr<void>>::value
+      > alignment_of<std::uint64_t>::value
+    ? alignment_of<boost::asio::detail::shared_ptr<void>>::value
+    : alignment_of<std::uint64_t>::value;
+
+  typedef aligned_storage<object_size, object_align>::type object_type;
 
   object_type object_;
   const object_fns* object_fns_;

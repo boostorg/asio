@@ -1576,6 +1576,15 @@
 # define BOOST_ASIO_ALWAYS_INLINE inline
 #endif // !defined(BOOST_ASIO_ALWAYS_INLINE)
 
+// Helper macro to apply the empty base class optimisation on MSVC.
+#if !defined(BOOST_ASIO_EMPTY_BASES)
+# if defined(BOOST_ASIO_MSVC) && defined(_MSVC_LANG)
+#  define BOOST_ASIO_EMPTY_BASES __declspec(empty_bases)
+# else // defined(BOOST_ASIO_MSVC) && defined(_MSVC_LANG)
+#  define BOOST_ASIO_EMPTY_BASES
+# endif // defined(BOOST_ASIO_MSVC) && defined(_MSVC_LANG)
+#endif // !defined(BOOST_ASIO_EMPTY_BASES)
+
 // Helper macro to force the inlining of a particular call, where the function
 // is worth inlining at that call site but not at the others.
 #if !defined(BOOST_ASIO_INVOKE_INLINE)
