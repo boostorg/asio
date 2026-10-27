@@ -145,6 +145,7 @@
 #include <boost/asio/is_contiguous_iterator.hpp>
 #include <boost/asio/is_executor.hpp>
 #include <boost/asio/is_read_buffered.hpp>
+#include <boost/asio/is_shallow_mutable_sequence.hpp>
 #include <boost/asio/is_write_buffered.hpp>
 #include <boost/asio/local/basic_endpoint.hpp>
 #include <boost/asio/local/connect_pair.hpp>

@@ -180,6 +180,60 @@ struct handler_type_requirements
             boost::asio::detail::lvref<const std::size_t>()), \
         char(0))> BOOST_ASIO_UNUSED_TYPEDEF
 
+#define BOOST_ASIO_READ_MULTI_HANDLER_CHECK( \
+    handler_type, handler) \
+  \
+  typedef BOOST_ASIO_HANDLER_TYPE(handler_type, \
+      void(boost::system::error_code, std::size_t)) \
+    asio_true_handler_type; \
+  \
+  BOOST_ASIO_HANDLER_TYPE_REQUIREMENTS_ASSERT( \
+      sizeof(boost::asio::detail::two_arg_handler_test( \
+          boost::asio::detail::rvref< \
+            asio_true_handler_type>(), \
+          static_cast<const boost::system::error_code*>(0), \
+          static_cast<const std::size_t*>(0))) == 1, \
+      "ReadMultiHandler type requirements not met") \
+  \
+  typedef boost::asio::detail::handler_type_requirements< \
+      sizeof( \
+        boost::asio::detail::argbyv( \
+          boost::asio::detail::rvref< \
+            asio_true_handler_type>())) + \
+      sizeof( \
+        boost::asio::detail::rorlvref< \
+          asio_true_handler_type>()( \
+            boost::asio::detail::lvref<const boost::system::error_code>(), \
+            boost::asio::detail::lvref<const std::size_t>()), \
+        char(0))> BOOST_ASIO_UNUSED_TYPEDEF
+
+#define BOOST_ASIO_WRITE_MULTI_HANDLER_CHECK( \
+    handler_type, handler) \
+  \
+  typedef BOOST_ASIO_HANDLER_TYPE(handler_type, \
+      void(boost::system::error_code, std::size_t)) \
+    asio_true_handler_type; \
+  \
+  BOOST_ASIO_HANDLER_TYPE_REQUIREMENTS_ASSERT( \
+      sizeof(boost::asio::detail::two_arg_handler_test( \
+          boost::asio::detail::rvref< \
+            asio_true_handler_type>(), \
+          static_cast<const boost::system::error_code*>(0), \
+          static_cast<const std::size_t*>(0))) == 1, \
+      "WriteMultiHandler type requirements not met") \
+  \
+  typedef boost::asio::detail::handler_type_requirements< \
+      sizeof( \
+        boost::asio::detail::argbyv( \
+          boost::asio::detail::rvref< \
+            asio_true_handler_type>())) + \
+      sizeof( \
+        boost::asio::detail::rorlvref< \
+          asio_true_handler_type>()( \
+            boost::asio::detail::lvref<const boost::system::error_code>(), \
+            boost::asio::detail::lvref<const std::size_t>()), \
+        char(0))> BOOST_ASIO_UNUSED_TYPEDEF
+
 #define BOOST_ASIO_ACCEPT_HANDLER_CHECK( \
     handler_type, handler) \
   \
@@ -478,6 +532,14 @@ struct handler_type_requirements
   typedef int BOOST_ASIO_UNUSED_TYPEDEF
 
 #define BOOST_ASIO_WRITE_HANDLER_CHECK( \
+    handler_type, handler) \
+  typedef int BOOST_ASIO_UNUSED_TYPEDEF
+
+#define BOOST_ASIO_READ_MULTI_HANDLER_CHECK( \
+    handler_type, handler) \
+  typedef int BOOST_ASIO_UNUSED_TYPEDEF
+
+#define BOOST_ASIO_WRITE_MULTI_HANDLER_CHECK( \
     handler_type, handler) \
   typedef int BOOST_ASIO_UNUSED_TYPEDEF
 

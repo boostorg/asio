@@ -332,6 +332,7 @@
             <member><link linkend="boost_asio.reference.placeholders__endpoint">placeholders::endpoint</link></member>
             <member><link linkend="boost_asio.reference.placeholders__error">placeholders::error</link></member>
             <member><link linkend="boost_asio.reference.placeholders__iterator">placeholders::iterator</link></member>
+            <member><link linkend="boost_asio.reference.placeholders__messages_transferred">placeholders::messages_transferred</link></member>
             <member><link linkend="boost_asio.reference.placeholders__results">placeholders::results</link></member>
             <member><link linkend="boost_asio.reference.placeholders__signal_number">placeholders::signal_number</link></member>
           </simplelist>
@@ -453,17 +454,23 @@
             <member><link linkend="boost_asio.reference.AsyncWriteStream">AsyncWriteStream</link></member>
             <member><link linkend="boost_asio.reference.CompletionCondition">CompletionCondition</link></member>
             <member><link linkend="boost_asio.reference.ConstBufferSequence">ConstBufferSequence</link></member>
+            <member><link linkend="boost_asio.reference.ConstBufferSequences">ConstBufferSequences</link></member>
             <member><link linkend="boost_asio.reference.DynamicBuffer">DynamicBuffer</link></member>
             <member><link linkend="boost_asio.reference.DynamicBuffer_v1">DynamicBuffer_v1</link></member>
             <member><link linkend="boost_asio.reference.DynamicBuffer_v2">DynamicBuffer_v2</link></member>
             <member><link linkend="boost_asio.reference.MutableBufferSequence">MutableBufferSequence</link></member>
+            <member><link linkend="boost_asio.reference.MutableBufferSequences">MutableBufferSequences</link></member>
             <member><link linkend="boost_asio.reference.ReadHandler">ReadHandler</link></member>
+            <member><link linkend="boost_asio.reference.ReadMultiHandler">ReadMultiHandler</link></member>
+            <member><link linkend="boost_asio.reference.ReadMultiToken">ReadMultiToken</link></member>
             <member><link linkend="boost_asio.reference.ReadToken">ReadToken</link></member>
             <member><link linkend="boost_asio.reference.SyncRandomAccessReadDevice">SyncRandomAccessReadDevice</link></member>
             <member><link linkend="boost_asio.reference.SyncRandomAccessWriteDevice">SyncRandomAccessWriteDevice</link></member>
             <member><link linkend="boost_asio.reference.SyncReadStream">SyncReadStream</link></member>
             <member><link linkend="boost_asio.reference.SyncWriteStream">SyncWriteStream</link></member>
             <member><link linkend="boost_asio.reference.WriteHandler">WriteHandler</link></member>
+            <member><link linkend="boost_asio.reference.WriteMultiHandler">WriteMultiHandler</link></member>
+            <member><link linkend="boost_asio.reference.WriteMultiToken">WriteMultiToken</link></member>
             <member><link linkend="boost_asio.reference.WriteToken">WriteToken</link></member>
           </simplelist>
         </entry>
@@ -610,6 +617,9 @@
             <member><link linkend="boost_asio.reference.IteratorConnectToken">IteratorConnectToken</link></member>
             <member><link linkend="boost_asio.reference.MoveAcceptHandler">MoveAcceptHandler</link></member>
             <member><link linkend="boost_asio.reference.MoveAcceptToken">MoveAcceptToken</link></member>
+            <member><link linkend="boost_asio.reference.MutableEndpointSequence">MutableEndpointSequence</link></member>
+            <member><link linkend="boost_asio.reference.MutableFlagsSequence">MutableFlagsSequence</link></member>
+            <member><link linkend="boost_asio.reference.MutableSizeSequence">MutableSizeSequence</link></member>
             <member><link linkend="boost_asio.reference.Protocol">Protocol</link></member>
             <member><link linkend="boost_asio.reference.RangeConnectHandler">RangeConnectHandler</link></member>
             <member><link linkend="boost_asio.reference.RangeConnectToken">RangeConnectToken</link></member>

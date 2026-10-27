@@ -231,6 +231,8 @@ test-suite "asio" :
   [ run ip/v6_only.cpp : : : $(USE_SELECT) : ip_v6_only_select ]
   [ run is_read_buffered.cpp ]
   [ run is_read_buffered.cpp : : : $(USE_SELECT) : is_read_buffered_select ]
+  [ run is_shallow_mutable_sequence.cpp ]
+  [ run is_shallow_mutable_sequence.cpp : : : $(USE_SELECT) : is_shallow_mutable_sequence_select ]
   [ run is_write_buffered.cpp ]
   [ run is_write_buffered.cpp : : : $(USE_SELECT) : is_write_buffered_select ]
   [ link local/basic_endpoint.cpp : : local_basic_endpoint ]
