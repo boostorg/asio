@@ -21,8 +21,10 @@
 
 #include <cstring>
 #include <functional>
+#include <boost/asio/any_io_executor.hpp>
 #include <boost/asio/bind_cancellation_slot.hpp>
 #include <boost/asio/cancellation_signal.hpp>
+#include <boost/asio/executor.hpp>
 #include <boost/asio/io_context.hpp>
 #include <boost/asio/read.hpp>
 #include <boost/asio/write.hpp>
@@ -1351,6 +1353,67 @@ void test()
 
 //------------------------------------------------------------------------------
 
+// ip_tcp_socket_immediate_runtime test
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// The following test checks the immediate completion of an ip::tcp::socket
+// asynchronous operation, using a variety of I/O executor types.
+
+namespace ip_tcp_socket_immediate_runtime {
+
+void handle_read_noop(const boost::system::error_code& err,
+    size_t bytes_transferred, bool* called)
+{
+  *called = true;
+  BOOST_ASIO_CHECK(!err);
+  BOOST_ASIO_CHECK(bytes_transferred == 0);
+}
+
+template <typename Executor>
+void test_immediate(boost::asio::io_context& ioc, const Executor& ex)
+{
+  using namespace boost::asio;
+  namespace ip = boost::asio::ip;
+
+  namespace bindns = std;
+  using bindns::placeholders::_1;
+  using bindns::placeholders::_2;
+
+  ip::tcp::acceptor acceptor(ioc, ip::tcp::endpoint(ip::tcp::v4(), 0));
+  ip::tcp::endpoint server_endpoint = acceptor.local_endpoint();
+  server_endpoint.address(ip::address_v4::loopback());
+
+  basic_stream_socket<ip::tcp, Executor> client_side_socket(ex);
+  ip::tcp::socket server_side_socket(ioc);
+
+  client_side_socket.connect(server_endpoint);
+  acceptor.accept(server_side_socket);
+
+  bool read_noop_completed = false;
+  client_side_socket.async_read_some(mutable_buffer(0, 0),
+      bindns::bind(handle_read_noop, _1, _2, &read_noop_completed));
+
+  BOOST_ASIO_CHECK(!read_noop_completed);
+
+  ioc.restart();
+  ioc.run();
+  BOOST_ASIO_CHECK(read_noop_completed);
+}
+
+void test()
+{
+  boost::asio::io_context ioc;
+
+  test_immediate(ioc, ioc.get_executor());
+  test_immediate(ioc, boost::asio::any_io_executor(ioc.get_executor()));
+#if !defined(BOOST_ASIO_NO_TS_EXECUTORS)
+  test_immediate(ioc, boost::asio::executor(ioc.get_executor()));
+#endif // !defined(BOOST_ASIO_NO_TS_EXECUTORS)
+}
+
+} // namespace ip_tcp_socket_immediate_runtime
+
+//------------------------------------------------------------------------------
+
 // ip_tcp_cancellation_runtime test
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // The following test checks the runtime operation of per-operation
@@ -1514,6 +1577,7 @@ BOOST_ASIO_TEST_SUITE
   BOOST_ASIO_COMPILE_TEST_CASE(ip_tcp_socket_compile::test)
   BOOST_ASIO_TEST_CASE(ip_tcp_socket_runtime::test)
   BOOST_ASIO_TEST_CASE(ip_tcp_socket_async_wait_runtime::test)
+  BOOST_ASIO_TEST_CASE(ip_tcp_socket_immediate_runtime::test)
   BOOST_ASIO_TEST_CASE(ip_tcp_cancellation_runtime::test)
   BOOST_ASIO_COMPILE_TEST_CASE(ip_tcp_acceptor_compile::test)
   BOOST_ASIO_TEST_CASE(ip_tcp_acceptor_runtime::test)
