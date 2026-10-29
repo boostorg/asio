@@ -18,6 +18,9 @@
 
 #include <cstring>
 #include <functional>
+#include <typeinfo>
+#include <boost/asio/any_io_executor.hpp>
+#include <boost/asio/io_context.hpp>
 #include <boost/asio/system_executor.hpp>
 #include <boost/asio/thread_pool.hpp>
 #include "unit_test.hpp"
@@ -453,6 +456,157 @@ void any_completion_executor_execute_test()
   BOOST_ASIO_CHECK(count == 5);
 }
 
+void any_completion_executor_conversion_test()
+{
+  io_context ioc1;
+  io_context ioc2;
+  boost::asio::nullptr_t null_ptr = boost::asio::nullptr_t();
+  boost::asio::any_io_executor io1(ioc1.get_executor());
+  boost::asio::any_io_executor io2(ioc2.get_executor());
+  boost::asio::any_io_executor io3;
+  boost::asio::any_completion_executor ex1(io1);
+
+  BOOST_ASIO_CHECK(ex1.target<void>() != 0);
+  BOOST_ASIO_CHECK(ex1.target<io_context::executor_type>() != 0);
+  BOOST_ASIO_CHECK(*ex1.target<io_context::executor_type>() == ioc1.get_executor());
+#if !defined(BOOST_ASIO_NO_TYPEID)
+  BOOST_ASIO_CHECK(ex1.target_type() == typeid(io_context::executor_type));
+#endif // !defined(BOOST_ASIO_NO_TYPEID)
+  BOOST_ASIO_CHECK(ex1 == boost::asio::any_completion_executor(io1));
+  BOOST_ASIO_CHECK(ex1 == boost::asio::any_completion_executor(ioc1.get_executor()));
+  BOOST_ASIO_CHECK(ex1 != boost::asio::any_completion_executor(io2));
+
+  boost::asio::any_completion_executor ex2(std::nothrow, io2);
+
+  BOOST_ASIO_CHECK(ex2.target<io_context::executor_type>() != 0);
+  BOOST_ASIO_CHECK(ex2 != ex1);
+  BOOST_ASIO_CHECK(ex2 == boost::asio::any_completion_executor(ioc2.get_executor()));
+
+  boost::asio::any_completion_executor ex3(io3);
+
+  BOOST_ASIO_CHECK(ex3.target<void>() == 0);
+  BOOST_ASIO_CHECK(ex3 == null_ptr);
+
+  boost::asio::any_completion_executor ex4 = boost::asio::prefer(ex1,
+      boost::asio::execution::outstanding_work.tracked);
+
+  BOOST_ASIO_CHECK(ex4.target<void>() != 0);
+  BOOST_ASIO_CHECK(ex4.target<io_context::executor_type>() == 0);
+  BOOST_ASIO_CHECK(
+      boost::asio::query(ex4, boost::asio::execution::outstanding_work)
+        == boost::asio::execution::outstanding_work.tracked);
+  BOOST_ASIO_CHECK(
+      boost::asio::query(ex1, boost::asio::execution::outstanding_work)
+        == boost::asio::execution::outstanding_work.untracked);
+
+  boost::asio::any_completion_executor ex5 = boost::asio::prefer(ex4,
+      boost::asio::execution::outstanding_work.untracked);
+
+  BOOST_ASIO_CHECK(ex5.target<io_context::executor_type>() != 0);
+  BOOST_ASIO_CHECK(
+      boost::asio::query(ex5, boost::asio::execution::outstanding_work)
+        == boost::asio::execution::outstanding_work.untracked);
+  BOOST_ASIO_CHECK(ex5 == ex1);
+
+  boost::asio::any_completion_executor ex6 = boost::asio::prefer(ex1,
+      boost::asio::execution::relationship.continuation);
+
+  BOOST_ASIO_CHECK(
+      boost::asio::query(ex6, boost::asio::execution::relationship)
+        == boost::asio::execution::relationship.continuation);
+  BOOST_ASIO_CHECK(
+      boost::asio::query(ex1, boost::asio::execution::relationship)
+        == boost::asio::execution::relationship.fork);
+
+  typedef execution::any_executor<
+      execution::context_as_t<execution_context&>,
+      execution::blocking_t::never_t
+    > leading_executor;
+
+  leading_executor ex7(io1);
+
+  BOOST_ASIO_CHECK(ex7.target<io_context::executor_type>() != 0);
+  BOOST_ASIO_CHECK(
+      &boost::asio::query(ex7, execution::context_as_t<execution_context&>())
+        == &ioc1);
+  BOOST_ASIO_CHECK(
+      boost::asio::query(ex7, execution::blocking.never)
+        == execution::blocking.possibly);
+
+  leading_executor ex8 = boost::asio::require(ex7, execution::blocking.never);
+
+  BOOST_ASIO_CHECK(ex8.target<void>() != 0);
+  BOOST_ASIO_CHECK(ex8 != ex7);
+  BOOST_ASIO_CHECK(
+      &boost::asio::query(ex8, execution::context_as_t<execution_context&>())
+        == &ioc1);
+  BOOST_ASIO_CHECK(
+      boost::asio::query(ex8, execution::blocking.never)
+        == execution::blocking.never);
+
+  typedef execution::any_executor<
+      execution::prefer_only<execution::outstanding_work_t::tracked_t>,
+      execution::prefer_only<execution::outstanding_work_t::untracked_t>
+    > work_executor;
+
+  work_executor ex9(io1);
+  work_executor ex10(ex1);
+
+  BOOST_ASIO_CHECK(ex9 == ex10);
+  BOOST_ASIO_CHECK(ex10.target<io_context::executor_type>() != 0);
+
+  work_executor ex11 = boost::asio::prefer(ex10,
+      boost::asio::execution::outstanding_work.tracked);
+
+  BOOST_ASIO_CHECK(
+      boost::asio::query(ex11, boost::asio::execution::outstanding_work)
+        == boost::asio::execution::outstanding_work.tracked);
+
+  work_executor ex12 = boost::asio::prefer(ex11,
+      boost::asio::execution::outstanding_work.untracked);
+
+  BOOST_ASIO_CHECK(ex12 == ex9);
+
+  typedef execution::any_executor<
+      execution::blocking_t::never_t,
+      execution::prefer_only<execution::relationship_t::continuation_t>
+    > other_executor;
+
+  other_executor ex13(io1);
+
+  BOOST_ASIO_CHECK(ex13.target<io_context::executor_type>() != 0);
+#if !defined(BOOST_ASIO_NO_TYPEID)
+  BOOST_ASIO_CHECK(ex13.target_type() == typeid(io_context::executor_type));
+#endif // !defined(BOOST_ASIO_NO_TYPEID)
+  BOOST_ASIO_CHECK(ex13 == other_executor(io1));
+  BOOST_ASIO_CHECK(ex13 != other_executor(io2));
+  BOOST_ASIO_CHECK(
+      boost::asio::query(ex13, execution::relationship)
+        == execution::relationship.fork);
+
+  other_executor ex14 = boost::asio::prefer(ex13,
+      execution::relationship.continuation);
+
+  BOOST_ASIO_CHECK(
+      boost::asio::query(ex14, execution::relationship)
+        == execution::relationship.continuation);
+
+  other_executor ex15 = boost::asio::require(ex13, execution::blocking.never);
+
+  BOOST_ASIO_CHECK(
+      boost::asio::query(ex15, execution::blocking.never)
+        == execution::blocking.never);
+
+  int count = 0;
+  ex1.execute(bindns::bind(increment, &count));
+  ex8.execute(bindns::bind(increment, &count));
+  ex11.execute(bindns::bind(increment, &count));
+  ex15.execute(bindns::bind(increment, &count));
+  ioc1.poll();
+
+  BOOST_ASIO_CHECK(count == 4);
+}
+
 BOOST_ASIO_TEST_SUITE
 (
   "any_completion_executor",
@@ -462,4 +616,5 @@ BOOST_ASIO_TEST_SUITE
   BOOST_ASIO_TEST_CASE(any_completion_executor_swap_test)
   BOOST_ASIO_TEST_CASE(any_completion_executor_query_test)
   BOOST_ASIO_TEST_CASE(any_completion_executor_execute_test)
+  BOOST_ASIO_TEST_CASE(any_completion_executor_conversion_test)
 )

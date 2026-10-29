@@ -21,6 +21,7 @@
 #if defined(BOOST_ASIO_HAS_WINDOWS_OBJECT_HANDLE)
 
 #include <boost/asio/detail/win_object_handle_service.hpp>
+#include <boost/asio/error.hpp>
 
 #include <boost/asio/detail/push_options.hpp>
 
@@ -220,7 +221,7 @@ boost::system::error_code win_object_handle_service::assign(
   }
 
   impl.handle_ = handle;
-  ec = boost::system::error_code();
+  boost::asio::error::clear(ec);
   return ec;
 }
 
@@ -257,7 +258,7 @@ boost::system::error_code win_object_handle_service::close(
     if (::CloseHandle(impl.handle_))
     {
       impl.handle_ = INVALID_HANDLE_VALUE;
-      ec = boost::system::error_code();
+      boost::asio::error::clear(ec);
     }
     else
     {
@@ -270,7 +271,7 @@ boost::system::error_code win_object_handle_service::close(
   }
   else
   {
-    ec = boost::system::error_code();
+    boost::asio::error::clear(ec);
   }
 
   BOOST_ASIO_ERROR_LOCATION(ec);
@@ -307,7 +308,7 @@ boost::system::error_code win_object_handle_service::cancel(
     if (wait_handle != INVALID_HANDLE_VALUE)
       ::UnregisterWaitEx(wait_handle, INVALID_HANDLE_VALUE);
 
-    ec = boost::system::error_code();
+    boost::asio::error::clear(ec);
 
     scheduler_.post_deferred_completions(completed_ops);
   }
@@ -337,7 +338,7 @@ void win_object_handle_service::wait(
   case WAIT_OBJECT_0:
   case WAIT_ABANDONED:
   default:
-    ec = boost::system::error_code();
+    boost::asio::error::clear(ec);
     break;
   }
 }
@@ -415,7 +416,7 @@ void win_object_handle_service::wait_callback(PVOID param, BOOLEAN)
   {
     op_queue<operation> completed_ops;
 
-    op->ec_ = boost::system::error_code();
+    boost::asio::error::clear(op->ec_);
     impl->op_queue_.pop();
     completed_ops.push(op);
 

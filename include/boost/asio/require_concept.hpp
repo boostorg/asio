@@ -321,6 +321,23 @@ constexpr bool can_require_concept_v = can_require_concept<T, Property>::value;
 #endif // defined(BOOST_ASIO_HAS_VARIABLE_TEMPLATES)
 
 template <typename T, typename Property>
+struct is_identity_require_concept :
+  integral_constant<bool,
+    BOOST_ASIO_VERSIONED_NAME(require_concept_fn)::call_traits<
+      require_concept_t, T, void(Property)>::overload
+        == BOOST_ASIO_VERSIONED_NAME(require_concept_fn)::identity>
+{
+};
+
+#if defined(BOOST_ASIO_HAS_VARIABLE_TEMPLATES)
+
+template <typename T, typename Property>
+constexpr bool is_identity_require_concept_v
+  = is_identity_require_concept<T, Property>::value;
+
+#endif // defined(BOOST_ASIO_HAS_VARIABLE_TEMPLATES)
+
+template <typename T, typename Property>
 struct is_nothrow_require_concept :
   integral_constant<bool,
     BOOST_ASIO_VERSIONED_NAME(require_concept_fn)::call_traits<

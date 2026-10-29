@@ -21,6 +21,7 @@
 #if defined(BOOST_ASIO_HAS_IOCP)
 
 #include <boost/asio/detail/win_iocp_handle_service.hpp>
+#include <boost/asio/error.hpp>
 
 #include <boost/asio/detail/push_options.hpp>
 
@@ -196,7 +197,7 @@ boost::system::error_code win_iocp_handle_service::assign(
   }
 
   impl.handle_ = handle;
-  ec = boost::system::error_code();
+  boost::asio::error::clear(ec);
   return ec;
 }
 
@@ -217,7 +218,7 @@ boost::system::error_code win_iocp_handle_service::close(
     }
     else
     {
-      ec = boost::system::error_code();
+      boost::asio::error::clear(ec);
     }
 
     impl.handle_ = INVALID_HANDLE_VALUE;
@@ -225,7 +226,7 @@ boost::system::error_code win_iocp_handle_service::close(
   }
   else
   {
-    ec = boost::system::error_code();
+    boost::asio::error::clear(ec);
   }
 
   BOOST_ASIO_ERROR_LOCATION(ec);
@@ -298,7 +299,7 @@ boost::system::error_code win_iocp_handle_service::cancel(
         // ERROR_NOT_FOUND means that there were no operations to be
         // cancelled. We swallow this error to match the behaviour on other
         // platforms.
-        ec = boost::system::error_code();
+        boost::asio::error::clear(ec);
       }
       else
       {
@@ -308,13 +309,13 @@ boost::system::error_code win_iocp_handle_service::cancel(
     }
     else
     {
-      ec = boost::system::error_code();
+      boost::asio::error::clear(ec);
     }
   }
   else if (impl.safe_cancellation_thread_id_ == 0)
   {
     // No operations have been started, so there's nothing to cancel.
-    ec = boost::system::error_code();
+    boost::asio::error::clear(ec);
   }
   else if (impl.safe_cancellation_thread_id_ == ::GetCurrentThreadId())
   {
@@ -328,7 +329,7 @@ boost::system::error_code win_iocp_handle_service::cancel(
     }
     else
     {
-      ec = boost::system::error_code();
+      boost::asio::error::clear(ec);
     }
   }
   else
@@ -356,7 +357,7 @@ size_t win_iocp_handle_service::do_write(
   // A request to write 0 bytes on a handle is a no-op.
   if (buffer.size() == 0)
   {
-    ec = boost::system::error_code();
+    boost::asio::error::clear(ec);
     return 0;
   }
 
@@ -397,7 +398,7 @@ size_t win_iocp_handle_service::do_write(
     return 0;
   }
 
-  ec = boost::system::error_code();
+  boost::asio::error::clear(ec);
   return bytes_transferred;
 }
 
@@ -452,7 +453,7 @@ size_t win_iocp_handle_service::do_read(
   // A request to read 0 bytes on a stream handle is a no-op.
   if (buffer.size() == 0)
   {
-    ec = boost::system::error_code();
+    boost::asio::error::clear(ec);
     return 0;
   }
 
@@ -507,7 +508,7 @@ size_t win_iocp_handle_service::do_read(
     return (last_error == ERROR_MORE_DATA) ? bytes_transferred : 0;
   }
 
-  ec = boost::system::error_code();
+  boost::asio::error::clear(ec);
   return bytes_transferred;
 }
 

@@ -204,6 +204,8 @@ BOOST_ASIO_DECL bool non_blocking_recvfrom1(socket_type s, void* data,
 
 #endif // defined(BOOST_ASIO_HAS_IOCP)
 
+BOOST_ASIO_DECL int recv_out_flags(int msg_flags, int in_flags);
+
 BOOST_ASIO_DECL signed_size_type recvmsg(socket_type s, buf* bufs,
     size_t count, int in_flags, int& out_flags,
     boost::system::error_code& ec);
@@ -225,6 +227,29 @@ BOOST_ASIO_DECL bool non_blocking_recvmsg(socket_type s,
     boost::system::error_code& ec, size_t& bytes_transferred);
 
 #endif // defined(BOOST_ASIO_HAS_IOCP)
+
+#if defined(BOOST_ASIO_HAS_RECVMMSG_SENDMMSG)
+
+BOOST_ASIO_DECL signed_size_type recvmmsg(socket_type s, mmsghdr* bufs,
+    size_t count, int flags, boost::system::error_code& ec);
+
+#endif // defined(BOOST_ASIO_HAS_RECVMMSG_SENDMMSG)
+
+#if !defined(BOOST_ASIO_WINDOWS_RUNTIME)
+
+BOOST_ASIO_DECL size_t sync_recvmmsg(socket_type s, state_type state,
+    mmsghdr* bufs, size_t count, int flags, bool want_flags,
+    boost::system::error_code& ec);
+
+#if !defined(BOOST_ASIO_HAS_IOCP)
+
+BOOST_ASIO_DECL bool non_blocking_recvmmsg(socket_type s, mmsghdr* bufs,
+    size_t count, int flags, bool want_flags, boost::system::error_code& ec,
+    size_t& messages_transferred);
+
+#endif // !defined(BOOST_ASIO_HAS_IOCP)
+
+#endif // !defined(BOOST_ASIO_WINDOWS_RUNTIME)
 
 BOOST_ASIO_DECL signed_size_type send(socket_type s, const buf* bufs,
     size_t count, int flags, boost::system::error_code& ec);
@@ -284,6 +309,28 @@ BOOST_ASIO_DECL bool non_blocking_sendto1(socket_type s, const void* data,
     boost::system::error_code& ec, size_t& bytes_transferred);
 
 #endif // !defined(BOOST_ASIO_HAS_IOCP)
+
+#if defined(BOOST_ASIO_HAS_RECVMMSG_SENDMMSG)
+
+BOOST_ASIO_DECL signed_size_type sendmmsg(socket_type s, mmsghdr* bufs,
+    size_t count, int flags, boost::system::error_code& ec);
+
+#endif // defined(BOOST_ASIO_HAS_RECVMMSG_SENDMMSG)
+
+#if !defined(BOOST_ASIO_WINDOWS_RUNTIME)
+
+BOOST_ASIO_DECL size_t sync_sendmmsg(socket_type s, state_type state,
+    mmsghdr* bufs, size_t count, int flags, boost::system::error_code& ec);
+
+#if !defined(BOOST_ASIO_HAS_IOCP)
+
+BOOST_ASIO_DECL bool non_blocking_sendmmsg(socket_type s, mmsghdr* bufs,
+    size_t count, int flags, boost::system::error_code& ec,
+    size_t& messages_transferred);
+
+#endif // !defined(BOOST_ASIO_HAS_IOCP)
+
+#endif // !defined(BOOST_ASIO_WINDOWS_RUNTIME)
 
 BOOST_ASIO_DECL socket_type socket(int af, int type, int protocol,
     boost::system::error_code& ec);

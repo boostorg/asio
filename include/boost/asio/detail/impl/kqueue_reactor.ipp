@@ -21,6 +21,7 @@
 #if defined(BOOST_ASIO_HAS_KQUEUE)
 
 #include <boost/asio/config.hpp>
+#include <boost/asio/detail/assert.hpp>
 #include <boost/asio/detail/kqueue_reactor.hpp>
 #include <boost/asio/detail/scheduler.hpp>
 #include <boost/asio/detail/throw_error.hpp>
@@ -206,42 +207,31 @@ void kqueue_reactor::call_post_immediate_completion(
       op, is_continuation);
 }
 
-void kqueue_reactor::start_op(int op_type, socket_type descriptor,
-    kqueue_reactor::per_descriptor_data& descriptor_data, reactor_op* op,
-    bool is_continuation, bool allow_speculative,
-    void (*on_immediate)(operation*, bool, const void*),
-    const void* immediate_arg)
+bool kqueue_reactor::start_bad_descriptor_op(reactor_op* op)
 {
-  if (!descriptor_data)
-  {
-    op->ec_ = boost::asio::error::bad_descriptor;
-    on_immediate(op, is_continuation, immediate_arg);
-    return;
-  }
+  op->ec_ = boost::asio::error::bad_descriptor;
+  return true;
+}
 
-  mutex::scoped_lock descriptor_lock(descriptor_data->mutex_);
+bool kqueue_reactor::start_unready_op(int op_type, socket_type descriptor,
+    kqueue_reactor::per_descriptor_data& descriptor_data,
+    mutex::scoped_lock& descriptor_lock, reactor_op* op, bool speculative)
+{
+  BOOST_ASIO_ASSERT(descriptor_lock.locked()
+      || !descriptor_data->mutex_.enabled());
 
-  if (descriptor_data->shutdown_)
-  {
-    on_immediate(op, is_continuation, immediate_arg);
-    return;
-  }
+  static const int num_kevents[max_ops] = { 1, 2, 1 };
 
   if (descriptor_data->op_queue_[op_type].empty())
   {
-    static const int num_kevents[max_ops] = { 1, 2, 1 };
-
-    if (allow_speculative
-        && (op_type != read_op
-          || descriptor_data->op_queue_[except_op].empty()))
+    if (BOOST_ASIO_UNLIKELY(descriptor_data->shutdown_))
     {
-      if (op->perform())
-      {
-        descriptor_lock.unlock();
-        on_immediate(op, is_continuation, immediate_arg);
-        return;
-      }
+      descriptor_lock.unlock();
+      return true;
+    }
 
+    if (speculative)
+    {
       if (descriptor_data->num_kevents_ < num_kevents[op_type])
       {
         struct kevent events[2];
@@ -257,8 +247,8 @@ void kqueue_reactor::start_op(int op_type, socket_type descriptor,
         {
           op->ec_ = boost::system::error_code(errno,
               boost::asio::error::get_system_category());
-          on_immediate(op, is_continuation, immediate_arg);
-          return;
+          descriptor_lock.unlock();
+          return true;
         }
       }
     }
@@ -278,6 +268,7 @@ void kqueue_reactor::start_op(int op_type, socket_type descriptor,
 
   descriptor_data->op_queue_[op_type].push(op);
   scheduler_.work_started();
+  return false;
 }
 
 void kqueue_reactor::cancel_ops(socket_type,

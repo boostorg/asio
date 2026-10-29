@@ -23,6 +23,7 @@
 #include <boost/asio/detail/throw_error.hpp>
 #include <boost/asio/detail/type_traits.hpp>
 #include <boost/asio/error.hpp>
+#include <boost/asio/is_shallow_mutable_sequence.hpp>
 
 #include <boost/asio/detail/push_options.hpp>
 
@@ -64,6 +65,10 @@ private:
   class initiate_async_send_to;
   class initiate_async_receive;
   class initiate_async_receive_from;
+  class initiate_async_send_multiple;
+  class initiate_async_send_to_multiple;
+  class initiate_async_receive_multiple;
+  class initiate_async_receive_from_multiple;
 
 public:
   /// The type of the executor associated with the object.
@@ -488,7 +493,7 @@ public:
           declval<initiate_async_send>(), token,
           buffers, socket_base::message_flags(0)))
   {
-    return async_initiate<WriteToken,
+    BOOST_ASIO_INVOKE_INLINE return async_initiate<WriteToken,
       void (boost::system::error_code, std::size_t)>(
         initiate_async_send(this), token,
         buffers, socket_base::message_flags(0));
@@ -549,7 +554,7 @@ public:
         void (boost::system::error_code, std::size_t)>(
           declval<initiate_async_send>(), token, buffers, flags))
   {
-    return async_initiate<WriteToken,
+    BOOST_ASIO_INVOKE_INLINE return async_initiate<WriteToken,
       void (boost::system::error_code, std::size_t)>(
         initiate_async_send(this), token, buffers, flags);
   }
@@ -707,7 +712,7 @@ public:
           declval<initiate_async_send_to>(), token, buffers,
           destination, socket_base::message_flags(0)))
   {
-    return async_initiate<WriteToken,
+    BOOST_ASIO_INVOKE_INLINE return async_initiate<WriteToken,
       void (boost::system::error_code, std::size_t)>(
         initiate_async_send_to(this), token, buffers,
         destination, socket_base::message_flags(0));
@@ -768,7 +773,7 @@ public:
           declval<initiate_async_send_to>(), token,
           buffers, destination, flags))
   {
-    return async_initiate<WriteToken,
+    BOOST_ASIO_INVOKE_INLINE return async_initiate<WriteToken,
       void (boost::system::error_code, std::size_t)>(
         initiate_async_send_to(this), token,
         buffers, destination, flags);
@@ -926,7 +931,7 @@ public:
           declval<initiate_async_receive>(), token,
           buffers, socket_base::message_flags(0)))
   {
-    return async_initiate<ReadToken,
+    BOOST_ASIO_INVOKE_INLINE return async_initiate<ReadToken,
       void (boost::system::error_code, std::size_t)>(
         initiate_async_receive(this), token,
         buffers, socket_base::message_flags(0));
@@ -987,7 +992,7 @@ public:
         void (boost::system::error_code, std::size_t)>(
           declval<initiate_async_receive>(), token, buffers, flags))
   {
-    return async_initiate<ReadToken,
+    BOOST_ASIO_INVOKE_INLINE return async_initiate<ReadToken,
       void (boost::system::error_code, std::size_t)>(
         initiate_async_receive(this), token, buffers, flags);
   }
@@ -1145,7 +1150,7 @@ public:
           declval<initiate_async_receive_from>(), token, buffers,
           &sender_endpoint, socket_base::message_flags(0)))
   {
-    return async_initiate<ReadToken,
+    BOOST_ASIO_INVOKE_INLINE return async_initiate<ReadToken,
       void (boost::system::error_code, std::size_t)>(
         initiate_async_receive_from(this), token, buffers,
         &sender_endpoint, socket_base::message_flags(0));
@@ -1208,12 +1213,1700 @@ public:
           declval<initiate_async_receive_from>(), token,
           buffers, &sender_endpoint, flags))
   {
-    return async_initiate<ReadToken,
+    BOOST_ASIO_INVOKE_INLINE return async_initiate<ReadToken,
       void (boost::system::error_code, std::size_t)>(
         initiate_async_receive_from(this), token,
         buffers, &sender_endpoint, flags);
   }
 
+  /// Send multiple datagrams on a connected socket.
+  /**
+   * This function is used to send multiple datagrams on the datagram socket.
+   * The function call will block until one or more datagrams have been sent
+   * successfully or an error occurs. The number of datagrams sent may be less
+   * than the length of the range.
+   *
+   * @param buffer_sequences A forward range of buffer sequences, one per
+   * datagram to send.
+   *
+   * @returns The number of datagrams sent.
+   *
+   * @throws boost::system::system_error Thrown on failure.
+   *
+   * @note The send_multiple operation can only be used with a connected
+   * socket. Use the send_to_multiple function to send data on an unconnected
+   * datagram socket.
+   */
+  template <typename ConstBufferSequences>
+  std::size_t send_multiple(ConstBufferSequences&& buffer_sequences)
+  {
+    boost::system::error_code ec;
+    std::size_t s = this->impl_.get_service().send_multiple(
+        this->impl_.get_implementation(),
+        static_cast<ConstBufferSequences&&>(buffer_sequences), 0, ec);
+    boost::asio::detail::throw_error(ec, "send_multiple");
+    return s;
+  }
+
+  /// Send multiple datagrams on a connected socket.
+  /**
+   * This function is used to send multiple datagrams on the datagram socket.
+   * The function call will block until one or more datagrams have been sent
+   * successfully or an error occurs. The number of datagrams sent may be less
+   * than the length of the range.
+   *
+   * @param buffer_sequences A forward range of buffer sequences, one per
+   * datagram to send.
+   *
+   * @param flags Flags specifying how the send call is to be made.
+   *
+   * @returns The number of datagrams sent.
+   *
+   * @throws boost::system::system_error Thrown on failure.
+   *
+   * @note The send_multiple operation can only be used with a connected
+   * socket. Use the send_to_multiple function to send data on an unconnected
+   * datagram socket.
+   */
+  template <typename ConstBufferSequences>
+  std::size_t send_multiple(ConstBufferSequences&& buffer_sequences,
+      socket_base::message_flags flags)
+  {
+    boost::system::error_code ec;
+    std::size_t s = this->impl_.get_service().send_multiple(
+        this->impl_.get_implementation(),
+        static_cast<ConstBufferSequences&&>(buffer_sequences), flags, ec);
+    boost::asio::detail::throw_error(ec, "send_multiple");
+    return s;
+  }
+
+  /// Send multiple datagrams on a connected socket.
+  /**
+   * This function is used to send multiple datagrams on the datagram socket.
+   * The function call will block until one or more datagrams have been sent
+   * successfully or an error occurs. The number of datagrams sent may be less
+   * than the length of the range.
+   *
+   * @param buffer_sequences A forward range of buffer sequences, one per
+   * datagram to send.
+   *
+   * @param flags Flags specifying how the send call is to be made.
+   *
+   * @param ec Set to indicate what error occurred, if any.
+   *
+   * @returns The number of datagrams sent.
+   *
+   * @note The send_multiple operation can only be used with a connected
+   * socket. Use the send_to_multiple function to send data on an unconnected
+   * datagram socket.
+   */
+  template <typename ConstBufferSequences>
+  std::size_t send_multiple(ConstBufferSequences&& buffer_sequences,
+      socket_base::message_flags flags, boost::system::error_code& ec)
+  {
+    return this->impl_.get_service().send_multiple(
+        this->impl_.get_implementation(),
+        static_cast<ConstBufferSequences&&>(buffer_sequences), flags, ec);
+  }
+
+  /// Start an asynchronous send of multiple datagrams on a connected socket.
+  /**
+   * This function is used to asynchronously send multiple datagrams on a
+   * connected datagram socket. It is an initiating function for an
+   * @ref asynchronous_operation, and always returns immediately. The number of
+   * datagrams sent may be less than the length of the range.
+   *
+   * @param buffer_sequences A forward range of buffer sequences, one per
+   * datagram to send. Although the range object may be copied as necessary,
+   * ownership of the underlying memory blocks is retained by the caller, which
+   * must guarantee that they remain valid until the completion handler is
+   * called.
+   *
+   * @param token The @ref completion_token that will be used to produce a
+   * completion handler, which will be called when the send completes. Potential
+   * completion tokens include @ref use_future, @ref use_awaitable, @ref
+   * yield_context, or a function object with the correct completion signature.
+   * The function signature of the completion handler must be:
+   * @code void handler(
+   *   const boost::system::error_code& error, // Result of operation.
+   *   std::size_t messages_transferred // Number of datagrams sent.
+   * ); @endcode
+   * Regardless of whether the asynchronous operation completes immediately or
+   * not, the completion handler will not be invoked from within this function.
+   * On immediate completion, invocation of the handler will be performed in a
+   * manner equivalent to using boost::asio::async_immediate().
+   *
+   * @par Completion Signature
+   * @code void(boost::system::error_code, std::size_t) @endcode
+   *
+   * @note The async_send_multiple operation can only be used with a connected
+   * socket. Use the async_send_to_multiple function to send data on an
+   * unconnected datagram socket.
+   *
+   * @par Per-Operation Cancellation
+   * On POSIX or Windows operating systems, this asynchronous operation supports
+   * cancellation for the following boost::asio::cancellation_type values:
+   *
+   * @li @c cancellation_type::terminal
+   *
+   * @li @c cancellation_type::partial
+   *
+   * @li @c cancellation_type::total
+   */
+  template <typename ConstBufferSequences,
+      BOOST_ASIO_COMPLETION_TOKEN_FOR(void (boost::system::error_code,
+        std::size_t)) WriteMultiToken =
+          default_completion_token_t<executor_type>>
+  auto async_send_multiple(ConstBufferSequences&& buffer_sequences,
+      WriteMultiToken&& token = default_completion_token_t<executor_type>())
+    -> decltype(
+      async_initiate<WriteMultiToken,
+        void (boost::system::error_code, std::size_t)>(
+          declval<initiate_async_send_multiple>(), token,
+          static_cast<ConstBufferSequences&&>(buffer_sequences),
+          socket_base::message_flags(0)))
+  {
+    BOOST_ASIO_INVOKE_INLINE return async_initiate<WriteMultiToken,
+      void (boost::system::error_code, std::size_t)>(
+        initiate_async_send_multiple(this), token,
+        static_cast<ConstBufferSequences&&>(buffer_sequences),
+        socket_base::message_flags(0));
+  }
+
+  /// Start an asynchronous send of multiple datagrams on a connected socket.
+  /**
+   * This function is used to asynchronously send multiple datagrams on a
+   * connected datagram socket. It is an initiating function for an
+   * @ref asynchronous_operation, and always returns immediately. The number of
+   * datagrams sent may be less than the length of the range.
+   *
+   * @param buffer_sequences A forward range of buffer sequences, one per
+   * datagram to send. Although the range object may be copied as necessary,
+   * ownership of the underlying memory blocks is retained by the caller, which
+   * must guarantee that they remain valid until the completion handler is
+   * called.
+   *
+   * @param flags Flags specifying how the send call is to be made.
+   *
+   * @param token The @ref completion_token that will be used to produce a
+   * completion handler, which will be called when the send completes. Potential
+   * completion tokens include @ref use_future, @ref use_awaitable, @ref
+   * yield_context, or a function object with the correct completion signature.
+   * The function signature of the completion handler must be:
+   * @code void handler(
+   *   const boost::system::error_code& error, // Result of operation.
+   *   std::size_t messages_transferred // Number of datagrams sent.
+   * ); @endcode
+   * Regardless of whether the asynchronous operation completes immediately or
+   * not, the completion handler will not be invoked from within this function.
+   * On immediate completion, invocation of the handler will be performed in a
+   * manner equivalent to using boost::asio::async_immediate().
+   *
+   * @par Completion Signature
+   * @code void(boost::system::error_code, std::size_t) @endcode
+   *
+   * @note The async_send_multiple operation can only be used with a connected
+   * socket. Use the async_send_to_multiple function to send data on an
+   * unconnected datagram socket.
+   *
+   * @par Per-Operation Cancellation
+   * On POSIX or Windows operating systems, this asynchronous operation supports
+   * cancellation for the following boost::asio::cancellation_type values:
+   *
+   * @li @c cancellation_type::terminal
+   *
+   * @li @c cancellation_type::partial
+   *
+   * @li @c cancellation_type::total
+   */
+  template <typename ConstBufferSequences,
+      BOOST_ASIO_COMPLETION_TOKEN_FOR(void (boost::system::error_code,
+        std::size_t)) WriteMultiToken =
+          default_completion_token_t<executor_type>>
+  auto async_send_multiple(ConstBufferSequences&& buffer_sequences,
+      socket_base::message_flags flags,
+      WriteMultiToken&& token = default_completion_token_t<executor_type>())
+    -> decltype(
+      async_initiate<WriteMultiToken,
+        void (boost::system::error_code, std::size_t)>(
+          declval<initiate_async_send_multiple>(), token,
+          static_cast<ConstBufferSequences&&>(buffer_sequences), flags))
+  {
+    BOOST_ASIO_INVOKE_INLINE return async_initiate<WriteMultiToken,
+      void (boost::system::error_code, std::size_t)>(
+        initiate_async_send_multiple(this), token,
+        static_cast<ConstBufferSequences&&>(buffer_sequences), flags);
+  }
+
+  /// Send multiple datagrams to the specified endpoints.
+  /**
+   * This function is used to send multiple datagrams to the specified remote
+   * endpoints. The function call will block until one or more datagrams have
+   * been sent successfully or an error occurs. The number of datagrams
+   * transferred may be less than the length of the shortest range.
+   *
+   * @param buffer_sequences A forward range of buffer sequences, one per
+   * datagram to send.
+   *
+   * @param endpoints A forward range of destination endpoints, one per
+   * datagram.
+   *
+   * @returns The number of datagrams sent.
+   *
+   * @throws boost::system::system_error Thrown on failure.
+   */
+  template <typename ConstBufferSequences, typename EndpointSequence>
+  std::size_t send_to_multiple(ConstBufferSequences&& buffer_sequences,
+      EndpointSequence&& endpoints)
+  {
+    boost::system::error_code ec;
+    std::size_t s = this->impl_.get_service().send_to_multiple(
+        this->impl_.get_implementation(),
+        static_cast<ConstBufferSequences&&>(buffer_sequences),
+        static_cast<EndpointSequence&&>(endpoints), 0, ec);
+    boost::asio::detail::throw_error(ec, "send_to_multiple");
+    return s;
+  }
+
+  /// Send multiple datagrams to the specified endpoints.
+  /**
+   * This function is used to send multiple datagrams to the specified remote
+   * endpoints. The function call will block until one or more datagrams have
+   * been sent successfully or an error occurs. The number of datagrams
+   * transferred may be less than the length of the shortest range.
+   *
+   * @param buffer_sequences A forward range of buffer sequences, one per
+   * datagram to send.
+   *
+   * @param endpoints A forward range of destination endpoints, one per
+   * datagram.
+   *
+   * @param flags Flags specifying how the send call is to be made.
+   *
+   * @returns The number of datagrams sent.
+   *
+   * @throws boost::system::system_error Thrown on failure.
+   */
+  template <typename ConstBufferSequences, typename EndpointSequence>
+  std::size_t send_to_multiple(ConstBufferSequences&& buffer_sequences,
+      EndpointSequence&& endpoints, socket_base::message_flags flags)
+  {
+    boost::system::error_code ec;
+    std::size_t s = this->impl_.get_service().send_to_multiple(
+        this->impl_.get_implementation(),
+        static_cast<ConstBufferSequences&&>(buffer_sequences),
+        static_cast<EndpointSequence&&>(endpoints), flags, ec);
+    boost::asio::detail::throw_error(ec, "send_to_multiple");
+    return s;
+  }
+
+  /// Send multiple datagrams to the specified endpoints.
+  /**
+   * This function is used to send multiple datagrams to the specified remote
+   * endpoints. The function call will block until one or more datagrams have
+   * been sent successfully or an error occurs. The number of datagrams
+   * transferred may be less than the length of the shortest range.
+   *
+   * @param buffer_sequences A forward range of buffer sequences, one per
+   * datagram to send.
+   *
+   * @param endpoints A forward range of destination endpoints, one per
+   * datagram.
+   *
+   * @param flags Flags specifying how the send call is to be made.
+   *
+   * @param ec Set to indicate what error occurred, if any.
+   *
+   * @returns The number of datagrams sent.
+   */
+  template <typename ConstBufferSequences, typename EndpointSequence>
+  std::size_t send_to_multiple(ConstBufferSequences&& buffer_sequences,
+      EndpointSequence&& endpoints, socket_base::message_flags flags,
+      boost::system::error_code& ec)
+  {
+    return this->impl_.get_service().send_to_multiple(
+        this->impl_.get_implementation(),
+        static_cast<ConstBufferSequences&&>(buffer_sequences),
+        static_cast<EndpointSequence&&>(endpoints), flags, ec);
+  }
+
+  /// Start an asynchronous send of multiple datagrams to the endpoints.
+  /**
+   * This function is used to asynchronously send multiple datagrams to the
+   * specified remote endpoints. It is an initiating function for an
+   * @ref asynchronous_operation, and always returns immediately. The number of
+   * datagrams transferred may be less than the length of the shortest range.
+   *
+   * @param buffer_sequences A forward range of buffer sequences, one per
+   * datagram to send. Although the range object may be copied as necessary,
+   * ownership of the underlying memory blocks is retained by the caller, which
+   * must guarantee that they remain valid until the completion handler is
+   * called.
+   *
+   * @param endpoints A forward range of destination endpoints, one per
+   * datagram. Although the range object may be copied as necessary, ownership
+   * of any endpoints to which the range yields references is retained by the
+   * caller, which must guarantee that they remain valid until the completion
+   * handler is called. Copies will be made of endpoints yielded by value as
+   * required.
+   *
+   * @param token The @ref completion_token that will be used to produce a
+   * completion handler, which will be called when the send completes. Potential
+   * completion tokens include @ref use_future, @ref use_awaitable, @ref
+   * yield_context, or a function object with the correct completion signature.
+   * The function signature of the completion handler must be:
+   * @code void handler(
+   *   const boost::system::error_code& error, // Result of operation.
+   *   std::size_t messages_transferred // Number of datagrams sent.
+   * ); @endcode
+   * Regardless of whether the asynchronous operation completes immediately or
+   * not, the completion handler will not be invoked from within this function.
+   * On immediate completion, invocation of the handler will be performed in a
+   * manner equivalent to using boost::asio::async_immediate().
+   *
+   * @par Completion Signature
+   * @code void(boost::system::error_code, std::size_t) @endcode
+   *
+   * @par Per-Operation Cancellation
+   * On POSIX or Windows operating systems, this asynchronous operation supports
+   * cancellation for the following boost::asio::cancellation_type values:
+   *
+   * @li @c cancellation_type::terminal
+   *
+   * @li @c cancellation_type::partial
+   *
+   * @li @c cancellation_type::total
+   */
+  template <typename ConstBufferSequences, typename EndpointSequence,
+      BOOST_ASIO_COMPLETION_TOKEN_FOR(void (boost::system::error_code,
+        std::size_t)) WriteMultiToken =
+          default_completion_token_t<executor_type>>
+  auto async_send_to_multiple(ConstBufferSequences&& buffer_sequences,
+      EndpointSequence&& endpoints,
+      WriteMultiToken&& token = default_completion_token_t<executor_type>())
+    -> decltype(
+      async_initiate<WriteMultiToken,
+        void (boost::system::error_code, std::size_t)>(
+          declval<initiate_async_send_to_multiple>(), token,
+          static_cast<ConstBufferSequences&&>(buffer_sequences),
+          static_cast<EndpointSequence&&>(endpoints),
+          socket_base::message_flags(0)))
+  {
+    BOOST_ASIO_INVOKE_INLINE return async_initiate<WriteMultiToken,
+      void (boost::system::error_code, std::size_t)>(
+        initiate_async_send_to_multiple(this), token,
+        static_cast<ConstBufferSequences&&>(buffer_sequences),
+        static_cast<EndpointSequence&&>(endpoints),
+        socket_base::message_flags(0));
+  }
+
+  /// Start an asynchronous send of multiple datagrams to the endpoints.
+  /**
+   * This function is used to asynchronously send multiple datagrams to the
+   * specified remote endpoints. It is an initiating function for an
+   * @ref asynchronous_operation, and always returns immediately. The number of
+   * datagrams transferred may be less than the length of the shortest range.
+   *
+   * @param buffer_sequences A forward range of buffer sequences, one per
+   * datagram to send. Although the range object may be copied as necessary,
+   * ownership of the underlying memory blocks is retained by the caller, which
+   * must guarantee that they remain valid until the completion handler is
+   * called.
+   *
+   * @param endpoints A forward range of destination endpoints, one per
+   * datagram. Although the range object may be copied as necessary, ownership
+   * of any endpoints to which the range yields references is retained by the
+   * caller, which must guarantee that they remain valid until the completion
+   * handler is called. Copies will be made of endpoints yielded by value as
+   * required.
+   *
+   * @param flags Flags specifying how the send call is to be made.
+   *
+   * @param token The @ref completion_token that will be used to produce a
+   * completion handler, which will be called when the send completes. Potential
+   * completion tokens include @ref use_future, @ref use_awaitable, @ref
+   * yield_context, or a function object with the correct completion signature.
+   * The function signature of the completion handler must be:
+   * @code void handler(
+   *   const boost::system::error_code& error, // Result of operation.
+   *   std::size_t messages_transferred // Number of datagrams sent.
+   * ); @endcode
+   * Regardless of whether the asynchronous operation completes immediately or
+   * not, the completion handler will not be invoked from within this function.
+   * On immediate completion, invocation of the handler will be performed in a
+   * manner equivalent to using boost::asio::async_immediate().
+   *
+   * @par Completion Signature
+   * @code void(boost::system::error_code, std::size_t) @endcode
+   *
+   * @par Per-Operation Cancellation
+   * On POSIX or Windows operating systems, this asynchronous operation supports
+   * cancellation for the following boost::asio::cancellation_type values:
+   *
+   * @li @c cancellation_type::terminal
+   *
+   * @li @c cancellation_type::partial
+   *
+   * @li @c cancellation_type::total
+   */
+  template <typename ConstBufferSequences, typename EndpointSequence,
+      BOOST_ASIO_COMPLETION_TOKEN_FOR(void (boost::system::error_code,
+        std::size_t)) WriteMultiToken =
+          default_completion_token_t<executor_type>>
+  auto async_send_to_multiple(ConstBufferSequences&& buffer_sequences,
+      EndpointSequence&& endpoints, socket_base::message_flags flags,
+      WriteMultiToken&& token = default_completion_token_t<executor_type>())
+    -> decltype(
+      async_initiate<WriteMultiToken,
+        void (boost::system::error_code, std::size_t)>(
+          declval<initiate_async_send_to_multiple>(), token,
+          static_cast<ConstBufferSequences&&>(buffer_sequences),
+          static_cast<EndpointSequence&&>(endpoints), flags))
+  {
+    BOOST_ASIO_INVOKE_INLINE return async_initiate<WriteMultiToken,
+      void (boost::system::error_code, std::size_t)>(
+        initiate_async_send_to_multiple(this), token,
+        static_cast<ConstBufferSequences&&>(buffer_sequences),
+        static_cast<EndpointSequence&&>(endpoints), flags);
+  }
+
+  /// Receive multiple datagrams on a connected socket.
+  /**
+   * This function is used to receive multiple datagrams on the datagram socket.
+   * The function call will block until one or more datagrams have been received
+   * successfully or an error occurs. The number of datagrams transferred may be
+   * less than the length of the shortest range.
+   *
+   * @param buffer_sequences A forward range of mutable buffer sequences, one
+   * per datagram, into which the data will be received.
+   *
+   * @param sizes A forward range of @c std::size_t, one per datagram, into
+   * which the number of bytes received in each datagram is written.
+   *
+   * @returns The number of datagrams received.
+   *
+   * @throws boost::system::system_error Thrown on failure.
+   *
+   * @note The receive_multiple operation can only be used with a connected
+   * socket. Use the receive_from_multiple function to receive data on an
+   * unconnected datagram socket.
+   */
+  template <typename MutableBufferSequences, typename MutableSizeSequence>
+  std::size_t receive_multiple(MutableBufferSequences&& buffer_sequences,
+      MutableSizeSequence&& sizes)
+  {
+    static_assert(
+        is_shallow_mutable_sequence<decay_t<MutableSizeSequence>>::value,
+        "sizes must be a shallow mutable sequence");
+
+    boost::system::error_code ec;
+    std::size_t s = this->impl_.get_service().receive_multiple(
+        this->impl_.get_implementation(),
+        static_cast<MutableBufferSequences&&>(buffer_sequences),
+        static_cast<MutableSizeSequence&&>(sizes), detail::empty_range(),
+        0, ec);
+    boost::asio::detail::throw_error(ec, "receive_multiple");
+    return s;
+  }
+
+  /// Receive multiple datagrams on a connected socket.
+  /**
+   * This function is used to receive multiple datagrams on the datagram socket.
+   * The function call will block until one or more datagrams have been received
+   * successfully or an error occurs. The number of datagrams transferred may be
+   * less than the length of the shortest range.
+   *
+   * @param buffer_sequences A forward range of mutable buffer sequences, one
+   * per datagram, into which the data will be received.
+   *
+   * @param sizes A forward range of @c std::size_t, one per datagram, into
+   * which the number of bytes received in each datagram is written.
+   *
+   * @param flags Flags specifying how the receive call is to be made.
+   *
+   * @returns The number of datagrams received.
+   *
+   * @throws boost::system::system_error Thrown on failure.
+   *
+   * @note The receive_multiple operation can only be used with a connected
+   * socket. Use the receive_from_multiple function to receive data on an
+   * unconnected datagram socket.
+   */
+  template <typename MutableBufferSequences, typename MutableSizeSequence>
+  std::size_t receive_multiple(MutableBufferSequences&& buffer_sequences,
+      MutableSizeSequence&& sizes, socket_base::message_flags flags)
+  {
+    static_assert(
+        is_shallow_mutable_sequence<decay_t<MutableSizeSequence>>::value,
+        "sizes must be a shallow mutable sequence");
+
+    boost::system::error_code ec;
+    std::size_t s = this->impl_.get_service().receive_multiple(
+        this->impl_.get_implementation(),
+        static_cast<MutableBufferSequences&&>(buffer_sequences),
+        static_cast<MutableSizeSequence&&>(sizes), detail::empty_range(),
+        flags, ec);
+    boost::asio::detail::throw_error(ec, "receive_multiple");
+    return s;
+  }
+
+  /// Receive multiple datagrams on a connected socket.
+  /**
+   * This function is used to receive multiple datagrams on the datagram socket.
+   * The function call will block until one or more datagrams have been received
+   * successfully or an error occurs. The number of datagrams transferred may be
+   * less than the length of the shortest range.
+   *
+   * @param buffer_sequences A forward range of mutable buffer sequences, one
+   * per datagram, into which the data will be received.
+   *
+   * @param sizes A forward range of @c std::size_t, one per datagram, into
+   * which the number of bytes received in each datagram is written.
+   *
+   * @param flags Flags specifying how the receive call is to be made.
+   *
+   * @param ec Set to indicate what error occurred, if any.
+   *
+   * @returns The number of datagrams received.
+   *
+   * @note The receive_multiple operation can only be used with a connected
+   * socket. Use the receive_from_multiple function to receive data on an
+   * unconnected datagram socket.
+   */
+  template <typename MutableBufferSequences, typename MutableSizeSequence>
+  std::size_t receive_multiple(MutableBufferSequences&& buffer_sequences,
+      MutableSizeSequence&& sizes, socket_base::message_flags flags,
+      boost::system::error_code& ec)
+  {
+    static_assert(
+        is_shallow_mutable_sequence<decay_t<MutableSizeSequence>>::value,
+        "sizes must be a shallow mutable sequence");
+
+    return this->impl_.get_service().receive_multiple(
+        this->impl_.get_implementation(),
+        static_cast<MutableBufferSequences&&>(buffer_sequences),
+        static_cast<MutableSizeSequence&&>(sizes), detail::empty_range(),
+        flags, ec);
+  }
+
+  /// Receive multiple datagrams and their flags on a connected socket.
+  /**
+   * This function is used to receive multiple datagrams on the datagram socket.
+   * The function call will block until one or more datagrams have been received
+   * successfully or an error occurs. The number of datagrams transferred may be
+   * less than the length of the shortest range.
+   *
+   * @param buffer_sequences A forward range of mutable buffer sequences, one
+   * per datagram, into which the data will be received.
+   *
+   * @param sizes A forward range of @c std::size_t, one per datagram, into
+   * which the number of bytes received in each datagram is written.
+   *
+   * @param out_flags A forward range of @c socket_base::message_flags, one per
+   * datagram, into which the flags associated with each received datagram are
+   * written.
+   *
+   * @returns The number of datagrams received.
+   *
+   * @throws boost::system::system_error Thrown on failure.
+   *
+   * @note The receive_multiple operation can only be used with a connected
+   * socket. Use the receive_from_multiple function to receive data on an
+   * unconnected datagram socket.
+   */
+  template <typename MutableBufferSequences, typename MutableSizeSequence,
+      typename MutableFlagsSequence>
+  std::size_t receive_multiple(MutableBufferSequences&& buffer_sequences,
+      MutableSizeSequence&& sizes, MutableFlagsSequence&& out_flags,
+      constraint_t<
+        is_shallow_mutable_sequence<decay_t<MutableFlagsSequence>>::value
+      > = 0)
+  {
+    static_assert(
+        is_shallow_mutable_sequence<decay_t<MutableSizeSequence>>::value,
+        "sizes must be a shallow mutable sequence");
+
+    boost::system::error_code ec;
+    std::size_t s = this->impl_.get_service().receive_multiple(
+        this->impl_.get_implementation(),
+        static_cast<MutableBufferSequences&&>(buffer_sequences),
+        static_cast<MutableSizeSequence&&>(sizes),
+        static_cast<MutableFlagsSequence&&>(out_flags), 0, ec);
+    boost::asio::detail::throw_error(ec, "receive_multiple");
+    return s;
+  }
+
+  /// Receive multiple datagrams and their flags on a connected socket.
+  /**
+   * This function is used to receive multiple datagrams on the datagram socket.
+   * The function call will block until one or more datagrams have been received
+   * successfully or an error occurs. The number of datagrams transferred may be
+   * less than the length of the shortest range.
+   *
+   * @param buffer_sequences A forward range of mutable buffer sequences, one
+   * per datagram, into which the data will be received.
+   *
+   * @param sizes A forward range of @c std::size_t, one per datagram, into
+   * which the number of bytes received in each datagram is written.
+   *
+   * @param flags Flags specifying how the receive call is to be made.
+   *
+   * @param out_flags A forward range of @c socket_base::message_flags, one per
+   * datagram, into which the flags associated with each received datagram are
+   * written.
+   *
+   * @returns The number of datagrams received.
+   *
+   * @throws boost::system::system_error Thrown on failure.
+   *
+   * @note The receive_multiple operation can only be used with a connected
+   * socket. Use the receive_from_multiple function to receive data on an
+   * unconnected datagram socket.
+   */
+  template <typename MutableBufferSequences, typename MutableSizeSequence,
+      typename MutableFlagsSequence>
+  std::size_t receive_multiple(MutableBufferSequences&& buffer_sequences,
+      MutableSizeSequence&& sizes, socket_base::message_flags flags,
+      MutableFlagsSequence&& out_flags,
+      constraint_t<
+        is_shallow_mutable_sequence<decay_t<MutableFlagsSequence>>::value
+      > = 0)
+  {
+    static_assert(
+        is_shallow_mutable_sequence<decay_t<MutableSizeSequence>>::value,
+        "sizes must be a shallow mutable sequence");
+
+    boost::system::error_code ec;
+    std::size_t s = this->impl_.get_service().receive_multiple(
+        this->impl_.get_implementation(),
+        static_cast<MutableBufferSequences&&>(buffer_sequences),
+        static_cast<MutableSizeSequence&&>(sizes),
+        static_cast<MutableFlagsSequence&&>(out_flags), flags, ec);
+    boost::asio::detail::throw_error(ec, "receive_multiple");
+    return s;
+  }
+
+  /// Receive multiple datagrams and their flags on a connected socket.
+  /**
+   * This function is used to receive multiple datagrams on the datagram socket.
+   * The function call will block until one or more datagrams have been received
+   * successfully or an error occurs. The number of datagrams transferred may be
+   * less than the length of the shortest range.
+   *
+   * @param buffer_sequences A forward range of mutable buffer sequences, one
+   * per datagram, into which the data will be received.
+   *
+   * @param sizes A forward range of @c std::size_t, one per datagram, into
+   * which the number of bytes received in each datagram is written.
+   *
+   * @param flags Flags specifying how the receive call is to be made.
+   *
+   * @param out_flags A forward range of @c socket_base::message_flags, one per
+   * datagram, into which the flags associated with each received datagram are
+   * written.
+   *
+   * @param ec Set to indicate what error occurred, if any.
+   *
+   * @returns The number of datagrams received.
+   *
+   * @note The receive_multiple operation can only be used with a connected
+   * socket. Use the receive_from_multiple function to receive data on an
+   * unconnected datagram socket.
+   */
+  template <typename MutableBufferSequences, typename MutableSizeSequence,
+      typename MutableFlagsSequence>
+  std::size_t receive_multiple(MutableBufferSequences&& buffer_sequences,
+      MutableSizeSequence&& sizes, socket_base::message_flags flags,
+      MutableFlagsSequence&& out_flags, boost::system::error_code& ec,
+      constraint_t<
+        is_shallow_mutable_sequence<decay_t<MutableFlagsSequence>>::value
+      > = 0)
+  {
+    static_assert(
+        is_shallow_mutable_sequence<decay_t<MutableSizeSequence>>::value,
+        "sizes must be a shallow mutable sequence");
+
+    return this->impl_.get_service().receive_multiple(
+        this->impl_.get_implementation(),
+        static_cast<MutableBufferSequences&&>(buffer_sequences),
+        static_cast<MutableSizeSequence&&>(sizes),
+        static_cast<MutableFlagsSequence&&>(out_flags), flags, ec);
+  }
+
+  /// Start an asynchronous receive of multiple datagrams on a connected socket.
+  /**
+   * This function is used to asynchronously receive multiple datagrams on a
+   * connected datagram socket. It is an initiating function for an
+   * @ref asynchronous_operation, and always returns immediately. The number of
+   * datagrams transferred may be less than the length of the shortest range.
+   *
+   * @param buffer_sequences A forward range of mutable buffer sequences, one
+   * per datagram, into which the data will be received. Although the range
+   * object may be copied as necessary, ownership of the underlying memory
+   * blocks is retained by the caller, which must guarantee that they remain
+   * valid until the completion handler is called.
+   *
+   * @param sizes A forward range of @c std::size_t, one per datagram, into
+   * which the number of bytes received in each datagram is written. Although
+   * the range object may be copied as necessary, ownership of the underlying
+   * elements is retained by the caller, which must guarantee that they remain
+   * valid until the completion handler is called.
+   *
+   * @param token The @ref completion_token that will be used to produce a
+   * completion handler, which will be called when the receive completes.
+   * Potential completion tokens include @ref use_future, @ref use_awaitable,
+   * @ref yield_context, or a function object with the correct completion
+   * signature.
+   * The function signature of the completion handler must be:
+   * @code void handler(
+   *   const boost::system::error_code& error, // Result of operation.
+   *   std::size_t messages_transferred // Number of datagrams received.
+   * ); @endcode
+   * Regardless of whether the asynchronous operation completes immediately or
+   * not, the completion handler will not be invoked from within this function.
+   * On immediate completion, invocation of the handler will be performed in a
+   * manner equivalent to using boost::asio::async_immediate().
+   *
+   * @par Completion Signature
+   * @code void(boost::system::error_code, std::size_t) @endcode
+   *
+   * @note The async_receive_multiple operation can only be used with a
+   * connected socket. Use the async_receive_from_multiple function to receive
+   * data on an unconnected datagram socket.
+   *
+   * @par Per-Operation Cancellation
+   * On POSIX or Windows operating systems, this asynchronous operation supports
+   * cancellation for the following boost::asio::cancellation_type values:
+   *
+   * @li @c cancellation_type::terminal
+   *
+   * @li @c cancellation_type::partial
+   *
+   * @li @c cancellation_type::total
+   */
+  template <typename MutableBufferSequences, typename MutableSizeSequence,
+      BOOST_ASIO_COMPLETION_TOKEN_FOR(void (boost::system::error_code,
+        std::size_t)) ReadMultiToken =
+          default_completion_token_t<executor_type>>
+  auto async_receive_multiple(MutableBufferSequences&& buffer_sequences,
+      MutableSizeSequence&& sizes,
+      ReadMultiToken&& token = default_completion_token_t<executor_type>(),
+      constraint_t<
+        !is_shallow_mutable_sequence<decay_t<ReadMultiToken>>::value
+      > = 0)
+    -> decltype(
+      async_initiate<ReadMultiToken,
+        void (boost::system::error_code, std::size_t)>(
+          declval<initiate_async_receive_multiple>(), token,
+          static_cast<MutableBufferSequences&&>(buffer_sequences),
+          static_cast<MutableSizeSequence&&>(sizes), detail::empty_range(),
+          socket_base::message_flags(0)))
+  {
+    BOOST_ASIO_INVOKE_INLINE return async_initiate<ReadMultiToken,
+      void (boost::system::error_code, std::size_t)>(
+        initiate_async_receive_multiple(this), token,
+        static_cast<MutableBufferSequences&&>(buffer_sequences),
+        static_cast<MutableSizeSequence&&>(sizes), detail::empty_range(),
+        socket_base::message_flags(0));
+  }
+
+  /// Start an asynchronous receive of multiple datagrams on a connected socket.
+  /**
+   * This function is used to asynchronously receive multiple datagrams on a
+   * connected datagram socket. It is an initiating function for an
+   * @ref asynchronous_operation, and always returns immediately. The number of
+   * datagrams transferred may be less than the length of the shortest range.
+   *
+   * @param buffer_sequences A forward range of mutable buffer sequences, one
+   * per datagram, into which the data will be received. Although the range
+   * object may be copied as necessary, ownership of the underlying memory
+   * blocks is retained by the caller, which must guarantee that they remain
+   * valid until the completion handler is called.
+   *
+   * @param sizes A forward range of @c std::size_t, one per datagram, into
+   * which the number of bytes received in each datagram is written. Although
+   * the range object may be copied as necessary, ownership of the underlying
+   * elements is retained by the caller, which must guarantee that they remain
+   * valid until the completion handler is called.
+   *
+   * @param flags Flags specifying how the receive call is to be made.
+   *
+   * @param token The @ref completion_token that will be used to produce a
+   * completion handler, which will be called when the receive completes.
+   * Potential completion tokens include @ref use_future, @ref use_awaitable,
+   * @ref yield_context, or a function object with the correct completion
+   * signature.
+   * The function signature of the completion handler must be:
+   * @code void handler(
+   *   const boost::system::error_code& error, // Result of operation.
+   *   std::size_t messages_transferred // Number of datagrams received.
+   * ); @endcode
+   * Regardless of whether the asynchronous operation completes immediately or
+   * not, the completion handler will not be invoked from within this function.
+   * On immediate completion, invocation of the handler will be performed in a
+   * manner equivalent to using boost::asio::async_immediate().
+   *
+   * @par Completion Signature
+   * @code void(boost::system::error_code, std::size_t) @endcode
+   *
+   * @note The async_receive_multiple operation can only be used with a
+   * connected socket. Use the async_receive_from_multiple function to receive
+   * data on an unconnected datagram socket.
+   *
+   * @par Per-Operation Cancellation
+   * On POSIX or Windows operating systems, this asynchronous operation supports
+   * cancellation for the following boost::asio::cancellation_type values:
+   *
+   * @li @c cancellation_type::terminal
+   *
+   * @li @c cancellation_type::partial
+   *
+   * @li @c cancellation_type::total
+   */
+  template <typename MutableBufferSequences, typename MutableSizeSequence,
+      BOOST_ASIO_COMPLETION_TOKEN_FOR(void (boost::system::error_code,
+        std::size_t)) ReadMultiToken =
+          default_completion_token_t<executor_type>>
+  auto async_receive_multiple(MutableBufferSequences&& buffer_sequences,
+      MutableSizeSequence&& sizes, socket_base::message_flags flags,
+      ReadMultiToken&& token = default_completion_token_t<executor_type>(),
+      constraint_t<
+        !is_shallow_mutable_sequence<decay_t<ReadMultiToken>>::value
+      > = 0)
+    -> decltype(
+      async_initiate<ReadMultiToken,
+        void (boost::system::error_code, std::size_t)>(
+          declval<initiate_async_receive_multiple>(), token,
+          static_cast<MutableBufferSequences&&>(buffer_sequences),
+          static_cast<MutableSizeSequence&&>(sizes), detail::empty_range(),
+          flags))
+  {
+    BOOST_ASIO_INVOKE_INLINE return async_initiate<ReadMultiToken,
+      void (boost::system::error_code, std::size_t)>(
+        initiate_async_receive_multiple(this), token,
+        static_cast<MutableBufferSequences&&>(buffer_sequences),
+        static_cast<MutableSizeSequence&&>(sizes), detail::empty_range(),
+        flags);
+  }
+
+  /// Start an asynchronous receive of multiple datagrams and their flags.
+  /**
+   * This function is used to asynchronously receive multiple datagrams on a
+   * connected datagram socket. It is an initiating function for an
+   * @ref asynchronous_operation, and always returns immediately. The number of
+   * datagrams transferred may be less than the length of the shortest range.
+   *
+   * @param buffer_sequences A forward range of mutable buffer sequences, one
+   * per datagram, into which the data will be received. Although the range
+   * object may be copied as necessary, ownership of the underlying memory
+   * blocks is retained by the caller, which must guarantee that they remain
+   * valid until the completion handler is called.
+   *
+   * @param sizes A forward range of @c std::size_t, one per datagram, into
+   * which the number of bytes received in each datagram is written. Although
+   * the range object may be copied as necessary, ownership of the underlying
+   * elements is retained by the caller, which must guarantee that they remain
+   * valid until the completion handler is called.
+   *
+   * @param out_flags A forward range of @c socket_base::message_flags, one per
+   * datagram, into which the flags associated with each received datagram are
+   * written. Although the range object may be copied as necessary, ownership
+   * of the underlying elements is retained by the caller, which must guarantee
+   * that they remain valid until the completion handler is called.
+   *
+   * @param token The @ref completion_token that will be used to produce a
+   * completion handler, which will be called when the receive completes.
+   * Potential completion tokens include @ref use_future, @ref use_awaitable,
+   * @ref yield_context, or a function object with the correct completion
+   * signature.
+   * The function signature of the completion handler must be:
+   * @code void handler(
+   *   const boost::system::error_code& error, // Result of operation.
+   *   std::size_t messages_transferred // Number of datagrams received.
+   * ); @endcode
+   * Regardless of whether the asynchronous operation completes immediately or
+   * not, the completion handler will not be invoked from within this function.
+   * On immediate completion, invocation of the handler will be performed in a
+   * manner equivalent to using boost::asio::async_immediate().
+   *
+   * @par Completion Signature
+   * @code void(boost::system::error_code, std::size_t) @endcode
+   *
+   * @note The async_receive_multiple operation can only be used with a
+   * connected socket. Use the async_receive_from_multiple function to receive
+   * data on an unconnected datagram socket.
+   *
+   * @par Per-Operation Cancellation
+   * On POSIX or Windows operating systems, this asynchronous operation supports
+   * cancellation for the following boost::asio::cancellation_type values:
+   *
+   * @li @c cancellation_type::terminal
+   *
+   * @li @c cancellation_type::partial
+   *
+   * @li @c cancellation_type::total
+   */
+  template <typename MutableBufferSequences, typename MutableSizeSequence,
+      typename MutableFlagsSequence,
+      BOOST_ASIO_COMPLETION_TOKEN_FOR(void (boost::system::error_code,
+        std::size_t)) ReadMultiToken =
+          default_completion_token_t<executor_type>>
+  auto async_receive_multiple(MutableBufferSequences&& buffer_sequences,
+      MutableSizeSequence&& sizes, MutableFlagsSequence&& out_flags,
+      ReadMultiToken&& token = default_completion_token_t<executor_type>(),
+      constraint_t<
+        is_shallow_mutable_sequence<decay_t<MutableFlagsSequence>>::value
+      > = 0)
+    -> decltype(
+      async_initiate<ReadMultiToken,
+        void (boost::system::error_code, std::size_t)>(
+          declval<initiate_async_receive_multiple>(), token,
+          static_cast<MutableBufferSequences&&>(buffer_sequences),
+          static_cast<MutableSizeSequence&&>(sizes),
+          static_cast<MutableFlagsSequence&&>(out_flags),
+          socket_base::message_flags(0)))
+  {
+    BOOST_ASIO_INVOKE_INLINE return async_initiate<ReadMultiToken,
+      void (boost::system::error_code, std::size_t)>(
+        initiate_async_receive_multiple(this), token,
+        static_cast<MutableBufferSequences&&>(buffer_sequences),
+        static_cast<MutableSizeSequence&&>(sizes),
+        static_cast<MutableFlagsSequence&&>(out_flags),
+        socket_base::message_flags(0));
+  }
+
+  /// Start an asynchronous receive of multiple datagrams and their flags.
+  /**
+   * This function is used to asynchronously receive multiple datagrams on a
+   * connected datagram socket. It is an initiating function for an
+   * @ref asynchronous_operation, and always returns immediately. The number of
+   * datagrams transferred may be less than the length of the shortest range.
+   *
+   * @param buffer_sequences A forward range of mutable buffer sequences, one
+   * per datagram, into which the data will be received. Although the range
+   * object may be copied as necessary, ownership of the underlying memory
+   * blocks is retained by the caller, which must guarantee that they remain
+   * valid until the completion handler is called.
+   *
+   * @param sizes A forward range of @c std::size_t, one per datagram, into
+   * which the number of bytes received in each datagram is written. Although
+   * the range object may be copied as necessary, ownership of the underlying
+   * elements is retained by the caller, which must guarantee that they remain
+   * valid until the completion handler is called.
+   *
+   * @param flags Flags specifying how the receive call is to be made.
+   *
+   * @param out_flags A forward range of @c socket_base::message_flags, one per
+   * datagram, into which the flags associated with each received datagram are
+   * written. Although the range object may be copied as necessary, ownership
+   * of the underlying elements is retained by the caller, which must guarantee
+   * that they remain valid until the completion handler is called.
+   *
+   * @param token The @ref completion_token that will be used to produce a
+   * completion handler, which will be called when the receive completes.
+   * Potential completion tokens include @ref use_future, @ref use_awaitable,
+   * @ref yield_context, or a function object with the correct completion
+   * signature.
+   * The function signature of the completion handler must be:
+   * @code void handler(
+   *   const boost::system::error_code& error, // Result of operation.
+   *   std::size_t messages_transferred // Number of datagrams received.
+   * ); @endcode
+   * Regardless of whether the asynchronous operation completes immediately or
+   * not, the completion handler will not be invoked from within this function.
+   * On immediate completion, invocation of the handler will be performed in a
+   * manner equivalent to using boost::asio::async_immediate().
+   *
+   * @par Completion Signature
+   * @code void(boost::system::error_code, std::size_t) @endcode
+   *
+   * @note The async_receive_multiple operation can only be used with a
+   * connected socket. Use the async_receive_from_multiple function to receive
+   * data on an unconnected datagram socket.
+   *
+   * @par Per-Operation Cancellation
+   * On POSIX or Windows operating systems, this asynchronous operation supports
+   * cancellation for the following boost::asio::cancellation_type values:
+   *
+   * @li @c cancellation_type::terminal
+   *
+   * @li @c cancellation_type::partial
+   *
+   * @li @c cancellation_type::total
+   */
+  template <typename MutableBufferSequences, typename MutableSizeSequence,
+      typename MutableFlagsSequence,
+      BOOST_ASIO_COMPLETION_TOKEN_FOR(void (boost::system::error_code,
+        std::size_t)) ReadMultiToken =
+          default_completion_token_t<executor_type>>
+  auto async_receive_multiple(MutableBufferSequences&& buffer_sequences,
+      MutableSizeSequence&& sizes, socket_base::message_flags flags,
+      MutableFlagsSequence&& out_flags,
+      ReadMultiToken&& token = default_completion_token_t<executor_type>(),
+      constraint_t<
+        is_shallow_mutable_sequence<decay_t<MutableFlagsSequence>>::value
+      > = 0)
+    -> decltype(
+      async_initiate<ReadMultiToken,
+        void (boost::system::error_code, std::size_t)>(
+          declval<initiate_async_receive_multiple>(), token,
+          static_cast<MutableBufferSequences&&>(buffer_sequences),
+          static_cast<MutableSizeSequence&&>(sizes),
+          static_cast<MutableFlagsSequence&&>(out_flags), flags))
+  {
+    BOOST_ASIO_INVOKE_INLINE return async_initiate<ReadMultiToken,
+      void (boost::system::error_code, std::size_t)>(
+        initiate_async_receive_multiple(this), token,
+        static_cast<MutableBufferSequences&&>(buffer_sequences),
+        static_cast<MutableSizeSequence&&>(sizes),
+        static_cast<MutableFlagsSequence&&>(out_flags), flags);
+  }
+
+  /// Receive multiple datagrams with the endpoints of the senders.
+  /**
+   * This function is used to receive multiple datagrams, recording the endpoint
+   * of the remote sender of each. The function call will block until one or
+   * more datagrams have been received successfully or an error occurs. The
+   * number of datagrams transferred may be less than the length of the shortest
+   * range.
+   *
+   * @param buffer_sequences A forward range of mutable buffer sequences, one
+   * per datagram, into which the data will be received.
+   *
+   * @param endpoints A forward range of endpoint objects, one per datagram,
+   * that receive the endpoint of the remote sender of each datagram.
+   *
+   * @param sizes A forward range of @c std::size_t, one per datagram, into
+   * which the number of bytes received in each datagram is written.
+   *
+   * @returns The number of datagrams received.
+   *
+   * @throws boost::system::system_error Thrown on failure.
+   */
+  template <typename MutableBufferSequences, typename MutableEndpointSequence,
+      typename MutableSizeSequence>
+  std::size_t receive_from_multiple(MutableBufferSequences&& buffer_sequences,
+      MutableEndpointSequence&& endpoints, MutableSizeSequence&& sizes)
+  {
+    static_assert(
+        is_shallow_mutable_sequence<decay_t<MutableEndpointSequence>>::value,
+        "endpoints must be a shallow mutable sequence");
+    static_assert(
+        is_shallow_mutable_sequence<decay_t<MutableSizeSequence>>::value,
+        "sizes must be a shallow mutable sequence");
+
+    boost::system::error_code ec;
+    std::size_t s = this->impl_.get_service().receive_from_multiple(
+        this->impl_.get_implementation(),
+        static_cast<MutableBufferSequences&&>(buffer_sequences),
+        static_cast<MutableEndpointSequence&&>(endpoints),
+        static_cast<MutableSizeSequence&&>(sizes), detail::empty_range(),
+        0, ec);
+    boost::asio::detail::throw_error(ec, "receive_from_multiple");
+    return s;
+  }
+
+  /// Receive multiple datagrams with the endpoints of the senders.
+  /**
+   * This function is used to receive multiple datagrams, recording the endpoint
+   * of the remote sender of each. The function call will block until one or
+   * more datagrams have been received successfully or an error occurs. The
+   * number of datagrams transferred may be less than the length of the shortest
+   * range.
+   *
+   * @param buffer_sequences A forward range of mutable buffer sequences, one
+   * per datagram, into which the data will be received.
+   *
+   * @param endpoints A forward range of endpoint objects, one per datagram,
+   * that receive the endpoint of the remote sender of each datagram.
+   *
+   * @param sizes A forward range of @c std::size_t, one per datagram, into
+   * which the number of bytes received in each datagram is written.
+   *
+   * @param flags Flags specifying how the receive call is to be made.
+   *
+   * @returns The number of datagrams received.
+   *
+   * @throws boost::system::system_error Thrown on failure.
+   */
+  template <typename MutableBufferSequences, typename MutableEndpointSequence,
+      typename MutableSizeSequence>
+  std::size_t receive_from_multiple(MutableBufferSequences&& buffer_sequences,
+      MutableEndpointSequence&& endpoints, MutableSizeSequence&& sizes,
+      socket_base::message_flags flags)
+  {
+    static_assert(
+        is_shallow_mutable_sequence<decay_t<MutableEndpointSequence>>::value,
+        "endpoints must be a shallow mutable sequence");
+    static_assert(
+        is_shallow_mutable_sequence<decay_t<MutableSizeSequence>>::value,
+        "sizes must be a shallow mutable sequence");
+
+    boost::system::error_code ec;
+    std::size_t s = this->impl_.get_service().receive_from_multiple(
+        this->impl_.get_implementation(),
+        static_cast<MutableBufferSequences&&>(buffer_sequences),
+        static_cast<MutableEndpointSequence&&>(endpoints),
+        static_cast<MutableSizeSequence&&>(sizes), detail::empty_range(),
+        flags, ec);
+    boost::asio::detail::throw_error(ec, "receive_from_multiple");
+    return s;
+  }
+
+  /// Receive multiple datagrams with the endpoints of the senders.
+  /**
+   * This function is used to receive multiple datagrams, recording the endpoint
+   * of the remote sender of each. The function call will block until one or
+   * more datagrams have been received successfully or an error occurs. The
+   * number of datagrams transferred may be less than the length of the shortest
+   * range.
+   *
+   * @param buffer_sequences A forward range of mutable buffer sequences, one
+   * per datagram, into which the data will be received.
+   *
+   * @param endpoints A forward range of endpoint objects, one per datagram,
+   * that receive the endpoint of the remote sender of each datagram.
+   *
+   * @param sizes A forward range of @c std::size_t, one per datagram, into
+   * which the number of bytes received in each datagram is written.
+   *
+   * @param flags Flags specifying how the receive call is to be made.
+   *
+   * @param ec Set to indicate what error occurred, if any.
+   *
+   * @returns The number of datagrams received.
+   */
+  template <typename MutableBufferSequences, typename MutableEndpointSequence,
+      typename MutableSizeSequence>
+  std::size_t receive_from_multiple(MutableBufferSequences&& buffer_sequences,
+      MutableEndpointSequence&& endpoints, MutableSizeSequence&& sizes,
+      socket_base::message_flags flags, boost::system::error_code& ec)
+  {
+    static_assert(
+        is_shallow_mutable_sequence<decay_t<MutableEndpointSequence>>::value,
+        "endpoints must be a shallow mutable sequence");
+    static_assert(
+        is_shallow_mutable_sequence<decay_t<MutableSizeSequence>>::value,
+        "sizes must be a shallow mutable sequence");
+
+    return this->impl_.get_service().receive_from_multiple(
+        this->impl_.get_implementation(),
+        static_cast<MutableBufferSequences&&>(buffer_sequences),
+        static_cast<MutableEndpointSequence&&>(endpoints),
+        static_cast<MutableSizeSequence&&>(sizes), detail::empty_range(),
+        flags, ec);
+  }
+
+  /// Receive multiple datagrams and their flags with the sender endpoints.
+  /**
+   * This function is used to receive multiple datagrams, recording the endpoint
+   * of the remote sender of each. The function call will block until one or
+   * more datagrams have been received successfully or an error occurs. The
+   * number of datagrams transferred may be less than the length of the shortest
+   * range.
+   *
+   * @param buffer_sequences A forward range of mutable buffer sequences, one
+   * per datagram, into which the data will be received.
+   *
+   * @param endpoints A forward range of endpoint objects, one per datagram,
+   * that receive the endpoint of the remote sender of each datagram.
+   *
+   * @param sizes A forward range of @c std::size_t, one per datagram, into
+   * which the number of bytes received in each datagram is written.
+   *
+   * @param out_flags A forward range of @c socket_base::message_flags, one per
+   * datagram, into which the flags associated with each received datagram are
+   * written.
+   *
+   * @returns The number of datagrams received.
+   *
+   * @throws boost::system::system_error Thrown on failure.
+   */
+  template <typename MutableBufferSequences, typename MutableEndpointSequence,
+      typename MutableSizeSequence, typename MutableFlagsSequence>
+  std::size_t receive_from_multiple(MutableBufferSequences&& buffer_sequences,
+      MutableEndpointSequence&& endpoints, MutableSizeSequence&& sizes,
+      MutableFlagsSequence&& out_flags,
+      constraint_t<
+        is_shallow_mutable_sequence<decay_t<MutableFlagsSequence>>::value
+      > = 0)
+  {
+    static_assert(
+        is_shallow_mutable_sequence<decay_t<MutableEndpointSequence>>::value,
+        "endpoints must be a shallow mutable sequence");
+    static_assert(
+        is_shallow_mutable_sequence<decay_t<MutableSizeSequence>>::value,
+        "sizes must be a shallow mutable sequence");
+
+    boost::system::error_code ec;
+    std::size_t s = this->impl_.get_service().receive_from_multiple(
+        this->impl_.get_implementation(),
+        static_cast<MutableBufferSequences&&>(buffer_sequences),
+        static_cast<MutableEndpointSequence&&>(endpoints),
+        static_cast<MutableSizeSequence&&>(sizes),
+        static_cast<MutableFlagsSequence&&>(out_flags), 0, ec);
+    boost::asio::detail::throw_error(ec, "receive_from_multiple");
+    return s;
+  }
+
+  /// Receive multiple datagrams and their flags with the sender endpoints.
+  /**
+   * This function is used to receive multiple datagrams, recording the endpoint
+   * of the remote sender of each. The function call will block until one or
+   * more datagrams have been received successfully or an error occurs. The
+   * number of datagrams transferred may be less than the length of the shortest
+   * range.
+   *
+   * @param buffer_sequences A forward range of mutable buffer sequences, one
+   * per datagram, into which the data will be received.
+   *
+   * @param endpoints A forward range of endpoint objects, one per datagram,
+   * that receive the endpoint of the remote sender of each datagram.
+   *
+   * @param sizes A forward range of @c std::size_t, one per datagram, into
+   * which the number of bytes received in each datagram is written.
+   *
+   * @param flags Flags specifying how the receive call is to be made.
+   *
+   * @param out_flags A forward range of @c socket_base::message_flags, one per
+   * datagram, into which the flags associated with each received datagram are
+   * written.
+   *
+   * @returns The number of datagrams received.
+   *
+   * @throws boost::system::system_error Thrown on failure.
+   */
+  template <typename MutableBufferSequences, typename MutableEndpointSequence,
+      typename MutableSizeSequence, typename MutableFlagsSequence>
+  std::size_t receive_from_multiple(MutableBufferSequences&& buffer_sequences,
+      MutableEndpointSequence&& endpoints, MutableSizeSequence&& sizes,
+      socket_base::message_flags flags, MutableFlagsSequence&& out_flags,
+      constraint_t<
+        is_shallow_mutable_sequence<decay_t<MutableFlagsSequence>>::value
+      > = 0)
+  {
+    static_assert(
+        is_shallow_mutable_sequence<decay_t<MutableEndpointSequence>>::value,
+        "endpoints must be a shallow mutable sequence");
+    static_assert(
+        is_shallow_mutable_sequence<decay_t<MutableSizeSequence>>::value,
+        "sizes must be a shallow mutable sequence");
+
+    boost::system::error_code ec;
+    std::size_t s = this->impl_.get_service().receive_from_multiple(
+        this->impl_.get_implementation(),
+        static_cast<MutableBufferSequences&&>(buffer_sequences),
+        static_cast<MutableEndpointSequence&&>(endpoints),
+        static_cast<MutableSizeSequence&&>(sizes),
+        static_cast<MutableFlagsSequence&&>(out_flags), flags, ec);
+    boost::asio::detail::throw_error(ec, "receive_from_multiple");
+    return s;
+  }
+
+  /// Receive multiple datagrams and their flags with the sender endpoints.
+  /**
+   * This function is used to receive multiple datagrams, recording the endpoint
+   * of the remote sender of each. The function call will block until one or
+   * more datagrams have been received successfully or an error occurs. The
+   * number of datagrams transferred may be less than the length of the shortest
+   * range.
+   *
+   * @param buffer_sequences A forward range of mutable buffer sequences, one
+   * per datagram, into which the data will be received.
+   *
+   * @param endpoints A forward range of endpoint objects, one per datagram,
+   * that receive the endpoint of the remote sender of each datagram.
+   *
+   * @param sizes A forward range of @c std::size_t, one per datagram, into
+   * which the number of bytes received in each datagram is written.
+   *
+   * @param flags Flags specifying how the receive call is to be made.
+   *
+   * @param out_flags A forward range of @c socket_base::message_flags, one per
+   * datagram, into which the flags associated with each received datagram are
+   * written.
+   *
+   * @param ec Set to indicate what error occurred, if any.
+   *
+   * @returns The number of datagrams received.
+   */
+  template <typename MutableBufferSequences, typename MutableEndpointSequence,
+      typename MutableSizeSequence, typename MutableFlagsSequence>
+  std::size_t receive_from_multiple(MutableBufferSequences&& buffer_sequences,
+      MutableEndpointSequence&& endpoints, MutableSizeSequence&& sizes,
+      socket_base::message_flags flags, MutableFlagsSequence&& out_flags,
+      boost::system::error_code& ec,
+      constraint_t<
+        is_shallow_mutable_sequence<decay_t<MutableFlagsSequence>>::value
+      > = 0)
+  {
+    static_assert(
+        is_shallow_mutable_sequence<decay_t<MutableEndpointSequence>>::value,
+        "endpoints must be a shallow mutable sequence");
+    static_assert(
+        is_shallow_mutable_sequence<decay_t<MutableSizeSequence>>::value,
+        "sizes must be a shallow mutable sequence");
+
+    return this->impl_.get_service().receive_from_multiple(
+        this->impl_.get_implementation(),
+        static_cast<MutableBufferSequences&&>(buffer_sequences),
+        static_cast<MutableEndpointSequence&&>(endpoints),
+        static_cast<MutableSizeSequence&&>(sizes),
+        static_cast<MutableFlagsSequence&&>(out_flags), flags, ec);
+  }
+
+  /// Start an asynchronous receive of multiple datagrams with their senders.
+  /**
+   * This function is used to asynchronously receive multiple datagrams,
+   * recording the endpoint of the remote sender of each. It is an initiating
+   * function for an @ref asynchronous_operation, and always returns
+   * immediately. The number of datagrams transferred may be less than the
+   * length of the shortest range.
+   *
+   * @param buffer_sequences A forward range of mutable buffer sequences, one
+   * per datagram, into which the data will be received. Although the range
+   * object may be copied as necessary, ownership of the underlying memory
+   * blocks is retained by the caller, which must guarantee that they remain
+   * valid until the completion handler is called.
+   *
+   * @param endpoints A forward range of endpoint objects, one per datagram,
+   * that receive the endpoint of the remote sender of each datagram. Although
+   * the range object may be copied as necessary, ownership of the underlying
+   * endpoint objects is retained by the caller, which must guarantee that they
+   * remain valid until the completion handler is called.
+   *
+   * @param sizes A forward range of @c std::size_t, one per datagram, into
+   * which the number of bytes received in each datagram is written. Although
+   * the range object may be copied as necessary, ownership of the underlying
+   * elements is retained by the caller, which must guarantee that they remain
+   * valid until the completion handler is called.
+   *
+   * @param token The @ref completion_token that will be used to produce a
+   * completion handler, which will be called when the receive completes.
+   * Potential completion tokens include @ref use_future, @ref use_awaitable,
+   * @ref yield_context, or a function object with the correct completion
+   * signature.
+   * The function signature of the completion handler must be:
+   * @code void handler(
+   *   const boost::system::error_code& error, // Result of operation.
+   *   std::size_t messages_transferred // Number of datagrams received.
+   * ); @endcode
+   * Regardless of whether the asynchronous operation completes immediately or
+   * not, the completion handler will not be invoked from within this function.
+   * On immediate completion, invocation of the handler will be performed in a
+   * manner equivalent to using boost::asio::async_immediate().
+   *
+   * @par Completion Signature
+   * @code void(boost::system::error_code, std::size_t) @endcode
+   *
+   * @par Per-Operation Cancellation
+   * On POSIX or Windows operating systems, this asynchronous operation supports
+   * cancellation for the following boost::asio::cancellation_type values:
+   *
+   * @li @c cancellation_type::terminal
+   *
+   * @li @c cancellation_type::partial
+   *
+   * @li @c cancellation_type::total
+   */
+  template <typename MutableBufferSequences, typename MutableEndpointSequence,
+      typename MutableSizeSequence,
+      BOOST_ASIO_COMPLETION_TOKEN_FOR(void (boost::system::error_code,
+        std::size_t)) ReadMultiToken =
+          default_completion_token_t<executor_type>>
+  auto async_receive_from_multiple(MutableBufferSequences&& buffer_sequences,
+      MutableEndpointSequence&& endpoints, MutableSizeSequence&& sizes,
+      ReadMultiToken&& token = default_completion_token_t<executor_type>(),
+      constraint_t<
+        !is_shallow_mutable_sequence<decay_t<ReadMultiToken>>::value
+      > = 0)
+    -> decltype(
+      async_initiate<ReadMultiToken,
+        void (boost::system::error_code, std::size_t)>(
+          declval<initiate_async_receive_from_multiple>(), token,
+          static_cast<MutableBufferSequences&&>(buffer_sequences),
+          static_cast<MutableEndpointSequence&&>(endpoints),
+          static_cast<MutableSizeSequence&&>(sizes), detail::empty_range(),
+          socket_base::message_flags(0)))
+  {
+    BOOST_ASIO_INVOKE_INLINE return async_initiate<ReadMultiToken,
+      void (boost::system::error_code, std::size_t)>(
+        initiate_async_receive_from_multiple(this), token,
+        static_cast<MutableBufferSequences&&>(buffer_sequences),
+        static_cast<MutableEndpointSequence&&>(endpoints),
+        static_cast<MutableSizeSequence&&>(sizes), detail::empty_range(),
+        socket_base::message_flags(0));
+  }
+
+  /// Start an asynchronous receive of multiple datagrams with their senders.
+  /**
+   * This function is used to asynchronously receive multiple datagrams,
+   * recording the endpoint of the remote sender of each. It is an initiating
+   * function for an @ref asynchronous_operation, and always returns
+   * immediately. The number of datagrams transferred may be less than the
+   * length of the shortest range.
+   *
+   * @param buffer_sequences A forward range of mutable buffer sequences, one
+   * per datagram, into which the data will be received. Although the range
+   * object may be copied as necessary, ownership of the underlying memory
+   * blocks is retained by the caller, which must guarantee that they remain
+   * valid until the completion handler is called.
+   *
+   * @param endpoints A forward range of endpoint objects, one per datagram,
+   * that receive the endpoint of the remote sender of each datagram. Although
+   * the range object may be copied as necessary, ownership of the underlying
+   * endpoint objects is retained by the caller, which must guarantee that they
+   * remain valid until the completion handler is called.
+   *
+   * @param sizes A forward range of @c std::size_t, one per datagram, into
+   * which the number of bytes received in each datagram is written. Although
+   * the range object may be copied as necessary, ownership of the underlying
+   * elements is retained by the caller, which must guarantee that they remain
+   * valid until the completion handler is called.
+   *
+   * @param flags Flags specifying how the receive call is to be made.
+   *
+   * @param token The @ref completion_token that will be used to produce a
+   * completion handler, which will be called when the receive completes.
+   * Potential completion tokens include @ref use_future, @ref use_awaitable,
+   * @ref yield_context, or a function object with the correct completion
+   * signature.
+   * The function signature of the completion handler must be:
+   * @code void handler(
+   *   const boost::system::error_code& error, // Result of operation.
+   *   std::size_t messages_transferred // Number of datagrams received.
+   * ); @endcode
+   * Regardless of whether the asynchronous operation completes immediately or
+   * not, the completion handler will not be invoked from within this function.
+   * On immediate completion, invocation of the handler will be performed in a
+   * manner equivalent to using boost::asio::async_immediate().
+   *
+   * @par Completion Signature
+   * @code void(boost::system::error_code, std::size_t) @endcode
+   *
+   * @par Per-Operation Cancellation
+   * On POSIX or Windows operating systems, this asynchronous operation supports
+   * cancellation for the following boost::asio::cancellation_type values:
+   *
+   * @li @c cancellation_type::terminal
+   *
+   * @li @c cancellation_type::partial
+   *
+   * @li @c cancellation_type::total
+   */
+  template <typename MutableBufferSequences, typename MutableEndpointSequence,
+      typename MutableSizeSequence,
+      BOOST_ASIO_COMPLETION_TOKEN_FOR(void (boost::system::error_code,
+        std::size_t)) ReadMultiToken =
+          default_completion_token_t<executor_type>>
+  auto async_receive_from_multiple(MutableBufferSequences&& buffer_sequences,
+      MutableEndpointSequence&& endpoints, MutableSizeSequence&& sizes,
+      socket_base::message_flags flags,
+      ReadMultiToken&& token = default_completion_token_t<executor_type>(),
+      constraint_t<
+        !is_shallow_mutable_sequence<decay_t<ReadMultiToken>>::value
+      > = 0)
+    -> decltype(
+      async_initiate<ReadMultiToken,
+        void (boost::system::error_code, std::size_t)>(
+          declval<initiate_async_receive_from_multiple>(), token,
+          static_cast<MutableBufferSequences&&>(buffer_sequences),
+          static_cast<MutableEndpointSequence&&>(endpoints),
+          static_cast<MutableSizeSequence&&>(sizes), detail::empty_range(),
+          flags))
+  {
+    BOOST_ASIO_INVOKE_INLINE return async_initiate<ReadMultiToken,
+      void (boost::system::error_code, std::size_t)>(
+        initiate_async_receive_from_multiple(this), token,
+        static_cast<MutableBufferSequences&&>(buffer_sequences),
+        static_cast<MutableEndpointSequence&&>(endpoints),
+        static_cast<MutableSizeSequence&&>(sizes), detail::empty_range(),
+        flags);
+  }
+
+  /// Start an asynchronous receive of datagrams with their senders and flags.
+  /**
+   * This function is used to asynchronously receive multiple datagrams,
+   * recording the endpoint of the remote sender of each. It is an initiating
+   * function for an @ref asynchronous_operation, and always returns
+   * immediately. The number of datagrams transferred may be less than the
+   * length of the shortest range.
+   *
+   * @param buffer_sequences A forward range of mutable buffer sequences, one
+   * per datagram, into which the data will be received. Although the range
+   * object may be copied as necessary, ownership of the underlying memory
+   * blocks is retained by the caller, which must guarantee that they remain
+   * valid until the completion handler is called.
+   *
+   * @param endpoints A forward range of endpoint objects, one per datagram,
+   * that receive the endpoint of the remote sender of each datagram. Although
+   * the range object may be copied as necessary, ownership of the underlying
+   * endpoint objects is retained by the caller, which must guarantee that they
+   * remain valid until the completion handler is called.
+   *
+   * @param sizes A forward range of @c std::size_t, one per datagram, into
+   * which the number of bytes received in each datagram is written. Although
+   * the range object may be copied as necessary, ownership of the underlying
+   * elements is retained by the caller, which must guarantee that they remain
+   * valid until the completion handler is called.
+   *
+   * @param out_flags A forward range of @c socket_base::message_flags, one per
+   * datagram, into which the flags associated with each received datagram are
+   * written. Although the range object may be copied as necessary, ownership
+   * of the underlying elements is retained by the caller, which must guarantee
+   * that they remain valid until the completion handler is called.
+   *
+   * @param token The @ref completion_token that will be used to produce a
+   * completion handler, which will be called when the receive completes.
+   * Potential completion tokens include @ref use_future, @ref use_awaitable,
+   * @ref yield_context, or a function object with the correct completion
+   * signature.
+   * The function signature of the completion handler must be:
+   * @code void handler(
+   *   const boost::system::error_code& error, // Result of operation.
+   *   std::size_t messages_transferred // Number of datagrams received.
+   * ); @endcode
+   * Regardless of whether the asynchronous operation completes immediately or
+   * not, the completion handler will not be invoked from within this function.
+   * On immediate completion, invocation of the handler will be performed in a
+   * manner equivalent to using boost::asio::async_immediate().
+   *
+   * @par Completion Signature
+   * @code void(boost::system::error_code, std::size_t) @endcode
+   *
+   * @par Per-Operation Cancellation
+   * On POSIX or Windows operating systems, this asynchronous operation supports
+   * cancellation for the following boost::asio::cancellation_type values:
+   *
+   * @li @c cancellation_type::terminal
+   *
+   * @li @c cancellation_type::partial
+   *
+   * @li @c cancellation_type::total
+   */
+  template <typename MutableBufferSequences, typename MutableEndpointSequence,
+      typename MutableSizeSequence, typename MutableFlagsSequence,
+      BOOST_ASIO_COMPLETION_TOKEN_FOR(void (boost::system::error_code,
+        std::size_t)) ReadMultiToken =
+          default_completion_token_t<executor_type>>
+  auto async_receive_from_multiple(MutableBufferSequences&& buffer_sequences,
+      MutableEndpointSequence&& endpoints, MutableSizeSequence&& sizes,
+      MutableFlagsSequence&& out_flags,
+      ReadMultiToken&& token = default_completion_token_t<executor_type>(),
+      constraint_t<
+        is_shallow_mutable_sequence<decay_t<MutableFlagsSequence>>::value
+      > = 0)
+    -> decltype(
+      async_initiate<ReadMultiToken,
+        void (boost::system::error_code, std::size_t)>(
+          declval<initiate_async_receive_from_multiple>(), token,
+          static_cast<MutableBufferSequences&&>(buffer_sequences),
+          static_cast<MutableEndpointSequence&&>(endpoints),
+          static_cast<MutableSizeSequence&&>(sizes),
+          static_cast<MutableFlagsSequence&&>(out_flags),
+          socket_base::message_flags(0)))
+  {
+    BOOST_ASIO_INVOKE_INLINE return async_initiate<ReadMultiToken,
+      void (boost::system::error_code, std::size_t)>(
+        initiate_async_receive_from_multiple(this), token,
+        static_cast<MutableBufferSequences&&>(buffer_sequences),
+        static_cast<MutableEndpointSequence&&>(endpoints),
+        static_cast<MutableSizeSequence&&>(sizes),
+        static_cast<MutableFlagsSequence&&>(out_flags),
+        socket_base::message_flags(0));
+  }
+
+  /// Start an asynchronous receive of datagrams with their senders and flags.
+  /**
+   * This function is used to asynchronously receive multiple datagrams,
+   * recording the endpoint of the remote sender of each. It is an initiating
+   * function for an @ref asynchronous_operation, and always returns
+   * immediately. The number of datagrams transferred may be less than the
+   * length of the shortest range.
+   *
+   * @param buffer_sequences A forward range of mutable buffer sequences, one
+   * per datagram, into which the data will be received. Although the range
+   * object may be copied as necessary, ownership of the underlying memory
+   * blocks is retained by the caller, which must guarantee that they remain
+   * valid until the completion handler is called.
+   *
+   * @param endpoints A forward range of endpoint objects, one per datagram,
+   * that receive the endpoint of the remote sender of each datagram. Although
+   * the range object may be copied as necessary, ownership of the underlying
+   * endpoint objects is retained by the caller, which must guarantee that they
+   * remain valid until the completion handler is called.
+   *
+   * @param sizes A forward range of @c std::size_t, one per datagram, into
+   * which the number of bytes received in each datagram is written. Although
+   * the range object may be copied as necessary, ownership of the underlying
+   * elements is retained by the caller, which must guarantee that they remain
+   * valid until the completion handler is called.
+   *
+   * @param flags Flags specifying how the receive call is to be made.
+   *
+   * @param out_flags A forward range of @c socket_base::message_flags, one per
+   * datagram, into which the flags associated with each received datagram are
+   * written. Although the range object may be copied as necessary, ownership
+   * of the underlying elements is retained by the caller, which must guarantee
+   * that they remain valid until the completion handler is called.
+   *
+   * @param token The @ref completion_token that will be used to produce a
+   * completion handler, which will be called when the receive completes.
+   * Potential completion tokens include @ref use_future, @ref use_awaitable,
+   * @ref yield_context, or a function object with the correct completion
+   * signature.
+   * The function signature of the completion handler must be:
+   * @code void handler(
+   *   const boost::system::error_code& error, // Result of operation.
+   *   std::size_t messages_transferred // Number of datagrams received.
+   * ); @endcode
+   * Regardless of whether the asynchronous operation completes immediately or
+   * not, the completion handler will not be invoked from within this function.
+   * On immediate completion, invocation of the handler will be performed in a
+   * manner equivalent to using boost::asio::async_immediate().
+   *
+   * @par Completion Signature
+   * @code void(boost::system::error_code, std::size_t) @endcode
+   *
+   * @par Per-Operation Cancellation
+   * On POSIX or Windows operating systems, this asynchronous operation supports
+   * cancellation for the following boost::asio::cancellation_type values:
+   *
+   * @li @c cancellation_type::terminal
+   *
+   * @li @c cancellation_type::partial
+   *
+   * @li @c cancellation_type::total
+   */
+  template <typename MutableBufferSequences, typename MutableEndpointSequence,
+      typename MutableSizeSequence, typename MutableFlagsSequence,
+      BOOST_ASIO_COMPLETION_TOKEN_FOR(void (boost::system::error_code,
+        std::size_t)) ReadMultiToken =
+          default_completion_token_t<executor_type>>
+  auto async_receive_from_multiple(MutableBufferSequences&& buffer_sequences,
+      MutableEndpointSequence&& endpoints, MutableSizeSequence&& sizes,
+      socket_base::message_flags flags, MutableFlagsSequence&& out_flags,
+      ReadMultiToken&& token = default_completion_token_t<executor_type>(),
+      constraint_t<
+        is_shallow_mutable_sequence<decay_t<MutableFlagsSequence>>::value
+      > = 0)
+    -> decltype(
+      async_initiate<ReadMultiToken,
+        void (boost::system::error_code, std::size_t)>(
+          declval<initiate_async_receive_from_multiple>(), token,
+          static_cast<MutableBufferSequences&&>(buffer_sequences),
+          static_cast<MutableEndpointSequence&&>(endpoints),
+          static_cast<MutableSizeSequence&&>(sizes),
+          static_cast<MutableFlagsSequence&&>(out_flags), flags))
+  {
+    BOOST_ASIO_INVOKE_INLINE return async_initiate<ReadMultiToken,
+      void (boost::system::error_code, std::size_t)>(
+        initiate_async_receive_from_multiple(this), token,
+        static_cast<MutableBufferSequences&&>(buffer_sequences),
+        static_cast<MutableEndpointSequence&&>(endpoints),
+        static_cast<MutableSizeSequence&&>(sizes),
+        static_cast<MutableFlagsSequence&&>(out_flags), flags);
+  }
 private:
   // Disallow copying and assignment.
   basic_datagram_socket(const basic_datagram_socket&) = delete;
@@ -1245,7 +2938,7 @@ private:
       BOOST_ASIO_WRITE_HANDLER_CHECK(WriteHandler, handler) type_check;
 
       detail::non_const_lvalue<WriteHandler> handler2(handler);
-      self_->impl_.get_service().async_send(
+      BOOST_ASIO_INVOKE_INLINE self_->impl_.get_service().async_send(
           self_->impl_.get_implementation(), buffers, flags,
           handler2.value, self_->impl_.get_executor());
     }
@@ -1279,7 +2972,7 @@ private:
       BOOST_ASIO_WRITE_HANDLER_CHECK(WriteHandler, handler) type_check;
 
       detail::non_const_lvalue<WriteHandler> handler2(handler);
-      self_->impl_.get_service().async_send_to(
+      BOOST_ASIO_INVOKE_INLINE self_->impl_.get_service().async_send_to(
           self_->impl_.get_implementation(), buffers, destination,
           flags, handler2.value, self_->impl_.get_executor());
     }
@@ -1313,7 +3006,7 @@ private:
       BOOST_ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
 
       detail::non_const_lvalue<ReadHandler> handler2(handler);
-      self_->impl_.get_service().async_receive(
+      BOOST_ASIO_INVOKE_INLINE self_->impl_.get_service().async_receive(
           self_->impl_.get_implementation(), buffers, flags,
           handler2.value, self_->impl_.get_executor());
     }
@@ -1347,9 +3040,185 @@ private:
       BOOST_ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
 
       detail::non_const_lvalue<ReadHandler> handler2(handler);
-      self_->impl_.get_service().async_receive_from(
+      BOOST_ASIO_INVOKE_INLINE self_->impl_.get_service().async_receive_from(
           self_->impl_.get_implementation(), buffers, *sender_endpoint,
           flags, handler2.value, self_->impl_.get_executor());
+    }
+
+  private:
+    basic_datagram_socket* self_;
+  };
+
+  class initiate_async_send_multiple
+  {
+  public:
+    typedef Executor executor_type;
+
+    explicit initiate_async_send_multiple(basic_datagram_socket* self)
+      : self_(self)
+    {
+    }
+
+    const executor_type& get_executor() const noexcept
+    {
+      return self_->get_executor();
+    }
+
+    template <typename WriteMultiHandler, typename ConstBufferSequences>
+    void operator()(WriteMultiHandler&& handler,
+        ConstBufferSequences&& buffer_sequences,
+        socket_base::message_flags flags) const
+    {
+      // If you get an error on the following line it means that your handler
+      // does not meet the documented type requirements for a WriteMultiHandler.
+      BOOST_ASIO_WRITE_MULTI_HANDLER_CHECK(
+          WriteMultiHandler, handler) type_check;
+
+      detail::non_const_lvalue<WriteMultiHandler> handler2(handler);
+      BOOST_ASIO_INVOKE_INLINE self_->impl_.get_service().async_send_multiple(
+          self_->impl_.get_implementation(),
+          static_cast<ConstBufferSequences&&>(buffer_sequences), flags,
+          handler2.value, self_->impl_.get_executor());
+    }
+
+  private:
+    basic_datagram_socket* self_;
+  };
+
+  class initiate_async_send_to_multiple
+  {
+  public:
+    typedef Executor executor_type;
+
+    explicit initiate_async_send_to_multiple(basic_datagram_socket* self)
+      : self_(self)
+    {
+    }
+
+    const executor_type& get_executor() const noexcept
+    {
+      return self_->get_executor();
+    }
+
+    template <typename WriteMultiHandler, typename ConstBufferSequences,
+        typename EndpointSequence>
+    void operator()(WriteMultiHandler&& handler,
+        ConstBufferSequences&& buffer_sequences,
+        EndpointSequence&& endpoints,
+        socket_base::message_flags flags) const
+    {
+      // If you get an error on the following line it means that your handler
+      // does not meet the documented type requirements for a WriteMultiHandler.
+      BOOST_ASIO_WRITE_MULTI_HANDLER_CHECK(
+          WriteMultiHandler, handler) type_check;
+
+      detail::non_const_lvalue<WriteMultiHandler> handler2(handler);
+      BOOST_ASIO_INVOKE_INLINE
+      self_->impl_.get_service().async_send_to_multiple(
+          self_->impl_.get_implementation(),
+          static_cast<ConstBufferSequences&&>(buffer_sequences),
+          static_cast<EndpointSequence&&>(endpoints), flags,
+          handler2.value, self_->impl_.get_executor());
+    }
+
+  private:
+    basic_datagram_socket* self_;
+  };
+
+  class initiate_async_receive_multiple
+  {
+  public:
+    typedef Executor executor_type;
+
+    explicit initiate_async_receive_multiple(basic_datagram_socket* self)
+      : self_(self)
+    {
+    }
+
+    const executor_type& get_executor() const noexcept
+    {
+      return self_->get_executor();
+    }
+
+    template <typename ReadMultiHandler, typename MutableBufferSequences,
+        typename MutableSizeSequence, typename MutableFlagsSequence>
+    void operator()(ReadMultiHandler&& handler,
+        MutableBufferSequences&& buffer_sequences,
+        MutableSizeSequence&& sizes, MutableFlagsSequence&& out_flags,
+        socket_base::message_flags flags) const
+    {
+      static_assert(
+          is_shallow_mutable_sequence<decay_t<MutableSizeSequence>>::value,
+          "sizes must be a shallow mutable sequence");
+      static_assert(!detail::is_range<ReadMultiHandler>::value,
+          "out_flags must be a shallow mutable sequence");
+
+      // If you get an error on the following line it means that your handler
+      // does not meet the documented type requirements for a ReadMultiHandler.
+      BOOST_ASIO_READ_MULTI_HANDLER_CHECK(
+          ReadMultiHandler, handler) type_check;
+
+      detail::non_const_lvalue<ReadMultiHandler> handler2(handler);
+      BOOST_ASIO_INVOKE_INLINE
+      self_->impl_.get_service().async_receive_multiple(
+          self_->impl_.get_implementation(),
+          static_cast<MutableBufferSequences&&>(buffer_sequences),
+          static_cast<MutableSizeSequence&&>(sizes),
+          static_cast<MutableFlagsSequence&&>(out_flags), flags,
+          handler2.value, self_->impl_.get_executor());
+    }
+
+  private:
+    basic_datagram_socket* self_;
+  };
+
+  class initiate_async_receive_from_multiple
+  {
+  public:
+    typedef Executor executor_type;
+
+    explicit initiate_async_receive_from_multiple(basic_datagram_socket* self)
+      : self_(self)
+    {
+    }
+
+    const executor_type& get_executor() const noexcept
+    {
+      return self_->get_executor();
+    }
+
+    template <typename ReadMultiHandler, typename MutableBufferSequences,
+        typename MutableEndpointSequence, typename MutableSizeSequence,
+        typename MutableFlagsSequence>
+    void operator()(ReadMultiHandler&& handler,
+        MutableBufferSequences&& buffer_sequences,
+        MutableEndpointSequence&& endpoints, MutableSizeSequence&& sizes,
+        MutableFlagsSequence&& out_flags,
+        socket_base::message_flags flags) const
+    {
+      static_assert(
+          is_shallow_mutable_sequence<decay_t<MutableEndpointSequence>>::value,
+          "endpoints must be a shallow mutable sequence");
+      static_assert(
+          is_shallow_mutable_sequence<decay_t<MutableSizeSequence>>::value,
+          "sizes must be a shallow mutable sequence");
+      static_assert(!detail::is_range<ReadMultiHandler>::value,
+          "out_flags must be a shallow mutable sequence");
+
+      // If you get an error on the following line it means that your handler
+      // does not meet the documented type requirements for a ReadMultiHandler.
+      BOOST_ASIO_READ_MULTI_HANDLER_CHECK(
+          ReadMultiHandler, handler) type_check;
+
+      detail::non_const_lvalue<ReadMultiHandler> handler2(handler);
+      BOOST_ASIO_INVOKE_INLINE
+      self_->impl_.get_service().async_receive_from_multiple(
+          self_->impl_.get_implementation(),
+          static_cast<MutableBufferSequences&&>(buffer_sequences),
+          static_cast<MutableEndpointSequence&&>(endpoints),
+          static_cast<MutableSizeSequence&&>(sizes),
+          static_cast<MutableFlagsSequence&&>(out_flags), flags,
+          handler2.value, self_->impl_.get_executor());
     }
 
   private:

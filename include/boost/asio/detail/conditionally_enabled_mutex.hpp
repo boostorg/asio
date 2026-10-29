@@ -51,9 +51,11 @@ public:
     explicit scoped_lock(conditionally_enabled_mutex& m)
       : mutex_(m)
     {
-      if (m.enabled_)
+      if (BOOST_ASIO_LIKELY(m.enabled_))
       {
-        for (int n = mutex_.spin_count_; n != 0; n -= (n > 0) ? 1 : 0)
+        for (int n = mutex_.spin_count_;
+            BOOST_ASIO_UNLIKELY(n != 0);
+            n -= (n > 0) ? 1 : 0)
         {
           if (mutex_.mutex_.try_lock())
           {
@@ -78,9 +80,11 @@ public:
     // Explicitly acquire the lock.
     void lock()
     {
-      if (mutex_.enabled_ && !locked_)
+      if (BOOST_ASIO_LIKELY(mutex_.enabled_ && !locked_))
       {
-        for (int n = mutex_.spin_count_; n != 0; n -= (n > 0) ? 1 : 0)
+        for (int n = mutex_.spin_count_;
+            BOOST_ASIO_UNLIKELY(n != 0);
+            n -= (n > 0) ? 1 : 0)
         {
           if (mutex_.mutex_.try_lock())
           {
@@ -96,7 +100,7 @@ public:
     // Explicitly release the lock.
     void unlock()
     {
-      if (locked_)
+      if (BOOST_ASIO_LIKELY(locked_))
       {
         mutex_.unlock();
         locked_ = false;
@@ -148,11 +152,15 @@ public:
   // Lock the mutex.
   void lock()
   {
-    if (enabled_)
+    if (BOOST_ASIO_LIKELY(enabled_))
     {
-      for (int n = spin_count_; n != 0; n -= (n > 0) ? 1 : 0)
+      for (int n = spin_count_;
+          BOOST_ASIO_UNLIKELY(n != 0);
+          n -= (n > 0) ? 1 : 0)
+      {
         if (mutex_.try_lock())
           return;
+      }
       mutex_.lock();
     }
   }
@@ -160,7 +168,7 @@ public:
   // Unlock the mutex.
   void unlock()
   {
-    if (enabled_)
+    if (BOOST_ASIO_LIKELY(enabled_))
       mutex_.unlock();
   }
 

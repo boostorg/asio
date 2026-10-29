@@ -16,6 +16,7 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include <boost/asio/detail/op_queue.hpp>
+#include <boost/asio/detail/operation.hpp>
 
 #include <boost/asio/detail/push_options.hpp>
 
@@ -24,14 +25,12 @@ namespace asio {
 BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
 
-class scheduler_operation;
-
 // Base class for all tasks that may be run by a scheduler.
 class scheduler_task
 {
 public:
   // Run the task once until interrupted or events are ready to be dispatched.
-  virtual void run(long usec, op_queue<scheduler_operation>& ops) = 0;
+  virtual void run(long usec, op_queue<operation>& ops) = 0;
 
   // Interrupt the task.
   virtual void interrupt() = 0;

@@ -20,6 +20,7 @@
 #include <boost/asio/detail/handler_type_requirements.hpp>
 #include <boost/asio/detail/non_const_lvalue.hpp>
 #include <boost/asio/detail/type_traits.hpp>
+#include <boost/asio/error.hpp>
 
 #include <boost/asio/detail/push_options.hpp>
 
@@ -70,19 +71,11 @@ namespace detail
     {
     }
 
-    buffered_fill_handler(const buffered_fill_handler& other)
-      : storage_(other.storage_),
-        previous_size_(other.previous_size_),
-        handler_(other.handler_)
-    {
-    }
+    buffered_fill_handler(const buffered_fill_handler& other) = default;
+    buffered_fill_handler(buffered_fill_handler&& other) = default;
 
-    buffered_fill_handler(buffered_fill_handler&& other)
-      : storage_(other.storage_),
-        previous_size_(other.previous_size_),
-        handler_(static_cast<ReadHandler&&>(other.handler_))
-    {
-    }
+    buffered_fill_handler& operator=(const buffered_fill_handler&) = delete;
+    buffered_fill_handler& operator=(buffered_fill_handler&&) = delete;
 
     void operator()(const boost::system::error_code& ec,
         const std::size_t bytes_transferred)
@@ -209,7 +202,7 @@ template <typename MutableBufferSequence>
 std::size_t buffered_read_stream<Stream>::read_some(
     const MutableBufferSequence& buffers, boost::system::error_code& ec)
 {
-  ec = boost::system::error_code();
+  boost::asio::error::clear(ec);
 
   using boost::asio::buffer_size;
   if (buffer_size(buffers) == 0)
@@ -235,12 +228,8 @@ namespace detail
     {
     }
 
-    buffered_read_some_handler(const buffered_read_some_handler& other)
-      : storage_(other.storage_),
-        buffers_(other.buffers_),
-        handler_(other.handler_)
-    {
-    }
+    buffered_read_some_handler(
+        const buffered_read_some_handler& other) = default;
 
     buffered_read_some_handler(buffered_read_some_handler&& other)
       : storage_(other.storage_),
@@ -248,6 +237,11 @@ namespace detail
         handler_(static_cast<ReadHandler&&>(other.handler_))
     {
     }
+
+    buffered_read_some_handler& operator=(
+        const buffered_read_some_handler&) = delete;
+    buffered_read_some_handler& operator=(
+        buffered_read_some_handler&&) = delete;
 
     void operator()(const boost::system::error_code& ec, std::size_t)
     {
@@ -393,7 +387,7 @@ template <typename MutableBufferSequence>
 std::size_t buffered_read_stream<Stream>::peek(
     const MutableBufferSequence& buffers, boost::system::error_code& ec)
 {
-  ec = boost::system::error_code();
+  boost::asio::error::clear(ec);
   if (storage_.empty() && !this->fill(ec))
     return 0;
   return this->peek_copy(buffers);

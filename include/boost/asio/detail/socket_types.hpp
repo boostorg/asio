@@ -441,6 +441,46 @@ BOOST_ASIO_INLINE_VARIABLE const int max_iov_len = 16;
 BOOST_ASIO_INLINE_VARIABLE const int custom_socket_option_level = 0xA5100000;
 BOOST_ASIO_INLINE_VARIABLE const int enable_connection_aborted_option = 1;
 BOOST_ASIO_INLINE_VARIABLE const int always_fail_option = 2;
+BOOST_ASIO_INLINE_VARIABLE const int custom_io_control_name = 0x5A110001;
+
+#if (defined(__MACH__) && defined(__APPLE__))
+struct mmsghdr
+{
+  void* msg_name;
+  socklen_t msg_namelen;
+  struct iovec* msg_iov;
+  int msg_iovlen;
+  void* msg_control;
+  socklen_t msg_controllen;
+  int msg_flags;
+  size_t msg_datalen;
+};
+# define BOOST_ASIO_MMSGHDR_HDR_PTR(x) x
+# define BOOST_ASIO_MMSGHDR_LEN(x) x.msg_datalen
+#elif defined(BOOST_ASIO_HAS_RECVMMSG_SENDMMSG)
+typedef ::mmsghdr mmsghdr;
+# define BOOST_ASIO_MMSGHDR_HDR_PTR(x) x.msg_hdr
+# define BOOST_ASIO_MMSGHDR_LEN(x) x.msg_len
+#elif !defined(BOOST_ASIO_WINDOWS_RUNTIME)
+struct mmsghdr
+{
+  void* msg_name;
+  socklen_t msg_namelen;
+# if defined(BOOST_ASIO_WINDOWS) || defined(BOOST_ASIO_CYGWIN_W32_SOCKETS)
+  WSABUF* msg_iov;
+  DWORD msg_iovlen;
+# else
+  struct iovec* msg_iov;
+  int msg_iovlen;
+# endif
+  void* msg_control;
+  socklen_t msg_controllen;
+  int msg_flags;
+  size_t msg_datalen;
+};
+# define BOOST_ASIO_MMSGHDR_HDR_PTR(x) x
+# define BOOST_ASIO_MMSGHDR_LEN(x) x.msg_datalen
+#endif // (defined(__MACH__) && defined(__APPLE__))
 
 } // namespace detail
 BOOST_ASIO_INLINE_NAMESPACE_END

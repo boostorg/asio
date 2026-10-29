@@ -480,7 +480,7 @@ public:
           declval<initiate_async_send>(), token,
           buffers, socket_base::message_flags(0)))
   {
-    return async_initiate<WriteToken,
+    BOOST_ASIO_INVOKE_INLINE return async_initiate<WriteToken,
       void (boost::system::error_code, std::size_t)>(
         initiate_async_send(this), token,
         buffers, socket_base::message_flags(0));
@@ -541,7 +541,7 @@ public:
         void (boost::system::error_code, std::size_t)>(
           declval<initiate_async_send>(), token, buffers, flags))
   {
-    return async_initiate<WriteToken,
+    BOOST_ASIO_INVOKE_INLINE return async_initiate<WriteToken,
       void (boost::system::error_code, std::size_t)>(
         initiate_async_send(this), token, buffers, flags);
   }
@@ -699,7 +699,7 @@ public:
           declval<initiate_async_send_to>(), token, buffers,
           destination, socket_base::message_flags(0)))
   {
-    return async_initiate<WriteToken,
+    BOOST_ASIO_INVOKE_INLINE return async_initiate<WriteToken,
       void (boost::system::error_code, std::size_t)>(
         initiate_async_send_to(this), token, buffers,
         destination, socket_base::message_flags(0));
@@ -760,7 +760,7 @@ public:
           declval<initiate_async_send_to>(), token,
           buffers, destination, flags))
   {
-    return async_initiate<WriteToken,
+    BOOST_ASIO_INVOKE_INLINE return async_initiate<WriteToken,
       void (boost::system::error_code, std::size_t)>(
         initiate_async_send_to(this), token,
         buffers, destination, flags);
@@ -918,7 +918,7 @@ public:
           declval<initiate_async_receive>(), token,
           buffers, socket_base::message_flags(0)))
   {
-    return async_initiate<ReadToken,
+    BOOST_ASIO_INVOKE_INLINE return async_initiate<ReadToken,
       void (boost::system::error_code, std::size_t)>(
         initiate_async_receive(this), token,
         buffers, socket_base::message_flags(0));
@@ -980,7 +980,7 @@ public:
         void (boost::system::error_code, std::size_t)>(
           declval<initiate_async_receive>(), token, buffers, flags))
   {
-    return async_initiate<ReadToken,
+    BOOST_ASIO_INVOKE_INLINE return async_initiate<ReadToken,
       void (boost::system::error_code, std::size_t)>(
         initiate_async_receive(this), token, buffers, flags);
   }
@@ -1139,7 +1139,7 @@ public:
           declval<initiate_async_receive_from>(), token, buffers,
           &sender_endpoint, socket_base::message_flags(0)))
   {
-    return async_initiate<ReadToken,
+    BOOST_ASIO_INVOKE_INLINE return async_initiate<ReadToken,
       void (boost::system::error_code, std::size_t)>(
         initiate_async_receive_from(this), token, buffers,
         &sender_endpoint, socket_base::message_flags(0));
@@ -1203,7 +1203,7 @@ public:
           declval<initiate_async_receive_from>(), token,
           buffers, &sender_endpoint, flags))
   {
-    return async_initiate<ReadToken,
+    BOOST_ASIO_INVOKE_INLINE return async_initiate<ReadToken,
       void (boost::system::error_code, std::size_t)>(
         initiate_async_receive_from(this), token,
         buffers, &sender_endpoint, flags);
@@ -1239,7 +1239,7 @@ private:
       BOOST_ASIO_WRITE_HANDLER_CHECK(WriteHandler, handler) type_check;
 
       detail::non_const_lvalue<WriteHandler> handler2(handler);
-      self_->impl_.get_service().async_send(
+      BOOST_ASIO_INVOKE_INLINE self_->impl_.get_service().async_send(
           self_->impl_.get_implementation(), buffers, flags,
           handler2.value, self_->impl_.get_executor());
     }
@@ -1273,7 +1273,7 @@ private:
       BOOST_ASIO_WRITE_HANDLER_CHECK(WriteHandler, handler) type_check;
 
       detail::non_const_lvalue<WriteHandler> handler2(handler);
-      self_->impl_.get_service().async_send_to(
+      BOOST_ASIO_INVOKE_INLINE self_->impl_.get_service().async_send_to(
           self_->impl_.get_implementation(), buffers, destination,
           flags, handler2.value, self_->impl_.get_executor());
     }
@@ -1307,7 +1307,7 @@ private:
       BOOST_ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
 
       detail::non_const_lvalue<ReadHandler> handler2(handler);
-      self_->impl_.get_service().async_receive(
+      BOOST_ASIO_INVOKE_INLINE self_->impl_.get_service().async_receive(
           self_->impl_.get_implementation(), buffers, flags,
           handler2.value, self_->impl_.get_executor());
     }
@@ -1341,7 +1341,7 @@ private:
       BOOST_ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
 
       detail::non_const_lvalue<ReadHandler> handler2(handler);
-      self_->impl_.get_service().async_receive_from(
+      BOOST_ASIO_INVOKE_INLINE self_->impl_.get_service().async_receive_from(
           self_->impl_.get_implementation(), buffers, *sender_endpoint,
           flags, handler2.value, self_->impl_.get_executor());
     }

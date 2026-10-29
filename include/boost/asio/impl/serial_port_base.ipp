@@ -122,7 +122,7 @@ BOOST_ASIO_SYNC_OP_VOID serial_port_base::baud_rate::store(
   ::cfsetospeed(&storage, baud);
 # endif
 #endif
-  ec = boost::system::error_code();
+  boost::asio::error::clear(ec);
   BOOST_ASIO_SYNC_OP_VOID_RETURN(ec);
 }
 
@@ -204,7 +204,7 @@ BOOST_ASIO_SYNC_OP_VOID serial_port_base::baud_rate::load(
     BOOST_ASIO_SYNC_OP_VOID_RETURN(ec);
   }
 #endif
-  ec = boost::system::error_code();
+  boost::asio::error::clear(ec);
   BOOST_ASIO_SYNC_OP_VOID_RETURN(ec);
 }
 
@@ -282,7 +282,7 @@ BOOST_ASIO_SYNC_OP_VOID serial_port_base::flow_control::store(
     break;
   }
 #endif
-  ec = boost::system::error_code();
+  boost::asio::error::clear(ec);
   BOOST_ASIO_SYNC_OP_VOID_RETURN(ec);
 }
 
@@ -323,7 +323,7 @@ BOOST_ASIO_SYNC_OP_VOID serial_port_base::flow_control::load(
     value_ = none;
   }
 #endif
-  ec = boost::system::error_code();
+  boost::asio::error::clear(ec);
   BOOST_ASIO_SYNC_OP_VOID_RETURN(ec);
 }
 
@@ -380,7 +380,7 @@ BOOST_ASIO_SYNC_OP_VOID serial_port_base::parity::store(
     break;
   }
 #endif
-  ec = boost::system::error_code();
+  boost::asio::error::clear(ec);
   BOOST_ASIO_SYNC_OP_VOID_RETURN(ec);
 }
 
@@ -417,7 +417,7 @@ BOOST_ASIO_SYNC_OP_VOID serial_port_base::parity::load(
     value_ = none;
   }
 #endif
-  ec = boost::system::error_code();
+  boost::asio::error::clear(ec);
   BOOST_ASIO_SYNC_OP_VOID_RETURN(ec);
 }
 
@@ -464,7 +464,7 @@ BOOST_ASIO_SYNC_OP_VOID serial_port_base::stop_bits::store(
     BOOST_ASIO_SYNC_OP_VOID_RETURN(ec);
   }
 #endif
-  ec = boost::system::error_code();
+  boost::asio::error::clear(ec);
   BOOST_ASIO_SYNC_OP_VOID_RETURN(ec);
 }
 
@@ -491,7 +491,7 @@ BOOST_ASIO_SYNC_OP_VOID serial_port_base::stop_bits::load(
 #else
   value_ = (storage.c_cflag & CSTOPB) ? two : one;
 #endif
-  ec = boost::system::error_code();
+  boost::asio::error::clear(ec);
   BOOST_ASIO_SYNC_OP_VOID_RETURN(ec);
 }
 
@@ -521,7 +521,7 @@ BOOST_ASIO_SYNC_OP_VOID serial_port_base::character_size::store(
   default: break;
   }
 #endif
-  ec = boost::system::error_code();
+  boost::asio::error::clear(ec);
   BOOST_ASIO_SYNC_OP_VOID_RETURN(ec);
 }
 
@@ -541,7 +541,7 @@ BOOST_ASIO_SYNC_OP_VOID serial_port_base::character_size::load(
     value_ = 8;
   }
 #endif
-  ec = boost::system::error_code();
+  boost::asio::error::clear(ec);
   BOOST_ASIO_SYNC_OP_VOID_RETURN(ec);
 }
 

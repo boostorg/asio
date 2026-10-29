@@ -615,7 +615,8 @@ public:
       async_initiate<SignalToken, void (boost::system::error_code, int)>(
         declval<initiate_async_wait>(), token))
   {
-    return async_initiate<SignalToken, void (boost::system::error_code, int)>(
+    BOOST_ASIO_INVOKE_INLINE return async_initiate<SignalToken,
+      void (boost::system::error_code, int)>(
         initiate_async_wait(this), token);
   }
 
@@ -647,7 +648,7 @@ private:
       BOOST_ASIO_SIGNAL_HANDLER_CHECK(SignalHandler, handler) type_check;
 
       detail::non_const_lvalue<SignalHandler> handler2(handler);
-      self_->impl_.get_service().async_wait(
+      BOOST_ASIO_INVOKE_INLINE self_->impl_.get_service().async_wait(
           self_->impl_.get_implementation(),
           handler2.value, self_->impl_.get_executor());
     }

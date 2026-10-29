@@ -21,7 +21,6 @@
 #include <boost/asio/detail/concurrency_hint.hpp>
 #include <boost/asio/detail/limits.hpp>
 #include <boost/asio/detail/service_registry.hpp>
-#include <boost/asio/detail/throw_error.hpp>
 
 #if defined(BOOST_ASIO_HAS_IOCP)
 # include <boost/asio/detail/win_iocp_io_context.hpp>
@@ -60,34 +59,22 @@ io_context::~io_context()
 
 io_context::count_type io_context::run()
 {
-  boost::system::error_code ec;
-  count_type s = impl_.run(ec);
-  boost::asio::detail::throw_error(ec);
-  return s;
+  return impl_.run();
 }
 
 io_context::count_type io_context::run_one()
 {
-  boost::system::error_code ec;
-  count_type s = impl_.run_one(ec);
-  boost::asio::detail::throw_error(ec);
-  return s;
+  return impl_.run_one();
 }
 
 io_context::count_type io_context::poll()
 {
-  boost::system::error_code ec;
-  count_type s = impl_.poll(ec);
-  boost::asio::detail::throw_error(ec);
-  return s;
+  return impl_.poll();
 }
 
 io_context::count_type io_context::poll_one()
 {
-  boost::system::error_code ec;
-  count_type s = impl_.poll_one(ec);
-  boost::asio::detail::throw_error(ec);
-  return s;
+  return impl_.poll_one();
 }
 
 void io_context::stop()

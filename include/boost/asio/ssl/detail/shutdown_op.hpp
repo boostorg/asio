@@ -16,7 +16,7 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include <boost/asio/detail/config.hpp>
-
+#include <boost/asio/error.hpp>
 #include <boost/asio/ssl/detail/engine.hpp>
 
 #include <boost/asio/detail/push_options.hpp>
@@ -50,7 +50,7 @@ public:
       // The engine only generates an eof when the shutdown notification has
       // been received from the peer. This indicates that the shutdown has
       // completed successfully, and thus need not be returned to the caller.
-      ec = boost::system::error_code();
+      boost::asio::error::clear(ec);
     }
   }
 

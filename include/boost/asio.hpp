@@ -65,11 +65,15 @@
 #include <boost/asio/cancellation_signal.hpp>
 #include <boost/asio/cancellation_state.hpp>
 #include <boost/asio/cancellation_type.hpp>
+#include <boost/asio/channel.hpp>
+#include <boost/asio/channel_error.hpp>
+#include <boost/asio/channel_traits.hpp>
 #include <boost/asio/co_composed.hpp>
 #include <boost/asio/co_spawn.hpp>
 #include <boost/asio/completion_condition.hpp>
 #include <boost/asio/compose.hpp>
 #include <boost/asio/composed.hpp>
+#include <boost/asio/concurrent_channel.hpp>
 #include <boost/asio/config.hpp>
 #include <boost/asio/connect.hpp>
 #include <boost/asio/connect_pipe.hpp>
@@ -81,6 +85,7 @@
 #include <boost/asio/detached.hpp>
 #include <boost/asio/dispatch.hpp>
 #include <boost/asio/disposition.hpp>
+#include <boost/asio/eager.hpp>
 #include <boost/asio/error.hpp>
 #include <boost/asio/execution.hpp>
 #include <boost/asio/execution/allocator.hpp>
@@ -96,6 +101,7 @@
 #include <boost/asio/execution/outstanding_work.hpp>
 #include <boost/asio/execution/prefer_only.hpp>
 #include <boost/asio/execution/relationship.hpp>
+#include <boost/asio/execution/staging_executor.hpp>
 #include <boost/asio/executor.hpp>
 #include <boost/asio/executor_work_guard.hpp>
 #include <boost/asio/file_base.hpp>
@@ -139,6 +145,7 @@
 #include <boost/asio/is_contiguous_iterator.hpp>
 #include <boost/asio/is_executor.hpp>
 #include <boost/asio/is_read_buffered.hpp>
+#include <boost/asio/is_shallow_mutable_sequence.hpp>
 #include <boost/asio/is_write_buffered.hpp>
 #include <boost/asio/local/basic_endpoint.hpp>
 #include <boost/asio/local/connect_pair.hpp>
@@ -147,6 +154,7 @@
 #include <boost/asio/local/stream_protocol.hpp>
 #include <boost/asio/multiple_exceptions.hpp>
 #include <boost/asio/packaged_task.hpp>
+#include <boost/asio/piping.hpp>
 #include <boost/asio/placeholders.hpp>
 #include <boost/asio/posix/basic_descriptor.hpp>
 #include <boost/asio/posix/basic_stream_descriptor.hpp>
@@ -183,6 +191,7 @@
 #include <boost/asio/system_timer.hpp>
 #include <boost/asio/this_coro.hpp>
 #include <boost/asio/thread_pool.hpp>
+#include <boost/asio/trampoline.hpp>
 #include <boost/asio/use_awaitable.hpp>
 #include <boost/asio/use_future.hpp>
 #include <boost/asio/uses_executor.hpp>

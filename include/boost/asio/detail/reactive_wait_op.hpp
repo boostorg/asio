@@ -48,14 +48,13 @@ public:
   {
   }
 
-  static status do_perform(reactor_op*)
+  static BOOST_ASIO_ALWAYS_INLINE status do_perform(reactor_op*)
   {
     return done;
   }
 
   static void do_complete(void* owner, operation* base,
-      const boost::system::error_code& /*ec*/,
-      std::size_t /*bytes_transferred*/)
+      int /*error_value*/, std::size_t /*bytes_transferred*/)
   {
     // Take ownership of the handler object.
     BOOST_ASIO_ASSUME(base != 0);

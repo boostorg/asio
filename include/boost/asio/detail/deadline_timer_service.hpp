@@ -162,7 +162,7 @@ public:
   {
     if (!impl.might_have_pending_waits)
     {
-      ec = boost::system::error_code();
+      boost::asio::error::clear(ec);
       return 0;
     }
 
@@ -171,7 +171,7 @@ public:
 
     std::size_t count = scheduler_.cancel_timer(timer_queue_, impl.timer_data);
     impl.might_have_pending_waits = false;
-    ec = boost::system::error_code();
+    boost::asio::error::clear(ec);
     return count;
   }
 
@@ -181,7 +181,7 @@ public:
   {
     if (!impl.might_have_pending_waits)
     {
-      ec = boost::system::error_code();
+      boost::asio::error::clear(ec);
       return 0;
     }
 
@@ -192,7 +192,7 @@ public:
         timer_queue_, impl.timer_data, 1);
     if (count == 0)
       impl.might_have_pending_waits = false;
-    ec = boost::system::error_code();
+    boost::asio::error::clear(ec);
     return count;
   }
 
@@ -220,7 +220,6 @@ public:
   {
     std::size_t count = cancel(impl, ec);
     impl.expiry = expiry_time;
-    ec = boost::system::error_code();
     return count;
   }
 
@@ -244,7 +243,7 @@ public:
   void wait(implementation_type& impl, boost::system::error_code& ec)
   {
     time_type now = TimeTraits::now();
-    ec = boost::system::error_code();
+    boost::asio::error::clear(ec);
     while (TimeTraits::less_than(now, impl.expiry) && !ec)
     {
       this->do_wait(TimeTraits::to_posix_duration(
@@ -294,7 +293,7 @@ private:
     std::this_thread::sleep_for(
         std::chrono::seconds(timeout.total_seconds())
         + std::chrono::microseconds(timeout.total_microseconds()));
-    ec = boost::system::error_code();
+    boost::asio::error::clear(ec);
 #else // defined(BOOST_ASIO_WINDOWS_RUNTIME)
     ::timeval tv;
     tv.tv_sec = timeout.total_seconds();

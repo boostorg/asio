@@ -20,6 +20,7 @@
 #if defined(BOOST_ASIO_HAS_IOCP)
 
 #include <boost/asio/detail/win_iocp_socket_service_base.hpp>
+#include <boost/asio/error.hpp>
 
 #include <boost/asio/detail/push_options.hpp>
 
@@ -188,7 +189,7 @@ boost::system::error_code win_iocp_socket_service_base::close(
   }
   else
   {
-    ec = boost::system::error_code();
+    boost::asio::error::clear(ec);
   }
 
   impl.socket_ = invalid_socket;
@@ -264,7 +265,7 @@ boost::system::error_code win_iocp_socket_service_base::cancel(
         // ERROR_NOT_FOUND means that there were no operations to be
         // cancelled. We swallow this error to match the behaviour on other
         // platforms.
-        ec = boost::system::error_code();
+        boost::asio::error::clear(ec);
       }
       else
       {
@@ -274,14 +275,14 @@ boost::system::error_code win_iocp_socket_service_base::cancel(
     }
     else
     {
-      ec = boost::system::error_code();
+      boost::asio::error::clear(ec);
     }
   }
 #if defined(BOOST_ASIO_ENABLE_CANCELIO)
   else if (impl.safe_cancellation_thread_id_ == 0)
   {
     // No operations have been started, so there's nothing to cancel.
-    ec = boost::system::error_code();
+    boost::asio::error::clear(ec);
   }
   else if (impl.safe_cancellation_thread_id_ == ::GetCurrentThreadId())
   {
@@ -297,7 +298,7 @@ boost::system::error_code win_iocp_socket_service_base::cancel(
     }
     else
     {
-      ec = boost::system::error_code();
+      boost::asio::error::clear(ec);
     }
   }
   else
@@ -353,7 +354,7 @@ boost::system::error_code win_iocp_socket_service_base::do_open(
   default: impl.state_ = 0; break;
   }
   impl.cancel_token_.reset(static_cast<void*>(0), socket_ops::noop_deleter());
-  ec = boost::system::error_code();
+  boost::asio::error::clear(ec);
   return ec;
 }
 
@@ -379,7 +380,7 @@ boost::system::error_code win_iocp_socket_service_base::do_assign(
   default: impl.state_ = 0; break;
   }
   impl.cancel_token_.reset(static_cast<void*>(0), socket_ops::noop_deleter());
-  ec = boost::system::error_code();
+  boost::asio::error::clear(ec);
   return ec;
 }
 
@@ -481,10 +482,16 @@ int win_iocp_socket_service_base::start_null_buffers_receive_op(
   }
   else
   {
-    int op_type = (flags & socket_base::message_out_of_band)
-      ? select_reactor::except_op : select_reactor::read_op;
-    start_reactor_op(impl, op_type, op);
-    return op_type;
+    if (flags & socket_base::message_out_of_band)
+    {
+      start_reactor_op<select_reactor::except_op>(impl, op);
+      return select_reactor::except_op;
+    }
+    else
+    {
+      start_reactor_op<select_reactor::read_op>(impl, op);
+      return select_reactor::read_op;
+    }
   }
 }
 
@@ -589,22 +596,19 @@ void win_iocp_socket_service_base::restart_accept_op(
   }
 }
 
-void win_iocp_socket_service_base::start_reactor_op(
+select_reactor* win_iocp_socket_service_base::prepare_reactor_op(
     win_iocp_socket_service_base::base_implementation_type& impl,
-    int op_type, reactor_op* op)
+    reactor_op* op)
 {
   select_reactor& r = get_reactor();
   update_cancellation_thread_id(impl);
 
   if (is_open(impl))
-  {
-    r.start_op(op_type, impl.socket_, impl.reactor_data_, op, false, false);
-    return;
-  }
-  else
-    op->ec_ = boost::asio::error::bad_descriptor;
+    return &r;
 
+  op->ec_ = boost::asio::error::bad_descriptor;
   iocp_service_.post_immediate_completion(op, false);
+  return nullptr;
 }
 
 int win_iocp_socket_service_base::start_connect_op(
@@ -667,9 +671,10 @@ int win_iocp_socket_service_base::start_connect_op(
       if (op->ec_ == boost::asio::error::in_progress
           || op->ec_ == boost::asio::error::would_block)
       {
-        op->ec_ = boost::system::error_code();
-        r.start_op(select_reactor::connect_op, impl.socket_,
-            impl.reactor_data_, op, false, false);
+        boost::asio::error::clear(op->ec_);
+        if (r.start_op<select_reactor::connect_op, nullptr>(impl.socket_,
+              impl.reactor_data_, op))
+          r.post_immediate_completion(op, false);
         return select_reactor::connect_op;
       }
     }

@@ -16,6 +16,7 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include <boost/asio/detail/config.hpp>
+#include <boost/asio/detail/io_control.hpp>
 
 #if defined(BOOST_ASIO_HAS_IO_URING)
 
@@ -135,6 +136,13 @@ public:
   boost::system::error_code io_control(base_implementation_type& impl,
       IO_Control_Command& command, boost::system::error_code& ec)
   {
+    const char* descriptor_name = 0;
+    if (get_descriptor_name(command, descriptor_name, ec))
+    {
+      // Descriptor name is unused.
+      return ec;
+    }
+
     socket_ops::ioctl(impl.socket_, impl.state_, command.name(),
         static_cast<ioctl_arg_type*>(command.data()), ec);
     return ec;

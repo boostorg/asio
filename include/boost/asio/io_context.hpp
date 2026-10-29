@@ -48,6 +48,8 @@ namespace asio {
 BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 
 namespace detail {
+  class executor_function;
+
 #if defined(BOOST_ASIO_HAS_IOCP)
   typedef win_iocp_io_context io_context_impl;
   class win_iocp_overlapped_ptr;
@@ -201,7 +203,7 @@ private:
 
 public:
   template <typename Allocator, uintptr_t Bits>
-  class basic_executor_type;
+  class BOOST_ASIO_EMPTY_BASES basic_executor_type;
 
   template <typename Allocator, uintptr_t Bits>
   friend class basic_executor_type;
@@ -513,6 +515,11 @@ private:
   io_context(const io_context&) = delete;
   io_context& operator=(const io_context&) = delete;
 
+  // Helper function to invoke a function immediately, on the calling thread.
+  template <typename Function>
+  BOOST_ASIO_NEVER_INLINE static void execute_immediately(
+      io_context* ctx, Function&& f);
+
   // Backwards compatible overload for use with services derived from
   // io_context::service.
   template <typename Service>
@@ -531,7 +538,7 @@ private:
 
 /// Executor implementation type used to submit functions to an io_context.
 template <typename Allocator, uintptr_t Bits>
-class io_context::basic_executor_type :
+class BOOST_ASIO_EMPTY_BASES io_context::basic_executor_type :
   detail::io_context_bits, Allocator
 {
 public:
@@ -887,7 +894,10 @@ public:
 
   /// Execution function.
   template <typename Function>
-  void execute(Function&& f) const;
+  void execute(Function&& f) const
+  {
+    this->do_execute(static_cast<Function&&>(f));
+  }
 
 #if !defined(BOOST_ASIO_NO_TS_EXECUTORS)
 public:
@@ -987,6 +997,13 @@ private:
       if (context_ptr())
         context_ptr()->impl_.work_started();
   }
+
+  /// Execution helper implementation.
+  template <typename Function>
+  void do_execute(Function&& f) const;
+
+  /// Execution helper implementation, when passed a type-erased function.
+  void do_execute(detail::executor_function&& f) const;
 
   io_context* context_ptr() const noexcept
   {

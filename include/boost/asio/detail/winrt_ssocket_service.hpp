@@ -123,7 +123,7 @@ public:
     {
       impl.socket_ = ref new Windows::Networking::Sockets::StreamSocket;
       impl.protocol_ = protocol;
-      ec = boost::system::error_code();
+      boost::asio::error::clear(ec);
     }
     catch (Platform::Exception^ e)
     {
@@ -147,7 +147,7 @@ public:
 
     impl.socket_ = native_socket;
     impl.protocol_ = protocol;
-    ec = boost::system::error_code();
+    boost::asio::error::clear(ec);
 
     return ec;
   }

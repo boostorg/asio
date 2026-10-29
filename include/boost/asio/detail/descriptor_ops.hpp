@@ -67,6 +67,23 @@ inline void get_last_error(
   }
 }
 
+inline int get_last_sys_error(bool is_error_condition)
+{
+  if (!is_error_condition)
+    return 0;
+
+  return errno;
+}
+
+inline void assign_sys_error(boost::system::error_code& ec, int err)
+{
+  if (err == 0)
+    boost::asio::error::clear(ec);
+  else
+    ec = boost::system::error_code(err,
+        boost::asio::error::get_system_category());
+}
+
 BOOST_ASIO_DECL int open(const char* path, int flags,
     boost::system::error_code& ec);
 

@@ -22,6 +22,7 @@
 #include <boost/asio/detail/handler_tracking.hpp>
 #include <boost/asio/detail/op_queue.hpp>
 #include <boost/asio/detail/socket_types.hpp>
+#include <boost/asio/error.hpp>
 #include <boost/system/error_code.hpp>
 
 #include <boost/asio/detail/push_options.hpp>
@@ -31,6 +32,7 @@ namespace asio {
 BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
 
+class scheduler;
 class win_iocp_io_context;
 
 // Base class for all operations. A function pointer is used instead of virtual
@@ -42,15 +44,22 @@ class win_iocp_operation
 public:
   typedef win_iocp_operation operation_type;
 
-  void complete(void* owner, const boost::system::error_code& ec,
-      std::size_t bytes_transferred)
+  void complete(void* owner, int error_value, std::size_t bytes_transferred)
   {
-    func_(owner, this, ec, bytes_transferred);
+    func_(owner, this, error_value, bytes_transferred);
   }
 
   void destroy()
   {
-    func_(0, this, boost::system::error_code(), 0);
+    Internal = reinterpret_cast<ULONG_PTR>(
+        &boost::asio::error::get_system_category());
+    func_(0, this, 0, 0);
+  }
+
+  boost::system::error_code make_error_code(int error_value) const
+  {
+    return boost::system::error_code(error_value,
+        *reinterpret_cast<boost::system::error_category*>(Internal));
   }
 
   void reset()
@@ -64,13 +73,12 @@ public:
   }
 
 protected:
-  typedef void (*func_type)(
-      void*, win_iocp_operation*,
-      const boost::system::error_code&, std::size_t);
+  typedef void (*func_type)(void*, win_iocp_operation*, int, std::size_t);
 
   win_iocp_operation(func_type func)
     : next_(0),
-      func_(func)
+      func_(func),
+      task_result_(0)
   {
     reset();
   }
@@ -83,9 +91,11 @@ protected:
 private:
   friend class op_queue_access;
   friend class win_iocp_io_context;
+  friend class scheduler;
   win_iocp_operation* next_;
   func_type func_;
   LONG ready_;
+  unsigned int task_result_; // Used by scheduler to pass as bytes_transferred.
 };
 
 } // namespace detail

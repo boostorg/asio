@@ -22,6 +22,7 @@
 #include <boost/asio/execution/allocator.hpp>
 #include <boost/asio/execution/blocking.hpp>
 #include <boost/asio/execution/relationship.hpp>
+#include <boost/asio/execution/staging_executor.hpp>
 #include <boost/asio/prefer.hpp>
 #include <boost/asio/require.hpp>
 
@@ -50,7 +51,8 @@ public:
         (get_associated_allocator)(handler));
 
     boost::asio::prefer(
-        boost::asio::require(ex, execution::blocking.never),
+        boost::asio::require(execution::stage(ex),
+          execution::blocking.never),
         execution::relationship.continuation,
         execution::allocator(alloc)
       ).execute(
@@ -81,14 +83,14 @@ template <typename Executor>
 class initiate_defer_with_executor
 {
 public:
-  typedef Executor executor_type;
+  typedef decay_t<Executor> executor_type;
 
-  explicit initiate_defer_with_executor(const Executor& ex)
+  explicit initiate_defer_with_executor(const executor_type& ex)
     : ex_(ex)
   {
   }
 
-  executor_type get_executor() const noexcept
+  const executor_type& get_executor() const noexcept
   {
     return ex_;
   }
@@ -104,7 +106,7 @@ public:
         !is_work_dispatcher_required<
           decay_t<Function>,
           decay_t<CompletionHandler>,
-          Executor
+          executor_type
         >::value
       >* = 0) const
   {
@@ -112,7 +114,8 @@ public:
         (get_associated_allocator)(handler));
 
     boost::asio::prefer(
-        boost::asio::require(ex_, execution::blocking.never),
+        boost::asio::require(execution::stage(ex_),
+          execution::blocking.never),
         execution::relationship.continuation,
         execution::allocator(alloc)
       ).execute(
@@ -131,21 +134,22 @@ public:
         is_work_dispatcher_required<
           decay_t<Function>,
           decay_t<CompletionHandler>,
-          Executor
+          executor_type
         >::value
       >* = 0) const
   {
     typedef decay_t<CompletionHandler> handler_t;
     typedef decay_t<Function> function_t;
 
-    typedef associated_executor_t<handler_t, Executor> handler_ex_t;
+    typedef associated_executor_t<handler_t, executor_type> handler_ex_t;
     handler_ex_t handler_ex((get_associated_executor)(handler, ex_));
 
     associated_allocator_t<handler_t> alloc(
         (get_associated_allocator)(handler));
 
     boost::asio::prefer(
-        boost::asio::require(ex_, execution::blocking.never),
+        boost::asio::require(execution::stage(ex_),
+          execution::blocking.never),
         execution::relationship.continuation,
         execution::allocator(alloc)
       ).execute(
@@ -165,7 +169,7 @@ public:
         !is_work_dispatcher_required<
           decay_t<Function>,
           decay_t<CompletionHandler>,
-          Executor
+          executor_type
         >::value
       >* = 0) const
   {
@@ -187,14 +191,14 @@ public:
         is_work_dispatcher_required<
           decay_t<Function>,
           decay_t<CompletionHandler>,
-          Executor
+          executor_type
         >::value
       >* = 0) const
   {
     typedef decay_t<CompletionHandler> handler_t;
     typedef decay_t<Function> function_t;
 
-    typedef associated_executor_t<handler_t, Executor> handler_ex_t;
+    typedef associated_executor_t<handler_t, executor_type> handler_ex_t;
     handler_ex_t handler_ex((get_associated_executor)(handler, ex_));
 
     associated_allocator_t<handler_t> alloc(

@@ -317,11 +317,7 @@ struct parallel_group_op_launcher
 template <std::size_t I, typename Op>
 struct parallel_group_op_launcher<I, Op,
     enable_if_t<
-      is_same<
-        typename associated_executor<
-          Op>::asio_associated_executor_is_unspecialised,
-        void
-      >::value
+      !boost::asio::detail::has_associated_executor<Op, inline_executor>::value
     >>
 {
   template <typename Condition, typename Handler, typename... Ops>

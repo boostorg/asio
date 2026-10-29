@@ -1,6 +1,6 @@
 //
-// experimental/detail/channel_send_op.hpp
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// detail/channel_send_op.hpp
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2026 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
@@ -8,8 +8,8 @@
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
-#ifndef BOOST_ASIO_EXPERIMENTAL_DETAIL_CHANNEL_SEND_OP_HPP
-#define BOOST_ASIO_EXPERIMENTAL_DETAIL_CHANNEL_SEND_OP_HPP
+#ifndef BOOST_ASIO_DETAIL_CHANNEL_SEND_OP_HPP
+#define BOOST_ASIO_DETAIL_CHANNEL_SEND_OP_HPP
 
 #if defined(_MSC_VER) && (_MSC_VER >= 1200)
 # pragma once
@@ -19,21 +19,25 @@
 #include <boost/asio/detail/bind_handler.hpp>
 #include <boost/asio/detail/handler_alloc_helpers.hpp>
 #include <boost/asio/error.hpp>
-#include <boost/asio/experimental/channel_error.hpp>
-#include <boost/asio/experimental/detail/channel_operation.hpp>
+#include <boost/asio/channel_error.hpp>
+#include <boost/asio/detail/channel_operation.hpp>
 
 #include <boost/asio/detail/push_options.hpp>
 
 namespace boost {
 namespace asio {
 BOOST_ASIO_INLINE_NAMESPACE_BEGIN
-namespace experimental {
 namespace detail {
 
 template <typename Payload>
 class channel_send : public channel_operation
 {
 public:
+  const Payload& peek_payload() const
+  {
+    return payload_;
+  }
+
   Payload get_payload()
   {
     return static_cast<Payload&&>(payload_);
@@ -90,7 +94,7 @@ public:
   {
     // Take ownership of the operation object.
     channel_send_op* o(static_cast<channel_send_op*>(base));
-    ptr p = { boost::asio::detail::addressof(o->handler_), o, o };
+    ptr p = { addressof(o->handler_), o, o };
 
     BOOST_ASIO_HANDLER_COMPLETION((*o));
 
@@ -103,10 +107,10 @@ public:
     switch (a)
     {
     case channel_operation::cancel_op:
-      ec = error::channel_cancelled;
+      ec = boost::asio::channel_errc::channel_cancelled;
       break;
     case channel_operation::close_op:
-      ec = error::channel_closed;
+      ec = boost::asio::channel_errc::channel_closed;
       break;
     default:
       break;
@@ -118,9 +122,9 @@ public:
     // with the handler. Consequently, a local copy of the handler is required
     // to ensure that any owning sub-object remains valid until after we have
     // deallocated the memory here.
-    boost::asio::detail::binder1<Handler, boost::system::error_code>
+    binder1<Handler, boost::system::error_code>
       handler(o->handler_, ec);
-    p.h = boost::asio::detail::addressof(handler.handler_);
+    p.h = addressof(handler.handler_);
     p.reset();
 
     // Post the completion if required.
@@ -141,11 +145,10 @@ private:
 };
 
 } // namespace detail
-} // namespace experimental
 BOOST_ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 } // namespace boost
 
 #include <boost/asio/detail/pop_options.hpp>
 
-#endif // BOOST_ASIO_EXPERIMENTAL_DETAIL_CHANNEL_SEND_OP_HPP
+#endif // BOOST_ASIO_DETAIL_CHANNEL_SEND_OP_HPP

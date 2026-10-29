@@ -44,8 +44,7 @@ struct win_iocp_io_context::thread_function
 
   void operator()()
   {
-    boost::system::error_code ec;
-    this_->run(ec);
+    this_->run();
   }
 
   win_iocp_io_context* this_;
@@ -208,19 +207,22 @@ boost::system::error_code win_iocp_io_context::register_handle(
   }
   else
   {
-    ec = boost::system::error_code();
+    boost::asio::error::clear(ec);
   }
   return ec;
 }
 
-size_t win_iocp_io_context::run(boost::system::error_code& ec)
+size_t win_iocp_io_context::run()
 {
+  boost::system::error_code ec;
+
   if (::InterlockedExchangeAdd(&outstanding_work_, 0) == 0)
   {
     stop();
-    ec = boost::system::error_code();
     return 0;
   }
+
+  BOOST_ASIO_HANDLER_SCHEDULER_RUN((&this->context(), "run"));
 
   win_iocp_thread_info this_thread;
   thread_call_stack::context ctx(this, this_thread);
@@ -229,47 +231,60 @@ size_t win_iocp_io_context::run(boost::system::error_code& ec)
   while (do_one(INFINITE, this_thread, ec))
     if (n != (std::numeric_limits<size_t>::max)())
       ++n;
+  boost::asio::detail::throw_error(ec);
   return n;
 }
 
-size_t win_iocp_io_context::run_one(boost::system::error_code& ec)
+size_t win_iocp_io_context::run_one()
 {
+  boost::system::error_code ec;
+
   if (::InterlockedExchangeAdd(&outstanding_work_, 0) == 0)
   {
     stop();
-    ec = boost::system::error_code();
+    return 0;
+  }
+
+  BOOST_ASIO_HANDLER_SCHEDULER_RUN((&this->context(), "run_one"));
+
+  win_iocp_thread_info this_thread;
+  thread_call_stack::context ctx(this, this_thread);
+
+  size_t n = do_one(INFINITE, this_thread, ec);
+  boost::asio::detail::throw_error(ec);
+  return n;
+}
+
+size_t win_iocp_io_context::wait_one(long usec)
+{
+  boost::system::error_code ec;
+
+  if (::InterlockedExchangeAdd(&outstanding_work_, 0) == 0)
+  {
+    stop();
     return 0;
   }
 
   win_iocp_thread_info this_thread;
   thread_call_stack::context ctx(this, this_thread);
 
-  return do_one(INFINITE, this_thread, ec);
+  size_t n = do_one(
+      usec < 0 ? INFINITE : ((usec - 1) / 1000 + 1), this_thread, ec);
+  boost::asio::detail::throw_error(ec);
+  return n;
 }
 
-size_t win_iocp_io_context::wait_one(long usec, boost::system::error_code& ec)
+size_t win_iocp_io_context::poll()
 {
+  boost::system::error_code ec;
+
   if (::InterlockedExchangeAdd(&outstanding_work_, 0) == 0)
   {
     stop();
-    ec = boost::system::error_code();
     return 0;
   }
 
-  win_iocp_thread_info this_thread;
-  thread_call_stack::context ctx(this, this_thread);
-
-  return do_one(usec < 0 ? INFINITE : ((usec - 1) / 1000 + 1), this_thread, ec);
-}
-
-size_t win_iocp_io_context::poll(boost::system::error_code& ec)
-{
-  if (::InterlockedExchangeAdd(&outstanding_work_, 0) == 0)
-  {
-    stop();
-    ec = boost::system::error_code();
-    return 0;
-  }
+  BOOST_ASIO_HANDLER_SCHEDULER_RUN((&this->context(), "poll"));
 
   win_iocp_thread_info this_thread;
   thread_call_stack::context ctx(this, this_thread);
@@ -278,22 +293,28 @@ size_t win_iocp_io_context::poll(boost::system::error_code& ec)
   while (do_one(0, this_thread, ec))
     if (n != (std::numeric_limits<size_t>::max)())
       ++n;
+  boost::asio::detail::throw_error(ec);
   return n;
 }
 
-size_t win_iocp_io_context::poll_one(boost::system::error_code& ec)
+size_t win_iocp_io_context::poll_one()
 {
+  boost::system::error_code ec;
+
   if (::InterlockedExchangeAdd(&outstanding_work_, 0) == 0)
   {
     stop();
-    ec = boost::system::error_code();
     return 0;
   }
+
+  BOOST_ASIO_HANDLER_SCHEDULER_RUN((&this->context(), "poll_one"));
 
   win_iocp_thread_info this_thread;
   thread_call_stack::context ctx(this, this_thread);
 
-  return do_one(0, this_thread, ec);
+  size_t n = do_one(0, this_thread, ec);
+  boost::asio::detail::throw_error(ec);
+  return n;
 }
 
 void win_iocp_io_context::stop()
@@ -333,6 +354,10 @@ void win_iocp_io_context::post_deferred_completion(win_iocp_operation* op)
   if (!::PostQueuedCompletionStatus(iocp_.handle, 0, 0, op))
   {
     // Out of resources. Put on completed queue instead.
+    op->Internal = reinterpret_cast<ulong_ptr_t>(
+        &boost::asio::error::get_system_category());
+    op->Offset = 0;
+    op->OffsetHigh = 0;
     mutex::scoped_lock lock(dispatch_mutex_);
     completed_ops_.push(op);
     ::InterlockedExchange(&dispatch_required_, 1);
@@ -353,9 +378,12 @@ void win_iocp_io_context::post_deferred_completions(
     if (!::PostQueuedCompletionStatus(iocp_.handle, 0, 0, op))
     {
       // Out of resources. Put on completed queue instead.
+      op->Internal = reinterpret_cast<ulong_ptr_t>(
+          &boost::asio::error::get_system_category());
+      op->Offset = 0;
+      op->OffsetHigh = 0;
       mutex::scoped_lock lock(dispatch_mutex_);
       completed_ops_.push(op);
-      completed_ops_.push(ops);
       ::InterlockedExchange(&dispatch_required_, 1);
     }
   }
@@ -443,9 +471,23 @@ size_t win_iocp_io_context::do_one(DWORD msec,
     {
       mutex::scoped_lock lock(dispatch_mutex_);
 
-      // Dispatch pending timers and operations.
+      // Dispatch completed operations.
       op_queue<win_iocp_operation> ops;
       ops.push(completed_ops_);
+      while (win_iocp_operation* op = ops.front())
+      {
+        ops.pop();
+        if (!::PostQueuedCompletionStatus(iocp_.handle,
+              0, overlapped_contains_result, op))
+        {
+          // Out of resources. Put back on completed queue.
+          completed_ops_.push(op);
+          completed_ops_.push(ops);
+          ::InterlockedExchange(&dispatch_required_, 1);
+        }
+      }
+
+      // Dispatch pending timers.
       timer_queues_.get_ready_timers(ops);
       post_deferred_completions(ops);
       update_timeout();
@@ -464,15 +506,13 @@ size_t win_iocp_io_context::do_one(DWORD msec,
     if (overlapped)
     {
       win_iocp_operation* op = static_cast<win_iocp_operation*>(overlapped);
-      boost::system::error_code result_ec(last_error,
-          boost::asio::error::get_system_category());
+      int error_value = static_cast<int>(last_error);
 
       // We may have been passed the last_error and bytes_transferred in the
       // OVERLAPPED structure itself.
       if (completion_key == overlapped_contains_result)
       {
-        result_ec = boost::system::error_code(static_cast<int>(op->Offset),
-            *reinterpret_cast<boost::system::error_category*>(op->Internal));
+        error_value = static_cast<int>(op->Offset);
         bytes_transferred = op->OffsetHigh;
       }
 
@@ -480,8 +520,9 @@ size_t win_iocp_io_context::do_one(DWORD msec,
       // structure.
       else
       {
-        op->Internal = reinterpret_cast<ulong_ptr_t>(&result_ec.category());
-        op->Offset = result_ec.value();
+        op->Internal = reinterpret_cast<ulong_ptr_t>(
+            &boost::asio::error::get_system_category());
+        op->Offset = error_value;
         op->OffsetHigh = bytes_transferred;
       }
 
@@ -495,9 +536,9 @@ size_t win_iocp_io_context::do_one(DWORD msec,
         work_finished_on_block_exit on_exit = { this };
         (void)on_exit;
 
-        op->complete(this, result_ec, bytes_transferred);
+        op->complete(this, error_value, bytes_transferred);
         this_thread.rethrow_pending_exception();
-        ec = boost::system::error_code();
+        boost::asio::error::clear(ec);
         return 1;
       }
     }
@@ -515,7 +556,7 @@ size_t win_iocp_io_context::do_one(DWORD msec,
       if (msec == INFINITE)
         continue;
 
-      ec = boost::system::error_code();
+      boost::asio::error::clear(ec);
       return 0;
     }
     else if (completion_key == wake_for_dispatch)
@@ -544,7 +585,7 @@ size_t win_iocp_io_context::do_one(DWORD msec,
           }
         }
 
-        ec = boost::system::error_code();
+        boost::asio::error::clear(ec);
         return 0;
       }
     }

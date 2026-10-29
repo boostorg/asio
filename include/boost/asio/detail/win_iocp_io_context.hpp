@@ -73,19 +73,19 @@ public:
       HANDLE handle, boost::system::error_code& ec);
 
   // Run the event loop until stopped or no more work.
-  BOOST_ASIO_DECL size_t run(boost::system::error_code& ec);
+  BOOST_ASIO_DECL size_t run();
 
   // Run until stopped or one operation is performed.
-  BOOST_ASIO_DECL size_t run_one(boost::system::error_code& ec);
+  BOOST_ASIO_DECL size_t run_one();
 
   // Run until timeout, interrupted, or one operation is performed.
-  BOOST_ASIO_DECL size_t wait_one(long usec, boost::system::error_code& ec);
+  BOOST_ASIO_DECL size_t wait_one(long usec);
 
   // Poll for operations without blocking.
-  BOOST_ASIO_DECL size_t poll(boost::system::error_code& ec);
+  BOOST_ASIO_DECL size_t poll();
 
   // Poll for one operation without blocking.
-  BOOST_ASIO_DECL size_t poll_one(boost::system::error_code& ec);
+  BOOST_ASIO_DECL size_t poll_one();
 
   // Stop the event processing loop.
   BOOST_ASIO_DECL void stop();

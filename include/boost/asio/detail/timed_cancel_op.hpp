@@ -126,7 +126,10 @@ public:
     else
     {
       cancellation_signal_.emit(cancellation_type_);
-      release();
+      if (has_payload_)
+        complete();
+      else
+        release();
     }
   }
 

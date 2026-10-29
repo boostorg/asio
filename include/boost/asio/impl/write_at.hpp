@@ -28,6 +28,7 @@
 #include <boost/asio/detail/handler_type_requirements.hpp>
 #include <boost/asio/detail/non_const_lvalue.hpp>
 #include <boost/asio/detail/throw_error.hpp>
+#include <boost/asio/error.hpp>
 
 #include <boost/asio/detail/push_options.hpp>
 
@@ -44,7 +45,7 @@ namespace detail
       const ConstBufferIterator&, CompletionCondition completion_condition,
       boost::system::error_code& ec)
   {
-    ec = boost::system::error_code();
+    boost::asio::error::clear(ec);
     boost::asio::detail::consuming_buffers<const_buffer,
         ConstBufferSequence, ConstBufferIterator> tmp(buffers);
     while (!tmp.empty())
@@ -190,29 +191,11 @@ namespace detail
     {
     }
 
-    write_at_op(const write_at_op& other)
-      : base_from_cancellation_state<WriteHandler>(other),
-        base_from_completion_cond<CompletionCondition>(other),
-        device_(other.device_),
-        offset_(other.offset_),
-        buffers_(other.buffers_),
-        start_(other.start_),
-        handler_(other.handler_)
-    {
-    }
+    write_at_op(const write_at_op& other) = default;
+    write_at_op(write_at_op&& other) = default;
 
-    write_at_op(write_at_op&& other)
-      : base_from_cancellation_state<WriteHandler>(
-          static_cast<base_from_cancellation_state<WriteHandler>&&>(other)),
-        base_from_completion_cond<CompletionCondition>(
-          static_cast<base_from_completion_cond<CompletionCondition>&&>(other)),
-        device_(other.device_),
-        offset_(other.offset_),
-        buffers_(static_cast<buffers_type&&>(other.buffers_)),
-        start_(other.start_),
-        handler_(static_cast<WriteHandler&&>(other.handler_))
-    {
-    }
+    write_at_op& operator=(const write_at_op&) = delete;
+    write_at_op& operator=(write_at_op&&) = delete;
 
     void operator()(boost::system::error_code ec,
         std::size_t bytes_transferred, int start = 0)
@@ -375,17 +358,11 @@ namespace detail
     {
     }
 
-    write_at_streambuf_op(const write_at_streambuf_op& other)
-      : streambuf_(other.streambuf_),
-        handler_(other.handler_)
-    {
-    }
+    write_at_streambuf_op(const write_at_streambuf_op& other) = default;
+    write_at_streambuf_op(write_at_streambuf_op&& other) = default;
 
-    write_at_streambuf_op(write_at_streambuf_op&& other)
-      : streambuf_(other.streambuf_),
-        handler_(static_cast<WriteHandler&&>(other.handler_))
-    {
-    }
+    write_at_streambuf_op& operator=(const write_at_streambuf_op&) = delete;
+    write_at_streambuf_op& operator=(write_at_streambuf_op&&) = delete;
 
     void operator()(const boost::system::error_code& ec,
         const std::size_t bytes_transferred)

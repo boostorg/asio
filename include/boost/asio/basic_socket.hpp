@@ -979,7 +979,8 @@ public:
       impl_.get_service().open(impl_.get_implementation(), protocol, open_ec);
     }
 
-    return async_initiate<ConnectToken, void (boost::system::error_code)>(
+    BOOST_ASIO_INVOKE_INLINE return async_initiate<ConnectToken,
+      void (boost::system::error_code)>(
         initiate_async_connect(this), token, peer_endpoint, open_ec);
   }
 
@@ -1820,7 +1821,8 @@ public:
       async_initiate<WaitToken, void (boost::system::error_code)>(
           declval<initiate_async_wait>(), token, w))
   {
-    return async_initiate<WaitToken, void (boost::system::error_code)>(
+    BOOST_ASIO_INVOKE_INLINE return async_initiate<WaitToken,
+      void (boost::system::error_code)>(
         initiate_async_wait(this), token, w);
   }
 
@@ -1886,7 +1888,7 @@ private:
       else
       {
         detail::non_const_lvalue<ConnectHandler> handler2(handler);
-        self_->impl_.get_service().async_connect(
+        BOOST_ASIO_INVOKE_INLINE self_->impl_.get_service().async_connect(
             self_->impl_.get_implementation(), peer_endpoint,
             handler2.value, self_->impl_.get_executor());
       }
@@ -1919,7 +1921,7 @@ private:
       BOOST_ASIO_WAIT_HANDLER_CHECK(WaitHandler, handler) type_check;
 
       detail::non_const_lvalue<WaitHandler> handler2(handler);
-      self_->impl_.get_service().async_wait(
+      BOOST_ASIO_INVOKE_INLINE self_->impl_.get_service().async_wait(
           self_->impl_.get_implementation(), w,
           handler2.value, self_->impl_.get_executor());
     }

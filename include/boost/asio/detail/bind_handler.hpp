@@ -42,24 +42,17 @@ public:
   {
   }
 
-  binder0(const binder0& other)
-    : handler_(other.handler_)
-  {
-  }
-
-  binder0(binder0&& other)
-    : handler_(static_cast<Handler&&>(other.handler_))
-  {
-  }
+  binder0(const binder0& other) = default;
+  binder0(binder0&& other) = default;
 
   void operator()()
   {
-    static_cast<Handler&&>(handler_)();
+    BOOST_ASIO_INVOKE_INLINE static_cast<Handler&&>(handler_)();
   }
 
   void operator()() const
   {
-    handler_();
+    BOOST_ASIO_INVOKE_INLINE handler_();
   }
 
 //private:
@@ -99,27 +92,18 @@ public:
   {
   }
 
-  binder1(const binder1& other)
-    : handler_(other.handler_),
-      arg1_(other.arg1_)
-  {
-  }
-
-  binder1(binder1&& other)
-    : handler_(static_cast<Handler&&>(other.handler_)),
-      arg1_(static_cast<Arg1&&>(other.arg1_))
-  {
-  }
+  binder1(const binder1& other) = default;
+  binder1(binder1&& other) = default;
 
   void operator()()
   {
-    static_cast<Handler&&>(handler_)(
+    BOOST_ASIO_INVOKE_INLINE static_cast<Handler&&>(handler_)(
         static_cast<const Arg1&>(arg1_));
   }
 
   void operator()() const
   {
-    handler_(arg1_);
+    BOOST_ASIO_INVOKE_INLINE handler_(arg1_);
   }
 
 //private:
@@ -143,6 +127,12 @@ inline binder1<decay_t<Handler>, Arg1> bind_handler(
       static_cast<Handler&&>(handler), arg1);
 }
 
+template <typename Handler, typename Arg1>
+inline binder1<Handler, Arg1>&& bind_handler(binder1<Handler, Arg1>&& handler)
+{
+  return static_cast<binder1<Handler, Arg1>&&>(handler);
+}
+
 template <typename Handler, typename Arg1, typename Arg2>
 class binder2
 {
@@ -163,30 +153,19 @@ public:
   {
   }
 
-  binder2(const binder2& other)
-    : handler_(other.handler_),
-      arg1_(other.arg1_),
-      arg2_(other.arg2_)
-  {
-  }
-
-  binder2(binder2&& other)
-    : handler_(static_cast<Handler&&>(other.handler_)),
-      arg1_(static_cast<Arg1&&>(other.arg1_)),
-      arg2_(static_cast<Arg2&&>(other.arg2_))
-  {
-  }
+  binder2(const binder2& other) = default;
+  binder2(binder2&& other) = default;
 
   void operator()()
   {
-    static_cast<Handler&&>(handler_)(
+    BOOST_ASIO_INVOKE_INLINE static_cast<Handler&&>(handler_)(
         static_cast<const Arg1&>(arg1_),
         static_cast<const Arg2&>(arg2_));
   }
 
   void operator()() const
   {
-    handler_(arg1_, arg2_);
+    BOOST_ASIO_INVOKE_INLINE handler_(arg1_, arg2_);
   }
 
 //private:
@@ -209,6 +188,13 @@ inline binder2<decay_t<Handler>, Arg1, Arg2> bind_handler(
 {
   return binder2<decay_t<Handler>, Arg1, Arg2>(0,
       static_cast<Handler&&>(handler), arg1, arg2);
+}
+
+template <typename Handler, typename Arg1, typename Arg2>
+inline binder2<Handler, Arg1, Arg2>&& bind_handler(
+    binder2<Handler, Arg1, Arg2>&& handler)
+{
+  return static_cast<binder2<Handler, Arg1, Arg2>&&>(handler);
 }
 
 template <typename Handler, typename Arg1, typename Arg2, typename Arg3>
@@ -234,25 +220,12 @@ public:
   {
   }
 
-  binder3(const binder3& other)
-    : handler_(other.handler_),
-      arg1_(other.arg1_),
-      arg2_(other.arg2_),
-      arg3_(other.arg3_)
-  {
-  }
-
-  binder3(binder3&& other)
-    : handler_(static_cast<Handler&&>(other.handler_)),
-      arg1_(static_cast<Arg1&&>(other.arg1_)),
-      arg2_(static_cast<Arg2&&>(other.arg2_)),
-      arg3_(static_cast<Arg3&&>(other.arg3_))
-  {
-  }
+  binder3(const binder3& other) = default;
+  binder3(binder3&& other) = default;
 
   void operator()()
   {
-    static_cast<Handler&&>(handler_)(
+    BOOST_ASIO_INVOKE_INLINE static_cast<Handler&&>(handler_)(
         static_cast<const Arg1&>(arg1_),
         static_cast<const Arg2&>(arg2_),
         static_cast<const Arg3&>(arg3_));
@@ -260,7 +233,7 @@ public:
 
   void operator()() const
   {
-    handler_(arg1_, arg2_, arg3_);
+    BOOST_ASIO_INVOKE_INLINE handler_(arg1_, arg2_, arg3_);
   }
 
 //private:
@@ -285,6 +258,13 @@ inline binder3<decay_t<Handler>, Arg1, Arg2, Arg3> bind_handler(
 {
   return binder3<decay_t<Handler>, Arg1, Arg2, Arg3>(0,
       static_cast<Handler&&>(handler), arg1, arg2, arg3);
+}
+
+template <typename Handler, typename Arg1, typename Arg2, typename Arg3>
+inline binder3<Handler, Arg1, Arg2, Arg3>&& bind_handler(
+    binder3<Handler, Arg1, Arg2, Arg3>&& handler)
+{
+  return static_cast<binder3<Handler, Arg1, Arg2, Arg3>&&>(handler);
 }
 
 template <typename Handler, typename Arg1,
@@ -313,27 +293,12 @@ public:
   {
   }
 
-  binder4(const binder4& other)
-    : handler_(other.handler_),
-      arg1_(other.arg1_),
-      arg2_(other.arg2_),
-      arg3_(other.arg3_),
-      arg4_(other.arg4_)
-  {
-  }
-
-  binder4(binder4&& other)
-    : handler_(static_cast<Handler&&>(other.handler_)),
-      arg1_(static_cast<Arg1&&>(other.arg1_)),
-      arg2_(static_cast<Arg2&&>(other.arg2_)),
-      arg3_(static_cast<Arg3&&>(other.arg3_)),
-      arg4_(static_cast<Arg4&&>(other.arg4_))
-  {
-  }
+  binder4(const binder4& other) = default;
+  binder4(binder4&& other) = default;
 
   void operator()()
   {
-    static_cast<Handler&&>(handler_)(
+    BOOST_ASIO_INVOKE_INLINE static_cast<Handler&&>(handler_)(
         static_cast<const Arg1&>(arg1_),
         static_cast<const Arg2&>(arg2_),
         static_cast<const Arg3&>(arg3_),
@@ -342,7 +307,7 @@ public:
 
   void operator()() const
   {
-    handler_(arg1_, arg2_, arg3_, arg4_);
+    BOOST_ASIO_INVOKE_INLINE handler_(arg1_, arg2_, arg3_, arg4_);
   }
 
 //private:
@@ -370,6 +335,14 @@ bind_handler(Handler&& handler, const Arg1& arg1,
 {
   return binder4<decay_t<Handler>, Arg1, Arg2, Arg3, Arg4>(0,
       static_cast<Handler&&>(handler), arg1, arg2, arg3, arg4);
+}
+
+template <typename Handler, typename Arg1,
+    typename Arg2, typename Arg3, typename Arg4>
+inline binder4<Handler, Arg1, Arg2, Arg3, Arg4>&& bind_handler(
+    binder4<Handler, Arg1, Arg2, Arg3, Arg4>&& handler)
+{
+  return static_cast<binder4<Handler, Arg1, Arg2, Arg3, Arg4>&&>(handler);
 }
 
 template <typename Handler, typename Arg1, typename Arg2,
@@ -400,29 +373,12 @@ public:
   {
   }
 
-  binder5(const binder5& other)
-    : handler_(other.handler_),
-      arg1_(other.arg1_),
-      arg2_(other.arg2_),
-      arg3_(other.arg3_),
-      arg4_(other.arg4_),
-      arg5_(other.arg5_)
-  {
-  }
-
-  binder5(binder5&& other)
-    : handler_(static_cast<Handler&&>(other.handler_)),
-      arg1_(static_cast<Arg1&&>(other.arg1_)),
-      arg2_(static_cast<Arg2&&>(other.arg2_)),
-      arg3_(static_cast<Arg3&&>(other.arg3_)),
-      arg4_(static_cast<Arg4&&>(other.arg4_)),
-      arg5_(static_cast<Arg5&&>(other.arg5_))
-  {
-  }
+  binder5(const binder5& other) = default;
+  binder5(binder5&& other) = default;
 
   void operator()()
   {
-    static_cast<Handler&&>(handler_)(
+    BOOST_ASIO_INVOKE_INLINE static_cast<Handler&&>(handler_)(
         static_cast<const Arg1&>(arg1_),
         static_cast<const Arg2&>(arg2_),
         static_cast<const Arg3&>(arg3_),
@@ -432,7 +388,7 @@ public:
 
   void operator()() const
   {
-    handler_(arg1_, arg2_, arg3_, arg4_, arg5_);
+    BOOST_ASIO_INVOKE_INLINE handler_(arg1_, arg2_, arg3_, arg4_, arg5_);
   }
 
 //private:
@@ -463,6 +419,15 @@ bind_handler(Handler&& handler, const Arg1& arg1,
       static_cast<Handler&&>(handler), arg1, arg2, arg3, arg4, arg5);
 }
 
+template <typename Handler, typename Arg1, typename Arg2,
+    typename Arg3, typename Arg4, typename Arg5>
+inline binder5<Handler, Arg1, Arg2, Arg3, Arg4, Arg5>&& bind_handler(
+    binder5<Handler, Arg1, Arg2, Arg3, Arg4, Arg5>&& handler)
+{
+  return static_cast<
+      binder5<Handler, Arg1, Arg2, Arg3, Arg4, Arg5>&&>(handler);
+}
+
 template <typename Handler, typename Arg1>
 class move_binder1
 {
@@ -474,15 +439,11 @@ public:
   {
   }
 
-  move_binder1(move_binder1&& other)
-    : handler_(static_cast<Handler&&>(other.handler_)),
-      arg1_(static_cast<Arg1&&>(other.arg1_))
-  {
-  }
+  move_binder1(move_binder1&& other) = default;
 
   void operator()()
   {
-    static_cast<Handler&&>(handler_)(
+    BOOST_ASIO_INVOKE_INLINE static_cast<Handler&&>(handler_)(
         static_cast<Arg1&&>(arg1_));
   }
 
@@ -519,16 +480,11 @@ public:
   {
   }
 
-  move_binder2(move_binder2&& other)
-    : handler_(static_cast<Handler&&>(other.handler_)),
-      arg1_(static_cast<Arg1&&>(other.arg1_)),
-      arg2_(static_cast<Arg2&&>(other.arg2_))
-  {
-  }
+  move_binder2(move_binder2&& other) = default;
 
   void operator()()
   {
-    static_cast<Handler&&>(handler_)(
+    BOOST_ASIO_INVOKE_INLINE static_cast<Handler&&>(handler_)(
         static_cast<const Arg1&>(arg1_),
         static_cast<Arg2&&>(arg2_));
   }

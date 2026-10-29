@@ -30,6 +30,7 @@
 #include <boost/asio/detail/limits.hpp>
 #include <boost/asio/detail/non_const_lvalue.hpp>
 #include <boost/asio/detail/throw_error.hpp>
+#include <boost/asio/error.hpp>
 
 #include <boost/asio/detail/push_options.hpp>
 
@@ -134,7 +135,7 @@ std::size_t read_until(SyncReadStream& s,
     if (iter != end)
     {
       // Found a match. We're done.
-      ec = boost::system::error_code();
+      boost::asio::error::clear(ec);
       return iter - begin + 1;
     }
     else
@@ -211,7 +212,7 @@ std::size_t read_until(SyncReadStream& s,
       if (result.second)
       {
         // Full match. We're done.
-        ec = boost::system::error_code();
+        boost::asio::error::clear(ec);
         return result.first - begin + delim.length();
       }
       else
@@ -297,7 +298,7 @@ std::size_t read_until(SyncReadStream& s, DynamicBuffer_v1&& buffers,
       if (match_results[0].matched)
       {
         // Full match. We're done.
-        ec = boost::system::error_code();
+        boost::asio::error::clear(ec);
         return match_results[0].second - begin;
       }
       else
@@ -388,7 +389,7 @@ std::size_t read_until(SyncReadStream& s,
     if (result.second)
     {
       // Full match. We're done.
-      ec = boost::system::error_code();
+      boost::asio::error::clear(ec);
       return result.first - begin;
     }
     else if (result.first != end)
@@ -534,7 +535,7 @@ std::size_t read_until(SyncReadStream& s, DynamicBuffer_v2 buffers,
     if (iter != end)
     {
       // Found a match. We're done.
-      ec = boost::system::error_code();
+      boost::asio::error::clear(ec);
       return iter - begin + 1;
     }
     else
@@ -606,7 +607,7 @@ std::size_t read_until(SyncReadStream& s, DynamicBuffer_v2 buffers,
       if (result.second)
       {
         // Full match. We're done.
-        ec = boost::system::error_code();
+        boost::asio::error::clear(ec);
         return result.first - begin + delim.length();
       }
       else
@@ -689,7 +690,7 @@ std::size_t read_until(SyncReadStream& s, DynamicBuffer_v2 buffers,
       if (match_results[0].matched)
       {
         // Full match. We're done.
-        ec = boost::system::error_code();
+        boost::asio::error::clear(ec);
         return match_results[0].second - begin;
       }
       else
@@ -775,7 +776,7 @@ std::size_t read_until(SyncReadStream& s, DynamicBuffer_v2 buffers,
     if (result.second)
     {
       // Full match. We're done.
-      ec = boost::system::error_code();
+      boost::asio::error::clear(ec);
       return result.first - begin;
     }
     else if (result.first != end)
@@ -836,28 +837,11 @@ namespace detail
     {
     }
 
-    read_until_delim_op_v1(const read_until_delim_op_v1& other)
-      : base_from_cancellation_state<ReadHandler>(other),
-        stream_(other.stream_),
-        buffers_(other.buffers_),
-        delim_(other.delim_),
-        start_(other.start_),
-        search_position_(other.search_position_),
-        handler_(other.handler_)
-    {
-    }
+    read_until_delim_op_v1(const read_until_delim_op_v1& other) = default;
+    read_until_delim_op_v1(read_until_delim_op_v1&& other) = default;
 
-    read_until_delim_op_v1(read_until_delim_op_v1&& other)
-      : base_from_cancellation_state<ReadHandler>(
-          static_cast<base_from_cancellation_state<ReadHandler>&&>(other)),
-        stream_(other.stream_),
-        buffers_(static_cast<DynamicBuffer_v1&&>(other.buffers_)),
-        delim_(other.delim_),
-        start_(other.start_),
-        search_position_(other.search_position_),
-        handler_(static_cast<ReadHandler&&>(other.handler_))
-    {
-    }
+    read_until_delim_op_v1& operator=(const read_until_delim_op_v1&) = delete;
+    read_until_delim_op_v1& operator=(read_until_delim_op_v1&&) = delete;
 
     void operator()(boost::system::error_code ec,
         std::size_t bytes_transferred, int start = 0)
@@ -1053,28 +1037,15 @@ namespace detail
     {
     }
 
-    read_until_delim_string_op_v1(const read_until_delim_string_op_v1& other)
-      : base_from_cancellation_state<ReadHandler>(other),
-        stream_(other.stream_),
-        buffers_(other.buffers_),
-        delim_(other.delim_),
-        start_(other.start_),
-        search_position_(other.search_position_),
-        handler_(other.handler_)
-    {
-    }
+    read_until_delim_string_op_v1(
+        const read_until_delim_string_op_v1& other) = default;
+    read_until_delim_string_op_v1(
+        read_until_delim_string_op_v1&& other) = default;
 
-    read_until_delim_string_op_v1(read_until_delim_string_op_v1&& other)
-      : base_from_cancellation_state<ReadHandler>(
-          static_cast<base_from_cancellation_state<ReadHandler>&&>(other)),
-        stream_(other.stream_),
-        buffers_(static_cast<DynamicBuffer_v1&&>(other.buffers_)),
-        delim_(static_cast<std::string&&>(other.delim_)),
-        start_(other.start_),
-        search_position_(other.search_position_),
-        handler_(static_cast<ReadHandler&&>(other.handler_))
-    {
-    }
+    read_until_delim_string_op_v1& operator=(
+        const read_until_delim_string_op_v1&) = delete;
+    read_until_delim_string_op_v1& operator=(
+        read_until_delim_string_op_v1&&) = delete;
 
     void operator()(boost::system::error_code ec,
         std::size_t bytes_transferred, int start = 0)
@@ -1283,16 +1254,7 @@ namespace detail
     {
     }
 
-    read_until_expr_op_v1(const read_until_expr_op_v1& other)
-      : base_from_cancellation_state<ReadHandler>(other),
-        stream_(other.stream_),
-        buffers_(other.buffers_),
-        expr_(other.expr_),
-        start_(other.start_),
-        search_position_(other.search_position_),
-        handler_(other.handler_)
-    {
-    }
+    read_until_expr_op_v1(const read_until_expr_op_v1& other) = default;
 
     read_until_expr_op_v1(read_until_expr_op_v1&& other)
       : base_from_cancellation_state<ReadHandler>(
@@ -1305,6 +1267,9 @@ namespace detail
         handler_(static_cast<ReadHandler&&>(other.handler_))
     {
     }
+
+    read_until_expr_op_v1& operator=(const read_until_expr_op_v1&) = delete;
+    read_until_expr_op_v1& operator=(read_until_expr_op_v1&&) = delete;
 
     void operator()(boost::system::error_code ec,
         std::size_t bytes_transferred, int start = 0)
@@ -1515,16 +1480,7 @@ namespace detail
     {
     }
 
-    read_until_match_op_v1(const read_until_match_op_v1& other)
-      : base_from_cancellation_state<ReadHandler>(other),
-        stream_(other.stream_),
-        buffers_(other.buffers_),
-        match_condition_(other.match_condition_),
-        start_(other.start_),
-        search_position_(other.search_position_),
-        handler_(other.handler_)
-    {
-    }
+    read_until_match_op_v1(const read_until_match_op_v1& other) = default;
 
     read_until_match_op_v1(read_until_match_op_v1&& other)
       : base_from_cancellation_state<ReadHandler>(
@@ -1537,6 +1493,9 @@ namespace detail
         handler_(static_cast<ReadHandler&&>(other.handler_))
     {
     }
+
+    read_until_match_op_v1& operator=(const read_until_match_op_v1&) = delete;
+    read_until_match_op_v1& operator=(read_until_match_op_v1&&) = delete;
 
     void operator()(boost::system::error_code ec,
         std::size_t bytes_transferred, int start = 0)
@@ -1747,30 +1706,11 @@ namespace detail
     {
     }
 
-    read_until_delim_op_v2(const read_until_delim_op_v2& other)
-      : base_from_cancellation_state<ReadHandler>(other),
-        stream_(other.stream_),
-        buffers_(other.buffers_),
-        delim_(other.delim_),
-        start_(other.start_),
-        search_position_(other.search_position_),
-        bytes_to_read_(other.bytes_to_read_),
-        handler_(other.handler_)
-    {
-    }
+    read_until_delim_op_v2(const read_until_delim_op_v2& other) = default;
+    read_until_delim_op_v2(read_until_delim_op_v2&& other) = default;
 
-    read_until_delim_op_v2(read_until_delim_op_v2&& other)
-      : base_from_cancellation_state<ReadHandler>(
-          static_cast<base_from_cancellation_state<ReadHandler>&&>(other)),
-        stream_(other.stream_),
-        buffers_(static_cast<DynamicBuffer_v2&&>(other.buffers_)),
-        delim_(other.delim_),
-        start_(other.start_),
-        search_position_(other.search_position_),
-        bytes_to_read_(other.bytes_to_read_),
-        handler_(static_cast<ReadHandler&&>(other.handler_))
-    {
-    }
+    read_until_delim_op_v2& operator=(const read_until_delim_op_v2&) = delete;
+    read_until_delim_op_v2& operator=(read_until_delim_op_v2&&) = delete;
 
     void operator()(boost::system::error_code ec,
         std::size_t bytes_transferred, int start = 0)
@@ -1971,30 +1911,15 @@ namespace detail
     {
     }
 
-    read_until_delim_string_op_v2(const read_until_delim_string_op_v2& other)
-      : base_from_cancellation_state<ReadHandler>(other),
-        stream_(other.stream_),
-        buffers_(other.buffers_),
-        delim_(other.delim_),
-        start_(other.start_),
-        search_position_(other.search_position_),
-        bytes_to_read_(other.bytes_to_read_),
-        handler_(other.handler_)
-    {
-    }
+    read_until_delim_string_op_v2(
+        const read_until_delim_string_op_v2& other) = default;
+    read_until_delim_string_op_v2(
+        read_until_delim_string_op_v2&& other) = default;
 
-    read_until_delim_string_op_v2(read_until_delim_string_op_v2&& other)
-      : base_from_cancellation_state<ReadHandler>(
-          static_cast<base_from_cancellation_state<ReadHandler>&&>(other)),
-        stream_(other.stream_),
-        buffers_(static_cast<DynamicBuffer_v2&&>(other.buffers_)),
-        delim_(static_cast<std::string&&>(other.delim_)),
-        start_(other.start_),
-        search_position_(other.search_position_),
-        bytes_to_read_(other.bytes_to_read_),
-        handler_(static_cast<ReadHandler&&>(other.handler_))
-    {
-    }
+    read_until_delim_string_op_v2& operator=(
+        const read_until_delim_string_op_v2&) = delete;
+    read_until_delim_string_op_v2& operator=(
+        read_until_delim_string_op_v2&&) = delete;
 
     void operator()(boost::system::error_code ec,
         std::size_t bytes_transferred, int start = 0)
@@ -2209,17 +2134,7 @@ namespace detail
     {
     }
 
-    read_until_expr_op_v2(const read_until_expr_op_v2& other)
-      : base_from_cancellation_state<ReadHandler>(other),
-        stream_(other.stream_),
-        buffers_(other.buffers_),
-        expr_(other.expr_),
-        start_(other.start_),
-        search_position_(other.search_position_),
-        bytes_to_read_(other.bytes_to_read_),
-        handler_(other.handler_)
-    {
-    }
+    read_until_expr_op_v2(const read_until_expr_op_v2& other) = default;
 
     read_until_expr_op_v2(read_until_expr_op_v2&& other)
       : base_from_cancellation_state<ReadHandler>(
@@ -2233,6 +2148,9 @@ namespace detail
         handler_(static_cast<ReadHandler&&>(other.handler_))
     {
     }
+
+    read_until_expr_op_v2& operator=(const read_until_expr_op_v2&) = delete;
+    read_until_expr_op_v2& operator=(read_until_expr_op_v2&&) = delete;
 
     void operator()(boost::system::error_code ec,
         std::size_t bytes_transferred, int start = 0)
@@ -2450,17 +2368,7 @@ namespace detail
     {
     }
 
-    read_until_match_op_v2(const read_until_match_op_v2& other)
-      : base_from_cancellation_state<ReadHandler>(other),
-        stream_(other.stream_),
-        buffers_(other.buffers_),
-        match_condition_(other.match_condition_),
-        start_(other.start_),
-        search_position_(other.search_position_),
-        bytes_to_read_(other.bytes_to_read_),
-        handler_(other.handler_)
-    {
-    }
+    read_until_match_op_v2(const read_until_match_op_v2& other) = default;
 
     read_until_match_op_v2(read_until_match_op_v2&& other)
       : base_from_cancellation_state<ReadHandler>(
@@ -2474,6 +2382,9 @@ namespace detail
         handler_(static_cast<ReadHandler&&>(other.handler_))
     {
     }
+
+    read_until_match_op_v2& operator=(const read_until_match_op_v2&) = delete;
+    read_until_match_op_v2& operator=(read_until_match_op_v2&&) = delete;
 
     void operator()(boost::system::error_code ec,
         std::size_t bytes_transferred, int start = 0)

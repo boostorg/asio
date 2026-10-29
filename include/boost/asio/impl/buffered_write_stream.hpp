@@ -19,6 +19,7 @@
 #include <boost/asio/detail/handler_cont_helpers.hpp>
 #include <boost/asio/detail/handler_type_requirements.hpp>
 #include <boost/asio/detail/non_const_lvalue.hpp>
+#include <boost/asio/error.hpp>
 
 #include <boost/asio/detail/push_options.hpp>
 
@@ -58,17 +59,11 @@ namespace detail
     {
     }
 
-    buffered_flush_handler(const buffered_flush_handler& other)
-      : storage_(other.storage_),
-        handler_(other.handler_)
-    {
-    }
+    buffered_flush_handler(const buffered_flush_handler& other) = default;
+    buffered_flush_handler(buffered_flush_handler&& other) = default;
 
-    buffered_flush_handler(buffered_flush_handler&& other)
-      : storage_(other.storage_),
-        handler_(static_cast<WriteHandler&&>(other.handler_))
-    {
-    }
+    buffered_flush_handler& operator=(const buffered_flush_handler&) = delete;
+    buffered_flush_handler& operator=(buffered_flush_handler&&) = delete;
 
     void operator()(const boost::system::error_code& ec,
         const std::size_t bytes_written)
@@ -189,7 +184,7 @@ template <typename ConstBufferSequence>
 std::size_t buffered_write_stream<Stream>::write_some(
     const ConstBufferSequence& buffers, boost::system::error_code& ec)
 {
-  ec = boost::system::error_code();
+  boost::asio::error::clear(ec);
 
   using boost::asio::buffer_size;
   if (buffer_size(buffers) == 0)
@@ -215,12 +210,8 @@ namespace detail
     {
     }
 
-    buffered_write_some_handler(const buffered_write_some_handler& other)
-      : storage_(other.storage_),
-        buffers_(other.buffers_),
-        handler_(other.handler_)
-    {
-    }
+    buffered_write_some_handler(
+        const buffered_write_some_handler& other) = default;
 
     buffered_write_some_handler(buffered_write_some_handler&& other)
       : storage_(other.storage_),
@@ -228,6 +219,11 @@ namespace detail
         handler_(static_cast<WriteHandler&&>(other.handler_))
     {
     }
+
+    buffered_write_some_handler& operator=(
+        const buffered_write_some_handler&) = delete;
+    buffered_write_some_handler& operator=(
+        buffered_write_some_handler&&) = delete;
 
     void operator()(const boost::system::error_code& ec, std::size_t)
     {

@@ -181,13 +181,13 @@ Next, instead of doing a blocking wait as in tutorial Timer.1, we call the [link
 
   ``''''''``  t.async_wait(&print);
 
-Finally, we must call the boost::asio::io\_context::run() member function on the io\_context object.
+Finally, we must call the [link boost_asio.reference.io_context.run io_context::run()] member function on the io\_context object.
 
-The asio library provides a guarantee that completion handlers will only be called from threads that are currently calling boost::asio::io\_context::run(). Therefore unless the boost::asio::io\_context::run() function is called the completion handler for the asynchronous wait completion will never be invoked.
+The asio library provides a guarantee that completion handlers will only be called from threads that are currently calling [link boost_asio.reference.io_context.run io_context::run()]. Therefore unless the [link boost_asio.reference.io_context.run io_context::run()] function is called the completion handler for the asynchronous wait completion will never be invoked.
 
-The boost::asio::io\_context::run() function will also continue to run while there is still "work" to do. In this example, the work is the asynchronous wait on the timer, so the call will not return until the timer has expired and the completion handler has returned.
+The [link boost_asio.reference.io_context.run io_context::run()] function will also continue to run while there is still "work" to do. In this example, the work is the asynchronous wait on the timer, so the call will not return until the timer has expired and the completion handler has returned.
 
-It is important to remember to give the io\_context some work to do before calling boost::asio::io\_context::run(). For example, if we had omitted the above call to [link boost_asio.reference.basic_waitable_timer.async_wait steady_timer::async_wait()], the io\_context would not have had any work to do, and consequently boost::asio::io\_context::run() would have returned immediately.
+It is important to remember to give the io\_context some work to do before calling [link boost_asio.reference.io_context.run io_context::run()]. For example, if we had omitted the above call to [link boost_asio.reference.basic_waitable_timer.async_wait steady_timer::async_wait()], the io\_context would not have had any work to do, and consequently [link boost_asio.reference.io_context.run io_context::run()] would have returned immediately.
 
 
   ``''''''``  io.run();
@@ -270,7 +270,7 @@ at the end of the parameter list.
   ``''''''``    boost::asio::steady_timer* t, int* count)
   ``''''''``{
 
-As mentioned above, this tutorial program uses a counter to stop running when the timer fires for the sixth time. However you will observe that there is no explicit call to ask the io\_context to stop. Recall that in tutorial Timer.2 we learnt that the boost::asio::io\_context::run() function completes when there is no more "work" to do. By not starting a new asynchronous wait on the timer when `count` reaches 5, the io\_context will run out of work and stop running.
+As mentioned above, this tutorial program uses a counter to stop running when the timer fires for the sixth time. However you will observe that there is no explicit call to ask the io\_context to stop. Recall that in tutorial Timer.2 we learnt that the [link boost_asio.reference.io_context.run io_context::run()] function completes when there is no more "work" to do. By not starting a new asynchronous wait on the timer when `count` reaches 5, the io\_context will run out of work and stop running.
 
 
   ``''''''``  if (*count < 5)
@@ -543,7 +543,7 @@ Return to [link boost_asio.tutorial.tuttimer4 Timer.4 - Using a member function 
 This tutorial demonstrates the use of the 
 [link boost_asio.reference.strand strand] class template to synchronise completion handlers in a multithreaded program.
 
-The previous four tutorials avoided the issue of handler synchronisation by calling the boost::asio::io\_context::run() function from one thread only. As you already know, the asio library provides a guarantee that completion handlers will only be called from threads that are currently calling boost::asio::io\_context::run(). Consequently, calling boost::asio::io\_context::run() from only one thread ensures that completion handlers cannot run concurrently.
+The previous four tutorials avoided the issue of handler synchronisation by calling the [link boost_asio.reference.io_context.run io_context::run()] function from one thread only. As you already know, the asio library provides a guarantee that completion handlers will only be called from threads that are currently calling [link boost_asio.reference.io_context.run io_context::run()]. Consequently, calling [link boost_asio.reference.io_context.run io_context::run()] from only one thread ensures that completion handlers cannot run concurrently.
 
 The single threaded approach is usually the best place to start when developing applications using asio. The downside is the limitations it places on programs, particularly servers, including:
 
@@ -555,7 +555,7 @@ The single threaded approach is usually the best place to start when developing 
 
 
 
-If you find yourself running into these limitations, an alternative approach is to have a pool of threads calling boost::asio::io\_context::run(). However, as this allows handlers to execute concurrently, we need a method of synchronisation when handlers might be accessing a shared, thread-unsafe resource.
+If you find yourself running into these limitations, an alternative approach is to have a pool of threads calling [link boost_asio.reference.io_context.run io_context::run()]. However, as this allows handlers to execute concurrently, we need a method of synchronisation when handlers might be accessing a shared, thread-unsafe resource.
 
 
   ``''''''``#include <functional>
@@ -574,7 +574,7 @@ We start by defining a class called `printer`, similar to the class in the previ
 In addition to initialising a pair of boost::asio::steady\_timer members, the constructor initialises the `strand_` member, an object of type boost::asio::strand<boost::asio::io\_context::executor\_type>.
 
 The 
-[link boost_asio.reference.strand strand] class template is an executor adapter that guarantees that, for those handlers that are dispatched through it, an executing handler will be allowed to complete before the next one is started. This is guaranteed irrespective of the number of threads that are calling boost::asio::io\_context::run(). Of course, the handlers may still execute concurrently with other handlers that were not dispatched through an 
+[link boost_asio.reference.strand strand] class template is an executor adapter that guarantees that, for those handlers that are dispatched through it, an executing handler will be allowed to complete before the next one is started. This is guaranteed irrespective of the number of threads that are calling [link boost_asio.reference.io_context.run io_context::run()]. Of course, the handlers may still execute concurrently with other handlers that were not dispatched through an 
 [link boost_asio.reference.strand strand], or were dispatched through a different 
 [link boost_asio.reference.strand strand] object.
 
@@ -642,9 +642,9 @@ In a multithreaded program, the handlers for asynchronous operations should be s
   ``''''''``  int count_;
   ``''''''``};
 
-The `main` function now causes boost::asio::io\_context::run() to be called from two threads: the main thread and one additional thread. This is accomplished using an boost::thread object.
+The `main` function now causes [link boost_asio.reference.io_context.run io_context::run()] to be called from two threads: the main thread and one additional thread. This is accomplished using an boost::thread object.
 
-Just as it would with a call from a single thread, concurrent calls to boost::asio::io\_context::run() will continue to execute while there is "work" left to do. The background thread will not exit until all asynchronous operations have completed.
+Just as it would with a call from a single thread, concurrent calls to [link boost_asio.reference.io_context.run io_context::run()] will continue to execute while there is "work" left to do. The background thread will not exit until all asynchronous operations have completed.
 
 
 

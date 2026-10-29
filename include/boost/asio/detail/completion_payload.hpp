@@ -49,6 +49,12 @@ public:
   {
     static_cast<Handler&&>(handler)();
   }
+
+  template <typename Handler>
+  void peek(Handler& handler) const
+  {
+    static_cast<Handler&&>(handler)();
+  }
 };
 
 template <typename Signature>
@@ -64,6 +70,12 @@ public:
   void receive(Handler& handler)
   {
     message_.receive(handler);
+  }
+
+  template <typename Handler>
+  void peek(Handler& handler) const
+  {
+    message_.peek(handler);
   }
 
 private:
@@ -89,6 +101,16 @@ public:
         [&](auto& message)
         {
           message.receive(handler);
+        }, message_);
+  }
+
+  template <typename Handler>
+  void peek(Handler& handler) const
+  {
+    std::visit(
+        [&](const auto& message)
+        {
+          message.peek(handler);
         }, message_);
   }
 
@@ -124,6 +146,15 @@ public:
       completion_message<R1()>(0).receive(handler);
     else
       message_.receive(handler);
+  }
+
+  template <typename Handler>
+  void peek(Handler& handler) const
+  {
+    if (empty_)
+      completion_message<R1()>(0).peek(handler);
+    else
+      message_.peek(handler);
   }
 
 private:
@@ -193,6 +224,22 @@ public:
       break;
     case 2:
       storage_.message_2_.receive(handler);
+      break;
+    default:
+      break;
+    }
+  }
+
+  template <typename Handler>
+  void peek(Handler& handler) const
+  {
+    switch (index_)
+    {
+    case 1:
+      storage_.message_1_.peek(handler);
+      break;
+    case 2:
+      storage_.message_2_.peek(handler);
       break;
     default:
       break;

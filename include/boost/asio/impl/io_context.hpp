@@ -17,12 +17,12 @@
 
 #include <boost/asio/config.hpp>
 #include <boost/asio/detail/completion_handler.hpp>
+#include <boost/asio/detail/executor_function.hpp>
 #include <boost/asio/detail/executor_op.hpp>
 #include <boost/asio/detail/fenced_block.hpp>
 #include <boost/asio/detail/handler_type_requirements.hpp>
 #include <boost/asio/detail/non_const_lvalue.hpp>
 #include <boost/asio/detail/service_registry.hpp>
-#include <boost/asio/detail/throw_error.hpp>
 #include <boost/asio/detail/type_traits.hpp>
 
 #include <boost/asio/detail/push_options.hpp>
@@ -118,11 +118,9 @@ std::size_t io_context::run_one_until(
     if (rel_time > chrono::seconds(1))
       rel_time = chrono::seconds(1);
 
-    boost::system::error_code ec;
     std::size_t s = impl_.wait_one(
         static_cast<long>(chrono::duration_cast<
-          chrono::microseconds>(rel_time).count()), ec);
-    boost::asio::detail::throw_error(ec);
+          chrono::microseconds>(rel_time).count()));
 
     if (s || impl_.stopped())
       return s;
@@ -196,9 +194,35 @@ inline bool io_context::basic_executor_type<Allocator,
   return context_ptr()->impl_.can_dispatch();
 }
 
+template <typename Function>
+void io_context::execute_immediately(io_context* ctx, Function&& f)
+{
+  typedef decay_t<Function> function_type;
+
+  // Make a local, non-const copy of the function.
+  detail::non_const_lvalue<Function> f2(f);
+
+#if defined(BOOST_ASIO_NO_EXCEPTIONS)
+  (void)ctx;
+  detail::fenced_block b(detail::fenced_block::full);
+  static_cast<function_type&&>(f2.value)();
+#else // defined(BOOST_ASIO_NO_EXCEPTIONS)
+  try
+  {
+    detail::fenced_block b(detail::fenced_block::full);
+    static_cast<function_type&&>(f2.value)();
+  }
+  catch (...)
+  {
+    ctx->impl_.capture_current_exception();
+  }
+#endif // defined(BOOST_ASIO_NO_EXCEPTIONS)
+}
+
 template <typename Allocator, uintptr_t Bits>
 template <typename Function>
-void io_context::basic_executor_type<Allocator, Bits>::execute(
+BOOST_ASIO_ALWAYS_INLINE
+void io_context::basic_executor_type<Allocator, Bits>::do_execute(
     Function&& f) const
 {
   typedef decay_t<Function> function_type;
@@ -207,28 +231,12 @@ void io_context::basic_executor_type<Allocator, Bits>::execute(
   // already inside the thread pool.
   if ((bits() & blocking_never) == 0 && context_ptr()->impl_.can_dispatch())
   {
-    // Make a local, non-const copy of the function.
-    function_type tmp(static_cast<Function&&>(f));
-
-#if !defined(BOOST_ASIO_NO_EXCEPTIONS)
-    try
-    {
-#endif // !defined(BOOST_ASIO_NO_EXCEPTIONS)
-      detail::fenced_block b(detail::fenced_block::full);
-      static_cast<function_type&&>(tmp)();
-      return;
-#if !defined(BOOST_ASIO_NO_EXCEPTIONS)
-    }
-    catch (...)
-    {
-      context_ptr()->impl_.capture_current_exception();
-      return;
-    }
-#endif // !defined(BOOST_ASIO_NO_EXCEPTIONS)
+    io_context::execute_immediately(context_ptr(), static_cast<Function&&>(f));
+    return;
   }
 
   // Allocate and construct an operation to wrap the function.
-  typedef detail::executor_op<function_type, Allocator, detail::operation> op;
+  typedef detail::executor_op<function_type, Allocator> op;
   typename op::ptr p = {
       detail::addressof(static_cast<const Allocator&>(*this)),
       op::ptr::allocate(static_cast<const Allocator&>(*this)), 0 };
@@ -238,9 +246,33 @@ void io_context::basic_executor_type<Allocator, Bits>::execute(
   BOOST_ASIO_HANDLER_CREATION((*context_ptr(), *p.p,
         "io_context", context_ptr(), 0, "execute"));
 
-  context_ptr()->impl_.post_immediate_completion(p.p,
-      (bits() & relationship_continuation) != 0);
+  if ((bits() & relationship_continuation) != 0)
+    context_ptr()->impl_.post_immediate_completion(p.p, true);
+  else
+    context_ptr()->impl_.post_immediate_completion(p.p, false);
   p.v = p.p = 0;
+}
+
+template <typename Allocator, uintptr_t Bits>
+void io_context::basic_executor_type<Allocator, Bits>::do_execute(
+    detail::executor_function&& f) const
+{
+  // Invoke immediately if the blocking.possibly property is enabled and we are
+  // already inside the thread pool.
+  if ((bits() & blocking_never) == 0 && context_ptr()->impl_.can_dispatch())
+  {
+    io_context::execute_immediately(context_ptr(),
+        static_cast<detail::executor_function&&>(f));
+    return;
+  }
+
+  BOOST_ASIO_HANDLER_CREATION((*context_ptr(), *f.get(),
+        "io_context", context_ptr(), 0, "execute"));
+
+  if ((bits() & relationship_continuation) != 0)
+    context_ptr()->impl_.post_immediate_completion(f.release(), true);
+  else
+    context_ptr()->impl_.post_immediate_completion(f.release(), false);
 }
 
 #if !defined(BOOST_ASIO_NO_TS_EXECUTORS)
@@ -284,8 +316,7 @@ void io_context::basic_executor_type<Allocator, Bits>::dispatch(
   }
 
   // Allocate and construct an operation to wrap the function.
-  typedef detail::executor_op<function_type,
-      OtherAllocator, detail::operation> op;
+  typedef detail::executor_op<function_type, OtherAllocator> op;
   typename op::ptr p = { detail::addressof(a), op::ptr::allocate(a), 0 };
   p.p = new (p.v) op(static_cast<Function&&>(f), a);
 
@@ -302,8 +333,7 @@ void io_context::basic_executor_type<Allocator, Bits>::post(
     Function&& f, const OtherAllocator& a) const
 {
   // Allocate and construct an operation to wrap the function.
-  typedef detail::executor_op<decay_t<Function>,
-      OtherAllocator, detail::operation> op;
+  typedef detail::executor_op<decay_t<Function>, OtherAllocator> op;
   typename op::ptr p = { detail::addressof(a), op::ptr::allocate(a), 0 };
   p.p = new (p.v) op(static_cast<Function&&>(f), a);
 
@@ -320,8 +350,7 @@ void io_context::basic_executor_type<Allocator, Bits>::defer(
     Function&& f, const OtherAllocator& a) const
 {
   // Allocate and construct an operation to wrap the function.
-  typedef detail::executor_op<decay_t<Function>,
-      OtherAllocator, detail::operation> op;
+  typedef detail::executor_op<decay_t<Function>, OtherAllocator> op;
   typename op::ptr p = { detail::addressof(a), op::ptr::allocate(a), 0 };
   p.p = new (p.v) op(static_cast<Function&&>(f), a);
 

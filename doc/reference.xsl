@@ -60,6 +60,7 @@
 [include requirements/ConnectHandler.qbk]
 [include requirements/ConnectToken.qbk]
 [include requirements/ConstBufferSequence.qbk]
+[include requirements/ConstBufferSequences.qbk]
 [include requirements/Disposition.qbk]
 [include requirements/DynamicBuffer.qbk]
 [include requirements/DynamicBuffer_v1.qbk]
@@ -81,12 +82,18 @@
 [include requirements/MoveAcceptHandler.qbk]
 [include requirements/MoveAcceptToken.qbk]
 [include requirements/MutableBufferSequence.qbk]
+[include requirements/MutableBufferSequences.qbk]
+[include requirements/MutableEndpointSequence.qbk]
+[include requirements/MutableFlagsSequence.qbk]
+[include requirements/MutableSizeSequence.qbk]
 [include requirements/NullaryToken.qbk]
 [include requirements/ProtoAllocator.qbk]
 [include requirements/Protocol.qbk]
 [include requirements/RangeConnectHandler.qbk]
 [include requirements/RangeConnectToken.qbk]
 [include requirements/ReadHandler.qbk]
+[include requirements/ReadMultiHandler.qbk]
+[include requirements/ReadMultiToken.qbk]
 [include requirements/ReadToken.qbk]
 [include requirements/ResolveHandler.qbk]
 [include requirements/ResolveToken.qbk]
@@ -106,6 +113,8 @@
 [include requirements/WaitToken.qbk]
 [include requirements/WaitTraits.qbk]
 [include requirements/WriteHandler.qbk]
+[include requirements/WriteMultiHandler.qbk]
+[include requirements/WriteMultiToken.qbk]
 [include requirements/WriteToken.qbk]
 
 </xsl:text>
@@ -126,6 +135,7 @@
             not(contains(compoundname, '_helper')) and
             not(contains(compoundname, 'std_allocator_void')) and
             not(contains(compoundname, 'thread_function')) and
+            not(contains(compoundname, '::carry_id')) and
             not(contains(compoundname, 'context_impl')) and
             not(contains(compoundname, 'initiate_')) and
             not(contains(compoundname, '_adapter')) and
@@ -816,6 +826,11 @@
       <xsl:value-of select="."/>
       <xsl:text>]</xsl:text>
     </xsl:when>
+    <xsl:when test="@refid = 'overview_eager'">
+      <xsl:text>[link boost_asio.overview.composition.eager </xsl:text>
+      <xsl:value-of select="."/>
+      <xsl:text>]</xsl:text>
+    </xsl:when>
     <xsl:when test="@refid = 'overview_promises'">
       <xsl:text>[link boost_asio.overview.composition.promises </xsl:text>
       <xsl:value-of select="."/>
@@ -1031,6 +1046,11 @@
     </xsl:when>
     <xsl:when test="@refid = 'overview_deferred'">
       <xsl:text>[link boost_asio.overview.composition.deferred </xsl:text>
+      <xsl:value-of select="."/>
+      <xsl:text>]</xsl:text>
+    </xsl:when>
+    <xsl:when test="@refid = 'overview_eager'">
+      <xsl:text>[link boost_asio.overview.composition.eager </xsl:text>
       <xsl:value-of select="."/>
       <xsl:text>]</xsl:text>
     </xsl:when>
@@ -2415,6 +2435,9 @@
           <xsl:value-of select="$declname"/>
         </xsl:when>
         <xsl:when test="$declname = 'Traits'">
+          <xsl:value-of select="$declname"/>
+        </xsl:when>
+        <xsl:when test="$declname = 'Trigger'">
           <xsl:value-of select="$declname"/>
         </xsl:when>
         <xsl:when test="$declname = 'U'">
