@@ -1,0 +1,256 @@
+//
+// Copyright (c) 2003-2025 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+//
+// Distributed under the Boost Software License, Version 1.0. (See accompanying
+// file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+//
+
+= UDP
+
+Learn how to send and receive datagrams using UDP.
+
+== UDP vs TCP
+
+[cols="1,1"]
+|===
+| TCP | UDP
+
+| Connection-oriented | Connectionless
+| Reliable, ordered delivery | Best-effort, may lose or reorder
+| Stream of bytes | Discrete datagrams
+| `async_read` / `async_write` | `async_send_to` / `async_receive_from`
+|===
+
+Use UDP when:
+
+* You need low latency (no connection setup)
+* Occasional packet loss is acceptable
+* You're building on a protocol that handles reliability itself
+
+== UDP Client
+
+Send a datagram to a server and receive a response:
+
+[source,cpp]
+----
+#include <boost/asio.hpp>
+#include <iostream>
+
+namespace asio = boost::asio;
+using asio::ip::udp;
+using asio::awaitable;
+using asio::use_awaitable;
+
+awaitable<void> udp_client()
+{
+    auto executor = co_await asio::this_coro::executor;
+    
+    // Create a socket
+    udp::socket socket(executor, udp::v4());
+    
+    // Server address
+    udp::endpoint server(asio::ip::make_address("127.0.0.1"), 9000);
+    
+    // Send a datagram
+    std::string message = "Hello, UDP!";
+    co_await socket.async_send_to(
+        asio::buffer(message), server, use_awaitable);
+    
+    // Receive a response
+    char reply[1024];
+    udp::endpoint sender;
+    std::size_t n = co_await socket.async_receive_from(
+        asio::buffer(reply), sender, use_awaitable);
+    
+    std::cout << "Received " << n << " bytes from " << sender << "\n";
+    std::cout << std::string_view(reply, n) << "\n";
+}
+
+int main()
+{
+    asio::io_context ctx;
+    asio::co_spawn(ctx, udp_client(), asio::detached);
+    ctx.run();
+}
+----
+
+== UDP Server
+
+Receive datagrams and echo them back:
+
+[source,cpp]
+----
+awaitable<void> udp_server(unsigned short port)
+{
+    auto executor = co_await asio::this_coro::executor;
+    
+    // Create a socket bound to a port
+    udp::socket socket(executor, udp::endpoint(udp::v4(), port));
+    
+    std::cout << "UDP server listening on port " << port << "\n";
+    
+    char data[1024];
+    for (;;)
+    {
+        udp::endpoint sender;
+        std::size_t n = co_await socket.async_receive_from(
+            asio::buffer(data), sender, use_awaitable);
+        
+        std::cout << "Received " << n << " bytes from " << sender << "\n";
+        
+        // Echo it back
+        co_await socket.async_send_to(
+            asio::buffer(data, n), sender, use_awaitable);
+    }
+}
+
+int main()
+{
+    asio::io_context ctx;
+    asio::co_spawn(ctx, udp_server(9000), asio::detached);
+    ctx.run();
+}
+----
+
+== Key Differences from TCP
+
+=== No Connection
+
+UDP has no `async_connect` or `async_accept`. Each datagram is independent.
+You can send to different addresses from the same socket.
+
+=== Message Boundaries
+
+Each `async_send_to` sends one datagram. Each `async_receive_from` receives
+one datagram. Messages are not split or merged like TCP streams.
+
+=== Sender Address
+
+`async_receive_from` fills in the sender's address. This is how the server
+knows where to send replies.
+
+== Connected UDP
+
+You can "connect" a UDP socket to a specific endpoint. This doesn't establish
+a connection—it just sets a default destination:
+
+[source,cpp]
+----
+awaitable<void> connected_udp()
+{
+    auto executor = co_await asio::this_coro::executor;
+    
+    udp::socket socket(executor, udp::v4());
+    udp::endpoint server(asio::ip::make_address("127.0.0.1"), 9000);
+    
+    // Set default destination
+    co_await socket.async_connect(server, use_awaitable);
+    
+    // Now you can use async_send instead of async_send_to
+    std::string message = "Hello!";
+    co_await socket.async_send(asio::buffer(message), use_awaitable);
+    
+    // And async_receive instead of async_receive_from
+    char reply[1024];
+    std::size_t n = co_await socket.async_receive(
+        asio::buffer(reply), use_awaitable);
+}
+----
+
+Benefits of connected UDP:
+
+* Slightly more efficient (no per-send address lookup)
+* Receives only packets from the connected address
+* Can detect ICMP errors (connection refused, etc.)
+
+== Multicast
+
+To receive multicast traffic, join a multicast group:
+
+[source,cpp]
+----
+awaitable<void> multicast_receiver()
+{
+    auto executor = co_await asio::this_coro::executor;
+    
+    // Listen on the multicast port
+    udp::socket socket(executor, udp::endpoint(udp::v4(), 30001));
+    
+    // Join the multicast group
+    socket.set_option(asio::ip::multicast::join_group(
+        asio::ip::make_address("239.255.0.1")));
+    
+    char data[1024];
+    for (;;)
+    {
+        udp::endpoint sender;
+        std::size_t n = co_await socket.async_receive_from(
+            asio::buffer(data), sender, use_awaitable);
+        
+        std::cout << std::string_view(data, n) << "\n";
+    }
+}
+
+awaitable<void> multicast_sender()
+{
+    auto executor = co_await asio::this_coro::executor;
+    
+    udp::socket socket(executor, udp::v4());
+    udp::endpoint multicast_endpoint(
+        asio::ip::make_address("239.255.0.1"), 30001);
+    
+    std::string message = "Hello, multicast!";
+    co_await socket.async_send_to(
+        asio::buffer(message), multicast_endpoint, use_awaitable);
+}
+----
+
+== Broadcast
+
+To send to all hosts on the local network:
+
+[source,cpp]
+----
+awaitable<void> broadcast_sender()
+{
+    auto executor = co_await asio::this_coro::executor;
+    
+    udp::socket socket(executor, udp::v4());
+    
+    // Enable broadcast
+    socket.set_option(asio::socket_base::broadcast(true));
+    
+    udp::endpoint broadcast_endpoint(
+        asio::ip::address_v4::broadcast(), 30001);
+    
+    std::string message = "Hello, everyone!";
+    co_await socket.async_send_to(
+        asio::buffer(message), broadcast_endpoint, use_awaitable);
+}
+----
+
+== Error Handling
+
+UDP operations can fail, but differently from TCP:
+
+* **Send errors** are rare (usually only if the network interface is down)
+* **Receive errors** can indicate the socket was closed or an ICMP error arrived
+* **Lost packets** are silent—there's no error, the data just doesn't arrive
+
+For reliability, implement your own acknowledgment and retry logic, or use TCP.
+
+== Common Mistakes
+
+**Buffer too small** — If the buffer is smaller than the incoming datagram,
+the excess is discarded. Make your buffer large enough.
+
+**Expecting reliability** — UDP doesn't guarantee delivery. Don't assume
+every send results in a receive.
+
+**Blocking on receive** — If no datagram arrives, `async_receive_from` waits
+forever. Use a timeout if needed.
+
+== Next Steps
+
+* xref:networking/resolving.adoc[DNS Resolution] — Look up hostnames
+* xref:timers/recurring-timer.adoc[Recurring Timer] — Add timeouts to UDP

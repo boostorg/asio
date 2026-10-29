@@ -1,0 +1,276 @@
+//
+// Copyright (c) 2003-2025 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+//
+// Distributed under the Boost Software License, Version 1.0. (See accompanying
+// file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+//
+
+= Executors
+
+Understand how executors control where and how operations run.
+
+== What is an Executor?
+
+An executor represents a context where work can be executed. It answers:
+
+* **Where** does work run? (Which thread pool? Which io_context?)
+* **How** is work submitted? (Queued? Immediate? Deferred?)
+
+Every I/O object in Asio is associated with an executor, and completions are
+delivered through that executor.
+
+== Getting Executors
+
+[source,cpp]
+----
+#include <boost/asio.hpp>
+
+namespace asio = boost::asio;
+
+// From io_context
+asio::io_context ctx;
+auto exec = ctx.get_executor();
+
+// From an I/O object
+asio::ip::tcp::socket socket(ctx);
+auto exec2 = socket.get_executor();
+
+// From a coroutine
+asio::awaitable<void> example()
+{
+    auto exec = co_await asio::this_coro::executor;
+}
+----
+
+== Executor Types
+
+=== `io_context::executor_type`
+
+The executor for `io_context`. Work submitted to this executor runs when
+`io_context::run()` is called.
+
+[source,cpp]
+----
+asio::io_context ctx;
+asio::io_context::executor_type exec = ctx.get_executor();
+----
+
+=== `any_io_executor`
+
+A type-erased executor that can hold any I/O executor:
+
+[source,cpp]
+----
+asio::any_io_executor exec = ctx.get_executor();
+----
+
+Useful for:
+
+* Function parameters that accept any executor
+* Runtime polymorphism
+
+=== `strand<Executor>`
+
+An executor adapter that serializes execution:
+
+[source,cpp]
+----
+auto strand = asio::make_strand(ctx);
+----
+
+See xref:threading/strands.adoc[Strands] for details.
+
+== Posting Work
+
+Submit work to an executor:
+
+[source,cpp]
+----
+auto exec = ctx.get_executor();
+
+// Post: queue for later execution
+asio::post(exec, []() {
+    std::cout << "Posted work\n";
+});
+
+// Dispatch: run immediately if possible, otherwise post
+asio::dispatch(exec, []() {
+    std::cout << "Dispatched work\n";
+});
+
+// Defer: like post, but may batch with other work
+asio::defer(exec, []() {
+    std::cout << "Deferred work\n";
+});
+----
+
+With coroutines:
+
+[source,cpp]
+----
+asio::awaitable<void> example()
+{
+    auto exec = co_await asio::this_coro::executor;
+    
+    // Switch to this executor (no-op if already there)
+    co_await asio::dispatch(exec, asio::use_awaitable);
+    
+    // Post and wait
+    co_await asio::post(exec, asio::use_awaitable);
+}
+----
+
+== Associated Executor
+
+I/O objects and handlers have an associated executor:
+
+[source,cpp]
+----
+// Socket's executor (from construction)
+asio::ip::tcp::socket socket(ctx);
+auto sock_exec = socket.get_executor();
+
+// Timer with explicit executor
+auto strand = asio::make_strand(ctx);
+asio::steady_timer timer(strand);  // Timer uses the strand
+----
+
+When an async operation completes, the completion handler runs on the
+associated executor.
+
+== Binding Executors
+
+Force a handler to run on a specific executor:
+
+[source,cpp]
+----
+auto strand = asio::make_strand(ctx);
+
+timer.async_wait(
+    asio::bind_executor(strand, [](auto ec) {
+        // This runs on the strand, regardless of timer's executor
+    }));
+----
+
+== Executor Properties
+
+Executors have queryable properties:
+
+[source,cpp]
+----
+// Check if the executor requires blocking (it doesn't for io_context)
+auto blocking = asio::query(exec, asio::execution::blocking);
+
+// Get the execution context
+auto& ctx = asio::query(exec, asio::execution::context);
+----
+
+== System Executor
+
+A lightweight executor for simple cases:
+
+[source,cpp]
+----
+asio::system_executor exec;
+
+asio::post(exec, []() {
+    // Runs on a system thread pool
+});
+----
+
+The system executor uses a global thread pool. It's useful when you don't
+need a dedicated `io_context`.
+
+== Custom Executors
+
+You can create custom executors by implementing the executor concept.
+A minimal executor needs:
+
+* `execute(f)` — Run a function
+* Equality comparison
+* Copy/move constructors
+
+[source,cpp]
+----
+class my_executor
+{
+public:
+    // Execute work
+    template<typename F>
+    void execute(F&& f) const
+    {
+        // Run f somehow
+        f();
+    }
+    
+    // Comparison
+    bool operator==(const my_executor&) const noexcept { return true; }
+    bool operator!=(const my_executor&) const noexcept { return false; }
+};
+----
+
+== Executor in Coroutines
+
+Inside a coroutine, get the executor with `this_coro::executor`:
+
+[source,cpp]
+----
+asio::awaitable<void> example()
+{
+    // Get current executor
+    auto exec = co_await asio::this_coro::executor;
+    
+    // Create objects using this executor
+    asio::steady_timer timer(exec, std::chrono::seconds(1));
+    asio::ip::tcp::socket socket(exec);
+    
+    // Spawn child coroutines on the same executor
+    asio::co_spawn(exec, child_coroutine(), asio::detached);
+}
+----
+
+== Thread Pool
+
+Asio provides a thread pool with its own executor:
+
+[source,cpp]
+----
+asio::thread_pool pool(4);  // 4 threads
+
+// Get executor
+auto exec = pool.get_executor();
+
+// Post work
+asio::post(exec, []() {
+    // Runs on one of the pool's threads
+});
+
+// Wait for all work to complete
+pool.join();
+----
+
+Or use it with coroutines:
+
+[source,cpp]
+----
+asio::thread_pool pool(4);
+
+asio::co_spawn(pool, my_coroutine(), asio::detached);
+
+pool.join();
+----
+
+== Best Practices
+
+1. **Prefer `any_io_executor` in interfaces** — Allows flexibility
+
+2. **Get executor from `this_coro`** — Propagates the executor through the call chain
+
+3. **Use strands for synchronization** — Cleaner than mutexes for async code
+
+4. **Don't assume thread identity** — Unless using a strand, handlers may run on any thread
+
+== Next Steps
+
+* xref:threading/strands.adoc[Strands] — Serialize handler execution
+* xref:threading/threads.adoc[Multi-Threading] — Run executors from multiple threads

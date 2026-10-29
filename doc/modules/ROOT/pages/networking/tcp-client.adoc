@@ -1,0 +1,252 @@
+//
+// Copyright (c) 2003-2025 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+//
+// Distributed under the Boost Software License, Version 1.0. (See accompanying
+// file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+//
+
+= TCP Client
+
+Learn how to connect to a server and exchange data over TCP using coroutines.
+
+== Basic TCP Client
+
+[source,cpp]
+----
+#include <boost/asio.hpp>
+#include <iostream>
+
+namespace asio = boost::asio;
+using asio::ip::tcp;
+using asio::awaitable;
+using asio::use_awaitable;
+
+awaitable<void> tcp_client()
+{
+    auto executor = co_await asio::this_coro::executor;
+    
+    // Create a socket
+    tcp::socket socket(executor);
+    
+    // Connect to the server
+    tcp::endpoint endpoint(asio::ip::make_address("93.184.216.34"), 80);
+    co_await socket.async_connect(endpoint, use_awaitable);
+    
+    std::cout << "Connected!\n";
+    
+    // Send a request
+    std::string request = "GET / HTTP/1.0\r\nHost: example.com\r\n\r\n";
+    co_await asio::async_write(socket, asio::buffer(request), use_awaitable);
+    
+    // Read the response
+    std::string response;
+    char buf[1024];
+    
+    for (;;)
+    {
+        boost::system::error_code ec;
+        std::size_t n = co_await socket.async_read_some(
+            asio::buffer(buf),
+            asio::redirect_error(use_awaitable, ec));
+        
+        if (ec == asio::error::eof)
+            break;  // Connection closed cleanly
+        if (ec)
+            throw boost::system::system_error(ec);
+        
+        response.append(buf, n);
+    }
+    
+    std::cout << "Received " << response.size() << " bytes\n";
+}
+
+int main()
+{
+    asio::io_context ctx;
+    asio::co_spawn(ctx, tcp_client(), asio::detached);
+    ctx.run();
+}
+----
+
+== Step by Step
+
+=== 1. Create the Socket
+
+[source,cpp]
+----
+tcp::socket socket(executor);
+----
+
+The socket is created in a closed state. It needs an executor to associate
+async operations with the event loop.
+
+=== 2. Connect
+
+[source,cpp]
+----
+tcp::endpoint endpoint(asio::ip::make_address("93.184.216.34"), 80);
+co_await socket.async_connect(endpoint, use_awaitable);
+----
+
+`async_connect` initiates a TCP connection. The coroutine suspends until the
+connection succeeds or fails.
+
+=== 3. Send Data
+
+[source,cpp]
+----
+co_await asio::async_write(socket, asio::buffer(request), use_awaitable);
+----
+
+`async_write` sends all the data in the buffer. It handles partial writes
+internally—you don't need a loop.
+
+=== 4. Receive Data
+
+[source,cpp]
+----
+std::size_t n = co_await socket.async_read_some(asio::buffer(buf), use_awaitable);
+----
+
+`async_read_some` reads *some* data—possibly less than the buffer size.
+You typically loop until you have all the data you need or the connection closes.
+
+== Using DNS Resolution
+
+Usually you have a hostname, not an IP address. Use the resolver:
+
+[source,cpp]
+----
+awaitable<void> tcp_client_with_dns(std::string host, std::string port)
+{
+    auto executor = co_await asio::this_coro::executor;
+    
+    // Resolve the hostname
+    tcp::resolver resolver(executor);
+    auto endpoints = co_await resolver.async_resolve(host, port, use_awaitable);
+    
+    // Connect to the first endpoint that works
+    tcp::socket socket(executor);
+    co_await asio::async_connect(socket, endpoints, use_awaitable);
+    
+    std::cout << "Connected to " << socket.remote_endpoint() << "\n";
+}
+----
+
+`async_resolve` returns a range of endpoints (a host may have multiple IPs).
+`async_connect` with an endpoint range tries each one until one succeeds.
+
+== Error Handling
+
+By default, errors throw exceptions:
+
+[source,cpp]
+----
+awaitable<void> tcp_client_with_exceptions()
+{
+    try
+    {
+        auto executor = co_await asio::this_coro::executor;
+        tcp::socket socket(executor);
+        
+        tcp::endpoint endpoint(asio::ip::make_address("127.0.0.1"), 12345);
+        co_await socket.async_connect(endpoint, use_awaitable);
+    }
+    catch (const boost::system::system_error& e)
+    {
+        std::cerr << "Connection failed: " << e.what() << "\n";
+        // e.code() == asio::error::connection_refused, etc.
+    }
+}
+----
+
+For error codes without exceptions, use `redirect_error` or `as_tuple`:
+
+[source,cpp]
+----
+awaitable<void> tcp_client_with_error_codes()
+{
+    auto executor = co_await asio::this_coro::executor;
+    tcp::socket socket(executor);
+    
+    tcp::endpoint endpoint(asio::ip::make_address("127.0.0.1"), 12345);
+    
+    boost::system::error_code ec;
+    co_await socket.async_connect(
+        endpoint,
+        asio::redirect_error(use_awaitable, ec));
+    
+    if (ec)
+    {
+        std::cerr << "Connection failed: " << ec.message() << "\n";
+        co_return;
+    }
+    
+    std::cout << "Connected!\n";
+}
+----
+
+== Adding a Timeout
+
+[source,cpp]
+----
+#include <boost/asio/experimental/awaitable_operators.hpp>
+
+using namespace asio::experimental::awaitable_operators;
+
+awaitable<void> tcp_client_with_timeout()
+{
+    auto executor = co_await asio::this_coro::executor;
+    
+    tcp::socket socket(executor);
+    tcp::endpoint endpoint(asio::ip::make_address("10.0.0.1"), 80);
+    
+    asio::steady_timer timer(executor, std::chrono::seconds(5));
+    
+    // Race connect against timeout
+    auto result = co_await (
+        socket.async_connect(endpoint, use_awaitable)
+        || timer.async_wait(use_awaitable)
+    );
+    
+    if (result.index() == 0)
+        std::cout << "Connected\n";
+    else
+        std::cout << "Connection timed out\n";
+}
+----
+
+== Reading Until a Delimiter
+
+For line-based protocols:
+
+[source,cpp]
+----
+awaitable<std::string> read_line(tcp::socket& socket)
+{
+    asio::streambuf buf;
+    co_await asio::async_read_until(socket, buf, '\n', use_awaitable);
+    
+    std::istream is(&buf);
+    std::string line;
+    std::getline(is, line);
+    co_return line;
+}
+----
+
+== Common Mistakes
+
+**Not checking for `eof`** — When the peer closes the connection, `async_read_some`
+returns `asio::error::eof`. This is normal, not an error.
+
+**Using `async_read_some` when you need exact bytes** — Use `async_read` with a
+buffer size if you need exactly N bytes. `async_read_some` may return fewer.
+
+**Forgetting buffer lifetime** — The buffer must remain valid until the operation
+completes. Don't use a local that goes out of scope.
+
+== Next Steps
+
+* xref:networking/tcp-server.adoc[TCP Server] — Accept incoming connections
+* xref:networking/resolving.adoc[DNS Resolution] — Hostname lookup in detail
+* xref:core/buffers.adoc[Buffers] — Understanding buffer types

@@ -1,0 +1,292 @@
+//
+// Copyright (c) 2003-2025 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+//
+// Distributed under the Boost Software License, Version 1.0. (See accompanying
+// file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+//
+
+= SSL/TLS
+
+Learn how to secure connections with SSL/TLS using coroutines.
+
+== Prerequisites
+
+Asio's SSL support requires OpenSSL. Link with `-lssl -lcrypto` on Linux/macOS
+or the equivalent on Windows.
+
+== SSL Context
+
+The `ssl::context` holds SSL configuration (certificates, protocols, etc.):
+
+[source,cpp]
+----
+#include <boost/asio.hpp>
+#include <boost/asio/ssl.hpp>
+
+namespace asio = boost::asio;
+namespace ssl = asio::ssl;
+
+// Client context
+ssl::context make_client_context()
+{
+    ssl::context ctx(ssl::context::tlsv13_client);
+    
+    // Use system's trusted CA certificates
+    ctx.set_default_verify_paths();
+    
+    // Verify the server's certificate
+    ctx.set_verify_mode(ssl::verify_peer);
+    
+    return ctx;
+}
+
+// Server context
+ssl::context make_server_context()
+{
+    ssl::context ctx(ssl::context::tlsv13_server);
+    
+    // Load certificate and private key
+    ctx.use_certificate_chain_file("server.crt");
+    ctx.use_private_key_file("server.key", ssl::context::pem);
+    
+    return ctx;
+}
+----
+
+== SSL Client
+
+[source,cpp]
+----
+using asio::awaitable;
+using asio::use_awaitable;
+using asio::ip::tcp;
+
+awaitable<void> ssl_client(ssl::context& ssl_ctx)
+{
+    auto executor = co_await asio::this_coro::executor;
+    
+    // Create an SSL stream wrapping a TCP socket
+    ssl::stream<tcp::socket> stream(executor, ssl_ctx);
+    
+    // Resolve and connect
+    tcp::resolver resolver(executor);
+    auto endpoints = co_await resolver.async_resolve(
+        "www.example.com", "443", use_awaitable);
+    
+    co_await asio::async_connect(
+        stream.lowest_layer(), endpoints, use_awaitable);
+    
+    // Set SNI hostname (required by many servers)
+    SSL_set_tlsext_host_name(stream.native_handle(), "www.example.com");
+    
+    // Perform TLS handshake
+    co_await stream.async_handshake(ssl::stream_base::client, use_awaitable);
+    
+    std::cout << "TLS handshake complete\n";
+    
+    // Send a request
+    std::string request = "GET / HTTP/1.1\r\nHost: www.example.com\r\n\r\n";
+    co_await asio::async_write(stream, asio::buffer(request), use_awaitable);
+    
+    // Read the response
+    std::string response;
+    char buf[1024];
+    
+    for (;;)
+    {
+        auto [ec, n] = co_await stream.async_read_some(
+            asio::buffer(buf),
+            asio::experimental::as_tuple(use_awaitable));
+        
+        if (ec == asio::error::eof || 
+            ec == asio::ssl::error::stream_truncated)
+            break;
+        if (ec)
+            throw boost::system::system_error(ec);
+        
+        response.append(buf, n);
+    }
+    
+    std::cout << "Received " << response.size() << " bytes\n";
+    
+    // Graceful shutdown
+    boost::system::error_code ec;
+    co_await stream.async_shutdown(asio::redirect_error(use_awaitable, ec));
+    // Shutdown errors are often expected (peer may close without shutdown)
+}
+----
+
+== SSL Server
+
+[source,cpp]
+----
+awaitable<void> ssl_session(ssl::stream<tcp::socket> stream)
+{
+    try
+    {
+        // Perform TLS handshake
+        co_await stream.async_handshake(
+            ssl::stream_base::server, use_awaitable);
+        
+        // Handle the connection
+        char buf[1024];
+        for (;;)
+        {
+            std::size_t n = co_await stream.async_read_some(
+                asio::buffer(buf), use_awaitable);
+            
+            co_await asio::async_write(
+                stream, asio::buffer(buf, n), use_awaitable);
+        }
+    }
+    catch (const std::exception& e)
+    {
+        std::cout << "Session error: " << e.what() << "\n";
+    }
+}
+
+awaitable<void> ssl_server(ssl::context& ssl_ctx, unsigned short port)
+{
+    auto executor = co_await asio::this_coro::executor;
+    tcp::acceptor acceptor(executor, {tcp::v4(), port});
+    
+    for (;;)
+    {
+        tcp::socket socket = co_await acceptor.async_accept(use_awaitable);
+        
+        // Wrap in SSL stream
+        ssl::stream<tcp::socket> stream(std::move(socket), ssl_ctx);
+        
+        asio::co_spawn(executor, ssl_session(std::move(stream)), asio::detached);
+    }
+}
+----
+
+== Certificate Verification
+
+=== Verify Against System CA
+
+[source,cpp]
+----
+ssl::context ctx(ssl::context::tlsv13_client);
+ctx.set_default_verify_paths();
+ctx.set_verify_mode(ssl::verify_peer);
+----
+
+=== Custom CA Certificate
+
+[source,cpp]
+----
+ctx.load_verify_file("ca.crt");
+----
+
+=== Hostname Verification
+
+[source,cpp]
+----
+// Before handshake
+stream.set_verify_callback(ssl::host_name_verification("www.example.com"));
+----
+
+=== Skip Verification (Development Only!)
+
+[source,cpp]
+----
+ctx.set_verify_mode(ssl::verify_none);  // DON'T DO THIS IN PRODUCTION
+----
+
+== SSL Protocol Versions
+
+[source,cpp]
+----
+// Specific version
+ssl::context ctx(ssl::context::tlsv13);
+
+// Or use method flags
+ssl::context ctx(ssl::context::sslv23);
+ctx.set_options(
+    ssl::context::default_workarounds |
+    ssl::context::no_sslv2 |
+    ssl::context::no_sslv3 |
+    ssl::context::no_tlsv1 |
+    ssl::context::no_tlsv1_1
+);
+// Now only TLS 1.2 and 1.3 are allowed
+----
+
+== Common SSL Errors
+
+[cols="1,2"]
+|===
+| Error | Meaning
+
+| `ssl::error::stream_truncated` | Peer closed without shutdown (common)
+| `certificate verify failed` | Certificate validation failed
+| `unknown ca` | CA not in trust store
+| `certificate has expired` | Certificate past its validity period
+| `handshake failure` | Protocol negotiation failed
+|===
+
+== Error Handling
+
+[source,cpp]
+----
+awaitable<void> robust_ssl_client(ssl::stream<tcp::socket>& stream)
+{
+    try
+    {
+        co_await stream.async_handshake(ssl::stream_base::client, use_awaitable);
+    }
+    catch (const boost::system::system_error& e)
+    {
+        if (e.code().category() == asio::error::get_ssl_category())
+        {
+            // SSL-specific error
+            std::cerr << "SSL error: " << e.what() << "\n";
+            
+            // Get detailed OpenSSL error
+            auto ssl_err = ERR_get_error();
+            std::cerr << "OpenSSL: " << ERR_error_string(ssl_err, nullptr) << "\n";
+        }
+        throw;
+    }
+}
+----
+
+== Layered Streams
+
+`ssl::stream` wraps any stream. The underlying stream is accessible via:
+
+* `lowest_layer()` — The bottom-most layer (usually TCP socket)
+* `next_layer()` — The next layer down (same as lowest_layer for two layers)
+
+[source,cpp]
+----
+ssl::stream<tcp::socket> stream(executor, ctx);
+
+// Access the TCP socket for connect, close, etc.
+stream.lowest_layer().connect(endpoint);
+stream.lowest_layer().close();
+
+// Read/write go through SSL
+co_await asio::async_write(stream, asio::buffer(data), use_awaitable);
+----
+
+== Common Mistakes
+
+**Forgetting SNI** — Many servers require SNI to select the right certificate.
+Always set it with `SSL_set_tlsext_host_name`.
+
+**Ignoring handshake errors** — A failed handshake means no encryption.
+Don't continue on handshake failure.
+
+**Not verifying certificates** — Without verification, you're vulnerable to
+man-in-the-middle attacks.
+
+**Treating `stream_truncated` as fatal** — Many servers close without a proper
+SSL shutdown. It's often safe to ignore.
+
+== Next Steps
+
+* xref:networking/tcp-client.adoc[TCP Client] — Non-SSL networking
+* xref:core/error-handling.adoc[Error Handling] — Handle SSL errors

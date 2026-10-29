@@ -1,0 +1,248 @@
+//
+// Copyright (c) 2003-2025 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+//
+// Distributed under the Boost Software License, Version 1.0. (See accompanying
+// file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+//
+
+= DNS Resolution
+
+Learn how to resolve hostnames to IP addresses using coroutines.
+
+== Basic Resolution
+
+[source,cpp]
+----
+#include <boost/asio.hpp>
+#include <iostream>
+
+namespace asio = boost::asio;
+using asio::ip::tcp;
+using asio::awaitable;
+using asio::use_awaitable;
+
+awaitable<void> resolve_hostname()
+{
+    auto executor = co_await asio::this_coro::executor;
+    
+    tcp::resolver resolver(executor);
+    
+    // Resolve hostname and service name
+    auto results = co_await resolver.async_resolve(
+        "www.example.com", "http", use_awaitable);
+    
+    for (const auto& entry : results)
+    {
+        std::cout << entry.endpoint() << "\n";
+    }
+}
+
+int main()
+{
+    asio::io_context ctx;
+    asio::co_spawn(ctx, resolve_hostname(), asio::detached);
+    ctx.run();
+}
+----
+
+Output might be:
+----
+93.184.216.34:80
+2606:2800:220:1:248:1893:25c8:1946:80
+----
+
+== Understanding Results
+
+`async_resolve` returns a range of `resolver::results_type`, containing
+`resolver::endpoint_type` entries. Each entry includes:
+
+* **Endpoint** — IP address and port
+* **Host name** — The canonical name (if available)
+* **Service name** — The service (e.g., "http")
+
+A single hostname may resolve to multiple addresses (IPv4 and IPv6, or
+multiple servers for load balancing).
+
+== Connecting with Resolution
+
+The typical pattern is to resolve, then try each address until one works:
+
+[source,cpp]
+----
+awaitable<tcp::socket> connect_to_host(std::string host, std::string service)
+{
+    auto executor = co_await asio::this_coro::executor;
+    
+    tcp::resolver resolver(executor);
+    auto endpoints = co_await resolver.async_resolve(host, service, use_awaitable);
+    
+    tcp::socket socket(executor);
+    co_await asio::async_connect(socket, endpoints, use_awaitable);
+    
+    co_return socket;
+}
+----
+
+`async_connect` with an endpoint range automatically tries each address in
+sequence until one succeeds.
+
+== Resolver Flags
+
+Control resolution behavior with flags:
+
+[source,cpp]
+----
+awaitable<void> resolve_with_flags()
+{
+    auto executor = co_await asio::this_coro::executor;
+    tcp::resolver resolver(executor);
+    
+    // Only return IPv4 addresses
+    auto results = co_await resolver.async_resolve(
+        "www.example.com", "443",
+        tcp::resolver::numeric_service,  // "443" is a port number, not a service name
+        use_awaitable);
+    
+    // Or combine flags
+    auto results2 = co_await resolver.async_resolve(
+        "www.example.com", "https",
+        tcp::resolver::passive |          // For binding (servers)
+        tcp::resolver::address_configured, // Only configured addresses
+        use_awaitable);
+}
+----
+
+Common flags:
+
+[cols="1,2"]
+|===
+| Flag | Meaning
+
+| `numeric_host` | The host string is an IP address, don't resolve
+| `numeric_service` | The service string is a port number
+| `passive` | For server sockets (bind, not connect)
+| `canonical_name` | Request the canonical name
+| `v4_mapped` | Return IPv4-mapped IPv6 addresses if no IPv6
+| `all_matching` | Return all matching addresses
+| `address_configured` | Only return addresses the system can use
+|===
+
+== IPv4 Only or IPv6 Only
+
+To restrict to a specific IP version:
+
+[source,cpp]
+----
+awaitable<void> resolve_ipv4_only()
+{
+    auto executor = co_await asio::this_coro::executor;
+    
+    // TCP IPv4 resolver
+    asio::ip::tcp::resolver resolver(executor);
+    
+    // Resolve with IPv4 protocol hint
+    auto results = co_await resolver.async_resolve(
+        asio::ip::tcp::v4(),  // Protocol hint
+        "www.example.com",
+        "http",
+        use_awaitable);
+    
+    // All results will be IPv4
+}
+----
+
+== Reverse DNS Lookup
+
+Look up the hostname for an IP address:
+
+[source,cpp]
+----
+awaitable<void> reverse_lookup()
+{
+    auto executor = co_await asio::this_coro::executor;
+    tcp::resolver resolver(executor);
+    
+    tcp::endpoint endpoint(asio::ip::make_address("93.184.216.34"), 80);
+    
+    auto results = co_await resolver.async_resolve(endpoint, use_awaitable);
+    
+    for (const auto& entry : results)
+    {
+        std::cout << entry.host_name() << "\n";
+    }
+}
+----
+
+== Error Handling
+
+Resolution can fail for various reasons:
+
+[source,cpp]
+----
+awaitable<void> resolve_with_error_handling()
+{
+    auto executor = co_await asio::this_coro::executor;
+    tcp::resolver resolver(executor);
+    
+    try
+    {
+        auto results = co_await resolver.async_resolve(
+            "nonexistent.invalid", "http", use_awaitable);
+    }
+    catch (const boost::system::system_error& e)
+    {
+        // e.code() might be:
+        // - asio::error::host_not_found
+        // - asio::error::host_not_found_try_again
+        // - asio::error::no_data
+        // - asio::error::no_recovery
+        std::cerr << "Resolution failed: " << e.what() << "\n";
+    }
+}
+----
+
+== Caching
+
+Asio doesn't cache DNS results. Each `async_resolve` call queries the system
+resolver. For high-volume applications, consider:
+
+* Caching results yourself (respecting TTL)
+* Using connection pools that reuse existing connections
+* Resolving once at startup for known hosts
+
+== UDP Resolution
+
+Works the same way, just use `udp::resolver`:
+
+[source,cpp]
+----
+awaitable<void> resolve_udp()
+{
+    auto executor = co_await asio::this_coro::executor;
+    
+    asio::ip::udp::resolver resolver(executor);
+    auto results = co_await resolver.async_resolve(
+        "dns.google", "53", use_awaitable);
+    
+    for (const auto& entry : results)
+    {
+        std::cout << entry.endpoint() << "\n";
+    }
+}
+----
+
+== Common Mistakes
+
+**Resolving every time** — Resolution has overhead. Resolve once and reuse the
+endpoint, or use connection pooling.
+
+**Ignoring multiple results** — A host may have several addresses. Using
+`async_connect` with the results range handles this correctly.
+
+**Not handling errors** — Network issues, DNS server problems, and typos in
+hostnames all cause resolution to fail.
+
+== Next Steps
+
+* xref:networking/tcp-client.adoc[TCP Client] — Use resolved addresses
+* xref:core/error-handling.adoc[Error Handling] — Handle resolution failures

@@ -1,0 +1,154 @@
+//
+// Copyright (c) 2003-2025 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+//
+// Distributed under the Boost Software License, Version 1.0. (See accompanying
+// file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+//
+
+= Quick Start
+
+Get a working Asio program running in five minutes.
+
+NOTE: This guide requires C++20 with coroutine support.
+
+== Minimal Example
+
+Create a file `timer.cpp`:
+
+[source,cpp]
+----
+#include <boost/asio.hpp>
+#include <iostream>
+
+namespace asio = boost::asio;
+using asio::awaitable;
+using asio::use_awaitable;
+
+awaitable<void> wait_one_second()
+{
+    // Get the executor from the current coroutine
+    auto executor = co_await asio::this_coro::executor;
+
+    // Create a timer that expires in 1 second
+    asio::steady_timer timer(executor, std::chrono::seconds(1));
+
+    // Wait for the timer to expire
+    co_await timer.async_wait(use_awaitable);
+
+    std::cout << "Hello from Asio!\n";
+}
+
+int main()
+{
+    // Create the I/O context — this runs the event loop
+    asio::io_context ctx;
+
+    // Spawn the coroutine onto the context
+    asio::co_spawn(ctx, wait_one_second(), asio::detached);
+
+    // Run the event loop until all work completes
+    ctx.run();
+}
+----
+
+== Build and Run
+
+[source,bash]
+----
+# Linux / macOS with GCC or Clang
+g++ -std=c++20 -o timer timer.cpp -pthread
+
+# Windows with MSVC
+cl /std:c++20 /EHsc timer.cpp
+
+# Run
+./timer
+----
+
+Expected output after 1 second:
+
+----
+Hello from Asio!
+----
+
+== What Just Happened?
+
+1. **`io_context ctx`** — Created the event loop that drives all async operations
+2. **`co_spawn(ctx, wait_one_second(), detached)`** — Launched the coroutine on the context
+3. **`ctx.run()`** — Ran the event loop; blocks until all work completes
+4. Inside the coroutine:
+   - **`co_await this_coro::executor`** — Got the executor from the coroutine's context
+   - **`steady_timer timer(...)`** — Created a timer bound to that executor
+   - **`co_await timer.async_wait(use_awaitable)`** — Suspended until the timer expires
+5. When the timer expired, the coroutine resumed and printed the message
+6. The coroutine completed, `run()` saw no more work, and returned
+
+== Key Concepts
+
+[cols="1,3"]
+|===
+| `io_context` | The event loop. Manages I/O and runs completion handlers.
+| `co_spawn` | Launches a coroutine onto an executor or context.
+| `awaitable<T>` | A coroutine that returns `T` and can be `co_await`-ed.
+| `use_awaitable` | Completion token that makes async operations return `awaitable`.
+| `detached` | Completion token for `co_spawn` that discards the result.
+|===
+
+== Adding Error Handling
+
+Asio coroutines report errors by throwing exceptions:
+
+[source,cpp]
+----
+awaitable<void> connect_to_server()
+{
+    try
+    {
+        auto executor = co_await asio::this_coro::executor;
+        asio::ip::tcp::socket socket(executor);
+        
+        asio::ip::tcp::endpoint endpoint(
+            asio::ip::make_address("127.0.0.1"), 8080);
+        
+        co_await socket.async_connect(endpoint, use_awaitable);
+        std::cout << "Connected!\n";
+    }
+    catch (const std::exception& e)
+    {
+        std::cerr << "Error: " << e.what() << "\n";
+    }
+}
+----
+
+If you prefer error codes over exceptions, use `as_tuple`:
+
+[source,cpp]
+----
+#include <boost/asio/experimental/as_tuple.hpp>
+
+awaitable<void> connect_to_server()
+{
+    auto executor = co_await asio::this_coro::executor;
+    asio::ip::tcp::socket socket(executor);
+    
+    asio::ip::tcp::endpoint endpoint(
+        asio::ip::make_address("127.0.0.1"), 8080);
+    
+    auto [ec] = co_await socket.async_connect(
+        endpoint,
+        asio::experimental::as_tuple(use_awaitable));
+    
+    if (ec)
+        std::cerr << "Error: " << ec.message() << "\n";
+    else
+        std::cout << "Connected!\n";
+}
+----
+
+== Next Steps
+
+Now that you have a working program:
+
+* xref:timers/async-timer.adoc[Async Timer] — More timer patterns
+* xref:networking/tcp-client.adoc[TCP Client] — Network I/O with coroutines
+* xref:core/io-context.adoc[The I/O Context] — Understand the event loop

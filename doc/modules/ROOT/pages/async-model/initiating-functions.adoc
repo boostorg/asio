@@ -1,0 +1,185 @@
+//
+// Copyright (c) 2003-2025 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+//
+// Distributed under the Boost Software License, Version 1.0. (See accompanying
+// file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+//
+
+= Initiating Functions
+
+Understand the functions that start asynchronous operations.
+
+== What is an Initiating Function?
+
+An *initiating function* is a function that starts an asynchronous operation.
+When you call it, the operation begins—but it doesn't necessarily complete
+before the function returns.
+
+Examples:
+
+* `socket.async_connect(endpoint, token)`
+* `socket.async_read_some(buffer, token)`
+* `timer.async_wait(token)`
+* `async_read(stream, buffer, token)`
+
+== Anatomy of an Initiating Function
+
+[source,cpp]
+----
+socket.async_read_some(buffer, completion_token);
+//     ~~~~~~~~~~~~~~~  ~~~~~~  ~~~~~~~~~~~~~~~~
+//     Initiating func  Args    Completion token
+----
+
+**Initiating function**: The function that starts the operation.
+
+**Arguments**: Operation-specific parameters (endpoint, buffer, etc.).
+
+**Completion token**: Determines how the result is delivered.
+
+With `use_awaitable`, the token makes the function return an `awaitable`:
+
+[source,cpp]
+----
+awaitable<std::size_t> a = socket.async_read_some(buffer, use_awaitable);
+std::size_t n = co_await a;
+----
+
+== What Happens When You Call an Initiating Function?
+
+1. **The operation is initiated** — The OS is asked to perform the work
+2. **The function returns** — Control returns to the caller immediately
+3. **Time passes** — The OS does the work in the background
+4. **The operation completes** — The OS signals completion
+5. **The completion handler is invoked** — Your code receives the result
+
+With coroutines, steps 3-5 happen behind the `co_await`.
+
+== Immediate vs Deferred Completion
+
+Some operations may complete immediately. For example, reading from a socket
+that already has data buffered. Asio handles this correctly—the operation
+still goes through the event loop to invoke the completion handler.
+
+[source,cpp]
+----
+// Even if data is ready, the coroutine still suspends
+// and resumes via the event loop
+std::size_t n = co_await socket.async_read_some(buffer, use_awaitable);
+----
+
+This consistency is important: you can rely on the completion handler always
+being invoked asynchronously (not inline from the initiating function).
+
+== Return Values
+
+Initiating functions with `use_awaitable` return `awaitable<T>` where `T` is
+the result type:
+
+[cols="1,2"]
+|===
+| Operation | Return Type
+
+| `async_wait` | `awaitable<void>`
+| `async_read_some` | `awaitable<std::size_t>`
+| `async_accept` | `awaitable<tcp::socket>`
+| `async_resolve` | `awaitable<resolver::results_type>`
+|===
+
+With `as_tuple`, error codes are included:
+
+[source,cpp]
+----
+auto [ec, n] = co_await socket.async_read_some(
+    buffer,
+    asio::experimental::as_tuple(use_awaitable));
+// Returns awaitable<std::tuple<error_code, std::size_t>>
+----
+
+== Completion Signatures
+
+Each initiating function documents its *completion signature*—the parameters
+passed to the completion handler. For example:
+
+[source,cpp]
+----
+// async_read_some completion signature:
+// void(error_code ec, std::size_t bytes_transferred)
+
+// async_connect completion signature:
+// void(error_code ec)
+
+// async_accept completion signature:
+// void(error_code ec, tcp::socket socket)
+----
+
+With `use_awaitable`:
+
+* `void(error_code)` → `awaitable<void>` (throws on error)
+* `void(error_code, T)` → `awaitable<T>` (throws on error)
+
+== Cancellation
+
+Initiating functions may be cancelled:
+
+* Close the I/O object (e.g., `socket.close()`)
+* Call `cancel()` (e.g., `timer.cancel()`)
+* Reset a timer's expiry time
+
+Cancelled operations complete with `asio::error::operation_aborted`:
+
+[source,cpp]
+----
+try
+{
+    co_await timer.async_wait(use_awaitable);
+}
+catch (const boost::system::system_error& e)
+{
+    if (e.code() == asio::error::operation_aborted)
+        std::cout << "Timer was cancelled\n";
+}
+----
+
+== Overlapping Operations
+
+On the same object, you can typically have:
+
+* Multiple reads outstanding? Usually **no**
+* Multiple writes outstanding? Usually **no**
+* A read and a write? **Yes**, these can overlap
+
+[source,cpp]
+----
+// WRONG: Two reads on same socket
+co_await socket.async_read_some(buf1, use_awaitable);  // Started
+co_await socket.async_read_some(buf2, use_awaitable);  // Don't do this!
+
+// OK: Read and write can overlap
+auto read_task = socket.async_read_some(buf1, use_awaitable);
+auto write_task = async_write(socket, buf2, use_awaitable);
+co_await (read_task && write_task);  // Both in parallel
+----
+
+== The Completion Token Mechanism
+
+The final parameter to an initiating function is the *completion token*.
+It determines how results are delivered:
+
+[cols="1,2"]
+|===
+| Token | Behavior
+
+| `use_awaitable` | Return `awaitable<T>` for `co_await`
+| `detached` | Discard the result, don't wait
+| `as_tuple(token)` | Include error code in result tuple
+| `redirect_error(token, ec)` | Store error in `ec` instead of throwing
+|===
+
+This is one of Asio's most powerful features: the same operation works with
+different async styles without changing the operation itself.
+
+== Next Steps
+
+* xref:async-model/completion-handlers.adoc[Completion Handlers] — How completions are delivered
+* xref:async-model/memory-model.adoc[Memory and Lifetimes] — Resource management guarantees

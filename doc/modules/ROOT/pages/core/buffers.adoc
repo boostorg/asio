@@ -1,0 +1,270 @@
+//
+// Copyright (c) 2003-2025 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+//
+// Distributed under the Boost Software License, Version 1.0. (See accompanying
+// file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+//
+
+= Buffers
+
+Learn how Asio represents memory for I/O operations.
+
+== The `buffer()` Function
+
+The `buffer()` function creates a buffer view from various types:
+
+[source,cpp]
+----
+#include <boost/asio.hpp>
+
+namespace asio = boost::asio;
+
+void buffer_examples()
+{
+    // From a char array
+    char arr[1024];
+    auto b1 = asio::buffer(arr);           // Entire array
+    auto b2 = asio::buffer(arr, 512);      // First 512 bytes
+    
+    // From std::array
+    std::array<char, 1024> std_arr;
+    auto b3 = asio::buffer(std_arr);
+    
+    // From std::vector
+    std::vector<char> vec(1024);
+    auto b4 = asio::buffer(vec);
+    
+    // From std::string (read-only)
+    std::string str = "Hello";
+    auto b5 = asio::buffer(str);           // const_buffer
+    
+    // From std::string_view (read-only)
+    auto b6 = asio::buffer(std::string_view("Hello"));
+}
+----
+
+== Mutable vs Const Buffers
+
+Asio distinguishes between buffers you can write to and buffers you can only read:
+
+[cols="1,2"]
+|===
+| Type | Use
+
+| `mutable_buffer` | For receiving data (`async_read`, `async_receive`)
+| `const_buffer` | For sending data (`async_write`, `async_send`)
+|===
+
+`buffer()` returns the appropriate type based on the source:
+
+[source,cpp]
+----
+char arr[1024];
+auto mb = asio::buffer(arr);        // mutable_buffer
+
+const char* data = "Hello";
+auto cb = asio::buffer(data, 5);    // const_buffer
+
+std::string str = "Hello";
+auto cb2 = asio::buffer(str);       // const_buffer (string is treated as const)
+----
+
+== Buffer Sequences
+
+Many operations accept a sequence of buffers (scatter/gather I/O):
+
+[source,cpp]
+----
+asio::awaitable<void> scatter_gather_example(asio::ip::tcp::socket& socket)
+{
+    // Gather write: send multiple buffers in one operation
+    std::string header = "HTTP/1.1 200 OK\r\n\r\n";
+    std::string body = "Hello, World!";
+    
+    std::array<asio::const_buffer, 2> buffers = {
+        asio::buffer(header),
+        asio::buffer(body)
+    };
+    
+    co_await asio::async_write(socket, buffers, asio::use_awaitable);
+    
+    // Scatter read: receive into multiple buffers
+    char header_buf[100];
+    char body_buf[1000];
+    
+    std::array<asio::mutable_buffer, 2> recv_buffers = {
+        asio::buffer(header_buf),
+        asio::buffer(body_buf)
+    };
+    
+    co_await socket.async_read_some(recv_buffers, asio::use_awaitable);
+}
+----
+
+== Dynamic Buffers
+
+For growing buffers (useful with `async_read_until`):
+
+[source,cpp]
+----
+asio::awaitable<void> dynamic_buffer_example(asio::ip::tcp::socket& socket)
+{
+    // Using std::string as a dynamic buffer
+    std::string data;
+    std::size_t n = co_await asio::async_read_until(
+        socket,
+        asio::dynamic_buffer(data),
+        '\n',
+        asio::use_awaitable);
+    
+    std::cout << "Received line: " << data.substr(0, n);
+    
+    // Or with std::vector
+    std::vector<char> vec_data;
+    co_await asio::async_read_until(
+        socket,
+        asio::dynamic_buffer(vec_data),
+        "\r\n\r\n",
+        asio::use_awaitable);
+}
+----
+
+== `streambuf`
+
+`asio::streambuf` provides iostream-compatible buffering:
+
+[source,cpp]
+----
+asio::awaitable<void> streambuf_example(asio::ip::tcp::socket& socket)
+{
+    asio::streambuf buf;
+    
+    // Read until newline
+    co_await asio::async_read_until(socket, buf, '\n', asio::use_awaitable);
+    
+    // Extract the data
+    std::istream is(&buf);
+    std::string line;
+    std::getline(is, line);
+    
+    std::cout << "Line: " << line << "\n";
+}
+----
+
+== Buffer Size and Consumption
+
+Get buffer size:
+
+[source,cpp]
+----
+auto buf = asio::buffer(data, 100);
+std::size_t size = buf.size();  // 100
+----
+
+After a partial read, you often need to work with a subset:
+
+[source,cpp]
+----
+char data[1024];
+auto buf = asio::buffer(data);
+
+// Read some data
+std::size_t n = co_await socket.async_read_some(buf, asio::use_awaitable);
+
+// Create a buffer for just the received data
+auto received = asio::buffer(data, n);
+
+// Or advance past consumed data
+buf += n;  // Now points to data[n] with size 1024-n
+----
+
+== Buffer Lifetime
+
+**Critical:** The buffer must remain valid until the async operation completes.
+
+[source,cpp]
+----
+// WRONG: string destroyed before operation completes
+asio::awaitable<void> bad_example(asio::ip::tcp::socket& socket)
+{
+    {
+        std::string msg = "Hello";
+        socket.async_write_some(asio::buffer(msg), ...);  // BAD!
+    }  // msg destroyed here, but write may still be in progress
+}
+
+// CORRECT: keep the buffer alive
+asio::awaitable<void> good_example(asio::ip::tcp::socket& socket)
+{
+    std::string msg = "Hello";
+    co_await asio::async_write(socket, asio::buffer(msg), asio::use_awaitable);
+    // msg still valid here, operation is complete
+}
+----
+
+For operations that outlive the current scope, store the buffer in a member
+variable or use `std::shared_ptr`.
+
+== Buffer Debugging
+
+Enable buffer debugging to catch lifetime issues:
+
+[source,cpp]
+----
+// Define before including Asio headers
+#define BOOST_ASIO_ENABLE_BUFFER_DEBUGGING
+#include <boost/asio.hpp>
+----
+
+This adds runtime checks that detect use of invalidated buffers.
+
+== Common Patterns
+
+=== Fixed-size read buffer
+
+[source,cpp]
+----
+char buf[8192];
+for (;;)
+{
+    std::size_t n = co_await socket.async_read_some(
+        asio::buffer(buf), asio::use_awaitable);
+    // Process buf[0..n)
+}
+----
+
+=== Exact-size read
+
+[source,cpp]
+----
+char buf[100];
+co_await asio::async_read(
+    socket, asio::buffer(buf), asio::use_awaitable);
+// All 100 bytes are now filled
+----
+
+=== Read until delimiter
+
+[source,cpp]
+----
+std::string data;
+std::size_t n = co_await asio::async_read_until(
+    socket, asio::dynamic_buffer(data), '\n', asio::use_awaitable);
+// data[0..n) includes the delimiter
+----
+
+== Common Mistakes
+
+**Buffer too small** — Reading into a small buffer silently truncates data.
+Size your buffers appropriately.
+
+**Buffer goes out of scope** — The most common bug. Always ensure buffers
+outlive the async operation.
+
+**Modifying buffer during operation** — Don't modify the buffer while an
+async operation is using it.
+
+== Next Steps
+
+* xref:core/streams.adoc[Reading and Writing] — Use buffers with I/O
+* xref:core/error-handling.adoc[Error Handling] — Handle partial reads/writes
