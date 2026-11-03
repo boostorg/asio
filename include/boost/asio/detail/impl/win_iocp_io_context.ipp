@@ -70,8 +70,14 @@ struct win_iocp_io_context::timer_thread_function
             INFINITE) == WAIT_OBJECT_0)
       {
         ::InterlockedExchange(&io_context_->dispatch_required_, 1);
-        ::PostQueuedCompletionStatus(io_context_->iocp_.handle,
-            0, wake_for_dispatch, 0);
+
+        // Only post a wake-up if one is not already queued.
+        if (::InterlockedExchange(&io_context_->wake_pending_, 1) == 0)
+        {
+          if (!::PostQueuedCompletionStatus(io_context_->iocp_.handle,
+                0, wake_for_dispatch, 0))
+            ::InterlockedExchange(&io_context_->wake_pending_, 0);
+        }
       }
     }
   }
@@ -89,6 +95,7 @@ win_iocp_io_context::win_iocp_io_context(
     shutdown_(0),
     gqcs_timeout_(get_gqcs_timeout()),
     dispatch_required_(0),
+    wake_pending_(0),
     concurrency_hint_(config(ctx).get("scheduler", "concurrency_hint", -1))
 {
   BOOST_ASIO_HANDLER_TRACKING_INIT;
@@ -121,6 +128,7 @@ win_iocp_io_context::win_iocp_io_context(
     shutdown_(0),
     gqcs_timeout_(get_gqcs_timeout()),
     dispatch_required_(0),
+    wake_pending_(0),
     concurrency_hint_(-1)
 {
   BOOST_ASIO_HANDLER_TRACKING_INIT;
@@ -562,7 +570,9 @@ size_t win_iocp_io_context::do_one(DWORD msec,
     else if (completion_key == wake_for_dispatch)
     {
       // We have been woken up to try to acquire responsibility for dispatching
-      // timers and completed operations.
+      // timers and completed operations. Allow the timer thread to post
+      // another wake-up before we check whether dispatching is required.
+      ::InterlockedExchange(&wake_pending_, 0);
     }
     else
     {
