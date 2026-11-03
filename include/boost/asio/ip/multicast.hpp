@@ -37,7 +37,7 @@ namespace multicast {
  * boost::asio::ip::udp::socket socket(my_context);
  * ...
  * boost::asio::ip::address multicast_address =
- *   boost::asio::ip::address::from_string("225.0.0.1");
+ *   boost::asio::ip::make_address("225.0.0.1");
  * boost::asio::ip::multicast::join_group option(multicast_address);
  * socket.set_option(option);
  * @endcode
@@ -65,7 +65,7 @@ typedef boost::asio::ip::detail::socket_option::multicast_request<
  * boost::asio::ip::udp::socket socket(my_context);
  * ...
  * boost::asio::ip::address multicast_address =
- *   boost::asio::ip::address::from_string("225.0.0.1");
+ *   boost::asio::ip::make_address("225.0.0.1");
  * boost::asio::ip::multicast::leave_group option(multicast_address);
  * socket.set_option(option);
  * @endcode
@@ -97,7 +97,7 @@ typedef boost::asio::ip::detail::socket_option::multicast_request<
  * boost::asio::ip::udp::socket socket(my_context);
  * ...
  * boost::asio::ip::address_v4 local_interface =
- *   boost::asio::ip::address_v4::from_string("1.2.3.4");
+ *   boost::asio::ip::make_address_v4("1.2.3.4");
  * boost::asio::ip::multicast::outbound_interface option(local_interface);
  * socket.set_option(option);
  * @endcode

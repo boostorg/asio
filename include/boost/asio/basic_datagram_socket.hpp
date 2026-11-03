@@ -577,7 +577,7 @@ public:
    * To send a single data buffer use the @ref buffer function as follows:
    * @code
    * boost::asio::ip::udp::endpoint destination(
-   *     boost::asio::ip::address::from_string("1.2.3.4"), 12345);
+   *     boost::asio::ip::make_address("1.2.3.4"), 12345);
    * socket.send_to(boost::asio::buffer(data, size), destination);
    * @endcode
    * See the @ref buffer documentation for information on sending multiple
@@ -682,7 +682,7 @@ public:
    * To send a single data buffer use the @ref buffer function as follows:
    * @code
    * boost::asio::ip::udp::endpoint destination(
-   *     boost::asio::ip::address::from_string("1.2.3.4"), 12345);
+   *     boost::asio::ip::make_address("1.2.3.4"), 12345);
    * socket.async_send_to(
    *     boost::asio::buffer(data, size), destination, handler);
    * @endcode
