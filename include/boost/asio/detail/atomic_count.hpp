@@ -22,7 +22,12 @@
 #else // !defined(BOOST_ASIO_HAS_THREADS)
 # include <atomic>
 # if defined(BOOST_ASIO_HAS_THREAD_SANITIZER)
-#  include <sanitizer/tsan_interface.h>
+#  if defined(BOOST_ASIO_HAS_SANITIZER_TSAN_INTERFACE)
+#   include <sanitizer/tsan_interface.h>
+#  else // defined(BOOST_ASIO_HAS_SANITIZER_TSAN_INTERFACE)
+extern "C" void __tsan_acquire(void* addr);
+extern "C" void __tsan_release(void* addr);
+#  endif // defined(BOOST_ASIO_HAS_SANITIZER_TSAN_INTERFACE)
 # endif // defined(BOOST_ASIO_HAS_THREAD_SANITIZER)
 #endif // !defined(BOOST_ASIO_HAS_THREADS)
 

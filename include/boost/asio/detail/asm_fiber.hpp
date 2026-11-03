@@ -26,9 +26,9 @@
 #include <boost/asio/detail/memory.hpp>
 #include <boost/asio/detail/type_traits.hpp>
 
-#if defined(BOOST_ASIO_HAS_THREAD_SANITIZER)
+#if defined(BOOST_ASIO_HAS_THREAD_SANITIZER_FIBERS)
 # include <sanitizer/tsan_interface.h>
-#endif // defined(BOOST_ASIO_HAS_THREAD_SANITIZER)
+#endif // defined(BOOST_ASIO_HAS_THREAD_SANITIZER_FIBERS)
 
 #if defined(BOOST_ASIO_HAS_ADDRESS_SANITIZER)
 # if defined(BOOST_ASIO_HAS_SANITIZER_COMMON_INTERFACE_DEFS)
@@ -125,9 +125,9 @@ class fiber_control_block_base
 public:
   fiber_control_block_base() noexcept
   {
-#if defined(BOOST_ASIO_HAS_THREAD_SANITIZER)
+#if defined(BOOST_ASIO_HAS_THREAD_SANITIZER_FIBERS)
     tsan_fiber_ = 0;
-#endif // defined(BOOST_ASIO_HAS_THREAD_SANITIZER)
+#endif // defined(BOOST_ASIO_HAS_THREAD_SANITIZER_FIBERS)
 #if defined(BOOST_ASIO_HAS_VALGRIND)
     valgrind_stack_id_ = 0;
 #endif // defined(BOOST_ASIO_HAS_VALGRIND)
@@ -143,9 +143,9 @@ public:
   // Must not be called from a context running on the stack being released.
   virtual void destroy() = 0;
 
-#if defined(BOOST_ASIO_HAS_THREAD_SANITIZER)
+#if defined(BOOST_ASIO_HAS_THREAD_SANITIZER_FIBERS)
   void* tsan_fiber_;
-#endif // defined(BOOST_ASIO_HAS_THREAD_SANITIZER)
+#endif // defined(BOOST_ASIO_HAS_THREAD_SANITIZER_FIBERS)
 
 #if defined(BOOST_ASIO_HAS_VALGRIND)
   unsigned valgrind_stack_id_;
@@ -246,9 +246,9 @@ public:
     stack_bottom_ = stack_bottom;
     stack_size_ = sctx.size;
 #endif // defined(BOOST_ASIO_HAS_ADDRESS_SANITIZER)
-#if defined(BOOST_ASIO_HAS_THREAD_SANITIZER)
+#if defined(BOOST_ASIO_HAS_THREAD_SANITIZER_FIBERS)
     block->tsan_fiber_ = __tsan_create_fiber(0);
-#endif // defined(BOOST_ASIO_HAS_THREAD_SANITIZER)
+#endif // defined(BOOST_ASIO_HAS_THREAD_SANITIZER_FIBERS)
 #if defined(BOOST_ASIO_HAS_VALGRIND)
     block->valgrind_stack_id_ = VALGRIND_STACK_REGISTER(stack_bottom, sctx.sp);
 #endif // defined(BOOST_ASIO_HAS_VALGRIND)
@@ -342,10 +342,10 @@ private:
     fiber_control_block_base* block =
       static_cast<fiber_control_block_base*>(t.data);
 
-#if defined(BOOST_ASIO_HAS_THREAD_SANITIZER)
+#if defined(BOOST_ASIO_HAS_THREAD_SANITIZER_FIBERS)
     if (block->tsan_fiber_)
       __tsan_switch_to_fiber(block->tsan_fiber_, 0);
-#endif // defined(BOOST_ASIO_HAS_THREAD_SANITIZER)
+#endif // defined(BOOST_ASIO_HAS_THREAD_SANITIZER_FIBERS)
 
     fiber_switch_result caller;
     caller.context = t;
@@ -422,9 +422,9 @@ private:
   static fiber_switch_result switch_to(
       const fiber_switch_target& target, void* data)
   {
-#if defined(BOOST_ASIO_HAS_THREAD_SANITIZER)
+#if defined(BOOST_ASIO_HAS_THREAD_SANITIZER_FIBERS)
     void* self = __tsan_get_current_fiber();
-#endif // defined(BOOST_ASIO_HAS_THREAD_SANITIZER)
+#endif // defined(BOOST_ASIO_HAS_THREAD_SANITIZER_FIBERS)
 #if defined(BOOST_ASIO_HAS_ADDRESS_SANITIZER)
     void* fake_stack = 0;
     __sanitizer_start_switch_fiber(&fake_stack, target.bottom, target.size);
@@ -434,9 +434,9 @@ private:
     fiber_context dest = { target.sp, data };
     r.context = swap_fiber_context(dest);
 
-#if defined(BOOST_ASIO_HAS_THREAD_SANITIZER)
+#if defined(BOOST_ASIO_HAS_THREAD_SANITIZER_FIBERS)
     __tsan_switch_to_fiber(self, 0);
-#endif // defined(BOOST_ASIO_HAS_THREAD_SANITIZER)
+#endif // defined(BOOST_ASIO_HAS_THREAD_SANITIZER_FIBERS)
 #if defined(BOOST_ASIO_HAS_ADDRESS_SANITIZER)
     __sanitizer_finish_switch_fiber(fake_stack, &r.from_bottom, &r.from_size);
 #endif // defined(BOOST_ASIO_HAS_ADDRESS_SANITIZER)
@@ -492,9 +492,9 @@ public:
   {
     StackAllocator alloc(static_cast<StackAllocator&&>(alloc_));
     stack_context_type sctx = sctx_;
-#if defined(BOOST_ASIO_HAS_THREAD_SANITIZER)
+#if defined(BOOST_ASIO_HAS_THREAD_SANITIZER_FIBERS)
     void* tsan_fiber = tsan_fiber_;
-#endif // defined(BOOST_ASIO_HAS_THREAD_SANITIZER)
+#endif // defined(BOOST_ASIO_HAS_THREAD_SANITIZER_FIBERS)
 #if defined(BOOST_ASIO_HAS_VALGRIND)
     unsigned valgrind_stack_id = valgrind_stack_id_;
 #endif // defined(BOOST_ASIO_HAS_VALGRIND)
@@ -503,10 +503,10 @@ public:
     VALGRIND_STACK_DEREGISTER(valgrind_stack_id);
 #endif // defined(BOOST_ASIO_HAS_VALGRIND)
     alloc.deallocate(sctx);
-#if defined(BOOST_ASIO_HAS_THREAD_SANITIZER)
+#if defined(BOOST_ASIO_HAS_THREAD_SANITIZER_FIBERS)
     if (tsan_fiber)
       __tsan_destroy_fiber(tsan_fiber);
-#endif // defined(BOOST_ASIO_HAS_THREAD_SANITIZER)
+#endif // defined(BOOST_ASIO_HAS_THREAD_SANITIZER_FIBERS)
   }
 
 private:
