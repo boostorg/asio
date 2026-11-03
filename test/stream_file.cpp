@@ -16,8 +16,13 @@
 // Test that header file is self-contained.
 #include <boost/asio/stream_file.hpp>
 
+#include <cstdio>
+#include <cstring>
+#include <vector>
 #include "archetypes/async_result.hpp"
 #include <boost/asio/io_context.hpp>
+#include <boost/asio/read.hpp>
+#include <boost/asio/write.hpp>
 #include "unit_test.hpp"
 
 // stream_file_compile test
@@ -166,8 +171,128 @@ void test()
 
 } // namespace stream_file_compile
 
+// stream_file_runtime test
+// ~~~~~~~~~~~~~~~~~~~~~~~~
+// The following tests check that the file position advances by the number of
+// bytes transferred when using multi-buffer sequences.
+
+namespace stream_file_runtime {
+
+#if defined(BOOST_ASIO_HAS_FILE)
+const char path[] = "stream_file_runtime.tmp";
+const char data[] = "abcdefgh";
+#endif // defined(BOOST_ASIO_HAS_FILE)
+
+void sync_test()
+{
+#if defined(BOOST_ASIO_HAS_FILE)
+  using namespace boost::asio;
+
+  io_context ioc;
+  boost::system::error_code ec;
+
+  std::vector<const_buffer> write_buffers;
+  write_buffers.push_back(buffer(data, 0));
+  write_buffers.push_back(buffer(data, 3));
+  write_buffers.push_back(buffer(data + 3, 5));
+
+  stream_file file(ioc, path, stream_file::write_only
+      | stream_file::create | stream_file::truncate);
+  std::size_t n = write(file, write_buffers);
+  BOOST_ASIO_CHECK(n == 8);
+  BOOST_ASIO_CHECK(file.seek(0, stream_file::seek_cur) == 8);
+  file.close();
+
+  char read_data[16] = "";
+  std::vector<mutable_buffer> read_buffers;
+  read_buffers.push_back(buffer(read_data, 0));
+  read_buffers.push_back(buffer(read_data, 3));
+  read_buffers.push_back(buffer(read_data + 3, 5));
+
+  file.open(path, stream_file::read_only);
+  BOOST_ASIO_CHECK(file.size() == 8);
+  n = read(file, read_buffers);
+  BOOST_ASIO_CHECK(n == 8);
+  BOOST_ASIO_CHECK(memcmp(read_data, data, 8) == 0);
+  BOOST_ASIO_CHECK(file.seek(0, stream_file::seek_cur) == 8);
+
+  file.seek(0, stream_file::seek_set);
+  n = file.read_some(buffer(read_data), ec);
+  BOOST_ASIO_CHECK(n == 8);
+  BOOST_ASIO_CHECK(!ec);
+  BOOST_ASIO_CHECK(file.seek(0, stream_file::seek_cur) == 8);
+
+  n = file.read_some(buffer(read_data), ec);
+  BOOST_ASIO_CHECK(n == 0);
+  BOOST_ASIO_CHECK(ec == boost::asio::error::eof);
+  BOOST_ASIO_CHECK(file.seek(0, stream_file::seek_cur) == 8);
+
+  file.close();
+  std::remove(path);
+#endif // defined(BOOST_ASIO_HAS_FILE)
+}
+
+void async_test()
+{
+#if defined(BOOST_ASIO_HAS_FILE)
+  using namespace boost::asio;
+
+  io_context ioc;
+  boost::system::error_code ec;
+  std::size_t n = 0;
+
+  std::vector<const_buffer> write_buffers;
+  write_buffers.push_back(buffer(data, 0));
+  write_buffers.push_back(buffer(data, 3));
+  write_buffers.push_back(buffer(data + 3, 5));
+
+  stream_file file(ioc, path, stream_file::write_only
+      | stream_file::create | stream_file::truncate);
+  async_write(file, write_buffers,
+      [&](const boost::system::error_code& e, std::size_t bytes)
+      {
+        ec = e;
+        n = bytes;
+      });
+  ioc.run();
+  BOOST_ASIO_CHECK(!ec);
+  BOOST_ASIO_CHECK(n == 8);
+  BOOST_ASIO_CHECK(file.seek(0, stream_file::seek_cur) == 8);
+  file.close();
+
+  char read_data[16] = "";
+  std::vector<mutable_buffer> read_buffers;
+  read_buffers.push_back(buffer(read_data, 0));
+  read_buffers.push_back(buffer(read_data, 3));
+  read_buffers.push_back(buffer(read_data + 3, 5));
+
+  file.open(path, stream_file::read_only);
+  BOOST_ASIO_CHECK(file.size() == 8);
+  n = 0;
+  async_read(file, read_buffers,
+      [&](const boost::system::error_code& e, std::size_t bytes)
+      {
+        ec = e;
+        n = bytes;
+      });
+  ioc.restart();
+  ioc.run();
+  BOOST_ASIO_CHECK(!ec);
+  BOOST_ASIO_CHECK(n == 8);
+  BOOST_ASIO_CHECK(memcmp(read_data, data, 8) == 0);
+  BOOST_ASIO_CHECK(file.seek(0, stream_file::seek_cur) == 8);
+
+  file.close();
+  std::remove(path);
+#endif // defined(BOOST_ASIO_HAS_FILE)
+}
+
+} // namespace stream_file_runtime
+
 BOOST_ASIO_TEST_SUITE
 (
   "stream_file",
   BOOST_ASIO_COMPILE_TEST_CASE(stream_file_compile::test)
+  BOOST_ASIO_TEST_CASE(stream_file_runtime::sync_test)
+  BOOST_ASIO_TEST_CASE(stream_file_runtime::async_test)
 )
