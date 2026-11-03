@@ -16,6 +16,10 @@
 // Test that header file is self-contained.
 #include <boost/asio/fwd.hpp>
 
+#if defined(BOOST_ASIO_HAS_CO_AWAIT)
+boost::asio::awaitable<void> fwd_awaitable();
+#endif // defined(BOOST_ASIO_HAS_CO_AWAIT)
+
 // Test that forward declarations don't conflict with full declarations.
 #include <boost/asio.hpp>
 
