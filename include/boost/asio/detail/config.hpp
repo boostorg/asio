@@ -1835,9 +1835,9 @@
 // Standard library support for snprintf.
 #if !defined(BOOST_ASIO_HAS_SNPRINTF)
 # if !defined(BOOST_ASIO_DISABLE_SNPRINTF)
-#  if defined(__APPLE__)
+#  if defined(__APPLE__) || defined(__OpenBSD__)
 #   define BOOST_ASIO_HAS_SNPRINTF 1
-#  endif // defined(__APPLE__)
+#  endif // defined(__APPLE__) || defined(__OpenBSD__)
 # endif // !defined(BOOST_ASIO_DISABLE_SNPRINTF)
 #endif // !defined(BOOST_ASIO_HAS_SNPRINTF)
 
