@@ -88,21 +88,12 @@ inline bool executor_is_candidate(
 // false at compile time otherwise, collapsing back to the unconditional
 // generic dispatch of before, and without deriving the association.
 //
-// Getting this wrong can only cost performance at the call site in
-// immediate_handler_work, not correctness: in both branches there the
-// completion is still dispatched through the correctly-derived immediate
-// executor (nothing here substitutes a different executor, it only chooses
-// how to reach the same one), and initiate_dispatch_with_executor's own
-// is_work_dispatcher_required check already collapses to the identical
-// boost::asio::prefer(...).execute(...) call for the unspecialised-associated-
-// executor continuation functions asio's own read_op/write_op/etc. construct
-// internally. Confirmed empirically, by forcing this function to always
-// return true, which produces no observable change against the fast-path
-// tests, or the composed-operation tests, only a measured -1172
-// instructions/RTT. A false positive would therefore not misdirect a
-// completion. It is guarded this carefully even so, since
-// immediate_handler_work is also reachable with other, non-I/O internal
-// Function shapes where that guarantee has not been re-verified.
+// A true result lets immediate_handler_work skip deriving the immediate
+// executor, and instead execute the completion on the candidate with
+// blocking.never required. A false negative only costs performance. A false
+// positive runs the completion on the wrong executor, so the result must be
+// exact. Even when it is, the shortcut also bypasses the handler's associated
+// executor, so the caller must separately check that it is the candidate too.
 template <typename T, typename Candidate>
 enable_if_t<
   is_base_of<execution::detail::any_executor_base,
