@@ -729,6 +729,21 @@
 # endif // !defined(BOOST_ASIO_DISABLE_STD_INVOKE_RESULT)
 #endif // !defined(BOOST_ASIO_HAS_STD_INVOKE_RESULT)
 
+// Standard library has is_final.
+#if !defined(BOOST_ASIO_HAS_STD_IS_FINAL)
+# if !defined(BOOST_ASIO_DISABLE_STD_IS_FINAL)
+#  if defined(BOOST_ASIO_MSVC)
+#   if (_MSC_VER >= 1900 && _MSVC_LANG >= 201402)
+#    define BOOST_ASIO_HAS_STD_IS_FINAL 1
+#   endif // (_MSC_VER >= 1900 && _MSVC_LANG >= 201402)
+#  else // defined(BOOST_ASIO_MSVC)
+#   if (__cplusplus >= 201402) && (__cpp_lib_is_final >= 201402)
+#    define BOOST_ASIO_HAS_STD_IS_FINAL 1
+#   endif // (__cplusplus >= 201402) && (__cpp_lib_is_final >= 201402)
+#  endif // defined(BOOST_ASIO_MSVC)
+# endif // !defined(BOOST_ASIO_DISABLE_STD_IS_FINAL)
+#endif // !defined(BOOST_ASIO_HAS_STD_IS_FINAL)
+
 // Standard library support for std::any.
 #if !defined(BOOST_ASIO_HAS_STD_ANY)
 # if !defined(BOOST_ASIO_DISABLE_STD_ANY)
