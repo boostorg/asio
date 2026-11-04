@@ -188,6 +188,36 @@ void test_dynamic_string_read_until_char()
   BOOST_ASIO_CHECK(length == 25);
 }
 
+void test_read_until_last_byte()
+{
+  // The delimiter is the last byte read.
+  static const size_t read_lengths[] = { 1, 10, 100 };
+
+  boost::asio::io_context ioc;
+  test_stream s(ioc);
+  boost::system::error_code ec;
+
+  for (size_t i = 0; i < sizeof(read_lengths) / sizeof(read_lengths[0]); ++i)
+  {
+    std::string data;
+    s.reset(read_data, sizeof(read_data) - 1);
+    s.next_read_length(read_lengths[i]);
+    std::size_t length = boost::asio::read_until(s,
+        boost::asio::dynamic_buffer(data), 'z', ec);
+    BOOST_ASIO_CHECK(!ec);
+    BOOST_ASIO_CHECK(length == sizeof(read_data) - 1);
+
+#if !defined(BOOST_ASIO_NO_DYNAMIC_BUFFER_V1)
+    boost::asio::streambuf sb;
+    s.reset(read_data, sizeof(read_data) - 1);
+    s.next_read_length(read_lengths[i]);
+    length = boost::asio::read_until(s, sb, 'z', ec);
+    BOOST_ASIO_CHECK(!ec);
+    BOOST_ASIO_CHECK(length == sizeof(read_data) - 1);
+#endif // !defined(BOOST_ASIO_NO_DYNAMIC_BUFFER_V1)
+  }
+}
+
 void test_streambuf_read_until_char()
 {
 #if !defined(BOOST_ASIO_NO_DYNAMIC_BUFFER_V1)
@@ -1707,6 +1737,7 @@ BOOST_ASIO_TEST_SUITE
 (
   "read_until",
   BOOST_ASIO_TEST_CASE(test_dynamic_string_read_until_char)
+  BOOST_ASIO_TEST_CASE(test_read_until_last_byte)
   BOOST_ASIO_TEST_CASE(test_streambuf_read_until_char)
   BOOST_ASIO_TEST_CASE(test_dynamic_string_read_until_string)
   BOOST_ASIO_TEST_CASE(test_streambuf_read_until_string)
