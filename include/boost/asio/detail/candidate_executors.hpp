@@ -76,24 +76,8 @@ inline bool executor_is_candidate(
   return executor_is_candidate_query<T, Candidate>::get(t, candidate);
 }
 
-// Whether a handler's immediate executor is exactly what
-// get_associated_immediate_executor would derive BY DEFAULT for the candidate
-// executor, i.e. the candidate itself with blocking.never required on it.
-// That is the comparison a customised immediate executor (e.g. via
-// bind_immediate_executor, applied to the handler BEFORE it was erased into
-// an any_completion_handler, so no compile-time trait can see it) has to pass
-// at runtime instead. Only attempted when the association is a polymorphic
-// executor (so the comparison itself is erasure-safe) and the candidate
-// supports blocking.never, as forming the default at all requires. It is
-// false at compile time otherwise, collapsing back to the unconditional
-// generic dispatch of before, and without deriving the association.
-//
-// A true result lets immediate_handler_work skip deriving the immediate
-// executor, and instead execute the completion on the candidate with
-// blocking.never required. A false negative only costs performance. A false
-// positive runs the completion on the wrong executor, so the result must be
-// exact. Even when it is, the shortcut also bypasses the handler's associated
-// executor, so the caller must separately check that it is the candidate too.
+// Helper function to determine at runtime whether a polymorphic immediate
+// executor is the candidate with blocking.never required.
 template <typename T, typename Candidate>
 enable_if_t<
   is_base_of<execution::detail::any_executor_base,
