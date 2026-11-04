@@ -1641,12 +1641,16 @@
 #  define BOOST_ASIO_UNUSED_VARIABLE __attribute__((__unused__))
 # endif // (__GNUC__ >= 4)
 #endif // defined(__GNUC__)
-#if defined(__clang__) && !defined(BOOST_ASIO_UNUSED_VARIABLE)
-# define BOOST_ASIO_UNUSED_VARIABLE __attribute__((__unused__))
-#endif // defined(__clang__) && !defined(BOOST_ASIO_UNUSED_VARIABLE)
 #if !defined(BOOST_ASIO_UNUSED_VARIABLE)
 # define BOOST_ASIO_UNUSED_VARIABLE
 #endif // !defined(BOOST_ASIO_UNUSED_VARIABLE)
+
+// Some versions of clang generate spurious warnings about unused fields.
+#if defined(__clang__)
+# define BOOST_ASIO_UNUSED_MEMBER __attribute__((__unused__))
+#else // defined(__clang__)
+# define BOOST_ASIO_UNUSED_MEMBER
+#endif // defined(__clang__)
 
 // Helper macro to prevent a static object from being destroyed at exit.
 #if defined(__has_cpp_attribute)

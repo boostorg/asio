@@ -327,7 +327,7 @@ private:
 
   private:
     friend class executor;
-    const bool fast_dispatch_ BOOST_ASIO_UNUSED_VARIABLE;
+    const bool fast_dispatch_ BOOST_ASIO_UNUSED_MEMBER;
   };
 
   // Helper function to check and return the implementation pointer.
