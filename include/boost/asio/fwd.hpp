@@ -83,6 +83,16 @@ class any_completion_executor;
 
 #endif // defined(BOOST_ASIO_USE_TS_EXECUTOR_AS_DEFAULT)
 
+#if defined(BOOST_ASIO_HAS_CO_AWAIT)
+#if !defined(BOOST_ASIO_AWAITABLE_FWD_DECL)
+#define BOOST_ASIO_AWAITABLE_FWD_DECL
+
+template <typename T, typename Executor = any_io_executor>
+class awaitable;
+
+#endif // !defined(BOOST_ASIO_AWAITABLE_FWD_DECL)
+#endif // defined(BOOST_ASIO_HAS_CO_AWAIT)
+
 template <typename... Signatures>
 class any_completion_handler;
 

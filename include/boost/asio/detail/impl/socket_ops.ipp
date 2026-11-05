@@ -125,19 +125,6 @@ inline void assign_sys_error(boost::system::error_code& ec, int err)
         boost::asio::error::get_system_category());
 }
 
-template <typename SockLenType>
-inline socket_type call_accept(SockLenType msghdr::*,
-    socket_type s, void* addr, std::size_t* addrlen)
-{
-  SockLenType tmp_addrlen = addrlen ? (SockLenType)*addrlen : 0;
-  socket_type result = ::accept(s,
-      static_cast<socket_addr_type*>(addr),
-      addrlen ? &tmp_addrlen : 0);
-  if (addrlen)
-    *addrlen = (std::size_t)tmp_addrlen;
-  return result;
-}
-
 socket_type accept(socket_type s, void* addr,
     std::size_t* addrlen, boost::system::error_code& ec)
 {
@@ -147,7 +134,13 @@ socket_type accept(socket_type s, void* addr,
     return invalid_socket;
   }
 
-  socket_type new_s = call_accept(&msghdr::msg_namelen, s, addr, addrlen);
+  typedef decltype(msghdr::msg_namelen) socklen_type;
+  socklen_type tmp_addrlen = addrlen ? (socklen_type)*addrlen : 0;
+  socket_type new_s = ::accept(s,
+      static_cast<socket_addr_type*>(addr),
+      addrlen ? &tmp_addrlen : 0);
+  if (addrlen)
+    *addrlen = (std::size_t)tmp_addrlen;
   get_last_error(ec, new_s == invalid_socket);
   if (new_s == invalid_socket)
     return new_s;
@@ -304,14 +297,6 @@ bool non_blocking_accept(socket_type s,
 
 #endif // defined(BOOST_ASIO_HAS_IOCP)
 
-template <typename SockLenType>
-inline int call_bind(SockLenType msghdr::*,
-    socket_type s, const void* addr, std::size_t addrlen)
-{
-  return ::bind(s, static_cast<const socket_addr_type*>(addr),
-      (SockLenType)addrlen);
-}
-
 int bind(socket_type s, const void* addr,
     std::size_t addrlen, boost::system::error_code& ec)
 {
@@ -321,7 +306,9 @@ int bind(socket_type s, const void* addr,
     return socket_error_retval;
   }
 
-  int result = call_bind(&msghdr::msg_namelen, s, addr, addrlen);
+  typedef decltype(msghdr::msg_namelen) socklen_type;
+  int result = ::bind(s, static_cast<const socket_addr_type*>(addr),
+      (socklen_type)addrlen);
   get_last_error(ec, result != 0);
   return result;
 }
@@ -557,14 +544,6 @@ int shutdown(socket_type s, int what, boost::system::error_code& ec)
   return result;
 }
 
-template <typename SockLenType>
-inline int call_connect(SockLenType msghdr::*,
-    socket_type s, const void* addr, std::size_t addrlen)
-{
-  return ::connect(s, static_cast<const socket_addr_type*>(addr),
-      (SockLenType)addrlen);
-}
-
 int connect(socket_type s, const void* addr,
     std::size_t addrlen, boost::system::error_code& ec)
 {
@@ -574,7 +553,9 @@ int connect(socket_type s, const void* addr,
     return socket_error_retval;
   }
 
-  int result = call_connect(&msghdr::msg_namelen, s, addr, addrlen);
+  typedef decltype(msghdr::msg_namelen) socklen_type;
+  int result = ::connect(s, static_cast<const socket_addr_type*>(addr),
+      (socklen_type)addrlen);
   get_last_error(ec, result != 0);
 #if defined(__linux__)
   if (result != 0 && ec == boost::asio::error::try_again)
@@ -1438,18 +1419,6 @@ signed_size_type recvfrom(socket_type s, buf* bufs, size_t count,
   return result;
 }
 
-template <typename SockLenType>
-inline signed_size_type call_recvfrom(SockLenType msghdr::*, socket_type s,
-    void* data, size_t size, int flags, void* addr, std::size_t* addrlen)
-{
-  SockLenType tmp_addrlen = addrlen ? (SockLenType)*addrlen : 0;
-  signed_size_type result = ::recvfrom(s, static_cast<char*>(data), size,
-      flags, static_cast<socket_addr_type*>(addr), addrlen ? &tmp_addrlen : 0);
-  if (addrlen)
-    *addrlen = (std::size_t)tmp_addrlen;
-  return result;
-}
-
 inline signed_size_type recvfrom1(socket_type s, void* data, size_t size,
     int flags, void* addr, std::size_t* addrlen, int& err)
 {
@@ -1476,8 +1445,12 @@ inline signed_size_type recvfrom1(socket_type s, void* data, size_t size,
   err = 0;
   return bytes_transferred;
 #else // defined(BOOST_ASIO_WINDOWS) || defined(BOOST_ASIO_CYGWIN_W32_SOCKETS)
-  signed_size_type result = call_recvfrom(&msghdr::msg_namelen,
-      s, data, size, flags, addr, addrlen);
+  typedef decltype(msghdr::msg_namelen) socklen_type;
+  socklen_type tmp_addrlen = addrlen ? (socklen_type)*addrlen : 0;
+  signed_size_type result = ::recvfrom(s, static_cast<char*>(data), size,
+      flags, static_cast<socket_addr_type*>(addr), addrlen ? &tmp_addrlen : 0);
+  if (addrlen)
+    *addrlen = (std::size_t)tmp_addrlen;
   err = socket_ops::get_last_sys_error(result < 0);
   return result;
 #endif // defined(BOOST_ASIO_WINDOWS) || defined(BOOST_ASIO_CYGWIN_W32_SOCKETS)
@@ -1822,10 +1795,14 @@ inline signed_size_type recvmmsg(socket_type s, mmsghdr* bufs,
     size_t count, int flags, int& err)
 {
 #if (defined(__MACH__) && defined(__APPLE__))
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+# if defined(__clang__)
+#  pragma clang diagnostic push
+#  pragma clang diagnostic ignored "-Wdeprecated-declarations"
+# endif // defined(__clang__)
   signed_size_type result = ::syscall(SYS_recvmsg_x, s, bufs, count, flags);
-#pragma clang diagnostic pop
+# if defined(__clang__)
+#  pragma clang diagnostic pop
+# endif // defined(__clang__)
 #else // (defined(__MACH__) && defined(__APPLE__))
   flags |= MSG_WAITFORONE;
   signed_size_type result = ::recvmmsg(s, bufs, count, flags, nullptr);
@@ -2367,15 +2344,6 @@ signed_size_type sendto(socket_type s, const buf* bufs,
   return result;
 }
 
-template <typename SockLenType>
-inline signed_size_type call_sendto(SockLenType msghdr::*,
-    socket_type s, const void* data, size_t size, int flags,
-    const void* addr, std::size_t addrlen)
-{
-  return ::sendto(s, static_cast<char*>(const_cast<void*>(data)), size, flags,
-      static_cast<const socket_addr_type*>(addr), (SockLenType)addrlen);
-}
-
 inline signed_size_type sendto1(socket_type s, const void* data,
     size_t size, int flags, const void* addr,
     std::size_t addrlen, int& err)
@@ -2402,8 +2370,10 @@ inline signed_size_type sendto1(socket_type s, const void* data,
 #if defined(BOOST_ASIO_HAS_MSG_NOSIGNAL)
   flags |= MSG_NOSIGNAL;
 #endif // defined(BOOST_ASIO_HAS_MSG_NOSIGNAL)
-  signed_size_type result = call_sendto(&msghdr::msg_namelen,
-      s, data, size, flags, addr, addrlen);
+  typedef decltype(msghdr::msg_namelen) socklen_type;
+  signed_size_type result = ::sendto(s,
+      static_cast<char*>(const_cast<void*>(data)), size, flags,
+      static_cast<const socket_addr_type*>(addr), (socklen_type)addrlen);
   err = socket_ops::get_last_sys_error(result < 0);
   return result;
 #endif // defined(BOOST_ASIO_WINDOWS) || defined(BOOST_ASIO_CYGWIN_W32_SOCKETS)
@@ -2589,10 +2559,14 @@ inline signed_size_type sendmmsg(socket_type s, mmsghdr* bufs,
   flags |= MSG_NOSIGNAL;
 #endif // defined(BOOST_ASIO_HAS_MSG_NOSIGNAL)
 #if (defined(__MACH__) && defined(__APPLE__))
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+# if defined(__clang__)
+#  pragma clang diagnostic push
+#  pragma clang diagnostic ignored "-Wdeprecated-declarations"
+# endif // defined(__clang__)
   signed_size_type result = ::syscall(SYS_sendmsg_x, s, bufs, count, flags);
-#pragma clang diagnostic pop
+# if defined(__clang__)
+#  pragma clang diagnostic pop
+# endif // defined(__clang__)
 #else // (defined(__MACH__) && defined(__APPLE__))
   signed_size_type result = ::sendmmsg(s, bufs, count, flags);
 #endif // (defined(__MACH__) && defined(__APPLE__))
@@ -2830,15 +2804,6 @@ socket_type socket(int af, int type, int protocol,
 #endif
 }
 
-template <typename SockLenType>
-inline int call_setsockopt(SockLenType msghdr::*,
-    socket_type s, int level, int optname,
-    const void* optval, std::size_t optlen)
-{
-  return ::setsockopt(s, level, optname,
-      (const char*)optval, (SockLenType)optlen);
-}
-
 int setsockopt(socket_type s, state_type& state, int level, int optname,
     const void* optval, std::size_t optlen, boost::system::error_code& ec)
 {
@@ -2893,8 +2858,9 @@ int setsockopt(socket_type s, state_type& state, int level, int optname,
   ec = boost::asio::error::fault;
   return socket_error_retval;
 #else // defined(__BORLANDC__)
-  int result = call_setsockopt(&msghdr::msg_namelen,
-        s, level, optname, optval, optlen);
+  typedef decltype(msghdr::msg_namelen) socklen_type;
+  int result = ::setsockopt(s, level, optname,
+      (const char*)optval, (socklen_type)optlen);
   get_last_error(ec, result != 0);
   if (result == 0)
   {
@@ -2906,25 +2872,14 @@ int setsockopt(socket_type s, state_type& state, int level, int optname,
     if ((state & datagram_oriented)
         && level == SOL_SOCKET && optname == SO_REUSEADDR)
     {
-      call_setsockopt(&msghdr::msg_namelen, s,
-          SOL_SOCKET, SO_REUSEPORT, optval, optlen);
+      ::setsockopt(s, SOL_SOCKET, SO_REUSEPORT,
+          (const char*)optval, (socklen_type)optlen);
     }
 #endif
   }
 
   return result;
 #endif // defined(__BORLANDC__)
-}
-
-template <typename SockLenType>
-inline int call_getsockopt(SockLenType msghdr::*,
-    socket_type s, int level, int optname,
-    void* optval, std::size_t* optlen)
-{
-  SockLenType tmp_optlen = (SockLenType)*optlen;
-  int result = ::getsockopt(s, level, optname, (char*)optval, &tmp_optlen);
-  *optlen = (std::size_t)tmp_optlen;
-  return result;
 }
 
 int getsockopt(socket_type s, state_type state, int level, int optname,
@@ -2987,8 +2942,10 @@ int getsockopt(socket_type s, state_type state, int level, int optname,
   ec = boost::asio::error::fault;
   return socket_error_retval;
 #elif defined(BOOST_ASIO_WINDOWS) || defined(BOOST_ASIO_CYGWIN_W32_SOCKETS)
-  int result = call_getsockopt(&msghdr::msg_namelen,
-        s, level, optname, optval, optlen);
+  typedef decltype(msghdr::msg_namelen) socklen_type;
+  socklen_type tmp_optlen = (socklen_type)*optlen;
+  int result = ::getsockopt(s, level, optname, (char*)optval, &tmp_optlen);
+  *optlen = (std::size_t)tmp_optlen;
   get_last_error(ec, result != 0);
   if (result != 0 && level == IPPROTO_IPV6 && optname == IPV6_V6ONLY
       && ec.value() == WSAENOPROTOOPT && *optlen == sizeof(DWORD))
@@ -3003,8 +2960,10 @@ int getsockopt(socket_type s, state_type state, int level, int optname,
   }
   return result;
 #else // defined(BOOST_ASIO_WINDOWS) || defined(BOOST_ASIO_CYGWIN_W32_SOCKETS)
-  int result = call_getsockopt(&msghdr::msg_namelen,
-        s, level, optname, optval, optlen);
+  typedef decltype(msghdr::msg_namelen) socklen_type;
+  socklen_type tmp_optlen = (socklen_type)*optlen;
+  int result = ::getsockopt(s, level, optname, (char*)optval, &tmp_optlen);
+  *optlen = (std::size_t)tmp_optlen;
   get_last_error(ec, result != 0);
 #if defined(__linux__)
   if (result == 0 && level == SOL_SOCKET && *optlen == sizeof(int)
@@ -3020,17 +2979,6 @@ int getsockopt(socket_type s, state_type state, int level, int optname,
 #endif // defined(__linux__)
   return result;
 #endif // defined(BOOST_ASIO_WINDOWS) || defined(BOOST_ASIO_CYGWIN_W32_SOCKETS)
-}
-
-template <typename SockLenType>
-inline int call_getpeername(SockLenType msghdr::*,
-    socket_type s, void* addr, std::size_t* addrlen)
-{
-  SockLenType tmp_addrlen = (SockLenType)*addrlen;
-  int result = ::getpeername(s,
-      static_cast<socket_addr_type*>(addr), &tmp_addrlen);
-  *addrlen = (std::size_t)tmp_addrlen;
-  return result;
 }
 
 int getpeername(socket_type s, void* addr, std::size_t* addrlen,
@@ -3070,19 +3018,12 @@ int getpeername(socket_type s, void* addr, std::size_t* addrlen,
 #endif // defined(BOOST_ASIO_WINDOWS) && !defined(BOOST_ASIO_WINDOWS_APP)
        // || defined(BOOST_ASIO_CYGWIN_W32_SOCKETS)
 
-  int result = call_getpeername(&msghdr::msg_namelen, s, addr, addrlen);
-  get_last_error(ec, result != 0);
-  return result;
-}
-
-template <typename SockLenType>
-inline int call_getsockname(SockLenType msghdr::*,
-    socket_type s, void* addr, std::size_t* addrlen)
-{
-  SockLenType tmp_addrlen = (SockLenType)*addrlen;
-  int result = ::getsockname(s,
+  typedef decltype(msghdr::msg_namelen) socklen_type;
+  socklen_type tmp_addrlen = (socklen_type)*addrlen;
+  int result = ::getpeername(s,
       static_cast<socket_addr_type*>(addr), &tmp_addrlen);
   *addrlen = (std::size_t)tmp_addrlen;
+  get_last_error(ec, result != 0);
   return result;
 }
 
@@ -3095,7 +3036,11 @@ int getsockname(socket_type s, void* addr,
     return socket_error_retval;
   }
 
-  int result = call_getsockname(&msghdr::msg_namelen, s, addr, addrlen);
+  typedef decltype(msghdr::msg_namelen) socklen_type;
+  socklen_type tmp_addrlen = (socklen_type)*addrlen;
+  int result = ::getsockname(s,
+      static_cast<socket_addr_type*>(addr), &tmp_addrlen);
+  *addrlen = (std::size_t)tmp_addrlen;
   get_last_error(ec, result != 0);
   return result;
 }
@@ -3295,7 +3240,7 @@ const char* inet_ntop(int af, const void* src, char* dest, size_t length,
     ec = boost::asio::error::invalid_argument;
   if (result != 0 && af == BOOST_ASIO_OS_DEF(AF_INET6) && scope_id != 0)
   {
-    using namespace std; // For strcat and sprintf.
+    using namespace std; // For strlen, strncat and sprintf.
     char if_name[(IF_NAMESIZE > 21 ? IF_NAMESIZE : 21) + 1] = "%";
     const in6_addr_type* ipv6_address = static_cast<const in6_addr_type*>(src);
     bool is_link_local = ((ipv6_address->s6_addr[0] == 0xfe)
@@ -3311,7 +3256,9 @@ const char* inet_ntop(int af, const void* src, char* dest, size_t length,
 #else // defined(BOOST_ASIO_HAS_SECURE_RTL)
       sprintf(if_name + 1, "%lu", scope_id);
 #endif // defined(BOOST_ASIO_HAS_SECURE_RTL)
-    strcat(dest, if_name);
+    std::size_t dest_length = strlen(dest);
+    if (dest_length < length)
+      strncat(dest, if_name, length - dest_length - 1);
   }
   return result;
 #endif // defined(BOOST_ASIO_WINDOWS) || defined(BOOST_ASIO_CYGWIN_W32_SOCKETS)
@@ -4649,7 +4596,8 @@ boost::system::error_code getnameinfo(const void* addr,
 #else
   clear_last_error();
   int error = ::getnameinfo(static_cast<const socket_addr_type*>(addr),
-      addrlen, host, hostlen, serv, servlen, flags);
+      static_cast<socklen_t>(addrlen), host, static_cast<socklen_t>(hostlen),
+      serv, static_cast<socklen_t>(servlen), flags);
   return ec = translate_addrinfo_error(error);
 #endif
 }

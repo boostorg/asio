@@ -518,6 +518,42 @@
 #endif // defined(BOOST_ASIO_HAS_THREAD_SANITIZER)
        //   || defined(BOOST_ASIO_HAS_ADDRESS_SANITIZER)
 
+// Thread sanitizer interface header. Older toolchains (before clang 5 and
+// gcc 8) provide the thread sanitizer runtime without this header.
+#if defined(BOOST_ASIO_HAS_THREAD_SANITIZER)
+# if !defined(BOOST_ASIO_HAS_SANITIZER_TSAN_INTERFACE)
+#  if defined(__has_include)
+#   if __has_include(<sanitizer/tsan_interface.h>)
+#    define BOOST_ASIO_HAS_SANITIZER_TSAN_INTERFACE 1
+#   endif // __has_include(<sanitizer/tsan_interface.h>)
+#  endif // defined(__has_include)
+# endif // !defined(BOOST_ASIO_HAS_SANITIZER_TSAN_INTERFACE)
+#endif // defined(BOOST_ASIO_HAS_THREAD_SANITIZER)
+
+// Thread sanitizer support for fibers. The runtime provides this from clang 9
+// and gcc 10.
+#if defined(BOOST_ASIO_HAS_THREAD_SANITIZER)
+# if !defined(BOOST_ASIO_HAS_THREAD_SANITIZER_FIBERS)
+#  if !defined(BOOST_ASIO_DISABLE_THREAD_SANITIZER_FIBERS)
+#   if defined(BOOST_ASIO_HAS_SANITIZER_TSAN_INTERFACE)
+#    if defined(__clang__)
+#     if defined(__apple_build_version__)
+#      if (__clang_major__ >= 12)
+#       define BOOST_ASIO_HAS_THREAD_SANITIZER_FIBERS 1
+#      endif // (__clang_major__ >= 12)
+#     elif (__clang_major__ >= 9)
+#      define BOOST_ASIO_HAS_THREAD_SANITIZER_FIBERS 1
+#     endif // (__clang_major__ >= 9)
+#    elif defined(__GNUC__)
+#     if (__GNUC__ >= 10)
+#      define BOOST_ASIO_HAS_THREAD_SANITIZER_FIBERS 1
+#     endif // (__GNUC__ >= 10)
+#    endif // defined(__GNUC__)
+#   endif // defined(BOOST_ASIO_HAS_SANITIZER_TSAN_INTERFACE)
+#  endif // !defined(BOOST_ASIO_DISABLE_THREAD_SANITIZER_FIBERS)
+# endif // !defined(BOOST_ASIO_HAS_THREAD_SANITIZER_FIBERS)
+#endif // defined(BOOST_ASIO_HAS_THREAD_SANITIZER)
+
 // Valgrind support. Must be explicitly enabled.
 #if !defined(BOOST_ASIO_HAS_VALGRIND)
 # if defined(BOOST_ASIO_ENABLE_VALGRIND)
@@ -692,6 +728,21 @@
 #  endif // defined(BOOST_ASIO_MSVC)
 # endif // !defined(BOOST_ASIO_DISABLE_STD_INVOKE_RESULT)
 #endif // !defined(BOOST_ASIO_HAS_STD_INVOKE_RESULT)
+
+// Standard library has is_final.
+#if !defined(BOOST_ASIO_HAS_STD_IS_FINAL)
+# if !defined(BOOST_ASIO_DISABLE_STD_IS_FINAL)
+#  if defined(BOOST_ASIO_MSVC)
+#   if (_MSC_VER >= 1900 && _MSVC_LANG >= 201402)
+#    define BOOST_ASIO_HAS_STD_IS_FINAL 1
+#   endif // (_MSC_VER >= 1900 && _MSVC_LANG >= 201402)
+#  else // defined(BOOST_ASIO_MSVC)
+#   if (__cplusplus >= 201402) && (__cpp_lib_is_final >= 201402)
+#    define BOOST_ASIO_HAS_STD_IS_FINAL 1
+#   endif // (__cplusplus >= 201402) && (__cpp_lib_is_final >= 201402)
+#  endif // defined(BOOST_ASIO_MSVC)
+# endif // !defined(BOOST_ASIO_DISABLE_STD_IS_FINAL)
+#endif // !defined(BOOST_ASIO_HAS_STD_IS_FINAL)
 
 // Standard library support for std::any.
 #if !defined(BOOST_ASIO_HAS_STD_ANY)
@@ -1594,6 +1645,13 @@
 # define BOOST_ASIO_UNUSED_VARIABLE
 #endif // !defined(BOOST_ASIO_UNUSED_VARIABLE)
 
+// Some versions of clang generate spurious warnings about unused fields.
+#if defined(__clang__)
+# define BOOST_ASIO_UNUSED_MEMBER __attribute__((__unused__))
+#else // defined(__clang__)
+# define BOOST_ASIO_UNUSED_MEMBER
+#endif // defined(__clang__)
+
 // Helper macro to prevent a static object from being destroyed at exit.
 #if defined(__has_cpp_attribute)
 # if __has_cpp_attribute(clang::no_destroy)
@@ -1832,9 +1890,9 @@
 // Standard library support for snprintf.
 #if !defined(BOOST_ASIO_HAS_SNPRINTF)
 # if !defined(BOOST_ASIO_DISABLE_SNPRINTF)
-#  if defined(__APPLE__)
+#  if defined(__APPLE__) || defined(__OpenBSD__)
 #   define BOOST_ASIO_HAS_SNPRINTF 1
-#  endif // defined(__APPLE__)
+#  endif // defined(__APPLE__) || defined(__OpenBSD__)
 # endif // !defined(BOOST_ASIO_DISABLE_SNPRINTF)
 #endif // !defined(BOOST_ASIO_HAS_SNPRINTF)
 

@@ -48,11 +48,20 @@ template <typename, typename> class awaitable_frame;
 
 } // namespace detail
 
+#if !defined(BOOST_ASIO_AWAITABLE_FWD_DECL)
+#define BOOST_ASIO_AWAITABLE_FWD_DECL
+
+// Forward declaration with defaulted arguments.
+template <typename T, typename Executor = any_io_executor>
+class awaitable;
+
+#endif // !defined(BOOST_ASIO_AWAITABLE_FWD_DECL)
+
 /// The return type of a coroutine or asynchronous operation.
 /**
  * @sa @ref overview_cpp20_coroutines "C++20 coroutines support"
  */
-template <typename T, typename Executor = any_io_executor>
+template <typename T, typename Executor>
 class BOOST_ASIO_NODISCARD awaitable
 {
 public:

@@ -16,6 +16,7 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include <algorithm>
+#include <cstring>
 #include <string>
 #include <vector>
 #include <utility>
@@ -40,6 +41,27 @@ BOOST_ASIO_INLINE_NAMESPACE_BEGIN
 
 namespace detail
 {
+  // Finds the first occurrence of a delimiter character.
+  template <typename Iterator>
+  inline Iterator find_delim(Iterator first, Iterator last, char delim)
+  {
+    return std::find(first, last, delim);
+  }
+
+  // Overload of find_delim for a single contiguous buffer.
+  inline buffers_iterator<const_buffer> find_delim(
+      buffers_iterator<const_buffer> first,
+      buffers_iterator<const_buffer> last, char delim)
+  {
+    using namespace std; // For memchr.
+    std::size_t length = last - first;
+    if (length == 0)
+      return last;
+    const char* begin = &*first;
+    const void* p = memchr(begin, delim, length);
+    return p ? first + (static_cast<const char*>(p) - begin) : last;
+  }
+
   // Algorithm that finds a subsequence of equal values in a sequence. Returns
   // (iterator,true) if a full match was found, in which case the iterator
   // points to the beginning of the match. Returns (iterator,false) if a
@@ -131,7 +153,7 @@ std::size_t read_until(SyncReadStream& s,
     iterator end = iterator::end(data_buffers);
 
     // Look for a match.
-    iterator iter = std::find(start_pos, end, delim);
+    iterator iter = detail::find_delim(start_pos, end, delim);
     if (iter != end)
     {
       // Found a match. We're done.
@@ -531,7 +553,7 @@ std::size_t read_until(SyncReadStream& s, DynamicBuffer_v2 buffers,
     iterator end = iterator::end(data_buffers);
 
     // Look for a match.
-    iterator iter = std::find(start_pos, end, delim);
+    iterator iter = detail::find_delim(start_pos, end, delim);
     if (iter != end)
     {
       // Found a match. We're done.
@@ -864,7 +886,7 @@ namespace detail
             iterator end = iterator::end(data_buffers);
 
             // Look for a match.
-            iterator iter = std::find(start_pos, end, delim_);
+            iterator iter = detail::find_delim(start_pos, end, delim_);
             if (iter != end)
             {
               // Found a match. We're done.
@@ -1735,7 +1757,7 @@ namespace detail
             iterator end = iterator::end(data_buffers);
 
             // Look for a match.
-            iterator iter = std::find(start_pos, end, delim_);
+            iterator iter = detail::find_delim(start_pos, end, delim_);
             if (iter != end)
             {
               // Found a match. We're done.

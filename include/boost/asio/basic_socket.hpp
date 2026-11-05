@@ -843,7 +843,7 @@ public:
    * @code
    * boost::asio::ip::tcp::socket socket(my_context);
    * boost::asio::ip::tcp::endpoint endpoint(
-   *     boost::asio::ip::address::from_string("1.2.3.4"), 12345);
+   *     boost::asio::ip::make_address("1.2.3.4"), 12345);
    * socket.connect(endpoint);
    * @endcode
    */
@@ -879,7 +879,7 @@ public:
    * @code
    * boost::asio::ip::tcp::socket socket(my_context);
    * boost::asio::ip::tcp::endpoint endpoint(
-   *     boost::asio::ip::address::from_string("1.2.3.4"), 12345);
+   *     boost::asio::ip::make_address("1.2.3.4"), 12345);
    * boost::system::error_code ec;
    * socket.connect(endpoint, ec);
    * if (ec)
@@ -948,7 +948,7 @@ public:
    *
    * boost::asio::ip::tcp::socket socket(my_context);
    * boost::asio::ip::tcp::endpoint endpoint(
-   *     boost::asio::ip::address::from_string("1.2.3.4"), 12345);
+   *     boost::asio::ip::make_address("1.2.3.4"), 12345);
    * socket.async_connect(endpoint, connect_handler);
    * @endcode
    *

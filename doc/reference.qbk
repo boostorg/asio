@@ -486,6 +486,56 @@ The type of the associated allocator.
   typedef Allocator allocator_type;
 
 
+[heading Types]
+[table
+  [[Name][Description]]
+
+  [
+
+    [[link boost_asio.reference.channel_traits__container [*container]]]
+    [Determine the container for the specified elements. ]
+  
+  ]
+
+  [
+
+    [[link boost_asio.reference.channel_traits__rebind [*rebind]]]
+    [Rebind the traits to a new set of signatures. ]
+  
+  ]
+
+  [
+
+    [[link boost_asio.reference.channel_traits.receive_cancelled_signature [*receive_cancelled_signature]]]
+    [The signature of a channel cancellation notification. ]
+  
+  ]
+
+  [
+
+    [[link boost_asio.reference.channel_traits.receive_closed_signature [*receive_closed_signature]]]
+    [The signature of a channel closed notification. ]
+  
+  ]
+
+]
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link boost_asio.reference.channel_traits.invoke_receive_cancelled [*invoke_receive_cancelled]] [static]]
+    [Invoke the specified handler with a cancellation notification. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.channel_traits.invoke_receive_closed [*invoke_receive_closed]] [static]]
+    [Invoke the specified handler with a closed notification. ]
+  ]
+  
+]
+
 
 [heading Requirements]
 
@@ -16152,7 +16202,7 @@ Regardless of whether the asynchronous operation completes immediately or not, t
 
   boost::asio::ip::tcp::socket socket(my_context);
   boost::asio::ip::tcp::endpoint endpoint(
-      boost::asio::ip::address::from_string("1.2.3.4"), 12345);
+      boost::asio::ip::make_address("1.2.3.4"), 12345);
   socket.async_connect(endpoint, connect_handler);
 
 
@@ -17731,7 +17781,7 @@ Regardless of whether the asynchronous operation completes immediately or not, t
 To send a single data buffer use the [link boost_asio.reference.buffer `buffer`] function as follows: 
 
   boost::asio::ip::udp::endpoint destination(
-      boost::asio::ip::address::from_string("1.2.3.4"), 12345);
+      boost::asio::ip::make_address("1.2.3.4"), 12345);
   socket.async_send_to(
       boost::asio::buffer(data, size), destination, handler);
 
@@ -19364,7 +19414,7 @@ The socket is automatically opened if it is not already open. If the connect fai
 
   boost::asio::ip::tcp::socket socket(my_context);
   boost::asio::ip::tcp::endpoint endpoint(
-      boost::asio::ip::address::from_string("1.2.3.4"), 12345);
+      boost::asio::ip::make_address("1.2.3.4"), 12345);
   socket.connect(endpoint);
 
 
@@ -19414,7 +19464,7 @@ The socket is automatically opened if it is not already open. If the connect fai
 
   boost::asio::ip::tcp::socket socket(my_context);
   boost::asio::ip::tcp::endpoint endpoint(
-      boost::asio::ip::address::from_string("1.2.3.4"), 12345);
+      boost::asio::ip::make_address("1.2.3.4"), 12345);
   boost::system::error_code ec;
   socket.connect(endpoint, ec);
   if (ec)
@@ -24654,7 +24704,7 @@ The number of bytes sent.
 To send a single data buffer use the [link boost_asio.reference.buffer `buffer`] function as follows: 
 
   boost::asio::ip::udp::endpoint destination(
-      boost::asio::ip::address::from_string("1.2.3.4"), 12345);
+      boost::asio::ip::make_address("1.2.3.4"), 12345);
   socket.send_to(boost::asio::buffer(data, size), destination);
 
 
@@ -27740,7 +27790,7 @@ An eager operation adds no thread safety to the operation that it wraps. A cance
 
 [heading See Also]
       
-Eager operations 
+[link boost_asio.overview.composition.eager Eager operations] 
 
 
 
@@ -35235,7 +35285,7 @@ Regardless of whether the asynchronous operation completes immediately or not, t
 
   boost::asio::ip::tcp::socket socket(my_context);
   boost::asio::ip::tcp::endpoint endpoint(
-      boost::asio::ip::address::from_string("1.2.3.4"), 12345);
+      boost::asio::ip::make_address("1.2.3.4"), 12345);
   socket.async_connect(endpoint, connect_handler);
 
 
@@ -35880,7 +35930,7 @@ Regardless of whether the asynchronous operation completes immediately or not, t
 To send a single data buffer use the [link boost_asio.reference.buffer `buffer`] function as follows: 
 
   boost::asio::ip::udp::endpoint destination(
-      boost::asio::ip::address::from_string("1.2.3.4"), 12345);
+      boost::asio::ip::make_address("1.2.3.4"), 12345);
   socket.async_send_to(
       boost::asio::buffer(data, size), destination, handler);
 
@@ -37341,7 +37391,7 @@ The socket is automatically opened if it is not already open. If the connect fai
 
   boost::asio::ip::tcp::socket socket(my_context);
   boost::asio::ip::tcp::endpoint endpoint(
-      boost::asio::ip::address::from_string("1.2.3.4"), 12345);
+      boost::asio::ip::make_address("1.2.3.4"), 12345);
   socket.connect(endpoint);
 
 
@@ -37391,7 +37441,7 @@ The socket is automatically opened if it is not already open. If the connect fai
 
   boost::asio::ip::tcp::socket socket(my_context);
   boost::asio::ip::tcp::endpoint endpoint(
-      boost::asio::ip::address::from_string("1.2.3.4"), 12345);
+      boost::asio::ip::make_address("1.2.3.4"), 12345);
   boost::system::error_code ec;
   socket.connect(endpoint, ec);
   if (ec)
@@ -41608,7 +41658,7 @@ The number of bytes sent.
 To send a single data buffer use the [link boost_asio.reference.buffer `buffer`] function as follows: 
 
   boost::asio::ip::udp::endpoint destination(
-      boost::asio::ip::address::from_string("1.2.3.4"), 12345);
+      boost::asio::ip::make_address("1.2.3.4"), 12345);
   socket.send_to(boost::asio::buffer(data, size), destination);
 
 
@@ -44848,7 +44898,7 @@ Regardless of whether the asynchronous operation completes immediately or not, t
 
   boost::asio::ip::tcp::socket socket(my_context);
   boost::asio::ip::tcp::endpoint endpoint(
-      boost::asio::ip::address::from_string("1.2.3.4"), 12345);
+      boost::asio::ip::make_address("1.2.3.4"), 12345);
   socket.async_connect(endpoint, connect_handler);
 
 
@@ -46503,7 +46553,7 @@ The socket is automatically opened if it is not already open. If the connect fai
 
   boost::asio::ip::tcp::socket socket(my_context);
   boost::asio::ip::tcp::endpoint endpoint(
-      boost::asio::ip::address::from_string("1.2.3.4"), 12345);
+      boost::asio::ip::make_address("1.2.3.4"), 12345);
   socket.connect(endpoint);
 
 
@@ -46553,7 +46603,7 @@ The socket is automatically opened if it is not already open. If the connect fai
 
   boost::asio::ip::tcp::socket socket(my_context);
   boost::asio::ip::tcp::endpoint endpoint(
-      boost::asio::ip::address::from_string("1.2.3.4"), 12345);
+      boost::asio::ip::make_address("1.2.3.4"), 12345);
   boost::system::error_code ec;
   socket.connect(endpoint, ec);
   if (ec)
@@ -55883,7 +55933,7 @@ Regardless of whether the asynchronous operation completes immediately or not, t
 
   boost::asio::ip::tcp::socket socket(my_context);
   boost::asio::ip::tcp::endpoint endpoint(
-      boost::asio::ip::address::from_string("1.2.3.4"), 12345);
+      boost::asio::ip::make_address("1.2.3.4"), 12345);
   socket.async_connect(endpoint, connect_handler);
 
 
@@ -57233,7 +57283,7 @@ The socket is automatically opened if it is not already open. If the connect fai
 
   boost::asio::ip::tcp::socket socket(my_context);
   boost::asio::ip::tcp::endpoint endpoint(
-      boost::asio::ip::address::from_string("1.2.3.4"), 12345);
+      boost::asio::ip::make_address("1.2.3.4"), 12345);
   socket.connect(endpoint);
 
 
@@ -57280,7 +57330,7 @@ The socket is automatically opened if it is not already open. If the connect fai
 
   boost::asio::ip::tcp::socket socket(my_context);
   boost::asio::ip::tcp::endpoint endpoint(
-      boost::asio::ip::address::from_string("1.2.3.4"), 12345);
+      boost::asio::ip::make_address("1.2.3.4"), 12345);
   boost::system::error_code ec;
   socket.connect(endpoint, ec);
   if (ec)
@@ -73590,7 +73640,7 @@ Regardless of whether the asynchronous operation completes immediately or not, t
 
   boost::asio::ip::tcp::socket socket(my_context);
   boost::asio::ip::tcp::endpoint endpoint(
-      boost::asio::ip::address::from_string("1.2.3.4"), 12345);
+      boost::asio::ip::make_address("1.2.3.4"), 12345);
   socket.async_connect(endpoint, connect_handler);
 
 
@@ -75518,7 +75568,7 @@ The socket is automatically opened if it is not already open. If the connect fai
 
   boost::asio::ip::tcp::socket socket(my_context);
   boost::asio::ip::tcp::endpoint endpoint(
-      boost::asio::ip::address::from_string("1.2.3.4"), 12345);
+      boost::asio::ip::make_address("1.2.3.4"), 12345);
   socket.connect(endpoint);
 
 
@@ -75568,7 +75618,7 @@ The socket is automatically opened if it is not already open. If the connect fai
 
   boost::asio::ip::tcp::socket socket(my_context);
   boost::asio::ip::tcp::endpoint endpoint(
-      boost::asio::ip::address::from_string("1.2.3.4"), 12345);
+      boost::asio::ip::make_address("1.2.3.4"), 12345);
   boost::system::error_code ec;
   socket.connect(endpoint, ec);
   if (ec)
@@ -89071,6 +89121,56 @@ The allocator type used for allocating storage for the buffers container.
 
   typedef Allocator allocator_type;
 
+
+[heading Types]
+[table
+  [[Name][Description]]
+
+  [
+
+    [[link boost_asio.reference.channel_traits__container [*container]]]
+    [Determine the container for the specified elements. ]
+  
+  ]
+
+  [
+
+    [[link boost_asio.reference.channel_traits__rebind [*rebind]]]
+    [Rebind the traits to a new set of signatures. ]
+  
+  ]
+
+  [
+
+    [[link boost_asio.reference.channel_traits.receive_cancelled_signature [*receive_cancelled_signature]]]
+    [The signature of a channel cancellation notification. ]
+  
+  ]
+
+  [
+
+    [[link boost_asio.reference.channel_traits.receive_closed_signature [*receive_closed_signature]]]
+    [The signature of a channel closed notification. ]
+  
+  ]
+
+]
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link boost_asio.reference.channel_traits.invoke_receive_cancelled [*invoke_receive_cancelled]] [static]]
+    [Invoke the specified handler with a cancellation notification. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.channel_traits.invoke_receive_closed [*invoke_receive_closed]] [static]]
+    [Invoke the specified handler with a closed notification. ]
+  ]
+  
+]
 
 
 [heading Requirements]
@@ -107106,7 +107206,7 @@ An eager operation adds no thread safety to the operation that it wraps. A cance
 
 [heading See Also]
       
-Eager operations 
+[link boost_asio.overview.composition.eager Eager operations] 
 
 
 
@@ -107219,7 +107319,7 @@ The token is idempotent. Applying it to an operation that has already been eager
 
 [heading See Also]
       
-Eager operations 
+[link boost_asio.overview.composition.eager Eager operations] 
 
 
 
@@ -107238,6 +107338,56 @@ The allocator type. The allocator is used when constructing the shared state for
 
   typedef Allocator allocator_type;
 
+
+[heading Types]
+[table
+  [[Name][Description]]
+
+  [
+
+    [[link boost_asio.reference.channel_traits__container [*container]]]
+    [Determine the container for the specified elements. ]
+  
+  ]
+
+  [
+
+    [[link boost_asio.reference.channel_traits__rebind [*rebind]]]
+    [Rebind the traits to a new set of signatures. ]
+  
+  ]
+
+  [
+
+    [[link boost_asio.reference.channel_traits.receive_cancelled_signature [*receive_cancelled_signature]]]
+    [The signature of a channel cancellation notification. ]
+  
+  ]
+
+  [
+
+    [[link boost_asio.reference.channel_traits.receive_closed_signature [*receive_closed_signature]]]
+    [The signature of a channel closed notification. ]
+  
+  ]
+
+]
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link boost_asio.reference.channel_traits.invoke_receive_cancelled [*invoke_receive_cancelled]] [static]]
+    [Invoke the specified handler with a cancellation notification. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.channel_traits.invoke_receive_closed [*invoke_receive_closed]] [static]]
+    [Invoke the specified handler with a closed notification. ]
+  ]
+  
+]
 
 
 [heading Requirements]
@@ -107562,7 +107712,7 @@ The token is idempotent. Applying it to an operation that has already been eager
 
 [heading See Also]
       
-Eager operations 
+[link boost_asio.overview.composition.eager Eager operations] 
 
 
 
@@ -132601,18 +132751,20 @@ Exception thrown when trying to add a service object to an [link boost_asio.refe
 Provides core I/O functionality. 
 
 
-  template<
-      typename Allocator,
-      uintptr_t Bits>
   class io_context :
-    public execution_context,
-    basic_executor_type detail::io_context_bits,
-    Allocator
+    public execution_context
 
 
 [heading Types]
 [table
   [[Name][Description]]
+
+  [
+
+    [[link boost_asio.reference.io_context__basic_executor_type [*basic_executor_type]]]
+    [Executor implementation type used to submit functions to an io_context. ]
+  
+  ]
 
   [
 
@@ -132656,33 +132808,6 @@ Provides core I/O functionality.
   [[Name][Description]]
 
   [
-    [[link boost_asio.reference.io_context.basic_executor_type [*basic_executor_type]]]
-    [Copy constructor. 
-     [hr]
-     Move constructor. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.io_context.context [*context]]]
-    [Obtain the underlying execution context. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.io_context.defer [*defer]]]
-    [Request the io_context to invoke the given function object. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.io_context.dispatch [*dispatch]]]
-    [Request the io_context to invoke the given function object. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.io_context.execute [*execute]]]
-    [Execution function. ]
-  ]
-  
-  [
     [[link boost_asio.reference.io_context.get_executor [*get_executor]]]
     [Obtains the executor associated with the io_context. ]
   ]
@@ -132698,23 +132823,6 @@ Provides core I/O functionality.
   ]
   
   [
-    [[link boost_asio.reference.io_context.on_work_finished [*on_work_finished]]]
-    [Inform the io_context that some work is no longer outstanding. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.io_context.on_work_started [*on_work_started]]]
-    [Inform the io_context that it has some outstanding work to do. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.io_context.operator_eq_ [*operator=]]]
-    [Assignment operator. 
-     [hr]
-     Move assignment operator. ]
-  ]
-  
-  [
     [[link boost_asio.reference.io_context.poll [*poll]]]
     [Run the io_context object's event processing loop to execute ready handlers. ]
   ]
@@ -132722,50 +132830,6 @@ Provides core I/O functionality.
   [
     [[link boost_asio.reference.io_context.poll_one [*poll_one]]]
     [Run the io_context object's event processing loop to execute one ready handler. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.io_context.post [*post]]]
-    [Request the io_context to invoke the given function object. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.io_context.query [*query]]]
-    [Query the current value of the context property. 
-     [hr]
-     Query the current value of the blocking property. 
-     [hr]
-     Query the current value of the relationship property. 
-     [hr]
-     Query the current value of the allocator property. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.io_context.query__static [*query]] [static]]
-    [Query the current value of the mapping property. 
-     [hr]
-     Query the current value of the inline_exception_handling property. 
-     [hr]
-     Query the current value of the outstanding_work property. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.io_context.require [*require]]]
-    [Obtain an executor with the blocking.possibly property. 
-     [hr]
-     Obtain an executor with the blocking.never property. 
-     [hr]
-     Obtain an executor with the relationship.fork property. 
-     [hr]
-     Obtain an executor with the relationship.continuation property. 
-     [hr]
-     Obtain an executor with the outstanding_work.tracked property. 
-     [hr]
-     Obtain an executor with the outstanding_work.untracked property. 
-     [hr]
-     Obtain an executor with the specified allocator property. 
-     [hr]
-     Obtain an executor with the default allocator property. ]
   ]
   
   [
@@ -132804,11 +132868,6 @@ Provides core I/O functionality.
   ]
   
   [
-    [[link boost_asio.reference.io_context.running_in_this_thread [*running_in_this_thread]]]
-    [Determine whether the io_context is running in the current thread. ]
-  ]
-  
-  [
     [[link boost_asio.reference.io_context.stop [*stop]]]
     [Stop the io_context object's event processing loop. ]
   ]
@@ -132821,11 +132880,6 @@ Provides core I/O functionality.
   [
     [[link boost_asio.reference.io_context.wrap [*wrap]]]
     [(Deprecated: Use boost::asio::bind_executor().) Create a new handler that automatically dispatches the wrapped handler on the io_context. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.io_context._basic_executor_type [*~basic_executor_type]] [destructor]]
-    [Destructor. ]
   ]
   
   [
@@ -132851,39 +132905,16 @@ Provides core I/O functionality.
   
 ]
 
-[heading Data Members]
-[table
-  [[Name][Description]]
-
-  [
-    [[link boost_asio.reference.io_context.basic_executor_type [*basic_executor_type]]]
-    []
-  ]
-
-]
-
 [heading Friends]
 [table
   [[Name][Description]]
 
-  [
-    [[link boost_asio.reference.io_context.operator_not__eq_ [*operator!=]]]
-    [Compare two executors for inequality. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.io_context.operator_eq__eq_ [*operator==]]]
-    [Compare two executors for equality. ]
-  ]
-  
   [
     [[link boost_asio.reference.io_context.use_service [*use_service]]]
     []
   ]
   
 ]
-
-Executor implementation type used to submit functions to an [link boost_asio.reference.io_context `io_context`].
 
 The [link boost_asio.reference.io_context `io_context`] class provides the core I/O functionality for users of the asynchronous I/O objects, including:
 
@@ -133019,82 +133050,6 @@ Alternatively, if the application requires that all operations and handlers be a
 ['Convenience header: ][^boost/asio.hpp]
 
 
-[section:basic_executor_type io_context::basic_executor_type]
-
-[indexterm2 boost_asio.indexterm.io_context.basic_executor_type..basic_executor_type..io_context] 
-
-  class BOOST_ASIO_EMPTY_BASES basic_executor_type;
-
-
-
-[endsect]
-
-
-[section:basic_executor_type io_context::basic_executor_type]
-
-[indexterm2 boost_asio.indexterm.io_context.basic_executor_type..basic_executor_type..io_context] 
-Copy constructor. 
-
-
-  ``[link boost_asio.reference.io_context.basic_executor_type.overload1 basic_executor_type]``(
-      const basic_executor_type & other);
-  ``  [''''&raquo;''' [link boost_asio.reference.io_context.basic_executor_type.overload1 more...]]``
-
-
-Move constructor. 
-
-
-  ``[link boost_asio.reference.io_context.basic_executor_type.overload2 basic_executor_type]``(
-      basic_executor_type && other);
-  ``  [''''&raquo;''' [link boost_asio.reference.io_context.basic_executor_type.overload2 more...]]``
-
-
-[section:overload1 io_context::basic_executor_type (1 of 2 overloads)]
-
-
-Copy constructor. 
-
-
-  basic_executor_type(
-      const basic_executor_type & other);
-
-
-
-[endsect]
-
-
-
-[section:overload2 io_context::basic_executor_type (2 of 2 overloads)]
-
-
-Move constructor. 
-
-
-  basic_executor_type(
-      basic_executor_type && other);
-
-
-
-[endsect]
-
-
-[endsect]
-
-
-[section:context io_context::context]
-
-[indexterm2 boost_asio.indexterm.io_context.context..context..io_context] 
-Obtain the underlying execution context. 
-
-
-  io_context & context() const;
-
-
-
-[endsect]
-
-
-
 [section:count_type io_context::count_type]
 
 [indexterm2 boost_asio.indexterm.io_context.count_type..count_type..io_context] 
@@ -133110,47 +133065,6 @@ The type used to count the number of handlers executed by the context.
 ['Header: ][^boost/asio/io_context.hpp]
 
 ['Convenience header: ][^boost/asio.hpp]
-
-
-[endsect]
-
-
-
-[section:defer io_context::defer]
-
-[indexterm2 boost_asio.indexterm.io_context.defer..defer..io_context] 
-Request the [link boost_asio.reference.io_context `io_context`] to invoke the given function object. 
-
-
-  template<
-      typename Function,
-      typename OtherAllocator>
-  void defer(
-      Function && f,
-      const OtherAllocator & a) const;
-
-
-This function is used to ask the [link boost_asio.reference.io_context `io_context`] to execute the given function object. The function object will never be executed inside `defer()`. Instead, it will be scheduled to run on the [link boost_asio.reference.io_context `io_context`].
-
-If the current thread belongs to the [link boost_asio.reference.io_context `io_context`], `defer()` will delay scheduling the function object until the current thread returns control to the pool.
-
-
-[heading Parameters]
-    
-
-[variablelist
-  
-[[f][The function object to be called. The executor will make a copy of the handler object as required. The function signature of the function object must be: 
-``
-  void function(); 
-``
-]]
-
-[[a][An allocator that may be used by the executor to allocate the internal storage needed for function invocation. ]]
-
-]
-
-
 
 
 [endsect]
@@ -133181,62 +133095,6 @@ This function is implemented as follows:
 
 
 
-[section:dispatch io_context::dispatch]
-
-[indexterm2 boost_asio.indexterm.io_context.dispatch..dispatch..io_context] 
-Request the [link boost_asio.reference.io_context `io_context`] to invoke the given function object. 
-
-
-  template<
-      typename Function,
-      typename OtherAllocator>
-  void dispatch(
-      Function && f,
-      const OtherAllocator & a) const;
-
-
-This function is used to ask the [link boost_asio.reference.io_context `io_context`] to execute the given function object. If the current thread is running the [link boost_asio.reference.io_context `io_context`], `dispatch()` executes the function before returning. Otherwise, the function will be scheduled to run on the [link boost_asio.reference.io_context `io_context`].
-
-
-[heading Parameters]
-    
-
-[variablelist
-  
-[[f][The function object to be called. The executor will make a copy of the handler object as required. The function signature of the function object must be: 
-``
-  void function(); 
-``
-]]
-
-[[a][An allocator that may be used by the executor to allocate the internal storage needed for function invocation. ]]
-
-]
-
-
-
-
-[endsect]
-
-
-
-[section:execute io_context::execute]
-
-[indexterm2 boost_asio.indexterm.io_context.execute..execute..io_context] 
-Execution function. 
-
-
-  template<
-      typename Function>
-  void execute(
-      Function && f) const;
-
-
-
-[endsect]
-
-
-
 [section:executor_type io_context::executor_type]
 
 [indexterm2 boost_asio.indexterm.io_context.executor_type..executor_type..io_context] 
@@ -133245,6 +133103,126 @@ Executor used to submit functions to an [link boost_asio.reference.io_context `i
 
   typedef basic_executor_type< std::allocator< void >, 0 > executor_type;
 
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link boost_asio.reference.io_context__basic_executor_type.basic_executor_type [*basic_executor_type]] [constructor]]
+    [Copy constructor. 
+     [hr]
+     Move constructor. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.io_context__basic_executor_type.context [*context]]]
+    [Obtain the underlying execution context. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.io_context__basic_executor_type.defer [*defer]]]
+    [Request the io_context to invoke the given function object. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.io_context__basic_executor_type.dispatch [*dispatch]]]
+    [Request the io_context to invoke the given function object. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.io_context__basic_executor_type.execute [*execute]]]
+    [Execution function. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.io_context__basic_executor_type.on_work_finished [*on_work_finished]]]
+    [Inform the io_context that some work is no longer outstanding. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.io_context__basic_executor_type.on_work_started [*on_work_started]]]
+    [Inform the io_context that it has some outstanding work to do. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.io_context__basic_executor_type.operator_eq_ [*operator=]]]
+    [Assignment operator. 
+     [hr]
+     Move assignment operator. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.io_context__basic_executor_type.post [*post]]]
+    [Request the io_context to invoke the given function object. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.io_context__basic_executor_type.query [*query]]]
+    [Query the current value of the context property. 
+     [hr]
+     Query the current value of the blocking property. 
+     [hr]
+     Query the current value of the relationship property. 
+     [hr]
+     Query the current value of the allocator property. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.io_context__basic_executor_type.query__static [*query]] [static]]
+    [Query the current value of the mapping property. 
+     [hr]
+     Query the current value of the inline_exception_handling property. 
+     [hr]
+     Query the current value of the outstanding_work property. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.io_context__basic_executor_type.require [*require]]]
+    [Obtain an executor with the blocking.possibly property. 
+     [hr]
+     Obtain an executor with the blocking.never property. 
+     [hr]
+     Obtain an executor with the relationship.fork property. 
+     [hr]
+     Obtain an executor with the relationship.continuation property. 
+     [hr]
+     Obtain an executor with the outstanding_work.tracked property. 
+     [hr]
+     Obtain an executor with the outstanding_work.untracked property. 
+     [hr]
+     Obtain an executor with the specified allocator property. 
+     [hr]
+     Obtain an executor with the default allocator property. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.io_context__basic_executor_type.running_in_this_thread [*running_in_this_thread]]]
+    [Determine whether the io_context is running in the current thread. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.io_context__basic_executor_type._basic_executor_type [*~basic_executor_type]] [destructor]]
+    [Destructor. ]
+  ]
+  
+]
+
+[heading Friends]
+[table
+  [[Name][Description]]
+
+  [
+    [[link boost_asio.reference.io_context__basic_executor_type.operator_not__eq_ [*operator!=]]]
+    [Compare two executors for inequality. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.io_context__basic_executor_type.operator_eq__eq_ [*operator==]]]
+    [Compare two executors for equality. ]
+  ]
+  
+]
 
 
 [heading Requirements]
@@ -133595,136 +133573,6 @@ For each service object `svc` in the [link boost_asio.reference.execution_contex
 
 
 
-[section:on_work_finished io_context::on_work_finished]
-
-[indexterm2 boost_asio.indexterm.io_context.on_work_finished..on_work_finished..io_context] 
-Inform the [link boost_asio.reference.io_context `io_context`] that some work is no longer outstanding. 
-
-
-  void on_work_finished() const;
-
-
-This function is used to inform the [link boost_asio.reference.io_context `io_context`] that some work has finished. Once the count of unfinished work reaches zero, the [link boost_asio.reference.io_context `io_context`] is stopped and the [link boost_asio.reference.io_context.run `run()`] and [link boost_asio.reference.io_context.run_one `run_one()`] functions may exit. 
-
-
-[endsect]
-
-
-
-[section:on_work_started io_context::on_work_started]
-
-[indexterm2 boost_asio.indexterm.io_context.on_work_started..on_work_started..io_context] 
-Inform the [link boost_asio.reference.io_context `io_context`] that it has some outstanding work to do. 
-
-
-  void on_work_started() const;
-
-
-This function is used to inform the [link boost_asio.reference.io_context `io_context`] that some work has begun. This ensures that the [link boost_asio.reference.io_context `io_context`]'s [link boost_asio.reference.io_context.run `run()`] and [link boost_asio.reference.io_context.run_one `run_one()`] functions do not exit while the work is underway. 
-
-
-[endsect]
-
-
-
-[section:operator_not__eq_ io_context::operator!=]
-
-[indexterm2 boost_asio.indexterm.io_context.operator_not__eq_..operator!=..io_context] 
-Compare two executors for inequality. 
-
-
-  bool operator!=(
-      const basic_executor_type & a,
-      const basic_executor_type & b);
-
-
-Two executors are equal if they refer to the same underlying [link boost_asio.reference.io_context `io_context`]. 
-
-[heading Requirements]
-
-['Header: ][^boost/asio/io_context.hpp]
-
-['Convenience header: ][^boost/asio.hpp]
-
-
-[endsect]
-
-
-[section:operator_eq_ io_context::operator=]
-
-[indexterm2 boost_asio.indexterm.io_context.operator_eq_..operator=..io_context] 
-Assignment operator. 
-
-
-  basic_executor_type & ``[link boost_asio.reference.io_context.operator_eq_.overload1 operator=]``(
-      const basic_executor_type & other);
-  ``  [''''&raquo;''' [link boost_asio.reference.io_context.operator_eq_.overload1 more...]]``
-
-
-Move assignment operator. 
-
-
-  basic_executor_type & ``[link boost_asio.reference.io_context.operator_eq_.overload2 operator=]``(
-      basic_executor_type && other);
-  ``  [''''&raquo;''' [link boost_asio.reference.io_context.operator_eq_.overload2 more...]]``
-
-
-[section:overload1 io_context::operator= (1 of 2 overloads)]
-
-
-Assignment operator. 
-
-
-  basic_executor_type & operator=(
-      const basic_executor_type & other);
-
-
-
-[endsect]
-
-
-
-[section:overload2 io_context::operator= (2 of 2 overloads)]
-
-
-Move assignment operator. 
-
-
-  basic_executor_type & operator=(
-      basic_executor_type && other);
-
-
-
-[endsect]
-
-
-[endsect]
-
-
-[section:operator_eq__eq_ io_context::operator==]
-
-[indexterm2 boost_asio.indexterm.io_context.operator_eq__eq_..operator==..io_context] 
-Compare two executors for equality. 
-
-
-  bool operator==(
-      const basic_executor_type & a,
-      const basic_executor_type & b);
-
-
-Two executors are equal if they refer to the same underlying [link boost_asio.reference.io_context `io_context`]. 
-
-[heading Requirements]
-
-['Header: ][^boost/asio/io_context.hpp]
-
-['Convenience header: ][^boost/asio.hpp]
-
-
-[endsect]
-
-
-
 [section:poll io_context::poll]
 
 [indexterm2 boost_asio.indexterm.io_context.poll..poll..io_context] 
@@ -133769,611 +133617,6 @@ The number of handlers that were executed.
 
 [endsect]
 
-
-
-[section:post io_context::post]
-
-[indexterm2 boost_asio.indexterm.io_context.post..post..io_context] 
-Request the [link boost_asio.reference.io_context `io_context`] to invoke the given function object. 
-
-
-  template<
-      typename Function,
-      typename OtherAllocator>
-  void post(
-      Function && f,
-      const OtherAllocator & a) const;
-
-
-This function is used to ask the [link boost_asio.reference.io_context `io_context`] to execute the given function object. The function object will never be executed inside `post()`. Instead, it will be scheduled to run on the [link boost_asio.reference.io_context `io_context`].
-
-
-[heading Parameters]
-    
-
-[variablelist
-  
-[[f][The function object to be called. The executor will make a copy of the handler object as required. The function signature of the function object must be: 
-``
-  void function(); 
-``
-]]
-
-[[a][An allocator that may be used by the executor to allocate the internal storage needed for function invocation. ]]
-
-]
-
-
-
-
-[endsect]
-
-
-[section:query io_context::query]
-
-[indexterm2 boost_asio.indexterm.io_context.query..query..io_context] 
-Query the current value of the `context` property. 
-
-
-  io_context & ``[link boost_asio.reference.io_context.query.overload1 query]``(
-      execution::context_t ) const;
-  ``  [''''&raquo;''' [link boost_asio.reference.io_context.query.overload1 more...]]``
-
-
-Query the current value of the `blocking` property. 
-
-
-  constexpr execution::blocking_t ``[link boost_asio.reference.io_context.query.overload2 query]``(
-      execution::blocking_t ) const;
-  ``  [''''&raquo;''' [link boost_asio.reference.io_context.query.overload2 more...]]``
-
-
-Query the current value of the `relationship` property. 
-
-
-  constexpr execution::relationship_t ``[link boost_asio.reference.io_context.query.overload3 query]``(
-      execution::relationship_t ) const;
-  ``  [''''&raquo;''' [link boost_asio.reference.io_context.query.overload3 more...]]``
-
-
-Query the current value of the `allocator` property. 
-
-
-  template<
-      typename OtherAllocator>
-  constexpr Allocator ``[link boost_asio.reference.io_context.query.overload4 query]``(
-      execution::allocator_t< OtherAllocator > ) const;
-  ``  [''''&raquo;''' [link boost_asio.reference.io_context.query.overload4 more...]]``
-
-  constexpr Allocator ``[link boost_asio.reference.io_context.query.overload5 query]``(
-      execution::allocator_t< void > ) const;
-  ``  [''''&raquo;''' [link boost_asio.reference.io_context.query.overload5 more...]]``
-
-
-[section:overload1 io_context::query (1 of 5 overloads)]
-
-
-Query the current value of the `context` property. 
-
-
-  io_context & query(
-      execution::context_t ) const;
-
-
-Do not call this function directly. It is intended for use with the [link boost_asio.reference.query `query`] customisation point.
-
-For example: 
-
-  auto ex = my_io_context.get_executor();
-  boost::asio::io_context& ctx = boost::asio::query(
-      ex, boost::asio::execution::context); 
-
-
-
-
-
-[endsect]
-
-
-
-[section:overload2 io_context::query (2 of 5 overloads)]
-
-
-Query the current value of the `blocking` property. 
-
-
-  constexpr execution::blocking_t query(
-      execution::blocking_t ) const;
-
-
-Do not call this function directly. It is intended for use with the [link boost_asio.reference.query `query`] customisation point.
-
-For example: 
-
-  auto ex = my_io_context.get_executor();
-  if (boost::asio::query(ex, boost::asio::execution::blocking)
-        == boost::asio::execution::blocking.always)
-    ... 
-
-
-
-
-
-[endsect]
-
-
-
-[section:overload3 io_context::query (3 of 5 overloads)]
-
-
-Query the current value of the `relationship` property. 
-
-
-  constexpr execution::relationship_t query(
-      execution::relationship_t ) const;
-
-
-Do not call this function directly. It is intended for use with the [link boost_asio.reference.query `query`] customisation point.
-
-For example: 
-
-  auto ex = my_io_context.get_executor();
-  if (boost::asio::query(ex, boost::asio::execution::relationship)
-        == boost::asio::execution::relationship.continuation)
-    ... 
-
-
-
-
-
-[endsect]
-
-
-
-[section:overload4 io_context::query (4 of 5 overloads)]
-
-
-Query the current value of the `allocator` property. 
-
-
-  template<
-      typename OtherAllocator>
-  constexpr Allocator query(
-      execution::allocator_t< OtherAllocator > ) const;
-
-
-Do not call this function directly. It is intended for use with the [link boost_asio.reference.query `query`] customisation point.
-
-For example: 
-
-  auto ex = my_io_context.get_executor();
-  auto alloc = boost::asio::query(ex,
-      boost::asio::execution::allocator); 
-
-
-
-
-
-[endsect]
-
-
-
-[section:overload5 io_context::query (5 of 5 overloads)]
-
-
-Query the current value of the `allocator` property. 
-
-
-  constexpr Allocator query(
-      execution::allocator_t< void > ) const;
-
-
-Do not call this function directly. It is intended for use with the [link boost_asio.reference.query `query`] customisation point.
-
-For example: 
-
-  auto ex = my_io_context.get_executor();
-  auto alloc = boost::asio::query(ex,
-      boost::asio::execution::allocator); 
-
-
-
-
-
-[endsect]
-
-
-[endsect]
-
-[section:query__static io_context::query]
-
-[indexterm2 boost_asio.indexterm.io_context.query__static..query..io_context] 
-Query the current value of the `mapping` property. 
-
-
-  static constexpr execution::mapping_t ``[link boost_asio.reference.io_context.query__static.overload1 query]``(
-      execution::mapping_t );
-  ``  [''''&raquo;''' [link boost_asio.reference.io_context.query__static.overload1 more...]]``
-
-
-Query the current value of the `inline_exception_handling` property. 
-
-
-  static constexpr execution::inline_exception_handling_t ``[link boost_asio.reference.io_context.query__static.overload2 query]``(
-      execution::inline_exception_handling_t );
-  ``  [''''&raquo;''' [link boost_asio.reference.io_context.query__static.overload2 more...]]``
-
-
-Query the current value of the `outstanding_work` property. 
-
-
-  static constexpr execution::outstanding_work_t ``[link boost_asio.reference.io_context.query__static.overload3 query]``(
-      execution::outstanding_work_t );
-  ``  [''''&raquo;''' [link boost_asio.reference.io_context.query__static.overload3 more...]]``
-
-
-[section:overload1 io_context::query (1 of 3 overloads)]
-
-
-Query the current value of the `mapping` property. 
-
-
-  static constexpr execution::mapping_t query(
-      execution::mapping_t );
-
-
-Do not call this function directly. It is intended for use with the [link boost_asio.reference.query `query`] customisation point.
-
-For example: 
-
-  auto ex = my_io_context.get_executor();
-  if (boost::asio::query(ex, boost::asio::execution::mapping)
-        == boost::asio::execution::mapping.thread)
-    ... 
-
-
-
-
-
-[endsect]
-
-
-
-[section:overload2 io_context::query (2 of 3 overloads)]
-
-
-Query the current value of the `inline_exception_handling` property. 
-
-
-  static constexpr execution::inline_exception_handling_t query(
-      execution::inline_exception_handling_t );
-
-
-Do not call this function directly. It is intended for use with the [link boost_asio.reference.query `query`] customisation point.
-
-For example: 
-
-  auto ex = my_io_context.get_executor();
-  if (boost::asio::query(ex,
-        boost::asio::execution::inline_exception_handling)
-      == boost::asio::execution::inline_exception_handling.capture)
-    ... 
-
-
-
-
-
-[endsect]
-
-
-
-[section:overload3 io_context::query (3 of 3 overloads)]
-
-
-Query the current value of the `outstanding_work` property. 
-
-
-  static constexpr execution::outstanding_work_t query(
-      execution::outstanding_work_t );
-
-
-Do not call this function directly. It is intended for use with the [link boost_asio.reference.query `query`] customisation point.
-
-For example: 
-
-  auto ex = my_io_context.get_executor();
-  if (boost::asio::query(ex, boost::asio::execution::outstanding_work)
-        == boost::asio::execution::outstanding_work.tracked)
-    ... 
-
-
-
-
-
-[endsect]
-
-
-[endsect]
-
-[section:require io_context::require]
-
-[indexterm2 boost_asio.indexterm.io_context.require..require..io_context] 
-Obtain an executor with the `blocking.possibly` property. 
-
-
-  constexpr basic_executor_type ``[link boost_asio.reference.io_context.require.overload1 require]``(
-      execution::blocking_t::possibly_t ) const;
-  ``  [''''&raquo;''' [link boost_asio.reference.io_context.require.overload1 more...]]``
-
-
-Obtain an executor with the `blocking.never` property. 
-
-
-  constexpr basic_executor_type ``[link boost_asio.reference.io_context.require.overload2 require]``(
-      execution::blocking_t::never_t ) const;
-  ``  [''''&raquo;''' [link boost_asio.reference.io_context.require.overload2 more...]]``
-
-
-Obtain an executor with the `relationship.fork` property. 
-
-
-  constexpr basic_executor_type ``[link boost_asio.reference.io_context.require.overload3 require]``(
-      execution::relationship_t::fork_t ) const;
-  ``  [''''&raquo;''' [link boost_asio.reference.io_context.require.overload3 more...]]``
-
-
-Obtain an executor with the `relationship.continuation` property. 
-
-
-  constexpr basic_executor_type ``[link boost_asio.reference.io_context.require.overload4 require]``(
-      execution::relationship_t::continuation_t ) const;
-  ``  [''''&raquo;''' [link boost_asio.reference.io_context.require.overload4 more...]]``
-
-
-Obtain an executor with the `outstanding_work.tracked` property. 
-
-
-  constexpr basic_executor_type< Allocator, unspecified > ``[link boost_asio.reference.io_context.require.overload5 require]``(
-      execution::outstanding_work_t::tracked_t ) const;
-  ``  [''''&raquo;''' [link boost_asio.reference.io_context.require.overload5 more...]]``
-
-
-Obtain an executor with the `outstanding_work.untracked` property. 
-
-
-  constexpr basic_executor_type< Allocator, unspecified > ``[link boost_asio.reference.io_context.require.overload6 require]``(
-      execution::outstanding_work_t::untracked_t ) const;
-  ``  [''''&raquo;''' [link boost_asio.reference.io_context.require.overload6 more...]]``
-
-
-Obtain an executor with the specified `allocator` property. 
-
-
-  template<
-      typename OtherAllocator>
-  constexpr basic_executor_type< OtherAllocator, Bits > ``[link boost_asio.reference.io_context.require.overload7 require]``(
-      execution::allocator_t< OtherAllocator > a) const;
-  ``  [''''&raquo;''' [link boost_asio.reference.io_context.require.overload7 more...]]``
-
-
-Obtain an executor with the default `allocator` property. 
-
-
-  constexpr basic_executor_type< std::allocator< void >, Bits > ``[link boost_asio.reference.io_context.require.overload8 require]``(
-      execution::allocator_t< void > ) const;
-  ``  [''''&raquo;''' [link boost_asio.reference.io_context.require.overload8 more...]]``
-
-
-[section:overload1 io_context::require (1 of 8 overloads)]
-
-
-Obtain an executor with the `blocking.possibly` property. 
-
-
-  constexpr basic_executor_type require(
-      execution::blocking_t::possibly_t ) const;
-
-
-Do not call this function directly. It is intended for use with the [link boost_asio.reference.require `require`] customisation point.
-
-For example: 
-
-  auto ex1 = my_io_context.get_executor();
-  auto ex2 = boost::asio::require(ex1,
-      boost::asio::execution::blocking.possibly); 
-
-
-
-
-
-[endsect]
-
-
-
-[section:overload2 io_context::require (2 of 8 overloads)]
-
-
-Obtain an executor with the `blocking.never` property. 
-
-
-  constexpr basic_executor_type require(
-      execution::blocking_t::never_t ) const;
-
-
-Do not call this function directly. It is intended for use with the [link boost_asio.reference.require `require`] customisation point.
-
-For example: 
-
-  auto ex1 = my_io_context.get_executor();
-  auto ex2 = boost::asio::require(ex1,
-      boost::asio::execution::blocking.never); 
-
-
-
-
-
-[endsect]
-
-
-
-[section:overload3 io_context::require (3 of 8 overloads)]
-
-
-Obtain an executor with the `relationship.fork` property. 
-
-
-  constexpr basic_executor_type require(
-      execution::relationship_t::fork_t ) const;
-
-
-Do not call this function directly. It is intended for use with the [link boost_asio.reference.require `require`] customisation point.
-
-For example: 
-
-  auto ex1 = my_io_context.get_executor();
-  auto ex2 = boost::asio::require(ex1,
-      boost::asio::execution::relationship.fork); 
-
-
-
-
-
-[endsect]
-
-
-
-[section:overload4 io_context::require (4 of 8 overloads)]
-
-
-Obtain an executor with the `relationship.continuation` property. 
-
-
-  constexpr basic_executor_type require(
-      execution::relationship_t::continuation_t ) const;
-
-
-Do not call this function directly. It is intended for use with the [link boost_asio.reference.require `require`] customisation point.
-
-For example: 
-
-  auto ex1 = my_io_context.get_executor();
-  auto ex2 = boost::asio::require(ex1,
-      boost::asio::execution::relationship.continuation); 
-
-
-
-
-
-[endsect]
-
-
-
-[section:overload5 io_context::require (5 of 8 overloads)]
-
-
-Obtain an executor with the `outstanding_work.tracked` property. 
-
-
-  constexpr basic_executor_type< Allocator, unspecified > require(
-      execution::outstanding_work_t::tracked_t ) const;
-
-
-Do not call this function directly. It is intended for use with the [link boost_asio.reference.require `require`] customisation point.
-
-For example: 
-
-  auto ex1 = my_io_context.get_executor();
-  auto ex2 = boost::asio::require(ex1,
-      boost::asio::execution::outstanding_work.tracked); 
-
-
-
-
-
-[endsect]
-
-
-
-[section:overload6 io_context::require (6 of 8 overloads)]
-
-
-Obtain an executor with the `outstanding_work.untracked` property. 
-
-
-  constexpr basic_executor_type< Allocator, unspecified > require(
-      execution::outstanding_work_t::untracked_t ) const;
-
-
-Do not call this function directly. It is intended for use with the [link boost_asio.reference.require `require`] customisation point.
-
-For example: 
-
-  auto ex1 = my_io_context.get_executor();
-  auto ex2 = boost::asio::require(ex1,
-      boost::asio::execution::outstanding_work.untracked); 
-
-
-
-
-
-[endsect]
-
-
-
-[section:overload7 io_context::require (7 of 8 overloads)]
-
-
-Obtain an executor with the specified `allocator` property. 
-
-
-  template<
-      typename OtherAllocator>
-  constexpr basic_executor_type< OtherAllocator, Bits > require(
-      execution::allocator_t< OtherAllocator > a) const;
-
-
-Do not call this function directly. It is intended for use with the [link boost_asio.reference.require `require`] customisation point.
-
-For example: 
-
-  auto ex1 = my_io_context.get_executor();
-  auto ex2 = boost::asio::require(ex1,
-      boost::asio::execution::allocator(my_allocator)); 
-
-
-
-
-
-[endsect]
-
-
-
-[section:overload8 io_context::require (8 of 8 overloads)]
-
-
-Obtain an executor with the default `allocator` property. 
-
-
-  constexpr basic_executor_type< std::allocator< void >, Bits > require(
-      execution::allocator_t< void > ) const;
-
-
-Do not call this function directly. It is intended for use with the [link boost_asio.reference.require `require`] customisation point.
-
-For example: 
-
-  auto ex1 = my_io_context.get_executor();
-  auto ex2 = boost::asio::require(ex1,
-      boost::asio::execution::allocator); 
-
-
-
-
-
-[endsect]
-
-
-[endsect]
 
 
 [section:restart io_context::restart]
@@ -134602,27 +133845,6 @@ The number of handlers that were executed.
 
 
 
-[section:running_in_this_thread io_context::running_in_this_thread]
-
-[indexterm2 boost_asio.indexterm.io_context.running_in_this_thread..running_in_this_thread..io_context] 
-Determine whether the [link boost_asio.reference.io_context `io_context`] is running in the current thread. 
-
-
-  bool running_in_this_thread() const;
-
-
-
-[heading Return Value]
-      
-`true` if the current thread is running the [link boost_asio.reference.io_context `io_context`]. Otherwise returns `false`. 
-
-
-
-
-[endsect]
-
-
-
 [section:shutdown io_context::shutdown]
 
 
@@ -134768,20 +133990,6 @@ that, when invoked, executes code equivalent to:
 
 
 
-[section:_basic_executor_type io_context::~basic_executor_type]
-
-[indexterm2 boost_asio.indexterm.io_context._basic_executor_type..~basic_executor_type..io_context] 
-Destructor. 
-
-
-  ~basic_executor_type();
-
-
-
-[endsect]
-
-
-
 [section:_io_context io_context::~io_context]
 
 [indexterm2 boost_asio.indexterm.io_context._io_context..~io_context..io_context] 
@@ -134813,6 +134021,1081 @@ The destruction sequence described above permits programs to simplify their reso
 
 * To shut down the whole program, the [link boost_asio.reference.io_context `io_context`] function [link boost_asio.reference.io_context.stop `stop()`] is called to terminate any [link boost_asio.reference.io_context.run `run()`] calls as soon as possible. The [link boost_asio.reference.io_context `io_context`] destructor defined above destroys all handlers, causing all `shared_ptr` references to all connection objects to be destroyed. 
 
+
+
+
+[endsect]
+
+
+
+[endsect]
+
+[section:io_context__basic_executor_type io_context::basic_executor_type]
+
+[indexterm1 boost_asio.indexterm.io_context__basic_executor_type..io_context::basic_executor_type]
+
+
+Executor implementation type used to submit functions to an [link boost_asio.reference.io_context `io_context`]. 
+
+
+  template<
+      typename Allocator,
+      uintptr_t Bits>
+  class basic_executor_type :
+    detail::allocator_base< Allocator >
+
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link boost_asio.reference.io_context__basic_executor_type.basic_executor_type [*basic_executor_type]] [constructor]]
+    [Copy constructor. 
+     [hr]
+     Move constructor. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.io_context__basic_executor_type.context [*context]]]
+    [Obtain the underlying execution context. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.io_context__basic_executor_type.defer [*defer]]]
+    [Request the io_context to invoke the given function object. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.io_context__basic_executor_type.dispatch [*dispatch]]]
+    [Request the io_context to invoke the given function object. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.io_context__basic_executor_type.execute [*execute]]]
+    [Execution function. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.io_context__basic_executor_type.on_work_finished [*on_work_finished]]]
+    [Inform the io_context that some work is no longer outstanding. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.io_context__basic_executor_type.on_work_started [*on_work_started]]]
+    [Inform the io_context that it has some outstanding work to do. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.io_context__basic_executor_type.operator_eq_ [*operator=]]]
+    [Assignment operator. 
+     [hr]
+     Move assignment operator. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.io_context__basic_executor_type.post [*post]]]
+    [Request the io_context to invoke the given function object. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.io_context__basic_executor_type.query [*query]]]
+    [Query the current value of the context property. 
+     [hr]
+     Query the current value of the blocking property. 
+     [hr]
+     Query the current value of the relationship property. 
+     [hr]
+     Query the current value of the allocator property. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.io_context__basic_executor_type.query__static [*query]] [static]]
+    [Query the current value of the mapping property. 
+     [hr]
+     Query the current value of the inline_exception_handling property. 
+     [hr]
+     Query the current value of the outstanding_work property. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.io_context__basic_executor_type.require [*require]]]
+    [Obtain an executor with the blocking.possibly property. 
+     [hr]
+     Obtain an executor with the blocking.never property. 
+     [hr]
+     Obtain an executor with the relationship.fork property. 
+     [hr]
+     Obtain an executor with the relationship.continuation property. 
+     [hr]
+     Obtain an executor with the outstanding_work.tracked property. 
+     [hr]
+     Obtain an executor with the outstanding_work.untracked property. 
+     [hr]
+     Obtain an executor with the specified allocator property. 
+     [hr]
+     Obtain an executor with the default allocator property. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.io_context__basic_executor_type.running_in_this_thread [*running_in_this_thread]]]
+    [Determine whether the io_context is running in the current thread. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.io_context__basic_executor_type._basic_executor_type [*~basic_executor_type]] [destructor]]
+    [Destructor. ]
+  ]
+  
+]
+
+[heading Friends]
+[table
+  [[Name][Description]]
+
+  [
+    [[link boost_asio.reference.io_context__basic_executor_type.operator_not__eq_ [*operator!=]]]
+    [Compare two executors for inequality. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.io_context__basic_executor_type.operator_eq__eq_ [*operator==]]]
+    [Compare two executors for equality. ]
+  ]
+  
+]
+
+[heading Requirements]
+
+['Header: ][^boost/asio/io_context.hpp]
+
+['Convenience header: ][^boost/asio.hpp]
+
+[section:basic_executor_type io_context::basic_executor_type::basic_executor_type]
+
+[indexterm2 boost_asio.indexterm.io_context__basic_executor_type.basic_executor_type..basic_executor_type..io_context::basic_executor_type] 
+Copy constructor. 
+
+
+  ``[link boost_asio.reference.io_context__basic_executor_type.basic_executor_type.overload1 basic_executor_type]``(
+      const basic_executor_type & other);
+  ``  [''''&raquo;''' [link boost_asio.reference.io_context__basic_executor_type.basic_executor_type.overload1 more...]]``
+
+
+Move constructor. 
+
+
+  ``[link boost_asio.reference.io_context__basic_executor_type.basic_executor_type.overload2 basic_executor_type]``(
+      basic_executor_type && other);
+  ``  [''''&raquo;''' [link boost_asio.reference.io_context__basic_executor_type.basic_executor_type.overload2 more...]]``
+
+
+[section:overload1 io_context::basic_executor_type::basic_executor_type (1 of 2 overloads)]
+
+
+Copy constructor. 
+
+
+  basic_executor_type(
+      const basic_executor_type & other);
+
+
+
+[endsect]
+
+
+
+[section:overload2 io_context::basic_executor_type::basic_executor_type (2 of 2 overloads)]
+
+
+Move constructor. 
+
+
+  basic_executor_type(
+      basic_executor_type && other);
+
+
+
+[endsect]
+
+
+[endsect]
+
+
+[section:context io_context::basic_executor_type::context]
+
+[indexterm2 boost_asio.indexterm.io_context__basic_executor_type.context..context..io_context::basic_executor_type] 
+Obtain the underlying execution context. 
+
+
+  io_context & context() const;
+
+
+
+[endsect]
+
+
+
+[section:defer io_context::basic_executor_type::defer]
+
+[indexterm2 boost_asio.indexterm.io_context__basic_executor_type.defer..defer..io_context::basic_executor_type] 
+Request the [link boost_asio.reference.io_context `io_context`] to invoke the given function object. 
+
+
+  template<
+      typename Function,
+      typename OtherAllocator>
+  void defer(
+      Function && f,
+      const OtherAllocator & a) const;
+
+
+This function is used to ask the [link boost_asio.reference.io_context `io_context`] to execute the given function object. The function object will never be executed inside `defer()`. Instead, it will be scheduled to run on the [link boost_asio.reference.io_context `io_context`].
+
+If the current thread belongs to the [link boost_asio.reference.io_context `io_context`], `defer()` will delay scheduling the function object until the current thread returns control to the pool.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[f][The function object to be called. The executor will make a copy of the handler object as required. The function signature of the function object must be: 
+``
+  void function(); 
+``
+]]
+
+[[a][An allocator that may be used by the executor to allocate the internal storage needed for function invocation. ]]
+
+]
+
+
+
+
+[endsect]
+
+
+
+[section:dispatch io_context::basic_executor_type::dispatch]
+
+[indexterm2 boost_asio.indexterm.io_context__basic_executor_type.dispatch..dispatch..io_context::basic_executor_type] 
+Request the [link boost_asio.reference.io_context `io_context`] to invoke the given function object. 
+
+
+  template<
+      typename Function,
+      typename OtherAllocator>
+  void dispatch(
+      Function && f,
+      const OtherAllocator & a) const;
+
+
+This function is used to ask the [link boost_asio.reference.io_context `io_context`] to execute the given function object. If the current thread is running the [link boost_asio.reference.io_context `io_context`], `dispatch()` executes the function before returning. Otherwise, the function will be scheduled to run on the [link boost_asio.reference.io_context `io_context`].
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[f][The function object to be called. The executor will make a copy of the handler object as required. The function signature of the function object must be: 
+``
+  void function(); 
+``
+]]
+
+[[a][An allocator that may be used by the executor to allocate the internal storage needed for function invocation. ]]
+
+]
+
+
+
+
+[endsect]
+
+
+
+[section:execute io_context::basic_executor_type::execute]
+
+[indexterm2 boost_asio.indexterm.io_context__basic_executor_type.execute..execute..io_context::basic_executor_type] 
+Execution function. 
+
+
+  template<
+      typename Function>
+  void execute(
+      Function && f) const;
+
+
+
+[endsect]
+
+
+
+[section:on_work_finished io_context::basic_executor_type::on_work_finished]
+
+[indexterm2 boost_asio.indexterm.io_context__basic_executor_type.on_work_finished..on_work_finished..io_context::basic_executor_type] 
+Inform the [link boost_asio.reference.io_context `io_context`] that some work is no longer outstanding. 
+
+
+  void on_work_finished() const;
+
+
+This function is used to inform the [link boost_asio.reference.io_context `io_context`] that some work has finished. Once the count of unfinished work reaches zero, the [link boost_asio.reference.io_context `io_context`] is stopped and the [link boost_asio.reference.io_context.run `run()`] and [link boost_asio.reference.io_context.run_one `run_one()`] functions may exit. 
+
+
+[endsect]
+
+
+
+[section:on_work_started io_context::basic_executor_type::on_work_started]
+
+[indexterm2 boost_asio.indexterm.io_context__basic_executor_type.on_work_started..on_work_started..io_context::basic_executor_type] 
+Inform the [link boost_asio.reference.io_context `io_context`] that it has some outstanding work to do. 
+
+
+  void on_work_started() const;
+
+
+This function is used to inform the [link boost_asio.reference.io_context `io_context`] that some work has begun. This ensures that the [link boost_asio.reference.io_context `io_context`]'s [link boost_asio.reference.io_context.run `run()`] and [link boost_asio.reference.io_context.run_one `run_one()`] functions do not exit while the work is underway. 
+
+
+[endsect]
+
+
+
+[section:operator_not__eq_ io_context::basic_executor_type::operator!=]
+
+[indexterm2 boost_asio.indexterm.io_context__basic_executor_type.operator_not__eq_..operator!=..io_context::basic_executor_type] 
+Compare two executors for inequality. 
+
+
+  bool operator!=(
+      const basic_executor_type & a,
+      const basic_executor_type & b);
+
+
+Two executors are equal if they refer to the same underlying [link boost_asio.reference.io_context `io_context`]. 
+
+[heading Requirements]
+
+['Header: ][^boost/asio/io_context.hpp]
+
+['Convenience header: ][^boost/asio.hpp]
+
+
+[endsect]
+
+
+[section:operator_eq_ io_context::basic_executor_type::operator=]
+
+[indexterm2 boost_asio.indexterm.io_context__basic_executor_type.operator_eq_..operator=..io_context::basic_executor_type] 
+Assignment operator. 
+
+
+  basic_executor_type & ``[link boost_asio.reference.io_context__basic_executor_type.operator_eq_.overload1 operator=]``(
+      const basic_executor_type & other);
+  ``  [''''&raquo;''' [link boost_asio.reference.io_context__basic_executor_type.operator_eq_.overload1 more...]]``
+
+
+Move assignment operator. 
+
+
+  basic_executor_type & ``[link boost_asio.reference.io_context__basic_executor_type.operator_eq_.overload2 operator=]``(
+      basic_executor_type && other);
+  ``  [''''&raquo;''' [link boost_asio.reference.io_context__basic_executor_type.operator_eq_.overload2 more...]]``
+
+
+[section:overload1 io_context::basic_executor_type::operator= (1 of 2 overloads)]
+
+
+Assignment operator. 
+
+
+  basic_executor_type & operator=(
+      const basic_executor_type & other);
+
+
+
+[endsect]
+
+
+
+[section:overload2 io_context::basic_executor_type::operator= (2 of 2 overloads)]
+
+
+Move assignment operator. 
+
+
+  basic_executor_type & operator=(
+      basic_executor_type && other);
+
+
+
+[endsect]
+
+
+[endsect]
+
+
+[section:operator_eq__eq_ io_context::basic_executor_type::operator==]
+
+[indexterm2 boost_asio.indexterm.io_context__basic_executor_type.operator_eq__eq_..operator==..io_context::basic_executor_type] 
+Compare two executors for equality. 
+
+
+  bool operator==(
+      const basic_executor_type & a,
+      const basic_executor_type & b);
+
+
+Two executors are equal if they refer to the same underlying [link boost_asio.reference.io_context `io_context`]. 
+
+[heading Requirements]
+
+['Header: ][^boost/asio/io_context.hpp]
+
+['Convenience header: ][^boost/asio.hpp]
+
+
+[endsect]
+
+
+
+[section:post io_context::basic_executor_type::post]
+
+[indexterm2 boost_asio.indexterm.io_context__basic_executor_type.post..post..io_context::basic_executor_type] 
+Request the [link boost_asio.reference.io_context `io_context`] to invoke the given function object. 
+
+
+  template<
+      typename Function,
+      typename OtherAllocator>
+  void post(
+      Function && f,
+      const OtherAllocator & a) const;
+
+
+This function is used to ask the [link boost_asio.reference.io_context `io_context`] to execute the given function object. The function object will never be executed inside `post()`. Instead, it will be scheduled to run on the [link boost_asio.reference.io_context `io_context`].
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[f][The function object to be called. The executor will make a copy of the handler object as required. The function signature of the function object must be: 
+``
+  void function(); 
+``
+]]
+
+[[a][An allocator that may be used by the executor to allocate the internal storage needed for function invocation. ]]
+
+]
+
+
+
+
+[endsect]
+
+
+[section:query io_context::basic_executor_type::query]
+
+[indexterm2 boost_asio.indexterm.io_context__basic_executor_type.query..query..io_context::basic_executor_type] 
+Query the current value of the `context` property. 
+
+
+  io_context & ``[link boost_asio.reference.io_context__basic_executor_type.query.overload1 query]``(
+      execution::context_t ) const;
+  ``  [''''&raquo;''' [link boost_asio.reference.io_context__basic_executor_type.query.overload1 more...]]``
+
+
+Query the current value of the `blocking` property. 
+
+
+  constexpr execution::blocking_t ``[link boost_asio.reference.io_context__basic_executor_type.query.overload2 query]``(
+      execution::blocking_t ) const;
+  ``  [''''&raquo;''' [link boost_asio.reference.io_context__basic_executor_type.query.overload2 more...]]``
+
+
+Query the current value of the `relationship` property. 
+
+
+  constexpr execution::relationship_t ``[link boost_asio.reference.io_context__basic_executor_type.query.overload3 query]``(
+      execution::relationship_t ) const;
+  ``  [''''&raquo;''' [link boost_asio.reference.io_context__basic_executor_type.query.overload3 more...]]``
+
+
+Query the current value of the `allocator` property. 
+
+
+  template<
+      typename OtherAllocator>
+  constexpr Allocator ``[link boost_asio.reference.io_context__basic_executor_type.query.overload4 query]``(
+      execution::allocator_t< OtherAllocator > ) const;
+  ``  [''''&raquo;''' [link boost_asio.reference.io_context__basic_executor_type.query.overload4 more...]]``
+
+  constexpr Allocator ``[link boost_asio.reference.io_context__basic_executor_type.query.overload5 query]``(
+      execution::allocator_t< void > ) const;
+  ``  [''''&raquo;''' [link boost_asio.reference.io_context__basic_executor_type.query.overload5 more...]]``
+
+
+[section:overload1 io_context::basic_executor_type::query (1 of 5 overloads)]
+
+
+Query the current value of the `context` property. 
+
+
+  io_context & query(
+      execution::context_t ) const;
+
+
+Do not call this function directly. It is intended for use with the [link boost_asio.reference.query `query`] customisation point.
+
+For example: 
+
+  auto ex = my_io_context.get_executor();
+  boost::asio::io_context& ctx = boost::asio::query(
+      ex, boost::asio::execution::context); 
+
+
+
+
+
+[endsect]
+
+
+
+[section:overload2 io_context::basic_executor_type::query (2 of 5 overloads)]
+
+
+Query the current value of the `blocking` property. 
+
+
+  constexpr execution::blocking_t query(
+      execution::blocking_t ) const;
+
+
+Do not call this function directly. It is intended for use with the [link boost_asio.reference.query `query`] customisation point.
+
+For example: 
+
+  auto ex = my_io_context.get_executor();
+  if (boost::asio::query(ex, boost::asio::execution::blocking)
+        == boost::asio::execution::blocking.always)
+    ... 
+
+
+
+
+
+[endsect]
+
+
+
+[section:overload3 io_context::basic_executor_type::query (3 of 5 overloads)]
+
+
+Query the current value of the `relationship` property. 
+
+
+  constexpr execution::relationship_t query(
+      execution::relationship_t ) const;
+
+
+Do not call this function directly. It is intended for use with the [link boost_asio.reference.query `query`] customisation point.
+
+For example: 
+
+  auto ex = my_io_context.get_executor();
+  if (boost::asio::query(ex, boost::asio::execution::relationship)
+        == boost::asio::execution::relationship.continuation)
+    ... 
+
+
+
+
+
+[endsect]
+
+
+
+[section:overload4 io_context::basic_executor_type::query (4 of 5 overloads)]
+
+
+Query the current value of the `allocator` property. 
+
+
+  template<
+      typename OtherAllocator>
+  constexpr Allocator query(
+      execution::allocator_t< OtherAllocator > ) const;
+
+
+Do not call this function directly. It is intended for use with the [link boost_asio.reference.query `query`] customisation point.
+
+For example: 
+
+  auto ex = my_io_context.get_executor();
+  auto alloc = boost::asio::query(ex,
+      boost::asio::execution::allocator); 
+
+
+
+
+
+[endsect]
+
+
+
+[section:overload5 io_context::basic_executor_type::query (5 of 5 overloads)]
+
+
+Query the current value of the `allocator` property. 
+
+
+  constexpr Allocator query(
+      execution::allocator_t< void > ) const;
+
+
+Do not call this function directly. It is intended for use with the [link boost_asio.reference.query `query`] customisation point.
+
+For example: 
+
+  auto ex = my_io_context.get_executor();
+  auto alloc = boost::asio::query(ex,
+      boost::asio::execution::allocator); 
+
+
+
+
+
+[endsect]
+
+
+[endsect]
+
+[section:query__static io_context::basic_executor_type::query]
+
+[indexterm2 boost_asio.indexterm.io_context__basic_executor_type.query__static..query..io_context::basic_executor_type] 
+Query the current value of the `mapping` property. 
+
+
+  static constexpr execution::mapping_t ``[link boost_asio.reference.io_context__basic_executor_type.query__static.overload1 query]``(
+      execution::mapping_t );
+  ``  [''''&raquo;''' [link boost_asio.reference.io_context__basic_executor_type.query__static.overload1 more...]]``
+
+
+Query the current value of the `inline_exception_handling` property. 
+
+
+  static constexpr execution::inline_exception_handling_t ``[link boost_asio.reference.io_context__basic_executor_type.query__static.overload2 query]``(
+      execution::inline_exception_handling_t );
+  ``  [''''&raquo;''' [link boost_asio.reference.io_context__basic_executor_type.query__static.overload2 more...]]``
+
+
+Query the current value of the `outstanding_work` property. 
+
+
+  static constexpr execution::outstanding_work_t ``[link boost_asio.reference.io_context__basic_executor_type.query__static.overload3 query]``(
+      execution::outstanding_work_t );
+  ``  [''''&raquo;''' [link boost_asio.reference.io_context__basic_executor_type.query__static.overload3 more...]]``
+
+
+[section:overload1 io_context::basic_executor_type::query (1 of 3 overloads)]
+
+
+Query the current value of the `mapping` property. 
+
+
+  static constexpr execution::mapping_t query(
+      execution::mapping_t );
+
+
+Do not call this function directly. It is intended for use with the [link boost_asio.reference.query `query`] customisation point.
+
+For example: 
+
+  auto ex = my_io_context.get_executor();
+  if (boost::asio::query(ex, boost::asio::execution::mapping)
+        == boost::asio::execution::mapping.thread)
+    ... 
+
+
+
+
+
+[endsect]
+
+
+
+[section:overload2 io_context::basic_executor_type::query (2 of 3 overloads)]
+
+
+Query the current value of the `inline_exception_handling` property. 
+
+
+  static constexpr execution::inline_exception_handling_t query(
+      execution::inline_exception_handling_t );
+
+
+Do not call this function directly. It is intended for use with the [link boost_asio.reference.query `query`] customisation point.
+
+For example: 
+
+  auto ex = my_io_context.get_executor();
+  if (boost::asio::query(ex,
+        boost::asio::execution::inline_exception_handling)
+      == boost::asio::execution::inline_exception_handling.capture)
+    ... 
+
+
+
+
+
+[endsect]
+
+
+
+[section:overload3 io_context::basic_executor_type::query (3 of 3 overloads)]
+
+
+Query the current value of the `outstanding_work` property. 
+
+
+  static constexpr execution::outstanding_work_t query(
+      execution::outstanding_work_t );
+
+
+Do not call this function directly. It is intended for use with the [link boost_asio.reference.query `query`] customisation point.
+
+For example: 
+
+  auto ex = my_io_context.get_executor();
+  if (boost::asio::query(ex, boost::asio::execution::outstanding_work)
+        == boost::asio::execution::outstanding_work.tracked)
+    ... 
+
+
+
+
+
+[endsect]
+
+
+[endsect]
+
+[section:require io_context::basic_executor_type::require]
+
+[indexterm2 boost_asio.indexterm.io_context__basic_executor_type.require..require..io_context::basic_executor_type] 
+Obtain an executor with the `blocking.possibly` property. 
+
+
+  constexpr basic_executor_type ``[link boost_asio.reference.io_context__basic_executor_type.require.overload1 require]``(
+      execution::blocking_t::possibly_t ) const;
+  ``  [''''&raquo;''' [link boost_asio.reference.io_context__basic_executor_type.require.overload1 more...]]``
+
+
+Obtain an executor with the `blocking.never` property. 
+
+
+  constexpr basic_executor_type ``[link boost_asio.reference.io_context__basic_executor_type.require.overload2 require]``(
+      execution::blocking_t::never_t ) const;
+  ``  [''''&raquo;''' [link boost_asio.reference.io_context__basic_executor_type.require.overload2 more...]]``
+
+
+Obtain an executor with the `relationship.fork` property. 
+
+
+  constexpr basic_executor_type ``[link boost_asio.reference.io_context__basic_executor_type.require.overload3 require]``(
+      execution::relationship_t::fork_t ) const;
+  ``  [''''&raquo;''' [link boost_asio.reference.io_context__basic_executor_type.require.overload3 more...]]``
+
+
+Obtain an executor with the `relationship.continuation` property. 
+
+
+  constexpr basic_executor_type ``[link boost_asio.reference.io_context__basic_executor_type.require.overload4 require]``(
+      execution::relationship_t::continuation_t ) const;
+  ``  [''''&raquo;''' [link boost_asio.reference.io_context__basic_executor_type.require.overload4 more...]]``
+
+
+Obtain an executor with the `outstanding_work.tracked` property. 
+
+
+  constexpr basic_executor_type< Allocator, unspecified > ``[link boost_asio.reference.io_context__basic_executor_type.require.overload5 require]``(
+      execution::outstanding_work_t::tracked_t ) const;
+  ``  [''''&raquo;''' [link boost_asio.reference.io_context__basic_executor_type.require.overload5 more...]]``
+
+
+Obtain an executor with the `outstanding_work.untracked` property. 
+
+
+  constexpr basic_executor_type< Allocator, unspecified > ``[link boost_asio.reference.io_context__basic_executor_type.require.overload6 require]``(
+      execution::outstanding_work_t::untracked_t ) const;
+  ``  [''''&raquo;''' [link boost_asio.reference.io_context__basic_executor_type.require.overload6 more...]]``
+
+
+Obtain an executor with the specified `allocator` property. 
+
+
+  template<
+      typename OtherAllocator>
+  constexpr basic_executor_type< OtherAllocator, Bits > ``[link boost_asio.reference.io_context__basic_executor_type.require.overload7 require]``(
+      execution::allocator_t< OtherAllocator > a) const;
+  ``  [''''&raquo;''' [link boost_asio.reference.io_context__basic_executor_type.require.overload7 more...]]``
+
+
+Obtain an executor with the default `allocator` property. 
+
+
+  constexpr basic_executor_type< std::allocator< void >, Bits > ``[link boost_asio.reference.io_context__basic_executor_type.require.overload8 require]``(
+      execution::allocator_t< void > ) const;
+  ``  [''''&raquo;''' [link boost_asio.reference.io_context__basic_executor_type.require.overload8 more...]]``
+
+
+[section:overload1 io_context::basic_executor_type::require (1 of 8 overloads)]
+
+
+Obtain an executor with the `blocking.possibly` property. 
+
+
+  constexpr basic_executor_type require(
+      execution::blocking_t::possibly_t ) const;
+
+
+Do not call this function directly. It is intended for use with the [link boost_asio.reference.require `require`] customisation point.
+
+For example: 
+
+  auto ex1 = my_io_context.get_executor();
+  auto ex2 = boost::asio::require(ex1,
+      boost::asio::execution::blocking.possibly); 
+
+
+
+
+
+[endsect]
+
+
+
+[section:overload2 io_context::basic_executor_type::require (2 of 8 overloads)]
+
+
+Obtain an executor with the `blocking.never` property. 
+
+
+  constexpr basic_executor_type require(
+      execution::blocking_t::never_t ) const;
+
+
+Do not call this function directly. It is intended for use with the [link boost_asio.reference.require `require`] customisation point.
+
+For example: 
+
+  auto ex1 = my_io_context.get_executor();
+  auto ex2 = boost::asio::require(ex1,
+      boost::asio::execution::blocking.never); 
+
+
+
+
+
+[endsect]
+
+
+
+[section:overload3 io_context::basic_executor_type::require (3 of 8 overloads)]
+
+
+Obtain an executor with the `relationship.fork` property. 
+
+
+  constexpr basic_executor_type require(
+      execution::relationship_t::fork_t ) const;
+
+
+Do not call this function directly. It is intended for use with the [link boost_asio.reference.require `require`] customisation point.
+
+For example: 
+
+  auto ex1 = my_io_context.get_executor();
+  auto ex2 = boost::asio::require(ex1,
+      boost::asio::execution::relationship.fork); 
+
+
+
+
+
+[endsect]
+
+
+
+[section:overload4 io_context::basic_executor_type::require (4 of 8 overloads)]
+
+
+Obtain an executor with the `relationship.continuation` property. 
+
+
+  constexpr basic_executor_type require(
+      execution::relationship_t::continuation_t ) const;
+
+
+Do not call this function directly. It is intended for use with the [link boost_asio.reference.require `require`] customisation point.
+
+For example: 
+
+  auto ex1 = my_io_context.get_executor();
+  auto ex2 = boost::asio::require(ex1,
+      boost::asio::execution::relationship.continuation); 
+
+
+
+
+
+[endsect]
+
+
+
+[section:overload5 io_context::basic_executor_type::require (5 of 8 overloads)]
+
+
+Obtain an executor with the `outstanding_work.tracked` property. 
+
+
+  constexpr basic_executor_type< Allocator, unspecified > require(
+      execution::outstanding_work_t::tracked_t ) const;
+
+
+Do not call this function directly. It is intended for use with the [link boost_asio.reference.require `require`] customisation point.
+
+For example: 
+
+  auto ex1 = my_io_context.get_executor();
+  auto ex2 = boost::asio::require(ex1,
+      boost::asio::execution::outstanding_work.tracked); 
+
+
+
+
+
+[endsect]
+
+
+
+[section:overload6 io_context::basic_executor_type::require (6 of 8 overloads)]
+
+
+Obtain an executor with the `outstanding_work.untracked` property. 
+
+
+  constexpr basic_executor_type< Allocator, unspecified > require(
+      execution::outstanding_work_t::untracked_t ) const;
+
+
+Do not call this function directly. It is intended for use with the [link boost_asio.reference.require `require`] customisation point.
+
+For example: 
+
+  auto ex1 = my_io_context.get_executor();
+  auto ex2 = boost::asio::require(ex1,
+      boost::asio::execution::outstanding_work.untracked); 
+
+
+
+
+
+[endsect]
+
+
+
+[section:overload7 io_context::basic_executor_type::require (7 of 8 overloads)]
+
+
+Obtain an executor with the specified `allocator` property. 
+
+
+  template<
+      typename OtherAllocator>
+  constexpr basic_executor_type< OtherAllocator, Bits > require(
+      execution::allocator_t< OtherAllocator > a) const;
+
+
+Do not call this function directly. It is intended for use with the [link boost_asio.reference.require `require`] customisation point.
+
+For example: 
+
+  auto ex1 = my_io_context.get_executor();
+  auto ex2 = boost::asio::require(ex1,
+      boost::asio::execution::allocator(my_allocator)); 
+
+
+
+
+
+[endsect]
+
+
+
+[section:overload8 io_context::basic_executor_type::require (8 of 8 overloads)]
+
+
+Obtain an executor with the default `allocator` property. 
+
+
+  constexpr basic_executor_type< std::allocator< void >, Bits > require(
+      execution::allocator_t< void > ) const;
+
+
+Do not call this function directly. It is intended for use with the [link boost_asio.reference.require `require`] customisation point.
+
+For example: 
+
+  auto ex1 = my_io_context.get_executor();
+  auto ex2 = boost::asio::require(ex1,
+      boost::asio::execution::allocator); 
+
+
+
+
+
+[endsect]
+
+
+[endsect]
+
+
+[section:running_in_this_thread io_context::basic_executor_type::running_in_this_thread]
+
+[indexterm2 boost_asio.indexterm.io_context__basic_executor_type.running_in_this_thread..running_in_this_thread..io_context::basic_executor_type] 
+Determine whether the [link boost_asio.reference.io_context `io_context`] is running in the current thread. 
+
+
+  bool running_in_this_thread() const;
+
+
+
+[heading Return Value]
+      
+`true` if the current thread is running the [link boost_asio.reference.io_context `io_context`]. Otherwise returns `false`. 
+
+
+
+
+[endsect]
+
+
+
+[section:_basic_executor_type io_context::basic_executor_type::~basic_executor_type]
+
+[indexterm2 boost_asio.indexterm.io_context__basic_executor_type._basic_executor_type..~basic_executor_type..io_context::basic_executor_type] 
+Destructor. 
+
+
+  ~basic_executor_type();
 
 
 
@@ -148731,7 +149014,7 @@ Setting the option to join a multicast group:
   boost::asio::ip::udp::socket socket(my_context);
   ...
   boost::asio::ip::address multicast_address =
-    boost::asio::ip::address::from_string("225.0.0.1");
+    boost::asio::ip::make_address("225.0.0.1");
   boost::asio::ip::multicast::join_group option(multicast_address);
   socket.set_option(option);
 
@@ -148823,7 +149106,7 @@ Setting the option to leave a multicast group:
   boost::asio::ip::udp::socket socket(my_context);
   ...
   boost::asio::ip::address multicast_address =
-    boost::asio::ip::address::from_string("225.0.0.1");
+    boost::asio::ip::make_address("225.0.0.1");
   boost::asio::ip::multicast::leave_group option(multicast_address);
   socket.set_option(option);
 
@@ -148917,7 +149200,7 @@ Setting the option:
   boost::asio::ip::udp::socket socket(my_context);
   ...
   boost::asio::ip::address_v4 local_interface =
-    boost::asio::ip::address_v4::from_string("1.2.3.4");
+    boost::asio::ip::make_address_v4("1.2.3.4");
   boost::asio::ip::multicast::outbound_interface option(local_interface);
   socket.set_option(option);
 
@@ -184714,6 +184997,13 @@ Verify the peer.
 
   [
 
+    [[link boost_asio.reference.thread_pool__basic_executor_type [*basic_executor_type]]]
+    [Executor implementation type used to submit functions to a thread pool. ]
+  
+  ]
+
+  [
+
     [[link boost_asio.reference.thread_pool.executor_type [*executor_type]]]
     [Executor used to submit functions to a thread pool. ]
   
@@ -184738,33 +185028,6 @@ Verify the peer.
   ]
   
   [
-    [[link boost_asio.reference.thread_pool.basic_executor_type [*basic_executor_type]]]
-    [Copy constructor. 
-     [hr]
-     Move constructor. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.thread_pool.context [*context]]]
-    [Obtain the underlying execution context. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.thread_pool.defer [*defer]]]
-    [Request the thread pool to invoke the given function object. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.thread_pool.dispatch [*dispatch]]]
-    [Request the thread pool to invoke the given function object. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.thread_pool.execute [*execute]]]
-    [Execution function. ]
-  ]
-  
-  [
     [[link boost_asio.reference.thread_pool.executor [*executor]]]
     [Obtains the executor associated with the pool. ]
   ]
@@ -184785,76 +185048,6 @@ Verify the peer.
   ]
   
   [
-    [[link boost_asio.reference.thread_pool.on_work_finished [*on_work_finished]]]
-    [Inform the thread pool that some work is no longer outstanding. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.thread_pool.on_work_started [*on_work_started]]]
-    [Inform the thread pool that it has some outstanding work to do. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.thread_pool.operator_eq_ [*operator=]]]
-    [Assignment operator. 
-     [hr]
-     Move assignment operator. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.thread_pool.post [*post]]]
-    [Request the thread pool to invoke the given function object. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.thread_pool.query [*query]]]
-    [Query the current value of the context property. 
-     [hr]
-     Query the current value of the blocking property. 
-     [hr]
-     Query the current value of the relationship property. 
-     [hr]
-     Query the current value of the allocator property. 
-     [hr]
-     Query the occupancy (recommended number of work items) for the pool. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.thread_pool.query__static [*query]] [static]]
-    [Query the current value of the mapping property. 
-     [hr]
-     Query the current value of the inline_exception_handling property. 
-     [hr]
-     Query the current value of the outstanding_work property. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.thread_pool.require [*require]]]
-    [Obtain an executor with the blocking.possibly property. 
-     [hr]
-     Obtain an executor with the blocking.always property. 
-     [hr]
-     Obtain an executor with the blocking.never property. 
-     [hr]
-     Obtain an executor with the relationship.fork property. 
-     [hr]
-     Obtain an executor with the relationship.continuation property. 
-     [hr]
-     Obtain an executor with the outstanding_work.tracked property. 
-     [hr]
-     Obtain an executor with the outstanding_work.untracked property. 
-     [hr]
-     Obtain an executor with the specified allocator property. 
-     [hr]
-     Obtain an executor with the default allocator property. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.thread_pool.running_in_this_thread [*running_in_this_thread]]]
-    [Determine whether the thread pool is running in the current thread. ]
-  ]
-  
-  [
     [[link boost_asio.reference.thread_pool.stop [*stop]]]
     [Stops the threads. ]
   ]
@@ -184869,11 +185062,6 @@ Verify the peer.
   [
     [[link boost_asio.reference.thread_pool.wait [*wait]]]
     [Waits for threads to complete. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.thread_pool._basic_executor_type [*~basic_executor_type]] [destructor]]
-    [Destructor. ]
   ]
   
   [
@@ -184898,35 +185086,6 @@ Verify the peer.
   ]
   
 ]
-
-[heading Data Members]
-[table
-  [[Name][Description]]
-
-  [
-    [[link boost_asio.reference.thread_pool.basic_executor_type [*basic_executor_type]]]
-    []
-  ]
-
-]
-
-[heading Friends]
-[table
-  [[Name][Description]]
-
-  [
-    [[link boost_asio.reference.thread_pool.operator_not__eq_ [*operator!=]]]
-    [Compare two executors for inequality. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.thread_pool.operator_eq__eq_ [*operator==]]]
-    [Compare two executors for equality. ]
-  ]
-  
-]
-
-Executor implementation type used to submit functions to a thread pool.
 
 The thread pool class is an execution context where functions are permitted to run on one of a fixed number of threads.
 
@@ -187759,18 +187918,20 @@ Returns an awaitable object that may be used to specify whether the coroutine th
 A simple fixed-size thread pool. 
 
 
-  template<
-      typename Allocator,
-      unsigned int Bits>
   class thread_pool :
-    public execution_context,
-    basic_executor_type detail::thread_pool_bits,
-    Allocator
+    public execution_context
 
 
 [heading Types]
 [table
   [[Name][Description]]
+
+  [
+
+    [[link boost_asio.reference.thread_pool__basic_executor_type [*basic_executor_type]]]
+    [Executor implementation type used to submit functions to a thread pool. ]
+  
+  ]
 
   [
 
@@ -187798,33 +187959,6 @@ A simple fixed-size thread pool.
   ]
   
   [
-    [[link boost_asio.reference.thread_pool.basic_executor_type [*basic_executor_type]]]
-    [Copy constructor. 
-     [hr]
-     Move constructor. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.thread_pool.context [*context]]]
-    [Obtain the underlying execution context. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.thread_pool.defer [*defer]]]
-    [Request the thread pool to invoke the given function object. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.thread_pool.dispatch [*dispatch]]]
-    [Request the thread pool to invoke the given function object. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.thread_pool.execute [*execute]]]
-    [Execution function. ]
-  ]
-  
-  [
     [[link boost_asio.reference.thread_pool.executor [*executor]]]
     [Obtains the executor associated with the pool. ]
   ]
@@ -187845,76 +187979,6 @@ A simple fixed-size thread pool.
   ]
   
   [
-    [[link boost_asio.reference.thread_pool.on_work_finished [*on_work_finished]]]
-    [Inform the thread pool that some work is no longer outstanding. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.thread_pool.on_work_started [*on_work_started]]]
-    [Inform the thread pool that it has some outstanding work to do. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.thread_pool.operator_eq_ [*operator=]]]
-    [Assignment operator. 
-     [hr]
-     Move assignment operator. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.thread_pool.post [*post]]]
-    [Request the thread pool to invoke the given function object. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.thread_pool.query [*query]]]
-    [Query the current value of the context property. 
-     [hr]
-     Query the current value of the blocking property. 
-     [hr]
-     Query the current value of the relationship property. 
-     [hr]
-     Query the current value of the allocator property. 
-     [hr]
-     Query the occupancy (recommended number of work items) for the pool. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.thread_pool.query__static [*query]] [static]]
-    [Query the current value of the mapping property. 
-     [hr]
-     Query the current value of the inline_exception_handling property. 
-     [hr]
-     Query the current value of the outstanding_work property. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.thread_pool.require [*require]]]
-    [Obtain an executor with the blocking.possibly property. 
-     [hr]
-     Obtain an executor with the blocking.always property. 
-     [hr]
-     Obtain an executor with the blocking.never property. 
-     [hr]
-     Obtain an executor with the relationship.fork property. 
-     [hr]
-     Obtain an executor with the relationship.continuation property. 
-     [hr]
-     Obtain an executor with the outstanding_work.tracked property. 
-     [hr]
-     Obtain an executor with the outstanding_work.untracked property. 
-     [hr]
-     Obtain an executor with the specified allocator property. 
-     [hr]
-     Obtain an executor with the default allocator property. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.thread_pool.running_in_this_thread [*running_in_this_thread]]]
-    [Determine whether the thread pool is running in the current thread. ]
-  ]
-  
-  [
     [[link boost_asio.reference.thread_pool.stop [*stop]]]
     [Stops the threads. ]
   ]
@@ -187929,11 +187993,6 @@ A simple fixed-size thread pool.
   [
     [[link boost_asio.reference.thread_pool.wait [*wait]]]
     [Waits for threads to complete. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.thread_pool._basic_executor_type [*~basic_executor_type]] [destructor]]
-    [Destructor. ]
   ]
   
   [
@@ -187958,35 +188017,6 @@ A simple fixed-size thread pool.
   ]
   
 ]
-
-[heading Data Members]
-[table
-  [[Name][Description]]
-
-  [
-    [[link boost_asio.reference.thread_pool.basic_executor_type [*basic_executor_type]]]
-    []
-  ]
-
-]
-
-[heading Friends]
-[table
-  [[Name][Description]]
-
-  [
-    [[link boost_asio.reference.thread_pool.operator_not__eq_ [*operator!=]]]
-    [Compare two executors for inequality. ]
-  ]
-  
-  [
-    [[link boost_asio.reference.thread_pool.operator_eq__eq_ [*operator==]]]
-    [Compare two executors for equality. ]
-  ]
-  
-]
-
-Executor implementation type used to submit functions to a thread pool.
 
 The thread pool class is an execution context where functions are permitted to run on one of a fixed number of threads.
 
@@ -188057,123 +188087,6 @@ This function attaches the current thread to the pool so that it may be used for
 
 
 
-[section:basic_executor_type thread_pool::basic_executor_type]
-
-[indexterm2 boost_asio.indexterm.thread_pool.basic_executor_type..basic_executor_type..thread_pool] 
-
-  class BOOST_ASIO_EMPTY_BASES basic_executor_type;
-
-
-
-[endsect]
-
-
-[section:basic_executor_type thread_pool::basic_executor_type]
-
-[indexterm2 boost_asio.indexterm.thread_pool.basic_executor_type..basic_executor_type..thread_pool] 
-Copy constructor. 
-
-
-  ``[link boost_asio.reference.thread_pool.basic_executor_type.overload1 basic_executor_type]``(
-      const basic_executor_type & other);
-  ``  [''''&raquo;''' [link boost_asio.reference.thread_pool.basic_executor_type.overload1 more...]]``
-
-
-Move constructor. 
-
-
-  ``[link boost_asio.reference.thread_pool.basic_executor_type.overload2 basic_executor_type]``(
-      basic_executor_type && other);
-  ``  [''''&raquo;''' [link boost_asio.reference.thread_pool.basic_executor_type.overload2 more...]]``
-
-
-[section:overload1 thread_pool::basic_executor_type (1 of 2 overloads)]
-
-
-Copy constructor. 
-
-
-  basic_executor_type(
-      const basic_executor_type & other);
-
-
-
-[endsect]
-
-
-
-[section:overload2 thread_pool::basic_executor_type (2 of 2 overloads)]
-
-
-Move constructor. 
-
-
-  basic_executor_type(
-      basic_executor_type && other);
-
-
-
-[endsect]
-
-
-[endsect]
-
-
-[section:context thread_pool::context]
-
-[indexterm2 boost_asio.indexterm.thread_pool.context..context..thread_pool] 
-Obtain the underlying execution context. 
-
-
-  thread_pool & context() const;
-
-
-
-[endsect]
-
-
-
-[section:defer thread_pool::defer]
-
-[indexterm2 boost_asio.indexterm.thread_pool.defer..defer..thread_pool] 
-Request the thread pool to invoke the given function object. 
-
-
-  template<
-      typename Function,
-      typename OtherAllocator>
-  void defer(
-      Function && f,
-      const OtherAllocator & a) const;
-
-
-This function is used to ask the thread pool to execute the given function object. The function object will never be executed inside `defer()`. Instead, it will be scheduled to run on the thread pool.
-
-If the current thread belongs to the thread pool, `defer()` will delay scheduling the function object until the current thread returns control to the pool.
-
-
-[heading Parameters]
-    
-
-[variablelist
-  
-[[f][The function object to be called. The executor will make a copy of the handler object as required. The function signature of the function object must be: 
-``
-  void function(); 
-``
-]]
-
-[[a][An allocator that may be used by the executor to allocate the internal storage needed for function invocation. ]]
-
-]
-
-
-
-
-[endsect]
-
-
-
 [section:destroy thread_pool::destroy]
 
 
@@ -188191,62 +188104,6 @@ This function is implemented as follows:
 
 * For each service object `svc` in the [link boost_asio.reference.execution_context `execution_context`] set, in reverse order * of the beginning of service object lifetime, performs `delete static_cast<execution_context::service*>(svc)`. 
 
-
-
-
-[endsect]
-
-
-
-[section:dispatch thread_pool::dispatch]
-
-[indexterm2 boost_asio.indexterm.thread_pool.dispatch..dispatch..thread_pool] 
-Request the thread pool to invoke the given function object. 
-
-
-  template<
-      typename Function,
-      typename OtherAllocator>
-  void dispatch(
-      Function && f,
-      const OtherAllocator & a) const;
-
-
-This function is used to ask the thread pool to execute the given function object. If the current thread belongs to the pool, `dispatch()` executes the function before returning. Otherwise, the function will be scheduled to run on the thread pool.
-
-
-[heading Parameters]
-    
-
-[variablelist
-  
-[[f][The function object to be called. The executor will make a copy of the handler object as required. The function signature of the function object must be: 
-``
-  void function(); 
-``
-]]
-
-[[a][An allocator that may be used by the executor to allocate the internal storage needed for function invocation. ]]
-
-]
-
-
-
-
-[endsect]
-
-
-
-[section:execute thread_pool::execute]
-
-[indexterm2 boost_asio.indexterm.thread_pool.execute..execute..thread_pool] 
-Execution function. 
-
-
-  template<
-      typename Function>
-  void execute(
-      Function && f) const;
 
 
 
@@ -188276,6 +188133,130 @@ Executor used to submit functions to a thread pool.
 
   typedef basic_executor_type< std::allocator< void >, 0 > executor_type;
 
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link boost_asio.reference.thread_pool__basic_executor_type.basic_executor_type [*basic_executor_type]] [constructor]]
+    [Copy constructor. 
+     [hr]
+     Move constructor. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.thread_pool__basic_executor_type.context [*context]]]
+    [Obtain the underlying execution context. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.thread_pool__basic_executor_type.defer [*defer]]]
+    [Request the thread pool to invoke the given function object. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.thread_pool__basic_executor_type.dispatch [*dispatch]]]
+    [Request the thread pool to invoke the given function object. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.thread_pool__basic_executor_type.execute [*execute]]]
+    [Execution function. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.thread_pool__basic_executor_type.on_work_finished [*on_work_finished]]]
+    [Inform the thread pool that some work is no longer outstanding. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.thread_pool__basic_executor_type.on_work_started [*on_work_started]]]
+    [Inform the thread pool that it has some outstanding work to do. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.thread_pool__basic_executor_type.operator_eq_ [*operator=]]]
+    [Assignment operator. 
+     [hr]
+     Move assignment operator. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.thread_pool__basic_executor_type.post [*post]]]
+    [Request the thread pool to invoke the given function object. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.thread_pool__basic_executor_type.query [*query]]]
+    [Query the current value of the context property. 
+     [hr]
+     Query the current value of the blocking property. 
+     [hr]
+     Query the current value of the relationship property. 
+     [hr]
+     Query the current value of the allocator property. 
+     [hr]
+     Query the occupancy (recommended number of work items) for the pool. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.thread_pool__basic_executor_type.query__static [*query]] [static]]
+    [Query the current value of the mapping property. 
+     [hr]
+     Query the current value of the inline_exception_handling property. 
+     [hr]
+     Query the current value of the outstanding_work property. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.thread_pool__basic_executor_type.require [*require]]]
+    [Obtain an executor with the blocking.possibly property. 
+     [hr]
+     Obtain an executor with the blocking.always property. 
+     [hr]
+     Obtain an executor with the blocking.never property. 
+     [hr]
+     Obtain an executor with the relationship.fork property. 
+     [hr]
+     Obtain an executor with the relationship.continuation property. 
+     [hr]
+     Obtain an executor with the outstanding_work.tracked property. 
+     [hr]
+     Obtain an executor with the outstanding_work.untracked property. 
+     [hr]
+     Obtain an executor with the specified allocator property. 
+     [hr]
+     Obtain an executor with the default allocator property. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.thread_pool__basic_executor_type.running_in_this_thread [*running_in_this_thread]]]
+    [Determine whether the thread pool is running in the current thread. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.thread_pool__basic_executor_type._basic_executor_type [*~basic_executor_type]] [destructor]]
+    [Destructor. ]
+  ]
+  
+]
+
+[heading Friends]
+[table
+  [[Name][Description]]
+
+  [
+    [[link boost_asio.reference.thread_pool__basic_executor_type.operator_not__eq_ [*operator!=]]]
+    [Compare two executors for inequality. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.thread_pool__basic_executor_type.operator_eq__eq_ [*operator==]]]
+    [Compare two executors for equality. ]
+  ]
+  
+]
 
 
 [heading Requirements]
@@ -188420,830 +188401,6 @@ The following code illustrates how to incorporate the [link boost_asio.reference
 [heading Remarks]
       
 For each service object `svc` in the [link boost_asio.reference.execution_context `execution_context`] set, performs `svc->notify_fork();`. When processing the fork\_prepare event, services are visited in reverse order of the beginning of service object lifetime. Otherwise, services are visited in order of the beginning of service object lifetime. 
-
-
-
-
-[endsect]
-
-
-
-[section:on_work_finished thread_pool::on_work_finished]
-
-[indexterm2 boost_asio.indexterm.thread_pool.on_work_finished..on_work_finished..thread_pool] 
-Inform the thread pool that some work is no longer outstanding. 
-
-
-  void on_work_finished() const;
-
-
-This function is used to inform the thread pool that some work has finished. Once the count of unfinished work reaches zero, the thread pool's [link boost_asio.reference.thread_pool.join `join()`] function is permitted to exit. 
-
-
-[endsect]
-
-
-
-[section:on_work_started thread_pool::on_work_started]
-
-[indexterm2 boost_asio.indexterm.thread_pool.on_work_started..on_work_started..thread_pool] 
-Inform the thread pool that it has some outstanding work to do. 
-
-
-  void on_work_started() const;
-
-
-This function is used to inform the thread pool that some work has begun. This ensures that the thread pool's [link boost_asio.reference.thread_pool.join `join()`] function will not return while the work is underway. 
-
-
-[endsect]
-
-
-
-[section:operator_not__eq_ thread_pool::operator!=]
-
-[indexterm2 boost_asio.indexterm.thread_pool.operator_not__eq_..operator!=..thread_pool] 
-Compare two executors for inequality. 
-
-
-  bool operator!=(
-      const basic_executor_type & a,
-      const basic_executor_type & b);
-
-
-Two executors are equal if they refer to the same underlying thread pool. 
-
-[heading Requirements]
-
-['Header: ][^boost/asio/thread_pool.hpp]
-
-['Convenience header: ][^boost/asio.hpp]
-
-
-[endsect]
-
-
-[section:operator_eq_ thread_pool::operator=]
-
-[indexterm2 boost_asio.indexterm.thread_pool.operator_eq_..operator=..thread_pool] 
-Assignment operator. 
-
-
-  basic_executor_type & ``[link boost_asio.reference.thread_pool.operator_eq_.overload1 operator=]``(
-      const basic_executor_type & other);
-  ``  [''''&raquo;''' [link boost_asio.reference.thread_pool.operator_eq_.overload1 more...]]``
-
-
-Move assignment operator. 
-
-
-  basic_executor_type & ``[link boost_asio.reference.thread_pool.operator_eq_.overload2 operator=]``(
-      basic_executor_type && other);
-  ``  [''''&raquo;''' [link boost_asio.reference.thread_pool.operator_eq_.overload2 more...]]``
-
-
-[section:overload1 thread_pool::operator= (1 of 2 overloads)]
-
-
-Assignment operator. 
-
-
-  basic_executor_type & operator=(
-      const basic_executor_type & other);
-
-
-
-[endsect]
-
-
-
-[section:overload2 thread_pool::operator= (2 of 2 overloads)]
-
-
-Move assignment operator. 
-
-
-  basic_executor_type & operator=(
-      basic_executor_type && other);
-
-
-
-[endsect]
-
-
-[endsect]
-
-
-[section:operator_eq__eq_ thread_pool::operator==]
-
-[indexterm2 boost_asio.indexterm.thread_pool.operator_eq__eq_..operator==..thread_pool] 
-Compare two executors for equality. 
-
-
-  bool operator==(
-      const basic_executor_type & a,
-      const basic_executor_type & b);
-
-
-Two executors are equal if they refer to the same underlying thread pool. 
-
-[heading Requirements]
-
-['Header: ][^boost/asio/thread_pool.hpp]
-
-['Convenience header: ][^boost/asio.hpp]
-
-
-[endsect]
-
-
-
-[section:post thread_pool::post]
-
-[indexterm2 boost_asio.indexterm.thread_pool.post..post..thread_pool] 
-Request the thread pool to invoke the given function object. 
-
-
-  template<
-      typename Function,
-      typename OtherAllocator>
-  void post(
-      Function && f,
-      const OtherAllocator & a) const;
-
-
-This function is used to ask the thread pool to execute the given function object. The function object will never be executed inside `post()`. Instead, it will be scheduled to run on the thread pool.
-
-
-[heading Parameters]
-    
-
-[variablelist
-  
-[[f][The function object to be called. The executor will make a copy of the handler object as required. The function signature of the function object must be: 
-``
-  void function(); 
-``
-]]
-
-[[a][An allocator that may be used by the executor to allocate the internal storage needed for function invocation. ]]
-
-]
-
-
-
-
-[endsect]
-
-
-[section:query thread_pool::query]
-
-[indexterm2 boost_asio.indexterm.thread_pool.query..query..thread_pool] 
-Query the current value of the `context` property. 
-
-
-  thread_pool & ``[link boost_asio.reference.thread_pool.query.overload1 query]``(
-      execution::context_t ) const;
-  ``  [''''&raquo;''' [link boost_asio.reference.thread_pool.query.overload1 more...]]``
-
-
-Query the current value of the `blocking` property. 
-
-
-  constexpr execution::blocking_t ``[link boost_asio.reference.thread_pool.query.overload2 query]``(
-      execution::blocking_t ) const;
-  ``  [''''&raquo;''' [link boost_asio.reference.thread_pool.query.overload2 more...]]``
-
-
-Query the current value of the `relationship` property. 
-
-
-  constexpr execution::relationship_t ``[link boost_asio.reference.thread_pool.query.overload3 query]``(
-      execution::relationship_t ) const;
-  ``  [''''&raquo;''' [link boost_asio.reference.thread_pool.query.overload3 more...]]``
-
-
-Query the current value of the `allocator` property. 
-
-
-  template<
-      typename OtherAllocator>
-  constexpr Allocator ``[link boost_asio.reference.thread_pool.query.overload4 query]``(
-      execution::allocator_t< OtherAllocator > ) const;
-  ``  [''''&raquo;''' [link boost_asio.reference.thread_pool.query.overload4 more...]]``
-
-  constexpr Allocator ``[link boost_asio.reference.thread_pool.query.overload5 query]``(
-      execution::allocator_t< void > ) const;
-  ``  [''''&raquo;''' [link boost_asio.reference.thread_pool.query.overload5 more...]]``
-
-
-Query the occupancy (recommended number of work items) for the pool. 
-
-
-  std::size_t ``[link boost_asio.reference.thread_pool.query.overload6 query]``(
-      execution::occupancy_t ) const;
-  ``  [''''&raquo;''' [link boost_asio.reference.thread_pool.query.overload6 more...]]``
-
-
-[section:overload1 thread_pool::query (1 of 6 overloads)]
-
-
-Query the current value of the `context` property. 
-
-
-  thread_pool & query(
-      execution::context_t ) const;
-
-
-Do not call this function directly. It is intended for use with the [link boost_asio.reference.query `query`] customisation point.
-
-For example: 
-
-  auto ex = my_thread_pool.executor();
-  boost::asio::thread_pool& pool = boost::asio::query(
-      ex, boost::asio::execution::context); 
-
-
-
-
-
-[endsect]
-
-
-
-[section:overload2 thread_pool::query (2 of 6 overloads)]
-
-
-Query the current value of the `blocking` property. 
-
-
-  constexpr execution::blocking_t query(
-      execution::blocking_t ) const;
-
-
-Do not call this function directly. It is intended for use with the [link boost_asio.reference.query `query`] customisation point.
-
-For example: 
-
-  auto ex = my_thread_pool.executor();
-  if (boost::asio::query(ex, boost::asio::execution::blocking)
-        == boost::asio::execution::blocking.always)
-    ... 
-
-
-
-
-
-[endsect]
-
-
-
-[section:overload3 thread_pool::query (3 of 6 overloads)]
-
-
-Query the current value of the `relationship` property. 
-
-
-  constexpr execution::relationship_t query(
-      execution::relationship_t ) const;
-
-
-Do not call this function directly. It is intended for use with the [link boost_asio.reference.query `query`] customisation point.
-
-For example: 
-
-  auto ex = my_thread_pool.executor();
-  if (boost::asio::query(ex, boost::asio::execution::relationship)
-        == boost::asio::execution::relationship.continuation)
-    ... 
-
-
-
-
-
-[endsect]
-
-
-
-[section:overload4 thread_pool::query (4 of 6 overloads)]
-
-
-Query the current value of the `allocator` property. 
-
-
-  template<
-      typename OtherAllocator>
-  constexpr Allocator query(
-      execution::allocator_t< OtherAllocator > ) const;
-
-
-Do not call this function directly. It is intended for use with the [link boost_asio.reference.query `query`] customisation point.
-
-For example: 
-
-  auto ex = my_thread_pool.executor();
-  auto alloc = boost::asio::query(ex,
-      boost::asio::execution::allocator); 
-
-
-
-
-
-[endsect]
-
-
-
-[section:overload5 thread_pool::query (5 of 6 overloads)]
-
-
-Query the current value of the `allocator` property. 
-
-
-  constexpr Allocator query(
-      execution::allocator_t< void > ) const;
-
-
-Do not call this function directly. It is intended for use with the [link boost_asio.reference.query `query`] customisation point.
-
-For example: 
-
-  auto ex = my_thread_pool.executor();
-  auto alloc = boost::asio::query(ex,
-      boost::asio::execution::allocator); 
-
-
-
-
-
-[endsect]
-
-
-
-[section:overload6 thread_pool::query (6 of 6 overloads)]
-
-
-Query the occupancy (recommended number of work items) for the pool. 
-
-
-  std::size_t query(
-      execution::occupancy_t ) const;
-
-
-Do not call this function directly. It is intended for use with the [link boost_asio.reference.query `query`] customisation point.
-
-For example: 
-
-  auto ex = my_thread_pool.executor();
-  std::size_t occupancy = boost::asio::query(
-      ex, boost::asio::execution::occupancy); 
-
-
-
-
-
-[endsect]
-
-
-[endsect]
-
-[section:query__static thread_pool::query]
-
-[indexterm2 boost_asio.indexterm.thread_pool.query__static..query..thread_pool] 
-Query the current value of the `mapping` property. 
-
-
-  static constexpr execution::mapping_t ``[link boost_asio.reference.thread_pool.query__static.overload1 query]``(
-      execution::mapping_t );
-  ``  [''''&raquo;''' [link boost_asio.reference.thread_pool.query__static.overload1 more...]]``
-
-
-Query the current value of the `inline_exception_handling` property. 
-
-
-  static constexpr execution::inline_exception_handling_t ``[link boost_asio.reference.thread_pool.query__static.overload2 query]``(
-      execution::inline_exception_handling_t );
-  ``  [''''&raquo;''' [link boost_asio.reference.thread_pool.query__static.overload2 more...]]``
-
-
-Query the current value of the `outstanding_work` property. 
-
-
-  static constexpr execution::outstanding_work_t ``[link boost_asio.reference.thread_pool.query__static.overload3 query]``(
-      execution::outstanding_work_t );
-  ``  [''''&raquo;''' [link boost_asio.reference.thread_pool.query__static.overload3 more...]]``
-
-
-[section:overload1 thread_pool::query (1 of 3 overloads)]
-
-
-Query the current value of the `mapping` property. 
-
-
-  static constexpr execution::mapping_t query(
-      execution::mapping_t );
-
-
-Do not call this function directly. It is intended for use with the [link boost_asio.reference.query `query`] customisation point.
-
-For example: 
-
-  auto ex = my_thread_pool.executor();
-  if (boost::asio::query(ex, boost::asio::execution::mapping)
-        == boost::asio::execution::mapping.thread)
-    ... 
-
-
-
-
-
-[endsect]
-
-
-
-[section:overload2 thread_pool::query (2 of 3 overloads)]
-
-
-Query the current value of the `inline_exception_handling` property. 
-
-
-  static constexpr execution::inline_exception_handling_t query(
-      execution::inline_exception_handling_t );
-
-
-Do not call this function directly. It is intended for use with the [link boost_asio.reference.query `query`] customisation point.
-
-For example: 
-
-  auto ex = my_thread_pool.get_executor();
-  if (boost::asio::query(ex,
-        boost::asio::execution::inline_exception_handling)
-      == boost::asio::execution::inline_exception_handling.terminate)
-    ... 
-
-
-
-
-
-[endsect]
-
-
-
-[section:overload3 thread_pool::query (3 of 3 overloads)]
-
-
-Query the current value of the `outstanding_work` property. 
-
-
-  static constexpr execution::outstanding_work_t query(
-      execution::outstanding_work_t );
-
-
-Do not call this function directly. It is intended for use with the [link boost_asio.reference.query `query`] customisation point.
-
-For example: 
-
-  auto ex = my_thread_pool.executor();
-  if (boost::asio::query(ex, boost::asio::execution::outstanding_work)
-        == boost::asio::execution::outstanding_work.tracked)
-    ... 
-
-
-
-
-
-[endsect]
-
-
-[endsect]
-
-[section:require thread_pool::require]
-
-[indexterm2 boost_asio.indexterm.thread_pool.require..require..thread_pool] 
-Obtain an executor with the `blocking.possibly` property. 
-
-
-  constexpr basic_executor_type< Allocator, unspecified > ``[link boost_asio.reference.thread_pool.require.overload1 require]``(
-      execution::blocking_t::possibly_t ) const;
-  ``  [''''&raquo;''' [link boost_asio.reference.thread_pool.require.overload1 more...]]``
-
-
-Obtain an executor with the `blocking.always` property. 
-
-
-  constexpr basic_executor_type< Allocator, unspecified > ``[link boost_asio.reference.thread_pool.require.overload2 require]``(
-      execution::blocking_t::always_t ) const;
-  ``  [''''&raquo;''' [link boost_asio.reference.thread_pool.require.overload2 more...]]``
-
-
-Obtain an executor with the `blocking.never` property. 
-
-
-  constexpr basic_executor_type< Allocator, unspecified > ``[link boost_asio.reference.thread_pool.require.overload3 require]``(
-      execution::blocking_t::never_t ) const;
-  ``  [''''&raquo;''' [link boost_asio.reference.thread_pool.require.overload3 more...]]``
-
-
-Obtain an executor with the `relationship.fork` property. 
-
-
-  constexpr basic_executor_type ``[link boost_asio.reference.thread_pool.require.overload4 require]``(
-      execution::relationship_t::fork_t ) const;
-  ``  [''''&raquo;''' [link boost_asio.reference.thread_pool.require.overload4 more...]]``
-
-
-Obtain an executor with the `relationship.continuation` property. 
-
-
-  constexpr basic_executor_type ``[link boost_asio.reference.thread_pool.require.overload5 require]``(
-      execution::relationship_t::continuation_t ) const;
-  ``  [''''&raquo;''' [link boost_asio.reference.thread_pool.require.overload5 more...]]``
-
-
-Obtain an executor with the `outstanding_work.tracked` property. 
-
-
-  constexpr basic_executor_type< Allocator, unspecified > ``[link boost_asio.reference.thread_pool.require.overload6 require]``(
-      execution::outstanding_work_t::tracked_t ) const;
-  ``  [''''&raquo;''' [link boost_asio.reference.thread_pool.require.overload6 more...]]``
-
-
-Obtain an executor with the `outstanding_work.untracked` property. 
-
-
-  constexpr basic_executor_type< Allocator, unspecified > ``[link boost_asio.reference.thread_pool.require.overload7 require]``(
-      execution::outstanding_work_t::untracked_t ) const;
-  ``  [''''&raquo;''' [link boost_asio.reference.thread_pool.require.overload7 more...]]``
-
-
-Obtain an executor with the specified `allocator` property. 
-
-
-  template<
-      typename OtherAllocator>
-  constexpr basic_executor_type< OtherAllocator, Bits > ``[link boost_asio.reference.thread_pool.require.overload8 require]``(
-      execution::allocator_t< OtherAllocator > a) const;
-  ``  [''''&raquo;''' [link boost_asio.reference.thread_pool.require.overload8 more...]]``
-
-
-Obtain an executor with the default `allocator` property. 
-
-
-  constexpr basic_executor_type< std::allocator< void >, Bits > ``[link boost_asio.reference.thread_pool.require.overload9 require]``(
-      execution::allocator_t< void > ) const;
-  ``  [''''&raquo;''' [link boost_asio.reference.thread_pool.require.overload9 more...]]``
-
-
-[section:overload1 thread_pool::require (1 of 9 overloads)]
-
-
-Obtain an executor with the `blocking.possibly` property. 
-
-
-  constexpr basic_executor_type< Allocator, unspecified > require(
-      execution::blocking_t::possibly_t ) const;
-
-
-Do not call this function directly. It is intended for use with the [link boost_asio.reference.require `require`] customisation point.
-
-For example: 
-
-  auto ex1 = my_thread_pool.executor();
-  auto ex2 = boost::asio::require(ex1,
-      boost::asio::execution::blocking.possibly); 
-
-
-
-
-
-[endsect]
-
-
-
-[section:overload2 thread_pool::require (2 of 9 overloads)]
-
-
-Obtain an executor with the `blocking.always` property. 
-
-
-  constexpr basic_executor_type< Allocator, unspecified > require(
-      execution::blocking_t::always_t ) const;
-
-
-Do not call this function directly. It is intended for use with the [link boost_asio.reference.require `require`] customisation point.
-
-For example: 
-
-  auto ex1 = my_thread_pool.executor();
-  auto ex2 = boost::asio::require(ex1,
-      boost::asio::execution::blocking.always); 
-
-
-
-
-
-[endsect]
-
-
-
-[section:overload3 thread_pool::require (3 of 9 overloads)]
-
-
-Obtain an executor with the `blocking.never` property. 
-
-
-  constexpr basic_executor_type< Allocator, unspecified > require(
-      execution::blocking_t::never_t ) const;
-
-
-Do not call this function directly. It is intended for use with the [link boost_asio.reference.require `require`] customisation point.
-
-For example: 
-
-  auto ex1 = my_thread_pool.executor();
-  auto ex2 = boost::asio::require(ex1,
-      boost::asio::execution::blocking.never); 
-
-
-
-
-
-[endsect]
-
-
-
-[section:overload4 thread_pool::require (4 of 9 overloads)]
-
-
-Obtain an executor with the `relationship.fork` property. 
-
-
-  constexpr basic_executor_type require(
-      execution::relationship_t::fork_t ) const;
-
-
-Do not call this function directly. It is intended for use with the [link boost_asio.reference.require `require`] customisation point.
-
-For example: 
-
-  auto ex1 = my_thread_pool.executor();
-  auto ex2 = boost::asio::require(ex1,
-      boost::asio::execution::relationship.fork); 
-
-
-
-
-
-[endsect]
-
-
-
-[section:overload5 thread_pool::require (5 of 9 overloads)]
-
-
-Obtain an executor with the `relationship.continuation` property. 
-
-
-  constexpr basic_executor_type require(
-      execution::relationship_t::continuation_t ) const;
-
-
-Do not call this function directly. It is intended for use with the [link boost_asio.reference.require `require`] customisation point.
-
-For example: 
-
-  auto ex1 = my_thread_pool.executor();
-  auto ex2 = boost::asio::require(ex1,
-      boost::asio::execution::relationship.continuation); 
-
-
-
-
-
-[endsect]
-
-
-
-[section:overload6 thread_pool::require (6 of 9 overloads)]
-
-
-Obtain an executor with the `outstanding_work.tracked` property. 
-
-
-  constexpr basic_executor_type< Allocator, unspecified > require(
-      execution::outstanding_work_t::tracked_t ) const;
-
-
-Do not call this function directly. It is intended for use with the [link boost_asio.reference.require `require`] customisation point.
-
-For example: 
-
-  auto ex1 = my_thread_pool.executor();
-  auto ex2 = boost::asio::require(ex1,
-      boost::asio::execution::outstanding_work.tracked); 
-
-
-
-
-
-[endsect]
-
-
-
-[section:overload7 thread_pool::require (7 of 9 overloads)]
-
-
-Obtain an executor with the `outstanding_work.untracked` property. 
-
-
-  constexpr basic_executor_type< Allocator, unspecified > require(
-      execution::outstanding_work_t::untracked_t ) const;
-
-
-Do not call this function directly. It is intended for use with the [link boost_asio.reference.require `require`] customisation point.
-
-For example: 
-
-  auto ex1 = my_thread_pool.executor();
-  auto ex2 = boost::asio::require(ex1,
-      boost::asio::execution::outstanding_work.untracked); 
-
-
-
-
-
-[endsect]
-
-
-
-[section:overload8 thread_pool::require (8 of 9 overloads)]
-
-
-Obtain an executor with the specified `allocator` property. 
-
-
-  template<
-      typename OtherAllocator>
-  constexpr basic_executor_type< OtherAllocator, Bits > require(
-      execution::allocator_t< OtherAllocator > a) const;
-
-
-Do not call this function directly. It is intended for use with the [link boost_asio.reference.require `require`] customisation point.
-
-For example: 
-
-  auto ex1 = my_thread_pool.executor();
-  auto ex2 = boost::asio::require(ex1,
-      boost::asio::execution::allocator(my_allocator)); 
-
-
-
-
-
-[endsect]
-
-
-
-[section:overload9 thread_pool::require (9 of 9 overloads)]
-
-
-Obtain an executor with the default `allocator` property. 
-
-
-  constexpr basic_executor_type< std::allocator< void >, Bits > require(
-      execution::allocator_t< void > ) const;
-
-
-Do not call this function directly. It is intended for use with the [link boost_asio.reference.require `require`] customisation point.
-
-For example: 
-
-  auto ex1 = my_thread_pool.executor();
-  auto ex2 = boost::asio::require(ex1,
-      boost::asio::execution::allocator); 
-
-
-
-
-
-[endsect]
-
-
-[endsect]
-
-
-[section:running_in_this_thread thread_pool::running_in_this_thread]
-
-[indexterm2 boost_asio.indexterm.thread_pool.running_in_this_thread..running_in_this_thread..thread_pool] 
-Determine whether the thread pool is running in the current thread. 
-
-
-  bool running_in_this_thread() const;
-
-
-
-[heading Return Value]
-      
-`true` if the current thread is running the thread pool. Otherwise returns `false`. 
 
 
 
@@ -189537,20 +188694,6 @@ This function blocks until the threads in the pool have completed. If `stop()` i
 
 
 
-[section:_basic_executor_type thread_pool::~basic_executor_type]
-
-[indexterm2 boost_asio.indexterm.thread_pool._basic_executor_type..~basic_executor_type..thread_pool] 
-Destructor. 
-
-
-  ~basic_executor_type();
-
-
-
-[endsect]
-
-
-
 [section:_thread_pool thread_pool::~thread_pool]
 
 [indexterm2 boost_asio.indexterm.thread_pool._thread_pool..~thread_pool..thread_pool] 
@@ -189561,6 +188704,1153 @@ Destructor.
 
 
 Automatically stops and joins the pool, if not explicitly done beforehand. 
+
+
+[endsect]
+
+
+
+[endsect]
+
+[section:thread_pool__basic_executor_type thread_pool::basic_executor_type]
+
+[indexterm1 boost_asio.indexterm.thread_pool__basic_executor_type..thread_pool::basic_executor_type]
+
+
+Executor implementation type used to submit functions to a thread pool. 
+
+
+  template<
+      typename Allocator,
+      unsigned int Bits>
+  class basic_executor_type :
+    detail::allocator_base< Allocator >
+
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link boost_asio.reference.thread_pool__basic_executor_type.basic_executor_type [*basic_executor_type]] [constructor]]
+    [Copy constructor. 
+     [hr]
+     Move constructor. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.thread_pool__basic_executor_type.context [*context]]]
+    [Obtain the underlying execution context. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.thread_pool__basic_executor_type.defer [*defer]]]
+    [Request the thread pool to invoke the given function object. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.thread_pool__basic_executor_type.dispatch [*dispatch]]]
+    [Request the thread pool to invoke the given function object. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.thread_pool__basic_executor_type.execute [*execute]]]
+    [Execution function. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.thread_pool__basic_executor_type.on_work_finished [*on_work_finished]]]
+    [Inform the thread pool that some work is no longer outstanding. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.thread_pool__basic_executor_type.on_work_started [*on_work_started]]]
+    [Inform the thread pool that it has some outstanding work to do. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.thread_pool__basic_executor_type.operator_eq_ [*operator=]]]
+    [Assignment operator. 
+     [hr]
+     Move assignment operator. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.thread_pool__basic_executor_type.post [*post]]]
+    [Request the thread pool to invoke the given function object. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.thread_pool__basic_executor_type.query [*query]]]
+    [Query the current value of the context property. 
+     [hr]
+     Query the current value of the blocking property. 
+     [hr]
+     Query the current value of the relationship property. 
+     [hr]
+     Query the current value of the allocator property. 
+     [hr]
+     Query the occupancy (recommended number of work items) for the pool. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.thread_pool__basic_executor_type.query__static [*query]] [static]]
+    [Query the current value of the mapping property. 
+     [hr]
+     Query the current value of the inline_exception_handling property. 
+     [hr]
+     Query the current value of the outstanding_work property. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.thread_pool__basic_executor_type.require [*require]]]
+    [Obtain an executor with the blocking.possibly property. 
+     [hr]
+     Obtain an executor with the blocking.always property. 
+     [hr]
+     Obtain an executor with the blocking.never property. 
+     [hr]
+     Obtain an executor with the relationship.fork property. 
+     [hr]
+     Obtain an executor with the relationship.continuation property. 
+     [hr]
+     Obtain an executor with the outstanding_work.tracked property. 
+     [hr]
+     Obtain an executor with the outstanding_work.untracked property. 
+     [hr]
+     Obtain an executor with the specified allocator property. 
+     [hr]
+     Obtain an executor with the default allocator property. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.thread_pool__basic_executor_type.running_in_this_thread [*running_in_this_thread]]]
+    [Determine whether the thread pool is running in the current thread. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.thread_pool__basic_executor_type._basic_executor_type [*~basic_executor_type]] [destructor]]
+    [Destructor. ]
+  ]
+  
+]
+
+[heading Friends]
+[table
+  [[Name][Description]]
+
+  [
+    [[link boost_asio.reference.thread_pool__basic_executor_type.operator_not__eq_ [*operator!=]]]
+    [Compare two executors for inequality. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.thread_pool__basic_executor_type.operator_eq__eq_ [*operator==]]]
+    [Compare two executors for equality. ]
+  ]
+  
+]
+
+[heading Requirements]
+
+['Header: ][^boost/asio/thread_pool.hpp]
+
+['Convenience header: ][^boost/asio.hpp]
+
+[section:basic_executor_type thread_pool::basic_executor_type::basic_executor_type]
+
+[indexterm2 boost_asio.indexterm.thread_pool__basic_executor_type.basic_executor_type..basic_executor_type..thread_pool::basic_executor_type] 
+Copy constructor. 
+
+
+  ``[link boost_asio.reference.thread_pool__basic_executor_type.basic_executor_type.overload1 basic_executor_type]``(
+      const basic_executor_type & other);
+  ``  [''''&raquo;''' [link boost_asio.reference.thread_pool__basic_executor_type.basic_executor_type.overload1 more...]]``
+
+
+Move constructor. 
+
+
+  ``[link boost_asio.reference.thread_pool__basic_executor_type.basic_executor_type.overload2 basic_executor_type]``(
+      basic_executor_type && other);
+  ``  [''''&raquo;''' [link boost_asio.reference.thread_pool__basic_executor_type.basic_executor_type.overload2 more...]]``
+
+
+[section:overload1 thread_pool::basic_executor_type::basic_executor_type (1 of 2 overloads)]
+
+
+Copy constructor. 
+
+
+  basic_executor_type(
+      const basic_executor_type & other);
+
+
+
+[endsect]
+
+
+
+[section:overload2 thread_pool::basic_executor_type::basic_executor_type (2 of 2 overloads)]
+
+
+Move constructor. 
+
+
+  basic_executor_type(
+      basic_executor_type && other);
+
+
+
+[endsect]
+
+
+[endsect]
+
+
+[section:context thread_pool::basic_executor_type::context]
+
+[indexterm2 boost_asio.indexterm.thread_pool__basic_executor_type.context..context..thread_pool::basic_executor_type] 
+Obtain the underlying execution context. 
+
+
+  thread_pool & context() const;
+
+
+
+[endsect]
+
+
+
+[section:defer thread_pool::basic_executor_type::defer]
+
+[indexterm2 boost_asio.indexterm.thread_pool__basic_executor_type.defer..defer..thread_pool::basic_executor_type] 
+Request the thread pool to invoke the given function object. 
+
+
+  template<
+      typename Function,
+      typename OtherAllocator>
+  void defer(
+      Function && f,
+      const OtherAllocator & a) const;
+
+
+This function is used to ask the thread pool to execute the given function object. The function object will never be executed inside `defer()`. Instead, it will be scheduled to run on the thread pool.
+
+If the current thread belongs to the thread pool, `defer()` will delay scheduling the function object until the current thread returns control to the pool.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[f][The function object to be called. The executor will make a copy of the handler object as required. The function signature of the function object must be: 
+``
+  void function(); 
+``
+]]
+
+[[a][An allocator that may be used by the executor to allocate the internal storage needed for function invocation. ]]
+
+]
+
+
+
+
+[endsect]
+
+
+
+[section:dispatch thread_pool::basic_executor_type::dispatch]
+
+[indexterm2 boost_asio.indexterm.thread_pool__basic_executor_type.dispatch..dispatch..thread_pool::basic_executor_type] 
+Request the thread pool to invoke the given function object. 
+
+
+  template<
+      typename Function,
+      typename OtherAllocator>
+  void dispatch(
+      Function && f,
+      const OtherAllocator & a) const;
+
+
+This function is used to ask the thread pool to execute the given function object. If the current thread belongs to the pool, `dispatch()` executes the function before returning. Otherwise, the function will be scheduled to run on the thread pool.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[f][The function object to be called. The executor will make a copy of the handler object as required. The function signature of the function object must be: 
+``
+  void function(); 
+``
+]]
+
+[[a][An allocator that may be used by the executor to allocate the internal storage needed for function invocation. ]]
+
+]
+
+
+
+
+[endsect]
+
+
+
+[section:execute thread_pool::basic_executor_type::execute]
+
+[indexterm2 boost_asio.indexterm.thread_pool__basic_executor_type.execute..execute..thread_pool::basic_executor_type] 
+Execution function. 
+
+
+  template<
+      typename Function>
+  void execute(
+      Function && f) const;
+
+
+
+[endsect]
+
+
+
+[section:on_work_finished thread_pool::basic_executor_type::on_work_finished]
+
+[indexterm2 boost_asio.indexterm.thread_pool__basic_executor_type.on_work_finished..on_work_finished..thread_pool::basic_executor_type] 
+Inform the thread pool that some work is no longer outstanding. 
+
+
+  void on_work_finished() const;
+
+
+This function is used to inform the thread pool that some work has finished. Once the count of unfinished work reaches zero, the thread pool's [link boost_asio.reference.thread_pool.join `join()`] function is permitted to exit. 
+
+
+[endsect]
+
+
+
+[section:on_work_started thread_pool::basic_executor_type::on_work_started]
+
+[indexterm2 boost_asio.indexterm.thread_pool__basic_executor_type.on_work_started..on_work_started..thread_pool::basic_executor_type] 
+Inform the thread pool that it has some outstanding work to do. 
+
+
+  void on_work_started() const;
+
+
+This function is used to inform the thread pool that some work has begun. This ensures that the thread pool's [link boost_asio.reference.thread_pool.join `join()`] function will not return while the work is underway. 
+
+
+[endsect]
+
+
+
+[section:operator_not__eq_ thread_pool::basic_executor_type::operator!=]
+
+[indexterm2 boost_asio.indexterm.thread_pool__basic_executor_type.operator_not__eq_..operator!=..thread_pool::basic_executor_type] 
+Compare two executors for inequality. 
+
+
+  bool operator!=(
+      const basic_executor_type & a,
+      const basic_executor_type & b);
+
+
+Two executors are equal if they refer to the same underlying thread pool. 
+
+[heading Requirements]
+
+['Header: ][^boost/asio/thread_pool.hpp]
+
+['Convenience header: ][^boost/asio.hpp]
+
+
+[endsect]
+
+
+[section:operator_eq_ thread_pool::basic_executor_type::operator=]
+
+[indexterm2 boost_asio.indexterm.thread_pool__basic_executor_type.operator_eq_..operator=..thread_pool::basic_executor_type] 
+Assignment operator. 
+
+
+  basic_executor_type & ``[link boost_asio.reference.thread_pool__basic_executor_type.operator_eq_.overload1 operator=]``(
+      const basic_executor_type & other);
+  ``  [''''&raquo;''' [link boost_asio.reference.thread_pool__basic_executor_type.operator_eq_.overload1 more...]]``
+
+
+Move assignment operator. 
+
+
+  basic_executor_type & ``[link boost_asio.reference.thread_pool__basic_executor_type.operator_eq_.overload2 operator=]``(
+      basic_executor_type && other);
+  ``  [''''&raquo;''' [link boost_asio.reference.thread_pool__basic_executor_type.operator_eq_.overload2 more...]]``
+
+
+[section:overload1 thread_pool::basic_executor_type::operator= (1 of 2 overloads)]
+
+
+Assignment operator. 
+
+
+  basic_executor_type & operator=(
+      const basic_executor_type & other);
+
+
+
+[endsect]
+
+
+
+[section:overload2 thread_pool::basic_executor_type::operator= (2 of 2 overloads)]
+
+
+Move assignment operator. 
+
+
+  basic_executor_type & operator=(
+      basic_executor_type && other);
+
+
+
+[endsect]
+
+
+[endsect]
+
+
+[section:operator_eq__eq_ thread_pool::basic_executor_type::operator==]
+
+[indexterm2 boost_asio.indexterm.thread_pool__basic_executor_type.operator_eq__eq_..operator==..thread_pool::basic_executor_type] 
+Compare two executors for equality. 
+
+
+  bool operator==(
+      const basic_executor_type & a,
+      const basic_executor_type & b);
+
+
+Two executors are equal if they refer to the same underlying thread pool. 
+
+[heading Requirements]
+
+['Header: ][^boost/asio/thread_pool.hpp]
+
+['Convenience header: ][^boost/asio.hpp]
+
+
+[endsect]
+
+
+
+[section:post thread_pool::basic_executor_type::post]
+
+[indexterm2 boost_asio.indexterm.thread_pool__basic_executor_type.post..post..thread_pool::basic_executor_type] 
+Request the thread pool to invoke the given function object. 
+
+
+  template<
+      typename Function,
+      typename OtherAllocator>
+  void post(
+      Function && f,
+      const OtherAllocator & a) const;
+
+
+This function is used to ask the thread pool to execute the given function object. The function object will never be executed inside `post()`. Instead, it will be scheduled to run on the thread pool.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[f][The function object to be called. The executor will make a copy of the handler object as required. The function signature of the function object must be: 
+``
+  void function(); 
+``
+]]
+
+[[a][An allocator that may be used by the executor to allocate the internal storage needed for function invocation. ]]
+
+]
+
+
+
+
+[endsect]
+
+
+[section:query thread_pool::basic_executor_type::query]
+
+[indexterm2 boost_asio.indexterm.thread_pool__basic_executor_type.query..query..thread_pool::basic_executor_type] 
+Query the current value of the `context` property. 
+
+
+  thread_pool & ``[link boost_asio.reference.thread_pool__basic_executor_type.query.overload1 query]``(
+      execution::context_t ) const;
+  ``  [''''&raquo;''' [link boost_asio.reference.thread_pool__basic_executor_type.query.overload1 more...]]``
+
+
+Query the current value of the `blocking` property. 
+
+
+  constexpr execution::blocking_t ``[link boost_asio.reference.thread_pool__basic_executor_type.query.overload2 query]``(
+      execution::blocking_t ) const;
+  ``  [''''&raquo;''' [link boost_asio.reference.thread_pool__basic_executor_type.query.overload2 more...]]``
+
+
+Query the current value of the `relationship` property. 
+
+
+  constexpr execution::relationship_t ``[link boost_asio.reference.thread_pool__basic_executor_type.query.overload3 query]``(
+      execution::relationship_t ) const;
+  ``  [''''&raquo;''' [link boost_asio.reference.thread_pool__basic_executor_type.query.overload3 more...]]``
+
+
+Query the current value of the `allocator` property. 
+
+
+  template<
+      typename OtherAllocator>
+  constexpr Allocator ``[link boost_asio.reference.thread_pool__basic_executor_type.query.overload4 query]``(
+      execution::allocator_t< OtherAllocator > ) const;
+  ``  [''''&raquo;''' [link boost_asio.reference.thread_pool__basic_executor_type.query.overload4 more...]]``
+
+  constexpr Allocator ``[link boost_asio.reference.thread_pool__basic_executor_type.query.overload5 query]``(
+      execution::allocator_t< void > ) const;
+  ``  [''''&raquo;''' [link boost_asio.reference.thread_pool__basic_executor_type.query.overload5 more...]]``
+
+
+Query the occupancy (recommended number of work items) for the pool. 
+
+
+  std::size_t ``[link boost_asio.reference.thread_pool__basic_executor_type.query.overload6 query]``(
+      execution::occupancy_t ) const;
+  ``  [''''&raquo;''' [link boost_asio.reference.thread_pool__basic_executor_type.query.overload6 more...]]``
+
+
+[section:overload1 thread_pool::basic_executor_type::query (1 of 6 overloads)]
+
+
+Query the current value of the `context` property. 
+
+
+  thread_pool & query(
+      execution::context_t ) const;
+
+
+Do not call this function directly. It is intended for use with the [link boost_asio.reference.query `query`] customisation point.
+
+For example: 
+
+  auto ex = my_thread_pool.executor();
+  boost::asio::thread_pool& pool = boost::asio::query(
+      ex, boost::asio::execution::context); 
+
+
+
+
+
+[endsect]
+
+
+
+[section:overload2 thread_pool::basic_executor_type::query (2 of 6 overloads)]
+
+
+Query the current value of the `blocking` property. 
+
+
+  constexpr execution::blocking_t query(
+      execution::blocking_t ) const;
+
+
+Do not call this function directly. It is intended for use with the [link boost_asio.reference.query `query`] customisation point.
+
+For example: 
+
+  auto ex = my_thread_pool.executor();
+  if (boost::asio::query(ex, boost::asio::execution::blocking)
+        == boost::asio::execution::blocking.always)
+    ... 
+
+
+
+
+
+[endsect]
+
+
+
+[section:overload3 thread_pool::basic_executor_type::query (3 of 6 overloads)]
+
+
+Query the current value of the `relationship` property. 
+
+
+  constexpr execution::relationship_t query(
+      execution::relationship_t ) const;
+
+
+Do not call this function directly. It is intended for use with the [link boost_asio.reference.query `query`] customisation point.
+
+For example: 
+
+  auto ex = my_thread_pool.executor();
+  if (boost::asio::query(ex, boost::asio::execution::relationship)
+        == boost::asio::execution::relationship.continuation)
+    ... 
+
+
+
+
+
+[endsect]
+
+
+
+[section:overload4 thread_pool::basic_executor_type::query (4 of 6 overloads)]
+
+
+Query the current value of the `allocator` property. 
+
+
+  template<
+      typename OtherAllocator>
+  constexpr Allocator query(
+      execution::allocator_t< OtherAllocator > ) const;
+
+
+Do not call this function directly. It is intended for use with the [link boost_asio.reference.query `query`] customisation point.
+
+For example: 
+
+  auto ex = my_thread_pool.executor();
+  auto alloc = boost::asio::query(ex,
+      boost::asio::execution::allocator); 
+
+
+
+
+
+[endsect]
+
+
+
+[section:overload5 thread_pool::basic_executor_type::query (5 of 6 overloads)]
+
+
+Query the current value of the `allocator` property. 
+
+
+  constexpr Allocator query(
+      execution::allocator_t< void > ) const;
+
+
+Do not call this function directly. It is intended for use with the [link boost_asio.reference.query `query`] customisation point.
+
+For example: 
+
+  auto ex = my_thread_pool.executor();
+  auto alloc = boost::asio::query(ex,
+      boost::asio::execution::allocator); 
+
+
+
+
+
+[endsect]
+
+
+
+[section:overload6 thread_pool::basic_executor_type::query (6 of 6 overloads)]
+
+
+Query the occupancy (recommended number of work items) for the pool. 
+
+
+  std::size_t query(
+      execution::occupancy_t ) const;
+
+
+Do not call this function directly. It is intended for use with the [link boost_asio.reference.query `query`] customisation point.
+
+For example: 
+
+  auto ex = my_thread_pool.executor();
+  std::size_t occupancy = boost::asio::query(
+      ex, boost::asio::execution::occupancy); 
+
+
+
+
+
+[endsect]
+
+
+[endsect]
+
+[section:query__static thread_pool::basic_executor_type::query]
+
+[indexterm2 boost_asio.indexterm.thread_pool__basic_executor_type.query__static..query..thread_pool::basic_executor_type] 
+Query the current value of the `mapping` property. 
+
+
+  static constexpr execution::mapping_t ``[link boost_asio.reference.thread_pool__basic_executor_type.query__static.overload1 query]``(
+      execution::mapping_t );
+  ``  [''''&raquo;''' [link boost_asio.reference.thread_pool__basic_executor_type.query__static.overload1 more...]]``
+
+
+Query the current value of the `inline_exception_handling` property. 
+
+
+  static constexpr execution::inline_exception_handling_t ``[link boost_asio.reference.thread_pool__basic_executor_type.query__static.overload2 query]``(
+      execution::inline_exception_handling_t );
+  ``  [''''&raquo;''' [link boost_asio.reference.thread_pool__basic_executor_type.query__static.overload2 more...]]``
+
+
+Query the current value of the `outstanding_work` property. 
+
+
+  static constexpr execution::outstanding_work_t ``[link boost_asio.reference.thread_pool__basic_executor_type.query__static.overload3 query]``(
+      execution::outstanding_work_t );
+  ``  [''''&raquo;''' [link boost_asio.reference.thread_pool__basic_executor_type.query__static.overload3 more...]]``
+
+
+[section:overload1 thread_pool::basic_executor_type::query (1 of 3 overloads)]
+
+
+Query the current value of the `mapping` property. 
+
+
+  static constexpr execution::mapping_t query(
+      execution::mapping_t );
+
+
+Do not call this function directly. It is intended for use with the [link boost_asio.reference.query `query`] customisation point.
+
+For example: 
+
+  auto ex = my_thread_pool.executor();
+  if (boost::asio::query(ex, boost::asio::execution::mapping)
+        == boost::asio::execution::mapping.thread)
+    ... 
+
+
+
+
+
+[endsect]
+
+
+
+[section:overload2 thread_pool::basic_executor_type::query (2 of 3 overloads)]
+
+
+Query the current value of the `inline_exception_handling` property. 
+
+
+  static constexpr execution::inline_exception_handling_t query(
+      execution::inline_exception_handling_t );
+
+
+Do not call this function directly. It is intended for use with the [link boost_asio.reference.query `query`] customisation point.
+
+For example: 
+
+  auto ex = my_thread_pool.get_executor();
+  if (boost::asio::query(ex,
+        boost::asio::execution::inline_exception_handling)
+      == boost::asio::execution::inline_exception_handling.terminate)
+    ... 
+
+
+
+
+
+[endsect]
+
+
+
+[section:overload3 thread_pool::basic_executor_type::query (3 of 3 overloads)]
+
+
+Query the current value of the `outstanding_work` property. 
+
+
+  static constexpr execution::outstanding_work_t query(
+      execution::outstanding_work_t );
+
+
+Do not call this function directly. It is intended for use with the [link boost_asio.reference.query `query`] customisation point.
+
+For example: 
+
+  auto ex = my_thread_pool.executor();
+  if (boost::asio::query(ex, boost::asio::execution::outstanding_work)
+        == boost::asio::execution::outstanding_work.tracked)
+    ... 
+
+
+
+
+
+[endsect]
+
+
+[endsect]
+
+[section:require thread_pool::basic_executor_type::require]
+
+[indexterm2 boost_asio.indexterm.thread_pool__basic_executor_type.require..require..thread_pool::basic_executor_type] 
+Obtain an executor with the `blocking.possibly` property. 
+
+
+  constexpr basic_executor_type< Allocator, unspecified > ``[link boost_asio.reference.thread_pool__basic_executor_type.require.overload1 require]``(
+      execution::blocking_t::possibly_t ) const;
+  ``  [''''&raquo;''' [link boost_asio.reference.thread_pool__basic_executor_type.require.overload1 more...]]``
+
+
+Obtain an executor with the `blocking.always` property. 
+
+
+  constexpr basic_executor_type< Allocator, unspecified > ``[link boost_asio.reference.thread_pool__basic_executor_type.require.overload2 require]``(
+      execution::blocking_t::always_t ) const;
+  ``  [''''&raquo;''' [link boost_asio.reference.thread_pool__basic_executor_type.require.overload2 more...]]``
+
+
+Obtain an executor with the `blocking.never` property. 
+
+
+  constexpr basic_executor_type< Allocator, unspecified > ``[link boost_asio.reference.thread_pool__basic_executor_type.require.overload3 require]``(
+      execution::blocking_t::never_t ) const;
+  ``  [''''&raquo;''' [link boost_asio.reference.thread_pool__basic_executor_type.require.overload3 more...]]``
+
+
+Obtain an executor with the `relationship.fork` property. 
+
+
+  constexpr basic_executor_type ``[link boost_asio.reference.thread_pool__basic_executor_type.require.overload4 require]``(
+      execution::relationship_t::fork_t ) const;
+  ``  [''''&raquo;''' [link boost_asio.reference.thread_pool__basic_executor_type.require.overload4 more...]]``
+
+
+Obtain an executor with the `relationship.continuation` property. 
+
+
+  constexpr basic_executor_type ``[link boost_asio.reference.thread_pool__basic_executor_type.require.overload5 require]``(
+      execution::relationship_t::continuation_t ) const;
+  ``  [''''&raquo;''' [link boost_asio.reference.thread_pool__basic_executor_type.require.overload5 more...]]``
+
+
+Obtain an executor with the `outstanding_work.tracked` property. 
+
+
+  constexpr basic_executor_type< Allocator, unspecified > ``[link boost_asio.reference.thread_pool__basic_executor_type.require.overload6 require]``(
+      execution::outstanding_work_t::tracked_t ) const;
+  ``  [''''&raquo;''' [link boost_asio.reference.thread_pool__basic_executor_type.require.overload6 more...]]``
+
+
+Obtain an executor with the `outstanding_work.untracked` property. 
+
+
+  constexpr basic_executor_type< Allocator, unspecified > ``[link boost_asio.reference.thread_pool__basic_executor_type.require.overload7 require]``(
+      execution::outstanding_work_t::untracked_t ) const;
+  ``  [''''&raquo;''' [link boost_asio.reference.thread_pool__basic_executor_type.require.overload7 more...]]``
+
+
+Obtain an executor with the specified `allocator` property. 
+
+
+  template<
+      typename OtherAllocator>
+  constexpr basic_executor_type< OtherAllocator, Bits > ``[link boost_asio.reference.thread_pool__basic_executor_type.require.overload8 require]``(
+      execution::allocator_t< OtherAllocator > a) const;
+  ``  [''''&raquo;''' [link boost_asio.reference.thread_pool__basic_executor_type.require.overload8 more...]]``
+
+
+Obtain an executor with the default `allocator` property. 
+
+
+  constexpr basic_executor_type< std::allocator< void >, Bits > ``[link boost_asio.reference.thread_pool__basic_executor_type.require.overload9 require]``(
+      execution::allocator_t< void > ) const;
+  ``  [''''&raquo;''' [link boost_asio.reference.thread_pool__basic_executor_type.require.overload9 more...]]``
+
+
+[section:overload1 thread_pool::basic_executor_type::require (1 of 9 overloads)]
+
+
+Obtain an executor with the `blocking.possibly` property. 
+
+
+  constexpr basic_executor_type< Allocator, unspecified > require(
+      execution::blocking_t::possibly_t ) const;
+
+
+Do not call this function directly. It is intended for use with the [link boost_asio.reference.require `require`] customisation point.
+
+For example: 
+
+  auto ex1 = my_thread_pool.executor();
+  auto ex2 = boost::asio::require(ex1,
+      boost::asio::execution::blocking.possibly); 
+
+
+
+
+
+[endsect]
+
+
+
+[section:overload2 thread_pool::basic_executor_type::require (2 of 9 overloads)]
+
+
+Obtain an executor with the `blocking.always` property. 
+
+
+  constexpr basic_executor_type< Allocator, unspecified > require(
+      execution::blocking_t::always_t ) const;
+
+
+Do not call this function directly. It is intended for use with the [link boost_asio.reference.require `require`] customisation point.
+
+For example: 
+
+  auto ex1 = my_thread_pool.executor();
+  auto ex2 = boost::asio::require(ex1,
+      boost::asio::execution::blocking.always); 
+
+
+
+
+
+[endsect]
+
+
+
+[section:overload3 thread_pool::basic_executor_type::require (3 of 9 overloads)]
+
+
+Obtain an executor with the `blocking.never` property. 
+
+
+  constexpr basic_executor_type< Allocator, unspecified > require(
+      execution::blocking_t::never_t ) const;
+
+
+Do not call this function directly. It is intended for use with the [link boost_asio.reference.require `require`] customisation point.
+
+For example: 
+
+  auto ex1 = my_thread_pool.executor();
+  auto ex2 = boost::asio::require(ex1,
+      boost::asio::execution::blocking.never); 
+
+
+
+
+
+[endsect]
+
+
+
+[section:overload4 thread_pool::basic_executor_type::require (4 of 9 overloads)]
+
+
+Obtain an executor with the `relationship.fork` property. 
+
+
+  constexpr basic_executor_type require(
+      execution::relationship_t::fork_t ) const;
+
+
+Do not call this function directly. It is intended for use with the [link boost_asio.reference.require `require`] customisation point.
+
+For example: 
+
+  auto ex1 = my_thread_pool.executor();
+  auto ex2 = boost::asio::require(ex1,
+      boost::asio::execution::relationship.fork); 
+
+
+
+
+
+[endsect]
+
+
+
+[section:overload5 thread_pool::basic_executor_type::require (5 of 9 overloads)]
+
+
+Obtain an executor with the `relationship.continuation` property. 
+
+
+  constexpr basic_executor_type require(
+      execution::relationship_t::continuation_t ) const;
+
+
+Do not call this function directly. It is intended for use with the [link boost_asio.reference.require `require`] customisation point.
+
+For example: 
+
+  auto ex1 = my_thread_pool.executor();
+  auto ex2 = boost::asio::require(ex1,
+      boost::asio::execution::relationship.continuation); 
+
+
+
+
+
+[endsect]
+
+
+
+[section:overload6 thread_pool::basic_executor_type::require (6 of 9 overloads)]
+
+
+Obtain an executor with the `outstanding_work.tracked` property. 
+
+
+  constexpr basic_executor_type< Allocator, unspecified > require(
+      execution::outstanding_work_t::tracked_t ) const;
+
+
+Do not call this function directly. It is intended for use with the [link boost_asio.reference.require `require`] customisation point.
+
+For example: 
+
+  auto ex1 = my_thread_pool.executor();
+  auto ex2 = boost::asio::require(ex1,
+      boost::asio::execution::outstanding_work.tracked); 
+
+
+
+
+
+[endsect]
+
+
+
+[section:overload7 thread_pool::basic_executor_type::require (7 of 9 overloads)]
+
+
+Obtain an executor with the `outstanding_work.untracked` property. 
+
+
+  constexpr basic_executor_type< Allocator, unspecified > require(
+      execution::outstanding_work_t::untracked_t ) const;
+
+
+Do not call this function directly. It is intended for use with the [link boost_asio.reference.require `require`] customisation point.
+
+For example: 
+
+  auto ex1 = my_thread_pool.executor();
+  auto ex2 = boost::asio::require(ex1,
+      boost::asio::execution::outstanding_work.untracked); 
+
+
+
+
+
+[endsect]
+
+
+
+[section:overload8 thread_pool::basic_executor_type::require (8 of 9 overloads)]
+
+
+Obtain an executor with the specified `allocator` property. 
+
+
+  template<
+      typename OtherAllocator>
+  constexpr basic_executor_type< OtherAllocator, Bits > require(
+      execution::allocator_t< OtherAllocator > a) const;
+
+
+Do not call this function directly. It is intended for use with the [link boost_asio.reference.require `require`] customisation point.
+
+For example: 
+
+  auto ex1 = my_thread_pool.executor();
+  auto ex2 = boost::asio::require(ex1,
+      boost::asio::execution::allocator(my_allocator)); 
+
+
+
+
+
+[endsect]
+
+
+
+[section:overload9 thread_pool::basic_executor_type::require (9 of 9 overloads)]
+
+
+Obtain an executor with the default `allocator` property. 
+
+
+  constexpr basic_executor_type< std::allocator< void >, Bits > require(
+      execution::allocator_t< void > ) const;
+
+
+Do not call this function directly. It is intended for use with the [link boost_asio.reference.require `require`] customisation point.
+
+For example: 
+
+  auto ex1 = my_thread_pool.executor();
+  auto ex2 = boost::asio::require(ex1,
+      boost::asio::execution::allocator); 
+
+
+
+
+
+[endsect]
+
+
+[endsect]
+
+
+[section:running_in_this_thread thread_pool::basic_executor_type::running_in_this_thread]
+
+[indexterm2 boost_asio.indexterm.thread_pool__basic_executor_type.running_in_this_thread..running_in_this_thread..thread_pool::basic_executor_type] 
+Determine whether the thread pool is running in the current thread. 
+
+
+  bool running_in_this_thread() const;
+
+
+
+[heading Return Value]
+      
+`true` if the current thread is running the thread pool. Otherwise returns `false`. 
+
+
+
+
+[endsect]
+
+
+
+[section:_basic_executor_type thread_pool::basic_executor_type::~basic_executor_type]
+
+[indexterm2 boost_asio.indexterm.thread_pool__basic_executor_type._basic_executor_type..~basic_executor_type..thread_pool::basic_executor_type] 
+Destructor. 
+
+
+  ~basic_executor_type();
+
 
 
 [endsect]
@@ -191751,6 +192041,56 @@ The allocator type. The allocator is used when constructing the `std::promise` o
 
   typedef Allocator allocator_type;
 
+
+[heading Types]
+[table
+  [[Name][Description]]
+
+  [
+
+    [[link boost_asio.reference.channel_traits__container [*container]]]
+    [Determine the container for the specified elements. ]
+  
+  ]
+
+  [
+
+    [[link boost_asio.reference.channel_traits__rebind [*rebind]]]
+    [Rebind the traits to a new set of signatures. ]
+  
+  ]
+
+  [
+
+    [[link boost_asio.reference.channel_traits.receive_cancelled_signature [*receive_cancelled_signature]]]
+    [The signature of a channel cancellation notification. ]
+  
+  ]
+
+  [
+
+    [[link boost_asio.reference.channel_traits.receive_closed_signature [*receive_closed_signature]]]
+    [The signature of a channel closed notification. ]
+  
+  ]
+
+]
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link boost_asio.reference.channel_traits.invoke_receive_cancelled [*invoke_receive_cancelled]] [static]]
+    [Invoke the specified handler with a cancellation notification. ]
+  ]
+  
+  [
+    [[link boost_asio.reference.channel_traits.invoke_receive_closed [*invoke_receive_closed]] [static]]
+    [Invoke the specified handler with a closed notification. ]
+  ]
+  
+]
 
 
 [heading Requirements]

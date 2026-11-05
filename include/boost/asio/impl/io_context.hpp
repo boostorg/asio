@@ -153,7 +153,7 @@ io_context::basic_executor_type<Allocator, Bits>::operator=(
 {
   if (this != &other)
   {
-    static_cast<Allocator&>(*this) = static_cast<const Allocator&>(other);
+    this->allocator_ref() = other.allocator_ref();
     io_context* old_io_context = context_ptr();
     target_ = other.target_;
     if (Bits & outstanding_work_tracked)
@@ -174,7 +174,8 @@ io_context::basic_executor_type<Allocator, Bits>::operator=(
 {
   if (this != &other)
   {
-    static_cast<Allocator&>(*this) = static_cast<Allocator&&>(other);
+    this->allocator_ref() =
+      static_cast<Allocator&&>(other.allocator_ref());
     io_context* old_io_context = context_ptr();
     target_ = other.target_;
     if (Bits & outstanding_work_tracked)
@@ -199,7 +200,7 @@ void io_context::execute_immediately(io_context* ctx, Function&& f)
 {
   typedef decay_t<Function> function_type;
 
-  // Make a local, non-const copy of the function.
+  // Obtain a non-const instance of the function.
   detail::non_const_lvalue<Function> f2(f);
 
 #if defined(BOOST_ASIO_NO_EXCEPTIONS)
@@ -238,10 +239,10 @@ void io_context::basic_executor_type<Allocator, Bits>::do_execute(
   // Allocate and construct an operation to wrap the function.
   typedef detail::executor_op<function_type, Allocator> op;
   typename op::ptr p = {
-      detail::addressof(static_cast<const Allocator&>(*this)),
-      op::ptr::allocate(static_cast<const Allocator&>(*this)), 0 };
+      detail::addressof(this->allocator_ref()),
+      op::ptr::allocate(this->allocator_ref()), 0 };
   p.p = new (p.v) op(static_cast<Function&&>(f),
-      static_cast<const Allocator&>(*this));
+      this->allocator_ref());
 
   BOOST_ASIO_HANDLER_CREATION((*context_ptr(), *p.p,
         "io_context", context_ptr(), 0, "execute"));
