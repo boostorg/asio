@@ -1,0 +1,169 @@
+//
+// Copyright (c) 2003-2025 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+//
+// Distributed under the Boost Software License, Version 1.0. (See accompanying
+// file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+//
+
+= Async Timer
+
+Learn how to wait for a timer to expire using `co_await`.
+
+== Basic Timer Wait
+
+[source,cpp]
+----
+#include <boost/asio.hpp>
+#include <iostream>
+
+namespace asio = boost::asio;
+using asio::awaitable;
+using asio::use_awaitable;
+
+awaitable<void> wait_for_timer()
+{
+    auto executor = co_await asio::this_coro::executor;
+    
+    // Create a timer that expires 2 seconds from now
+    asio::steady_timer timer(executor, std::chrono::seconds(2));
+    
+    std::cout << "Waiting...\n";
+    
+    // Suspend until the timer expires
+    co_await timer.async_wait(use_awaitable);
+    
+    std::cout << "Done!\n";
+}
+
+int main()
+{
+    asio::io_context ctx;
+    asio::co_spawn(ctx, wait_for_timer(), asio::detached);
+    ctx.run();
+}
+----
+
+== How It Works
+
+1. **Create the timer** — `steady_timer` takes an executor and a duration or time point
+2. **Start the async wait** — `async_wait(use_awaitable)` initiates the operation
+3. **Coroutine suspends** — Execution returns to the event loop
+4. **Timer expires** — The operating system signals the event loop
+5. **Coroutine resumes** — Execution continues after the `co_await`
+
+The coroutine does not block a thread while waiting. The `io_context` is free
+to run other work during this time.
+
+== Timer Types
+
+Asio provides several timer types:
+
+[cols="1,2"]
+|===
+| `steady_timer` | Uses `std::chrono::steady_clock`. Monotonic, not affected by system clock changes. **Use this for timeouts and intervals.**
+| `system_timer` | Uses `std::chrono::system_clock`. Can be affected by system clock adjustments.
+| `high_resolution_timer` | Uses `std::chrono::high_resolution_clock`. May be an alias for one of the above.
+|===
+
+== Setting Expiry Time
+
+You can set the expiry time in several ways:
+
+[source,cpp]
+----
+// Relative: expires N seconds from now
+timer.expires_after(std::chrono::seconds(5));
+
+// Absolute: expires at a specific time point
+timer.expires_at(std::chrono::steady_clock::now() + std::chrono::seconds(5));
+
+// At construction
+asio::steady_timer timer(executor, std::chrono::seconds(5));
+----
+
+== Cancelling a Timer
+
+Timers can be cancelled, which causes the pending `co_await` to throw
+`boost::system::system_error` with `asio::error::operation_aborted`:
+
+[source,cpp]
+----
+awaitable<void> cancellable_wait(asio::steady_timer& timer)
+{
+    try
+    {
+        co_await timer.async_wait(use_awaitable);
+        std::cout << "Timer expired normally\n";
+    }
+    catch (const boost::system::system_error& e)
+    {
+        if (e.code() == asio::error::operation_aborted)
+            std::cout << "Timer was cancelled\n";
+        else
+            throw;
+    }
+}
+
+awaitable<void> example()
+{
+    auto executor = co_await asio::this_coro::executor;
+    asio::steady_timer timer(executor, std::chrono::seconds(10));
+    
+    // Start the wait
+    auto wait = cancellable_wait(timer);
+    
+    // Cancel after 1 second
+    asio::steady_timer cancel_timer(executor, std::chrono::seconds(1));
+    co_await cancel_timer.async_wait(use_awaitable);
+    
+    timer.cancel();  // This causes the wait to complete with operation_aborted
+}
+----
+
+Resetting the expiry time also cancels any pending wait:
+
+[source,cpp]
+----
+timer.expires_after(std::chrono::seconds(5));  // Cancels pending waits
+----
+
+== Using Error Codes Instead of Exceptions
+
+If you prefer handling errors without exceptions:
+
+[source,cpp]
+----
+#include <boost/asio/experimental/as_tuple.hpp>
+
+awaitable<void> wait_with_error_code()
+{
+    auto executor = co_await asio::this_coro::executor;
+    asio::steady_timer timer(executor, std::chrono::seconds(2));
+    
+    auto [ec] = co_await timer.async_wait(
+        asio::experimental::as_tuple(use_awaitable));
+    
+    if (ec == asio::error::operation_aborted)
+        std::cout << "Cancelled\n";
+    else if (ec)
+        std::cout << "Error: " << ec.message() << "\n";
+    else
+        std::cout << "Expired\n";
+}
+----
+
+== Common Mistakes
+
+**Forgetting to call `run()`** — The timer won't expire unless `io_context::run()`
+is called. The event loop must be running.
+
+**Timer goes out of scope** — If the timer object is destroyed while a wait is
+pending, the operation is cancelled. Keep the timer alive.
+
+**Using the wrong clock** — `steady_timer` is almost always what you want.
+`system_timer` can jump forward or backward if the system clock is adjusted.
+
+== Next Steps
+
+* xref:timers/recurring-timer.adoc[Recurring Timer] — Wait repeatedly in a loop
+* xref:networking/tcp-client.adoc[TCP Client] — Apply async patterns to networking

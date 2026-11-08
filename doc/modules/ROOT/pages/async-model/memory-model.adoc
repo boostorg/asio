@@ -1,0 +1,241 @@
+//
+// Copyright (c) 2003-2025 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+//
+// Distributed under the Boost Software License, Version 1.0. (See accompanying
+// file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+//
+
+= Memory and Lifetimes
+
+Understand Asio's resource management guarantees.
+
+== The Deallocate-Before-Invoke Guarantee
+
+This is one of Asio's most important guarantees:
+
+[quote]
+If an asynchronous operation requires a temporary resource (such as memory,
+a file descriptor, or a thread), this resource is released before calling
+the completion handler.
+
+Why does this matter? Consider a chain of operations:
+
+[source,cpp]
+----
+awaitable<void> chain()
+{
+    co_await async_op1();  // Uses internal buffer
+    co_await async_op2();  // Uses internal buffer
+    co_await async_op3();  // Uses internal buffer
+}
+----
+
+Without this guarantee, all three internal buffers might exist simultaneously,
+tripling memory usage. With the guarantee, each operation releases its
+resources before the next operation starts.
+
+== Practical Impact
+
+=== Memory Efficiency
+
+[source,cpp]
+----
+awaitable<void> echo_loop(tcp::socket& socket)
+{
+    char buf[1024];
+    for (;;)
+    {
+        // Op 1: internal resources allocated
+        std::size_t n = co_await socket.async_read_some(
+            asio::buffer(buf), use_awaitable);
+        // Op 1: internal resources released before we get here
+        
+        // Op 2: can reuse the same memory
+        co_await asio::async_write(
+            socket, asio::buffer(buf, n), use_awaitable);
+        // Op 2: internal resources released
+    }
+}
+----
+
+Each iteration uses the same peak memory, not accumulating.
+
+=== Safe Handler Chaining
+
+The guarantee enables patterns like:
+
+[source,cpp]
+----
+awaitable<void> infinite_accept(tcp::acceptor& acceptor)
+{
+    for (;;)
+    {
+        // Accept completes, releases internal state
+        auto socket = co_await acceptor.async_accept(use_awaitable);
+        
+        // Now safe to do the next accept without resource buildup
+        co_spawn(socket.get_executor(), 
+                 handle_session(std::move(socket)), 
+                 detached);
+    }
+}
+----
+
+== Buffer Lifetimes
+
+**Critical**: You must keep buffers alive until the operation completes.
+
+[source,cpp]
+----
+// WRONG: buffer destroyed before operation completes
+awaitable<void> bad()
+{
+    auto socket = /* ... */;
+    {
+        std::string data = "Hello";
+        socket.async_write_some(asio::buffer(data), use_awaitable);
+    }  // data destroyed here!
+    
+    // ... operation still in progress, buffer is gone
+}
+
+// CORRECT: buffer outlives operation
+awaitable<void> good()
+{
+    auto socket = /* ... */;
+    std::string data = "Hello";
+    co_await asio::async_write(socket, asio::buffer(data), use_awaitable);
+    // data still valid, operation is complete
+}
+----
+
+With `co_await`, this is natural: the local variable stays alive until the
+operation completes.
+
+== I/O Object Lifetimes
+
+Keep I/O objects alive while operations are pending:
+
+[source,cpp]
+----
+// WRONG: socket destroyed while operation pending
+void bad()
+{
+    auto socket = std::make_unique<tcp::socket>(ctx);
+    socket->async_read_some(buffer, handler);
+    socket.reset();  // Destroys socket while read is pending!
+}
+
+// CORRECT: socket outlives operation
+awaitable<void> good()
+{
+    tcp::socket socket(co_await asio::this_coro::executor);
+    co_await socket.async_connect(endpoint, use_awaitable);
+    co_await socket.async_read_some(buffer, use_awaitable);
+    // socket destroyed here, after operations complete
+}
+----
+
+For servers with multiple sessions, use `shared_ptr`:
+
+[source,cpp]
+----
+class session : public std::enable_shared_from_this<session>
+{
+    tcp::socket socket_;
+    
+public:
+    awaitable<void> run()
+    {
+        // Keep self alive while running
+        auto self = shared_from_this();
+        
+        co_await do_read();
+        co_await do_write();
+    }
+};
+----
+
+== Executor Lifetime
+
+The executor (and its underlying `io_context`) must outlive all operations:
+
+[source,cpp]
+----
+// WRONG: context destroyed before operation completes
+void bad()
+{
+    asio::io_context ctx;
+    tcp::socket socket(ctx);
+    socket.async_connect(endpoint, handler);
+}  // ctx destroyed before run() called!
+
+// CORRECT: context outlives operations
+void good()
+{
+    asio::io_context ctx;
+    tcp::socket socket(ctx);
+    socket.async_connect(endpoint, handler);
+    ctx.run();  // Keeps ctx alive until complete
+}
+----
+
+== Cancellation and Resources
+
+When an operation is cancelled, resources are still released before the
+handler is invoked:
+
+[source,cpp]
+----
+awaitable<void> cancellable()
+{
+    tcp::socket socket(co_await asio::this_coro::executor);
+    
+    try
+    {
+        co_await socket.async_connect(endpoint, use_awaitable);
+    }
+    catch (const boost::system::system_error& e)
+    {
+        if (e.code() == asio::error::operation_aborted)
+        {
+            // Resources are already released
+            // Safe to start new operations
+        }
+    }
+}
+----
+
+== The Cost of Safety
+
+The deallocate-before-invoke guarantee has minimal cost:
+
+* Operations already need to complete before invoking the handler
+* The deallocation happens at a natural point in the flow
+* Modern allocators make this efficient
+
+== Debugging Lifetime Issues
+
+Enable buffer debugging:
+
+[source,cpp]
+----
+#define BOOST_ASIO_ENABLE_BUFFER_DEBUGGING
+#include <boost/asio.hpp>
+----
+
+This adds runtime checks that detect use of invalidated buffers.
+
+== Summary
+
+1. **Internal resources released before handler** — Enables efficient chaining
+2. **Your buffers must outlive operations** — With `co_await`, this is natural
+3. **I/O objects must outlive pending operations** — Use `shared_ptr` when needed
+4. **Executors must outlive operations** — Don't destroy `io_context` early
+
+These guarantees make async code composable and memory-efficient.
+
+== Next Steps
+
+* xref:core/buffers.adoc[Buffers] — Buffer types and usage
+* xref:async-model/initiating-functions.adoc[Initiating Functions] — Starting operations

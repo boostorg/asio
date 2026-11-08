@@ -1,0 +1,36 @@
+#
+# Copyright (c) 2003-2025 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+#
+# Distributed under the Boost Software License, Version 1.0. (See accompanying
+# file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+#
+
+site:
+  title: Boost.Asio
+  url: https://antora.cppalliance.org/develop/lib/doc
+  start_page: asio::index.adoc
+  robots: allow
+  keys:
+    repo_url: 'https://github.com/boostorg/asio'
+
+content:
+  sources:
+    - url: ..
+      start_path: doc
+      edit_url: 'https://github.com/boostorg/asio/edit/{refname}/{path}'
+
+ui:
+  bundle:
+    url: https://github.com/boostorg/website-v2-docs/releases/download/ui-develop/ui-bundle.zip
+    snapshot: true
+
+antora:
+  extensions:
+    - require: '@asciidoctor/tabs'
+
+asciidoc:
+  attributes:
+    # Enable pagination
+    page-pagination: ''
+  extensions:
+    - '@asciidoctor/tabs'

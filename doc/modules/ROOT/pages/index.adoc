@@ -1,0 +1,101 @@
+//
+// Copyright (c) 2003-2025 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+//
+// Distributed under the Boost Software License, Version 1.0. (See accompanying
+// file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+//
+
+= Boost.Asio
+
+Boost.Asio is a cross-platform C++ library for network and low-level I/O
+programming that provides a consistent asynchronous model using modern C++.
+
+NOTE: This documentation covers **C++20 coroutines only**. All examples use
+`co_await` with `awaitable<>`. For callback-based or other completion token
+styles, see the reference documentation.
+
+== What This Library Does
+
+Asio provides portable, efficient asynchronous I/O:
+
+* **Networking** — TCP and UDP sockets, name resolution
+* **Timers** — High-resolution deadline and steady timers
+* **SSL/TLS** — Secure sockets via OpenSSL
+* **Signal handling** — Portable signal interception
+* **Extensible** — Write your own async operations
+
+The library uses the operating system's most efficient I/O mechanisms:
+`epoll` on Linux, `kqueue` on BSD/macOS, and I/O completion ports on Windows.
+
+== What This Library Does Not Do
+
+Asio is a low-level toolkit, not a framework:
+
+* No HTTP, WebSocket, or other protocol implementations (see Boost.Beast)
+* No serialization or message framing
+* No connection pooling or load balancing
+* No built-in thread pool (though you can run `io_context` from multiple threads)
+
+== Design Philosophy
+
+**Proactor pattern.** Asio uses the proactor model: you initiate an operation,
+then the system notifies you when it completes. This differs from the reactor
+pattern (select/poll) where you wait for readiness then perform the operation.
+
+**Completion tokens.** Every async operation accepts a "completion token" that
+determines how results are delivered. With `use_awaitable`, results arrive via
+`co_await`. The same operation can work with callbacks, futures, or other
+mechanisms—the initiating function is decoupled from result delivery.
+
+**Zero-overhead abstractions.** The library is designed so that you pay only
+for what you use. Header-only by default, with optional separate compilation.
+
+== Requirements
+
+* **C++20** with coroutine support (`-std=c++20` or `/std:c++20`)
+* **Boost** — System, and optionally Coroutine for stackful coroutines
+
+=== Tested Compilers
+
+* GCC 10+
+* Clang 12+
+* MSVC 19.28+ (Visual Studio 2019 16.8+)
+
+=== Platform Support
+
+* Linux (epoll)
+* macOS / BSD (kqueue)
+* Windows (IOCP)
+
+== Quick Example
+
+[source,cpp]
+----
+#include <boost/asio.hpp>
+#include <iostream>
+
+namespace asio = boost::asio;
+using asio::awaitable;
+using asio::use_awaitable;
+
+awaitable<void> wait_and_print()
+{
+    auto executor = co_await asio::this_coro::executor;
+    asio::steady_timer timer(executor, std::chrono::seconds(1));
+    co_await timer.async_wait(use_awaitable);
+    std::cout << "Timer expired!\n";
+}
+
+int main()
+{
+    asio::io_context ctx;
+    asio::co_spawn(ctx, wait_and_print(), asio::detached);
+    ctx.run();
+}
+----
+
+== Next Steps
+
+* xref:quick-start.adoc[Quick Start] — Build and run your first program
+* xref:timers/async-timer.adoc[Async Timer] — Understand the async pattern
+* xref:networking/tcp-client.adoc[TCP Client] — Connect to a server
